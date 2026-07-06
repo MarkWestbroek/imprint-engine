@@ -1,36 +1,25 @@
-import type { Page, PageLayout, WidgetPlacement } from "@imprint/content-core";
+import type { Page, PageLayout, WidgetInstance } from "@imprint/content-core";
 import { Markdown } from "@/components/markdown";
 import { widgetComponents } from "@/widgets/components";
-import { TEMPLATES } from "@/widgets/templates";
+import { layoutRows } from "@/widgets/templates";
 
 /**
- * Renders a composed page (UML: Page ◆ PageLayout ◇ Widget*). A template
- * names the region arrangement; widgets are grouped per region and rendered
- * in content order. New arrangements are one entry in templates.ts.
+ * Renders a composed page (UML: Page ◆ PageLayout ◇ Widget*): rows of
+ * cells, widgets stacked inside each cell. Cell widths are fraction units
+ * (span 1|2 = one-third + two-thirds); below lg everything stacks.
  */
 
-function Region({ widgets }: { widgets: WidgetPlacement[] }) {
-  return (
-    <div className="space-y-6">
-      {widgets.map((w, i) => {
-        const Widget = widgetComponents[w.type];
-        if (!Widget) {
-          // Store validation should have caught this; fail loudly, not silently.
-          throw new Error(`No component for widget type "${w.type}"`);
-        }
-        return <Widget key={i} config={w.config} />;
-      })}
-    </div>
-  );
+function Widget({ widget }: { widget: WidgetInstance }) {
+  const Component = widgetComponents[widget.type];
+  if (!Component) {
+    // Store validation should have caught this; fail loudly, not silently.
+    throw new Error(`No component for widget type "${widget.type}"`);
+  }
+  return <Component config={widget.config} />;
 }
 
 export function PageRenderer({ page }: { page: Page & { layout: PageLayout } }) {
-  const template = TEMPLATES[page.layout.template];
-  if (!template) {
-    throw new Error(
-      `Unknown layout template "${page.layout.template}" (known: ${Object.keys(TEMPLATES).join(", ")})`
-    );
-  }
+  const rows = layoutRows(page.layout);
   return (
     <div>
       <h1 className="text-3xl font-semibold tracking-tight">{page.title}</h1>
@@ -39,12 +28,23 @@ export function PageRenderer({ page }: { page: Page & { layout: PageLayout } }) 
           <Markdown>{page.body}</Markdown>
         </div>
       )}
-      <div className={`mt-8 grid items-start gap-6 ${template.grid}`}>
-        {template.regions.map((region) => (
-          <Region
-            key={region}
-            widgets={page.layout.widgets.filter((w) => w.region === region)}
-          />
+      <div className="mt-8 space-y-6">
+        {rows.map((row, r) => (
+          <div
+            key={r}
+            className="grid items-start gap-6 lg:[grid-template-columns:var(--cols)]"
+            style={{
+              ["--cols" as string]: row.cells.map((c) => `${c.span}fr`).join(" "),
+            }}
+          >
+            {row.cells.map((cell, c) => (
+              <div key={c} className="min-w-0 space-y-6">
+                {cell.widgets.map((widget, w) => (
+                  <Widget key={w} widget={widget} />
+                ))}
+              </div>
+            ))}
+          </div>
         ))}
       </div>
     </div>

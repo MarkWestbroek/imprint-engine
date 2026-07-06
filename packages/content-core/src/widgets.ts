@@ -10,24 +10,49 @@ import { z } from "zod";
  * entries in a page's layout, no engine changes needed.
  */
 
-/** A widget as placed on a page: which type, in which region, with what config. */
-export const WidgetPlacementSchema = z.object({
+/** A widget instance: which type, with what config (UML: Widget /type). */
+export const WidgetInstanceSchema = z.object({
   /** WidgetType name, e.g. "text", "treeview", "api". Resolved via the registry. */
   type: z.string().min(1),
-  /** Region of the layout template this widget lands in (e.g. "sidebar", "main"). */
-  region: z.string().default("main"),
   /** Type-specific config; validated against the registered config schema. */
   config: z.unknown().default({}),
+});
+export type WidgetInstance = z.infer<typeof WidgetInstanceSchema>;
+
+/** Legacy (pre-rows) placement: widget + named region of a template. */
+export const WidgetPlacementSchema = WidgetInstanceSchema.extend({
+  region: z.string().default("main"),
 });
 export type WidgetPlacement = z.infer<typeof WidgetPlacementSchema>;
 
 /**
- * PageLayout: a template name (the region arrangement, defined by the site's
- * renderer) plus the widgets placed on it, in order.
+ * A cell ("vak"): a box in a row that holds widgets, stacked vertically.
+ * `span` is its relative width in fraction units (a 1|2 row renders as
+ * one-third + two-thirds).
+ */
+export const LayoutCellSchema = z.object({
+  span: z.number().int().min(1).max(4).default(1),
+  widgets: z.array(WidgetInstanceSchema).default([]),
+});
+export type LayoutCell = z.infer<typeof LayoutCellSchema>;
+
+export const LayoutRowSchema = z.object({
+  cells: z.array(LayoutCellSchema).min(1),
+});
+export type LayoutRow = z.infer<typeof LayoutRowSchema>;
+
+/**
+ * PageLayout: rows of cells, widgets inside cells — free-form, Pleio-style;
+ * cells can be added left/right, rows above/below. The legacy shape
+ * (template + region-tagged widgets) still parses; sites convert it to rows
+ * when rendering/editing, and the composer saves rows.
  */
 export const PageLayoutSchema = z.object({
-  template: z.string().default("single"),
-  widgets: z.array(WidgetPlacementSchema).default([]),
+  rows: z.array(LayoutRowSchema).optional(),
+  /** Legacy: named template ("single", "sidebar-left", …). */
+  template: z.string().optional(),
+  /** Legacy: widgets tagged with a template region. */
+  widgets: z.array(WidgetPlacementSchema).optional(),
 });
 export type PageLayout = z.infer<typeof PageLayoutSchema>;
 
@@ -61,25 +86,34 @@ export class WidgetTypeRegistry {
     return [...this.types.keys()];
   }
 
-  /** Validate a placement; returns it with a parsed, type-checked config. */
-  parse(placement: WidgetPlacement): WidgetPlacement {
-    const def = this.types.get(placement.type);
+  /** Validate a widget instance; returns it with a parsed, type-checked config. */
+  parse<T extends WidgetInstance>(widget: T): T {
+    const def = this.types.get(widget.type);
     if (!def) {
       throw new Error(
-        `Unknown widget type "${placement.type}" (registered: ${this.names().join(", ")})`
+        `Unknown widget type "${widget.type}" (registered: ${this.names().join(", ")})`
       );
     }
-    const result = def.configSchema.safeParse(placement.config);
+    const result = def.configSchema.safeParse(widget.config);
     if (!result.success) {
       throw new Error(
-        `Invalid config for widget "${placement.type}": ${result.error.message}`
+        `Invalid config for widget "${widget.type}": ${result.error.message}`
       );
     }
-    return { ...placement, config: result.data };
+    return { ...widget, config: result.data };
   }
 
-  /** Validate a whole layout (all placements) in one go. */
+  /** Validate every widget in a layout (rows and legacy placements) in one go. */
   parseLayout(layout: PageLayout): PageLayout {
-    return { ...layout, widgets: layout.widgets.map((w) => this.parse(w)) };
+    return {
+      ...layout,
+      rows: layout.rows?.map((row) => ({
+        cells: row.cells.map((cell) => ({
+          ...cell,
+          widgets: cell.widgets.map((w) => this.parse(w)),
+        })),
+      })),
+      widgets: layout.widgets?.map((w) => this.parse(w)),
+    };
   }
 }

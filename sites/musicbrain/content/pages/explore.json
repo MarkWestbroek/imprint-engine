@@ -2,59 +2,68 @@
   "slug": "explore",
   "title": "Explore",
   "description": "A composed page: treeview navigation on the left, live API content and store-driven widgets in the middle.",
-  "body": "This page is not coded — it is *composed*. Everything below is widgets placed on a `sidebar-left` layout in `content/pages/explore.json`.",
+  "body": "This page is not coded — it is *composed*: rows of boxes with widgets in them, defined in `content/pages/explore.json` (or in the /admin composer).",
   "layout": {
-    "template": "sidebar-left",
-    "widgets": [
+    "rows": [
       {
-        "type": "treeview",
-        "region": "sidebar",
-        "config": {
-          "title": "Browse",
-          "items": [
-            {
-              "label": "Products",
-              "children": [
-                { "label": "Cortex", "href": "/products/cortex" },
-                { "label": "Reflex", "href": "/products/reflex" },
-                { "label": "Relay", "href": "/products/relay" },
-                { "label": "Synapse", "href": "/products/synapse" }
-              ]
-            }
-          ],
-          "pagesPrefix": ""
-        }
-      },
-      {
-        "type": "api",
-        "region": "main",
-        "config": {
-          "title": "Live from the MusicBrainz API (no relation!)",
-          "url": "https://musicbrainz.org/ws/2/instrument?query=synthesizer&fmt=json&limit=5",
-          "headers": {
-            "User-Agent": "ImprintEngine/0.1 (https://github.com/MarkWestbroek/imprint-engine)"
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "treeview",
+                "config": {
+                  "title": "Browse",
+                  "items": [
+                    {
+                      "label": "Products",
+                      "children": [
+                        { "label": "Cortex", "href": "/products/cortex" },
+                        { "label": "Reflex", "href": "/products/reflex" },
+                        { "label": "Relay", "href": "/products/relay" },
+                        { "label": "Synapse", "href": "/products/synapse" }
+                      ]
+                    }
+                  ],
+                  "pagesPrefix": ""
+                }
+              }
+            ]
           },
-          "itemsPath": "instruments",
-          "fields": [
-            { "label": "Instrument", "path": "name" },
-            { "label": "Type", "path": "type" },
-            { "label": "Description", "path": "description" }
-          ],
-          "limit": 5
-        }
-      },
-      {
-        "type": "releases",
-        "region": "main",
-        "config": { "title": "Latest releases", "limit": 3 }
-      },
-      {
-        "type": "text",
-        "region": "main",
-        "config": {
-          "title": "How this works",
-          "markdown": "Each block on this page is a **widget**: a type name plus a config, validated against the schema the site registered for that type. Want a new kind of block? Add one schema to `src/widgets/registry.ts` and one component to `src/widgets/components.tsx` — then place it on any page."
-        }
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "api",
+                "config": {
+                  "title": "Live from the MusicBrainz API (no relation!)",
+                  "url": "https://musicbrainz.org/ws/2/instrument?query=synthesizer&fmt=json&limit=5",
+                  "headers": {
+                    "User-Agent": "ImprintEngine/0.1 (https://github.com/MarkWestbroek/imprint-engine)"
+                  },
+                  "itemsPath": "instruments",
+                  "fields": [
+                    { "label": "Instrument", "path": "name" },
+                    { "label": "Type", "path": "type" },
+                    { "label": "Description", "path": "description" }
+                  ],
+                  "limit": 5
+                }
+              },
+              {
+                "type": "releases",
+                "config": { "title": "Latest releases", "limit": 3 }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "title": "How this works",
+                  "markdown": "Each block on this page is a **widget**: a type name plus a config, validated against the schema the site registered for that type. Want a new kind of block? Add one schema to `src/widgets/registry.ts` and one component to `src/widgets/components.tsx` — then place it on any page in the composer."
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   }

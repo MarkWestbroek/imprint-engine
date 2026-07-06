@@ -4,7 +4,6 @@ import type { ContentType } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
 import { contentFormSchema, widgetFormSchemas } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
-import { TEMPLATES } from "@/widgets/templates";
 
 const CONTENT_TYPES: ContentType[] = ["site", "product", "release", "page", "menu"];
 
@@ -49,9 +48,14 @@ export default async function AdminEdit({ params, searchParams }: Props) {
     : null;
   if (slug && !item) notFound();
 
-  const templates = Object.fromEntries(
-    Object.entries(TEMPLATES).map(([name, t]) => [name, { regions: t.regions }])
-  );
+  // Menu items point to pages; give the editor the real list to pick from.
+  const pages =
+    contentType === "menu"
+      ? (await writableStore!.listItems("page")).map((p) => ({
+          slug: p.slug,
+          title: String((p.data as Record<string, unknown>).title ?? p.slug),
+        }))
+      : undefined;
 
   return (
     <div className="max-w-3xl">
@@ -71,8 +75,8 @@ export default async function AdminEdit({ params, searchParams }: Props) {
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}
           validTo={toLocalInput(item?.validTo)}
-          templates={templates}
           widgetSchemas={contentType === "page" ? widgetFormSchemas() : undefined}
+          pages={pages}
         />
       </div>
     </div>

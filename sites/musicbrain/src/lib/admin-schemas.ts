@@ -1,6 +1,5 @@
 import { z } from "zod";
 import {
-  MenuSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
@@ -45,7 +44,8 @@ export function contentFormSchema(type: ContentType): JsonSchema {
     case "release":
       return objectSchema(ReleaseSchema);
     case "menu":
-      return objectSchema(MenuSchema);
+      // Only the name; the items get the dedicated MenuEditor, not a form.
+      return { type: "object", properties: { name: { type: "string" } } };
     case "page":
       return objectSchema(PageMetaSchema);
   }
