@@ -1,0 +1,43 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Imprint: dev (musicbrain)",
+      "type": "npm",
+      "script": "dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "next",
+        "pattern": {
+          "regexp": "^\\s*(.*)$",
+          "file": 1
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Starting\\.\\.\\.|Compiling",
+          "endsPattern": "Ready in|Compiled"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Imprint: build (musicbrain)",
+      "type": "npm",
+      "script": "build",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$tsc"]
+    },
+    {
+      "label": "Imprint: typecheck + lint",
+      "type": "shell",
+      "command": "npm run typecheck; npm run lint",
+      "problemMatcher": ["$tsc"]
+    }
+  ]
+}
