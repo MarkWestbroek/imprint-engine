@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PageLayoutSchema } from "./widgets";
 
 /**
  * Content schemas — the single source of truth for what content looks like.
@@ -73,7 +74,73 @@ export const PageMetaSchema = z.object({
 });
 export type PageMeta = z.infer<typeof PageMetaSchema>;
 
-export type Page = PageMeta & { body: string };
+/**
+ * A page is either free-form (markdown body) or composed (a PageLayout with
+ * widgets) — or both, when a layout page also wants a markdown intro.
+ */
+export type Page = PageMeta & { body: string; layout?: z.infer<typeof PageLayoutSchema> };
+
+/** JSON page document: meta + layout in one file (pages/<slug>.json). */
+export const PageDocSchema = PageMetaSchema.extend({
+  layout: PageLayoutSchema,
+  /** Optional markdown rendered before/without a "main" region. */
+  body: z.string().default(""),
+});
+export type PageDoc = z.infer<typeof PageDocSchema>;
+
+/**
+ * Menu / MenuItem (UML): a named menu of nestable items; an item points to a
+ * Page (0..1, by slug), to an external/anchor URL, or is just a group label.
+ */
+export type MenuItem = {
+  label: string;
+  /** Slug of the Page this item points to (UML "points to 0..1"). */
+  page?: string;
+  /** Alternative to `page`: literal href (external URL, anchor, …). */
+  url?: string;
+  children?: MenuItem[];
+};
+export const MenuItemSchema: z.ZodType<MenuItem> = z.lazy(() =>
+  z.object({
+    label: z.string().min(1),
+    page: z.string().optional(),
+    url: z.string().optional(),
+    children: z.array(MenuItemSchema).optional(),
+  })
+);
+
+export const MenuSchema = z.object({
+  name: z.string().min(1),
+  items: z.array(MenuItemSchema).default([]),
+});
+export type Menu = z.infer<typeof MenuSchema>;
+
+/**
+ * Users & roles (UML: User, RoleType, ContentUser). Defined here so the model
+ * is complete, but v0 has no login — enforcement arrives with the v1 database
+ * store (admin UI). Site-wide role vs. per-content-item role, as in the UML.
+ */
+export const RoleType = z.enum(["admin", "editor", "reader"]);
+export type RoleType = z.infer<typeof RoleType>;
+
+export const ContentUserRoleType = z.enum(["creator", "owner", "contributor"]);
+export type ContentUserRoleType = z.infer<typeof ContentUserRoleType>;
+
+export const UserSchema = z.object({
+  name: z.string().min(1),
+  hashedPassword: z.string(),
+  role: RoleType,
+});
+export type User = z.infer<typeof UserSchema>;
+
+/** Association between a User and one content item (release, page, …). */
+export const ContentUserSchema = z.object({
+  user: z.string().min(1),
+  /** Content reference, e.g. "pages/about" or "releases/simulator-0.1.0". */
+  contentRef: z.string().min(1),
+  role: ContentUserRoleType,
+});
+export type ContentUser = z.infer<typeof ContentUserSchema>;
 
 export const SiteConfigSchema = z.object({
   name: z.string(),

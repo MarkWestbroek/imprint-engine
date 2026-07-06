@@ -3,15 +3,19 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import {
+  MenuSchema,
+  PageDocSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  type Menu,
   type Page,
   type Product,
   type Release,
   type SiteConfig,
 } from "./schemas";
+import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentStore, ReadOptions } from "./store";
 
 /**
@@ -21,13 +25,19 @@ import type { ContentStore, ReadOptions } from "./store";
  *   products/<slug>.json      Product (or <slug>.<lang>.json for translations)
  *   releases/<file>.json      Release
  *   pages/<slug>.md           Page: frontmatter (PageMeta) + markdown body
+ *   pages/<slug>.json         Composed page: meta + PageLayout with widgets
  *   pages/posts/<slug>.md     Devlog posts (just pages under a prefix)
+ *   menus/<name>.json         Menu (nestable items pointing to pages/URLs)
  *
  * Everything is validated with zod on read, so a broken file fails the build
- * instead of silently rendering garbage.
+ * instead of silently rendering garbage. Pass the site's WidgetTypeRegistry
+ * to also validate widget configs against their declared schemas.
  */
 export class FileContentStore implements ContentStore {
-  constructor(private readonly contentDir: string) {}
+  constructor(
+    private readonly contentDir: string,
+    private readonly opts: { widgets?: WidgetTypeRegistry } = {}
+  ) {}
 
   async getSiteConfig(): Promise<SiteConfig> {
     const raw = await fs.readFile(path.join(this.contentDir, "site.json"), "utf8");
@@ -69,12 +79,19 @@ export class FileContentStore implements ContentStore {
   }
 
   async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {
-    const files = await this.listFiles("pages", ".md", true);
     const pages: Page[] = [];
-    for (const file of files) {
+    for (const file of await this.listFiles("pages", ".md", true)) {
       const raw = await fs.readFile(file, "utf8");
       const { data, content } = matter(raw);
       pages.push({ ...PageMetaSchema.parse(data), body: content.trim() });
+    }
+    for (const file of await this.listFiles("pages", ".json", true)) {
+      const raw = await fs.readFile(file, "utf8");
+      const doc = PageDocSchema.parse(JSON.parse(raw));
+      const layout = this.opts.widgets
+        ? this.opts.widgets.parseLayout(doc.layout)
+        : doc.layout;
+      pages.push({ ...doc, layout });
     }
     const lang = opts?.lang ?? "en";
     const asOf = opts?.asOf ?? new Date();
@@ -99,6 +116,19 @@ export class FileContentStore implements ContentStore {
   async getPage(slug: string, opts?: ReadOptions): Promise<Page | null> {
     const pages = await this.listPages(opts);
     return pages.find((p) => p.slug === slug) ?? null;
+  }
+
+  async getMenu(name: string): Promise<Menu | null> {
+    try {
+      const raw = await fs.readFile(
+        path.join(this.contentDir, "menus", `${name}.json`),
+        "utf8"
+      );
+      return MenuSchema.parse(JSON.parse(raw));
+    } catch (err: unknown) {
+      if ((err as NodeJS.ErrnoException).code === "ENOENT") return null;
+      throw err;
+    }
   }
 
   private async listFiles(subdir: string, ext: string, recursive = false): Promise<string[]> {
