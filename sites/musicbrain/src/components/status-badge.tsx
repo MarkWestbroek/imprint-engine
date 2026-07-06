@@ -1,4 +1,4 @@
-import type { ProductStatus } from "@cms2026/content-core";
+import type { ProductStatus } from "@imprint/content-core";
 
 const LABELS: Record<ProductStatus, string> = {
   "in-development": "In development",

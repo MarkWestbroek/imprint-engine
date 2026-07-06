@@ -1,8 +1,8 @@
 {
-  "name": "cms2026",
+  "name": "imprint",
   "version": "0.1.0",
   "private": true,
-  "description": "Multi-site CMS: reusable content core + per-site front-ends. First site: MusicBrain.",
+  "description": "Imprint — one publishing engine, many brand sites (imprints). Reusable content core + per-site front-ends. First imprint: MusicBrain.",
   "workspaces": [
     "packages/*",
     "sites/*"

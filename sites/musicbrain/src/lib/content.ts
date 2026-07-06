@@ -1,5 +1,5 @@
 import path from "node:path";
-import { FileContentStore, type ContentStore } from "@cms2026/content-core";
+import { FileContentStore, type ContentStore } from "@imprint/content-core";
 
 /**
  * The one place the site talks to content (S1). Swap this for a

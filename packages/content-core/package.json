@@ -1,5 +1,5 @@
 {
-  "name": "@cms2026/content-core",
+  "name": "@imprint/content-core",
   "version": "0.1.0",
   "private": true,
   "description": "Content schemas (zod) and the ContentStore interface. Storage-agnostic: file-backed today, bitemporal database later.",

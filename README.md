@@ -1,8 +1,9 @@
-# CMS2026
+# Imprint
 
-Systeem om merk-/productwebsites op te zetten en te onderhouden. Eerste
-klant: **MusicBrain** (werknaam). Requirements: zie
-[docs/website-requirements.md](docs/website-requirements.md).
+Eén publicatie-motor, meerdere merk-sites — zoals een uitgeverij meerdere
+*imprints* voert: elk met een eigen gezicht, allemaal op dezelfde machinerie.
+Geen klassiek CMS dus. Eerste imprint: **MusicBrain** (werknaam).
+Requirements: zie [docs/website-requirements.md](docs/website-requirements.md).
 
 ## Opzet
 

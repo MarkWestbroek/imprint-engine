@@ -1,4 +1,7 @@
-# CMS2026 — werkafspraken
+# Imprint — werkafspraken
+
+- Projectnaam is **Imprint**: één publicatie-motor, sites zijn "imprints"
+  (de map heet mogelijk nog CMS2026; de naam in code/docs is Imprint).
 
 - npm-workspaces-monorepo: `packages/content-core` (schemas + ContentStore),
   `sites/musicbrain` (Next.js 16, App Router, Tailwind v4). Requirements in
