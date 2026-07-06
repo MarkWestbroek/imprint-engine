@@ -20,14 +20,17 @@
   Secrets in `.env` (root) + `sites/musicbrain/.env.local` — nooit committen.
 - Content is zod-gevalideerd; schemawijzigingen horen in
   `packages/content-core/src/schemas.ts`, niet ad hoc in een site.
-- Widget-model (UML-contentmodel): pagina's kunnen gecomponeerd worden als
-  `PageLayout` (template + regio's) met widgets `{ type, region, config }`.
+- Widget-model (UML-contentmodel): pagina's zijn composeerbaar als
+  `PageLayout` = rijen → cellen (met `span`-breedte) → widgets
+  `{ type, config }`; het oude template/regio-formaat parseert nog en
+  wordt via `layoutRows()` (site, `src/widgets/templates.ts`) omgezet.
   De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
   widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
   (configschema's, geen React/store-imports — de store valideert hiermee)
   + `src/widgets/components.tsx` (componenten). Nieuwe widget = één schema
-  + één component; layout-templates staan in
-  `src/components/page-renderer.tsx`.
+  + één component.
+- Ontwerp gedocumenteerd in `docs/architecture.md` (mermaid) — bijwerken
+  als het contentmodel, de stores of de deploy-opzet wijzigen.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);
   geen losse hexkleuren in componenten.
 - Build verifiëren met `npm run build` vanuit de root. Publieke pagina's
