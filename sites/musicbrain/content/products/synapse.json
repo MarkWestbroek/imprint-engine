@@ -1,0 +1,13 @@
+{
+  "slug": "synapse",
+  "lang": "en",
+  "name": "Synapse",
+  "tagline": "Compact MIDI merge & split utility.",
+  "status": "in-development",
+  "specs": [
+    { "label": "Ports", "value": "2x in, 4x thru/out, merge & split" },
+    { "label": "Power", "value": "USB or 9V pedal supply" }
+  ],
+  "media": [],
+  "order": 4
+}

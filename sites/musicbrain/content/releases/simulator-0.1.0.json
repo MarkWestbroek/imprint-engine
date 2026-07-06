@@ -1,0 +1,13 @@
+{
+  "project": "simulator",
+  "version": "0.1.0",
+  "date": "2026-07-01",
+  "channel": "beta",
+  "highlights": [
+    "First public beta of the editor & simulator",
+    "Full Cortex routing model, no hardware required"
+  ],
+  "body": "Placeholder release note. Once the GitHub webhook (S7) is wired up, entries like this are created automatically from GitHub releases.",
+  "sourceUrl": "https://github.com/musicbrain",
+  "downloads": []
+}

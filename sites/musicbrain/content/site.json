@@ -1,0 +1,10 @@
+{
+  "name": "MusicBrain",
+  "tagline": "Open-source brains for your music rig",
+  "baseUrl": "https://musicbrain.example",
+  "defaultLocale": "en",
+  "links": {
+    "github": "https://github.com/musicbrain",
+    "discord": "https://discord.gg/musicbrain"
+  }
+}

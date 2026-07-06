@@ -1,0 +1,13 @@
+{
+  "slug": "relay",
+  "lang": "en",
+  "name": "Relay",
+  "tagline": "Amp switching and control, driven by your MIDI rig.",
+  "status": "in-development",
+  "specs": [
+    { "label": "Switching", "value": "4x relay loops, amp channel switching" },
+    { "label": "Control", "value": "MIDI program/control change" }
+  ],
+  "media": [],
+  "order": 3
+}

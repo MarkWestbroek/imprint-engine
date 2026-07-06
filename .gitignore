@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+out/
+dist/
+build/
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# misc
+*.log
+.DS_Store
+Thumbs.db
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

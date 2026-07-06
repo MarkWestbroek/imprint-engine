@@ -1,0 +1,20 @@
+{
+  "name": "cms2026",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Multi-site CMS: reusable content core + per-site front-ends. First site: MusicBrain.",
+  "workspaces": [
+    "packages/*",
+    "sites/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=musicbrain",
+    "build": "npm run build --workspace=musicbrain",
+    "start": "npm run start --workspace=musicbrain",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

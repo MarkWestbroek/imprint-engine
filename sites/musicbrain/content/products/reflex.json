@@ -1,0 +1,14 @@
+{
+  "slug": "reflex",
+  "lang": "en",
+  "name": "Reflex",
+  "tagline": "Programmable foot controller that talks to everything.",
+  "status": "in-development",
+  "specs": [
+    { "label": "Switches", "value": "8 footswitches, RGB LED rings" },
+    { "label": "Display", "value": "Per-switch OLED labels" },
+    { "label": "Connectivity", "value": "MIDI DIN, USB, 2x expression pedal" }
+  ],
+  "media": [],
+  "order": 2
+}
