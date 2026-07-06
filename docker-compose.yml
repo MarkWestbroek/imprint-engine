@@ -1,0 +1,17 @@
+# Local dev database — same MariaDB major as the Plesk production server
+# (10.11), so migrations behave identically. Start with: npm run db:up
+services:
+  db:
+    image: mariadb:10.11
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: imprint-root
+      MARIADB_DATABASE: musicbrain
+      MARIADB_USER: imprint
+      MARIADB_PASSWORD: imprint-dev
+    volumes:
+      - db-data:/var/lib/mysql
+
+volumes:
+  db-data:

@@ -9,21 +9,28 @@ Requirements: zie [docs/website-requirements.md](docs/website-requirements.md).
 
 npm-workspaces-monorepo, gefaseerd volgens §C van het requirements-doc:
 
-- **v0 (nu):** statische site, content als bestanden in git — geen database,
-  wél al de definitieve componenten en het definitieve contentmodel.
-- **v1 (later):** database (Plesk MySQL of Postgres/Neon) + admin-UI
-  erachter schuiven. Alleen de `ContentStore`-implementatie wisselt; de
-  pagina's blijven ongewijzigd. De bitemporal-light-kolommen
-  (`valid_from/valid_to/tx_from/tx_to`, §B3) horen bij die stap.
+- **v0:** statische site, content als bestanden in git. Werkt nog steeds:
+  zonder `DATABASE_URL` valt de site terug op de file-store.
+- **v1 (nu):** MariaDB met **bitemporal-light**-tabellen (§B3:
+  `valid_from/valid_to/tx_from/tx_to` — elke wijziging is een nieuwe rij,
+  historie en terugrollen gratis) + admin-UI met widget-composer op
+  `/admin`. Alleen de `ContentStore`-implementatie wisselde; de pagina's
+  bleven ongewijzigd. Doel-hosting: Plesk (Node.js-app + MariaDB).
 
 ```
 packages/
-  content-core/        Zod-schemas + ContentStore-interface + file-store
-                       (herbruikbaar voor elke volgende site)
+  content-core/        Zod-schemas + ContentStore-interface + widget-model
+                       (PageLayout, WidgetTypeRegistry) + twee stores:
+                       file-store (v0, git) en db-store (v1, bitemporal-light)
 sites/
   musicbrain/          Next.js 16-site (App Router, Tailwind v4, dark)
-    content/           De content: site.json, products/*.json,
-                       releases/*.json, pages/**/*.md
+    content/           v0-content (files) — ook de seed-bron voor de DB
+    src/widgets/       De widget-catalogus van deze site:
+                       registry.ts (configschema's) + components.tsx
+    src/app/admin/     Admin-UI: login, lijsten, formulieren uit zod-schema's,
+                       widget-composer, versiehistorie met restore
+drizzle/               Gegenereerde SQL-migraties (in git; nooit handmatig)
+scripts/seed.ts        Contentbestanden + eerste admin-user → database
 docs/
   website-requirements.md
 ```
@@ -33,10 +40,48 @@ docs/
 ```bash
 npm install        # eenmalig, vanuit de repo-root
 npm run dev        # dev-server musicbrain (http://localhost:3000)
-npm run build      # productie-build (volledig statisch, 11 pagina's)
+npm run build      # productie-build
 npm run lint
 npm run typecheck
+
+npm run db:up      # lokale MariaDB 10.11 (docker compose), zelfde major als Plesk
+npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/
+npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL
+npm run db:seed      # contentbestanden + admin-user importeren (idempotent)
 ```
+
+## Database & admin (v1)
+
+1. Kopieer `.env.example` naar `.env` (root, voor de tooling) én naar
+   `sites/musicbrain/.env.local` (voor de app); vul `DATABASE_URL`,
+   `SESSION_SECRET` en `SEED_ADMIN_*`.
+2. `npm run db:up && npm run db:migrate && npm run db:seed`
+3. `npm run dev` → **http://localhost:3000/admin** en log in.
+
+Elke save is een *nieuwe versie* (transaction time); niets wordt
+overschreven — "History" bij elk item toont alles en kan terugrollen.
+"Validity" op een item plant publicatie (valid time, S6). Zonder
+`DATABASE_URL` draait de site in v0-modus op de files in git.
+
+**Schema-sync dev → Plesk:** migraties staan in git (`drizzle/`); op de
+server is bijwerken `git pull` + `npm run db:migrate`. Content wordt niet
+gesynct: de productie-DB is de bron van waarheid, de seed is eenmalig.
+
+## Deploy naar Plesk
+
+De **hele repo** kan naar de server (Plesk Git-extensie of eigen sync);
+de app wijst gewoon naar de submap:
+
+1. **Git:** koppel de repo aan een map op de server (bijv. `imprint/`);
+   zet als "additional deployment action" (script na de pull):
+   `npm ci && npm run build && npm run db:migrate && touch sites/musicbrain/tmp/restart.txt`
+2. **Node.js-extensie:** Application root = `imprint/sites/musicbrain`,
+   startup file = `server.js` (Passenger start geen npm-scripts, wél dit
+   bestand), Node ≥ 20. Zet `DATABASE_URL` en `SESSION_SECRET` als
+   environment-variabelen in de Node.js-instellingen (dan is er geen
+   `.env.local` op de server nodig).
+3. **Eenmalig:** database aanmaken in Plesk (zie `.env.example` voor de
+   URL-vorm) en `npm run db:seed` draaien voor de startcontent + admin-user.
 
 ## Content bewerken (v0)
 
@@ -50,13 +95,37 @@ kapot bestand breekt de build in plaats van stil verkeerde output te geven.
 - **Pagina/post:** `content/pages/**/*.md` — frontmatter + markdown.
   `draft: true` verbergt; `publishedAt` in de toekomst = nog niet zichtbaar
   (file-versie van S5/S6).
+- **Widget-pagina:** `content/pages/<slug>.json` — meta + `layout`
+  (`template` + `widgets[]`). Elke widget is `{ type, region, config }`;
+  de config wordt gevalideerd tegen het schema dat de site voor dat type
+  registreert. Zie `pages/explore.json` voor een voorbeeld (treeview links,
+  API-content in het midden).
+- **Menu:** `content/menus/<naam>.json` — nestbare items die naar een
+  pagina (`page: <slug>`) of URL wijzen; `main` stuurt de header-nav.
 - **Vertaling (S9):** zelfde bestand met `lang: nl` ernaast; EN is fallback.
 
-## Nog te doen (v0 → v1)
+## Widgets (vrije bouwblokken)
 
-- [ ] Repo naar GitHub; CI (build bij PR)
-- [ ] Deploy-doel kiezen: statische export naar Plesk, of Vercel/Netlify
+Pagina's kunnen worden *gecomponeerd* uit widgets op een layout-template
+(`single`, `sidebar-left`, `sidebar-right`, `three-column`). De motor kent
+geen concrete widgets; elke site declareert zijn eigen catalogus:
+
+1. configschema toevoegen in `src/widgets/registry.ts` (zod),
+2. component toevoegen in `src/widgets/components.tsx` (server component,
+   mag de `ContentStore` gebruiken of externe API's fetchen).
+
+Meegeleverd in musicbrain: `text` (markdown), `treeview` (handmatige boom
+en/of automatisch uit pagina-slugs), `api` (JSON-endpoint → lijst met
+veldselectie), `releases`, `products`.
+
+## Nog te doen
+
+- [ ] CI (GitHub Actions: build + lint bij PR)
+- [ ] Deploy naar Plesk: Node.js-extensie aanzetten, MariaDB aanmaken,
+      `DATABASE_URL`/`SESSION_SECRET` zetten, migrate + seed draaien
 - [ ] Nieuwsbrief-signup met double opt-in (W1) — heeft backend/dienst nodig
-- [ ] GitHub-webhook → releases (S7) — heeft de DB-stap nodig
-- [ ] Admin-UI + auth (v1)
+- [ ] GitHub-webhook → releases (S7)
+- [ ] Users-beheer in de admin (nu alleen via seed); rollen afdwingen per item
+      (ContentUser) zit in het schema maar wordt nog niet gehandhaafd
 - [ ] Placeholder-content (productteksten, links, domein) vervangen
+- [ ] Later: DB-store migreren naar het echte bitemporal register (§B3)

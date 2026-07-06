@@ -1,0 +1,269 @@
+import { and, desc, eq, gt, isNull, lte, or } from "drizzle-orm";
+import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
+import mysql from "mysql2/promise";
+import { z } from "zod";
+
+import { contentItems, users } from "./db-schema";
+import {
+  MenuSchema,
+  PageMetaSchema,
+  ProductSchema,
+  ReleaseSchema,
+  SiteConfigSchema,
+  type Menu,
+  type Page,
+  type Product,
+  type Release,
+  type SiteConfig,
+} from "./schemas";
+import { PageLayoutSchema, type WidgetTypeRegistry } from "./widgets";
+import type {
+  ContentRecord,
+  ContentStore,
+  ContentType,
+  ReadOptions,
+  WritableContentStore,
+} from "./store";
+
+/** Page payload as stored: meta + markdown body and/or a widget layout. */
+const PageRecordSchema = PageMetaSchema.extend({
+  body: z.string().default(""),
+  layout: PageLayoutSchema.optional(),
+});
+
+export type Db = MySql2Database & { $client: mysql.Pool };
+
+/** One pool per process; Next.js dev reloads modules, so keep it lazy. */
+export function createDb(url: string): Db {
+  const pool = mysql.createPool({ uri: url, connectionLimit: 5 });
+  return drizzle(pool) as Db;
+}
+
+export { contentItems, users };
+
+/**
+ * Database-backed ContentStore (v1, bitemporal-light §B3) plus the write
+ * side for the admin. Same read semantics as the file store: language
+ * fallback to "en" (S9), drafts hidden unless asked (S5), asOf respected
+ * via valid time (S6).
+ */
+export class DbContentStore implements WritableContentStore {
+  constructor(
+    private readonly db: Db,
+    private readonly opts: { widgets?: WidgetTypeRegistry } = {}
+  ) {}
+
+  /**
+   * MariaDB's JSON type is an alias for LONGTEXT, so mysql2 hands the payload
+   * back as a string (real MySQL parses it). Normalize on every read.
+   */
+  private static thaw<T extends { data: unknown }>(row: T): T {
+    return typeof row.data === "string" ? { ...row, data: JSON.parse(row.data) } : row;
+  }
+
+  // ---------- read side (ContentStore) ----------
+
+  async getSiteConfig(): Promise<SiteConfig> {
+    const rows = await this.currentRows("site");
+    if (rows.length === 0) throw new Error("No site config in database (seed it first)");
+    return SiteConfigSchema.parse(rows[0].data);
+  }
+
+  async listProducts(opts?: ReadOptions): Promise<Product[]> {
+    const rows = await this.currentRows("product", opts);
+    const products = rows.map((r) => ProductSchema.parse(r.data));
+    return this.pickLang(products, opts?.lang).sort(
+      (a, b) => a.order - b.order || a.slug.localeCompare(b.slug)
+    );
+  }
+
+  async getProduct(slug: string, opts?: ReadOptions): Promise<Product | null> {
+    return (await this.listProducts(opts)).find((p) => p.slug === slug) ?? null;
+  }
+
+  async listReleases(opts?: ReadOptions & { project?: string }): Promise<Release[]> {
+    const rows = await this.currentRows("release", opts);
+    let releases = rows.map((r) => ReleaseSchema.parse(r.data));
+    if (opts?.project) releases = releases.filter((r) => r.project === opts.project);
+    const asOf = opts?.asOf ?? new Date();
+    releases = releases.filter((r) => new Date(r.date) <= asOf);
+    return releases.sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {
+    const rows = await this.currentRows("page", opts);
+    let pages = rows.map((r) => this.parsePage(r.data));
+    const asOf = opts?.asOf ?? new Date();
+    pages = pages.filter(
+      (p) =>
+        (opts?.includeDrafts || !p.draft) &&
+        (!p.publishedAt || new Date(p.publishedAt) <= asOf)
+    );
+    if (opts?.prefix) pages = pages.filter((p) => p.slug.startsWith(opts.prefix!));
+    return this.pickLang(pages, opts?.lang).sort((a, b) =>
+      (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "")
+    );
+  }
+
+  async getPage(slug: string, opts?: ReadOptions): Promise<Page | null> {
+    return (await this.listPages(opts)).find((p) => p.slug === slug) ?? null;
+  }
+
+  async getMenu(name: string, opts?: ReadOptions): Promise<Menu | null> {
+    const rows = await this.currentRows("menu", opts);
+    const row = rows.find((r) => r.slug === name);
+    return row ? MenuSchema.parse(row.data) : null;
+  }
+
+  // ---------- write side (WritableContentStore) ----------
+
+  async listItems(type: ContentType): Promise<ContentRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(contentItems)
+      .where(and(eq(contentItems.type, type), isNull(contentItems.txTo)))
+      .orderBy(contentItems.slug, contentItems.lang);
+    return rows.map(DbContentStore.thaw) as ContentRecord[];
+  }
+
+  async getItem(type: ContentType, slug: string, lang = "en"): Promise<ContentRecord | null> {
+    const rows = await this.db
+      .select()
+      .from(contentItems)
+      .where(
+        and(
+          eq(contentItems.type, type),
+          eq(contentItems.slug, slug),
+          eq(contentItems.lang, lang),
+          isNull(contentItems.txTo)
+        )
+      )
+      .limit(1);
+    return rows[0] ? (DbContentStore.thaw(rows[0]) as ContentRecord) : null;
+  }
+
+  async putItem(
+    type: ContentType,
+    slug: string,
+    data: unknown,
+    opts: { lang?: string; validFrom?: Date; validTo?: Date | null; by?: string } = {}
+  ): Promise<void> {
+    const parsed = this.validate(type, data);
+    const lang = opts.lang ?? "en";
+    const now = new Date();
+    await this.db.transaction(async (tx) => {
+      await tx
+        .update(contentItems)
+        .set({ txTo: now })
+        .where(
+          and(
+            eq(contentItems.type, type),
+            eq(contentItems.slug, slug),
+            eq(contentItems.lang, lang),
+            isNull(contentItems.txTo)
+          )
+        );
+      await tx.insert(contentItems).values({
+        type,
+        slug,
+        lang,
+        data: parsed,
+        validFrom: opts.validFrom ?? now,
+        validTo: opts.validTo ?? null,
+        txFrom: now,
+        txTo: null,
+        createdBy: opts.by ?? null,
+      });
+    });
+  }
+
+  async deleteItem(type: ContentType, slug: string, lang = "en"): Promise<void> {
+    await this.db
+      .update(contentItems)
+      .set({ txTo: new Date() })
+      .where(
+        and(
+          eq(contentItems.type, type),
+          eq(contentItems.slug, slug),
+          eq(contentItems.lang, lang),
+          isNull(contentItems.txTo)
+        )
+      );
+  }
+
+  async listVersions(type: ContentType, slug: string, lang = "en"): Promise<ContentRecord[]> {
+    const rows = await this.db
+      .select()
+      .from(contentItems)
+      .where(
+        and(
+          eq(contentItems.type, type),
+          eq(contentItems.slug, slug),
+          eq(contentItems.lang, lang)
+        )
+      )
+      .orderBy(desc(contentItems.txFrom));
+    return rows.map(DbContentStore.thaw) as ContentRecord[];
+  }
+
+  // ---------- internals ----------
+
+  /** Current assertions valid at `asOf` (tx_to IS NULL, valid window matches). */
+  private async currentRows(type: ContentType, opts?: ReadOptions) {
+    const asOf = opts?.asOf ?? new Date();
+    const rows = await this.db
+      .select()
+      .from(contentItems)
+      .where(
+        and(
+          eq(contentItems.type, type),
+          isNull(contentItems.txTo),
+          lte(contentItems.validFrom, asOf),
+          or(isNull(contentItems.validTo), gt(contentItems.validTo, asOf))
+        )
+      );
+    return rows.map(DbContentStore.thaw);
+  }
+
+  /** EN as base, requested language overlaid per slug (S9). */
+  private pickLang<T extends { slug: string; lang: string }>(
+    items: T[],
+    lang?: string
+  ): T[] {
+    const wanted = lang ?? "en";
+    const bySlug = new Map<string, T>();
+    for (const item of items.filter((i) => i.lang === "en")) bySlug.set(item.slug, item);
+    if (wanted !== "en") {
+      for (const item of items.filter((i) => i.lang === wanted)) bySlug.set(item.slug, item);
+    }
+    return [...bySlug.values()];
+  }
+
+  private parsePage(data: unknown): Page {
+    const page = PageRecordSchema.parse(data);
+    if (page.layout && this.opts.widgets) {
+      return { ...page, layout: this.opts.widgets.parseLayout(page.layout) };
+    }
+    return page;
+  }
+
+  private validate(type: ContentType, data: unknown): unknown {
+    switch (type) {
+      case "site":
+        return SiteConfigSchema.parse(data);
+      case "product":
+        return ProductSchema.parse(data);
+      case "release":
+        return ReleaseSchema.parse(data);
+      case "menu":
+        return MenuSchema.parse(data);
+      case "page": {
+        const page = PageRecordSchema.parse(data);
+        if (page.layout && this.opts.widgets) this.opts.widgets.parseLayout(page.layout);
+        return page;
+      }
+      default:
+        throw new Error(`Unknown content type "${String(type satisfies never)}"`);
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import type { Locale, Page, Product, Release, SiteConfig } from "./schemas";
+import type { Locale, Menu, Page, Product, Release, SiteConfig } from "./schemas";
 
 /**
  * ContentStore — the narrow interface between sites and content storage (B3).
@@ -32,4 +32,46 @@ export interface ContentStore {
 
   listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]>;
   getPage(slug: string, opts?: ReadOptions): Promise<Page | null>;
+
+  /** Named navigation menus (UML: Menu/MenuItem), e.g. "main", "footer". */
+  getMenu(name: string, opts?: ReadOptions): Promise<Menu | null>;
+}
+
+/** Content types a store can hold; `data`'s shape per type lives in schemas.ts. */
+export type ContentType = "site" | "product" | "release" | "page" | "menu";
+
+/** One stored assertion of a content item (a row, in bitemporal terms). */
+export interface ContentRecord {
+  id: number;
+  type: ContentType;
+  slug: string;
+  lang: string;
+  data: unknown;
+  validFrom: Date;
+  validTo: Date | null;
+  txFrom: Date;
+  txTo: Date | null;
+  createdBy: string | null;
+}
+
+/**
+ * Write side, used by the admin/editor — sites' public pages only ever need
+ * the read-only ContentStore above. Every put supersedes the current
+ * assertion (transaction time) instead of overwriting, so history is free.
+ */
+export interface WritableContentStore extends ContentStore {
+  /** Current assertions, ignoring valid time (admin sees drafts/scheduled). */
+  listItems(type: ContentType): Promise<ContentRecord[]>;
+  getItem(type: ContentType, slug: string, lang?: string): Promise<ContentRecord | null>;
+  /** Validates `data` against the type's schema, then asserts a new version. */
+  putItem(
+    type: ContentType,
+    slug: string,
+    data: unknown,
+    opts?: { lang?: string; validFrom?: Date; validTo?: Date | null; by?: string }
+  ): Promise<void>;
+  /** Ends the current assertion (content disappears; history stays). */
+  deleteItem(type: ContentType, slug: string, lang?: string): Promise<void>;
+  /** Full version history (S4), newest first. */
+  listVersions(type: ContentType, slug: string, lang?: string): Promise<ContentRecord[]>;
 }

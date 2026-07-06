@@ -12,7 +12,16 @@
     "build": "npm run build --workspace=musicbrain",
     "start": "npm run start --workspace=musicbrain",
     "lint": "npm run lint --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:up": "docker compose up -d",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx scripts/seed.ts"
+  },
+  "devDependencies": {
+    "dotenv": "^17.2.0",
+    "drizzle-kit": "^0.31.1",
+    "tsx": "^4.20.0"
   },
   "engines": {
     "node": ">=20"

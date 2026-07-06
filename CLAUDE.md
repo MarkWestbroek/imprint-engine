@@ -9,11 +9,30 @@
   code-comments aangehaald).
 - Sites praten uitsluitend via de `ContentStore`-interface
   (`packages/content-core/src/store.ts`) met content — nooit rechtstreeks
-  bestanden of straks de database lezen vanuit paginacode. v1 vervangt de
-  file-store door een DB-store (bitemporal-light, §B3).
+  bestanden of de database lezen vanuit paginacode. Met `DATABASE_URL`
+  draait de site op de `DbContentStore` (MariaDB, bitemporal-light §B3:
+  elke wijziging is een nieuwe rij); zonder valt hij terug op de
+  file-store (v0). Schrijven kan alleen via `WritableContentStore`
+  (de admin), nooit met kale SQL — anders klopt de historie niet meer.
+- DB-workflow: schemawijziging in `db-schema.ts` → `npm run db:generate`
+  (migratie in `drizzle/`, committen) → `npm run db:migrate`. Lokale DB:
+  `npm run db:up` (MariaDB 10.11-container, zelfde major als Plesk).
+  Secrets in `.env` (root) + `sites/musicbrain/.env.local` — nooit committen.
 - Content is zod-gevalideerd; schemawijzigingen horen in
   `packages/content-core/src/schemas.ts`, niet ad hoc in een site.
+- Widget-model (UML-contentmodel): pagina's kunnen gecomponeerd worden als
+  `PageLayout` (template + regio's) met widgets `{ type, region, config }`.
+  De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
+  widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
+  (configschema's, geen React/store-imports — de store valideert hiermee)
+  + `src/widgets/components.tsx` (componenten). Nieuwe widget = één schema
+  + één component; layout-templates staan in
+  `src/components/page-renderer.tsx`.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);
   geen losse hexkleuren in componenten.
-- Build verifiëren met `npm run build` vanuit de root (moet volledig
-  statisch blijven in v0).
+- Build verifiëren met `npm run build` vanuit de root. Publieke pagina's
+  blijven prerendered (SSG + revalidatie na admin-saves); alles onder
+  `/admin` is per definitie dynamisch.
+- Admin-formulieren worden gegenereerd uit de zod-schema's
+  (`src/lib/admin-schemas.ts` → `SchemaForm`); een nieuw contentveld hoort
+  dus in het schema, niet als los formulierveld in de admin.

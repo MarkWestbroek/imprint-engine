@@ -1,0 +1,61 @@
+import { z } from "zod";
+import {
+  MenuSchema,
+  PageMetaSchema,
+  ProductSchema,
+  ReleaseSchema,
+  SiteConfigSchema,
+  type ContentType,
+} from "@imprint/content-core";
+import { widgetCatalog } from "@/widgets/registry";
+
+/**
+ * Bridges zod to the admin forms: every editor form is generated from the
+ * same schemas that validate the content (§C: "formulier gegenereerd uit
+ * zod-schema"). Serializable JSON Schema goes to the client; fields whose
+ * shape is too rich for a form control (nested arrays/objects, recursion)
+ * get an empty schema `{}`, which the form renders as a validated JSON box.
+ */
+
+export type JsonSchema = Record<string, unknown>;
+
+function fieldSchema(field: z.ZodType): JsonSchema {
+  try {
+    return z.toJSONSchema(field, { io: "input" }) as JsonSchema;
+  } catch {
+    return {}; // recursive/unrepresentable → JSON textarea in the form
+  }
+}
+
+function objectSchema(schema: z.ZodObject): JsonSchema {
+  const properties: Record<string, JsonSchema> = {};
+  for (const [key, field] of Object.entries(schema.shape)) {
+    properties[key] = fieldSchema(field as z.ZodType);
+  }
+  return { type: "object", properties };
+}
+
+/** Form schema per content type; pages use meta only (body/layout are special-cased). */
+export function contentFormSchema(type: ContentType): JsonSchema {
+  switch (type) {
+    case "site":
+      return objectSchema(SiteConfigSchema);
+    case "product":
+      return objectSchema(ProductSchema);
+    case "release":
+      return objectSchema(ReleaseSchema);
+    case "menu":
+      return objectSchema(MenuSchema);
+    case "page":
+      return objectSchema(PageMetaSchema);
+  }
+}
+
+/** Widget catalogue with JSON-Schema configs, for the composer. */
+export function widgetFormSchemas(): { name: string; label: string; schema: JsonSchema }[] {
+  return widgetCatalog.map((w) => ({
+    name: w.name,
+    label: w.label,
+    schema: objectSchema(w.configSchema as unknown as z.ZodObject),
+  }));
+}
