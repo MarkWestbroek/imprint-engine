@@ -190,6 +190,11 @@ classDiagram
 Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
 (taal-fallback naar EN, S9) en `includeDrafts` (previews).
 
+Dezelfde store is ook als **read-only JSON-API** ontsloten
+(`/api/content/...`, zie de README): één catch-all route handler die de
+`ContentStore` aanroept, met dezelfde query-parameters. API, site en admin
+kunnen daardoor per definitie niet van elkaar afwijken.
+
 ## 5. Admin (/admin)
 
 - **Auth:** scrypt-wachtwoordhashes in de `users`-tabel, HMAC-signed

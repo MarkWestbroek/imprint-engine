@@ -19,6 +19,7 @@ import {
 import type { DraftOp, WidgetPath } from "@/lib/layout-ops";
 import type { JsonSchema } from "@/lib/admin-schemas";
 import { SchemaForm } from "./schema-form";
+import { MarkdownEditor } from "./markdown-editor";
 import { WidgetEditorFor } from "@/widgets/editors";
 
 /**
@@ -302,11 +303,9 @@ function PageSettingsPane() {
         <span className="block text-xs font-medium uppercase tracking-wide text-muted">
           body (markdown, above the widgets)
         </span>
-        <textarea
-          className="mt-1 min-h-32 w-full rounded-md border border-line bg-background px-2.5 py-1.5 font-mono text-sm focus:border-accent focus:outline-none"
-          value={localBody}
-          onChange={(e) => setLocalBody(e.target.value)}
-        />
+        <div className="mt-1">
+          <MarkdownEditor value={localBody} onChange={setLocalBody} rows={6} />
+        </div>
       </label>
     </div>
   );

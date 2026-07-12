@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { JsonSchema } from "@/lib/admin-schemas";
+import { MarkdownEditor } from "./markdown-editor";
 
 /**
  * Generic form over a JSON Schema that came from a zod schema (§C: forms
@@ -10,7 +11,9 @@ import type { JsonSchema } from "@/lib/admin-schemas";
  * validation happens server-side against the zod schema on save.
  */
 
-const LONG_TEXT_KEYS = new Set(["body", "markdown", "description", "text"]);
+/** Fields that hold markdown get the editor with live preview. */
+const MARKDOWN_KEYS = new Set(["body", "markdown"]);
+const LONG_TEXT_KEYS = new Set(["description", "text"]);
 
 const inputCls =
   "w-full rounded-md border border-line bg-background px-2.5 py-1.5 text-sm " +
@@ -89,6 +92,17 @@ function Field({
             </option>
           ))}
         </select>
+      </label>
+    );
+  }
+
+  if (type === "string" && MARKDOWN_KEYS.has(name)) {
+    return (
+      <label className="block">
+        <span className={labelCls}>{name}</span>
+        <div className="mt-1">
+          <MarkdownEditor value={String(value ?? "")} onChange={onChange} />
+        </div>
       </label>
     );
   }
