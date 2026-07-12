@@ -27,8 +27,13 @@
   De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
   widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
   (configschema's, geen React/store-imports — de store valideert hiermee)
-  + `src/widgets/components.tsx` (componenten). Nieuwe widget = één schema
-  + één component.
+  + `src/widgets/components.tsx` (viewers, server) + optioneel
+  `src/widgets/editors.tsx` (custom editor; default is het formulier uit
+  het schema). Nieuwe widget = één schema + één viewer.
+- Pagina's bewerk je in de studio (`/admin/page/edit/...`): canvas met
+  echte viewers in de echte SiteChrome, sidebar per widget, wijzigingen in
+  een serverside draft (`src/lib/page-draft.ts`); pas "Save" maakt een
+  versie. Mutatielogica is puur in `src/lib/layout-ops.ts`.
 - Ontwerp gedocumenteerd in `docs/architecture.md` (mermaid) — bijwerken
   als het contentmodel, de stores of de deploy-opzet wijzigen.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);

@@ -93,15 +93,24 @@ Verschillen met het oorspronkelijke UML:
 
 ## 3. Widgets: kern kent het model, de site de catalogus
 
-Nieuwe widget = één configschema + één component, verder niets:
+Een widgettype bestaat uit drie stukken; alleen het eerste is verplicht
+handwerk, de editor heeft een schema-gedreven default:
+
+| stuk | bestand | draait | rol |
+|---|---|---|---|
+| **configschema** | `src/widgets/registry.ts` | overal (geen React/store) | valideert de config; bron voor het default-editorformulier |
+| **viewer** | `src/widgets/components.tsx` | server | rendert de widget op de site (mag store/API's gebruiken) |
+| **editor** | `src/widgets/editors.tsx` | client | bewerkt de config in de studio; default = formulier uit het schema, alleen overriden voor rijkere bewerking |
 
 ```mermaid
 flowchart LR
     JSON["page-layout in DB/bestand<br/>{ type: 'api', config: {...} }"]
     REG["WidgetTypeRegistry<br/>(kern, generiek)"]
-    RTS["registry.ts<br/>zod-config per widgettype<br/>(géén React/store-imports)"]
-    CTS["components.tsx<br/>server component per type<br/>(mag store/API's gebruiken)"]
+    RTS["registry.ts<br/>configschema per widgettype"]
+    CTS["components.tsx<br/>viewer (server component)"]
+    ETS["editors.tsx<br/>editor (client, default: SchemaForm)"]
     REN["PageRenderer<br/>rijen → cellen → widgets"]
+    STU["Studio<br/>(pagina-editor)"]
     HTML["HTML"]
 
     JSON -->|"store valideert bij lezen"| REG
@@ -109,13 +118,13 @@ flowchart LR
     REG --> REN
     CTS --> REN
     REN --> HTML
+    CTS -->|previews| STU
+    ETS -->|sidebar| STU
 ```
 
 - De **store** valideert elke widget-config tegen het geregistreerde schema:
   een kapotte widget breekt de build/save met een duidelijke fout, in plaats
   van stil verkeerd te renderen.
-- De **admin-composer** gebruikt dezelfde schema's (via `z.toJSONSchema`) om
-  per widget een configformulier te genereren.
 - Catalogus van musicbrain: `text`, `treeview`, `api` (JSON-endpoint met
   veldselectie), `releases`, `products`.
 
@@ -190,13 +199,32 @@ Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
   naar JSON Schema; `SchemaForm` rendert scalars als echte controls en
   complexe/recursieve velden als gevalideerde JSON-boxen. Een nieuw veld
   hoort dus in het schema, niet als los formulierveld.
-- **Composer:** visueel vakkenmodel — "+"-balken voegen rijen boven/onder
-  toe, "+"-stroken cellen links/rechts; widgets verhuizen met pijltjes,
-  celbreedte met −/+. Geen pixel-WYSIWYG: het canvas toont de echte
-  verhoudingen, de site bepaalt de styling.
+- **Studio (pagina-editor):** WYSIWYG-achtig, Pleio/Gutenberg-stijl. Het
+  canvas ís de pagina: de echte widget-viewers, met echte data, binnen de
+  echte site-omlijsting (`SiteChrome`, gedeeld met de publieke layout).
+  Klik op een widget → links een sidebar met zíjn editor; een wijziging
+  gaat (gedebounced) naar een **serverside draft** en het canvas rendert
+  opnieuw — direct effect, zonder dat er iets is gepubliceerd. "+"-balken
+  voegen rijen toe, "+"-stroken vakken links/rechts; pas "Save" assereert
+  de draft als nieuwe versie in de store.
 - **Menu-editor:** genest lijstje; een item wijst naar een pagina (dropdown
   met echte pagina's), een URL, of niets (groepslabel).
 - **History:** alle versies per item, met restore.
+
+```mermaid
+sequenceDiagram
+    participant S as Sidebar (client)
+    participant A as draftOpAction
+    participant D as Draft (server, per gebruiker+pagina)
+    participant C as Canvas (server components)
+
+    S->>A: op (bijv. widget-config, rij toevoegen)
+    A->>D: applyOp(draft, op)
+    S->>C: router.refresh()
+    C->>D: lees draft
+    C-->>S: canvas opnieuw gerenderd (echte viewers)
+    Note over S,C: pas "Save" → putItem(draft) = nieuwe versie
+```
 
 ## 6. Omgevingen & deploy
 
