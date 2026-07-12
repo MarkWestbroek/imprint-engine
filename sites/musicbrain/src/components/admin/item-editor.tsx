@@ -1,18 +1,16 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import type { ContentType, PageLayout } from "@imprint/content-core";
+import type { ContentType } from "@imprint/content-core";
 import { saveItemAction, type ActionResult } from "@/app/admin/actions";
 import type { JsonSchema } from "@/lib/admin-schemas";
-import { layoutRows, LAYOUT_PRESETS } from "@/widgets/templates";
 import { SchemaForm } from "./schema-form";
-import { PageComposer, type LayoutValue } from "./page-composer";
 import { MenuEditor, type MenuItemV } from "./menu-editor";
 
 /**
- * Editor for one content item. The form fields come from the type's zod
- * schema; pages additionally get a markdown body and the visual composer,
- * menus get the menu editor. Saving asserts a new version in the bitemporal
+ * Form editor for site/product/release/menu items (pages have their own
+ * visual studio). Fields come from the type's zod schema; menus get the
+ * dedicated menu editor. Saving asserts a new version in the bitemporal
  * store — nothing is ever overwritten, so History can always roll back.
  */
 export function ItemEditor({
@@ -22,7 +20,6 @@ export function ItemEditor({
   isNew,
   validFrom,
   validTo,
-  widgetSchemas,
   pages,
 }: {
   type: ContentType;
@@ -31,27 +28,13 @@ export function ItemEditor({
   isNew: boolean;
   validFrom?: string;
   validTo?: string;
-  widgetSchemas?: { name: string; label: string; schema: JsonSchema }[];
   pages?: { slug: string; title: string }[];
 }) {
-  // Open legacy template-layouts as rows, so the composer only knows rows.
-  const [data, setData] = useState(() => {
-    if (type === "page" && initialData.layout) {
-      return {
-        ...initialData,
-        layout: { rows: layoutRows(initialData.layout as PageLayout) },
-      };
-    }
-    return initialData;
-  });
+  const [data, setData] = useState(initialData);
   const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(
     saveItemAction,
     null
   );
-
-  const isPage = type === "page";
-  const body = typeof data.body === "string" ? data.body : "";
-  const layout = data.layout as LayoutValue | undefined;
 
   return (
     <form action={formAction} className="space-y-6">
@@ -62,8 +45,8 @@ export function ItemEditor({
         schema={formSchema}
         value={data}
         onChange={(next) =>
-          // keep the fields the meta form doesn't know about
-          setData({ ...next, body: data.body, layout: data.layout, items: data.items })
+          // keep fields the meta form doesn't know about (menu items)
+          setData({ ...next, items: data.items })
         }
       />
 
@@ -78,37 +61,6 @@ export function ItemEditor({
             pages={pages ?? []}
           />
         </section>
-      )}
-
-      {isPage && (
-        <>
-          <label className="block">
-            <span className="block text-xs font-medium uppercase tracking-wide text-muted">
-              body (markdown)
-            </span>
-            <textarea
-              className="mt-1 min-h-48 w-full rounded-md border border-line bg-background px-2.5 py-1.5 font-mono text-sm focus:border-accent focus:outline-none"
-              value={body}
-              onChange={(e) => setData({ ...data, body: e.target.value })}
-            />
-          </label>
-
-          <section className="rounded-xl border border-line bg-surface p-4">
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">
-              Widget layout
-            </h3>
-            <PageComposer
-              value={layout}
-              onChange={(next) => {
-                const rest = { ...data };
-                delete rest.layout;
-                setData(next ? { ...rest, layout: next } : rest);
-              }}
-              presets={LAYOUT_PRESETS}
-              widgetSchemas={widgetSchemas ?? []}
-            />
-          </section>
-        </>
       )}
 
       <details className="rounded-xl border border-line p-4 text-sm">

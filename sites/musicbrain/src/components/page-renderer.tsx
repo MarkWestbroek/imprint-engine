@@ -9,7 +9,7 @@ import { layoutRows } from "@/widgets/templates";
  * (span 1|2 = one-third + two-thirds); below lg everything stacks.
  */
 
-function Widget({ widget }: { widget: WidgetInstance }) {
+export function Widget({ widget }: { widget: WidgetInstance }) {
   const Component = widgetComponents[widget.type];
   if (!Component) {
     // Store validation should have caught this; fail loudly, not silently.

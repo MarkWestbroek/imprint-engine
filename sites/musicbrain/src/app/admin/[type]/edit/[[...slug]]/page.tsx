@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ContentType } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
-import { contentFormSchema, widgetFormSchemas } from "@/lib/admin-schemas";
+import { contentFormSchema } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
+import { PageStudio } from "@/components/admin/studio";
 
 const CONTENT_TYPES: ContentType[] = ["site", "product", "release", "page", "menu"];
 
@@ -25,7 +26,7 @@ function emptyData(type: ContentType): Record<string, unknown> {
     case "menu":
       return { name: "", items: [] };
     case "page":
-      return { slug: "", lang: "en", title: "", description: "", draft: false, body: "" };
+      return {};
   }
 }
 
@@ -41,8 +42,13 @@ export default async function AdminEdit({ params, searchParams }: Props) {
   const { lang } = await searchParams;
   if (!CONTENT_TYPES.includes(type as ContentType)) notFound();
   const contentType = type as ContentType;
-
   const slug = slugParts?.map(decodeURIComponent).join("/");
+
+  // Pages get the visual studio (live canvas + sidebar), the rest a form.
+  if (contentType === "page") {
+    return <PageStudio slug={slug} lang={lang ?? "en"} />;
+  }
+
   const item = slug
     ? await writableStore!.getItem(contentType, slug, lang ?? "en")
     : null;
@@ -75,7 +81,6 @@ export default async function AdminEdit({ params, searchParams }: Props) {
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}
           validTo={toLocalInput(item?.validTo)}
-          widgetSchemas={contentType === "page" ? widgetFormSchemas() : undefined}
           pages={pages}
         />
       </div>

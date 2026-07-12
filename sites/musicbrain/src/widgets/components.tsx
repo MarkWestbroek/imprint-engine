@@ -122,7 +122,11 @@ function getPath(value: unknown, dotPath: string): unknown {
 async function ApiWidget({ config }: { config: ApiConfig }) {
   let items: unknown[];
   try {
-    const res = await fetch(config.url, { headers: config.headers });
+    // Cache for a few minutes: keeps studio previews snappy and spares the API.
+    const res = await fetch(config.url, {
+      headers: config.headers,
+      next: { revalidate: 300 },
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json: unknown = await res.json();
     const data = config.itemsPath ? getPath(json, config.itemsPath) : json;
