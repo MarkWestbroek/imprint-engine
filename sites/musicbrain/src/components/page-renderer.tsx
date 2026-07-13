@@ -9,16 +9,29 @@ import { layoutRows } from "@/widgets/templates";
  * (span 1|2 = one-third + two-thirds); below lg everything stacks.
  */
 
-export function Widget({ widget }: { widget: WidgetInstance }) {
+export function Widget({
+  widget,
+  subject,
+}: {
+  widget: WidgetInstance;
+  subject?: unknown;
+}) {
   const Component = widgetComponents[widget.type];
   if (!Component) {
     // Store validation should have caught this; fail loudly, not silently.
     throw new Error(`No component for widget type "${widget.type}"`);
   }
-  return <Component config={widget.config} />;
+  return <Component config={widget.config} subject={subject} />;
 }
 
-export function PageRenderer({ page }: { page: Page & { layout: PageLayout } }) {
+export function PageRenderer({
+  page,
+  subject,
+}: {
+  page: Page & { layout: PageLayout };
+  /** The content item this page is about (default views bind widgets to it). */
+  subject?: unknown;
+}) {
   const rows = layoutRows(page.layout);
   return (
     <div>
@@ -40,7 +53,7 @@ export function PageRenderer({ page }: { page: Page & { layout: PageLayout } }) 
             {row.cells.map((cell, c) => (
               <div key={c} className="min-w-0 space-y-6">
                 {cell.widgets.map((widget, w) => (
-                  <Widget key={w} widget={widget} />
+                  <Widget key={w} widget={widget} subject={subject} />
                 ))}
               </div>
             ))}

@@ -132,8 +132,10 @@ flowchart LR
   geannoteerde-afbeelding-widget wel.
 - Catalogus van musicbrain: `text`, `table` (met custom grid-editor),
   `image`, `callout`/CTA, `embed` (iframe), `board` (geannoteerde render),
-  `boardspec` (rendert een board-spec), `treeview`, `api` (JSON-endpoint met
-  veldselectie), `releases`, `products`.
+  `boardspec` (rendert een board-spec), `template` (markdown met Mustache
+  merge fields over een content-item/subject), `list` (links die de
+  content-graaf volgen), `treeview`, `api` (JSON-endpoint met veldselectie),
+  `releases`, `products`.
 
 ## 3b. Product / component / release
 
@@ -201,9 +203,16 @@ de `sections` zijn vertaalbaar (S9).
   `board`-widget-config is bovendien **afleidbaar** uit een board-spec
   (`boardSpecToBoardConfig`, D4): de punten komen uit `spec.points`, hun detail
   uit de per-connector pinout-SVG (`svgRef`, D10) — geen JSON-plak meer.
-- **Productpagina**: toont de componenten van het product (herbruikbaar, dus
-  hetzelfde component kan onder meerdere producten hangen) en per component-
-  versie zijn board-spec.
+- **Navigatie (per-type pagina's, "optie B"):** elk contenttype heeft een
+  eigen route — `/products/<slug>`, `/components/<slug>`, `/releases/<slug>` —
+  die het item als *subject* rendert. De keten is klikbaar: productpagina →
+  releases van dat product → release → zijn componenten → component → board.
+- **`list`-widget** volgt de content-graaf voor die navigatie: modus `query`
+  (items van een type waar `veld == waarde`, bijv. releases van dit product)
+  of `refs` (een slug-array op de subject, bijv. `release.components[]`), met
+  een `linkPattern` naar de doelpagina. De `template`- en `list`-widgets
+  krijgen de subject van de pagina mee (PageRenderer geeft `subject` door),
+  zodat dezelfde default-view zich vult voor elk item.
 
 Omdat de `content_items`-tabel generiek is (§4), kostte dit **geen
 DB-migratie**: `component` is gewoon een nieuwe waarde in de `type`-kolom,

@@ -135,6 +135,34 @@ export const TemplateConfig = z.object({
 export type TemplateConfig = z.infer<typeof TemplateConfig>;
 
 /**
+ * List widget: renders links that follow the content graph. Two modes —
+ *  - "query": items of a content type, optionally filtered by matchField ==
+ *    matchValue (matchValue falls back to the page subject's slug); e.g. the
+ *    releases of this product.
+ *  - "refs": follow a slug array on the subject (e.g. release.components[]);
+ *    each element is a slug, or an object with `itemKey` holding the slug.
+ * `linkPattern` builds the href ({slug} is replaced).
+ */
+export const ListConfig = z.object({
+  title: z.string().optional(),
+  mode: z.enum(["query", "refs"]).default("query"),
+  // query mode
+  type: TemplateSourceType.optional(),
+  matchField: z.string().optional(),
+  matchValue: z.string().optional(),
+  limit: z.number().int().positive().optional(),
+  // refs mode
+  field: z.string().optional(),
+  itemKey: z.string().optional(),
+  itemType: TemplateSourceType.optional(),
+  // both
+  linkPattern: z.string().default("/{slug}"),
+  labelField: z.string().optional(),
+  emptyText: z.string().optional(),
+});
+export type ListConfig = z.infer<typeof ListConfig>;
+
+/**
  * Annotated board image: a (3D PCB) render with hotspots that reveal detail
  * on hover. Coordinates are relative (0..1) so the annotation stays put at
  * any column width. The hardware toolkit can emit a ready-made config from a
@@ -184,6 +212,7 @@ export const widgetCatalog = [
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
   { name: "template", label: "Template (merge fields)", version: "1.0.0", help: "Markdown with {{fields}} merged from a content item.", configSchema: TemplateConfig },
+  { name: "list", label: "List (links)", version: "1.0.0", help: "A list of links following the content graph (e.g. a product's releases).", configSchema: ListConfig },
   { name: "callout", label: "Callout / CTA", version: "1.0.0", help: "A coloured box with markdown and an optional button.", configSchema: CalloutConfig },
   { name: "embed", label: "Embed (iframe)", version: "1.0.0", help: "Embed an external page in a sandboxed iframe.", configSchema: EmbedConfig },
   { name: "treeview", label: "Treeview", version: "1.0.0", help: "A nested link tree; can auto-build from page slugs.", configSchema: TreeviewConfig },

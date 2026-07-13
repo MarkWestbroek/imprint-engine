@@ -15,6 +15,7 @@ import type {
   ImageConfig,
   ProductsConfig,
   ReleasesConfig,
+  ListConfig,
   TableConfig,
   TemplateConfig,
   TextConfig,
@@ -32,7 +33,11 @@ Mustache.escape = (text) => text;
  * ./registry.ts by the store.
  */
 
-type WidgetComponent = (props: { config: unknown }) => Promise<React.ReactNode>;
+type WidgetComponent = (props: {
+  config: unknown;
+  /** The content item a default-view page is about (for template/list widgets). */
+  subject?: unknown;
+}) => Promise<React.ReactNode>;
 
 function WidgetFrame({
   title,
@@ -167,6 +172,67 @@ async function TemplateWidget({
   return (
     <WidgetFrame title={config.title}>
       <Markdown>{text}</Markdown>
+    </WidgetFrame>
+  );
+}
+
+function itemLabel(data: unknown, field?: string): string {
+  const d = (data ?? {}) as Record<string, unknown>;
+  if (field && d[field] != null) return String(d[field]);
+  return String(d.name ?? d.title ?? d.slug ?? "?");
+}
+
+async function ListWidget({ config, subject }: { config: ListConfig; subject?: unknown }) {
+  const links: { href: string; label: string }[] = [];
+  const fill = (slug: string) => config.linkPattern.replace(/\{slug\}/g, slug);
+  const subj = subject as Record<string, unknown> | undefined;
+
+  if (config.mode === "refs") {
+    const arr = config.field && Array.isArray(subj?.[config.field])
+      ? (subj![config.field] as unknown[])
+      : [];
+    for (const el of arr) {
+      const slug =
+        config.itemKey && el && typeof el === "object"
+          ? String((el as Record<string, unknown>)[config.itemKey] ?? "")
+          : String(el ?? "");
+      if (!slug) continue;
+      let label = slug;
+      if (config.itemType && writableStore) {
+        const item = await writableStore.getItem(config.itemType, slug);
+        if (item) label = itemLabel(item.data, config.labelField);
+      }
+      links.push({ href: fill(slug), label });
+    }
+  } else if (config.type && writableStore) {
+    let records = await writableStore.listItems(config.type);
+    if (config.matchField) {
+      const value = config.matchValue ?? (subj?.slug as string | undefined);
+      records = records.filter(
+        (r) => (r.data as Record<string, unknown>)?.[config.matchField!] === value
+      );
+    }
+    if (config.limit) records = records.slice(0, config.limit);
+    for (const r of records) {
+      links.push({ href: fill(r.slug), label: itemLabel(r.data, config.labelField) });
+    }
+  }
+
+  return (
+    <WidgetFrame title={config.title}>
+      {links.length > 0 ? (
+        <ul className="space-y-1 text-sm">
+          {links.map((l, i) => (
+            <li key={i}>
+              <Link href={l.href} className="text-accent hover:underline">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-muted">{config.emptyText ?? "Nothing here yet."}</p>
+      )}
     </WidgetFrame>
   );
 }
@@ -394,6 +460,7 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   board: BoardWidget as WidgetComponent,
   boardspec: BoardSpecWidget as WidgetComponent,
   template: TemplateWidget as WidgetComponent,
+  list: ListWidget as WidgetComponent,
   callout: CalloutWidget as WidgetComponent,
   embed: EmbedWidget as WidgetComponent,
   treeview: TreeviewWidget as WidgetComponent,

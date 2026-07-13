@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { BoardSpec, Component } from "@imprint/content-core";
-import { store } from "@/lib/content";
+import { store, writableStore } from "@/lib/content";
 import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
@@ -39,7 +40,12 @@ export default async function ProductPage({ params }: Props) {
   const product = await store.getProduct(slug);
   if (!product) notFound();
 
-  const releases = await store.listReleases({ project: product.slug });
+  // Releases of this product, with their slugs (to link to /releases/<slug>).
+  const releases = writableStore
+    ? (await writableStore.listItems("release"))
+        .filter((r) => (r.data as { product?: string }).product === product.slug)
+        .map((r) => ({ slug: r.slug, data: r.data as { version: string; date: string; channel: string } }))
+    : [];
   const components = (
     await Promise.all(product.components.map(loadComponent))
   ).filter((c): c is NonNullable<typeof c> => c !== null);
@@ -81,7 +87,11 @@ export default async function ProductPage({ params }: Props) {
             {components.map(({ component, specs }) => (
               <div key={component.slug} className="rounded-xl border border-line p-4">
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <h3 className="font-semibold">{component.name}</h3>
+                  <h3 className="font-semibold">
+                    <Link href={`/components/${component.slug}`} className="hover:text-accent">
+                      {component.name}
+                    </Link>
+                  </h3>
                   {component.versions.length > 0 && (
                     <span className="font-mono text-xs text-muted">
                       {component.versions.map((v) => v.number).join(", ")}
@@ -112,8 +122,11 @@ export default async function ProductPage({ params }: Props) {
           <h2 className="text-xl font-semibold tracking-tight">Releases</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {releases.map((r) => (
-              <li key={r.version} className="font-mono">
-                v{r.version} · {r.date} · {r.channel}
+              <li key={r.slug}>
+                <Link href={`/releases/${r.slug}`} className="font-mono text-accent hover:underline">
+                  v{r.data.version}
+                </Link>
+                <span className="text-muted"> · {r.data.date} · {r.data.channel}</span>
               </li>
             ))}
           </ul>
