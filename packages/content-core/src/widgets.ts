@@ -56,10 +56,18 @@ export const PageLayoutSchema = z.object({
 });
 export type PageLayout = z.infer<typeof PageLayoutSchema>;
 
-/** Declaration of one widget type: its name plus the shape of its config. */
+/** Declaration of one widget type (UML: WidgetType). */
 export interface WidgetTypeDef<TConfig = unknown> {
   name: string;
   configSchema: z.ZodType<TConfig>;
+  /**
+   * Software version of the widget itself (semver-ish). Part of the contract:
+   * a widget is a component of the Imprint engine, so it carries a version the
+   * editor can show and content can pin against.
+   */
+  version?: string;
+  /** One-line manual for the site editor, shown in the studio sidebar. */
+  help?: string;
 }
 
 /**

@@ -31,7 +31,13 @@ import { WidgetEditorFor } from "@/widgets/editors";
  * re-renders the canvas — that's what makes changes visible immediately.
  */
 
-type WidgetSchemaDef = { name: string; label: string; schema: JsonSchema };
+type WidgetSchemaDef = {
+  name: string;
+  label: string;
+  version?: string;
+  help?: string;
+  schema: JsonSchema;
+};
 
 type StudioCtx = {
   slug?: string;
@@ -223,7 +229,7 @@ function WidgetPane({
   path: WidgetPath;
   type: string;
   config: Record<string, unknown>;
-  def?: { label: string; schema: JsonSchema };
+  def?: WidgetSchemaDef;
 }) {
   const { dispatch, setSel } = useStudio();
   const [local, setLocal] = useState(config);
@@ -235,8 +241,23 @@ function WidgetPane({
 
   return (
     <div>
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">{def?.label ?? type}</h2>
+      <div className="mb-1 flex items-center justify-between">
+        <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+          {def?.label ?? type}
+          {def?.version && (
+            <span
+              className="rounded bg-background px-1 py-0.5 text-[10px] font-normal text-muted"
+              title={`${type} widget v${def.version}`}
+            >
+              v{def.version}
+            </span>
+          )}
+          {def?.help && (
+            <span className="cursor-help text-xs text-muted" title={def.help}>
+              ⓘ
+            </span>
+          )}
+        </h2>
         <button
           type="button"
           onClick={() => setSel(null)}
@@ -245,6 +266,7 @@ function WidgetPane({
           ✓ Done
         </button>
       </div>
+      {def?.help && <p className="mb-3 text-xs text-muted">{def.help}</p>}
       {def && (
         <WidgetEditorFor
           type={type}

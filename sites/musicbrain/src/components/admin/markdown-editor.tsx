@@ -56,6 +56,18 @@ export function MarkdownEditor({
     syncFromVisual();
   };
 
+  /** Wrap the selection in <code> (turndown renders it as `inline code`). */
+  const wrapCode = () => {
+    editable.current?.focus();
+    const selected = window.getSelection()?.toString() ?? "";
+    const escaped = selected
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    document.execCommand("insertHTML", false, `<code>${escaped}</code>`);
+    syncFromVisual();
+  };
+
   const toggleMode = (next: Mode) => {
     if (mode === "visual") syncFromVisual();
     setMode(next);
@@ -89,6 +101,9 @@ export function MarkdownEditor({
             </Btn>
             <Btn title="Paragraph" onClick={() => exec("formatBlock", "P")}>
               ¶
+            </Btn>
+            <Btn title="Inline code" onClick={wrapCode}>
+              <code>{"</>"}</code>
             </Btn>
             <Btn title="Bulleted list" onClick={() => exec("insertUnorderedList")}>
               •

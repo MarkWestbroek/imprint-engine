@@ -54,11 +54,21 @@ export function contentFormSchema(type: ContentType): JsonSchema {
   }
 }
 
-/** Widget catalogue with JSON-Schema configs, for the composer. */
-export function widgetFormSchemas(): { name: string; label: string; schema: JsonSchema }[] {
+export type WidgetFormSchema = {
+  name: string;
+  label: string;
+  version?: string;
+  help?: string;
+  schema: JsonSchema;
+};
+
+/** Widget catalogue with JSON-Schema configs (+ version/help), for the composer. */
+export function widgetFormSchemas(): WidgetFormSchema[] {
   return widgetCatalog.map((w) => ({
     name: w.name,
     label: w.label,
+    version: w.version,
+    help: w.help,
     schema: objectSchema(w.configSchema as unknown as z.ZodObject),
   }));
 }

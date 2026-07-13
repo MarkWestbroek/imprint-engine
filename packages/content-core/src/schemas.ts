@@ -46,10 +46,17 @@ export const ProductSchema = z.object({
 export type Product = z.infer<typeof ProductSchema>;
 
 /**
- * Version string, e.g. "v2.5.12" (UML dataType VersionNumber). Kept loose on
- * purpose — different projects version differently.
+ * VersionNumber (UML dataType): a self-validating version string, e.g.
+ * "v2.5.12", "1.0", "2026.03-beta.1". Optional leading `v`, dot-separated
+ * numeric segments, optional pre-release/build suffix. Kept broad enough for
+ * real-world schemes but strict enough to reject nonsense — the "OO" bit is
+ * that the type validates itself wherever it's used (release/component versions).
  */
-export const VersionNumber = z.string().min(1);
+export const VERSION_RE = /^v?\d+(\.\d+)*([.-][0-9A-Za-z-]+)*$/;
+export const VersionNumber = z
+  .string()
+  .regex(VERSION_RE, 'Invalid version (expected e.g. "v2.5.12" or "1.0.0")');
+export type VersionNumber = z.infer<typeof VersionNumber>;
 
 /** One version of a component (UML: ComponentVersion). */
 export const ComponentVersionSchema = z.object({

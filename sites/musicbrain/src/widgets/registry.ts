@@ -136,18 +136,22 @@ export const BoardConfig = z.object({
 });
 export type BoardConfig = z.infer<typeof BoardConfig>;
 
-/** The catalogue as a list, so the admin composer can enumerate it. */
+/**
+ * The catalogue as a list, so the admin composer can enumerate it. Each entry
+ * carries its own `version` (the widget is a component of Imprint) and `help`
+ * (a one-line manual shown to the editor in the studio sidebar).
+ */
 export const widgetCatalog = [
-  { name: "text", label: "Text (markdown)", configSchema: TextConfig },
-  { name: "table", label: "Table", configSchema: TableConfig },
-  { name: "image", label: "Image", configSchema: ImageConfig },
-  { name: "board", label: "Board annotations", configSchema: BoardConfig },
-  { name: "callout", label: "Callout / CTA", configSchema: CalloutConfig },
-  { name: "embed", label: "Embed (iframe)", configSchema: EmbedConfig },
-  { name: "treeview", label: "Treeview", configSchema: TreeviewConfig },
-  { name: "api", label: "API content", configSchema: ApiConfig },
-  { name: "releases", label: "Releases", configSchema: ReleasesConfig },
-  { name: "products", label: "Products", configSchema: ProductsConfig },
+  { name: "text", label: "Text (markdown)", version: "1.0.0", help: "Rich text via markdown, with a visual editor.", configSchema: TextConfig },
+  { name: "table", label: "Table", version: "1.0.0", help: "A data table; edit cells, add rows/columns.", configSchema: TableConfig },
+  { name: "image", label: "Image", version: "1.0.0", help: "A single image with optional caption.", configSchema: ImageConfig },
+  { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
+  { name: "callout", label: "Callout / CTA", version: "1.0.0", help: "A coloured box with markdown and an optional button.", configSchema: CalloutConfig },
+  { name: "embed", label: "Embed (iframe)", version: "1.0.0", help: "Embed an external page in a sandboxed iframe.", configSchema: EmbedConfig },
+  { name: "treeview", label: "Treeview", version: "1.0.0", help: "A nested link tree; can auto-build from page slugs.", configSchema: TreeviewConfig },
+  { name: "api", label: "API content", version: "1.0.0", help: "Fetch a JSON endpoint and show selected fields.", configSchema: ApiConfig },
+  { name: "releases", label: "Releases", version: "1.0.0", help: "The latest releases from the content store.", configSchema: ReleasesConfig },
+  { name: "products", label: "Products", version: "1.0.0", help: "A grid of products with their status.", configSchema: ProductsConfig },
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(
