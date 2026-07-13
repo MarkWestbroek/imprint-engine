@@ -1,6 +1,7 @@
 import Link from "next/link";
-import type { Page } from "@imprint/content-core";
-import { store } from "@/lib/content";
+import Mustache from "mustache";
+import type { ContentType, Page } from "@imprint/content-core";
+import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { StatusBadge } from "@/components/status-badge";
 import { BoardCanvas } from "./board-canvas";
@@ -15,10 +16,14 @@ import type {
   ProductsConfig,
   ReleasesConfig,
   TableConfig,
+  TemplateConfig,
   TextConfig,
   TreeNode,
   TreeviewConfig,
 } from "./registry";
+
+// Merge fields go into markdown, so don't HTML-escape; react-markdown is safe.
+Mustache.escape = (text) => text;
 
 /**
  * One React component per widget type (async server components, so widgets
@@ -136,6 +141,32 @@ async function BoardSpecWidget({ config }: { config: BoardSpecConfig }) {
       ) : (
         <p className="text-sm text-muted">No board-spec &quot;{config.spec}&quot;.</p>
       )}
+    </WidgetFrame>
+  );
+}
+
+async function TemplateWidget({
+  config,
+  subject,
+}: {
+  config: TemplateConfig;
+  subject?: unknown;
+}) {
+  // Data source: an explicit content item, or the page's own subject.
+  let data: unknown = subject ?? {};
+  if (config.type && config.slug && writableStore) {
+    const item = await writableStore.getItem(config.type as ContentType, config.slug);
+    if (item) data = item.data;
+  }
+  let text: string;
+  try {
+    text = Mustache.render(config.template, data);
+  } catch (err) {
+    text = `_Template error: ${err instanceof Error ? err.message : String(err)}_`;
+  }
+  return (
+    <WidgetFrame title={config.title}>
+      <Markdown>{text}</Markdown>
     </WidgetFrame>
   );
 }
@@ -362,6 +393,7 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   image: ImageWidget as WidgetComponent,
   board: BoardWidget as WidgetComponent,
   boardspec: BoardSpecWidget as WidgetComponent,
+  template: TemplateWidget as WidgetComponent,
   callout: CalloutWidget as WidgetComponent,
   embed: EmbedWidget as WidgetComponent,
   treeview: TreeviewWidget as WidgetComponent,

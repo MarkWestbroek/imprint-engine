@@ -44,10 +44,21 @@ Content-Type: application/json
 - `versions[].spec` is optioneel: de board-spec-slug voor die revisie. Je kunt
   'm nu al invullen (de board-spec zelf mag je daarna posten).
 
-## 2. Component onder cortex én reflex hangen
+## 2. De component→product-mapping (jij bezit die kennis)
 
-De relatie leeft op het **product** (`product.components[]`). Dus voeg de
-component-slug toe aan elk product. Read-modify-post per product:
+MMB weet uit de BOM welke componenten (en subcomponenten) bij welk product
+horen — Imprint niet. **Jij legt die mapping dus vast**, op twee plekken:
+
+- **Subcomponenten** → `component.children[]` (slugs). Een busboard die modules
+  bevat: post die modules als eigen componenten, en zet hun slugs in
+  `children`. Post de children eerst (anders 422).
+- **Component onder een product** → `product.components[]` (slugs). Ligt op het
+  product, niet op het component. Hetzelfde component-slug mag in meerdere
+  producten staan (dat is het hele punt van herbruikbare componenten).
+
+Voorbeeld: hoort de busboard bij cortex én reflex, dan komt `"busboard-v2"` in
+`cortex.components` én `reflex.components`. Voeg 'm toe per product met
+read-modify-post:
 
 ```bash
 # huidige product ophalen
@@ -125,9 +136,10 @@ POST /api/content/release/<project>-<versie>
 
 ## Samengevat: de happy path van een MMB-publicatierun
 
-1. `POST` alle componenten (children eerst).
+1. `POST` alle componenten (children/subcomponenten eerst, dan de ouders met
+   hun `children`-slugs).
 2. Per product (`cortex`, `reflex`, …): read-modify-post om de component-slugs
-   in `components` te zetten.
+   in `components` te zetten (de mapping die jij uit de BOM kent).
 3. `POST /api/ingest/board-spec` per bord-revisie (multipart, met de assets).
 4. Optioneel `POST` releases.
 

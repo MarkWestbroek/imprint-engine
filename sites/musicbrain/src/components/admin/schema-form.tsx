@@ -13,7 +13,7 @@ import { MarkdownEditor } from "./markdown-editor";
 
 /** Fields that hold markdown get the editor with live preview. */
 const MARKDOWN_KEYS = new Set(["body", "markdown"]);
-const LONG_TEXT_KEYS = new Set(["description", "text"]);
+const LONG_TEXT_KEYS = new Set(["description", "text", "template"]);
 
 const inputCls =
   "w-full rounded-md border border-line bg-background px-2.5 py-1.5 text-sm " +

@@ -1,13 +1,14 @@
 import type { BoardSpec } from "@imprint/content-core";
 import { boardSpecToBoardConfig } from "@imprint/content-core";
 import { Markdown } from "@/components/markdown";
-import { BoardCanvas } from "@/widgets/board-canvas";
+import { BoardSpecMedia } from "@/components/board-spec-media";
 
 /**
- * Renders a board-spec with low authoring burden (D9): the interactive hotspot
- * render when the spec has points (derived via boardSpecToBoardConfig, D4),
- * else the overview image; then the connectors table, the pinout SVGs, and the
- * prose sections. `compact` trims it for embedding on a product page.
+ * Renders a board-spec with low authoring burden (D9). The render is hybrid
+ * (BoardSpecMedia: static overview, plus an interactive hover view when the
+ * spec has points, D4/D10). The dense connector table and pinout grid sit in
+ * collapsed <details> so the default view stays calm; `compact` (product page)
+ * trims to just the render + connectors.
  */
 export function BoardSpecView({
   spec,
@@ -17,59 +18,44 @@ export function BoardSpecView({
   compact?: boolean;
 }) {
   const derived = boardSpecToBoardConfig(spec);
-  const hasBoard = derived.image !== "" && derived.points.length > 0;
+  const pinouts = Object.entries(spec.assets.pinouts);
 
   return (
     <div className="space-y-4">
-      {hasBoard ? (
-        <BoardCanvas
-          image={derived.image}
-          alt={derived.alt}
-          points={derived.points}
-          mode="hover"
-        />
-      ) : (
-        spec.assets.overview && (
-          // eslint-disable-next-line @next/next/no-img-element -- stored render
-          <img
-            src={spec.assets.overview}
-            alt={`${spec.component} ${spec.version}`}
-            className="h-auto max-w-full rounded-lg"
-          />
-        )
-      )}
+      <BoardSpecMedia overview={spec.assets.overview} board={derived} />
 
       {spec.connectors.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-sm">
-            <thead>
-              <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
-                <th className="py-1.5 pr-4">Connector</th>
-                <th className="py-1.5 pr-4">Pins (pin → net)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {spec.connectors.map((c) => (
-                <tr key={c.ref} className="border-b border-line align-top">
-                  <td className="py-1.5 pr-4 font-mono">
-                    {c.ref}
-                    {c.label && <span className="text-muted"> · {c.label}</span>}
-                  </td>
-                  <td className="py-1.5 pr-4 font-mono text-xs">
-                    {c.pins.map((p) => `${p.pin}→${p.net}`).join("  ")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <details className="rounded-lg border border-line px-3 py-2">
+          <summary className="cursor-pointer text-sm text-muted">
+            Connectors ({spec.connectors.length})
+          </summary>
+          <div className="mt-2 overflow-x-auto">
+            <table className="w-full border-collapse text-sm">
+              <tbody>
+                {spec.connectors.map((c) => (
+                  <tr key={c.ref} className="border-b border-line align-top">
+                    <td className="py-1.5 pr-4 font-mono whitespace-nowrap">
+                      {c.ref}
+                      {c.label && <span className="text-muted"> · {c.label}</span>}
+                    </td>
+                    <td className="py-1.5 font-mono text-xs">
+                      {c.pins.map((p) => `${p.pin}→${p.net}`).join("  ")}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
       )}
 
-      {!compact &&
-        Object.entries(spec.assets.pinouts).length > 0 &&
-        !hasBoard && (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {Object.entries(spec.assets.pinouts).map(([ref, url]) => (
+      {!compact && pinouts.length > 0 && (
+        <details className="rounded-lg border border-line px-3 py-2">
+          <summary className="cursor-pointer text-sm text-muted">
+            Pinout diagrams ({pinouts.length})
+          </summary>
+          <div className="mt-2 grid gap-3 sm:grid-cols-2">
+            {pinouts.map(([ref, url]) => (
               <figure key={ref} className="rounded-lg border border-line p-2">
                 {/* eslint-disable-next-line @next/next/no-img-element -- stored pinout SVG */}
                 <img src={url} alt={`Pinout ${ref}`} className="max-w-full" />
@@ -77,14 +63,13 @@ export function BoardSpecView({
               </figure>
             ))}
           </div>
-        )}
+        </details>
+      )}
 
       {!compact &&
         spec.sections.map((s, i) => (
           <section key={i}>
-            {s.heading && (
-              <h3 className="mb-1 text-base font-semibold">{s.heading}</h3>
-            )}
+            {s.heading && <h3 className="mb-1 text-base font-semibold">{s.heading}</h3>}
             <Markdown>{s.markdown}</Markdown>
           </section>
         ))}

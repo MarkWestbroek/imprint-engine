@@ -110,6 +110,30 @@ export const BoardSpecConfig = z.object({
 });
 export type BoardSpecConfig = z.infer<typeof BoardSpecConfig>;
 
+/** Content types a template widget can read from. */
+export const TemplateSourceType = z.enum([
+  "site",
+  "product",
+  "component",
+  "board-spec",
+  "release",
+  "page",
+  "menu",
+]);
+
+export const TemplateConfig = z.object({
+  title: z.string().optional(),
+  /** Which content item to merge in. Omit to use the page's own subject. */
+  type: TemplateSourceType.optional(),
+  slug: z.string().optional(),
+  /**
+   * Markdown with Mustache merge fields: {{field}}, {{nested.field}}, and
+   * {{#array}}…{{/array}} to repeat over a list (merge fields / mail merge).
+   */
+  template: z.string(),
+});
+export type TemplateConfig = z.infer<typeof TemplateConfig>;
+
 /**
  * Annotated board image: a (3D PCB) render with hotspots that reveal detail
  * on hover. Coordinates are relative (0..1) so the annotation stays put at
@@ -159,6 +183,7 @@ export const widgetCatalog = [
   { name: "image", label: "Image", version: "1.0.0", help: "A single image with optional caption.", configSchema: ImageConfig },
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
+  { name: "template", label: "Template (merge fields)", version: "1.0.0", help: "Markdown with {{fields}} merged from a content item.", configSchema: TemplateConfig },
   { name: "callout", label: "Callout / CTA", version: "1.0.0", help: "A coloured box with markdown and an optional button.", configSchema: CalloutConfig },
   { name: "embed", label: "Embed (iframe)", version: "1.0.0", help: "Embed an external page in a sandboxed iframe.", configSchema: EmbedConfig },
   { name: "treeview", label: "Treeview", version: "1.0.0", help: "A nested link tree; can auto-build from page slugs.", configSchema: TreeviewConfig },
