@@ -6,6 +6,7 @@ const TYPES: { type: ContentType; label: string }[] = [
   { type: "page", label: "Pages" },
   { type: "product", label: "Products" },
   { type: "component", label: "Components" },
+  { type: "board-spec", label: "Board specs" },
   { type: "release", label: "Releases" },
   { type: "menu", label: "Menus" },
 ];

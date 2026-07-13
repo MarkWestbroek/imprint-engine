@@ -78,6 +78,7 @@ GET /api/content                    index van endpoints
 GET /api/content/site               site-config
 GET /api/content/products[/slug]    producten
 GET /api/content/components[/slug]  componenten (herbruikbaar, kunnen nesten)
+GET /api/content/board-specs[/slug] bord-documentatie (?component=…)
 GET /api/content/releases           releases (?project=… of ?product=…)
 GET /api/content/itinerary/<prod>   afgeleide component-itinerary van een product
 GET /api/content/pages[/slug]       pagina's incl. widget-layout (?prefix=posts/)
@@ -92,7 +93,8 @@ S5) en `?drafts=1` (alleen met admin-sessie).
 POST /api/content/<type>/<slug>   één item (body = de content)
 POST /api/content                 bundle: { product?, components?, releases? }
 ```
-Ingestbare types: `product`, `component`, `release`, `page`. Elke post loopt
+Ingestbare types: `product`, `component`, `board-spec`, `release`, `page`.
+Elke post loopt
 door de zod-validatie en wordt een nieuwe bitemporale versie (dus volledige
 historie + rollback, ook voor machine-posts). Voorbeeld: een hardware-repo
 post in één keer zijn product, zijn (geneste) componenten en een release met

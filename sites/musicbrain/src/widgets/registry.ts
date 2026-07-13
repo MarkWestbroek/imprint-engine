@@ -128,8 +128,13 @@ export const BoardConfig = z.object({
         y: z.number().min(0).max(1),
         /** Short heading shown on the hotspot / tooltip. */
         label: z.string().optional(),
-        /** Detail shown on hover; rendered as markdown. */
-        markdown: z.string(),
+        /** Detail shown on hover, rendered as markdown (e.g. a pin→net table). */
+        markdown: z.string().optional(),
+        /**
+         * D10: URL of a pinout SVG, shown instead of `markdown` — the generated
+         * dual-row pinout diagram. One of markdown/svgRef per point.
+         */
+        svgRef: z.string().optional(),
       })
     )
     .default([]),

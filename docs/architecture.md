@@ -145,7 +145,8 @@ via de write-API; het landt in dezelfde bitemporal-store als alle content.
 classDiagram
     class Product { slug, name, status, components[] }
     class Component { slug, name, children[], versions[] }
-    class ComponentVersion { number, date, notes }
+    class ComponentVersion { number, date, notes, spec? }
+    class BoardSpec { slug, component, version, connectors[], assets, sections[] }
     class Release { project, version, date, product, components[] }
     class ReleaseComponent { component, version }
     class ComponentItinerary { start, end, versions[] }
@@ -153,6 +154,8 @@ classDiagram
     Product o-- Component : components[] (refs)
     Component o-- Component : children (nesting)
     Component *-- ComponentVersion : versions
+    ComponentVersion ..> BoardSpec : spec (per versie)
+    BoardSpec --> Component : component (ref)
     Product *-- Release : product
     Release *-- ReleaseComponent : components[]
     ReleaseComponent --> Component : component (ref)
@@ -175,6 +178,18 @@ Modelleerkeuzes (naar het UML van Mark):
 - **Documentatie** hangt (voorlopig simpel) als optioneel `docs`-veld aan
   product/component: een pagina-slug of inline markdown. Differentiëren kan
   later.
+
+**board-spec** (hardware-documentatie, D1–D10) is de eerste gedifferentieerde
+documentatievorm: een eigen contenttype voor de machinaal gegenereerde
+bord-info (connectors, nets, gerenderde SVG's/PNG's, proza-secties, fab-info).
+Eén board-spec **per ComponentVersion** (slug `<component>@<versie>`); de
+`ComponentVersion` verwijst er optioneel naar via `spec`, en de board-spec
+verwijst terug naar zijn component (RelationRule `board-spec.component →
+component`). De technische kern is taalneutraal, alleen de `sections` zijn
+vertaalbaar (S9). Assets zitten nu als URL in het schema; het uploaden ervan
+(een `AssetStore`-interface + multipart-ingest) is een volgende stap. De
+`board`-widget kan per punt een `svgRef` (pinout-SVG) tonen i.p.v. markdown
+(D10).
 
 Omdat de `content_items`-tabel generiek is (§4), kostte dit **geen
 DB-migratie**: `component` is gewoon een nieuwe waarde in de `type`-kolom,

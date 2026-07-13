@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import {
+  BoardSpecSchema,
   ComponentSchema,
   MenuSchema,
   PageDocSchema,
@@ -10,6 +11,7 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  type BoardSpec,
   type Component,
   type Menu,
   type Page,
@@ -101,6 +103,30 @@ export class FileContentStore implements ContentStore {
 
   async getComponent(slug: string, opts?: ReadOptions): Promise<Component | null> {
     return (await this.listComponents(opts)).find((c) => c.slug === slug) ?? null;
+  }
+
+  async listBoardSpecs(
+    opts?: ReadOptions & { component?: string }
+  ): Promise<BoardSpec[]> {
+    const files = await this.listFiles("board-specs", ".json");
+    const specs: BoardSpec[] = [];
+    for (const file of files) {
+      const raw = await fs.readFile(file, "utf8");
+      specs.push(BoardSpecSchema.parse(JSON.parse(raw)));
+    }
+    const lang = opts?.lang ?? "en";
+    const bySlug = new Map<string, BoardSpec>();
+    for (const s of specs.filter((s) => s.lang === "en")) bySlug.set(s.slug, s);
+    if (lang !== "en") {
+      for (const s of specs.filter((s) => s.lang === lang)) bySlug.set(s.slug, s);
+    }
+    let out = [...bySlug.values()];
+    if (opts?.component) out = out.filter((s) => s.component === opts.component);
+    return out.sort((a, b) => a.slug.localeCompare(b.slug));
+  }
+
+  async getBoardSpec(slug: string, opts?: ReadOptions): Promise<BoardSpec | null> {
+    return (await this.listBoardSpecs(opts)).find((s) => s.slug === slug) ?? null;
   }
 
   async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {

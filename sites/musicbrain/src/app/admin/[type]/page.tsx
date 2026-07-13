@@ -4,7 +4,7 @@ import type { ContentType } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
 import { deleteItemAction } from "../actions";
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "release", "page", "menu"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu"];
 
 type Props = { params: Promise<{ type: string }> };
 

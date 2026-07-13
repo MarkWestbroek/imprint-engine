@@ -15,12 +15,22 @@ import type { BoardConfig } from "./registry";
 
 type Point = BoardConfig["points"][number];
 
-/** Compact markdown (tight pin→net tables) shown inside a box/tooltip. */
-function Detail({ markdown }: { markdown: string }) {
-  if (!markdown.trim()) return null;
+/** Point detail: a generated pinout SVG (D10) if present, else compact markdown. */
+function Detail({ point }: { point: Point }) {
+  if (point.svgRef) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element -- generated pinout SVG
+      <img
+        src={point.svgRef}
+        alt={point.label ?? "pinout"}
+        className="my-1 max-w-full"
+      />
+    );
+  }
+  if (!point.markdown?.trim()) return null;
   return (
     <div className="markdown text-muted text-[11px] leading-tight [&_img]:my-1 [&_img]:max-w-full [&_table]:border-collapse [&_td]:py-0 [&_td]:pr-2 [&_th]:py-0 [&_th]:pr-2 [&_th]:text-left">
-      <ReactMarkdown remarkPlugins={[remarkGfm]}>{markdown}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{point.markdown}</ReactMarkdown>
     </div>
   );
 }
@@ -46,7 +56,7 @@ function Tooltip({
       {point.label && (
         <div className="mb-1 font-semibold text-foreground">{point.label}</div>
       )}
-      <Detail markdown={point.markdown} />
+      <Detail point={point} />
     </div>
   );
 }
@@ -154,7 +164,7 @@ function ExpandedBoard({ image, alt, points }: Omit<BoardConfig, "mode" | "title
             <div className="text-xs font-semibold text-foreground">{p.label}</div>
           )}
           <div className={side === "left" ? "flex justify-end" : ""}>
-            <Detail markdown={p.markdown} />
+            <Detail point={p} />
           </div>
         </div>
       ))}

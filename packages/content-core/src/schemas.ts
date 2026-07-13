@@ -64,6 +64,12 @@ export const ComponentVersionSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   /** Version-specific notes (markdown). */
   notes: z.string().default(""),
+  /**
+   * Slug of the board-spec documenting this exact revision (D8: one board-spec
+   * per ComponentVersion). Convention: "<component>@<number>". Optional — not
+   * every version is a board.
+   */
+  spec: z.string().optional(),
 });
 export type ComponentVersion = z.infer<typeof ComponentVersionSchema>;
 
@@ -137,6 +143,61 @@ export type ComponentItinerary = {
   /** Versions seen along the way, in release order. */
   versions: string[];
 };
+
+/**
+ * board-spec (D1–D10): machine-generated documentation of one PCB revision —
+ * one per ComponentVersion (D8). Slug convention: "<component>@<version>".
+ * The technical core (connectors, nets, asset URLs) is language-neutral; only
+ * the prose `sections` are translatable via the usual per-lang overlay (S9).
+ * Assets are referenced by URL; producing those URLs (upload/AssetStore) is a
+ * later step — this schema just holds them.
+ */
+export const BoardConnectorSchema = z.object({
+  /** Connector reference on the board, e.g. "J1". */
+  ref: z.string().min(1),
+  label: z.string().default(""),
+  footprint: z.string().default(""),
+  /** 1 = single row, 2 = dual row (D10: most headers are dual-row). */
+  rows: z.number().int().min(1).max(2).default(1),
+  pins: z.array(z.object({ pin: z.string(), net: z.string() })).default([]),
+});
+export type BoardConnector = z.infer<typeof BoardConnectorSchema>;
+
+export const BoardSpecSchema = z.object({
+  /** "<component>@<version>", so it allows @ and dots. */
+  slug: z.string().regex(/^[a-z0-9@.\-]+$/),
+  lang: Locale.default("en"),
+  /** Back-reference to the Component this board is (a RelationRule enforces it). */
+  component: z.string().min(1),
+  /** Which ComponentVersion this documents. */
+  version: VersionNumber,
+  /** Structured connector data, read straight from the .kicad_pcb (D1, D2). */
+  connectors: z.array(BoardConnectorSchema).default([]),
+  /** Rendered assets, by role, as URLs (D2, D3). */
+  assets: z
+    .object({
+      renderTop: z.string().optional(),
+      renderBottom: z.string().optional(),
+      /** The wiring-overview SVG. */
+      overview: z.string().optional(),
+      /** Per-connector pinout SVG, keyed by connector ref (D10). */
+      pinouts: z.record(z.string(), z.string()).default({}),
+    })
+    .default({ pinouts: {} }),
+  /** README-style prose blocks (D4); translatable. */
+  sections: z.array(z.object({ heading: z.string(), markdown: z.string() })).default([]),
+  /** Fab/order info (D5). */
+  fab: z
+    .object({
+      packageUrl: z.string().optional(),
+      jlcNotes: z.string().default(""),
+      bomHighlights: z.array(z.string()).default([]),
+    })
+    .optional(),
+  /** Related board-specs/components, by slug (D6). */
+  related: z.array(z.string()).default([]),
+});
+export type BoardSpec = z.infer<typeof BoardSpecSchema>;
 
 /** Frontmatter for free-form pages and devlog posts. */
 export const PageMetaSchema = z.object({

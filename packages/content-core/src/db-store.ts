@@ -5,12 +5,14 @@ import { z } from "zod";
 
 import { contentItems, users } from "./db-schema";
 import {
+  BoardSpecSchema,
   ComponentSchema,
   MenuSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  type BoardSpec,
   type Component,
   type Menu,
   type Page,
@@ -110,6 +112,19 @@ export class DbContentStore implements WritableContentStore {
 
   async getComponent(slug: string, opts?: ReadOptions): Promise<Component | null> {
     return (await this.listComponents(opts)).find((c) => c.slug === slug) ?? null;
+  }
+
+  async listBoardSpecs(
+    opts?: ReadOptions & { component?: string }
+  ): Promise<BoardSpec[]> {
+    const rows = await this.currentRows("board-spec", opts);
+    let specs = rows.map((r) => BoardSpecSchema.parse(r.data));
+    if (opts?.component) specs = specs.filter((s) => s.component === opts.component);
+    return this.pickLang(specs, opts?.lang).sort((a, b) => a.slug.localeCompare(b.slug));
+  }
+
+  async getBoardSpec(slug: string, opts?: ReadOptions): Promise<BoardSpec | null> {
+    return (await this.listBoardSpecs(opts)).find((s) => s.slug === slug) ?? null;
   }
 
   async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {
@@ -278,6 +293,8 @@ export class DbContentStore implements WritableContentStore {
         return ProductSchema.parse(data);
       case "component":
         return ComponentSchema.parse(data);
+      case "board-spec":
+        return BoardSpecSchema.parse(data);
       case "release":
         return ReleaseSchema.parse(data);
       case "menu":

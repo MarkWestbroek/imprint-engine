@@ -26,7 +26,13 @@ import { canEdit, getSession } from "@/lib/auth";
  */
 
 const CACHE = "public, max-age=60";
-const INGESTABLE = new Set<ContentType>(["product", "component", "release", "page"]);
+const INGESTABLE = new Set<ContentType>([
+  "product",
+  "component",
+  "board-spec",
+  "release",
+  "page",
+]);
 
 function json(data: unknown, cache = true) {
   return NextResponse.json(data, {
@@ -67,6 +73,7 @@ export async function GET(
           "/api/content/site",
           "/api/content/products[/slug]",
           "/api/content/components[/slug]",
+          "/api/content/board-specs[/slug]?component=",
           "/api/content/releases?project=&product=",
           "/api/content/itinerary/<product>",
           "/api/content/pages[/slug]?prefix=",
@@ -89,6 +96,17 @@ export async function GET(
       if (!slug) return json(await store.listComponents(opts), !noCache);
       const component = await store.getComponent(slug, opts);
       return component ? json(component, !noCache) : error(404, `No component "${slug}"`);
+    }
+
+    case "board-specs": {
+      if (!slug) {
+        return json(
+          await store.listBoardSpecs({ ...opts, component: q.get("component") ?? undefined }),
+          !noCache
+        );
+      }
+      const spec = await store.getBoardSpec(slug, opts);
+      return spec ? json(spec, !noCache) : error(404, `No board-spec "${slug}"`);
     }
 
     case "releases":

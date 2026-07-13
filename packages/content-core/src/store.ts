@@ -1,4 +1,5 @@
 import type {
+  BoardSpec,
   Component,
   Locale,
   Menu,
@@ -41,6 +42,9 @@ export interface ContentStore {
   listComponents(opts?: ReadOptions): Promise<Component[]>;
   getComponent(slug: string, opts?: ReadOptions): Promise<Component | null>;
 
+  listBoardSpecs(opts?: ReadOptions & { component?: string }): Promise<BoardSpec[]>;
+  getBoardSpec(slug: string, opts?: ReadOptions): Promise<BoardSpec | null>;
+
   listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]>;
   getPage(slug: string, opts?: ReadOptions): Promise<Page | null>;
 
@@ -53,6 +57,7 @@ export type ContentType =
   | "site"
   | "product"
   | "component"
+  | "board-spec"
   | "release"
   | "page"
   | "menu"
