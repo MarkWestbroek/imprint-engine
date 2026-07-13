@@ -125,8 +125,60 @@ flowchart LR
 - De **store** valideert elke widget-config tegen het geregistreerde schema:
   een kapotte widget breekt de build/save met een duidelijke fout, in plaats
   van stil verkeerd te renderen.
-- Catalogus van musicbrain: `text`, `treeview`, `api` (JSON-endpoint met
-  veldselectie), `releases`, `products`.
+- Config moet **JSON-serialiseerbaar** zijn (opslag als JSON); coördinaten
+  e.d. relatief opslaan (0..1) zodat ze meeschalen met de vakbreedte.
+- Interactieve viewers (hover/klik) zijn een dun server-component met een
+  `"use client"`-eiland erin; `treeview`/`api` hebben dat niet nodig, een
+  geannoteerde-afbeelding-widget wel.
+- Catalogus van musicbrain: `text`, `table` (met custom grid-editor),
+  `image`, `callout`/CTA, `embed` (iframe), `treeview`, `api` (JSON-endpoint
+  met veldselectie), `releases`, `products`.
+
+## 3b. Product / component / release
+
+Naast de website-content is er een productdomein: producten zijn opgebouwd
+uit **componenten**, en worden in genummerde **releases** uitgebracht. Een
+product-project (bijv. de MusicBrain-hardwarerepo) kan dit zelf **posten**
+via de write-API; het landt in dezelfde bitemporal-store als alle content.
+
+```mermaid
+classDiagram
+    class Product { slug, name, status, components[] }
+    class Component { slug, name, children[], versions[] }
+    class ComponentVersion { number, date, notes }
+    class Release { project, version, date, product, components[] }
+    class ReleaseComponent { component, version }
+    class ComponentItinerary { start, end, versions[] }
+
+    Product o-- Component : components[] (refs)
+    Component o-- Component : children (nesting)
+    Component *-- ComponentVersion : versions
+    Product *-- Release : product
+    Release *-- ReleaseComponent : components[]
+    ReleaseComponent --> Component : component (ref)
+    ComponentItinerary ..> Release : afgeleid
+```
+
+Modelleerkeuzes (naar het UML van Mark):
+
+- **Component is een eigen contenttype**, niet genest in een product — omdat
+  hetzelfde component in meerdere producten kan zitten. Componenten kunnen
+  wél nesten (`children`), bijv. een busboard met modules.
+- **Een release bevat componenten met genoteerde versie** (`components: [{
+  component, version }]`) — de `ReleaseComponent`-associatie draagt het
+  versienummer. Bewust géén directe relatie naar een `ComponentVersion`-
+  entiteit: een versie ís geen component.
+- **ProductComponentItinerary is afgeleid**, niet opgeslagen:
+  [`computeItinerary()`](../packages/content-core/src/itinerary.ts) leest per
+  component de eerste→laatste release af (`end: null` = zit nog in de nieuwste
+  release).
+- **Documentatie** hangt (voorlopig simpel) als optioneel `docs`-veld aan
+  product/component: een pagina-slug of inline markdown. Differentiëren kan
+  later.
+
+Omdat de `content_items`-tabel generiek is (§4), kostte dit **geen
+DB-migratie**: `component` is gewoon een nieuwe waarde in de `type`-kolom,
+met een eigen zod-schema.
 
 ## 4. Opslag: bitemporal-light (§B3)
 
@@ -190,10 +242,20 @@ classDiagram
 Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
 (taal-fallback naar EN, S9) en `includeDrafts` (previews).
 
-Dezelfde store is ook als **read-only JSON-API** ontsloten
-(`/api/content/...`, zie de README): één catch-all route handler die de
-`ContentStore` aanroept, met dezelfde query-parameters. API, site en admin
-kunnen daardoor per definitie niet van elkaar afwijken.
+Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
+README): één catch-all route handler die de `ContentStore` aanroept, met
+dezelfde query-parameters. API, site en admin kunnen daardoor per definitie
+niet van elkaar afwijken.
+
+- **GET** is read-only en publiek (alleen gepubliceerde content; `?drafts=1`
+  met admin-sessie). Endpoints o.a. `products`, `components`, `releases`
+  (`?product=`), en de afgeleide `itinerary/<product>`.
+- **POST** is de schrijfkant voor product-projecten: `Authorization: Bearer
+  <INGEST_TOKEN>` (constant-time check; leeg token = schrijven uit). Eén item
+  via `POST /api/content/<type>/<slug>`, of een bundle via `POST /api/content`
+  met `{ product?, components?, releases? }`. Elke put loopt door de
+  zod-validatie en wordt een nieuwe bitemporale versie — dus ook machine-
+  posts hebben volledige historie en rollback.
 
 ## 5. Admin (/admin)
 

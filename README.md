@@ -67,23 +67,36 @@ overschreven — "History" bij elk item toont alles en kan terugrollen.
 server is bijwerken `git pull` + `npm run db:migrate`. Content wordt niet
 gesynct: de productie-DB is de bron van waarheid, de seed is eenmalig.
 
-## Content-API (read-only)
+## Content-API
 
 Dezelfde `ContentStore` als de pagina's, maar dan als JSON over HTTP —
-voor externe consumenten (andere sites, scripts, tools):
+voor externe consumenten (andere sites, scripts, product-projecten).
 
+**Lezen (GET, publiek, alleen gepubliceerde content):**
 ```
-GET /api/content                  index van endpoints
-GET /api/content/site             site-config
-GET /api/content/products[/slug]  producten
-GET /api/content/releases         releases (?project=…)
-GET /api/content/pages[/slug]     pagina's incl. widget-layout (?prefix=posts/)
-GET /api/content/menus/main       menu
+GET /api/content                    index van endpoints
+GET /api/content/site               site-config
+GET /api/content/products[/slug]    producten
+GET /api/content/components[/slug]  componenten (herbruikbaar, kunnen nesten)
+GET /api/content/releases           releases (?project=… of ?product=…)
+GET /api/content/itinerary/<prod>   afgeleide component-itinerary van een product
+GET /api/content/pages[/slug]       pagina's incl. widget-layout (?prefix=posts/)
+GET /api/content/menus/<naam>       menu
 ```
-
 Overal bruikbaar: `?lang=nl` (fallback EN), `?asOf=2026-01-01` (tijdreizen,
-S5) en `?drafts=1` (alleen met admin-sessie). Alleen gepubliceerde content —
-precies wat de site zelf toont.
+S5) en `?drafts=1` (alleen met admin-sessie).
+
+**Schrijven (POST, voor product-projecten):** stuur
+`Authorization: Bearer <INGEST_TOKEN>` (zie `.env.example`).
+```
+POST /api/content/<type>/<slug>   één item (body = de content)
+POST /api/content                 bundle: { product?, components?, releases? }
+```
+Ingestbare types: `product`, `component`, `release`, `page`. Elke post loopt
+door de zod-validatie en wordt een nieuwe bitemporale versie (dus volledige
+historie + rollback, ook voor machine-posts). Voorbeeld: een hardware-repo
+post in één keer zijn product, zijn (geneste) componenten en een release met
+per component de meegeleverde versie.
 
 ## Deploy naar Plesk
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  ComponentSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
@@ -41,6 +42,8 @@ export function contentFormSchema(type: ContentType): JsonSchema {
       return objectSchema(SiteConfigSchema);
     case "product":
       return objectSchema(ProductSchema);
+    case "component":
+      return objectSchema(ComponentSchema);
     case "release":
       return objectSchema(ReleaseSchema);
     case "menu":

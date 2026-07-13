@@ -5,11 +5,13 @@ import { z } from "zod";
 
 import { contentItems, users } from "./db-schema";
 import {
+  ComponentSchema,
   MenuSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  type Component,
   type Menu,
   type Page,
   type Product,
@@ -81,13 +83,28 @@ export class DbContentStore implements WritableContentStore {
     return (await this.listProducts(opts)).find((p) => p.slug === slug) ?? null;
   }
 
-  async listReleases(opts?: ReadOptions & { project?: string }): Promise<Release[]> {
+  async listReleases(
+    opts?: ReadOptions & { project?: string; product?: string }
+  ): Promise<Release[]> {
     const rows = await this.currentRows("release", opts);
     let releases = rows.map((r) => ReleaseSchema.parse(r.data));
     if (opts?.project) releases = releases.filter((r) => r.project === opts.project);
+    if (opts?.product) releases = releases.filter((r) => r.product === opts.product);
     const asOf = opts?.asOf ?? new Date();
     releases = releases.filter((r) => new Date(r.date) <= asOf);
     return releases.sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  async listComponents(opts?: ReadOptions): Promise<Component[]> {
+    const rows = await this.currentRows("component", opts);
+    const components = rows.map((r) => ComponentSchema.parse(r.data));
+    return this.pickLang(components, opts?.lang).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
+
+  async getComponent(slug: string, opts?: ReadOptions): Promise<Component | null> {
+    return (await this.listComponents(opts)).find((c) => c.slug === slug) ?? null;
   }
 
   async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {
@@ -253,6 +270,8 @@ export class DbContentStore implements WritableContentStore {
         return SiteConfigSchema.parse(data);
       case "product":
         return ProductSchema.parse(data);
+      case "component":
+        return ComponentSchema.parse(data);
       case "release":
         return ReleaseSchema.parse(data);
       case "menu":

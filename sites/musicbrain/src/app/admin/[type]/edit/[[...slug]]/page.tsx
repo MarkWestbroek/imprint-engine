@@ -6,7 +6,7 @@ import { contentFormSchema } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
 import { PageStudio } from "@/components/admin/studio";
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "release", "page", "menu"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "release", "page", "menu"];
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
@@ -20,7 +20,9 @@ function emptyData(type: ContentType): Record<string, unknown> {
     case "site":
       return { name: "", tagline: "", baseUrl: "https://", defaultLocale: "en", links: {} };
     case "product":
-      return { slug: "", lang: "en", name: "", tagline: "", status: "in-development", description: "", specs: [], media: [], order: 0 };
+      return { slug: "", lang: "en", name: "", tagline: "", status: "in-development", description: "", specs: [], media: [], components: [], order: 0 };
+    case "component":
+      return { slug: "", lang: "en", name: "", description: "", children: [], versions: [] };
     case "release":
       return { project: "", version: "", date: today, channel: "stable", highlights: [], body: "", downloads: [] };
     case "menu":

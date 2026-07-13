@@ -14,7 +14,7 @@ import { writableStore } from "@/lib/content";
 
 export type ActionResult = { ok: boolean; error?: string };
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "release", "page", "menu"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "release", "page", "menu"];
 
 export async function loginAction(
   _prev: ActionResult | null,

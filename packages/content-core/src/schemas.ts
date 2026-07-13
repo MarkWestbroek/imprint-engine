@@ -33,16 +33,70 @@ export const ProductSchema = z.object({
   specs: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
   /** Paths relative to the site's public/ dir, or absolute URLs. */
   media: z.array(z.string()).default([]),
+  /**
+   * Slugs of the components this product is built from (UML: Product ◆ Component).
+   * Components are their own content type because they're reusable across
+   * products; here we just reference them.
+   */
+  components: z.array(z.string()).default([]),
+  /** Optional documentation: a page slug, or inline markdown (see §docs). */
+  docs: z.string().optional(),
   order: z.number().int().default(0),
 });
 export type Product = z.infer<typeof ProductSchema>;
 
+/**
+ * Version string, e.g. "v2.5.12" (UML dataType VersionNumber). Kept loose on
+ * purpose — different projects version differently.
+ */
+export const VersionNumber = z.string().min(1);
+
+/** One version of a component (UML: ComponentVersion). */
+export const ComponentVersionSchema = z.object({
+  number: VersionNumber,
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  /** Version-specific notes (markdown). */
+  notes: z.string().default(""),
+});
+export type ComponentVersion = z.infer<typeof ComponentVersionSchema>;
+
+/**
+ * A component (UML: Component): a standalone, reusable building block. It is
+ * its own content type — not nested inside a product — precisely because the
+ * same component can appear in several products. Components can nest
+ * (`children`), e.g. a busboard that contains modules.
+ */
+export const ComponentSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  name: z.string().min(1),
+  description: z.string().default(""),
+  /** Slugs of sub-components (nesting). */
+  children: z.array(z.string()).default([]),
+  /** Known versions of this component. */
+  versions: z.array(ComponentVersionSchema).default([]),
+  /** Optional documentation: a page slug, or inline markdown. */
+  docs: z.string().optional(),
+});
+export type Component = z.infer<typeof ComponentSchema>;
+
 export const ReleaseSchema = z.object({
   /** e.g. "cortex-fw" or "simulator" — which artifact this release belongs to. */
   project: z.string().min(1),
-  version: z.string().min(1),
+  version: VersionNumber,
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   channel: z.enum(["stable", "beta", "dev"]).default("stable"),
+  /** Slug of the Product this release belongs to (UML: Product ◆ ProductRelease). */
+  product: z.string().optional(),
+  /**
+   * The components in this release, each with the version that ships in it
+   * (UML: the ReleaseComponent association carries the ComponentVersion). We
+   * reference the component + note its version, rather than pointing at a
+   * ComponentVersion entity — a version isn't a component.
+   */
+  components: z
+    .array(z.object({ component: z.string(), version: VersionNumber }))
+    .default([]),
   highlights: z.array(z.string()).default([]),
   /** Markdown body (release notes). */
   body: z.string().default(""),
@@ -59,6 +113,23 @@ export const ReleaseSchema = z.object({
     .default([]),
 });
 export type Release = z.infer<typeof ReleaseSchema>;
+
+/**
+ * Derived view (UML: ProductComponentItinerary): the journey a component makes
+ * with a product — from the first release it appears in to the last. Computed
+ * from a product's releases, never stored.
+ */
+export type ComponentItinerary = {
+  component: string;
+  /** Date of the first release containing the component. */
+  start: string;
+  /** Date of the last release containing it (null = still current). */
+  end: string | null;
+  firstRelease: string;
+  lastRelease: string;
+  /** Versions seen along the way, in release order. */
+  versions: string[];
+};
 
 /** Frontmatter for free-form pages and devlog posts. */
 export const PageMetaSchema = z.object({

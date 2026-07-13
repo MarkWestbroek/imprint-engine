@@ -5,6 +5,7 @@ import { writableStore } from "@/lib/content";
 const TYPES: { type: ContentType; label: string }[] = [
   { type: "page", label: "Pages" },
   { type: "product", label: "Products" },
+  { type: "component", label: "Components" },
   { type: "release", label: "Releases" },
   { type: "menu", label: "Menus" },
 ];

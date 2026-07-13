@@ -3,12 +3,14 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import {
+  ComponentSchema,
   MenuSchema,
   PageDocSchema,
   PageMetaSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  type Component,
   type Menu,
   type Page,
   type Product,
@@ -65,7 +67,9 @@ export class FileContentStore implements ContentStore {
     return products.find((p) => p.slug === slug) ?? null;
   }
 
-  async listReleases(opts?: ReadOptions & { project?: string }): Promise<Release[]> {
+  async listReleases(
+    opts?: ReadOptions & { project?: string; product?: string }
+  ): Promise<Release[]> {
     const files = await this.listFiles("releases", ".json");
     let releases: Release[] = [];
     for (const file of files) {
@@ -73,9 +77,30 @@ export class FileContentStore implements ContentStore {
       releases.push(ReleaseSchema.parse(JSON.parse(raw)));
     }
     if (opts?.project) releases = releases.filter((r) => r.project === opts.project);
+    if (opts?.product) releases = releases.filter((r) => r.product === opts.product);
     const asOf = opts?.asOf ?? new Date();
     releases = releases.filter((r) => new Date(r.date) <= asOf);
     return releases.sort((a, b) => b.date.localeCompare(a.date));
+  }
+
+  async listComponents(opts?: ReadOptions): Promise<Component[]> {
+    const files = await this.listFiles("components", ".json");
+    const components: Component[] = [];
+    for (const file of files) {
+      const raw = await fs.readFile(file, "utf8");
+      components.push(ComponentSchema.parse(JSON.parse(raw)));
+    }
+    const lang = opts?.lang ?? "en";
+    const bySlug = new Map<string, Component>();
+    for (const c of components.filter((c) => c.lang === "en")) bySlug.set(c.slug, c);
+    if (lang !== "en") {
+      for (const c of components.filter((c) => c.lang === lang)) bySlug.set(c.slug, c);
+    }
+    return [...bySlug.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async getComponent(slug: string, opts?: ReadOptions): Promise<Component | null> {
+    return (await this.listComponents(opts)).find((c) => c.slug === slug) ?? null;
   }
 
   async listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]> {

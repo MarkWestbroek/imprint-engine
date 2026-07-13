@@ -1,4 +1,12 @@
-import type { Locale, Menu, Page, Product, Release, SiteConfig } from "./schemas";
+import type {
+  Component,
+  Locale,
+  Menu,
+  Page,
+  Product,
+  Release,
+  SiteConfig,
+} from "./schemas";
 
 /**
  * ContentStore — the narrow interface between sites and content storage (B3).
@@ -28,7 +36,10 @@ export interface ContentStore {
   listProducts(opts?: ReadOptions): Promise<Product[]>;
   getProduct(slug: string, opts?: ReadOptions): Promise<Product | null>;
 
-  listReleases(opts?: ReadOptions & { project?: string }): Promise<Release[]>;
+  listReleases(opts?: ReadOptions & { project?: string; product?: string }): Promise<Release[]>;
+
+  listComponents(opts?: ReadOptions): Promise<Component[]>;
+  getComponent(slug: string, opts?: ReadOptions): Promise<Component | null>;
 
   listPages(opts?: ReadOptions & { prefix?: string }): Promise<Page[]>;
   getPage(slug: string, opts?: ReadOptions): Promise<Page | null>;
@@ -38,7 +49,13 @@ export interface ContentStore {
 }
 
 /** Content types a store can hold; `data`'s shape per type lives in schemas.ts. */
-export type ContentType = "site" | "product" | "release" | "page" | "menu";
+export type ContentType =
+  | "site"
+  | "product"
+  | "component"
+  | "release"
+  | "page"
+  | "menu";
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */
 export interface ContentRecord {
