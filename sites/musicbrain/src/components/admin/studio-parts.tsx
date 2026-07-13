@@ -197,7 +197,7 @@ export function StudioSidebar() {
   const widget = sel ? rows[sel.r]?.cells[sel.c]?.widgets[sel.w] : undefined;
 
   return (
-    <aside className="w-80 shrink-0 self-start rounded-xl border border-line bg-surface p-4">
+    <aside className="sticky top-4 max-h-[calc(100vh-2rem)] w-80 shrink-0 self-start overflow-y-auto rounded-xl border border-line bg-surface p-4">
       {sel && widget ? (
         <WidgetPane
           key={`${sel.r}-${sel.c}-${sel.w}-${widget.type}`}

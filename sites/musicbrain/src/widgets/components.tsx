@@ -3,10 +3,16 @@ import type { Page } from "@imprint/content-core";
 import { store } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { StatusBadge } from "@/components/status-badge";
+import { BoardCanvas } from "./board-canvas";
 import type {
   ApiConfig,
+  BoardConfig,
+  CalloutConfig,
+  EmbedConfig,
+  ImageConfig,
   ProductsConfig,
   ReleasesConfig,
+  TableConfig,
   TextConfig,
   TreeNode,
   TreeviewConfig,
@@ -44,6 +50,118 @@ async function TextWidget({ config }: { config: TextConfig }) {
   return (
     <WidgetFrame title={config.title}>
       <Markdown>{config.markdown}</Markdown>
+    </WidgetFrame>
+  );
+}
+
+async function TableWidget({ config }: { config: TableConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse text-sm">
+          {config.headers.length > 0 && (
+            <thead>
+              <tr className="border-b border-line text-left">
+                {config.headers.map((h, i) => (
+                  <th key={i} className="py-2 pr-4 font-medium text-muted">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {config.rows.map((row, r) => (
+              <tr
+                key={r}
+                className={`border-b border-line ${
+                  config.striped && r % 2 === 1 ? "bg-background/50" : ""
+                }`}
+              >
+                {row.map((cell, c) => (
+                  <td key={c} className="py-2 pr-4 align-top">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function ImageWidget({ config }: { config: ImageConfig }) {
+  return (
+    <WidgetFrame>
+      <figure>
+        {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary external/public src, no loader config */}
+        <img
+          src={config.src}
+          alt={config.alt}
+          style={config.maxWidth ? { maxWidth: config.maxWidth } : undefined}
+          className="h-auto max-w-full rounded-lg"
+        />
+        {config.caption && (
+          <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>
+        )}
+      </figure>
+    </WidgetFrame>
+  );
+}
+
+async function BoardWidget({ config }: { config: BoardConfig }) {
+  // Thin server shell: the hover interaction lives in the client island.
+  return (
+    <WidgetFrame title={config.title}>
+      <BoardCanvas
+        image={config.image}
+        alt={config.alt}
+        points={config.points}
+        mode={config.mode}
+      />
+    </WidgetFrame>
+  );
+}
+
+const CALLOUT_TONES: Record<CalloutConfig["tone"], string> = {
+  accent: "border-accent/40 bg-accent/10",
+  warning: "border-amber-400/40 bg-amber-400/10",
+  info: "border-sky-400/40 bg-sky-400/10",
+  muted: "border-line bg-surface",
+};
+
+async function CalloutWidget({ config }: { config: CalloutConfig }) {
+  return (
+    <section className={`rounded-xl border p-5 ${CALLOUT_TONES[config.tone]}`}>
+      {config.title && (
+        <h2 className="mb-2 text-lg font-semibold tracking-tight">{config.title}</h2>
+      )}
+      <Markdown>{config.markdown}</Markdown>
+      {config.buttonLabel && config.buttonUrl && (
+        <a
+          href={config.buttonUrl}
+          className="mt-4 inline-block rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background hover:bg-accent-strong"
+        >
+          {config.buttonLabel}
+        </a>
+      )}
+    </section>
+  );
+}
+
+async function EmbedWidget({ config }: { config: EmbedConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <iframe
+        src={config.url}
+        height={config.height}
+        className="w-full rounded-lg border border-line"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        loading="lazy"
+        title={config.title ?? "Embedded content"}
+      />
     </WidgetFrame>
   );
 }
@@ -225,6 +343,11 @@ async function ProductsWidget({ config }: { config: ProductsConfig }) {
  */
 export const widgetComponents: Record<string, WidgetComponent> = {
   text: TextWidget as WidgetComponent,
+  table: TableWidget as WidgetComponent,
+  image: ImageWidget as WidgetComponent,
+  board: BoardWidget as WidgetComponent,
+  callout: CalloutWidget as WidgetComponent,
+  embed: EmbedWidget as WidgetComponent,
   treeview: TreeviewWidget as WidgetComponent,
   api: ApiWidget as WidgetComponent,
   releases: ReleasesWidget as WidgetComponent,
