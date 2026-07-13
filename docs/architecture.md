@@ -131,8 +131,9 @@ flowchart LR
   `"use client"`-eiland erin; `treeview`/`api` hebben dat niet nodig, een
   geannoteerde-afbeelding-widget wel.
 - Catalogus van musicbrain: `text`, `table` (met custom grid-editor),
-  `image`, `callout`/CTA, `embed` (iframe), `treeview`, `api` (JSON-endpoint
-  met veldselectie), `releases`, `products`.
+  `image`, `callout`/CTA, `embed` (iframe), `board` (geannoteerde render),
+  `boardspec` (rendert een board-spec), `treeview`, `api` (JSON-endpoint met
+  veldselectie), `releases`, `products`.
 
 ## 3b. Product / component / release
 
@@ -181,15 +182,28 @@ Modelleerkeuzes (naar het UML van Mark):
 
 **board-spec** (hardware-documentatie, D1–D10) is de eerste gedifferentieerde
 documentatievorm: een eigen contenttype voor de machinaal gegenereerde
-bord-info (connectors, nets, gerenderde SVG's/PNG's, proza-secties, fab-info).
-Eén board-spec **per ComponentVersion** (slug `<component>@<versie>`); de
-`ComponentVersion` verwijst er optioneel naar via `spec`, en de board-spec
-verwijst terug naar zijn component (RelationRule `board-spec.component →
-component`). De technische kern is taalneutraal, alleen de `sections` zijn
-vertaalbaar (S9). Assets zitten nu als URL in het schema; het uploaden ervan
-(een `AssetStore`-interface + multipart-ingest) is een volgende stap. De
-`board`-widget kan per punt een `svgRef` (pinout-SVG) tonen i.p.v. markdown
-(D10).
+bord-info (connectors, nets, gerenderde SVG's/PNG's, proza-secties, fab-info,
+hotspot-punten). Eén board-spec **per ComponentVersion** (slug
+`<component>@<versie>`); de `ComponentVersion` verwijst er optioneel naar via
+`spec`, en de board-spec verwijst terug naar zijn component (RelationRule
+`board-spec.component → component`). De technische kern is taalneutraal, alleen
+de `sections` zijn vertaalbaar (S9).
+
+- **Assets** (renders, pinout-SVG's) gaan via de **AssetStore** (D7,
+  `content-core/asset-store.ts`): `put(path,bytes) → url`, file-backend nu,
+  MinIO/S3 later als config-wissel. Upload via multipart
+  `POST /api/ingest/board-spec` (D5/D6): de backend slaat de bestanden op,
+  herschrijft asset-namen in de doc naar URL's en doet `putItem`. Serveren via
+  `GET /api/assets/...`.
+- **Weergave** met lage auteurlast: `BoardSpecView` (D9) rendert een board-spec
+  (interactief board of overzicht + connectors-tabel + pinouts + secties). De
+  `boardspec`-widget zet dat op elke pagina met alleen een spec-slug. De
+  `board`-widget-config is bovendien **afleidbaar** uit een board-spec
+  (`boardSpecToBoardConfig`, D4): de punten komen uit `spec.points`, hun detail
+  uit de per-connector pinout-SVG (`svgRef`, D10) — geen JSON-plak meer.
+- **Productpagina**: toont de componenten van het product (herbruikbaar, dus
+  hetzelfde component kan onder meerdere producten hangen) en per component-
+  versie zijn board-spec.
 
 Omdat de `content_items`-tabel generiek is (§4), kostte dit **geen
 DB-migratie**: `component` is gewoon een nieuwe waarde in de `type`-kolom,
@@ -280,14 +294,18 @@ dezelfde query-parameters. API, site en admin kunnen daardoor per definitie
 niet van elkaar afwijken.
 
 - **GET** is read-only en publiek (alleen gepubliceerde content; `?drafts=1`
-  met admin-sessie). Endpoints o.a. `products`, `components`, `releases`
-  (`?product=`), en de afgeleide `itinerary/<product>`.
+  met admin-sessie). Endpoints o.a. `products`, `components`, `board-specs`
+  (`?component=`), `releases` (`?product=`), en de afgeleide
+  `itinerary/<product>`.
 - **POST** is de schrijfkant voor product-projecten: `Authorization: Bearer
   <INGEST_TOKEN>` (constant-time check; leeg token = schrijven uit). Eén item
-  via `POST /api/content/<type>/<slug>`, of een bundle via `POST /api/content`
-  met `{ product?, components?, releases? }`. Elke put loopt door de
-  zod-validatie en wordt een nieuwe bitemporale versie — dus ook machine-
-  posts hebben volledige historie en rollback.
+  via `POST /api/content/<type>/<slug>`, een bundle via `POST /api/content`
+  met `{ product?, components?, releases? }`, of assets+doc via multipart
+  `POST /api/ingest/board-spec`. Elke put loopt door de zod-validatie + de
+  referentiecheck en wordt een nieuwe bitemporale versie — dus ook machine-
+  posts hebben volledige historie en rollback. Schrijven revalideert de
+  site-cache. Een handleiding voor de consument staat in
+  [mmb-ingest-guide.md](mmb-ingest-guide.md).
 
 ## 5. Admin (/admin)
 

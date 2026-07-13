@@ -184,6 +184,22 @@ export const BoardSpecSchema = z.object({
       pinouts: z.record(z.string(), z.string()).default({}),
     })
     .default({ pinouts: {} }),
+  /**
+   * Hotspot positions on the render (relative 0..1), so a board widget can be
+   * derived (D4). `connector` auto-links that connector's pinout SVG (D10).
+   */
+  points: z
+    .array(
+      z.object({
+        x: z.number().min(0).max(1),
+        y: z.number().min(0).max(1),
+        label: z.string().optional(),
+        /** Connector ref (e.g. "J1"); links assets.pinouts[ref] as the detail. */
+        connector: z.string().optional(),
+        markdown: z.string().optional(),
+      })
+    )
+    .default([]),
   /** README-style prose blocks (D4); translatable. */
   sections: z.array(z.object({ heading: z.string(), markdown: z.string() })).default([]),
   /** Fab/order info (D5). */

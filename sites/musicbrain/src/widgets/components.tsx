@@ -4,9 +4,11 @@ import { store } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { StatusBadge } from "@/components/status-badge";
 import { BoardCanvas } from "./board-canvas";
+import { BoardSpecView } from "@/components/board-spec-view";
 import type {
   ApiConfig,
   BoardConfig,
+  BoardSpecConfig,
   CalloutConfig,
   EmbedConfig,
   ImageConfig,
@@ -121,6 +123,19 @@ async function BoardWidget({ config }: { config: BoardConfig }) {
         points={config.points}
         mode={config.mode}
       />
+    </WidgetFrame>
+  );
+}
+
+async function BoardSpecWidget({ config }: { config: BoardSpecConfig }) {
+  const spec = await store.getBoardSpec(config.spec);
+  return (
+    <WidgetFrame title={config.title}>
+      {spec ? (
+        <BoardSpecView spec={spec} />
+      ) : (
+        <p className="text-sm text-muted">No board-spec &quot;{config.spec}&quot;.</p>
+      )}
     </WidgetFrame>
   );
 }
@@ -346,6 +361,7 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   table: TableWidget as WidgetComponent,
   image: ImageWidget as WidgetComponent,
   board: BoardWidget as WidgetComponent,
+  boardspec: BoardSpecWidget as WidgetComponent,
   callout: CalloutWidget as WidgetComponent,
   embed: EmbedWidget as WidgetComponent,
   treeview: TreeviewWidget as WidgetComponent,

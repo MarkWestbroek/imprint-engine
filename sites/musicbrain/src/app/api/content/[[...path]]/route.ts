@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { computeItinerary, Locale, type ContentType } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
@@ -173,6 +174,7 @@ export async function POST(
   } catch (err) {
     return error(422, err instanceof Error ? err.message : String(err));
   }
+  revalidatePath("/", "layout");
   return json({ ok: true, type, slug }, false);
 }
 
@@ -209,5 +211,6 @@ async function ingestBundle(body: Record<string, unknown>) {
   } catch (err) {
     return error(422, err instanceof Error ? err.message : String(err));
   }
+  revalidatePath("/", "layout");
   return json({ ok: true, written }, false);
 }

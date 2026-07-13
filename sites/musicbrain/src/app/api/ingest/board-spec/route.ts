@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { BoardSpecSchema } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
@@ -84,5 +85,6 @@ export async function POST(req: NextRequest) {
     return error(422, err instanceof Error ? err.message : String(err));
   }
 
+  revalidatePath("/", "layout"); // flush the public site's cache
   return NextResponse.json({ ok: true, slug, assets: urls });
 }

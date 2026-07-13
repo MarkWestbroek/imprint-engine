@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import type { BoardSpec, Component } from "@imprint/content-core";
 import { store } from "@/lib/content";
 import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
+import { BoardSpecView } from "@/components/board-spec-view";
 
 type Props = { params: Promise<{ slug: string }> };
+
+/** A component plus any board-specs found for its versions. */
+async function loadComponent(
+  slug: string
+): Promise<{ component: Component; specs: { version: string; spec: BoardSpec }[] } | null> {
+  const component = await store.getComponent(slug);
+  if (!component) return null;
+  const specs: { version: string; spec: BoardSpec }[] = [];
+  for (const v of component.versions) {
+    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`);
+    if (spec) specs.push({ version: v.number, spec });
+  }
+  return { component, specs };
+}
 
 export async function generateStaticParams() {
   const products = await store.listProducts();
@@ -24,6 +40,9 @@ export default async function ProductPage({ params }: Props) {
   if (!product) notFound();
 
   const releases = await store.listReleases({ project: product.slug });
+  const components = (
+    await Promise.all(product.components.map(loadComponent))
+  ).filter((c): c is NonNullable<typeof c> => c !== null);
 
   return (
     <article className="max-w-3xl space-y-10">
@@ -52,6 +71,39 @@ export default async function ProductPage({ params }: Props) {
               ))}
             </tbody>
           </table>
+        </section>
+      )}
+
+      {components.length > 0 && (
+        <section>
+          <h2 className="text-xl font-semibold tracking-tight">Components</h2>
+          <div className="mt-4 space-y-4">
+            {components.map(({ component, specs }) => (
+              <div key={component.slug} className="rounded-xl border border-line p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h3 className="font-semibold">{component.name}</h3>
+                  {component.versions.length > 0 && (
+                    <span className="font-mono text-xs text-muted">
+                      {component.versions.map((v) => v.number).join(", ")}
+                    </span>
+                  )}
+                </div>
+                {component.description && (
+                  <p className="mt-1 text-sm text-muted">{component.description}</p>
+                )}
+                {specs.map(({ version, spec }) => (
+                  <details key={version} className="mt-3">
+                    <summary className="cursor-pointer text-sm text-accent">
+                      Board {version}
+                    </summary>
+                    <div className="mt-3">
+                      <BoardSpecView spec={spec} compact />
+                    </div>
+                  </details>
+                ))}
+              </div>
+            ))}
+          </div>
         </section>
       )}
 

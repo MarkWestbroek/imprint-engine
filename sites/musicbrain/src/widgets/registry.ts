@@ -103,6 +103,13 @@ export const EmbedConfig = z.object({
 });
 export type EmbedConfig = z.infer<typeof EmbedConfig>;
 
+export const BoardSpecConfig = z.object({
+  title: z.string().optional(),
+  /** Slug of the board-spec to render, e.g. "busboard-v2@v2.0". */
+  spec: z.string().min(1),
+});
+export type BoardSpecConfig = z.infer<typeof BoardSpecConfig>;
+
 /**
  * Annotated board image: a (3D PCB) render with hotspots that reveal detail
  * on hover. Coordinates are relative (0..1) so the annotation stays put at
@@ -151,6 +158,7 @@ export const widgetCatalog = [
   { name: "table", label: "Table", version: "1.0.0", help: "A data table; edit cells, add rows/columns.", configSchema: TableConfig },
   { name: "image", label: "Image", version: "1.0.0", help: "A single image with optional caption.", configSchema: ImageConfig },
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
+  { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
   { name: "callout", label: "Callout / CTA", version: "1.0.0", help: "A coloured box with markdown and an optional button.", configSchema: CalloutConfig },
   { name: "embed", label: "Embed (iframe)", version: "1.0.0", help: "Embed an external page in a sandboxed iframe.", configSchema: EmbedConfig },
   { name: "treeview", label: "Treeview", version: "1.0.0", help: "A nested link tree; can auto-build from page slugs.", configSchema: TreeviewConfig },
