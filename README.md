@@ -92,13 +92,19 @@ S5) en `?drafts=1` (alleen met admin-sessie).
 ```
 POST /api/content/<type>/<slug>   één item (body = de content)
 POST /api/content                 bundle: { product?, components?, releases? }
+POST /api/ingest/board-spec       multipart: doc (JSON) + de asset-bestanden
 ```
 Ingestbare types: `product`, `component`, `board-spec`, `release`, `page`.
-Elke post loopt
-door de zod-validatie en wordt een nieuwe bitemporale versie (dus volledige
-historie + rollback, ook voor machine-posts). Voorbeeld: een hardware-repo
-post in één keer zijn product, zijn (geneste) componenten en een release met
-per component de meegeleverde versie.
+Elke post loopt door de zod-validatie en wordt een nieuwe bitemporale versie
+(dus volledige historie + rollback, ook voor machine-posts). Voorbeeld: een
+hardware-repo post in één keer zijn product, zijn (geneste) componenten en een
+release met per component de meegeleverde versie.
+
+**Assets** (bord-renders, pinout-SVG's) gaan via de multipart-ingest: de
+`doc`-JSON verwijst naar bestandsnamen, de backend slaat elk bestand op via de
+**AssetStore** en herschrijft de namen naar URL's. De file-backend schrijft
+naar `ASSET_ROOT` en serveert via `/api/assets/...`; MinIO/S3 later is een
+config-wissel (`.env`), geen herschrijving.
 
 ## Deploy naar Plesk
 
@@ -110,9 +116,10 @@ de app wijst gewoon naar de submap:
    `npm ci && npm run build && npm run db:migrate && touch sites/musicbrain/tmp/restart.txt`
 2. **Node.js-extensie:** Application root = `imprint/sites/musicbrain`,
    startup file = `server.js` (Passenger start geen npm-scripts, wél dit
-   bestand), Node ≥ 20. Zet `DATABASE_URL` en `SESSION_SECRET` als
-   environment-variabelen in de Node.js-instellingen (dan is er geen
-   `.env.local` op de server nodig).
+   bestand), Node ≥ 20. Zet `DATABASE_URL`, `SESSION_SECRET`, `INGEST_TOKEN`
+   en (voor bord-assets) `ASSET_ROOT` als environment-variabelen in de
+   Node.js-instellingen — wijs `ASSET_ROOT` naar een map búiten de app zodat
+   uploads een redeploy overleven.
 3. **Eenmalig:** database aanmaken in Plesk (zie `.env.example` voor de
    URL-vorm) en `npm run db:seed` draaien voor de startcontent + admin-user.
 

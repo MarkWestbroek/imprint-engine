@@ -1,8 +1,7 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { computeItinerary, Locale, type ContentType } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
-import { canEdit, getSession } from "@/lib/auth";
+import { canEdit, checkIngestToken, getSession } from "@/lib/auth";
 
 /**
  * Content API over the same ContentStore the pages use (S1), so API, site and
@@ -147,21 +146,11 @@ export async function GET(
   }
 }
 
-/** Bearer-token check for machine-to-machine writes (constant-time). */
-function authorized(req: NextRequest): boolean {
-  const token = process.env.INGEST_TOKEN;
-  if (!token) return false; // writes disabled until a token is configured
-  const provided = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
-  const a = Buffer.from(provided);
-  const b = Buffer.from(token);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-
 export async function POST(
   req: NextRequest,
   ctx: { params: Promise<{ path?: string[] }> }
 ) {
-  if (!authorized(req)) return error(401, "Missing or invalid ingest token");
+  if (!checkIngestToken(req)) return error(401, "Missing or invalid ingest token");
   if (!writableStore) return error(503, "Writes require DATABASE_URL");
 
   const body: unknown = await req.json().catch(() => null);

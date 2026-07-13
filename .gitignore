@@ -17,6 +17,9 @@ build/
 .DS_Store
 Thumbs.db
 
+# uploaded assets (AssetStore file backend) — runtime data, not source
+.assets/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

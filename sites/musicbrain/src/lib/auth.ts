@@ -98,3 +98,16 @@ export async function getSession(): Promise<Session | null> {
 export function canEdit(session: Session | null): session is Session {
   return session !== null && (session.role === "admin" || session.role === "editor");
 }
+
+/**
+ * Bearer-token check for machine-to-machine writes (product-projects posting
+ * content/assets). Constant-time; an unset INGEST_TOKEN disables writes.
+ */
+export function checkIngestToken(req: Request): boolean {
+  const token = process.env.INGEST_TOKEN;
+  if (!token) return false;
+  const provided = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const a = Buffer.from(provided);
+  const b = Buffer.from(token);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
