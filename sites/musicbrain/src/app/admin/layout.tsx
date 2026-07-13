@@ -14,6 +14,7 @@ const NAV = [
   { href: "/admin/component", label: "Components" },
   { href: "/admin/release", label: "Releases" },
   { href: "/admin/menu", label: "Menus" },
+  { href: "/admin/relations", label: "Relations" },
   { href: "/admin/site", label: "Site" },
 ];
 

@@ -185,12 +185,14 @@ async function ingestBundle(body: Record<string, unknown>) {
   };
 
   try {
-    const product = body.product as Record<string, unknown> | undefined;
-    if (product) await record("product", String(product.slug ?? ""), product);
-
+    // Order matters when references are enforced: components exist before the
+    // product/releases that point at them.
     for (const c of (body.components as Record<string, unknown>[] | undefined) ?? []) {
       await record("component", String(c.slug ?? ""), c);
     }
+    const product = body.product as Record<string, unknown> | undefined;
+    if (product) await record("product", String(product.slug ?? ""), product);
+
     for (const r of (body.releases as Record<string, unknown>[] | undefined) ?? []) {
       const slug =
         (r.slug as string | undefined) ??

@@ -29,6 +29,8 @@ function emptyData(type: ContentType): Record<string, unknown> {
       return { name: "", items: [] };
     case "page":
       return {};
+    case "relations":
+      return { rules: [] };
   }
 }
 

@@ -55,7 +55,8 @@ export type ContentType =
   | "component"
   | "release"
   | "page"
-  | "menu";
+  | "menu"
+  | "relations";
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */
 export interface ContentRecord {

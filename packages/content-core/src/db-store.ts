@@ -19,6 +19,11 @@ import {
   type SiteConfig,
 } from "./schemas";
 import { PageLayoutSchema, type WidgetTypeRegistry } from "./widgets";
+import {
+  RelationsDoc,
+  validateReferences,
+  type RelationRule,
+} from "./relations";
 import type {
   ContentRecord,
   ContentStore,
@@ -166,6 +171,7 @@ export class DbContentStore implements WritableContentStore {
     opts: { lang?: string; validFrom?: Date; validTo?: Date | null; by?: string } = {}
   ): Promise<void> {
     const parsed = this.validate(type, data);
+    await this.checkReferences(type, parsed);
     const lang = opts.lang ?? "en";
     const now = new Date();
     await this.db.transaction(async (tx) => {
@@ -276,6 +282,8 @@ export class DbContentStore implements WritableContentStore {
         return ReleaseSchema.parse(data);
       case "menu":
         return MenuSchema.parse(data);
+      case "relations":
+        return RelationsDoc.parse(data);
       case "page": {
         const page = PageRecordSchema.parse(data);
         if (page.layout && this.opts.widgets) this.opts.widgets.parseLayout(page.layout);
@@ -283,6 +291,30 @@ export class DbContentStore implements WritableContentStore {
       }
       default:
         throw new Error(`Unknown content type "${String(type satisfies never)}"`);
+    }
+  }
+
+  /** The configurable relation rules (content type "relations", slug "relations"). */
+  private async loadRelationRules(): Promise<RelationRule[]> {
+    const item = await this.getItem("relations", "relations");
+    return item ? RelationsDoc.parse(item.data).rules : [];
+  }
+
+  /**
+   * Enforce referential integrity on write: any enforced reference must point
+   * at content that exists. Skipped entirely when no rules are configured.
+   */
+  private async checkReferences(type: ContentType, data: unknown): Promise<void> {
+    if (type === "relations") return;
+    const rules = await this.loadRelationRules();
+    if (rules.length === 0) return;
+    const missing = await validateReferences(rules, type, data, async (toType) => {
+      const items = await this.listItems(toType as ContentType);
+      return new Set(items.map((i) => i.slug));
+    });
+    if (missing.length > 0) {
+      const detail = missing.map((m) => `${m.field} → ${m.toType}/${m.slug}`).join(", ");
+      throw new Error(`References not found: ${detail}`);
     }
   }
 }

@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { ContentType } from "@imprint/content-core";
+import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
 import {
   authenticate,
   canEdit,
@@ -13,6 +13,25 @@ import {
 import { writableStore } from "@/lib/content";
 
 export type ActionResult = { ok: boolean; error?: string };
+
+/** Save the content-type relation rules (edited in /admin/relations). */
+export async function saveRelationsAction(
+  _prev: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> {
+  const session = await getSession();
+  if (!canEdit(session)) return { ok: false, error: "Not signed in" };
+  if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
+  try {
+    const rules = JSON.parse(String(formData.get("rules") ?? "[]")) as RelationRule[];
+    const doc = RelationsDoc.parse({ rules });
+    await writableStore.putItem("relations", "relations", doc, { by: session.name });
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+  revalidatePath("/admin/relations");
+  return { ok: true };
+}
 
 const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "release", "page", "menu"];
 

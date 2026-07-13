@@ -44,3 +44,8 @@
 - Admin-formulieren worden gegenereerd uit de zod-schema's
   (`src/lib/admin-schemas.ts` → `SchemaForm`); een nieuw contentveld hoort
   dus in het schema, niet als los formulierveld in de admin.
+- Relaties tussen contenttypen zijn zachte slug-referenties; integriteit
+  wordt bewaakt door RelationRules (`content-core/src/relations.ts`),
+  opgeslagen als `type: "relations"` en bewerkbaar in `/admin/relations`.
+  `DbContentStore.putItem` weigert een enforced verwijzing naar niet-
+  bestaande content. Nieuw type met refs = een regel toevoegen, geen code.

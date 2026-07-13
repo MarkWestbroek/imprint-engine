@@ -180,6 +180,23 @@ Omdat de `content_items`-tabel generiek is (§4), kostte dit **geen
 DB-migratie**: `component` is gewoon een nieuwe waarde in de `type`-kolom,
 met een eigen zod-schema.
 
+### Relaties tussen contenttypen
+
+Referenties tussen types (`release → product`, `product → components`,
+`component → children`, …) zijn **zachte slug-verwijzingen** in de JSON,
+maar hun integriteit is bewaakbaar. Een set **RelationRules** verklaart welk
+veld van welk type naar welk ander type wijst; de store controleert dat bij
+elke schrijfactie ([relations.ts](../packages/content-core/src/relations.ts),
+`validateReferences`). De regels zijn zélf content (`type: "relations"`),
+bewerkbaar in **/admin/relations** — dus configureerbaar, niet hardgecodeerd.
+
+- Veldpaden: `product` (slug), `components[]` (array van slugs),
+  `components[].component` (array van objecten met een slug-veld).
+- Per regel een `enforce`-vlag: aan = een verwijzing naar niet-bestaande
+  content weigert de write (422); uit = advies.
+- Machine-ingest post daarom in volgorde: eerst componenten, dan het product,
+  dan de releases (de bundle-POST doet dit al).
+
 ## 4. Opslag: bitemporal-light (§B3)
 
 Eén generieke tabel `content_items`; de payload per type blijft een
