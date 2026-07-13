@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { store } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
+import { displayVersion } from "@/lib/format";
 
 export const metadata: Metadata = {
   title: "Releases",
@@ -26,7 +27,7 @@ export default async function ReleasesPage() {
           >
             <header className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-mono text-lg font-semibold text-accent">
-                {release.project} v{release.version}
+                {release.project} {displayVersion(release.version)}
               </h2>
               <p className="text-sm text-muted">
                 {release.date} · {release.channel}

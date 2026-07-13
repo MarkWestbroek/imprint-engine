@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { store } from "@/lib/content";
+import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { displayVersion } from "@/lib/format";
 
 /**
  * Default view for a component (option B: one route per content type). Shows
@@ -36,6 +37,20 @@ export default async function ComponentPage({ params }: Props) {
     if (spec) specs.push({ version: v.number, spec });
   }
 
+  // Reverse navigation: a component can sit in several products/releases.
+  const products = writableStore
+    ? (await writableStore.listItems("product")).filter((p) =>
+        ((p.data as { components?: string[] }).components ?? []).includes(slug)
+      )
+    : [];
+  const releases = writableStore
+    ? (await writableStore.listItems("release")).filter((r) =>
+        ((r.data as { components?: { component: string }[] }).components ?? []).some(
+          (c) => c.component === slug
+        )
+      )
+    : [];
+
   return (
     <article className="max-w-3xl space-y-8">
       <header>
@@ -49,6 +64,43 @@ export default async function ComponentPage({ params }: Props) {
       </header>
 
       {component.description && <Markdown>{component.description}</Markdown>}
+
+      {(products.length > 0 || releases.length > 0) && (
+        <section className="rounded-xl border border-line bg-surface p-4 text-sm">
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">
+            Used in
+          </h2>
+          <div className="flex flex-wrap gap-x-6 gap-y-2">
+            {products.length > 0 && (
+              <div>
+                <span className="text-muted">Products: </span>
+                {products.map((p, i) => (
+                  <span key={p.slug}>
+                    {i > 0 && ", "}
+                    <Link href={`/products/${p.slug}`} className="text-accent hover:underline">
+                      {String((p.data as { name?: string }).name ?? p.slug)}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+            {releases.length > 0 && (
+              <div>
+                <span className="text-muted">Releases: </span>
+                {releases.map((r, i) => (
+                  <span key={r.slug}>
+                    {i > 0 && ", "}
+                    <Link href={`/releases/${r.slug}`} className="font-mono text-accent hover:underline">
+                      {String((r.data as { project?: string }).project ?? r.slug)}{" "}
+                      {displayVersion(String((r.data as { version?: string }).version ?? ""))}
+                    </Link>
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {component.children.length > 0 && (
         <section>

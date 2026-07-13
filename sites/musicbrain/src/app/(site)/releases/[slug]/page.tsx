@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ReleaseSchema, type Release } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
+import { displayVersion } from "@/lib/format";
 
 /**
  * Default view for a release. Links up to its product and down to each
@@ -33,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const release = await getRelease(slug);
   if (!release) return {};
-  return { title: `${release.project} v${release.version}` };
+  return { title: `${release.project} ${displayVersion(release.version)}` };
 }
 
 export default async function ReleasePage({ params }: Props) {
@@ -46,7 +47,7 @@ export default async function ReleasePage({ params }: Props) {
       <header>
         <p className="text-sm text-muted">Release</p>
         <h1 className="font-mono text-3xl font-semibold tracking-tight">
-          {release.project} v{release.version}
+          {release.project} {displayVersion(release.version)}
         </h1>
         <p className="mt-1 text-sm text-muted">
           {release.date} · {release.channel}

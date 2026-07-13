@@ -6,6 +6,7 @@ import { store, writableStore } from "@/lib/content";
 import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { displayVersion } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -124,7 +125,7 @@ export default async function ProductPage({ params }: Props) {
             {releases.map((r) => (
               <li key={r.slug}>
                 <Link href={`/releases/${r.slug}`} className="font-mono text-accent hover:underline">
-                  v{r.data.version}
+                  {displayVersion(r.data.version)}
                 </Link>
                 <span className="text-muted"> · {r.data.date} · {r.data.channel}</span>
               </li>

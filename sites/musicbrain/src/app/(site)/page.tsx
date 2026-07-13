@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { store } from "@/lib/content";
 import { StatusBadge } from "@/components/status-badge";
+import { displayVersion } from "@/lib/format";
 
 export default async function Home() {
   const [site, products, releases] = await Promise.all([
@@ -66,7 +67,7 @@ export default async function Home() {
           <h2 className="text-2xl font-semibold tracking-tight">Latest release</h2>
           <div className="mt-4 rounded-xl border border-line bg-surface p-5">
             <p className="font-mono text-sm text-accent">
-              {latest.project} v{latest.version} · {latest.date}
+              {latest.project} {displayVersion(latest.version)} · {latest.date}
             </p>
             <ul className="mt-2 list-disc pl-5 text-sm text-muted">
               {latest.highlights.map((h) => (
