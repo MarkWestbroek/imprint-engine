@@ -137,14 +137,32 @@ async function BoardWidget({ config }: { config: BoardConfig }) {
   );
 }
 
-async function BoardSpecWidget({ config }: { config: BoardSpecConfig }) {
-  const spec = await store.getBoardSpec(config.spec);
+/** The spec slug, from config or derived from a subject component's version. */
+function resolveSpecSlug(config: BoardSpecConfig, subject?: unknown): string | undefined {
+  if (config.spec) return config.spec;
+  const s = subject as { slug?: string; versions?: { number: string; spec?: string }[] } | undefined;
+  const version = s?.versions?.[0];
+  if (s?.slug && version) return version.spec ?? `${s.slug}@${version.number}`;
+  return undefined;
+}
+
+async function BoardSpecWidget({
+  config,
+  subject,
+}: {
+  config: BoardSpecConfig;
+  subject?: unknown;
+}) {
+  const slug = resolveSpecSlug(config, subject);
+  const spec = slug ? await store.getBoardSpec(slug) : null;
   return (
     <WidgetFrame title={config.title}>
       {spec ? (
         <BoardSpecView spec={spec} />
       ) : (
-        <p className="text-sm text-muted">No board-spec &quot;{config.spec}&quot;.</p>
+        <p className="text-sm text-muted">
+          {slug ? `No board-spec "${slug}".` : "No board-spec (set one, or use on a component)."}
+        </p>
       )}
     </WidgetFrame>
   );

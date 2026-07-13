@@ -206,7 +206,14 @@ de `sections` zijn vertaalbaar (S9).
 - **Navigatie (per-type pagina's, "optie B"):** elk contenttype heeft een
   eigen route — `/products/<slug>`, `/components/<slug>`, `/releases/<slug>` —
   die het item als *subject* rendert. De keten is klikbaar: productpagina →
-  releases van dat product → release → zijn componenten → component → board.
+  releases van dat product → release → zijn componenten → component → board
+  (en terug: de componentpagina toont in welke producten/releases hij zit).
+- **Studio-bewerkbare default-views:** een route gebruikt de layout van de
+  pagina `_view/<type>` (in de studio samengesteld) met het item als subject;
+  bestaat die niet, dan valt hij terug op de hand-gecodeerde weergave. In de
+  studio kies je "preview als <voorbeeld-item>" zodat de widgets zich vullen
+  terwijl je de template ontwerpt. `_view/*`-pagina's zijn niet publiek
+  bereikbaar. Beheer via **/admin → Default views**.
 - **`list`-widget** volgt de content-graaf voor die navigatie: modus `query`
   (items van een type waar `veld == waarde`, bijv. releases van dit product)
   of `refs` (een slug-array op de subject, bijv. `release.components[]`), met

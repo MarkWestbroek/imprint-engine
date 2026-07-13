@@ -124,7 +124,12 @@ curl -X POST $BASE/api/ingest/board-spec \
   -F "f3=@pinouts/pinout-J1.svg"
 ```
 
-## 4. Releases posten (optioneel)
+## 4. Releases posten
+
+De release is de schakel die **product ↔ component-versies** verbindt: hij
+noteert welke componentversies in welke uitgave van het product zitten. Zonder
+release toont de site wél het product en zijn componenten, maar niet "welke
+versie zat in v0.2". Voor het complete pad post je dus ook de releases.
 
 ```
 POST /api/content/release/<project>-<versie>
@@ -132,16 +137,25 @@ POST /api/content/release/<project>-<versie>
   "date": "2026-06-01",
   "components": [ { "component": "busboard-v2", "version": "v2.1" } ] }
 ```
-`product` en elke `components[].component` moeten bestaan (anders 422).
+`product` en elke `components[].component` moeten bestaan (anders 422) — vandaar
+de volgorde hieronder.
 
-## Samengevat: de happy path van een MMB-publicatierun
+## Het volledige pad (product → release → component → board)
 
-1. `POST` alle componenten (children/subcomponenten eerst, dan de ouders met
-   hun `children`-slugs).
-2. Per product (`cortex`, `reflex`, …): read-modify-post om de component-slugs
-   in `components` te zetten (de mapping die jij uit de BOM kent).
-3. `POST /api/ingest/board-spec` per bord-revisie (multipart, met de assets).
-4. Optioneel `POST` releases.
+MMB kan de **hele keten** posten; alle drie de niveaus zijn schrijfbaar. In
+deze volgorde (elke stap verwijst alleen naar wat er al staat):
 
-Alles idempotent: opnieuw draaien maakt nieuwe versies, overschrijft niets in
-de historie.
+1. **Componenten** — `POST /api/content/component/<slug>` (children/sub-
+   componenten eerst, dan de ouders met hun `children`-slugs).
+2. **Board-specs** — `POST /api/ingest/board-spec` per bord-revisie (multipart,
+   met de assets). Verwijst naar het component uit stap 1.
+3. **Producten koppelen** — per product read-modify-post om de component-slugs
+   in `components` te zetten (de BOM-mapping die jij kent). Het product zelf
+   mag je aanmaken of, als Imprint 'm bezit, alleen aanvullen.
+4. **Releases** — `POST /api/content/release/<slug>` met `product` +
+   `components[]{component,version}`. Verwijst naar product (stap 3) en
+   componenten (stap 1).
+
+Daarmee is de site-navigatie volledig klikbaar: productpagina → releases →
+release → componenten → board. Alles idempotent: opnieuw draaien maakt nieuwe
+versies en overschrijft niets in de historie.

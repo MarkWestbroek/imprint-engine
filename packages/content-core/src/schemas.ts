@@ -217,7 +217,9 @@ export type BoardSpec = z.infer<typeof BoardSpecSchema>;
 
 /** Frontmatter for free-form pages and devlog posts. */
 export const PageMetaSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-/]+$/),
+  // underscore allowed so reserved slugs like "_view/component" (default-view
+  // templates) are valid page slugs.
+  slug: z.string().regex(/^[a-z0-9_/-]+$/),
   lang: Locale.default("en"),
   title: z.string().min(1),
   description: z.string().default(""),

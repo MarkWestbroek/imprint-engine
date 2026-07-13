@@ -14,9 +14,14 @@ type Props = { params: Promise<{ slug: string[] }> };
 
 // dynamicParams stays on (default): pages created in /admin must appear
 // without a rebuild. Unknown slugs still 404 via notFound() below.
+// "_view/*" pages are per-type default-view templates, not public pages.
+const isViewTemplate = (slug: string) => slug.startsWith("_view/");
+
 export async function generateStaticParams() {
   const pages = await store.listPages();
-  return pages.map((p) => ({ slug: p.slug.split("/") }));
+  return pages
+    .filter((p) => !isViewTemplate(p.slug))
+    .map((p) => ({ slug: p.slug.split("/") }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -28,7 +33,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ContentPage({ params }: Props) {
   const { slug } = await params;
-  const page = await store.getPage(slug.join("/"));
+  const joined = slug.join("/");
+  if (isViewTemplate(joined)) notFound(); // template, not a public page
+  const page = await store.getPage(joined);
   if (!page) notFound();
 
   if (page.layout) {

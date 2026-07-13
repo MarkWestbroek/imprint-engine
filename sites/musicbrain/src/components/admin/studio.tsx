@@ -9,10 +9,12 @@ import { widgetRegistry, widgetCatalog } from "@/widgets/registry";
 import { Widget } from "@/components/page-renderer";
 import { Markdown } from "@/components/markdown";
 import { menuToNav, SiteChrome } from "@/components/site-chrome";
+import { viewTargetType } from "@/components/default-view";
 import {
   AddWidgetButton,
   CellChrome,
   InsertRowBar,
+  PreviewAsPicker,
   RowChrome,
   StudioProvider,
   StudioSidebar,
@@ -27,9 +29,30 @@ import {
  * mutation triggers router.refresh(), which re-runs this component — that's
  * the "parameters aanpassen toont meteen het effect" loop.
  */
-export async function PageStudio({ slug, lang }: { slug?: string; lang: string }) {
+export async function PageStudio({
+  slug,
+  lang,
+  previewAs,
+}: {
+  slug?: string;
+  lang: string;
+  /** When editing a default-view template, the sample item to bind as subject. */
+  previewAs?: string;
+}) {
   const session = (await getSession())!; // admin layout guarantees a session
   const key = draftKey(session.name, slug, lang);
+
+  // A page at slug "_view/<type>" is that content type's default view; while
+  // editing it we bind a sample item as the subject so the preview fills in.
+  const targetType = viewTargetType(slug);
+  let subject: unknown;
+  let samples: string[] = [];
+  if (targetType && writableStore) {
+    const items = await writableStore.listItems(targetType);
+    samples = items.map((i) => i.slug);
+    const chosen = previewAs ? items.find((i) => i.slug === previewAs) : items[0];
+    subject = chosen?.data;
+  }
 
   let draft = getDraft(key);
   if (!draft) {
@@ -55,7 +78,9 @@ export async function PageStudio({ slug, lang }: { slug?: string; lang: string }
 
   const site = await store.getSiteConfig();
   const menu = await store.getMenu("main");
-  const title = String(draft.meta.title ?? "") || "Untitled";
+  const title = targetType
+    ? `Default view: ${targetType}`
+    : String(draft.meta.title ?? "") || "Untitled";
 
   return (
     <StudioProvider
@@ -68,6 +93,9 @@ export async function PageStudio({ slug, lang }: { slug?: string; lang: string }
       widgetSchemas={widgetFormSchemas()}
     >
       <StudioTopBar isNew={!slug} />
+      {targetType && (
+        <PreviewAsPicker lang={lang} current={previewAs} samples={samples} />
+      )}
       <div className="flex items-start gap-4">
         <StudioSidebar />
 
@@ -108,7 +136,7 @@ export async function PageStudio({ slug, lang }: { slug?: string; lang: string }
                                 path={{ r, c, w }}
                                 label={widgetLabel(widget.type)}
                               >
-                                <WidgetPreview widget={widget} />
+                                <WidgetPreview widget={widget} subject={subject} />
                               </WidgetShell>
                             ))}
                             <AddWidgetButton r={r} c={c} widgetCount={cell.widgets.length} />
@@ -133,7 +161,7 @@ function widgetLabel(type: string): string {
 }
 
 /** Real viewer when the config validates; a friendly placeholder until then. */
-function WidgetPreview({ widget }: { widget: WidgetInstance }) {
+function WidgetPreview({ widget, subject }: { widget: WidgetInstance; subject?: unknown }) {
   let valid: WidgetInstance;
   try {
     valid = widgetRegistry.parse(widget);
@@ -145,5 +173,5 @@ function WidgetPreview({ widget }: { widget: WidgetInstance }) {
       </div>
     );
   }
-  return <Widget widget={valid} />;
+  return <Widget widget={valid} subject={subject} />;
 }

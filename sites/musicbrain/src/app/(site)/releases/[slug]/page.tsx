@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ReleaseSchema, type Release } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
+import { DefaultView } from "@/components/default-view";
 import { displayVersion } from "@/lib/format";
 
 /**
@@ -42,7 +43,7 @@ export default async function ReleasePage({ params }: Props) {
   const release = await getRelease(slug);
   if (!release) notFound();
 
-  return (
+  const fallback = (
     <article className="max-w-3xl space-y-8">
       <header>
         <p className="text-sm text-muted">Release</p>
@@ -88,5 +89,14 @@ export default async function ReleasePage({ params }: Props) {
         </section>
       )}
     </article>
+  );
+
+  return (
+    <DefaultView
+      type="release"
+      subject={release}
+      title={`${release.project} ${displayVersion(release.version)}`}
+      fallback={fallback}
+    />
   );
 }

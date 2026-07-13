@@ -10,7 +10,7 @@ const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spe
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; previewAs?: string }>;
 };
 
 /** Sensible starting data for a new item, so required fields are visible. */
@@ -45,14 +45,14 @@ function toLocalInput(date: Date | null | undefined): string | undefined {
 
 export default async function AdminEdit({ params, searchParams }: Props) {
   const { type, slug: slugParts } = await params;
-  const { lang } = await searchParams;
+  const { lang, previewAs } = await searchParams;
   if (!CONTENT_TYPES.includes(type as ContentType)) notFound();
   const contentType = type as ContentType;
   const slug = slugParts?.map(decodeURIComponent).join("/");
 
   // Pages get the visual studio (live canvas + sidebar), the rest a form.
   if (contentType === "page") {
-    return <PageStudio slug={slug} lang={lang ?? "en"} />;
+    return <PageStudio slug={slug} lang={lang ?? "en"} previewAs={previewAs} />;
   }
 
   const item = slug

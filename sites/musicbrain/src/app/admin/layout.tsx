@@ -15,6 +15,7 @@ const NAV = [
   { href: "/admin/board-spec", label: "Board specs" },
   { href: "/admin/release", label: "Releases" },
   { href: "/admin/menu", label: "Menus" },
+  { href: "/admin/views", label: "Default views" },
   { href: "/admin/relations", label: "Relations" },
   { href: "/admin/site", label: "Site" },
 ];

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { DefaultView } from "@/components/default-view";
 import { displayVersion } from "@/lib/format";
 
 /**
@@ -51,7 +52,7 @@ export default async function ComponentPage({ params }: Props) {
       )
     : [];
 
-  return (
+  const fallback = (
     <article className="max-w-3xl space-y-8">
       <header>
         <p className="text-sm text-muted">Component</p>
@@ -128,5 +129,9 @@ export default async function ComponentPage({ params }: Props) {
         ) : null
       )}
     </article>
+  );
+
+  return (
+    <DefaultView type="component" subject={component} title={component.name} fallback={fallback} />
   );
 }

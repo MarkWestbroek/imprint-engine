@@ -105,8 +105,11 @@ export type EmbedConfig = z.infer<typeof EmbedConfig>;
 
 export const BoardSpecConfig = z.object({
   title: z.string().optional(),
-  /** Slug of the board-spec to render, e.g. "busboard-v2@v2.0". */
-  spec: z.string().min(1),
+  /**
+   * Slug of the board-spec to render, e.g. "busboard-v2@v2.0". Optional in a
+   * default view: left empty, the widget derives it from the subject component.
+   */
+  spec: z.string().optional(),
 });
 export type BoardSpecConfig = z.infer<typeof BoardSpecConfig>;
 

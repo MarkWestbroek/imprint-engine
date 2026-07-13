@@ -23,6 +23,52 @@ import { MarkdownEditor } from "./markdown-editor";
 import { WidgetEditorFor } from "@/widgets/editors";
 
 /**
+ * When editing a default-view template (_view/<type>), pick a sample item to
+ * bind as the preview subject; the canvas widgets fill in with its data. The
+ * choice rides in a ?previewAs= query param so the server canvas re-renders.
+ */
+export function PreviewAsPicker({
+  lang,
+  current,
+  samples,
+}: {
+  lang: string;
+  current?: string;
+  samples: string[];
+}) {
+  const router = useRouter();
+  const select = (slug: string) => {
+    const params = new URLSearchParams({ lang });
+    if (slug) params.set("previewAs", slug);
+    router.replace(`?${params.toString()}`);
+    router.refresh();
+  };
+  return (
+    <div className="mb-3 flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-sm">
+      <span className="text-muted">Preview as:</span>
+      {samples.length > 0 ? (
+        <select
+          className="rounded-md border border-line bg-background px-2 py-1"
+          value={current ?? samples[0]}
+          onChange={(e) => select(e.target.value)}
+        >
+          {samples.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <span className="text-muted">no sample items of this type yet</span>
+      )}
+      <span className="text-xs text-muted">
+        — the widgets below render with this item&apos;s data
+      </span>
+    </div>
+  );
+}
+
+/**
  * Client half of the page studio. The canvas itself is server-rendered
  * (real widget viewers, real data, real site chrome); these components add
  * the editing skin on top: selection outlines, toolbars, "+" affordances

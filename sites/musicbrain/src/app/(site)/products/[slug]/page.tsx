@@ -6,6 +6,7 @@ import { store, writableStore } from "@/lib/content";
 import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { DefaultView } from "@/components/default-view";
 import { displayVersion } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -51,7 +52,7 @@ export default async function ProductPage({ params }: Props) {
     await Promise.all(product.components.map(loadComponent))
   ).filter((c): c is NonNullable<typeof c> => c !== null);
 
-  return (
+  const fallback = (
     <article className="max-w-3xl space-y-10">
       <header>
         <div className="flex items-center gap-3">
@@ -134,5 +135,9 @@ export default async function ProductPage({ params }: Props) {
         </section>
       )}
     </article>
+  );
+
+  return (
+    <DefaultView type="product" subject={product} title={product.name} fallback={fallback} />
   );
 }
