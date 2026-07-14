@@ -102,9 +102,12 @@ release met per component de meegeleverde versie.
 
 **Assets** (bord-renders, pinout-SVG's) gaan via de multipart-ingest: de
 `doc`-JSON verwijst naar bestandsnamen, de backend slaat elk bestand op via de
-**AssetStore** en herschrijft de namen naar URL's. De file-backend schrijft
-naar `ASSET_ROOT` en serveert via `/api/assets/...`; MinIO/S3 later is een
-config-wissel (`.env`), geen herschrijving.
+**AssetStore** en herschrijft de namen naar URL's. De AssetStore **content-hasht**
+de bestandsnaam (`render-top.<sha8>.png`), dus her-publiceren met nieuwe bytes
+geeft een nieuwe URL — de lange `immutable`-cache blijft daardoor correct én
+vers. De file-backend schrijft naar `ASSET_ROOT` en serveert via
+`/api/assets/...`; MinIO/S3 later is een config-wissel (`.env`), geen
+herschrijving.
 
 ## Deploy naar Plesk
 

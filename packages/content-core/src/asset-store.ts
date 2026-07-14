@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 
@@ -6,9 +7,14 @@ import path from "node:path";
  * Mirrors the ContentStore file-vs-db split: today a FileAssetStore writes to
  * disk and hands back a URL; swapping to MinIO/S3 later is a config change, not
  * a rewrite, because callers only ever see `put(path) -> url`.
+ *
+ * `put` content-hashes the filename (render-top.<sha8>.png), so re-publishing
+ * with new bytes yields a *new* URL. That keeps the long `immutable` cache
+ * correct: a stable URL always maps to the same bytes, changed content = new
+ * URL = cache miss = fresh (the standard fingerprinting pattern).
  */
 export interface AssetStore {
-  /** Store bytes at a logical path; returns the public URL to reach them. */
+  /** Store bytes; returns a public, content-addressed URL to reach them. */
   put(assetPath: string, bytes: Uint8Array): Promise<string>;
   delete(assetPath: string): Promise<void>;
 }
@@ -21,6 +27,17 @@ export function safeAssetPath(p: string): string {
     .filter((s) => s && s !== "." && s !== "..")
     .map((s) => s.replace(/[^a-zA-Z0-9._@-]/g, "_"))
     .join("/");
+}
+
+/** Insert a hash before the extension: "a/render-top.png" → "a/render-top.<hash>.png". */
+export function fingerprintPath(rel: string, hash: string): string {
+  const slash = rel.lastIndexOf("/");
+  const dir = slash >= 0 ? rel.slice(0, slash + 1) : "";
+  const name = slash >= 0 ? rel.slice(slash + 1) : rel;
+  const dot = name.lastIndexOf(".");
+  return dot > 0
+    ? `${dir}${name.slice(0, dot)}.${hash}${name.slice(dot)}`
+    : `${dir}${name}.${hash}`;
 }
 
 /**
@@ -37,10 +54,12 @@ export class FileAssetStore implements AssetStore {
   async put(assetPath: string, bytes: Uint8Array): Promise<string> {
     const rel = safeAssetPath(assetPath);
     if (!rel) throw new Error(`Invalid asset path "${assetPath}"`);
-    const full = path.join(this.root, rel);
+    const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
+    const hashed = fingerprintPath(rel, hash);
+    const full = path.join(this.root, hashed);
     await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, bytes);
-    return `${this.urlBase.replace(/\/$/, "")}/${rel}`;
+    return `${this.urlBase.replace(/\/$/, "")}/${hashed}`;
   }
 
   async delete(assetPath: string): Promise<void> {
