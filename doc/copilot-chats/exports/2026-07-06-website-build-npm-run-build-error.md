@@ -2395,3 +2395,141 @@ De borden die vóór deze fix zijn gepubliceerd (bijv. `busboard-v2@v2.0`) hebbe
 
 Verder niets veranderd aan de ingest-kant — MMB's `publish_board.py` hoeft niks aan te passen; het krijgt gewoon gehashte URL's terug in de `assets`-map van de respons.
 
+---
+
+## 👤 Gebruiker (26)
+
+kunnen we versienummers van de engine gaan bijhouden als labels in git? Waar zitten we nu voor ons gevoel? 0.2.1?
+
+Kun jij nog achterhalen wat een logische 0.1.0 was?
+
+**🤖 Claude:**
+
+Goede stap. Laat me eerst de hele historie erbij pakken om logische mijlpalen te vinden.
+> 🔧 `PowerShell` — Full commit history oldest-first + package versions
+
+**🤖 Claude:**
+
+Ik heb de historie erbij gepakt. Kort antwoord op je gevoel: **"0.2.1" telt de era's** (statisch → database), maar áls je per echte capability-mijlpaal telt, hebben we eigenlijk zo veel geleverd dat we eerder rond **0.7** zitten. Beide zijn verdedigbaar — het hangt af van hoe grofmazig je wilt taggen.
+
+**Wat een logische 0.1.0 was:** het eerste punt waarop Imprint een echte motor is — content erin, site eruit, met het widget-contentmodel, nog file-backed. Dat is commit **`d84e144`** ("Widget-engine: composeerbare pagina's"). Alles daarvoor (scaffold, hernoemen) is de aanloop; alles daarna (database, admin, studio, domeinmodel, board-specs, navigatie) zijn de volgende releases.
+
+Mijn voorgestelde mijlpaal-indeling (retroactief), waarmee we nu op **v0.7.1** zitten:
+
+| tag | commit | mijlpaal |
+|---|---|---|
+| v0.1.0 | `d84e144` | v0: statische motor + widget-contentmodel (file-backed) |
+| v0.2.0 | `09bdb0a` | v1: MariaDB bitemporal + admin + widget-composer + deploy |
+| v0.3.0 | `08f4b67` | WYSIWYG-studio + vakken-layout + menu-editor |
+| v0.4.0 | `e046644` | content-API + widgetbibliotheek + markdown-editor |
+| v0.5.0 | `08b1465` | product/component/release-domein + write-API + referentie-integriteit |
+| v0.6.0 | `13276dc` | board-spec end-to-end (schema + ingest/AssetStore + weergave) |
+| v0.7.0 | `ebaada3` | navigatie + template/list-widgets + studio-bewerkbare default-views |
+| v0.7.1 | `898c719` | asset-fingerprint fix (patch) — = nu |
+
+Vanaf hier: **minor** per capability, **patch** per fix. En de `package.json`-versies (nu overal 0.1.0) trek ik gelijk met de gekozen huidige versie.
+
+Welke granulariteit wil je? Dan zet ik de tags meteen (en push ze):
+> 🔧 `AskUserQuestion`
+
+**🤖 Claude:**
+
+Per mijlpaal (0.7.1). Ik zet de acht tags op de bijbehorende commits, trek de package-versies gelijk naar 0.7.1, en push tags + de versiebump.
+> 🔧 `PowerShell` — Create annotated tags v0.1.0 through v0.7.0
+
+**🤖 Claude:**
+
+Nu de package-versies naar 0.7.1 en die commit taggen als v0.7.1:
+> 🔧 `Bash` — Bump package versions to 0.7.1
+> 🔧 `PowerShell` — Sync lockfile and commit version bump
+> 🔧 `PowerShell` — Tag v0.7.1 on HEAD and push commits + all tags
+> 🔧 `PowerShell` — Confirm all tags are on the remote
+
+**🤖 Claude:**
+
+Klaar. Alle acht de tags staan op GitHub en de package-versies zijn gelijkgetrokken.
+
+## Wat er nu staat
+
+- **Git-tags v0.1.0 t/m v0.7.1** — geannoteerd (met omschrijving), op de bijbehorende mijlpaal-commits, en gepusht naar de remote. Op GitHub verschijnen ze onder *Releases → Tags*; `git tag` of `git describe` laat lokaal zien op welke versie een commit zit.
+- **`package.json` (root + content-core + musicbrain) op 0.7.1**, gecommit en getagd als `v0.7.1` op HEAD.
+
+## Antwoord op je vragen, samengevat
+
+- **Logische 0.1.0** = `d84e144` — het moment waarop Imprint een echte motor werd (content-in, site-uit, met het widget-contentmodel; nog file-backed). De scaffold en het hernoemen daarvoor waren de aanloop.
+- **Waar we zitten**: je gevoel "0.2.1" telde de twee era's (statisch → database); geteld per capability-mijlpaal zijn we op **v0.7.1**. Dat is nu ook wat de tags en de package-versies zeggen.
+
+## Voor voortaan
+
+- **minor** (`v0.8.0`) per nieuwe capability, **patch** (`v0.7.2`) per fix.
+- Handig ritueel bij een release: `git tag -a v0.8.0 -m "…"` en de drie `package.json`-versies gelijk meebumpen (of zeg het, dan doe ik dat als onderdeel van de betreffende feature-commit).
+- Wil je er automatisch changelog-notities bij? Dan kan ik bij elke tag een `CHANGELOG.md`-regel bijhouden — zeg het als je dat wilt.
+
+---
+
+## 👤 Gebruiker (27)
+
+Ja, graag het ritueel vastleggen en changelog notities maken
+
+**🤖 Claude:**
+
+Mooi — ik leg het ritueel vast als een script (zodat het niet handmatig fout kan gaan) plus docs, en schrijf een CHANGELOG met de historie. Eerst de echte datums van de getagde commits ophalen zodat de changelog klopt:
+> 🔧 `PowerShell` — Get commit dates for each tag
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+
+**🤖 Claude:**
+
+Nu het release-script dat het ritueel automatiseert:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\release.mjs
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\package.json
+
+**🤖 Claude:**
+
+Nu de release-docs en de CLAUDE.md-notitie (zodat het ritueel automatisch gevolgd wordt):
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\releasing.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\CLAUDE.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CLAUDE.md
+
+**🤖 Claude:**
+
+Even de scriptsyntax checken en de changelog-transformatie droog testen (zonder echt te releasen):
+> 🔧 `Bash` — Syntax-check release script and dry-run changelog transform
+
+**🤖 Claude:**
+
+Werkt. Ik zet een voorbeeld-notitie onder `[Unreleased]` (meteen dogfooding het ritueel) en commit dan alles:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `PowerShell` — Commit changelog and release tooling, push
+
+**🤖 Claude:**
+
+De haakjes `(npm run release)` in de boodschap braken PowerShell weer. Ik gebruik een bestand:
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `PowerShell` — Commit via message file and push
+
+**🤖 Claude:**
+
+Klaar en gepusht (`9c6cb06`). Het ritueel is nu vastgelegd én geautomatiseerd.
+
+## Wat er staat
+
+- **[CHANGELOG.md](CHANGELOG.md)** — de volledige historie v0.1.0 → v0.7.1 met per versie een korte notitie, plus een `## [Unreleased]`-sectie bovenaan waar nieuwe notities in komen.
+- **[scripts/release.mjs](scripts/release.mjs)** + `npm run release` — het ritueel als één commando.
+- **[docs/releasing.md](docs/releasing.md)** — de uitleg; en [CLAUDE.md](CLAUDE.md) verwijst ernaar zodat het in volgende sessies automatisch gevolgd wordt.
+
+## Het ritueel
+
+**Tijdens het werk:** zet bij elke noemenswaardige wijziging een regel onder `## [Unreleased]` in de CHANGELOG (ik doe dat voortaan bij feature-commits).
+
+**Releasen:**
+```bash
+npm run release -- 0.8.0
+```
+Dat bumpt de drie `package.json`-versies, schuift de `[Unreleased]`-notities onder een nieuwe kop `## [0.8.0] - <datum>`, werkt de lockfile bij, commit (`Release v0.8.0`) en zet de geannoteerde tag `v0.8.0`. Het **pusht bewust niet** — je controleert de changelog-notitie en pusht dan zelf:
+```bash
+git push origin main --follow-tags
+```
+Het script weigert bij een vuile werkboom of een bestaande tag, dus je kunt het niet per ongeluk verkeerd doen.
+
+Getest: de scriptsyntax klopt en de changelog-transformatie plaatst de nieuwe versiekop correct (droog gedraaid, niets echt gereleased — we blijven op 0.7.1). De volgende keer dat we een capability afronden, is dat dus gewoon `npm run release -- 0.8.0`, en de notities die ik onderweg onder `[Unreleased]` zet, rollen er vanzelf in.
+
