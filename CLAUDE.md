@@ -36,6 +36,11 @@
   versie. Mutatielogica is puur in `src/lib/layout-ops.ts`.
 - Ontwerp gedocumenteerd in `docs/architecture.md` (mermaid) — bijwerken
   als het contentmodel, de stores of de deploy-opzet wijzigen.
+- Versies: semver via git-tags (pre-1.0: minor = capability, patch = fix);
+  de drie `package.json`-versies lopen gelijk met de tag. Zet bij elke
+  noemenswaardige wijziging een regel onder `## [Unreleased]` in
+  `CHANGELOG.md`. Releasen = `npm run release -- <versie>` (bumpt versies,
+  verplaatst de changelog-notities, commit + tag); zie `docs/releasing.md`.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);
   geen losse hexkleuren in componenten.
 - Build verifiëren met `npm run build` vanuit de root. Publieke pagina's

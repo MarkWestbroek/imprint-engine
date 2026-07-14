@@ -16,7 +16,8 @@
     "db:up": "docker compose up -d",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "release": "node scripts/release.mjs"
   },
   "devDependencies": {
     "dotenv": "^17.2.0",
