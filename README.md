@@ -68,6 +68,10 @@ Open daarna beide bestanden en vul in (in *allebei* hetzelfde):
 - `SEED_ADMIN_PASSWORD` — **verplicht als je wilt inloggen.** Blijft dit leeg,
   dan maakt de seed géén admin-user aan (`user ! ...` in de output) en kun je
   niet in `/admin`. `SEED_ADMIN_USER` is de bijbehorende naam (default `mark`).
+  Beide zijn **alleen** voor `db:seed`; de draaiende app leest ze niet. Na de
+  eerste seed mag je ze weer weghalen (de user staat dan in de DB) — je hebt ze
+  alleen weer nodig om een verse/lege database te seeden. `DATABASE_URL` (met
+  het echte DB-wachtwoord) en `SESSION_SECRET` blíjven wél nodig.
 
 ```bash
 # 3. Database-container starten (= docker compose up -d --wait, MariaDB 10.11).
