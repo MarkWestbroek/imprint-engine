@@ -8,6 +8,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 ## [Unreleased]
 - Changelog + release-ritueel: `npm run release -- <versie>` (bumpt versies,
   verplaatst changelog-notities, commit + tag); zie `docs/releasing.md`.
+- README: expliciete "Lokaal draaien (from scratch)"-sectie met vereisten
+  (Node ≥ 20, draaiende Docker), de twee env-bestanden en de db:up → migrate →
+  seed-volgorde uitgelegd.
+- Db-container krijgt een healthcheck en `db:up` gebruikt `--wait`, zodat
+  `db:migrate` er direct achteraan kan zonder opstart-race.
 
 ## [0.7.1] - 2026-07-14
 - Asset-bestandsnamen krijgen een content-hash (`render-top.<sha8>.png`), zodat

@@ -35,10 +35,69 @@ docs/
   website-requirements.md
 ```
 
-## Commando's
+## Lokaal draaien (from scratch)
+
+Onderstaande volgorde brengt de v1-opzet (MariaDB + admin) van niets naar een
+draaiende site met content en een admin-login. Duurt een paar minuten.
+
+**Vereisten**
+
+- **Node ≥ 20** (`node -v`).
+- **Docker Desktop** geïnstalleerd én *draaiend* — de lokale database is een
+  container. Check: `docker info` mag geen fout geven. Geen Docker? Dan kan de
+  site nog steeds in v0-modus draaien (zie onderaan), maar zonder admin.
+
+**Stappen**
 
 ```bash
-npm install        # eenmalig, vanuit de repo-root
+# 1. Dependencies (eenmalig, vanuit de repo-root)
+npm install
+
+# 2. Env-bestanden. Er zijn er twee: de root-.env voor de db-tooling
+#    (drizzle-kit, seed) en .env.local voor de Next.js-app zelf.
+cp .env.example .env
+cp .env.example sites/musicbrain/.env.local
+```
+
+Open daarna beide bestanden en vul in (in *allebei* hetzelfde):
+
+- `DATABASE_URL` — de default matcht al met docker-compose, lokaal
+  onveranderd laten.
+- `SESSION_SECRET` — genereer er een:
+  `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+- `SEED_ADMIN_PASSWORD` — **verplicht als je wilt inloggen.** Blijft dit leeg,
+  dan maakt de seed géén admin-user aan (`user ! ...` in de output) en kun je
+  niet in `/admin`. `SEED_ADMIN_USER` is de bijbehorende naam (default `mark`).
+
+```bash
+# 3. Database-container starten (= docker compose up -d --wait, MariaDB 10.11).
+#    Dankzij de healthcheck blokkeert dit tot MariaDB écht klaar is (~7s),
+#    zodat de volgende stap er nooit te vroeg op loopt.
+npm run db:up
+
+# 4. Tabellen aanmaken. Er is géén los SQL-script: dit past de gecommitte
+#    migratie in drizzle/ toe (schema komt uit db-schema.ts).
+npm run db:migrate
+
+# 5. Content (uit sites/musicbrain/content/) + de admin-user importeren.
+npm run db:seed
+
+# 6. Dev-server. → http://localhost:3000 en http://localhost:3000/admin
+npm run dev
+```
+
+Log in op `/admin` met `SEED_ADMIN_USER` / `SEED_ADMIN_PASSWORD`. Elke save is
+een *nieuwe versie* (transaction time); niets wordt overschreven — "History"
+bij elk item toont alles en kan terugrollen. "Validity" plant publicatie (valid
+time, S6).
+
+**Zonder Docker/DB (v0-modus):** laat `DATABASE_URL` leeg (of sla stap 2–5
+over) en draai alleen `npm install && npm run dev`. De site valt dan terug op
+de file-store: content uit `sites/musicbrain/content/`, geen admin.
+
+## Commando's (referentie)
+
+```bash
 npm run dev        # dev-server musicbrain (http://localhost:3000)
 npm run build      # productie-build
 npm run lint
@@ -50,18 +109,8 @@ npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL
 npm run db:seed      # contentbestanden + admin-user importeren (idempotent)
 ```
 
-## Database & admin (v1)
-
-1. Kopieer `.env.example` naar `.env` (root, voor de tooling) én naar
-   `sites/musicbrain/.env.local` (voor de app); vul `DATABASE_URL`,
-   `SESSION_SECRET` en `SEED_ADMIN_*`.
-2. `npm run db:up && npm run db:migrate && npm run db:seed`
-3. `npm run dev` → **http://localhost:3000/admin** en log in.
-
-Elke save is een *nieuwe versie* (transaction time); niets wordt
-overschreven — "History" bij elk item toont alles en kan terugrollen.
-"Validity" op een item plant publicatie (valid time, S6). Zonder
-`DATABASE_URL` draait de site in v0-modus op de files in git.
+Handig: `docker compose down` stopt de db-container, `docker compose down -v`
+gooit óók het datavolume weg (schone lei — daarna weer migrate + seed).
 
 **Schema-sync dev → Plesk:** migraties staan in git (`drizzle/`); op de
 server is bijwerken `git pull` + `npm run db:migrate`. Content wordt niet
@@ -88,7 +137,13 @@ Overal bruikbaar: `?lang=nl` (fallback EN), `?asOf=2026-01-01` (tijdreizen,
 S5) en `?drafts=1` (alleen met admin-sessie).
 
 **Schrijven (POST, voor product-projecten):** stuur
-`Authorization: Bearer <INGEST_TOKEN>` (zie `.env.example`).
+`Authorization: Bearer <INGEST_TOKEN>` (zie `.env.example`). De write-API staat
+**standaard uit**: zolang `INGEST_TOKEN` leeg is, wordt elke POST geweigerd. Zet
+het token in de omgeving van de dráaiende app (`.env.local` of Plesk-env) én
+herstart de app (Passenger leest env alleen bij opstarten). Board-assets landen
+onder `ASSET_ROOT` — op Plesk een map **buiten** de app-map, anders overleeft
+een upload de volgende deploy niet. De how-to voor consumers staat in
+[docs/mmb-ingest-guide.md](docs/mmb-ingest-guide.md).
 ```
 POST /api/content/<type>/<slug>   één item (body = de content)
 POST /api/content                 bundle: { product?, components?, releases? }
@@ -109,22 +164,85 @@ vers. De file-backend schrijft naar `ASSET_ROOT` en serveert via
 `/api/assets/...`; MinIO/S3 later is een config-wissel (`.env`), geen
 herschrijving.
 
-## Deploy naar Plesk
+## Deploy naar Plesk (musicbrain.nl)
 
-De **hele repo** kan naar de server (Plesk Git-extensie of eigen sync);
-de app wijst gewoon naar de submap:
+Model: **dezelfde repo als lokaal**, maar de app draait onder Passenger
+(Plesk Node.js-extensie) tegen een MariaDB op de server. De secrets komen uit
+`.env`-bestanden die je **éénmalig op de server** zet — die zijn git-ignored en
+blijven dus staan bij elke `git pull`, precies zoals lokaal.
 
-1. **Git:** koppel de repo aan een map op de server (bijv. `imprint/`);
-   zet als "additional deployment action" (script na de pull):
-   `npm ci && npm run build && npm run db:migrate && touch sites/musicbrain/tmp/restart.txt`
-2. **Node.js-extensie:** Application root = `imprint/sites/musicbrain`,
-   startup file = `server.js` (Passenger start geen npm-scripts, wél dit
-   bestand), Node ≥ 20. Zet `DATABASE_URL`, `SESSION_SECRET`, `INGEST_TOKEN`
-   en (voor bord-assets) `ASSET_ROOT` als environment-variabelen in de
-   Node.js-instellingen — wijs `ASSET_ROOT` naar een map búiten de app zodat
-   uploads een redeploy overleven.
-3. **Eenmalig:** database aanmaken in Plesk (zie `.env.example` voor de
-   URL-vorm) en `npm run db:seed` draaien voor de startcontent + admin-user.
+Passenger kan geen npm-scripts starten; het start één JS-bestand
+(`sites/musicbrain/server.js`), dat een gebouwde `.next` nodig heeft. De build
+gebeurt daarom op de server, als deployment-action na de git-pull.
+
+**Eenmalig instellen** (volgorde is belangrijk — DB en env moeten er zijn
+vóór de eerste migrate):
+
+1. **Database** — Plesk → *Databases* → MariaDB-database + gebruiker aanmaken.
+   Noteer db-naam, gebruiker en wachtwoord.
+2. **Env-bestanden op de server** (Plesk File Manager of SSH), buiten git —
+   maak in de deploy-map zowel `/.env` (root, voor migrate/seed) als
+   `sites/musicbrain/.env.local` (voor de app), met:
+   - `DATABASE_URL=mysql://<db-user>:<pass>@localhost:3306/<db-naam>`
+   - een verse `SESSION_SECRET`
+     (`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
+   - optioneel `INGEST_TOKEN` (write-API) en `ASSET_ROOT` (map **búiten** de
+     app, zodat uploads een redeploy overleven).
+3. **Git** — Plesk → *Git* → koppel déze repo, branch `main`, in een map
+   (bijv. `imprint/`). Zet als *additional deployment action* (draait na de
+   pull, vanuit de repo-root):
+   ```
+   export PATH="/opt/plesk/node/21/bin:$PATH" && \
+     npm ci --include=dev && npm run db:migrate && npm run build && \
+     mkdir -p sites/musicbrain/tmp && touch sites/musicbrain/tmp/restart.txt
+   ```
+   **Volgorde is essentieel:** `db:migrate` moet vóór `build` — de publieke
+   pagina's zijn SSG en `next build` bevraagt tijdens de build de database
+   (`generateStaticParams`). Bestaan de tabellen nog niet, dan faalt de build
+   met `Table '…content_items' doesn't exist`.
+   De `export PATH=...` is nodig omdat de deploy-shell `npm` niet op PATH heeft
+   (je krijgt anders `nodenv: npm: command not found` of `npm: command not
+   found`). Plesk zet z'n Node-binaries in `/opt/plesk/node/<major>/bin/` —
+   gebruik dezelfde major als in het Node.js-paneel (hier `21`).
+   `npm ci` draait in de repo-root (npm-workspaces hoisten `node_modules`
+   daarheen). `--include=dev` is nodig omdat `next build` én
+   `db:migrate`/`db:seed` de devDependencies gebruiken (typescript/tailwind
+   resp. drizzle-kit/tsx); zonder die vlag slaat een `production`-omgeving ze
+   over en faalt de build.
+   **Eerste deploy:** voeg éénmalig `&& npm run db:seed` ná `db:migrate` toe
+   (vóór `build`), zodat de build met echte content prerendert; haal het er
+   daarna weer af (anders voegt elke deploy een nieuwe content-versie toe).
+4. **Node.js-extensie** — Plesk → *Node.js*: Application root =
+   `imprint/sites/musicbrain`, startup file = `server.js`, Node ≥ 20,
+   mode `production`. **Document Root** moet ónder de Application Root liggen,
+   dus zet 'm op `imprint/sites/musicbrain/public` (niet `httpdocs` — anders:
+   "document root is not a subchild of application root").
+   (Env-vars mag je hier óók zetten i.p.v. `.env.local` — kies één plek.)
+   Deploy de git-repo naar een eigen map (`imprint/`), **niet** in `httpdocs`;
+   de Node-app zit in de submap. Gebruik **niet** Plesk's per-app *"NPM
+   install"*-knop: dat installeert alleen in de submap, terwijl de workspaces
+   hun `node_modules` in de repo-root hoisten — de `npm ci` uit de
+   deployment-action (stap 3) doet dat correct.
+5. **Seed** (eenmalig) — startcontent + admin-user (heeft
+   `SEED_ADMIN_PASSWORD` nodig):
+   - **met SSH:** `npm run db:seed` vanuit de repo-root.
+   - **zonder SSH:** Plesk → *Scheduled Tasks* → een eenmalige taak
+     `cd <repo-root> && npm run db:seed` (of plak `&& npm run db:seed` één keer
+     aan de deployment-action en haal het er daarna weer af).
+
+**Volgende deploys:** `git push` → Plesk pullt, bouwt, migreert, herstart
+(de nieuwe `restart.txt` triggert Passenger). Content blijft in de DB; de seed
+is eenmalig, de productie-DB is de bron van waarheid.
+
+**Als de site de Passenger-foutpagina toont** ("We're sorry, but something went
+wrong") — kijk in Plesk → *Logs* (of het Passenger-log) en check op volgorde:
+- **Build ontbreekt** (`.next` niet gebouwd) of verkeerde startup-file → is de
+  deployment-action gedraaid en geslaagd? Staat `server.js` als startup file?
+- **DB-connectie faalt** → is `DATABASE_URL` zichtbaar voor de app
+  (`.env.local` of Node-env) en kloppen de creds?
+- **`next build` valt om (out of memory)** → shared hosting heeft soms te
+  weinig geheugen voor een Next-build. Dan is `output: "standalone"` in
+  `next.config.ts` + lokaal/CI bouwen het alternatief (lichter voor Passenger).
 
 ## Content bewerken (v0)
 

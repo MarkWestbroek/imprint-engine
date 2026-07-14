@@ -12,6 +12,14 @@ services:
       MARIADB_PASSWORD: imprint-dev
     volumes:
       - db-data:/var/lib/mysql
+    # Zo weet 'docker compose up -d --wait' (npm run db:up) dat MariaDB écht
+    # klaar is, zodat db:migrate er direct achteraan kan zonder race.
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "imprint", "-pimprint-dev", "--silent"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
 
 volumes:
   db-data:
