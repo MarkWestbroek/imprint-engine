@@ -90,6 +90,20 @@ Verschillen met het oorspronkelijke UML:
   nog en wordt bij renderen/bewerken naar rijen omgezet.
 - `User`/`RoleType` zijn actief (admin-login); de rol per content-item
   (`ContentUser`) staat in het schema maar wordt nog niet gehandhaafd.
+  Gebruikers lopen **niet** via de `ContentStore`: ze zijn geen content en
+  krijgen bewust géén historie — een bitemporale tabel bewaart elke rij voor
+  altijd, en dat is precies wat je met wachtwoordhashes niet wilt. Ze hebben
+  een eigen `DbUserStore`
+  ([user-store.ts](../packages/content-core/src/user-store.ts)), gedeeld door
+  **/admin/users**, de seed en de `npm run user`-CLI, zodat de regels
+  (wachtwoordlengte, "laatste admin blijft admin") overal gelden. Hashing en
+  wachtwoordbeleid staan apart in
+  [passwords.ts](../packages/content-core/src/passwords.ts).
+- **Sessies** zijn stateless: een HMAC-ondertekend cookie met naam, rol en
+  vervaltijd (12u), zonder tabel. Dat betekent dat een wachtwoordreset of
+  rolwijziging een al openstaande sessie niet intrekt — die loopt gewoon af.
+  Acceptabel bij deze handvol vertrouwde gebruikers; een `session_epoch`-kolom
+  zou het dichtzetten (backlog).
 
 ## 3. Widgets: kern kent het model, de site de catalogus
 

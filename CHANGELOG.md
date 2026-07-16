@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Gebruikersbeheer**: `/admin/users` — admins voegen gebruikers toe, wijzigen
+  rollen, resetten wachtwoorden (gegenereerd, één keer getoond) en verwijderen
+  accounts; iedereen die is ingelogd wijzigt er zijn eigen wachtwoord (huidige
+  vereist). De laatste admin kan zichzelf niet degraderen of verwijderen.
+  Buitengesloten? `npm run user -- passwd <naam>` op de server is de weg terug;
+  `npm run user` doet ook list/add/role/delete. Wachtwoordregels en hashing
+  staan nu één keer in `content-core` (`passwords.ts` + `DbUserStore`), gedeeld
+  door admin, seed en CLI. Let op: een sessiecookie blijft na een reset tot 12u
+  geldig in een browser die al openstond.
 - **Theming**: een thema is nu content (`type: "theme"`, kleurtokens + fonts),
   bewerkbaar in de admin met kleurpickers en live palet-preview. De site
   rendert thema's als CSS-vars op `[data-theme]`; een gebruikers-switcher in

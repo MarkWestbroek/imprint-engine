@@ -61,7 +61,16 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       draft-vlag + studio-concept, geen deelbare preview-link. _(S5; M)_
 - [ ] **Drafts in een tabel** i.p.v. procesgeheugen — een niet-opgeslagen
       studio-concept overleeft nu geen serverherstart. _(bekend; M)_
-- [ ] **Users-beheer in de admin** — nu alleen via `db:seed`. _(README; M)_
+- [x] **Users-beheer in de admin** — `/admin/users` (admins: toevoegen, rol,
+      wachtwoord resetten, verwijderen; iedereen: eigen wachtwoord wijzigen),
+      plus `npm run user` als noodingang via SSH. _(README)_
+- [ ] **Sessie intrekken bij reset/rol/verwijderen** — de sessiecookie is
+      stateless (HMAC, 12u), dus een gereset of gedegradeerde gebruiker blijft
+      tot 12u ingelogd in een browser die al openstond. Vraagt een
+      `session_epoch`-kolom die `getSession()` meeneemt. _(M)_
+- [ ] **Wachtwoord vergeten zonder SSH** — nu is de CLI de enige weg terug.
+      Wacht op mail-infra op Plesk; dan liever meteen de magic-link uit de
+      requirements (§C) dan een reset-token-flow. _(S10-afhankelijk; M)_
 - [ ] **Rollen per content-item** (`ContentUser`: creator/owner/contributor) staan
       in het schema maar worden niet gehandhaafd; S3 vraagt ook een
       *product-editor*-rol. _(S3; M)_
