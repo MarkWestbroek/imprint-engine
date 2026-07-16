@@ -299,6 +299,39 @@ export const ContentUserSchema = z.object({
 });
 export type ContentUser = z.infer<typeof ContentUserSchema>;
 
+/**
+ * Theme: a named set of design tokens (colours, fonts) delivered as CSS
+ * custom properties on `[data-theme="<name>"]`. Follows the spirit of the
+ * W3C Design Tokens (DTCG) idea — tokens as data, presentation reads vars —
+ * kept deliberately flat so the admin can edit it with colour pickers.
+ * Structural layout (logo position, chrome variants) is a separate concern.
+ */
+export const ThemeColorsSchema = z.object({
+  background: z.string().min(1),
+  surface: z.string().min(1),
+  border: z.string().min(1),
+  foreground: z.string().min(1),
+  muted: z.string().min(1),
+  accent: z.string().min(1),
+  accentStrong: z.string().min(1),
+});
+export type ThemeColors = z.infer<typeof ThemeColorsSchema>;
+
+export const ThemeSchema = z.object({
+  name: z.string().regex(/^[a-z0-9-]+$/),
+  label: z.string().min(1),
+  colors: ThemeColorsSchema,
+  /** CSS font stacks; empty = keep the site's default (next/font vars). */
+  fonts: z
+    .object({
+      sans: z.string().default(""),
+      mono: z.string().default(""),
+    })
+    .default({ sans: "", mono: "" }),
+  order: z.number().int().default(0),
+});
+export type Theme = z.infer<typeof ThemeSchema>;
+
 export const SiteConfigSchema = z.object({
   name: z.string(),
   tagline: z.string(),

@@ -1,0 +1,14 @@
+{
+  "name": "dark",
+  "label": "Dark",
+  "order": 0,
+  "colors": {
+    "background": "#0b0d10",
+    "surface": "#14181d",
+    "border": "#262c33",
+    "foreground": "#e8ebee",
+    "muted": "#9aa4ae",
+    "accent": "#4fd1c5",
+    "accentStrong": "#2ab5a8"
+  }
+}

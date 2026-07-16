@@ -32,15 +32,13 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       geverifieerd met Marks "@2020 Street"-album (11 foto's).
 - [x] ~~**interactieve kaart**~~ — gedaan in 0.8.0 (Leaflet/OSM).
 - [x] ~~**kanban-bord**~~ — gedaan in 0.8.0.
-- [ ] **`downloads`** — release-downloads met versie + checksum als blok (W7 is er
-      wel in de data, niet als plaatsbare widget). _(S)_
-- [ ] **`posts` / nieuws-feed** — devlog-items als feed-blok (nu alleen losse
-      pagina's onder `posts/`). _(W6; S)_
-- [ ] **`accordion` / FAQ** — inklapbare vraag/antwoord-blokken. _(idee; S)_
-- [ ] **`hero`** — grote kop + beeld + CTA (nu handwerk op de home). _(idee; S)_
-- [ ] **`divider` / spacer** — visuele rust tussen rijen. _(idee; S)_
-- [ ] **`video`** — YouTube/Vimeo/zelfgehost, netjes responsive (rest van W3).
-      _(idee; S)_
+- [x] ~~**`downloads`**~~ — gedaan in 0.9.0 (W7).
+- [x] ~~**`posts` / nieuws-feed**~~ — gedaan in 0.9.0 (W6-deel; RSS staat nog open).
+- [x] ~~**`accordion` / FAQ**~~ — gedaan in 0.9.0.
+- [x] ~~**`hero`**~~ — gedaan in 0.9.0.
+- [x] ~~**`divider` / spacer**~~ — gedaan in 0.9.0.
+- [x] ~~**`video`**~~ — gedaan in 0.9.0 (YouTube/Vimeo privacy-embed of bestand;
+      rest van W3).
 - [ ] **`search`** — zoeken in content (vergt eerst een zoekindex). _(idee; L)_
 - [ ] **Lijst-varianten** — de `list`-widget kan alleen links; Pleio doet ook
       *feed* en *slider* als weergavevorm. _(idee; M)_
@@ -72,6 +70,9 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       set startsjablonen meeleveren. _(S)_
 - [ ] **Media-bibliotheek** met automatische varianten (thumbnail/OG/hero). De
       AssetStore is er; upload-UI en varianten niet. _(S8; L)_
+- [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,
+      header/footer-variant) parameteriseren per site, als server-side laag
+      naast de client-side thema-tokens (zie architecture.md §3c). _(M)_
 
 ---
 

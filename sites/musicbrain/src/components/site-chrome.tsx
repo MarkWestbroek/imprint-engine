@@ -1,5 +1,6 @@
 import Link from "next/link";
-import type { SiteConfig } from "@imprint/content-core";
+import type { SiteConfig, Theme } from "@imprint/content-core";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 /**
  * The site's framing — header with menu, footer. The public layout wraps
@@ -9,11 +10,14 @@ import type { SiteConfig } from "@imprint/content-core";
 export function SiteChrome({
   site,
   nav,
+  themes = [],
   children,
   inert = false,
 }: {
   site: SiteConfig;
   nav: { href: string; label: string }[];
+  /** Available themes; ≥2 shows the user-facing switcher. */
+  themes?: Theme[];
   children: React.ReactNode;
   /** Studio mode: chrome is visible but not clickable. */
   inert?: boolean;
@@ -42,6 +46,9 @@ export function SiteChrome({
                 GitHub
               </a>
             )}
+            <ThemeSwitcher
+              themes={themes.map((t) => ({ name: t.name, label: t.label }))}
+            />
           </nav>
         </div>
       </header>

@@ -192,6 +192,56 @@ export const KanbanConfig = z.object({
 });
 export type KanbanConfig = z.infer<typeof KanbanConfig>;
 
+export const HeroConfig = z.object({
+  title: z.string().min(1),
+  subtitle: z.string().default(""),
+  /** Background/side image (URL or public/ path). */
+  image: z.string().optional(),
+  buttonLabel: z.string().optional(),
+  buttonUrl: z.string().optional(),
+  align: z.enum(["left", "center"]).default("left"),
+});
+export type HeroConfig = z.infer<typeof HeroConfig>;
+
+export const VideoConfig = z.object({
+  title: z.string().optional(),
+  /** YouTube/Vimeo page URL, or a direct video file URL. */
+  url: z.string().url(),
+  caption: z.string().optional(),
+});
+export type VideoConfig = z.infer<typeof VideoConfig>;
+
+export const AccordionConfig = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(z.object({ title: z.string().min(1), markdown: z.string().default("") }))
+    .default([]),
+});
+export type AccordionConfig = z.infer<typeof AccordionConfig>;
+
+export const DividerConfig = z.object({
+  style: z.enum(["line", "dots", "space"]).default("line"),
+  /** Vertical breathing room, 1 (subtle) … 4 (roomy). */
+  size: z.number().int().min(1).max(4).default(2),
+});
+export type DividerConfig = z.infer<typeof DividerConfig>;
+
+export const DownloadsConfig = z.object({
+  title: z.string().optional(),
+  /** Limit to one project's releases. */
+  project: z.string().optional(),
+  limit: z.number().int().positive().default(10),
+});
+export type DownloadsConfig = z.infer<typeof DownloadsConfig>;
+
+export const PostsConfig = z.object({
+  title: z.string().optional(),
+  /** Page-slug prefix that marks a post. */
+  prefix: z.string().default("posts/"),
+  limit: z.number().int().positive().default(5),
+});
+export type PostsConfig = z.infer<typeof PostsConfig>;
+
 export const ItineraryConfig = z.object({
   title: z.string().optional(),
   /** Product slug; falls back to the page subject's slug. */
@@ -313,6 +363,12 @@ export const widgetCatalog = [
   { name: "album", label: "External album", version: "1.0.0", help: "A view on an online photo repo (JSON API, or a Lightroom share as link card).", configSchema: AlbumConfig },
   { name: "map", label: "Map", version: "1.0.0", help: "An interactive OpenStreetMap with markers and popups.", configSchema: MapConfig },
   { name: "kanban", label: "Kanban board", version: "1.0.0", help: "A small board: columns with cards.", configSchema: KanbanConfig },
+  { name: "hero", label: "Hero", version: "1.0.0", help: "Big heading + subtitle, optional image and CTA button.", configSchema: HeroConfig },
+  { name: "video", label: "Video", version: "1.0.0", help: "YouTube/Vimeo (privacy embed) or a direct video file.", configSchema: VideoConfig },
+  { name: "accordion", label: "Accordion / FAQ", version: "1.0.0", help: "Collapsible question/answer blocks (no JS needed).", configSchema: AccordionConfig },
+  { name: "divider", label: "Divider", version: "1.0.0", help: "Visual rest between rows: line, dots or just space.", configSchema: DividerConfig },
+  { name: "downloads", label: "Downloads", version: "1.0.0", help: "Release downloads with version and checksum (W7).", configSchema: DownloadsConfig },
+  { name: "posts", label: "Posts / news feed", version: "1.0.0", help: "Latest devlog posts as linked cards (W6).", configSchema: PostsConfig },
   { name: "itinerary", label: "Component itinerary", version: "1.0.0", help: "The journey of each component through a product's releases.", configSchema: ItineraryConfig },
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },

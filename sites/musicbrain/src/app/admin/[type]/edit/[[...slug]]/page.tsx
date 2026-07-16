@@ -6,7 +6,7 @@ import { contentFormSchema } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
 import { PageStudio } from "@/components/admin/studio";
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme"];
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
@@ -29,6 +29,12 @@ function emptyData(type: ContentType): Record<string, unknown> {
       return { project: "", version: "", date: today, channel: "stable", highlights: [], body: "", downloads: [] };
     case "menu":
       return { name: "", items: [] };
+    case "theme":
+      return {
+        name: "", label: "", order: 0,
+        colors: { background: "#0b0d10", surface: "#14181d", border: "#262c33", foreground: "#e8ebee", muted: "#9aa4ae", accent: "#4fd1c5", accentStrong: "#2ab5a8" },
+        fonts: { sans: "", mono: "" },
+      };
     case "page":
       return {};
     case "relations":

@@ -9,6 +9,7 @@ const TYPES: { type: ContentType; label: string }[] = [
   { type: "board-spec", label: "Board specs" },
   { type: "release", label: "Releases" },
   { type: "menu", label: "Menus" },
+  { type: "theme", label: "Themes" },
 ];
 
 export default async function AdminDashboard() {

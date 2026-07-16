@@ -1,0 +1,18 @@
+{
+  "name": "neon",
+  "label": "Neon",
+  "order": 2,
+  "colors": {
+    "background": "#0a0118",
+    "surface": "#170b2e",
+    "border": "#3c1d6e",
+    "foreground": "#f2e9ff",
+    "muted": "#a78fd6",
+    "accent": "#ff2ec4",
+    "accentStrong": "#00f0ff"
+  },
+  "fonts": {
+    "sans": "var(--font-geist-mono), ui-monospace, monospace",
+    "mono": ""
+  }
+}

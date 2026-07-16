@@ -15,10 +15,15 @@ const NAV = [
   { href: "/admin/board-spec", label: "Board specs" },
   { href: "/admin/release", label: "Releases" },
   { href: "/admin/menu", label: "Menus" },
+  { href: "/admin/theme", label: "Themes" },
   { href: "/admin/views", label: "Default views" },
   { href: "/admin/relations", label: "Relations" },
   { href: "/admin/site", label: "Site" },
 ];
+
+// Managing other accounts is admin-only; /admin/users itself is not — everyone
+// signed in reaches it through their name in the header to set a password.
+const ADMIN_ONLY = [{ href: "/admin/users", label: "Users" }];
 
 export default async function AdminLayout({
   children,
@@ -50,7 +55,7 @@ export default async function AdminLayout({
             <span className="font-semibold">
               <span className="text-accent">Imprint</span> admin
             </span>
-            {NAV.map((item) => (
+            {[...NAV, ...(session.role === "admin" ? ADMIN_ONLY : [])].map((item) => (
               <Link key={item.href} href={item.href} className="text-muted hover:text-foreground">
                 {item.label}
               </Link>
@@ -60,9 +65,9 @@ export default async function AdminLayout({
             </a>
           </nav>
           <form action={logoutAction} className="flex items-center gap-3 text-sm text-muted">
-            <span>
+            <Link href="/admin/users" className="hover:text-foreground">
               {session.name} · {session.role}
-            </span>
+            </Link>
             <button className="rounded border border-line px-2 py-1 hover:border-accent">
               Sign out
             </button>

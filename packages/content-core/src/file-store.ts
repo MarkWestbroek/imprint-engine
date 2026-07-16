@@ -11,6 +11,7 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  ThemeSchema,
   type BoardSpec,
   type Component,
   type Menu,
@@ -18,6 +19,7 @@ import {
   type Product,
   type Release,
   type SiteConfig,
+  type Theme,
 } from "./schemas";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentStore, ReadOptions } from "./store";
@@ -180,6 +182,16 @@ export class FileContentStore implements ContentStore {
       if ((err as NodeJS.ErrnoException).code === "ENOENT") return null;
       throw err;
     }
+  }
+
+  async listThemes(): Promise<Theme[]> {
+    const files = await this.listFiles("themes", ".json");
+    const themes: Theme[] = [];
+    for (const file of files) {
+      const raw = await fs.readFile(file, "utf8");
+      themes.push(ThemeSchema.parse(JSON.parse(raw)));
+    }
+    return themes.sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
   }
 
   private async listFiles(subdir: string, ext: string, recursive = false): Promise<string[]> {

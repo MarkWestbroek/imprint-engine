@@ -245,6 +245,32 @@ bewerkbaar in **/admin/relations** — dus configureerbaar, niet hardgecodeerd.
 - Machine-ingest post daarom in volgorde: eerst componenten, dan het product,
   dan de releases (de bundle-POST doet dit al).
 
+## 3c. Theming
+
+Een **thema is content**: een set design-tokens (kleuren, fonts) als
+`type: "theme"`-item, bewerkbaar in de admin met kleurpickers en bitemporeel
+geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
+
+- **Tokens als CSS custom properties** — componenten gebruiken uitsluitend
+  token-klassen (`bg-background`, `text-accent`, …; afgedwongen door de
+  werkafspraak "geen losse hexkleuren"). `globals.css` houdt de
+  default-waarden op `:root` (tevens de no-JS-fallback).
+- **`[data-theme="<naam>"]`-switching** — de site rendert per thema een
+  CSS-blok dat de variabelen overschrijft (`ThemeStyles`). Omdat Tailwind v4
+  de tokens via `@theme inline` aan de variabelen bindt, restylet één
+  attribuutwissel de hele site, direct.
+- **Gebruikers-switcher** (IDE-stijl) in de header: zet `data-theme` op
+  `<html>` en bewaart de keuze in localStorage; een klein inline-script
+  bovenin `<body>` past de keuze vóór de eerste paint toe (geen flash).
+- **Formaat**: het zod-`ThemeSchema` is bewust plat (7 kleurtokens +
+  optionele font-stacks) — in de geest van het W3C **Design Tokens
+  (DTCG)**-formaat (tokens als data), maar zonder de volle diepte daarvan.
+  Import/export naar DTCG-JSON kan later een dunne mapping zijn.
+- **Afbakening**: tokens (kleur/typografie) zijn client-side wisselbaar; de
+  **grove pagina-indeling** (logo-positie, header-variant) is een
+  server-concern en hoort bij een aparte chrome-variant per site — bewust
+  níet in het thema gestopt (staat op de backlog).
+
 ## 4. Opslag: bitemporal-light (§B3)
 
 Eén generieke tabel `content_items`; de payload per type blijft een

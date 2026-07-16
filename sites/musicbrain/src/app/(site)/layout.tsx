@@ -8,8 +8,9 @@ export default async function SiteLayout({
 }>) {
   const site = await store.getSiteConfig();
   const menu = await store.getMenu("main");
+  const themes = await store.listThemes();
   return (
-    <SiteChrome site={site} nav={menuToNav(menu)}>
+    <SiteChrome site={site} nav={menuToNav(menu)} themes={themes}>
       {children}
     </SiteChrome>
   );

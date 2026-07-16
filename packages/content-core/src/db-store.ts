@@ -12,6 +12,7 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  ThemeSchema,
   type BoardSpec,
   type Component,
   type Menu,
@@ -19,6 +20,7 @@ import {
   type Product,
   type Release,
   type SiteConfig,
+  type Theme,
 } from "./schemas";
 import { PageLayoutSchema, type WidgetTypeRegistry } from "./widgets";
 import {
@@ -150,6 +152,13 @@ export class DbContentStore implements WritableContentStore {
     const rows = await this.currentRows("menu", opts);
     const row = rows.find((r) => r.slug === name);
     return row ? MenuSchema.parse(row.data) : null;
+  }
+
+  async listThemes(opts?: ReadOptions): Promise<Theme[]> {
+    const rows = await this.currentRows("theme", opts);
+    return rows
+      .map((r) => ThemeSchema.parse(r.data))
+      .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
   }
 
   // ---------- write side (WritableContentStore) ----------
@@ -299,6 +308,8 @@ export class DbContentStore implements WritableContentStore {
         return ReleaseSchema.parse(data);
       case "menu":
         return MenuSchema.parse(data);
+      case "theme":
+        return ThemeSchema.parse(data);
       case "relations":
         return RelationsDoc.parse(data);
       case "page": {

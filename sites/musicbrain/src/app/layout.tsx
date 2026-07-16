@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { store } from "@/lib/content";
+import { ThemeInit, ThemeStyles } from "@/components/theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -22,17 +23,23 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themes = await store.listThemes();
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {/* Before anything paints: apply the saved theme (no flash). */}
+        <ThemeInit />
+        <ThemeStyles themes={themes} />
+        {children}
+      </body>
     </html>
   );
 }

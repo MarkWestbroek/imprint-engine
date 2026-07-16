@@ -54,6 +54,12 @@ export function contentFormSchema(type: ContentType): JsonSchema {
       return { type: "object", properties: { name: { type: "string" } } };
     case "page":
       return objectSchema(PageMetaSchema);
+    case "theme":
+      // name/label/order via the form; colours get the dedicated ThemeEditor.
+      return {
+        type: "object",
+        properties: { name: { type: "string" }, label: { type: "string" }, order: { type: "integer" } },
+      };
     case "relations":
       // Config type with its own screen (/admin/relations), not a generic form.
       return { type: "object", properties: {} };

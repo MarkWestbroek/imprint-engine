@@ -33,7 +33,7 @@ export async function saveRelationsAction(
   return { ok: true };
 }
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme"];
 
 export async function loginAction(
   _prev: ActionResult | null,
@@ -64,6 +64,7 @@ function slugFor(type: ContentType, data: Record<string, unknown>): string {
     case "site":
       return "site";
     case "menu":
+    case "theme":
       return String(data.name ?? "");
     case "release":
       return `${String(data.project ?? "")}-${String(data.version ?? "")}`;

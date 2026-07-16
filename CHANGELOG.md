@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Theming**: een thema is nu content (`type: "theme"`, kleurtokens + fonts),
+  bewerkbaar in de admin met kleurpickers en live palet-preview. De site
+  rendert thema's als CSS-vars op `[data-theme]`; een gebruikers-switcher in
+  de header (IDE-stijl) wisselt direct en onthoudt de keuze (no-flash script).
+  Meegeleverd: **dark, light en neon**. Zie architecture.md §3c.
+- Zes nieuwe widgets: **hero** (kop + CTA), **video** (YouTube/Vimeo
+  privacy-embed of bestand), **accordion**/FAQ (zonder JS), **divider**,
+  **downloads** (release-downloads met versie + checksum, W7) en **posts**
+  (devlog-feed, W6-deel).
 - Lightroom-shares in de `album`-widget werken nu écht: de provider loopt de
   publieke share-API af (space → resources → album → renditions) en toont de
   volledige fotoset i.p.v. alleen een linkkaart. Geverifieerd met een echte

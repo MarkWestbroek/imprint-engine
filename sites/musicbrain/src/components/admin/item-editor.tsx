@@ -6,6 +6,7 @@ import { saveItemAction, type ActionResult } from "@/app/admin/actions";
 import type { JsonSchema } from "@/lib/admin-schemas";
 import { SchemaForm } from "./schema-form";
 import { MenuEditor, type MenuItemV } from "./menu-editor";
+import { ThemeEditor } from "./theme-editor";
 
 /**
  * Form editor for site/product/release/menu items (pages have their own
@@ -45,10 +46,24 @@ export function ItemEditor({
         schema={formSchema}
         value={data}
         onChange={(next) =>
-          // keep fields the meta form doesn't know about (menu items)
-          setData({ ...next, items: data.items })
+          // keep fields the meta form doesn't know about (menu items, theme tokens)
+          setData({ ...next, items: data.items, colors: data.colors, fonts: data.fonts })
         }
       />
+
+      {type === "theme" && (
+        <section className="rounded-xl border border-line bg-surface p-4">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">
+            Design tokens
+          </h3>
+          <ThemeEditor
+            colors={(data.colors as Record<string, string>) ?? {}}
+            fonts={(data.fonts as { sans?: string; mono?: string }) ?? {}}
+            onColors={(colors) => setData({ ...data, colors })}
+            onFonts={(fonts) => setData({ ...data, fonts })}
+          />
+        </section>
+      )}
 
       {type === "menu" && (
         <section className="rounded-xl border border-line bg-surface p-4">

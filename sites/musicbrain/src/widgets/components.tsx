@@ -10,18 +10,23 @@ import { BoardSpecView } from "@/components/board-spec-view";
 import { Carousel, Gallery } from "./media-islands";
 import { MapIsland } from "./map-island";
 import type {
+  AccordionConfig,
   AlbumConfig,
   ApiConfig,
   BoardConfig,
   BoardSpecConfig,
   CalloutConfig,
   CarouselConfig,
+  DividerConfig,
+  DownloadsConfig,
   EmbedConfig,
   GalleryConfig,
+  HeroConfig,
   ImageConfig,
   ImageItem,
   ItineraryConfig,
   KanbanConfig,
+  PostsConfig,
   ProductsConfig,
   ReleasesConfig,
   ListConfig,
@@ -31,6 +36,7 @@ import type {
   TextConfig,
   TreeNode,
   TreeviewConfig,
+  VideoConfig,
 } from "./registry";
 
 // Merge fields go into markdown, so don't HTML-escape; react-markdown is safe.
@@ -528,6 +534,175 @@ async function ItineraryWidget({
   );
 }
 
+async function HeroWidget({ config }: { config: HeroConfig }) {
+  const center = config.align === "center";
+  return (
+    <section
+      className={`relative overflow-hidden rounded-xl border border-line bg-surface p-8 sm:p-12 ${
+        center ? "text-center" : ""
+      }`}
+    >
+      {config.image && (
+        // eslint-disable-next-line @next/next/no-img-element -- content image
+        <img
+          src={config.image}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
+        />
+      )}
+      <div className="relative">
+        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{config.title}</h2>
+        {config.subtitle && (
+          <p className={`mt-3 max-w-2xl text-lg text-muted ${center ? "mx-auto" : ""}`}>
+            {config.subtitle}
+          </p>
+        )}
+        {config.buttonLabel && config.buttonUrl && (
+          <a
+            href={config.buttonUrl}
+            className="mt-6 inline-block rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-background hover:bg-accent-strong"
+          >
+            {config.buttonLabel}
+          </a>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/** YouTube/Vimeo page URL → privacy-friendly embed URL; else null (file). */
+function videoEmbedUrl(url: string): string | null {
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{6,})/);
+  if (yt) return `https://www.youtube-nocookie.com/embed/${yt[1]}`;
+  const vimeo = url.match(/vimeo\.com\/(\d+)/);
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}?dnt=1`;
+  return null;
+}
+
+async function VideoWidget({ config }: { config: VideoConfig }) {
+  const embed = videoEmbedUrl(config.url);
+  return (
+    <WidgetFrame title={config.title}>
+      <figure>
+        {embed ? (
+          <iframe
+            src={embed}
+            className="aspect-video w-full rounded-lg border border-line"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title={config.title ?? "Video"}
+          />
+        ) : (
+          <video src={config.url} controls className="aspect-video w-full rounded-lg border border-line bg-black" />
+        )}
+        {config.caption && (
+          <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>
+        )}
+      </figure>
+    </WidgetFrame>
+  );
+}
+
+async function AccordionWidget({ config }: { config: AccordionConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="space-y-2">
+        {config.items.map((item, i) => (
+          <details key={i} className="rounded-lg border border-line px-4 py-3">
+            <summary className="cursor-pointer font-medium hover:text-accent">
+              {item.title}
+            </summary>
+            <div className="mt-2 text-sm">
+              <Markdown>{item.markdown}</Markdown>
+            </div>
+          </details>
+        ))}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function DividerWidget({ config }: { config: DividerConfig }) {
+  const pad = { 1: "py-2", 2: "py-4", 3: "py-8", 4: "py-14" }[config.size] ?? "py-4";
+  return (
+    <div className={`flex items-center justify-center ${pad}`} aria-hidden>
+      {config.style === "line" && <hr className="w-full border-line" />}
+      {config.style === "dots" && (
+        <span className="tracking-[1em] text-muted">•••</span>
+      )}
+    </div>
+  );
+}
+
+async function DownloadsWidget({ config }: { config: DownloadsConfig }) {
+  const releases = await store.listReleases({ project: config.project });
+  const rows = releases
+    .flatMap((r) =>
+      r.downloads.map((d) => ({
+        version: r.version,
+        date: r.date,
+        ...d,
+      }))
+    )
+    .slice(0, config.limit);
+
+  return (
+    <WidgetFrame title={config.title}>
+      {rows.length === 0 ? (
+        <p className="text-sm text-muted">No downloads yet.</p>
+      ) : (
+        <ul className="space-y-2 text-sm">
+          {rows.map((d, i) => (
+            <li key={i} className="flex flex-wrap items-baseline gap-x-2">
+              <a href={d.url} className="text-accent underline underline-offset-4">
+                {d.label}
+              </a>
+              <span className="font-mono text-xs text-muted">
+                {displayVersion(d.version)} · {d.date}
+              </span>
+              {d.checksumSha256 && (
+                <span className="font-mono text-xs text-muted">
+                  sha256:{d.checksumSha256.slice(0, 12)}…
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </WidgetFrame>
+  );
+}
+
+async function PostsWidget({ config }: { config: PostsConfig }) {
+  const posts = (await store.listPages({ prefix: config.prefix })).slice(0, config.limit);
+  return (
+    <WidgetFrame title={config.title}>
+      {posts.length === 0 ? (
+        <p className="text-sm text-muted">No posts yet.</p>
+      ) : (
+        <div className="space-y-3">
+          {posts.map((p) => (
+            <Link
+              key={p.slug}
+              href={`/${p.slug}`}
+              className="block rounded-lg border border-line p-3 hover:border-accent"
+            >
+              <span className="font-semibold">{p.title}</span>
+              {p.publishedAt && (
+                <span className="ml-2 text-xs text-muted">{p.publishedAt}</span>
+              )}
+              {p.description && (
+                <p className="mt-1 text-sm text-muted">{p.description}</p>
+              )}
+            </Link>
+          ))}
+        </div>
+      )}
+    </WidgetFrame>
+  );
+}
+
 const CALLOUT_TONES: Record<CalloutConfig["tone"], string> = {
   accent: "border-accent/40 bg-accent/10",
   warning: "border-amber-400/40 bg-amber-400/10",
@@ -754,6 +929,12 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   map: MapWidget as WidgetComponent,
   kanban: KanbanWidget as WidgetComponent,
   itinerary: ItineraryWidget as WidgetComponent,
+  hero: HeroWidget as WidgetComponent,
+  video: VideoWidget as WidgetComponent,
+  accordion: AccordionWidget as WidgetComponent,
+  divider: DividerWidget as WidgetComponent,
+  downloads: DownloadsWidget as WidgetComponent,
+  posts: PostsWidget as WidgetComponent,
   board: BoardWidget as WidgetComponent,
   boardspec: BoardSpecWidget as WidgetComponent,
   template: TemplateWidget as WidgetComponent,

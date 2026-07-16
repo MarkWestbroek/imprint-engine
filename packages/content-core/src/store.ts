@@ -7,6 +7,7 @@ import type {
   Product,
   Release,
   SiteConfig,
+  Theme,
 } from "./schemas";
 
 /**
@@ -50,6 +51,9 @@ export interface ContentStore {
 
   /** Named navigation menus (UML: Menu/MenuItem), e.g. "main", "footer". */
   getMenu(name: string, opts?: ReadOptions): Promise<Menu | null>;
+
+  /** Design-token themes (delivered as CSS vars; user-switchable). */
+  listThemes(opts?: ReadOptions): Promise<Theme[]>;
 }
 
 /** Content types a store can hold; `data`'s shape per type lives in schemas.ts. */
@@ -61,6 +65,7 @@ export type ContentType =
   | "release"
   | "page"
   | "menu"
+  | "theme"
   | "relations";
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */

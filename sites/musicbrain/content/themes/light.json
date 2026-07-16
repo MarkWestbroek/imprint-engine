@@ -1,0 +1,14 @@
+{
+  "name": "light",
+  "label": "Light",
+  "order": 1,
+  "colors": {
+    "background": "#faf9f7",
+    "surface": "#ffffff",
+    "border": "#dcd8d0",
+    "foreground": "#1c222a",
+    "muted": "#5c6670",
+    "accent": "#0e8377",
+    "accentStrong": "#0a6459"
+  }
+}
