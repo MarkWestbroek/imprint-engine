@@ -270,7 +270,15 @@ vóór de eerste migrate):
 
 **Volgende deploys:** `git push` → Plesk pullt, bouwt, migreert, herstart
 (de nieuwe `restart.txt` triggert Passenger). Content blijft in de DB; de seed
-is eenmalig, de productie-DB is de bron van waarheid.
+is eenmalig, de productie-DB is de bron van waarheid. Controleer daarna met
+`npm run smoke -- https://<domein>` (read-only checks: home, admin, API).
+
+**Nieuwe seed-content na een update** (bijv. de thema's van 0.9.0): seed
+gericht bij met `npm run db:seed -- --only=themes` — dat raakt alleen dat
+type en laat je bewerkte productie-content met rust. Draai daarna de
+deployment-action nogmaals (of doe een Save in de admin): de publieke
+pagina's zijn prerendered en tonen nieuwe thema's pas na een rebuild of
+cache-flush.
 
 **Als de site de Passenger-foutpagina toont** ("We're sorry, but something went
 wrong") — kijk in Plesk → *Logs* (of het Passenger-log) en check op volgorde:

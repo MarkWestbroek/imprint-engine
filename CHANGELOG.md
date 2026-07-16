@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- `npm run db:seed -- --only=<types>` seedt een subset (bijv. `--only=themes`
+  om de thema's aan een bestaande database toe te voegen zonder bewerkte
+  content te overschrijven).
+- `npm run smoke -- <url>`: read-only post-deploy-check (home, admin, API,
+  write-API-dicht, thema's) — voor na elke Plesk-update.
 
 ## [0.9.0] - 2026-07-16
 - **Gebruikersbeheer**: `/admin/users` — admins voegen gebruikers toe, wijzigen
