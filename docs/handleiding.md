@@ -59,6 +59,18 @@ wanneer, en een **Restore**-knop. Terugrollen is dus altijd veilig.
 Onder **Validity** kun je publicatie plannen: "geldig vanaf" (verschijnt dan
 pas op de site) en "geldig tot".
 
+### Tijdreizen: de site zien zoals hij wás (of wordt)
+
+Op het admin-dashboard staat **Time travel**: kies een moment en een
+startpagina en klik **Preview**. Je bladert dan door de publieke site zoals
+hij er op dat moment uitzag — oude productteksten, verdwenen releases,
+ge-restorede content, alles zoals toen. Kies je een moment in de toekomst,
+dan zie je geplande content (Validity) alvast staan.
+
+Een balk bovenaan de site markeert de preview; alleen jouw browser ziet hem.
+Klaar? **Exit preview** in de balk zet je terug in het nu. Gewone bezoekers
+merken hier niets van.
+
 ## Contenttypen
 
 | type | wat het is |
@@ -70,6 +82,12 @@ pas op de site) en "geldig tot".
 | **Releases** | uitgaves van een product, met per component de meegeleverde versie |
 | **Menus** | navigatiemenu's (het "main"-menu stuurt de header) |
 | **Themes** | kleurenschema's van de site (zie Thema's) |
+
+Goed om te weten over de weergave op de site: de **componentpagina** toont de
+versie die door de nieuwste release wordt gepind (stable weegt zwaarder dan
+beta/dev) als hoofdweergave, met de overige versies ingeklapt onder "Other
+versions"; zonder release-pin staan alle versies gewoon onder elkaar. Alle
+borden samen staan op **/boards**.
 
 De formulieren volgen automatisch de contentregels; ongeldige invoer wordt bij
 het opslaan geweigerd met een duidelijke melding. Verwijzingen tussen content

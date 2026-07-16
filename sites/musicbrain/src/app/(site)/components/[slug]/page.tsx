@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { store, writableStore } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { DefaultView } from "@/components/default-view";
@@ -29,12 +30,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ComponentPage({ params }: Props) {
   const { slug } = await params;
-  const component = await store.getComponent(slug);
+  const opts = await readOpts();
+  const component = await store.getComponent(slug, opts);
   if (!component) notFound();
 
   const specs: { version: string; spec: Awaited<ReturnType<typeof store.getBoardSpec>> }[] = [];
   for (const v of component.versions) {
-    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`);
+    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`, opts);
     if (spec) specs.push({ version: v.number, spec });
   }
 
@@ -52,6 +54,40 @@ export default async function ComponentPage({ params }: Props) {
       )
     : [];
 
+  // Which version does "the site" consider current? The one pinned by the
+  // newest release, with channel weighting: stable beats beta beats dev
+  // (MMB-testcase assert 4 / vraag 4). Unpinned components keep the flat list.
+  const channelRank: Record<string, number> = { stable: 0, beta: 1, dev: 2 };
+  const pins = releases
+    .map((r) => {
+      const data = r.data as {
+        project?: string;
+        version?: string;
+        date?: string;
+        channel?: string;
+        components?: { component: string; version: string }[];
+      };
+      const pin = (data.components ?? []).find((c) => c.component === slug);
+      return pin
+        ? {
+            version: pin.version,
+            channel: data.channel ?? "stable",
+            date: data.date ?? "",
+            project: data.project ?? r.slug,
+            releaseVersion: data.version ?? "",
+            releaseSlug: r.slug,
+          }
+        : null;
+    })
+    .filter((p) => p !== null);
+  const bestPin = pins.sort(
+    (a, b) =>
+      (channelRank[a.channel] ?? 9) - (channelRank[b.channel] ?? 9) ||
+      b.date.localeCompare(a.date)
+  )[0];
+  const pinnedSpec = bestPin ? specs.find((s) => s.version === bestPin.version) : undefined;
+  const otherSpecs = pinnedSpec ? specs.filter((s) => s !== pinnedSpec) : specs;
+
   const fallback = (
     <article className="max-w-3xl space-y-8">
       <header>
@@ -59,7 +95,16 @@ export default async function ComponentPage({ params }: Props) {
         <h1 className="text-3xl font-semibold tracking-tight">{component.name}</h1>
         {component.versions.length > 0 && (
           <p className="mt-1 font-mono text-sm text-muted">
-            {component.versions.map((v) => v.number).join(", ")}
+            {component.versions.map((v, i) => (
+              <span key={v.number}>
+                {i > 0 && ", "}
+                {bestPin?.version === v.number ? (
+                  <strong className="text-accent">{v.number}</strong>
+                ) : (
+                  v.number
+                )}
+              </span>
+            ))}
           </p>
         )}
       </header>
@@ -118,16 +163,58 @@ export default async function ComponentPage({ params }: Props) {
         </section>
       )}
 
-      {specs.map(({ version, spec }) =>
-        spec ? (
-          <section key={version}>
-            <h2 className="text-xl font-semibold tracking-tight">Board {version}</h2>
-            <div className="mt-4">
-              <BoardSpecView spec={spec} />
-            </div>
-          </section>
-        ) : null
+      {pinnedSpec?.spec && bestPin && (
+        <section>
+          <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="text-xl font-semibold tracking-tight">Board {pinnedSpec.version}</h2>
+            <Link
+              href={`/releases/${bestPin.releaseSlug}`}
+              className="rounded-full border border-accent px-2.5 py-0.5 font-mono text-xs text-accent hover:bg-accent/10"
+            >
+              pinned by {bestPin.project} {displayVersion(bestPin.releaseVersion)} ·{" "}
+              {bestPin.channel}
+            </Link>
+          </header>
+          <div className="mt-4">
+            <BoardSpecView spec={pinnedSpec.spec} />
+          </div>
+        </section>
       )}
+
+      {otherSpecs.length > 0 &&
+        (pinnedSpec ? (
+          <details className="group">
+            <summary className="cursor-pointer text-xl font-semibold tracking-tight text-muted transition-colors hover:text-foreground">
+              Other versions ({otherSpecs.length})
+              <span className="ml-2 font-mono text-sm">
+                {otherSpecs.map((s) => s.version).join(", ")}
+              </span>
+            </summary>
+            <div className="mt-4 space-y-8">
+              {otherSpecs.map(({ version, spec }) =>
+                spec ? (
+                  <section key={version}>
+                    <h3 className="text-lg font-semibold tracking-tight">Board {version}</h3>
+                    <div className="mt-4">
+                      <BoardSpecView spec={spec} />
+                    </div>
+                  </section>
+                ) : null
+              )}
+            </div>
+          </details>
+        ) : (
+          otherSpecs.map(({ version, spec }) =>
+            spec ? (
+              <section key={version}>
+                <h2 className="text-xl font-semibold tracking-tight">Board {version}</h2>
+                <div className="mt-4">
+                  <BoardSpecView spec={spec} />
+                </div>
+              </section>
+            ) : null
+          )
+        ))}
     </article>
   );
 

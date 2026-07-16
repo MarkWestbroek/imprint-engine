@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { store } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { displayVersion } from "@/lib/format";
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ReleasesPage() {
-  const releases = await store.listReleases();
+  const releases = await store.listReleases(await readOpts());
 
   return (
     <div className="max-w-3xl">

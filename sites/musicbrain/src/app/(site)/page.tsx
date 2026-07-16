@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { store } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { StatusBadge } from "@/components/status-badge";
 import { displayVersion } from "@/lib/format";
 
 export default async function Home() {
+  const opts = await readOpts();
   const [site, products, releases] = await Promise.all([
     store.getSiteConfig(),
-    store.listProducts(),
-    store.listReleases(),
+    store.listProducts(opts),
+    store.listReleases(opts),
   ]);
   const latest = releases[0];
 

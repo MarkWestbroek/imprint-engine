@@ -255,7 +255,13 @@ export class DbContentStore implements WritableContentStore {
 
   // ---------- internals ----------
 
-  /** Current assertions valid at `asOf` (tx_to IS NULL, valid window matches). */
+  /**
+   * Assertions as known AND valid at `asOf` — both bitemporal axes (S6).
+   * With `asOf` in the past this returns the rows that were current back then
+   * (superseded/tombstoned since or not), so an as-of preview really time
+   * travels; for `asOf` = now the tx-window clause is equivalent to
+   * `tx_to IS NULL` (supersession always stamps txTo <= now).
+   */
   private async currentRows(type: ContentType, opts?: ReadOptions) {
     const asOf = opts?.asOf ?? new Date();
     const rows = await this.db
@@ -264,7 +270,8 @@ export class DbContentStore implements WritableContentStore {
       .where(
         and(
           eq(contentItems.type, type),
-          isNull(contentItems.txTo),
+          lte(contentItems.txFrom, asOf),
+          or(isNull(contentItems.txTo), gt(contentItems.txTo, asOf)),
           lte(contentItems.validFrom, asOf),
           or(isNull(contentItems.validTo), gt(contentItems.validTo, asOf))
         )

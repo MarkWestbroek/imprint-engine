@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { BoardSpec, Component } from "@imprint/content-core";
+import type { BoardSpec, Component, ReadOptions } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
@@ -14,13 +15,14 @@ type Props = { params: Promise<{ slug: string }> };
 
 /** A component plus any board-specs found for its versions. */
 async function loadComponent(
-  slug: string
+  slug: string,
+  opts?: ReadOptions
 ): Promise<{ component: Component; specs: { version: string; spec: BoardSpec }[] } | null> {
-  const component = await store.getComponent(slug);
+  const component = await store.getComponent(slug, opts);
   if (!component) return null;
   const specs: { version: string; spec: BoardSpec }[] = [];
   for (const v of component.versions) {
-    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`);
+    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`, opts);
     if (spec) specs.push({ version: v.number, spec });
   }
   return { component, specs };
@@ -40,7 +42,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = await store.getProduct(slug);
+  const opts = await readOpts();
+  const product = await store.getProduct(slug, opts);
   if (!product) notFound();
 
   // Releases of this product, with their slugs (to link to /releases/<slug>).
@@ -53,7 +56,7 @@ export default async function ProductPage({ params }: Props) {
         }))
     : [];
   const components = (
-    await Promise.all(product.components.map(loadComponent))
+    await Promise.all(product.components.map((c) => loadComponent(c, opts)))
   ).filter((c): c is NonNullable<typeof c> => c !== null);
 
   const fallback = (

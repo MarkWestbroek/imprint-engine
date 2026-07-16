@@ -6,6 +6,24 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Time travel (as-of-preview)**: op het admin-dashboard kies je een moment
+  en bladert de publieke site zoals hij tóen was (of, met geplande content,
+  wordt) — banner + Exit bovenaan, alleen zichtbaar in je eigen browser.
+  Onder water reist `DbContentStore.currentRows` nu op beide bitemporale
+  assen (tx- én valid-time), dus verleden-previews tonen echt de oude
+  versies. Bekende beperking: widgets die zelf content ophalen kijken nog
+  naar "nu".
+- **Componentpagina toont de gepinde versie prominent** (MMB-vraag 4): de
+  versie die de nieuwste release pint (stable weegt zwaarder dan beta/dev) is
+  de hoofdweergave met een "pinned by"-badge; overige versies ingeklapt onder
+  "Other versions". Zonder release-pins blijft de vlakke lijst.
+- **/boards**: index van alle board-specs (kaarten met render, component,
+  versie), tot nu toe alleen via hun component bereikbaar.
+- **CI**: GitHub Actions draait typecheck + lint + build (file-store, geen
+  database) bij elke push en PR.
+- Ontwerpnotities toegevoegd: meertaligheid-beheer (docs/design/
+  meertaligheid.md) en de embedded editor-demo W9 (docs/design/
+  editor-demo.md).
 - **URL-aliases** per contenttype (MMB-vraag 1): `aliases` in de site-config
   (bijv. `{"hw": "components"}`) redirect `/hw/adc8` permanent naar
   `/components/adc8` — voor de silk-opdruk `musicbrain.nl/hw/<naam>` op de

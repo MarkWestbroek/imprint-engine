@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ReleaseSchema, type Release } from "@imprint/content-core";
+import { ReleaseSchema, type ReadOptions, type Release } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { DefaultView } from "@/components/default-view";
 import { displayVersion } from "@/lib/format";
@@ -14,14 +15,18 @@ import { displayVersion } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string }> };
 
-/** Releases are keyed by their stored slug; look it up directly in DB mode. */
-async function getRelease(slug: string): Promise<Release | null> {
-  if (writableStore) {
+/**
+ * Releases are keyed by their stored slug; look it up directly in DB mode.
+ * With `asOf` set (preview) the list-based path is used instead — getItem
+ * only knows "current", listReleases can time travel.
+ */
+async function getRelease(slug: string, opts?: ReadOptions): Promise<Release | null> {
+  if (writableStore && !opts?.asOf) {
     const item = await writableStore.getItem("release", slug);
     // Parse (not cast) so schema defaults fill fields older rows may lack.
     return item ? ReleaseSchema.parse(item.data) : null;
   }
-  const all = await store.listReleases();
+  const all = await store.listReleases(opts);
   return all.find((r) => `${r.project}-${r.version}` === slug) ?? null;
 }
 
@@ -40,7 +45,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ReleasePage({ params }: Props) {
   const { slug } = await params;
-  const release = await getRelease(slug);
+  const release = await getRelease(slug, await readOpts());
   if (!release) notFound();
 
   const fallback = (

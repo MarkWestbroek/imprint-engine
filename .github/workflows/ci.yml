@@ -1,0 +1,32 @@
+# CI — build + lint + typecheck bij elke push/PR (backlog §6).
+# Bouwt zonder DATABASE_URL: de site valt dan terug op de file-store (v0),
+# dus de SSG-build draait tegen de content in git — geen database nodig.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build (file-store, geen DB)
+        run: npm run build

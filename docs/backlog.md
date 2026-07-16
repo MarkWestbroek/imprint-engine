@@ -54,9 +54,10 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 
 ## 2. Studio & admin
 
-- [ ] **As-of-preview** — "toon de site zoals hij op datum X was/wordt". De store
-      kan het al (`asOf`), er is alleen geen knop. Mooie demo van bitemporal.
-      _(chat-idee; M)_
+- [x] ~~**As-of-preview**~~ — gedaan in 0.10.0: "Time travel" op het
+      admin-dashboard (draft mode + `asOf`-cookie; `currentRows` reist nu op
+      beide tijdassen). Nog open: widgets die zelf content ophalen (posts,
+      list, releases) kijken in de preview nog naar "nu". _(rest: S)_
 - [ ] **Preview-URL voor drafts** (S5: draft → preview-URL → publish). Nu wel
       draft-vlag + studio-concept, geen deelbare preview-link. _(S5; M)_
 - [ ] **Drafts in een tabel** i.p.v. procesgeheugen — een niet-opgeslagen
@@ -108,14 +109,13 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 - [ ] **Hotspot-punten meesturen** — zonder `points` blijft de interactieve
       board-modus uit. Beslis dit vóór de batch, anders is de set inconsistent.
       _(beslissing; S)_
-- [ ] **Boards-index** — een overzichtspagina van alle board-specs (nu alleen
-      bereikbaar via hun component). _(chat-idee; S)_
-- [ ] **Componentpagina: gepinde versie prominent** (MMB-testcase assert 4 +
-      vraag 4): toon de versie die de nieuwste release pint als hoofdweergave
-      en oudere versies ingeklapt als archief, met **kanaalweging** (stable
-      wint van beta/dev bij het kiezen van "de nieuwste"). Basis werkt al
-      (alle versies zichtbaar, geen release-logica); zie
-      docs/testcases/oude-releases-blijven-benaderbaar.md. _(MMB; M)_
+- [x] ~~**Boards-index**~~ — gedaan in 0.10.0: `/boards`, kaartenraster met
+      render, component en versie.
+- [x] ~~**Componentpagina: gepinde versie prominent**~~ (MMB-testcase assert 4
+      + vraag 4) — gedaan in 0.10.0: de door de nieuwste release gepinde
+      versie is de hoofdweergave (met "pinned by"-badge naar de release,
+      kanaalweging stable > beta > dev); overige versies ingeklapt onder
+      "Other versions". Zonder pins: vlakke lijst zoals voorheen.
 
 ---
 
@@ -134,11 +134,14 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       geen gezicht: geen taal-switcher op de site, geen NL-content, en in de
       admin geen taalkeuze-flow (vertaling maken = zelfde slug met
       `lang: nl` opslaan, maar geen knop "vertaal dit item"). Ook nog open:
-      `hreflang`/URL-strategie (pad-prefix `/nl/` of cookie). _(should; L)_
+      `hreflang`/URL-strategie. **Ontwerp ligt klaar** (beheer-flow, fasering):
+      [design/meertaligheid.md](design/meertaligheid.md). _(should; L)_
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_
 - [ ] **W11** Community: links + GitHub Discussions embed. _(should; S)_
 - [ ] **W12** Privacy-vriendelijke analytics (Plausible/Umami). _(should; S)_
-- [ ] **W9** Embedded demo van de editor. _(could; M)_
+- [ ] **W9** Embedded demo van de editor. **Ontwerp ligt klaar** (aparte
+      demo-imprint met nachtelijke reset; open vragen voor Mark):
+      [design/editor-demo.md](design/editor-demo.md). _(could; M)_
 - [ ] **W10** Dealer-portal achter login. _(later; L)_
 - [ ] **Placeholder-content vervangen** — productteksten, links, domein zijn nog
       door mij verzonnen. _(README; M — jouw tekst)_
@@ -151,7 +154,8 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       update-flow bewezen bij 0.9.0 (pull → gericht bijseeden → rebuild →
       `npm run smoke`). Servercommando's zonder SSH via Scheduled Tasks
       (patroon in de README).
-- [ ] **CI** — GitHub Actions: build + lint + typecheck per PR. _(README; S)_
+- [x] ~~**CI**~~ — gedaan in 0.10.0: GitHub Actions draait typecheck + lint +
+      build (file-store, geen DB) bij elke push/PR.
 - [ ] **Backups** van de DB + assets op Plesk. _(niet eerder genoemd; S)_
 
 ---

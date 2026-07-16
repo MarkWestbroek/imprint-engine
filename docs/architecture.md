@@ -311,10 +311,24 @@ sequenceDiagram
     E->>E: revalidatePath: site-cache leeg
 ```
 
-Lezen voor de site is altijd: `tx_to IS NULL` (huidige bewering) én
-`valid_from ≤ asOf < valid_to` (geldig op dat moment). Terugrollen =
-een oude payload opnieuw asserteren; de geschiedenis zelf wordt nooit
-herschreven. Dit model migreert later naadloos naar het echte
+Lezen voor de site is volledig bitemporeel op één moment: `tx_from ≤ asOf <
+tx_to` (wat we op dat moment beweerden) én `valid_from ≤ asOf < valid_to`
+(wat op dat moment gold). Zonder `asOf` is dat moment "nu", en is de
+tx-clausule gelijkwaardig aan `tx_to IS NULL` — maar met een `asOf` in het
+verleden komen de tóen actuele (inmiddels gesuperseerde of getombstonede)
+rijen terug: echt tijdreizen. Terugrollen = een oude payload opnieuw
+asserteren; de geschiedenis zelf wordt nooit herschreven.
+
+**As-of-preview** (S6) maakt dat tijdreizen zichtbaar: het admin-dashboard
+("Time travel") opent de publieke site met een gekozen moment. Technisch:
+Next **draft mode** (de bypass-cookie laat de prerendered pagina's dynamisch
+renderen voor déze browser) plus een `imprint_asof`-cookie met het moment;
+[preview.ts](../sites/musicbrain/src/lib/preview.ts) vertaalt dat per request
+naar `ReadOptions` en elke publieke pagina geeft die door aan de store.
+In-/uitstappen via `/api/preview?asOf=…&to=…` (editors only) en
+`/api/preview/exit`; een banner in de site-layout markeert de preview.
+Beperking: widgets die zelf content ophalen (posts, list, releases…) kijken
+nog naar "nu" — de kernpagina's reizen mee. Dit model migreert later naadloos naar het echte
 bitemporal-register (bitemporal2026) — de site merkt daar niets van, want
 alles loopt via de `ContentStore`-interface.
 
@@ -426,6 +440,10 @@ flowchart LR
   hij nogmaals, dan wordt dat een nieuwe versie in de historie).
 - Publieke pagina's zijn prerendered (SSG); admin-saves legen de cache en
   nieuwe pagina's renderen on demand — geen rebuild nodig.
+- **CI**: GitHub Actions ([ci.yml](../.github/workflows/ci.yml)) draait
+  typecheck + lint + build bij elke push/PR. De build draait zonder
+  `DATABASE_URL` en valt dus terug op de file-store — precies de
+  v0-belofte "een checkout bouwt zonder database".
 
 ## 7. Nieuwe site ("imprint") toevoegen
 

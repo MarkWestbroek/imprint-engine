@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { store } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { PageRenderer } from "@/components/page-renderer";
 
@@ -44,7 +45,7 @@ export default async function ContentPage({ params }: Props) {
     permanentRedirect(`/${[target, ...slug.slice(1)].join("/")}`);
   }
 
-  const page = await store.getPage(joined);
+  const page = await store.getPage(joined, await readOpts());
   if (!page) notFound();
 
   if (page.layout) {
