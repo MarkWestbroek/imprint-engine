@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.9.0] - 2026-07-16
 - **Gebruikersbeheer**: `/admin/users` — admins voegen gebruikers toe, wijzigen
   rollen, resetten wachtwoorden (gegenereerd, één keer getoond) en verwijderen
   accounts; iedereen die is ingelogd wijzigt er zijn eigen wachtwoord (huidige
