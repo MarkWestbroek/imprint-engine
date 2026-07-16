@@ -131,11 +131,14 @@ flowchart LR
   `"use client"`-eiland erin; `treeview`/`api` hebben dat niet nodig, een
   geannoteerde-afbeelding-widget wel.
 - Catalogus van musicbrain: `text`, `table` (met custom grid-editor),
-  `image`, `callout`/CTA, `embed` (iframe), `board` (geannoteerde render),
-  `boardspec` (rendert een board-spec), `template` (markdown met Mustache
-  merge fields over een content-item/subject), `list` (links die de
-  content-graaf volgen), `treeview`, `api` (JSON-endpoint met veldselectie),
-  `releases`, `products`.
+  `image`, `gallery` (fotoraster + lightbox, kan subject-media meenemen),
+  `carousel`, `album` (externe foto-repo: JSON-API of Lightroom-share
+  best-effort), `map` (Leaflet/OSM met markers), `kanban`, `itinerary`
+  (component-reis door releases), `callout`/CTA, `embed` (iframe),
+  `board` (geannoteerde render), `boardspec` (rendert een board-spec),
+  `template` (markdown met Mustache merge fields over een content-item/
+  subject), `list` (links die de content-graaf volgen), `treeview`,
+  `api` (JSON-endpoint met veldselectie), `releases`, `products`.
 
 ## 3b. Product / component / release
 

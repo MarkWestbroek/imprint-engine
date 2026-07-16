@@ -1,21 +1,31 @@
 import Link from "next/link";
 import Mustache from "mustache";
-import type { ContentType, Page } from "@imprint/content-core";
+import { computeItinerary, type ContentType, type Page } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { StatusBadge } from "@/components/status-badge";
+import { displayVersion } from "@/lib/format";
 import { BoardCanvas } from "./board-canvas";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { Carousel, Gallery } from "./media-islands";
+import { MapIsland } from "./map-island";
 import type {
+  AlbumConfig,
   ApiConfig,
   BoardConfig,
   BoardSpecConfig,
   CalloutConfig,
+  CarouselConfig,
   EmbedConfig,
+  GalleryConfig,
   ImageConfig,
+  ImageItem,
+  ItineraryConfig,
+  KanbanConfig,
   ProductsConfig,
   ReleasesConfig,
   ListConfig,
+  MapConfig,
   TableConfig,
   TemplateConfig,
   TextConfig,
@@ -255,6 +265,220 @@ async function ListWidget({ config, subject }: { config: ListConfig; subject?: u
   );
 }
 
+/** Config images + (optionally) the subject's media[] strings, as one list. */
+function collectImages(
+  config: { images: ImageItem[]; useSubjectMedia: boolean },
+  subject?: unknown
+): ImageItem[] {
+  const images = [...config.images];
+  const media = (subject as { media?: unknown } | undefined)?.media;
+  if (config.useSubjectMedia && Array.isArray(media)) {
+    for (const m of media) {
+      if (typeof m === "string" && m) images.push({ src: m, alt: "" });
+    }
+  }
+  return images;
+}
+
+async function GalleryWidget({
+  config,
+  subject,
+}: {
+  config: GalleryConfig;
+  subject?: unknown;
+}) {
+  const images = collectImages(config, subject);
+  return (
+    <WidgetFrame title={config.title}>
+      {images.length > 0 ? (
+        <Gallery images={images} columns={config.columns} />
+      ) : (
+        <p className="text-sm text-muted">No photos yet.</p>
+      )}
+    </WidgetFrame>
+  );
+}
+
+async function CarouselWidget({
+  config,
+  subject,
+}: {
+  config: CarouselConfig;
+  subject?: unknown;
+}) {
+  const images = collectImages(config, subject);
+  return (
+    <WidgetFrame title={config.title}>
+      {images.length > 0 ? (
+        <Carousel images={images} interval={config.interval} />
+      ) : (
+        <p className="text-sm text-muted">No photos yet.</p>
+      )}
+    </WidgetFrame>
+  );
+}
+
+/** Best-effort image extraction from an external album (see AlbumConfig). */
+async function loadAlbumImages(config: AlbumConfig): Promise<ImageItem[]> {
+  const res = await fetch(config.url, { next: { revalidate: 600 } });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+  if (config.source === "json-api") {
+    const json: unknown = await res.json();
+    const data = config.itemsPath ? getPath(json, config.itemsPath) : json;
+    const items = Array.isArray(data) ? data : [];
+    return items
+      .map((item) => ({
+        src: String(getPath(item, config.srcPath) ?? ""),
+        alt: "",
+        caption: config.captionPath
+          ? String(getPath(item, config.captionPath) ?? "") || undefined
+          : undefined,
+      }))
+      .filter((img) => img.src.startsWith("http") || img.src.startsWith("/"))
+      .slice(0, config.limit);
+  }
+
+  // lightroom-share (or any share page): scrape image URLs; og:image as floor.
+  const html = await res.text();
+  const urls = new Set<string>();
+  const og = html.match(/property="og:image"\s+content="([^"]+)"/i)?.[1];
+  for (const m of html.matchAll(/https:\/\/[^"'\s\\]+\.(?:jpg|jpeg|png|webp)[^"'\s\\]*/gi)) {
+    urls.add(m[0]);
+  }
+  if (og) urls.add(og);
+  return [...urls].slice(0, config.limit).map((src) => ({ src, alt: "" }));
+}
+
+async function AlbumWidget({ config }: { config: AlbumConfig }) {
+  let images: ImageItem[] = [];
+  let error: string | undefined;
+  try {
+    images = await loadAlbumImages(config);
+  } catch (err) {
+    error = err instanceof Error ? err.message : String(err);
+  }
+  const host = new URL(config.url).hostname;
+
+  return (
+    <WidgetFrame title={config.title}>
+      {images.length > 0 ? (
+        <Gallery images={images} columns={config.columns} />
+      ) : (
+        <p className="text-sm text-muted">
+          {error ? `Could not load ${host}: ${error}` : `No previewable photos on ${host}.`}
+        </p>
+      )}
+      <a
+        href={config.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-block text-sm text-accent underline underline-offset-4"
+      >
+        Open album on {host} ↗
+      </a>
+    </WidgetFrame>
+  );
+}
+
+async function MapWidget({ config }: { config: MapConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <MapIsland
+        center={config.center}
+        zoom={config.zoom}
+        height={config.height}
+        markers={config.markers}
+      />
+    </WidgetFrame>
+  );
+}
+
+const CARD_TONES: Record<string, string> = {
+  default: "border-line bg-background",
+  accent: "border-accent/50 bg-accent/10",
+  warning: "border-amber-400/50 bg-amber-400/10",
+  success: "border-emerald-400/50 bg-emerald-400/10",
+};
+
+async function KanbanWidget({ config }: { config: KanbanConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="flex gap-3 overflow-x-auto pb-2">
+        {config.columns.map((col, c) => (
+          <div key={c} className="w-56 shrink-0 rounded-lg border border-line bg-surface/60 p-2">
+            <h3 className="mb-2 flex items-baseline justify-between px-1 text-sm font-semibold">
+              {col.title}
+              <span className="text-xs font-normal text-muted">{col.cards.length}</span>
+            </h3>
+            <div className="space-y-2">
+              {col.cards.map((card, i) => (
+                <div key={i} className={`rounded-md border p-2 text-sm ${CARD_TONES[card.tone]}`}>
+                  <Markdown>{card.text}</Markdown>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function ItineraryWidget({
+  config,
+  subject,
+}: {
+  config: ItineraryConfig;
+  subject?: unknown;
+}) {
+  const product =
+    config.product ?? (subject as { slug?: string } | undefined)?.slug;
+  const releases = product ? await store.listReleases({ product }) : [];
+  const itinerary = computeItinerary(releases);
+
+  return (
+    <WidgetFrame title={config.title}>
+      {itinerary.length === 0 ? (
+        <p className="text-sm text-muted">
+          {product ? `No component history for "${product}" yet.` : "No product (set one, or use on a product page)."}
+        </p>
+      ) : (
+        <table className="w-full border-collapse text-sm">
+          <thead>
+            <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+              <th className="py-1.5 pr-3">Component</th>
+              <th className="py-1.5 pr-3">From</th>
+              <th className="py-1.5 pr-3">Until</th>
+              <th className="py-1.5">Versions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {itinerary.map((row) => (
+              <tr key={row.component} className="border-b border-line">
+                <td className="py-1.5 pr-3">
+                  <Link href={`/components/${row.component}`} className="text-accent hover:underline">
+                    {row.component}
+                  </Link>
+                </td>
+                <td className="py-1.5 pr-3 text-muted">
+                  {row.start} <span className="font-mono text-xs">({displayVersion(row.firstRelease)})</span>
+                </td>
+                <td className="py-1.5 pr-3 text-muted">
+                  {row.end ?? <span className="text-emerald-400">current</span>}
+                </td>
+                <td className="py-1.5 font-mono text-xs">
+                  {row.versions.map(displayVersion).join(" → ")}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </WidgetFrame>
+  );
+}
+
 const CALLOUT_TONES: Record<CalloutConfig["tone"], string> = {
   accent: "border-accent/40 bg-accent/10",
   warning: "border-amber-400/40 bg-amber-400/10",
@@ -475,6 +699,12 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   text: TextWidget as WidgetComponent,
   table: TableWidget as WidgetComponent,
   image: ImageWidget as WidgetComponent,
+  gallery: GalleryWidget as WidgetComponent,
+  carousel: CarouselWidget as WidgetComponent,
+  album: AlbumWidget as WidgetComponent,
+  map: MapWidget as WidgetComponent,
+  kanban: KanbanWidget as WidgetComponent,
+  itinerary: ItineraryWidget as WidgetComponent,
   board: BoardWidget as WidgetComponent,
   boardspec: BoardSpecWidget as WidgetComponent,
   template: TemplateWidget as WidgetComponent,

@@ -385,10 +385,267 @@ function BoardEditor({ config, onChange }: WidgetEditorProps) {
   );
 }
 
+/** SchemaForm over everything except `except` — mix generated + custom parts. */
+function omitProps(schema: JsonSchema, except: string[]): JsonSchema {
+  const properties = { ...((schema.properties as Record<string, unknown>) ?? {}) };
+  for (const key of except) delete properties[key];
+  return { ...schema, properties };
+}
+
+function Mini2({ label, title, onClick }: { label: string; title?: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      title={title}
+      onClick={onClick}
+      className="rounded border border-line px-1.5 py-0.5 text-xs text-muted hover:border-accent hover:text-foreground"
+    >
+      {label}
+    </button>
+  );
+}
+
+type ImageRow = { src: string; alt?: string; caption?: string };
+
+/** Row editor for image lists (gallery/carousel): src/alt/caption + ordering. */
+function ImagesEditor({ config, onChange, schema }: WidgetEditorProps) {
+  const images = (Array.isArray(config.images) ? config.images : []) as ImageRow[];
+  const set = (next: ImageRow[]) => onChange({ ...config, images: next });
+  const update = (i: number, patch: Partial<ImageRow>) =>
+    set(images.map((img, idx) => (idx === i ? { ...img, ...patch } : img)));
+  const move = (i: number, d: -1 | 1) => {
+    const to = i + d;
+    if (to < 0 || to >= images.length) return;
+    const next = [...images];
+    [next[i], next[to]] = [next[to], next[i]];
+    set(next);
+  };
+
+  return (
+    <div className="space-y-3">
+      <SchemaForm schema={omitProps(schema, ["images"])} value={config} onChange={onChange} />
+      <div>
+        <span className="block text-xs font-medium uppercase tracking-wide text-muted">
+          photos
+        </span>
+        <div className="mt-1 space-y-2">
+          {images.map((img, i) => (
+            <div key={i} className="rounded-lg border border-line p-2">
+              <input
+                className={`${inputCls} w-full`}
+                placeholder="/boards/foo.png of https://…"
+                value={img.src}
+                onChange={(e) => update(i, { src: e.target.value })}
+              />
+              <div className="mt-1.5 flex gap-1.5">
+                <input
+                  className={`${inputCls} flex-1`}
+                  placeholder="alt"
+                  value={img.alt ?? ""}
+                  onChange={(e) => update(i, { alt: e.target.value })}
+                />
+                <input
+                  className={`${inputCls} flex-1`}
+                  placeholder="caption"
+                  value={img.caption ?? ""}
+                  onChange={(e) => update(i, { caption: e.target.value })}
+                />
+                <Mini2 label="↑" onClick={() => move(i, -1)} />
+                <Mini2 label="↓" onClick={() => move(i, 1)} />
+                <Mini2 label="✕" onClick={() => set(images.filter((_, idx) => idx !== i))} />
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => set([...images, { src: "" }])}
+            className="rounded-md border border-dashed border-line px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
+          >
+            ＋ photo
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type MarkerRow = { lat: number; lng: number; label?: string; markdown?: string };
+
+/** Row editor for map markers: lat/lng/label + popup markdown. */
+function MapEditor({ config, onChange, schema }: WidgetEditorProps) {
+  const markers = (Array.isArray(config.markers) ? config.markers : []) as MarkerRow[];
+  const set = (next: MarkerRow[]) => onChange({ ...config, markers: next });
+  const update = (i: number, patch: Partial<MarkerRow>) =>
+    set(markers.map((m, idx) => (idx === i ? { ...m, ...patch } : m)));
+  const num = (v: string) => (v === "" || Number.isNaN(Number(v)) ? 0 : Number(v));
+
+  return (
+    <div className="space-y-3">
+      <SchemaForm schema={omitProps(schema, ["markers"])} value={config} onChange={onChange} />
+      <div>
+        <span className="block text-xs font-medium uppercase tracking-wide text-muted">
+          markers
+        </span>
+        <div className="mt-1 space-y-2">
+          {markers.map((m, i) => (
+            <div key={i} className="rounded-lg border border-line p-2">
+              <div className="flex gap-1.5">
+                <input
+                  className={`${inputCls} w-24`}
+                  placeholder="lat"
+                  value={String(m.lat)}
+                  onChange={(e) => update(i, { lat: num(e.target.value) })}
+                />
+                <input
+                  className={`${inputCls} w-24`}
+                  placeholder="lng"
+                  value={String(m.lng)}
+                  onChange={(e) => update(i, { lng: num(e.target.value) })}
+                />
+                <input
+                  className={`${inputCls} flex-1`}
+                  placeholder="label"
+                  value={m.label ?? ""}
+                  onChange={(e) => update(i, { label: e.target.value })}
+                />
+                <Mini2 label="✕" onClick={() => set(markers.filter((_, idx) => idx !== i))} />
+              </div>
+              <textarea
+                className={`${inputCls} mt-1.5 w-full`}
+                rows={2}
+                placeholder="popup (markdown, optioneel)"
+                value={m.markdown ?? ""}
+                onChange={(e) => update(i, { markdown: e.target.value })}
+              />
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => set([...markers, { lat: 52.37, lng: 4.9 }])}
+            className="rounded-md border border-dashed border-line px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
+          >
+            ＋ marker
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type KanbanCard = { text: string; tone?: string };
+type KanbanColumn = { title: string; cards: KanbanCard[] };
+
+/** Board editor for the kanban widget: columns with cards, move with arrows. */
+function KanbanEditor({ config, onChange, schema }: WidgetEditorProps) {
+  const columns = (Array.isArray(config.columns) ? config.columns : []) as KanbanColumn[];
+  const set = (next: KanbanColumn[]) => onChange({ ...config, columns: next });
+  const patchCol = (c: number, patch: Partial<KanbanColumn>) =>
+    set(columns.map((col, idx) => (idx === c ? { ...col, ...patch } : col)));
+  const moveCard = (c: number, i: number, dir: "up" | "down" | "left" | "right") => {
+    const next = structuredClone(columns);
+    const cards = next[c].cards;
+    if (dir === "up" || dir === "down") {
+      const to = dir === "up" ? i - 1 : i + 1;
+      if (to < 0 || to >= cards.length) return;
+      [cards[i], cards[to]] = [cards[to], cards[i]];
+    } else {
+      const to = dir === "left" ? c - 1 : c + 1;
+      if (to < 0 || to >= next.length) return;
+      const [card] = cards.splice(i, 1);
+      next[to].cards.push(card);
+    }
+    set(next);
+  };
+
+  return (
+    <div className="space-y-3">
+      <SchemaForm schema={omitProps(schema, ["columns"])} value={config} onChange={onChange} />
+      <div className="space-y-2">
+        {columns.map((col, c) => (
+          <div key={c} className="rounded-lg border border-line p-2">
+            <div className="flex gap-1.5">
+              <input
+                className={`${inputCls} flex-1 font-semibold`}
+                placeholder="kolomtitel"
+                value={col.title}
+                onChange={(e) => patchCol(c, { title: e.target.value })}
+              />
+              <Mini2 label="✕ col" onClick={() => set(columns.filter((_, idx) => idx !== c))} />
+            </div>
+            <div className="mt-1.5 space-y-1.5">
+              {col.cards.map((card, i) => (
+                <div key={i} className="rounded-md border border-line p-1.5">
+                  <textarea
+                    className={`${inputCls} w-full`}
+                    rows={2}
+                    value={card.text}
+                    onChange={(e) =>
+                      patchCol(c, {
+                        cards: col.cards.map((cd, idx) =>
+                          idx === i ? { ...cd, text: e.target.value } : cd
+                        ),
+                      })
+                    }
+                  />
+                  <div className="mt-1 flex items-center gap-1">
+                    <select
+                      className={`${inputCls} text-xs`}
+                      value={card.tone ?? "default"}
+                      onChange={(e) =>
+                        patchCol(c, {
+                          cards: col.cards.map((cd, idx) =>
+                            idx === i ? { ...cd, tone: e.target.value } : cd
+                          ),
+                        })
+                      }
+                    >
+                      {["default", "accent", "warning", "success"].map((t) => (
+                        <option key={t} value={t}>{t}</option>
+                      ))}
+                    </select>
+                    <Mini2 label="↑" onClick={() => moveCard(c, i, "up")} />
+                    <Mini2 label="↓" onClick={() => moveCard(c, i, "down")} />
+                    <Mini2 label="◀" title="Naar kolom links" onClick={() => moveCard(c, i, "left")} />
+                    <Mini2 label="▶" title="Naar kolom rechts" onClick={() => moveCard(c, i, "right")} />
+                    <Mini2
+                      label="✕"
+                      onClick={() =>
+                        patchCol(c, { cards: col.cards.filter((_, idx) => idx !== i) })
+                      }
+                    />
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => patchCol(c, { cards: [...col.cards, { text: "" }] })}
+                className="w-full rounded-md border border-dashed border-line py-1 text-xs text-muted hover:border-accent hover:text-accent"
+              >
+                ＋ kaart
+              </button>
+            </div>
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => set([...columns, { title: `Kolom ${columns.length + 1}`, cards: [] }])}
+          className="rounded-md border border-dashed border-line px-3 py-1.5 text-sm text-muted hover:border-accent hover:text-accent"
+        >
+          ＋ kolom
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /** Custom editors per widget type; absent = schema-generated form. */
 export const widgetEditors: Record<string, WidgetEditor> = {
   table: TableEditor,
   board: BoardEditor,
+  gallery: ImagesEditor,
+  carousel: ImagesEditor,
+  map: MapEditor,
+  kanban: KanbanEditor,
 };
 
 export function WidgetEditorFor({ type, ...props }: WidgetEditorProps & { type: string }) {

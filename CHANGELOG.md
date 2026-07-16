@@ -15,6 +15,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   `db:migrate` er direct achteraan kan zonder opstart-race.
 - Backlog (`docs/backlog.md`): open punten uit de README, de requirements en de
   bouwsessies op één plek.
+- Zes nieuwe widgets: **gallery** (fotoraster met lightbox, kan de media van de
+  pagina-subject meenemen), **carousel** (met auto-advance), **album** (view op
+  een externe foto-repo: JSON-API of een Lightroom-share als best-effort/link-
+  kaart), **map** (interactieve OpenStreetMap/Leaflet met markers en markdown-
+  popups), **kanban** (kolommen met kaarten) en **itinerary** (de reis van
+  componenten door de releases van een product).
+- Custom editors voor de nieuwe widgets: fotorijen (gallery/carousel), markers
+  (map) en een bord-editor (kanban, kaarten verplaatsen met pijltjes).
+- Productpagina toont `product.media` als galerij (W3-foto's).
 
 ## [0.7.1] - 2026-07-14
 - Asset-bestandsnamen krijgen een content-hash (`render-top.<sha8>.png`), zodat

@@ -23,19 +23,24 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 - [ ] **Menu-items** in de `treeview`-widget: nu nog een JSON-box. _(S)_
 
 ### Nieuwe widgettypen
-- [ ] **`itinerary`** — de afgeleide component-itinerary (start→eind, versies per
-      component) is berekend en via de API te lezen, maar wordt nergens getoond.
-      _(bestaat al server-side; S)_
+- [x] ~~**`itinerary`**~~ — gedaan in 0.8.0.
+- [x] ~~**`gallery` / media**~~ — gedaan in 0.8.0 (gallery-widget + lightbox;
+      `product.media` wordt op de productpagina gerenderd). Voor W3 rest **video**.
+- [x] ~~**foto-carrousel**~~ — gedaan in 0.8.0.
+- [x] ~~**externe foto-repo / Lightroom-view**~~ — gedaan in 0.8.0 als
+      `album`-widget (JSON-API generiek; Lightroom-share best-effort → linkkaart).
+      **Nog testen met een echte Lightroom-share-URL van Mark.** _(S)_
+- [x] ~~**interactieve kaart**~~ — gedaan in 0.8.0 (Leaflet/OSM).
+- [x] ~~**kanban-bord**~~ — gedaan in 0.8.0.
 - [ ] **`downloads`** — release-downloads met versie + checksum als blok (W7 is er
       wel in de data, niet als plaatsbare widget). _(S)_
-- [ ] **`gallery` / media** — `product.media` bestaat in het schema maar wordt
-      **nergens gerenderd**; W3 vraagt foto/video op de productpagina. _(W3; M)_
 - [ ] **`posts` / nieuws-feed** — devlog-items als feed-blok (nu alleen losse
       pagina's onder `posts/`). _(W6; S)_
 - [ ] **`accordion` / FAQ** — inklapbare vraag/antwoord-blokken. _(idee; S)_
 - [ ] **`hero`** — grote kop + beeld + CTA (nu handwerk op de home). _(idee; S)_
 - [ ] **`divider` / spacer** — visuele rust tussen rijen. _(idee; S)_
-- [ ] **`video`** — YouTube/Vimeo/zelfgehost, netjes responsive. _(idee; S)_
+- [ ] **`video`** — YouTube/Vimeo/zelfgehost, netjes responsive (rest van W3).
+      _(idee; S)_
 - [ ] **`search`** — zoeken in content (vergt eerst een zoekindex). _(idee; L)_
 - [ ] **Lijst-varianten** — de `list`-widget kan alleen links; Pleio doet ook
       *feed* en *slider* als weergavevorm. _(idee; M)_
@@ -138,5 +143,5 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       inpluggen als je meer wilt.
 - [ ] **Postgres of MariaDB?** S11 noemt PostgreSQL; we koersen bewust op MariaDB
       (Plesk). Prima keuze, maar het staat nog als afwijking in de requirements.
-- [ ] **Relations aanzetten** — het beheerscherm staat er, maar er zijn nu géén
-      regels geconfigureerd (dus geen afdwinging). Aanzetten via /admin/relations.
+- [x] ~~**Relations aanzetten**~~ — gedaan: de default-regels staan aan in de
+      dev-DB (op Plesk straks nogmaals via /admin/relations → Load defaults).

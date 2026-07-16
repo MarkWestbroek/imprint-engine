@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { DefaultView } from "@/components/default-view";
+import { Gallery } from "@/widgets/media-islands";
 import { displayVersion } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -63,6 +64,13 @@ export default async function ProductPage({ params }: Props) {
       </header>
 
       {product.description && <Markdown>{product.description}</Markdown>}
+
+      {product.media.length > 0 && (
+        <section>
+          {/* W3: product photos/video — media[] rendered as a gallery. */}
+          <Gallery images={product.media.map((src) => ({ src, alt: product.name }))} columns={3} />
+        </section>
+      )}
 
       {product.specs.length > 0 && (
         <section>

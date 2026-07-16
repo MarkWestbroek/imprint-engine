@@ -103,6 +103,102 @@ export const EmbedConfig = z.object({
 });
 export type EmbedConfig = z.infer<typeof EmbedConfig>;
 
+/** One image in a gallery/carousel/album. */
+export const ImageItem = z.object({
+  /** URL or a path under public/ or /api/assets. */
+  src: z.string().min(1),
+  alt: z.string().default(""),
+  caption: z.string().optional(),
+});
+export type ImageItem = z.infer<typeof ImageItem>;
+
+export const GalleryConfig = z.object({
+  title: z.string().optional(),
+  images: z.array(ImageItem).default([]),
+  /** Grid columns on wide screens. */
+  columns: z.number().int().min(2).max(6).default(3),
+  /** Also include the subject's media[] (e.g. product photos, W3). */
+  useSubjectMedia: z.boolean().default(false),
+});
+export type GalleryConfig = z.infer<typeof GalleryConfig>;
+
+export const CarouselConfig = z.object({
+  title: z.string().optional(),
+  images: z.array(ImageItem).default([]),
+  /** Auto-advance in seconds; 0 = manual only. */
+  interval: z.number().int().min(0).max(60).default(0),
+  useSubjectMedia: z.boolean().default(false),
+});
+export type CarouselConfig = z.infer<typeof CarouselConfig>;
+
+/**
+ * A view on an *external* photo collection. "json-api" reads any repo that
+ * exposes JSON (dot-paths like the api widget); "lightroom-share" is a
+ * best-effort scrape of a public share page (e.g. Lightroom mobile album) —
+ * it always degrades gracefully to a link card with the cover image.
+ */
+export const AlbumConfig = z.object({
+  title: z.string().optional(),
+  source: z.enum(["json-api", "lightroom-share"]).default("lightroom-share"),
+  /** Share URL (lightroom-share) or JSON endpoint (json-api). */
+  url: z.string().url(),
+  /** json-api: dot-path to the item array, and per-item paths. */
+  itemsPath: z.string().optional(),
+  srcPath: z.string().default("src"),
+  captionPath: z.string().optional(),
+  limit: z.number().int().positive().default(12),
+  columns: z.number().int().min(2).max(6).default(3),
+});
+export type AlbumConfig = z.infer<typeof AlbumConfig>;
+
+export const MapConfig = z.object({
+  title: z.string().optional(),
+  /** Fallback centre when there are no markers. */
+  center: z.object({ lat: z.number(), lng: z.number() }).optional(),
+  zoom: z.number().int().min(1).max(19).default(13),
+  height: z.number().int().min(120).max(1200).default(400),
+  markers: z
+    .array(
+      z.object({
+        lat: z.number(),
+        lng: z.number(),
+        label: z.string().optional(),
+        /** Popup content (markdown). */
+        markdown: z.string().optional(),
+      })
+    )
+    .default([]),
+});
+export type MapConfig = z.infer<typeof MapConfig>;
+
+export const KanbanConfig = z.object({
+  title: z.string().optional(),
+  columns: z
+    .array(
+      z.object({
+        title: z.string().min(1),
+        cards: z
+          .array(
+            z.object({
+              /** Card content (markdown). */
+              text: z.string(),
+              tone: z.enum(["default", "accent", "warning", "success"]).default("default"),
+            })
+          )
+          .default([]),
+      })
+    )
+    .default([]),
+});
+export type KanbanConfig = z.infer<typeof KanbanConfig>;
+
+export const ItineraryConfig = z.object({
+  title: z.string().optional(),
+  /** Product slug; falls back to the page subject's slug. */
+  product: z.string().optional(),
+});
+export type ItineraryConfig = z.infer<typeof ItineraryConfig>;
+
 export const BoardSpecConfig = z.object({
   title: z.string().optional(),
   /**
@@ -212,6 +308,12 @@ export const widgetCatalog = [
   { name: "text", label: "Text (markdown)", version: "1.0.0", help: "Rich text via markdown, with a visual editor.", configSchema: TextConfig },
   { name: "table", label: "Table", version: "1.0.0", help: "A data table; edit cells, add rows/columns.", configSchema: TableConfig },
   { name: "image", label: "Image", version: "1.0.0", help: "A single image with optional caption.", configSchema: ImageConfig },
+  { name: "gallery", label: "Photo gallery", version: "1.0.0", help: "A grid of photos with a lightbox; can include the subject's media.", configSchema: GalleryConfig },
+  { name: "carousel", label: "Photo carousel", version: "1.0.0", help: "One photo at a time with prev/next and optional auto-advance.", configSchema: CarouselConfig },
+  { name: "album", label: "External album", version: "1.0.0", help: "A view on an online photo repo (JSON API, or a Lightroom share as link card).", configSchema: AlbumConfig },
+  { name: "map", label: "Map", version: "1.0.0", help: "An interactive OpenStreetMap with markers and popups.", configSchema: MapConfig },
+  { name: "kanban", label: "Kanban board", version: "1.0.0", help: "A small board: columns with cards.", configSchema: KanbanConfig },
+  { name: "itinerary", label: "Component itinerary", version: "1.0.0", help: "The journey of each component through a product's releases.", configSchema: ItineraryConfig },
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
   { name: "template", label: "Template (merge fields)", version: "1.0.0", help: "Markdown with {{fields}} merged from a content item.", configSchema: TemplateConfig },
