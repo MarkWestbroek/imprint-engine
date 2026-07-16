@@ -5,6 +5,10 @@ Eén publicatie-motor, meerdere merk-sites — zoals een uitgeverij meerdere
 Geen klassiek CMS dus. Eerste imprint: **MusicBrain** (werknaam).
 Requirements: zie [docs/website-requirements.md](docs/website-requirements.md).
 
+> **Live**: https://musicbrain.nl (sinds juli 2026, v0.9.0) — beheer via
+> `/admin`. Updaten = `git push` → Plesk *Pull updates*; controleren met
+> `npm run smoke -- https://musicbrain.nl`. Zie "Deploy naar Plesk".
+
 ## Opzet
 
 npm-workspaces-monorepo, gefaseerd volgens §C van het requirements-doc:
@@ -268,6 +272,22 @@ vóór de eerste migrate):
      `cd <repo-root> && npm run db:seed` (of plak `&& npm run db:seed` één keer
      aan de deployment-action en haal het er daarna weer af).
 
+**Servercommando's zonder SSH — het Scheduled-Task-patroon** (in de praktijk
+bewezen bij de 0.9.0-update): elk npm-commando uit deze README is op de server
+te draaien als taak van het type *Run a command*, met Notify **Every time**
+(anders zie je de uitvoer niet) en de knop **Run Now**:
+
+```
+cd imprint && export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=themes
+```
+
+De `cd imprint` (het deployment-pad, relatief vanaf home) én de
+`export PATH=...` zijn allebei verplicht: een scheduled task start in je
+home-directory en heeft npm niet op het pad. Zet de taak daarna op inactief
+(of verwijder hem) — als "Yearly" blijven staan betekent één overbodige
+(onschuldige) run per jaar. Zelfde patroon werkt voor `npm run user -- passwd
+<naam>` (wachtwoord-reset) en `npm run db:migrate`.
+
 **Volgende deploys:** `git push` → Plesk pullt, bouwt, migreert, herstart
 (de nieuwe `restart.txt` triggert Passenger). Content blijft in de DB; de seed
 is eenmalig, de productie-DB is de bron van waarheid. Controleer daarna met
@@ -331,6 +351,6 @@ De volledige lijst met open punten staat in **[docs/backlog.md](docs/backlog.md)
 (widgets, studio/admin, contentmodel, deploy, open requirements en de
 beslissingen die nog gemaakt moeten worden). De eerstvolgende dingen:
 
-- [ ] Deploy naar Plesk (Node.js-extensie, MariaDB, env-vars, migrate + seed)
+- [x] ~~Deploy naar Plesk~~ — live op https://musicbrain.nl sinds juli 2026
 - [ ] CI (GitHub Actions: build + lint + typecheck per PR)
 - [ ] Placeholder-content (productteksten, links, domein) vervangen

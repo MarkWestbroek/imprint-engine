@@ -4,6 +4,9 @@ Wat je als site-redacteur met Imprint kunt, zonder techniek. De technische
 tegenhanger is [architecture.md](architecture.md); wat er per versie bij kwam
 staat in de [CHANGELOG](../CHANGELOG.md).
 
+De eerste imprint draait live: **https://musicbrain.nl**, beheer via
+**https://musicbrain.nl/admin**.
+
 ## Inloggen & account
 
 - **/admin** — log in met je gebruikersnaam en wachtwoord.

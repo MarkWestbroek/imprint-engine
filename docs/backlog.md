@@ -135,9 +135,10 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 
 ## 6. Deploy & beheer
 
-- [ ] **Deploy naar Plesk** — Node.js-extensie aan, MariaDB aanmaken, env-vars
-      (`DATABASE_URL`, `SESSION_SECRET`, `INGEST_TOKEN`, `ASSET_ROOT`), migrate +
-      seed. Het stappenplan staat in de README. _(README; M)_
+- [x] ~~**Deploy naar Plesk**~~ — live op https://musicbrain.nl sinds juli 2026;
+      update-flow bewezen bij 0.9.0 (pull → gericht bijseeden → rebuild →
+      `npm run smoke`). Servercommando's zonder SSH via Scheduled Tasks
+      (patroon in de README).
 - [ ] **CI** — GitHub Actions: build + lint + typecheck per PR. _(README; S)_
 - [ ] **Backups** van de DB + assets op Plesk. _(niet eerder genoemd; S)_
 
