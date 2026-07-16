@@ -185,6 +185,42 @@ async function putOne(type: ContentType, slug: string, data: Record<string, unkn
   });
 }
 
+/**
+ * Retract an item (MMB: "release terugtrekken"). Bitemporal tombstone, no
+ * erasure: the current assertion is ended (tx_to = now), so the item leaves
+ * every public list/API immediately — but the full history stays and the
+ * admin's History → Restore can bring it back. Same door the admin Delete
+ * button uses.
+ *
+ *   DELETE /api/content/<type>/<slug>[?lang=]   (Bearer INGEST_TOKEN)
+ */
+export async function DELETE(
+  req: NextRequest,
+  ctx: { params: Promise<{ path?: string[] }> }
+) {
+  if (!checkIngestToken(req)) return error(401, "Missing or invalid ingest token");
+  if (!writableStore) return error(503, "Writes require DATABASE_URL");
+
+  const { path = [] } = await ctx.params;
+  const [type, ...slugParts] = path;
+  const slug = slugParts.map(decodeURIComponent).join("/");
+  if (!INGESTABLE.has(type as ContentType)) {
+    return error(400, `Type "${type}" is not retractable (${[...INGESTABLE].join(", ")})`);
+  }
+  if (!slug) return error(400, "Slug required: DELETE /api/content/<type>/<slug>");
+
+  const lang = req.nextUrl.searchParams.get("lang") ?? "en";
+  const existing = await writableStore.getItem(type as ContentType, slug, lang);
+  if (!existing) return error(404, `No current ${type} "${slug}" (${lang})`);
+
+  await writableStore.deleteItem(type as ContentType, slug, lang);
+  revalidatePath("/", "layout");
+  return json(
+    { ok: true, type, slug, note: "retracted (tombstone) — history retained, restorable via admin History" },
+    false
+  );
+}
+
 /** { product?, components?: [], releases?: [] } → one put each. */
 async function ingestBundle(body: Record<string, unknown>) {
   const written: { type: ContentType; slug: string }[] = [];

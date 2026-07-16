@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- Write-API kan nu **terugtrekken**: `DELETE /api/content/<type>/<slug>`
+  (Bearer-token) zet een bitemporale tombstone — het item verdwijnt direct
+  uit alle publieke lijsten, de historie blijft en is via admin History →
+  Restore terug te halen. Voor het MMB-scenario "verkeerd genummerde release"
+  (terugtrekken + onder de juiste slug opnieuw posten); recept in de
+  ingest-gids.
 - `npm run db:seed -- --only=<types>` seedt een subset (bijv. `--only=themes`
   om de thema's aan een bestaande database toe te voegen zonder bewerkte
   content te overschrijven).

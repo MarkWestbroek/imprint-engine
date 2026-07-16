@@ -140,6 +140,30 @@ POST /api/content/release/<project>-<versie>
 `product` en elke `components[].component` moeten bestaan (anders 422) — vandaar
 de volgorde hieronder.
 
+## 5. Item terugtrekken (verkeerd gepost? DELETE)
+
+Fout genummerde release, verkeerde slug, per ongeluk gepubliceerd:
+
+```
+DELETE /api/content/<type>/<slug>[?lang=en]    Authorization: Bearer <TOKEN>
+```
+
+Dit is een **bitemporale tombstone**, geen wissing: het item verdwijnt
+onmiddellijk uit alle publieke lijsten en API's, maar de volledige historie
+blijft bewaard en is via de admin (History → Restore) terug te halen. Zelfde
+mechanisme als de Delete-knop in de admin.
+
+- Hernoemen bestaat niet (de slug ís de identiteit): terugtrekken + opnieuw
+  posten onder de juiste slug.
+- Voorbeeld — `cortex-v0.2` had `cortex-v0.3` moeten heten:
+  ```bash
+  curl -X DELETE "$BASE/api/content/release/cortex-v0.2" -H "Authorization: Bearer $TOKEN"
+  curl -X POST   "$BASE/api/content/release/cortex-v0.3" -H "Authorization: Bearer $TOKEN" \
+       -H "Content-Type: application/json" -d @cortex-v0.3.json
+  ```
+- Antwoord: 200 met een notitie; 404 als er (voor die taal) geen actueel item
+  is; 401 zonder token.
+
 ## Het volledige pad (product → release → component → board)
 
 MMB kan de **hele keten** posten; alle drie de niveaus zijn schrijfbaar. In
