@@ -318,36 +318,85 @@ async function CarouselWidget({
   );
 }
 
+const LR_API_KEY = "LightroomMobileWeb1";
+
+/** Adobe's JSON endpoints prefix responses with an anti-hijack `while (1) {}`. */
+function stripLrPrefix(text: string): string {
+  return text.replace(/^while \(1\) \{\}\s*/, "");
+}
+
+/**
+ * Photos from a public Lightroom share, via the same public API the share
+ * page itself uses: share-URL → space id → resources → album → assets, and
+ * per asset the 1280-rendition (fallback 2048/640). Renditions are publicly
+ * hotlinkable with the web api_key. Verified against a real share (Mark's
+ * "@2020 Street"); if Adobe ever changes this, the caller degrades to a
+ * link card.
+ */
+async function loadLightroomImages(shareUrl: string, limit: number): Promise<ImageItem[]> {
+  const opts = { next: { revalidate: 600 } } as const;
+  // Follow the (adobe.ly) redirect; the final URL carries the space id.
+  const page = await fetch(shareUrl, opts);
+  if (!page.ok) throw new Error(`HTTP ${page.status}`);
+  const spaceId = new URL(page.url).pathname.match(/shares\/([a-f0-9]+)/)?.[1];
+  if (!spaceId) return [];
+
+  const base = `https://photos.adobe.io/v2/spaces/${spaceId}/`;
+  const getJson = async (path: string) => {
+    const res = await fetch(`${base}${path}${path.includes("?") ? "&" : "?"}api_key=${LR_API_KEY}`, opts);
+    if (!res.ok) throw new Error(`Lightroom API HTTP ${res.status}`);
+    return JSON.parse(stripLrPrefix(await res.text())) as {
+      resources?: {
+        type?: string;
+        links?: Record<string, { href?: string }>;
+        asset?: { links?: Record<string, { href?: string }> };
+      }[];
+    };
+  };
+
+  const albums = (await getJson("resources")).resources ?? [];
+  const assetsHref = albums.find((r) => r.type === "album")?.links?.[
+    "/rels/space_album_images_videos"
+  ]?.href;
+  if (!assetsHref) return [];
+
+  const assets = (await getJson(assetsHref)).resources ?? [];
+  return assets
+    .map((r) => {
+      const links = r.asset?.links ?? {};
+      const rendition =
+        links["/rels/rendition_type/1280"] ??
+        links["/rels/rendition_type/2048"] ??
+        links["/rels/rendition_type/640"];
+      return rendition?.href
+        ? { src: `${base}${rendition.href}?api_key=${LR_API_KEY}`, alt: "" }
+        : null;
+    })
+    .filter((img): img is ImageItem => img !== null)
+    .slice(0, limit);
+}
+
 /** Best-effort image extraction from an external album (see AlbumConfig). */
 async function loadAlbumImages(config: AlbumConfig): Promise<ImageItem[]> {
+  if (config.source === "lightroom-share") {
+    return loadLightroomImages(config.url, config.limit);
+  }
+
   const res = await fetch(config.url, { next: { revalidate: 600 } });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-  if (config.source === "json-api") {
-    const json: unknown = await res.json();
-    const data = config.itemsPath ? getPath(json, config.itemsPath) : json;
-    const items = Array.isArray(data) ? data : [];
-    return items
-      .map((item) => ({
-        src: String(getPath(item, config.srcPath) ?? ""),
-        alt: "",
-        caption: config.captionPath
-          ? String(getPath(item, config.captionPath) ?? "") || undefined
-          : undefined,
-      }))
-      .filter((img) => img.src.startsWith("http") || img.src.startsWith("/"))
-      .slice(0, config.limit);
-  }
-
-  // lightroom-share (or any share page): scrape image URLs; og:image as floor.
-  const html = await res.text();
-  const urls = new Set<string>();
-  const og = html.match(/property="og:image"\s+content="([^"]+)"/i)?.[1];
-  for (const m of html.matchAll(/https:\/\/[^"'\s\\]+\.(?:jpg|jpeg|png|webp)[^"'\s\\]*/gi)) {
-    urls.add(m[0]);
-  }
-  if (og) urls.add(og);
-  return [...urls].slice(0, config.limit).map((src) => ({ src, alt: "" }));
+  const json: unknown = await res.json();
+  const data = config.itemsPath ? getPath(json, config.itemsPath) : json;
+  const items = Array.isArray(data) ? data : [];
+  return items
+    .map((item) => ({
+      src: String(getPath(item, config.srcPath) ?? ""),
+      alt: "",
+      caption: config.captionPath
+        ? String(getPath(item, config.captionPath) ?? "") || undefined
+        : undefined,
+    }))
+    .filter((img) => img.src.startsWith("http") || img.src.startsWith("/"))
+    .slice(0, config.limit);
 }
 
 async function AlbumWidget({ config }: { config: AlbumConfig }) {

@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- Lightroom-shares in de `album`-widget werken nu écht: de provider loopt de
+  publieke share-API af (space → resources → album → renditions) en toont de
+  volledige fotoset i.p.v. alleen een linkkaart. Geverifieerd met een echte
+  share (11 foto's).
+- Map-editor: coördinaten met decimalen zijn nu gewoon te typen (punt of
+  komma); de controlled input at voorheen de punt op bij elke toetsaanslag.
+- Carousel toont de hele foto (object-contain, letterboxed) i.p.v. een
+  bijgesneden doorsnede.
 
 ## [0.8.0] - 2026-07-14
 - Changelog + release-ritueel: `npm run release -- <versie>` (bumpt versies,

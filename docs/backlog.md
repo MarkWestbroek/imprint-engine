@@ -27,9 +27,9 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 - [x] ~~**`gallery` / media**~~ — gedaan in 0.8.0 (gallery-widget + lightbox;
       `product.media` wordt op de productpagina gerenderd). Voor W3 rest **video**.
 - [x] ~~**foto-carrousel**~~ — gedaan in 0.8.0.
-- [x] ~~**externe foto-repo / Lightroom-view**~~ — gedaan in 0.8.0 als
-      `album`-widget (JSON-API generiek; Lightroom-share best-effort → linkkaart).
-      **Nog testen met een echte Lightroom-share-URL van Mark.** _(S)_
+- [x] ~~**externe foto-repo / Lightroom-view**~~ — gedaan in 0.8.0; de
+      Lightroom-provider loopt sinds 0.8.1 de echte share-API af en is
+      geverifieerd met Marks "@2020 Street"-album (11 foto's).
 - [x] ~~**interactieve kaart**~~ — gedaan in 0.8.0 (Leaflet/OSM).
 - [x] ~~**kanban-bord**~~ — gedaan in 0.8.0.
 - [ ] **`downloads`** — release-downloads met versie + checksum als blok (W7 is er

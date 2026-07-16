@@ -471,13 +471,53 @@ function ImagesEditor({ config, onChange, schema }: WidgetEditorProps) {
 
 type MarkerRow = { lat: number; lng: number; label?: string; markdown?: string };
 
+/**
+ * Number input that lets you *type* decimals: the raw text lives in local
+ * state (so "52." survives the keystroke) and only parseable values are
+ * committed. A parsed-per-keystroke controlled input eats the dot. Accepts
+ * a comma as decimal separator too.
+ */
+function NumInput({
+  value,
+  onCommit,
+  placeholder,
+  className,
+}: {
+  value: number;
+  onCommit: (n: number) => void;
+  placeholder?: string;
+  className?: string;
+}) {
+  const [text, setText] = useState(String(value));
+  const [lastValue, setLastValue] = useState(value);
+  // Reset when the value changed externally (row moved/added) — the sanctioned
+  // "adjust state during render" pattern, so typing "52." isn't clobbered.
+  if (value !== lastValue) {
+    setLastValue(value);
+    if (Number(text.replace(",", ".")) !== value) setText(String(value));
+  }
+  return (
+    <input
+      inputMode="decimal"
+      className={className}
+      placeholder={placeholder}
+      value={text}
+      onChange={(e) => {
+        const t = e.target.value;
+        setText(t);
+        const n = Number(t.replace(",", "."));
+        if (t.trim() !== "" && !Number.isNaN(n)) onCommit(n);
+      }}
+    />
+  );
+}
+
 /** Row editor for map markers: lat/lng/label + popup markdown. */
 function MapEditor({ config, onChange, schema }: WidgetEditorProps) {
   const markers = (Array.isArray(config.markers) ? config.markers : []) as MarkerRow[];
   const set = (next: MarkerRow[]) => onChange({ ...config, markers: next });
   const update = (i: number, patch: Partial<MarkerRow>) =>
     set(markers.map((m, idx) => (idx === i ? { ...m, ...patch } : m)));
-  const num = (v: string) => (v === "" || Number.isNaN(Number(v)) ? 0 : Number(v));
 
   return (
     <div className="space-y-3">
@@ -490,17 +530,17 @@ function MapEditor({ config, onChange, schema }: WidgetEditorProps) {
           {markers.map((m, i) => (
             <div key={i} className="rounded-lg border border-line p-2">
               <div className="flex gap-1.5">
-                <input
+                <NumInput
                   className={`${inputCls} w-24`}
                   placeholder="lat"
-                  value={String(m.lat)}
-                  onChange={(e) => update(i, { lat: num(e.target.value) })}
+                  value={m.lat}
+                  onCommit={(lat) => update(i, { lat })}
                 />
-                <input
+                <NumInput
                   className={`${inputCls} w-24`}
                   placeholder="lng"
-                  value={String(m.lng)}
-                  onChange={(e) => update(i, { lng: num(e.target.value) })}
+                  value={m.lng}
+                  onCommit={(lng) => update(i, { lng })}
                 />
                 <input
                   className={`${inputCls} flex-1`}

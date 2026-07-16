@@ -147,10 +147,11 @@ export function Carousel({
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      {/* object-contain: show the whole photo (letterboxed), never crop it. */}
       <img
         src={img.src}
         alt={img.alt}
-        className="aspect-video w-full object-cover"
+        className="aspect-video w-full bg-black/40 object-contain"
       />
       {(img.caption ?? img.alt) && (
         <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-8 text-sm text-white">
