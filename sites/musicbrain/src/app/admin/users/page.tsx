@@ -9,7 +9,7 @@ import {
 /**
  * Everyone signed in can change their own password here; only admins see the
  * user list. Locked out entirely? `npm run user -- passwd <name>` on the
- * server is the way back in (docs/releasing.md).
+ * server is the way back in (README, "Wachtwoord kwijt").
  */
 export default async function AdminUsers() {
   const session = await getSession();

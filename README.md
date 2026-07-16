@@ -28,9 +28,10 @@ sites/
     src/widgets/       De widget-catalogus van deze site:
                        registry.ts (configschema's) + components.tsx
     src/app/admin/     Admin-UI: login, lijsten, formulieren uit zod-schema's,
-                       widget-composer, versiehistorie met restore
+                       widget-composer, versiehistorie met restore, users
 drizzle/               Gegenereerde SQL-migraties (in git; nooit handmatig)
 scripts/seed.ts        Contentbestanden + eerste admin-user → database
+scripts/user.ts        Gebruikersbeheer vanaf de CLI (noodingang, zie onder)
 docs/
   website-requirements.md
 ```
@@ -93,7 +94,8 @@ npm run dev
 Log in op `/admin` met `SEED_ADMIN_USER` / `SEED_ADMIN_PASSWORD`. Elke save is
 een *nieuwe versie* (transaction time); niets wordt overschreven — "History"
 bij elk item toont alles en kan terugrollen. "Validity" plant publicatie (valid
-time, S6).
+time, S6). Verdere gebruikers beheer je daarna onder **/admin → Users**;
+wachtwoord kwijt? Zie [Wachtwoord kwijt](#wachtwoord-kwijt).
 
 **Zonder Docker/DB (v0-modus):** laat `DATABASE_URL` leeg (of sla stap 2–5
 over) en draai alleen `npm install && npm run dev`. De site valt dan terug op
@@ -111,7 +113,39 @@ npm run db:up      # lokale MariaDB 10.11 (docker compose), zelfde major als Ple
 npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/
 npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL
 npm run db:seed      # contentbestanden + admin-user importeren (idempotent)
+
+npm run user -- list                     # gebruikers + rollen
+npm run user -- add <naam> [rol] [ww]    # toevoegen (rol default editor)
+npm run user -- passwd <naam> [ww]       # wachtwoord zetten
+npm run user -- role <naam> <rol>        # admin | editor | reader
+npm run user -- delete <naam>            # verwijderen
 ```
+
+Laat `[ww]` weg en er wordt er één gegenereerd en één keer getoond — dan komt
+je wachtwoord niet in je shell-historie terecht. Dagelijks beheer gaat
+makkelijker via **/admin → Users**; de CLI is er vooral voor als dat niet
+meer kan (zie hieronder).
+
+### Wachtwoord kwijt
+
+Er is geen "wachtwoord vergeten"-mail: de site heeft geen mail-infra, en die
+route zou een publiek reset-endpoint toevoegen voor een handvol gebruikers.
+De weg terug loopt daarom over de server, waar `DATABASE_URL` al staat:
+
+```bash
+npm run user -- passwd <naam>     # print een nieuw wachtwoord; op Plesk via SSH
+```
+
+Daarna inloggen op `/admin` en bij **Users → Change my password** zelf iets
+kiezen. De laatste admin kan zichzelf niet degraderen of verwijderen, dus het
+scherm kan je er niet uit sluiten.
+
+**Alle sessies direct verlopen** (bijv. een account is gecompromitteerd): een
+sessiecookie is stateless en blijft na een reset nog tot 12u geldig. Vervang
+`SESSION_SECRET` in `sites/musicbrain/.env.local` (op Plesk: de env-vars van
+de Node.js-app) en herstart — elk bestaand cookie valideert dan niet meer, dus
+iedereen moet opnieuw inloggen. Genereer er een met
+`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
 Handig: `docker compose down` stopt de db-container, `docker compose down -v`
 gooit óók het datavolume weg (schone lei — daarna weer migrate + seed).

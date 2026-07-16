@@ -7,12 +7,45 @@ staat in de [CHANGELOG](../CHANGELOG.md).
 ## Inloggen & account
 
 - **/admin** — log in met je gebruikersnaam en wachtwoord.
-- Je wachtwoord wijzig je onder **Users** (iedereen ziet daar zijn eigen
-  account; admins beheren alle accounts en rollen). Wachtwoord kwijt? Een
-  admin reset het; je krijgt eenmalig een gegenereerd wachtwoord dat je
-  daarna zelf vervangt.
+- Je wachtwoord wijzig je onder **Users** (of via je naam rechtsboven).
+  Iedereen ziet daar zijn eigen account; admins beheren alle accounts.
 - Rollen: **admin** (alles, incl. gebruikersbeheer), **editor** (content
   bewerken), **reader** (alleen kijken — geen schrijfrechten).
+
+### Gebruikers beheren (admins)
+
+Onder **Users** voeg je accounts toe, wijzig je rollen, reset je wachtwoorden
+en verwijder je accounts. Een reset geeft een gegenereerd wachtwoord dat
+**één keer** wordt getoond: kopieer het meteen en geef het door — de eigenaar
+vervangt het daarna zelf. Nieuwe gebruiker toevoegen zonder wachtwoord te
+bedenken? Laat het veld leeg, dan wordt er ook een gegenereerd.
+
+Twee dingen die je niet kunt (met opzet): jezelf de admin-rol afnemen, en de
+laatste admin degraderen of verwijderen. Anders zou niemand er nog bij kunnen.
+
+Let op: uitloggen werkt niet op afstand. Wie al ingelogd was in een andere
+browser blijft daar na een reset, rolwijziging of verwijdering nog tot **12
+uur** binnen — zolang loopt een sessie door. Meestal geen punt. Moet iemand er
+**nu** uit, dan is er één knop die dat afdwingt: het `SESSION_SECRET` op de
+server vervangen en de app herstarten. Dat verloopt in één klap alle sessies
+van iedereen (jij moet dus ook opnieuw inloggen) — zie
+[README](../README.md#wachtwoord-kwijt).
+
+### Wachtwoord kwijt
+
+Er is bewust **geen "wachtwoord vergeten"-mail**: de site verstuurt geen mail,
+en die route zou een publiek reset-endpoint toevoegen voor een handvol
+gebruikers.
+
+- **Ben je editor of reader?** Vraag een admin om een reset.
+- **Ben je de (enige) admin?** Dan kom je er niet in via het scherm — dat
+  vereist nu juist dat je ingelogd bent. De weg terug loopt over de server:
+  `npm run user -- passwd <naam>` print een nieuw wachtwoord. Het hoe (ook op
+  Plesk, via SSH) staat onder **"Wachtwoord kwijt"** in de
+  [README](../README.md#wachtwoord-kwijt). Daarna inloggen en bij **Users →
+  Change my password** zelf iets kiezen.
+
+Praktischer nog: bewaar het in een wachtwoordmanager, dan hoeft dit nooit.
 
 ## Het belangrijkste principe: niets is ooit weg
 
