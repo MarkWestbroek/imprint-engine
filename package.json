@@ -20,7 +20,8 @@
     "user": "tsx scripts/user.ts",
     "user:passwd": "tsx scripts/user.ts passwd",
     "release": "node scripts/release.mjs",
-    "smoke": "node scripts/smoke.mjs"
+    "smoke": "node scripts/smoke.mjs",
+    "testcase:bitemporal": "node scripts/testcase-bitemporal.mjs"
   },
   "devDependencies": {
     "dotenv": "^17.2.0",

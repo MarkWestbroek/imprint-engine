@@ -110,10 +110,12 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       _(beslissing; S)_
 - [ ] **Boards-index** — een overzichtspagina van alle board-specs (nu alleen
       bereikbaar via hun component). _(chat-idee; S)_
-- [ ] **Componentpagina: gepinde versie prominent** (MMB-testcase assert 4):
-      toon de versie die de nieuwste release pint als hoofdweergave en oudere
-      versies ingeklapt als archief. Basis werkt al (alle versies zichtbaar);
-      zie docs/testcases/oude-releases-blijven-benaderbaar.md. _(MMB; S)_
+- [ ] **Componentpagina: gepinde versie prominent** (MMB-testcase assert 4 +
+      vraag 4): toon de versie die de nieuwste release pint als hoofdweergave
+      en oudere versies ingeklapt als archief, met **kanaalweging** (stable
+      wint van beta/dev bij het kiezen van "de nieuwste"). Basis werkt al
+      (alle versies zichtbaar, geen release-logica); zie
+      docs/testcases/oude-releases-blijven-benaderbaar.md. _(MMB; M)_
 
 ---
 

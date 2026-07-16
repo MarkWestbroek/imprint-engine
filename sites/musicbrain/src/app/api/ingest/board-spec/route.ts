@@ -86,5 +86,26 @@ export async function POST(req: NextRequest) {
   }
 
   revalidatePath("/", "layout"); // flush the public site's cache
-  return NextResponse.json({ ok: true, slug, assets: urls });
+
+  // DX (MMB-vraag 6): meld of deze componentversie door een release gepind
+  // wordt — een ongepinde versie verschijnt nergens op productpagina's, en
+  // dat gat is anders onzichtbaar tot je de hele keten naloopt.
+  const releases = await writableStore.listItems("release");
+  const pinnedBy = releases
+    .filter((r) =>
+      ((r.data as { components?: { component: string; version: string }[] }).components ?? []).some(
+        (c) => c.component === component && c.version === version
+      )
+    )
+    .map((r) => r.slug);
+
+  return NextResponse.json({
+    ok: true,
+    slug,
+    assets: urls,
+    pinned_by: pinnedBy,
+    ...(pinnedBy.length === 0 && {
+      warning: `No release pins ${component}@${version} yet — it won't appear on product pages until one does (see mmb-ingest-guide.md, "Het volledige pad").`,
+    }),
+  });
 }

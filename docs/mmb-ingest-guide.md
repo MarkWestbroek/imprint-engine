@@ -140,7 +140,26 @@ POST /api/content/release/<project>-<versie>
 `product` en elke `components[].component` moeten bestaan (anders 422) — vandaar
 de volgorde hieronder.
 
-## 5. Item terugtrekken (verkeerd gepost? DELETE)
+## Welke versie toont de site? (MMB-vraag 4)
+
+Kort: **de componentpagina volgt geen releases.** Drie weergaven, drie regels:
+
+- **Componentpagina** (`/components/<slug>`): toont **álle versies** uit
+  `component.versions[]`, in de volgorde waarin jij ze post, elk met hun
+  board-spec. Kanalen (dev/beta/stable) wegen hier niet mee — de pagina kijkt
+  alleen naar het component zelf.
+- **Releasepagina** (`/releases/<slug>`): toont exact wat díe release pint
+  (`components[]{component, version}`). Hier klopt jullie mentale model
+  "de site toont wat de release vastpint" — maar alleen op deze pagina.
+- **Productpagina**: toont de releases van het product (met project + kanaal)
+  en de componenten van het product (alle versies, zoals de componentpagina).
+
+"Wint stable van dev bij gelijke recentheid?" — nee, er ís nog geen weging:
+niets in de weergave kiest op kanaal. De verfijning "componentpagina toont de
+door de nieuwste (stable-)release gepinde versie prominent, ouderen als
+archief" staat op de Imprint-backlog (aangevraagd via jullie testcase).
+
+## 6. Item terugtrekken (verkeerd gepost? DELETE)
 
 Fout genummerde release, verkeerde slug, per ongeluk gepubliceerd:
 

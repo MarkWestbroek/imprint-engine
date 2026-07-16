@@ -47,7 +47,10 @@ export default async function ProductPage({ params }: Props) {
   const releases = writableStore
     ? (await writableStore.listItems("release"))
         .filter((r) => (r.data as { product?: string }).product === product.slug)
-        .map((r) => ({ slug: r.slug, data: r.data as { version: string; date: string; channel: string } }))
+        .map((r) => ({
+          slug: r.slug,
+          data: r.data as { project: string; version: string; date: string; channel: string },
+        }))
     : [];
   const components = (
     await Promise.all(product.components.map(loadComponent))
@@ -133,8 +136,10 @@ export default async function ProductPage({ params }: Props) {
           <ul className="mt-4 space-y-2 text-sm">
             {releases.map((r) => (
               <li key={r.slug}>
+                {/* Project erbij (MMB-vraag 3): twee projecten kunnen hetzelfde
+                    versienummer voeren — zonder projectnaam is dat onleesbaar. */}
                 <Link href={`/releases/${r.slug}`} className="font-mono text-accent hover:underline">
-                  {displayVersion(r.data.version)}
+                  {r.data.project} {displayVersion(r.data.version)}
                 </Link>
                 <span className="text-muted"> · {r.data.date} · {r.data.channel}</span>
               </li>

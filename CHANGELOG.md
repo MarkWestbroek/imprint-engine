@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **URL-aliases** per contenttype (MMB-vraag 1): `aliases` in de site-config
+  (bijv. `{"hw": "components"}`) redirect `/hw/adc8` permanent naar
+  `/components/adc8` — voor de silk-opdruk `musicbrain.nl/hw/<naam>` op de
+  borden. Beheerbaar via /admin → Site.
+- Productpagina toont bij releases nu ook het **project** (MMB-vraag 3):
+  twee projecten met hetzelfde versienummer zijn niet langer onleesbaar.
+- Ingest-response meldt **`pinned_by`** (MMB-vraag 6): welke releases de
+  zojuist gepubliceerde componentversie pinnen, met een waarschuwing als dat
+  er nul zijn (dan verschijnt hij nergens op productpagina's).
+- MMB-testcase "oude releases blijven benaderbaar" als herhaalbaar script:
+  `npm run testcase:bitemporal -- <url> <component>@<versie>`.
 - Write-API kan nu **terugtrekken**: `DELETE /api/content/<type>/<slug>`
   (Bearer-token) zet een bitemporale tombstone — het item verdwijnt direct
   uit alle publieke lijsten, de historie blijft en is via admin History →

@@ -6,5 +6,8 @@
   "links": {
     "github": "https://github.com/musicbrain",
     "discord": "https://discord.gg/musicbrain"
+  },
+  "aliases": {
+    "hw": "components"
   }
 }

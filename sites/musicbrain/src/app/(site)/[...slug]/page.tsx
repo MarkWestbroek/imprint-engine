@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { store } from "@/lib/content";
 import { Markdown } from "@/components/markdown";
 import { PageRenderer } from "@/components/page-renderer";
@@ -35,6 +35,15 @@ export default async function ContentPage({ params }: Props) {
   const { slug } = await params;
   const joined = slug.join("/");
   if (isViewTemplate(joined)) notFound(); // template, not a public page
+
+  // URL-aliases uit de site-config (MMB-vraag 1): /hw/adc8 → /components/adc8.
+  // Permanente redirect, dus zoekmachines volgen de echte route.
+  const site = await store.getSiteConfig();
+  const target = site.aliases[slug[0]];
+  if (target) {
+    permanentRedirect(`/${[target, ...slug.slice(1)].join("/")}`);
+  }
+
   const page = await store.getPage(joined);
   if (!page) notFound();
 

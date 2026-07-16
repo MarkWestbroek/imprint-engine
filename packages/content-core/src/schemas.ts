@@ -338,5 +338,11 @@ export const SiteConfigSchema = z.object({
   baseUrl: z.string().url(),
   defaultLocale: Locale.default("en"),
   links: z.record(z.string(), z.string().url()).default({}),
+  /**
+   * URL-aliases: eerste padsegment → doel-route, permanent geredirect.
+   * Bijv. { "hw": "components" } maakt /hw/adc8 → /components/adc8 — zoals
+   * de silk-opdruk op de MusicBrain-borden (musicbrain.nl/hw/<naam>).
+   */
+  aliases: z.record(z.string(), z.string()).default({}),
 });
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
