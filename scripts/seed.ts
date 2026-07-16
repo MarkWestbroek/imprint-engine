@@ -1,9 +1,7 @@
 import "dotenv/config";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { randomBytes, scryptSync } from "node:crypto";
 import matter from "gray-matter";
-import { eq } from "drizzle-orm";
 
 import {
   MenuSchema,
@@ -12,8 +10,10 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  ThemeSchema,
 } from "@imprint/content-core";
-import { createDb, DbContentStore, users } from "@imprint/content-core/db-store";
+import { createDb, DbContentStore } from "@imprint/content-core/db-store";
+import { DbUserStore } from "@imprint/content-core/user-store";
 
 /**
  * One-time (idempotent) import: the v0 content files → database, plus the
@@ -22,12 +22,6 @@ import { createDb, DbContentStore, users } from "@imprint/content-core/db-store"
  */
 
 const CONTENT_DIR = path.join(process.cwd(), "sites", "musicbrain", "content");
-
-function hashPassword(password: string): string {
-  const salt = randomBytes(16).toString("hex");
-  const hash = scryptSync(password, salt, 64).toString("hex");
-  return `scrypt:${salt}:${hash}`;
-}
 
 async function json(file: string): Promise<unknown> {
   return JSON.parse(await fs.readFile(file, "utf8"));
@@ -102,23 +96,24 @@ async function main() {
     console.log(`menu      ✓ ${menu.name}`);
   }
 
-  // first admin user
+  // themes
+  for (const file of await listFiles(path.join(CONTENT_DIR, "themes"), ".json")) {
+    const theme = ThemeSchema.parse(await json(file));
+    await store.putItem("theme", theme.name, theme, { by });
+    console.log(`theme     ✓ ${theme.name}`);
+  }
+
+  // first admin user — later ones go through /admin/users or `npm run user`
   const name = process.env.SEED_ADMIN_USER ?? "admin";
   const password = process.env.SEED_ADMIN_PASSWORD;
-  if (password) {
-    const existing = await db.select().from(users).where(eq(users.name, name));
-    if (existing.length === 0) {
-      await db.insert(users).values({
-        name,
-        hashedPassword: hashPassword(password),
-        role: "admin",
-      });
-      console.log(`user      ✓ ${name} (admin)`);
-    } else {
-      console.log(`user      = ${name} already exists, skipped`);
-    }
-  } else {
+  const userStore = new DbUserStore(db);
+  if (!password) {
     console.log("user      ! SEED_ADMIN_PASSWORD empty — no admin user created");
+  } else if (await userStore.get(name)) {
+    console.log(`user      = ${name} already exists, skipped`);
+  } else {
+    await userStore.create(name, password, "admin");
+    console.log(`user      ✓ ${name} (admin)`);
   }
 
   await db.$client.end();

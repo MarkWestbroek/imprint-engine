@@ -10,7 +10,9 @@
     "./store": "./src/store.ts",
     "./file-store": "./src/file-store.ts",
     "./db-schema": "./src/db-schema.ts",
-    "./db-store": "./src/db-store.ts"
+    "./db-store": "./src/db-store.ts",
+    "./passwords": "./src/passwords.ts",
+    "./user-store": "./src/user-store.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"

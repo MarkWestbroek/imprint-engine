@@ -1,7 +1,6 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import { eq } from "drizzle-orm";
-import { users } from "@imprint/content-core/db-store";
+import { DbUserStore } from "@imprint/content-core/user-store";
 import type { RoleType } from "@imprint/content-core";
 import { db } from "@/lib/content";
 
@@ -14,6 +13,9 @@ import { db } from "@/lib/content";
 const COOKIE = "imprint_session";
 const SESSION_HOURS = 12;
 
+/** User CRUD for /admin/users. Null in file mode: v0 has no users table. */
+export const userStore: DbUserStore | null = db ? new DbUserStore(db) : null;
+
 export type Session = { name: string; role: RoleType; exp: number };
 
 function secret(): string {
@@ -22,19 +24,6 @@ function secret(): string {
     throw new Error("Set a real SESSION_SECRET in sites/musicbrain/.env.local");
   }
   return s;
-}
-
-export function hashPassword(password: string): string {
-  const salt = randomBytes(16).toString("hex");
-  return `scrypt:${salt}:${scryptSync(password, salt, 64).toString("hex")}`;
-}
-
-export function verifyPassword(password: string, stored: string): boolean {
-  const [scheme, salt, hash] = stored.split(":");
-  if (scheme !== "scrypt" || !salt || !hash) return false;
-  const candidate = scryptSync(password, salt, 64);
-  const expected = Buffer.from(hash, "hex");
-  return candidate.length === expected.length && timingSafeEqual(candidate, expected);
 }
 
 function sign(payload: string): string {
@@ -64,15 +53,12 @@ function decodeSession(token: string): Session | null {
 
 /** Check credentials against the users table; null when they don't hold. */
 export async function authenticate(name: string, password: string): Promise<Session | null> {
-  if (!db) throw new Error("Admin requires DATABASE_URL (the file store has no users)");
-  const rows = await db.select().from(users).where(eq(users.name, name)).limit(1);
-  const user = rows[0];
-  if (!user || !verifyPassword(password, user.hashedPassword)) return null;
-  return {
-    name: user.name,
-    role: user.role as RoleType,
-    exp: Date.now() + SESSION_HOURS * 3600_000,
-  };
+  if (!userStore) {
+    throw new Error("Admin requires DATABASE_URL (the file store has no users)");
+  }
+  const user = await userStore.verify(name, password);
+  if (!user) return null;
+  return { name: user.name, role: user.role, exp: Date.now() + SESSION_HOURS * 3600_000 };
 }
 
 export async function createSessionCookie(session: Session): Promise<void> {
