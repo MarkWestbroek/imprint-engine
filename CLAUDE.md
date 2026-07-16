@@ -34,6 +34,10 @@
   echte viewers in de echte SiteChrome, sidebar per widget, wijzigingen in
   een serverside draft (`src/lib/page-draft.ts`); pas "Save" maakt een
   versie. Mutatielogica is puur in `src/lib/layout-ops.ts`.
+- Mark exporteert af en toe handmatig chat-sessies (script) naar
+  `doc/copilot-chats/exports/` — die bestanden verschijnen dus "opeens"
+  (nieuw of gewijzigd) in de werkboom. Niet van schrikken: ze gaan over het
+  lopende werk en mogen gewoon mee in commits en releases.
 - Documentatie hoort bij elke wijziging, gescheiden naar publiek:
   **functioneel** (wat kan de redacteur ermee) in `docs/handleiding.md`,
   **technisch** (hoe zit het in elkaar) in `docs/architecture.md` (mermaid),
