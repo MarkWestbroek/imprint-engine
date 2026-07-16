@@ -12,8 +12,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   rollen, resetten wachtwoorden (gegenereerd, één keer getoond) en verwijderen
   accounts; iedereen die is ingelogd wijzigt er zijn eigen wachtwoord (huidige
   vereist). De laatste admin kan zichzelf niet degraderen of verwijderen.
-  Buitengesloten? `npm run user -- passwd <naam>` op de server is de weg terug;
-  `npm run user` doet ook list/add/role/delete. Wachtwoordregels en hashing
+  Buitengesloten? `npm run user -- passwd <naam>` op de server is de weg terug
+  — een reset-mail is er bewust niet; `npm run user` doet ook
+  list/add/role/delete. Wachtwoordregels en hashing
   staan nu één keer in `content-core` (`passwords.ts` + `DbUserStore`), gedeeld
   door admin, seed en CLI. Let op: een sessiecookie blijft na een reset tot 12u
   geldig in een browser die al openstond.
