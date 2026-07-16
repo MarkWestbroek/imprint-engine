@@ -110,6 +110,10 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       _(beslissing; S)_
 - [ ] **Boards-index** — een overzichtspagina van alle board-specs (nu alleen
       bereikbaar via hun component). _(chat-idee; S)_
+- [ ] **Componentpagina: gepinde versie prominent** (MMB-testcase assert 4):
+      toon de versie die de nieuwste release pint als hoofdweergave en oudere
+      versies ingeklapt als archief. Basis werkt al (alle versies zichtbaar);
+      zie docs/testcases/oude-releases-blijven-benaderbaar.md. _(MMB; S)_
 
 ---
 
@@ -123,6 +127,12 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 - [ ] **S10** Formulieren → DB + notificatie-mail + spam-bescherming (de basis
       onder W1/W4). _(must; L)_
 - [ ] **W3** Foto/video op de productpagina (zie gallery-widget). _(must; M)_
+- [ ] **W5/S9 Meertaligheid** — het fundament bestaat (elk item heeft `lang`,
+      EN→NL-fallback in beide stores, `?lang=` op de API), maar er is nog
+      geen gezicht: geen taal-switcher op de site, geen NL-content, en in de
+      admin geen taalkeuze-flow (vertaling maken = zelfde slug met
+      `lang: nl` opslaan, maar geen knop "vertaal dit item"). Ook nog open:
+      `hreflang`/URL-strategie (pad-prefix `/nl/` of cookie). _(should; L)_
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_
 - [ ] **W11** Community: links + GitHub Discussions embed. _(should; S)_
 - [ ] **W12** Privacy-vriendelijke analytics (Plausible/Umami). _(should; S)_
