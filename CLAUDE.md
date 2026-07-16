@@ -35,7 +35,8 @@
   een serverside draft (`src/lib/page-draft.ts`); pas "Save" maakt een
   versie. Mutatielogica is puur in `src/lib/layout-ops.ts`.
 - Ontwerp gedocumenteerd in `docs/architecture.md` (mermaid) — bijwerken
-  als het contentmodel, de stores of de deploy-opzet wijzigen.
+  als het contentmodel, de stores of de deploy-opzet wijzigen. Open punten
+  staan in `docs/backlog.md`; streep af/vul aan als er iets af of bij komt.
 - Versies: semver via git-tags (pre-1.0: minor = capability, patch = fix);
   de drie `package.json`-versies lopen gelijk met de tag. Zet bij elke
   noemenswaardige wijziging een regel onder `## [Unreleased]` in

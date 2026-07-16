@@ -285,12 +285,10 @@ veldselectie), `releases`, `products`.
 
 ## Nog te doen
 
-- [ ] CI (GitHub Actions: build + lint bij PR)
-- [ ] Deploy naar Plesk: Node.js-extensie aanzetten, MariaDB aanmaken,
-      `DATABASE_URL`/`SESSION_SECRET` zetten, migrate + seed draaien
-- [ ] Nieuwsbrief-signup met double opt-in (W1) — heeft backend/dienst nodig
-- [ ] GitHub-webhook → releases (S7)
-- [ ] Users-beheer in de admin (nu alleen via seed); rollen afdwingen per item
-      (ContentUser) zit in het schema maar wordt nog niet gehandhaafd
+De volledige lijst met open punten staat in **[docs/backlog.md](docs/backlog.md)**
+(widgets, studio/admin, contentmodel, deploy, open requirements en de
+beslissingen die nog gemaakt moeten worden). De eerstvolgende dingen:
+
+- [ ] Deploy naar Plesk (Node.js-extensie, MariaDB, env-vars, migrate + seed)
+- [ ] CI (GitHub Actions: build + lint + typecheck per PR)
 - [ ] Placeholder-content (productteksten, links, domein) vervangen
-- [ ] Later: DB-store migreren naar het echte bitemporal register (§B3)

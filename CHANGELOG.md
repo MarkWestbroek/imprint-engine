@@ -13,6 +13,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   seed-volgorde uitgelegd.
 - Db-container krijgt een healthcheck en `db:up` gebruikt `--wait`, zodat
   `db:migrate` er direct achteraan kan zonder opstart-race.
+- Backlog (`docs/backlog.md`): open punten uit de README, de requirements en de
+  bouwsessies op één plek.
 
 ## [0.7.1] - 2026-07-14
 - Asset-bestandsnamen krijgen een content-hash (`render-top.<sha8>.png`), zodat
