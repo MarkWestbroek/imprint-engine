@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.8.0] - 2026-07-14
 - Changelog + release-ritueel: `npm run release -- <versie>` (bumpt versies,
   verplaatst changelog-notities, commit + tag); zie `docs/releasing.md`.
 - README: expliciete "Lokaal draaien (from scratch)"-sectie met vereisten

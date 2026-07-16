@@ -53,10 +53,16 @@ if (!changelog.includes("## [Unreleased]")) {
   process.exit(1);
 }
 const date = new Date().toISOString().slice(0, 10);
-writeFileSync(
-  changelogPath,
-  changelog.replace("## [Unreleased]\n", `## [Unreleased]\n\n## [${version}] - ${date}\n`)
+// CRLF-tolerant (Windows-checkouts): match beide regeleindes en behoud de stijl.
+const rolled = changelog.replace(
+  /## \[Unreleased\](\r?\n)/,
+  `## [Unreleased]$1$1## [${version}] - ${date}$1`
 );
+if (rolled === changelog) {
+  console.error("CHANGELOG-rollover mislukt (patroon niet gevonden) — niets gewijzigd.");
+  process.exit(1);
+}
+writeFileSync(changelogPath, rolled);
 
 // 3. Lockfile bijwerken, committen, taggen.
 execSync("npm install --package-lock-only", { stdio: "inherit" });
