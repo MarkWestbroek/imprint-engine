@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.10.2] - 2026-07-17
 - 3D-tab: het 3D-vlak neemt nu de vorm van het bord aan (vierkantig bord →
   vierkanter vlak, lang bord → breed vlak; verhouding op een wrapper, want
   model-viewers interne styling won van `aspect-ratio` op het element zelf —
