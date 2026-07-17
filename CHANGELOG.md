@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- 3D-tab: het bord vult nu de beginstand. De camera-afstand wordt bij het
+  laden berekend uit de echte modelafmetingen (model-viewers %-framing kadert
+  op de omsluitende bol — bij een plat bord dus veel te ver weg), en de lange
+  as van het bord ligt horizontaal in het (16:9-)beeld. Geverifieerd met
+  screenshots op busboard (breed), jack8 (lang/smal) en gswitch-loop8sh.
 
 ## [0.10.0] - 2026-07-17
 - **3D-tab op bordweergaves** (MMB-request): een board-spec kan een GLB-model

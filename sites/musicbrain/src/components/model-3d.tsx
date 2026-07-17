@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 /**
  * 3D board view (MMB-request 3D-tab): a GLB in Google's <model-viewer>
@@ -22,12 +22,47 @@ declare global {
         alt?: string;
         bounds?: string;
         "camera-controls"?: boolean;
-        "camera-orbit"?: string;
         "touch-action"?: string;
         exposure?: string;
       };
     }
   }
+}
+
+/** The slice of ModelViewerElement this component talks to. */
+type ModelViewerEl = HTMLElement & {
+  loaded: boolean;
+  getDimensions(): { x: number; y: number; z: number };
+  getFieldOfView(): number;
+  minCameraOrbit: string;
+  cameraOrbit: string;
+  jumpCameraToGoal(): void;
+};
+
+/**
+ * Start the camera so the board fills the frame (Mark: "uitvullen in die
+ * ruimte"). model-viewer's own % radius frames the bounding *sphere*, which
+ * for a long flat board is far bigger than the board looks — hence the
+ * postage-stamp start. So: measure the model, put its long axis across the
+ * (wide) viewport, and compute the distance at which it just fits.
+ */
+function frameBoard(el: ModelViewerEl) {
+  const { x: w, y: h, z: d } = el.getDimensions();
+  const rect = el.getBoundingClientRect();
+  if (!w || !rect.width) return;
+  const azDeg = w >= d ? 20 : 70; // long axis left-to-right in view
+  const az = (azDeg * Math.PI) / 180;
+  const elev = (35 * Math.PI) / 180; // camera 35° above the horizon (polar 55°)
+  const hExt = w * Math.abs(Math.cos(az)) + d * Math.abs(Math.sin(az));
+  const vExt =
+    (w * Math.abs(Math.sin(az)) + d * Math.abs(Math.cos(az))) * Math.sin(elev) +
+    h * Math.cos(elev);
+  const tanV = Math.tan(((el.getFieldOfView() || 30) * Math.PI) / 360);
+  const tanH = tanV * (rect.width / rect.height);
+  const r = Math.max(vExt / (2 * tanV), hExt / (2 * tanH)) * 1.06; // little air
+  el.minCameraOrbit = "auto auto 5%"; // default clamp forbids coming this close
+  el.cameraOrbit = `${azDeg}deg 55deg ${r}m`;
+  el.jumpCameraToGoal();
 }
 
 export function Model3D({ src, poster, alt }: { src: string; poster?: string; alt: string }) {
@@ -43,6 +78,15 @@ export function Model3D({ src, poster, alt }: { src: string; poster?: string; al
     };
   }, []);
 
+  const mount = useCallback((node: HTMLElement | null) => {
+    if (!node) return;
+    const el = node as ModelViewerEl;
+    const onLoad = () => frameBoard(el);
+    if (el.loaded) onLoad();
+    el.addEventListener("load", onLoad);
+    return () => el.removeEventListener("load", onLoad);
+  }, []);
+
   if (!ready) {
     // Poster placeholder while the viewer bundle loads (usually a blink).
     return poster ? (
@@ -55,16 +99,12 @@ export function Model3D({ src, poster, alt }: { src: string; poster?: string; al
 
   return (
     <model-viewer
+      ref={mount}
       src={src}
       poster={poster}
       alt={alt}
       camera-controls
-      // Frame on the tight bounding box, not the bounding sphere — a long
-      // flat board otherwise starts out postage-stamp small until you drag.
       bounds="tight"
-      // The informative angle: three-quarter view from slightly above,
-      // starting slightly inside the framed distance so the board fills.
-      camera-orbit="30deg 55deg 92%"
       touch-action="pan-y"
       className="w-full rounded-lg border border-line bg-surface"
       // 16:9: boards are long and flat, widescreen wastes far less space.
