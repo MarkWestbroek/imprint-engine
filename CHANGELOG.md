@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.10.0] - 2026-07-17
 - **3D-tab op bordweergaves** (MMB-request): een board-spec kan een GLB-model
   meesturen (`assets.model3d`, versioned zoals de renders, of `view3d.src`);
   de bordweergave krijgt dan naast Overview/Interactive een **3D**-knop —
