@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.10.1] - 2026-07-17
 - 3D-tab: het bord vult nu de beginstand. De camera-afstand wordt bij het
   laden berekend uit de echte modelafmetingen (model-viewers %-framing kadert
   op de omsluitende bol — bij een plat bord dus veel te ver weg), en de lange
