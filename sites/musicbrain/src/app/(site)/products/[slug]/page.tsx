@@ -9,7 +9,7 @@ import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { DefaultView } from "@/components/default-view";
 import { Gallery } from "@/widgets/media-islands";
-import { displayVersion } from "@/lib/format";
+import { displayVersion, kindLabel } from "@/lib/format";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -120,7 +120,7 @@ export default async function ProductPage({ params }: Props) {
                 {specs.map(({ version, spec }) => (
                   <details key={version} className="mt-3">
                     <summary className="cursor-pointer text-sm text-accent">
-                      Board {version}
+                      {kindLabel(spec.kind ?? component.kind)} {version}
                     </summary>
                     <div className="mt-3">
                       <BoardSpecView spec={spec} compact />

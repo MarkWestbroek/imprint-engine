@@ -20,9 +20,21 @@ export function BoardSpecView({
   const derived = boardSpecToBoardConfig(spec);
   const pinouts = Object.entries(spec.assets.pinouts);
 
+  // 3D model: the versioned spec-asset wins over a static view3d.src (cache-
+  // safe: content-hashed URL, republish = new URL). No model = no 3D tab.
+  const modelSrc = spec.assets.model3d ?? spec.view3d?.src;
+  const model3d =
+    modelSrc && (spec.view3d?.mode ?? "glb") === "glb"
+      ? {
+          src: modelSrc,
+          poster: spec.view3d?.poster ?? spec.assets.renderTop ?? spec.assets.overview,
+          alt: `${spec.component} ${spec.version} — 3D model`,
+        }
+      : undefined;
+
   return (
     <div className="space-y-4">
-      <BoardSpecMedia overview={spec.assets.overview} board={derived} />
+      <BoardSpecMedia overview={spec.assets.overview} board={derived} model3d={model3d} />
 
       {spec.connectors.length > 0 && (
         <details className="rounded-lg border border-line px-3 py-2">

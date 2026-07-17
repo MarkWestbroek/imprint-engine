@@ -6,7 +6,7 @@ import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { DefaultView } from "@/components/default-view";
-import { displayVersion } from "@/lib/format";
+import { displayVersion, kindLabel } from "@/lib/format";
 
 /**
  * Default view for a component (option B: one route per content type). Shows
@@ -166,7 +166,9 @@ export default async function ComponentPage({ params }: Props) {
       {pinnedSpec?.spec && bestPin && (
         <section>
           <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 className="text-xl font-semibold tracking-tight">Board {pinnedSpec.version}</h2>
+            <h2 className="text-xl font-semibold tracking-tight">
+              {kindLabel(pinnedSpec.spec?.kind ?? component.kind)} {pinnedSpec.version}
+            </h2>
             <Link
               href={`/releases/${bestPin.releaseSlug}`}
               className="rounded-full border border-accent px-2.5 py-0.5 font-mono text-xs text-accent hover:bg-accent/10"
@@ -194,7 +196,9 @@ export default async function ComponentPage({ params }: Props) {
               {otherSpecs.map(({ version, spec }) =>
                 spec ? (
                   <section key={version}>
-                    <h3 className="text-lg font-semibold tracking-tight">Board {version}</h3>
+                    <h3 className="text-lg font-semibold tracking-tight">
+                      {kindLabel(spec?.kind ?? component.kind)} {version}
+                    </h3>
                     <div className="mt-4">
                       <BoardSpecView spec={spec} />
                     </div>
@@ -207,7 +211,9 @@ export default async function ComponentPage({ params }: Props) {
           otherSpecs.map(({ version, spec }) =>
             spec ? (
               <section key={version}>
-                <h2 className="text-xl font-semibold tracking-tight">Board {version}</h2>
+                <h2 className="text-xl font-semibold tracking-tight">
+                  {kindLabel(spec?.kind ?? component.kind)} {version}
+                </h2>
                 <div className="mt-4">
                   <BoardSpecView spec={spec} />
                 </div>

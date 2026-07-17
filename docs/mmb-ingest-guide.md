@@ -43,6 +43,11 @@ Content-Type: application/json
 - `children` = geneste componenten (post die eerst, anders 422).
 - `versions[].spec` is optioneel: de board-spec-slug voor die revisie. Je kunt
   'm nu al invullen (de board-spec zelf mag je daarna posten).
+- `kind` (optioneel, default `"board"`): wat voor soort component dit is —
+  `"software"` voor de editors, later vrij uit te breiden (open string, geen
+  enum). De site gebruikt het voor de versiekop ("Software v0.5.48" i.p.v.
+  "Board …"). Mag ook per spec (`kind` op het spec-doc wint dan). De eerder
+  gestripte herposts van `editor-cortex`/`editor-reflex` kunnen dus opnieuw.
 
 ## 2. De component→product-mapping (jij bezit die kennis)
 
@@ -99,12 +104,15 @@ Content-Type: multipart/form-data
     "assets": {
       "renderTop": "render-top.png",
       "overview":  "overview.svg",
+      "model3d":   "model.glb",
       "pinouts":   { "J1": "pinout-J1.svg" }
     },
+    "view3d": { "mode": "glb", "poster": "render-top.png" },
     "sections": [ { "heading": "Overzicht", "markdown": "De busboard verdeelt…" } ]
   }
   <bestandsveld> = render-top.png
   <bestandsveld> = overview.svg
+  <bestandsveld> = model.glb
   <bestandsveld> = pinout-J1.svg
 ```
 
@@ -112,6 +120,14 @@ Content-Type: multipart/form-data
   de meegestuurde bestanden. Elke match wordt een URL (`/api/assets/…`).
 - De veldnamen van de bestanden (hierboven `<bestandsveld>`) doen er niet toe —
   alleen de bestandsnaam telt.
+- **3D (optioneel):** stuur de GLB als spec-asset (`assets.model3d`, binair
+  glTF) — die wordt net als de renders **versioned** opgeslagen
+  (content-hash-URL, herpost = nieuwe URL, cache blijft correct). Dat is de
+  voorkeursroute; `view3d.src` met een statisch pad werkt ook maar
+  `assets.model3d` wint als beide er zijn. `view3d.poster` (bestandsnaam of
+  URL) is de placeholder tot de bezoeker de 3D-tab activeert; ontbreekt hij,
+  dan pakt de site `renderTop`. Zonder GLB/`view3d` verandert er niets:
+  geen 3D-tab.
 - Antwoord: `{ "ok": true, "slug": "...", "assets": { "overview.svg": "/api/assets/…", … } }`.
 
 curl-voorbeeld:

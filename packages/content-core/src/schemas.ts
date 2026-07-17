@@ -83,6 +83,12 @@ export const ComponentSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
   name: z.string().min(1),
+  /**
+   * What sort of component this is — "board" (default), "software", … Open
+   * string, no enum: new kinds must not need a migration (MMB-FR component-
+   * kind). Drives the version heading on the component page.
+   */
+  kind: z.string().default("board"),
   description: z.string().default(""),
   /** Slugs of sub-components (nesting). */
   children: z.array(z.string()).default([]),
@@ -171,6 +177,8 @@ export const BoardSpecSchema = z.object({
   component: z.string().min(1),
   /** Which ComponentVersion this documents. */
   version: VersionNumber,
+  /** Kind override per spec (else the component's `kind` counts): "board", "software", … */
+  kind: z.string().optional(),
   /** Structured connector data, read straight from the .kicad_pcb (D1, D2). */
   connectors: z.array(BoardConnectorSchema).default([]),
   /** Rendered assets, by role, as URLs (D2, D3). */
@@ -180,10 +188,24 @@ export const BoardSpecSchema = z.object({
       renderBottom: z.string().optional(),
       /** The wiring-overview SVG. */
       overview: z.string().optional(),
+      /** 3D model (binary glTF, .glb) for the 3D tab — versioned like the rest. */
+      model3d: z.string().optional(),
       /** Per-connector pinout SVG, keyed by connector ref (D10). */
       pinouts: z.record(z.string(), z.string()).default({}),
     })
     .default({ pinouts: {} }),
+  /**
+   * 3D view config (MMB-request 3D-tab). `src` may point at a static file;
+   * the versioned `assets.model3d` wins when both are present (cache-safe:
+   * content-hashed URL, republish = new URL).
+   */
+  view3d: z
+    .object({
+      mode: z.string().default("glb"),
+      src: z.string().optional(),
+      poster: z.string().optional(),
+    })
+    .optional(),
   /**
    * Hotspot positions on the render (relative 0..1), so a board widget can be
    * derived (D4). `connector` auto-links that connector's pinout SVG (D10).

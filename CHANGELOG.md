@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **3D-tab op bordweergaves** (MMB-request): een board-spec kan een GLB-model
+  meesturen (`assets.model3d`, versioned zoals de renders, of `view3d.src`);
+  de bordweergave krijgt dan naast Overview/Interactive een **3D**-knop —
+  vrij draaien/zoomen via een zelf-gehoste `<model-viewer>`. Dubbel lazy: de
+  viewer-bundel én de GLB laden pas bij de eerste klik; tot die tijd staat de
+  poster (`view3d.poster`, anders de render). Specs zonder model veranderen
+  niet.
+- **Component-soort `kind`** (MMB-FR): open stringveld op component (default
+  `board`) en optioneel per spec; de versiekop op component- en productpagina
+  volgt het ("Software v0.5.48" i.p.v. "Board …" voor de browser-editors).
+  Bestaande content ongewijzigd — geen migratie.
 - **Time travel (as-of-preview)**: op het admin-dashboard kies je een moment
   en bladert de publieke site zoals hij tóen was (of, met geplande content,
   wordt) — banner + Exit bovenaan, alleen zichtbaar in je eigen browser.

@@ -77,8 +77,8 @@ merken hier niets van.
 |---|---|
 | **Pages** | vrije pagina's — bewerk je in de studio (zie onder) |
 | **Products** | producten met specs, status, foto's en componenten |
-| **Components** | herbruikbare bouwblokken (één component kan in meerdere producten zitten); kunnen nesten |
-| **Board specs** | machinaal gegenereerde borddocumentatie (komt binnen via de hardware-toolkit) |
+| **Components** | herbruikbare bouwblokken (één component kan in meerdere producten zitten); kunnen nesten. Het veld **kind** (board, software, …) bepaalt de versiekop op de site |
+| **Board specs** | machinaal gegenereerde borddocumentatie (komt binnen via de hardware-toolkit). Met een 3D-model erbij krijgt het bord een **3D**-knop: vrij draaien en zoomen; het model laadt pas als een bezoeker erop klikt |
 | **Releases** | uitgaves van een product, met per component de meegeleverde versie |
 | **Menus** | navigatiemenu's (het "main"-menu stuurt de header) |
 | **Themes** | kleurenschema's van de site (zie Thema's) |

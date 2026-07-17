@@ -18,6 +18,7 @@ const CONTENT_TYPES: Record<string, string> = {
   pdf: "application/pdf",
   zip: "application/zip",
   json: "application/json",
+  glb: "model/gltf-binary",
 };
 
 export async function GET(
