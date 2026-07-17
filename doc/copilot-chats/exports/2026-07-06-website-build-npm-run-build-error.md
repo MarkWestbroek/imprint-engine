@@ -3039,3 +3039,1156 @@ De parallelle users-sessie is **op dit moment nog actief** in de werkboom (READM
 
 Kleine voetnoot: onderweg ontdekt dat jouw chat-export-bestand (`doc/copilot-chats/...`) zichzelf continu bijwerkt — dat verklaart waarom het altijd als "modified" in git staat. Niets van verloren gegaan; mijn tijdelijke stash bleek redundant en is opgeruimd.
 
+---
+
+## 👤 Gebruiker (34)
+
+Ja, de andere sessie heeft iets met gebruikersbeheer gedaan. Leek mij redelijk los staan van de widgets.
+Het mag wel mee in dezelfde release.
+
+Wil jij in claude.md schrijven dat ik af en toe chat exports maak met de hand (nou ja, ik run het script). Dus af en toe komen die files er opeens. Daar moet je niet van schrikken en ze gaan over waar we nu mee bezig zijn, dus het mag gewoon mee in de release. Gecommit enz.
+
+**🤖 Claude:**
+
+Twee dingen dan: de CLAUDE.md-afspraak over je chat-exports, en daarna de release met alles erin. Eerst kijken wat de users-sessie nog heeft klaargelegd:
+> 🔧 `PowerShell` — Check remaining uncommitted work
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CLAUDE.md
+> 🔧 `PowerShell` — Commit users docs polish
+
+**🤖 Claude:**
+
+Weer de aanhalingstekens-valkuil — via bestand:
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `PowerShell` — Commit users docs, then CLAUDE.md + chat exports
+
+**🤖 Claude:**
+
+Boom is schoon — nu de release:
+> 🔧 `PowerShell` — Release 0.9.0 and push with tags
+> 🔧 `Bash` — Verify changelog rollover and versions after release
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+**v0.9.0 is uit** — getagd en gepusht, mét het gebruikersbeheer erin zoals je wilde.
+
+## Wat er in de release zit
+
+De changelog-rollover werkte dit keer vlekkeloos (de CRLF-fix uit 0.8.0 heeft zijn eerste echte run doorstaan). Onder `[0.9.0]`:
+- **Gebruikersbeheer** (parallelle sessie): `/admin/users`, rollen, wachtwoordresets met eenmalig getoond gegenereerd wachtwoord, last-admin-guard, en `npm run user` als noodingang via SSH — inclusief hun nette docs (README "Wachtwoord kwijt", handleiding-sectie).
+- **Theming**: thema's als content met kleurpicker-editor, de dark/light/neon-switcher in de header, no-flash.
+- **Zes widgets**: hero, video, accordion, divider, downloads, posts.
+- Plus de eerdere fixes (Lightroom-API, map-decimalen, carousel).
+
+Versies staan overal op 0.9.0.
+
+## Je CLAUDE.md-verzoek
+
+Staat erin: *"Mark exporteert af en toe handmatig chat-sessies (script) naar `doc/copilot-chats/exports/` — die bestanden verschijnen dus 'opeens' in de werkboom. Niet van schrikken: ze gaan over het lopende werk en mogen gewoon mee in commits en releases."* En meteen in praktijk gebracht: beide exports (de bijgewerkte build-error-sessie én de verse users-beheer-sessie) zijn mee gecommit. Dit verklaart trouwens ook waarom dat ene bestand steeds als "modified" opdook — mysterie opgelost.
+
+## Stand van zaken
+
+Alles is gepusht, de werkboom is schoon, en de dev-server draait nog op http://localhost:3000 — de **theme-switcher** staat rechtsboven in de header (probeer Neon 😄), en `/widgets-demo` toont de complete widget-verzameling. Voor de allowlist geldt nog steeds: typ zelf `/fewer-permission-prompts`, dan mag het wél.
+
+De backlog is bijgewerkt; wat er qua widgets nog open staat is klein (search, lijst-varianten, custom editors voor specs/downloads). De grotere kandidaten voor een volgende sessie: **Plesk-deploy** (alles staat klaar), **CI**, of de **as-of-preview** (tijdreizen in de admin — de bitemporal-showcase).
+
+---
+
+## 👤 Gebruiker (35)
+
+Was onderstaande wel ongeveer in de release log geland?
+# werk van de andere sessie voor in de release log:
+"Gebruikersbeheer — /admin/users: admins beheren accounts, rollen en wachtwoord-resets (gegenereerd, één keer getoond); iedereen wijzigt er zijn eigen wachtwoord. De laatste admin kan zichzelf niet slopen. Buitengesloten? npm run user -- passwd <naam> op de server is de weg terug — geen reset-mail nodig."
+
+**🤖 Claude:**
+
+Even de exacte tekst erbij pakken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `PowerShell` — Commit changelog nuance and push
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `PowerShell` — Commit via message file and push
+
+**🤖 Claude:**
+
+Kort samengevat: **ja, het is geland** — de parallelle sessie had zijn notitie zelf keurig onder `[Unreleased]` gezet en die is bij de release automatisch onder `[0.9.0]` gerold, inhoudelijk compleet en op punten zelfs rijker dan jouw citaat (de CLI-subcommando's, de gedeelde wachtwoordregels in content-core, en de 12-uurs-sessiecookie-caveat).
+
+Het enige ontbrekende detail — **"een reset-mail is er bewust niet"** — heb ik zojuist alsnog in de 0.9.0-notitie gezet en gepusht (`851bbf4`). Nu dekt de changelog-regel elke nuance uit hun formulering.
+
+Mooi om te zien dat het ritueel werkt zoals bedoeld: twee sessies die onafhankelijk hun notities onder `[Unreleased]` zetten, en één `npm run release` die alles correct bundelt.
+
+---
+
+## 👤 Gebruiker (36)
+
+Dus ik zou de site kunnen updaten op plesk. Gewoon pullen en deployen toch?
+
+**🤖 Claude:**
+
+Bijna — met één belangrijke nuance: **"pullen en deployen" geldt voor updates, maar de site staat er nog helemaal niet**. De eerste keer is een echte inrichtingsklus (eenmalig); daarná is het inderdaad pull + deploy. Even beide op een rij.
+
+## Eerste keer (jouw situatie nu)
+
+Het volledige stappenplan staat in de README onder "Deploy naar Plesk"; de kern:
+
+1. **Git-extensie in Plesk**: koppel `github.com/MarkWestbroek/imprint-engine` aan een map — de héle repo (de app wijst straks naar de submap).
+2. **MariaDB aanmaken** (je "Add Database"-scherm van eerder): database + user, remote access niet nodig.
+3. **Node.js-extensie**: Application root = `<repo>/sites/musicbrain`, startup file = `server.js`, Node ≥ 20.
+4. **Environment-variabelen** in de Node.js-instellingen (geen `.env`-bestand op de server nodig): `DATABASE_URL`, een vers `SESSION_SECRET`, `INGEST_TOKEN` (voor MMB), `ASSET_ROOT` (map **buiten** de app-map, anders overleven bord-uploads geen deploy), en eenmalig `SEED_ADMIN_USER`/`SEED_ADMIN_PASSWORD`.
+5. Op de server (SSH of Plesk-terminal), **vanuit de repo-root**: `npm ci && npm run build && npm run db:migrate && npm run db:seed`.
+6. App (her)starten in de Node.js-extensie.
+
+## Drie dingen om niet door verrast te worden
+
+- **`npm ci` vanuit de root**, niet vanuit `sites/musicbrain` — het is een workspaces-monorepo.
+- **NODE_ENV-valkuil**: Plesk zet vaak `NODE_ENV=production`, waardoor `npm ci` de devDependencies (TypeScript, Tailwind) overslaat en de build faalt. Gebruik dan `npm ci --include=dev`.
+- **Je lokale content verhuist níet mee.** De productie-DB start leeg; de seed vult 'm met de contentbestanden uit git (producten, pagina's, thema's, menu). Maar alles wat alleen in je lokale DB leeft — de widgets-demo-pagina, je Street-album-widget, de busboard-board-spec mét assets — staat er dus niet. Dat is by design (productie-DB = eigen bron van waarheid): MMB publiceert de borden opnieuw tegen de productie-URL met het productie-`INGEST_TOKEN`, en demo-pagina's maak je in de productie-studio opnieuw (of we bouwen ooit een export/import).
+
+## Daarna: ja, gewoon pullen en deployen
+
+Zet in de Plesk Git-extensie dit als "additional deployment actions":
+
+```bash
+npm ci --include=dev
+npm run build
+npm run db:migrate
+touch sites/musicbrain/tmp/restart.txt
+```
+
+Dan is elke update letterlijk één klik (of automatisch bij push): pull → dependencies → build → schema-migraties → Passenger-herstart. Content hoeft nooit mee te syncen (die zit in de productie-DB), en schemawijzigingen reizen als drizzle-migraties in git — precies waarvoor we dat zo hebben ingericht.
+
+Wil je het samen doorlopen? Als je de Git-koppeling en de DB in Plesk aanmaakt en me het `DATABASE_URL`-formaat laat zien (zonder wachtwoord), kan ik de exacte env-waarden en het deploy-script voor je klaarzetten — en na de eerste deploy een checklist afdraaien tegen de live URL (site, admin-login, API, een board-ingest van MMB).
+
+---
+
+## 👤 Gebruiker (37)
+
+ja, graag
+
+**🤖 Claude:**
+
+Ik zet alles klaar wat vanuit de repo kán: het deploy-script, een smoke-test voor na de deploy, verse productie-secrets, en een strakke checklist voor jouw Plesk-kant. Eerst de huidige README-deploysectie bekijken (de users-sessie heeft eraan gewerkt):
+> 🔧 `Bash` — Read current README deploy section
+> 🔧 `Bash` — Read rest of deploy section
+> 🔧 `Bash` — Probe whether musicbrain.nl is already live
+> 🔧 `Bash` — Fingerprint live deployed version
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+
+**🤖 Claude:**
+
+Nu de smoke-test:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\smoke.mjs
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\package.json
+> 🔧 `Bash` — Check for duplicate user script entry
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\package.json
+> 🔧 `Bash` — Test smoke against local and live, dry-test only-filter
+> 🔧 `Bash` — Real run of seed --only=themes against local DB
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `PowerShell` — Commit update tooling and push
+
+**🤖 Claude:**
+
+Alles staat klaar op `main` (gepusht t/m `b5a0aa2`). Live draait nu een 0.7-era build; na jouw pull staat er v0.9.0+. Dit is je update-recept:
+
+## De update (jouw kant, ~5 minuten)
+
+1. **Plesk → Git → Pull updates** (of "Deploy"). Jouw deployment-action doet de rest — die is al goed zoals je 'm eergisteren instelde (`npm ci --include=dev && db:migrate && build && restart`). Er zijn géén nieuwe DB-migraties, dus `db:migrate` is een no-op; `npm ci` haalt wel de nieuwe dependencies binnen (leaflet, mustache, e.d.).
+
+2. **Thema's bijseeden** (eenmalig, via SSH of een scheduled task, vanuit de repo-root):
+   ```bash
+   export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=themes
+   ```
+   Dit is het nieuwe gerichte bijseeden: het raakt **alleen de drie thema's** en laat alles wat je op productie hebt bewerkt met rust (een volle seed zou elke prod-bewerking overschrijven met de file-versie — daarom heb ik dit gebouwd). Lokaal getest: hij doet exact `dark, light, neon` en verder niets.
+
+3. **Nog één keer Pull/deploy** (of: log in op de admin en druk ergens op Save). Reden: de publieke pagina's zijn prerendered, dus de theme-switcher en -CSS verschijnen pas na een rebuild of cache-flush ná het seeden. Staat nu ook zo in de README.
+
+## Controleren: `npm run smoke`
+
+Nieuw post-deploy-gereedschap (read-only, veilig tegen productie):
+```bash
+npm run smoke -- https://musicbrain.nl
+```
+Checkt home, admin, API-index, producten, de productpagina, dat de write-API dicht zit zonder token, en of de thema's actief zijn. Ik heb 'm al tegen beide gedraaid: **lokaal alles ✓**, en **live nu alles ✓ behalve de thema-waarschuwing** — precies de pre-update-vingerafdruk. Na jouw drie stappen moet ook die ⚠ een ✓ zijn.
+
+Leuke bijvangst van het vingerafdrukken: `busboard-v2` bestaat al op productie — MMB heeft dus ook al naar musicbrain.nl gepubliceerd. De hele keten (component → board, met assets) staat daar al klaar en gaat met de nieuwe frontend alleen maar mooier renderen.
+
+Zeg het als de pull gedraaid heeft, dan draai ik de smoke er meteen overheen en lopen we samen de site na (theme-switcher op Neon als lakmoesproef 😄).
+
+---
+
+## 👤 Gebruiker (38)
+
+Ik heb geen SSH. Scheduled task kan. Zo?
+
+**🤖 Claude:**
+
+Bijna — twee belangrijke aanpassingen, anders doet-ie niks (of te veel):
+
+## 1. `cd` naar de repo-map ontbreekt
+
+Een scheduled task start in je **home-directory**, niet in de repo-root (de deployment-action wél, dat regelt Plesk's Git). Zonder `cd` vindt npm geen `package.json` en de seed geen `.env`. Maak het commando:
+
+```
+cd <deployment-pad> && export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=themes
+```
+
+Het `<deployment-pad>` is de map waarin Plesk de repo uitcheckt — je vindt 'm onder **Plesk → Git → (repo) → instellingen → "Deployment path"** (vermoedelijk iets als `/var/www/vhosts/musicbrain.nl/imprint` of hoe je de map ook noemde; relatief vanaf home mag ook: `cd imprint && …`).
+
+## 2. Niet "Daily" — dit is een eenmalige actie
+
+Zoals het nu staat draait de seed **elke nacht** en stapelt hij dagelijks een (identieke) nieuwe versie van elk thema in de historie. Niet schadelijk, wel vervuiling. Doe in plaats daarvan:
+
+1. Zet **Notify op "Every time"** — anders zie je de uitvoer niet en weet je niet of het gelukt is.
+2. Klik **Run Now** (dat draait het commando direct, éénmalig).
+3. Controleer de output: je wilt drie regels zien — `theme ✓ dark`, `theme ✓ light`, `theme ✓ neon`.
+4. Daarna: **Cancel / taak verwijderen** (of "Active" uitvinken als je 'm wilt bewaren als sjabloon voor later gericht bijseeden).
+
+## 3. Daarna nog één keer deployen
+
+De publieke pagina's zijn prerendered, dus de theme-switcher verschijnt pas na een rebuild: klik in **Plesk → Git** nogmaals **Deploy/Pull** (de deployment-action draait dan opnieuw en bouwt met de thema's erin).
+
+Je eerste screenshot ziet er goed uit trouwens — de pull + deployment-actions zijn groen doorlopen, dus **v0.9.0+ code staat al live**. Zodra jij de seed + herdeploy hebt gedaan, zeg je het even; dan draai ik `npm run smoke -- https://musicbrain.nl` en verwacht ik alle checks groen, inclusief de thema's. Dan staat de switcher (Dark/Light/Neon) live op musicbrain.nl. 🎨
+
+---
+
+## 👤 Gebruiker (39)
+
+Task "cd imprint && export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=themes" successfully completed in 2 seconds. See details
+> imprint@0.9.0 db:seed
+> tsx scripts/seed.ts --only=themes
+
+theme ✓ dark
+theme ✓ light
+theme ✓ neon
+Done.
+
+**🤖 Claude:**
+
+De seed is perfect gelopen — drie thema's in de productie-DB, en de output verraadt meteen dat er inderdaad **0.9.0** live staat (`imprint@0.9.0`). Nu de lakmoesproef:
+> 🔧 `Bash` — Smoke test live site after theme seed
+
+**🤖 Claude:**
+
+Zeven van de acht groen — alleen de thema-check staat nog op ⚠, precies zoals voorspeld: de publieke pagina's zijn **prerendered vóórdat** de thema's in de DB zaten. Er rest dus nog één stap:
+
+**Plesk → Git → nogmaals "Deploy"/"Pull updates"** — er is niets nieuws te pullen, maar de deployment-action draait dan opnieuw en de `npm run build` daarin prerendert de pagina's mét de thema's (en de nieuwe `restart.txt` herstart Passenger).
+
+Twee kleine opmerkingen over je scheduled task:
+- Slimme oplossing, "Yearly op 1 januari" als parkeerplek — werkt prima. Weet alleen: elke nieuwjaarsnacht draait hij en voegt hij een (identieke, onschuldige) nieuwe versie van de drie thema's toe aan de historie. Wil je dat niet, vink dan **Active** uit — dan blijft hij bewaard als sjabloon en draai je 'm alleen nog handmatig met Run Now, bijvoorbeeld voor toekomstig gericht bijseeden (`--only=pages`, `--only=menus`, …).
+- Notify "Every time" was precies goed — daardoor zagen we de `theme ✓`-regels.
+
+Zeg het als de herdeploy klaar is, dan draai ik de smoke opnieuw — dan verwacht ik acht van de acht, en staat de **Dark/Light/Neon-switcher live op musicbrain.nl**.
+
+---
+
+## 👤 Gebruiker (40)
+
+deployment task complete
+> 🔧 `Bash` — Final smoke + theme verification on live site
+> 🔧 `Edit` — C:\Users\User\.claude\projects\d--Git-Web-Imprint-engine\memory\cms2026-project-context.md
+
+**🤖 Claude:**
+
+**Klaar — de update is rond.** Wat er nu live staat op musicbrain.nl:
+
+- **Theming**: de switcher in de header (probeer Neon 😄), thema's beheerbaar via /admin → Themes met kleurpickers
+- **De volledige widget-catalogus** (20+): galerij met lightbox, carrousel, Lightroom-albums, kaart, kanban, hero, video, accordion, downloads, posts, board-specs, itinerary…
+- **Gebruikersbeheer**: /admin/users — en zonder SSH is je scheduled-task-truc nu ook de gedocumenteerde noodingang voor `npm run user`
+- **De hele board-keten**: MMB's busboard staat er al met assets; de andere 12 borden kunnen ze publiceren wanneer jij het sein geeft
+
+En belangrijker dan de features: **de update-routine is nu bewezen**. Voortaan is bijwerken letterlijk: `git push` (doe ik) → **Pull updates** in Plesk (doe jij, of automatisch) → bij nieuwe seed-content eenmalig je scheduled task met `--only=…` → `npm run smoke` als controle. Van laptop naar live in een paar minuten.
+
+Ik heb de mijlpaal in mijn projectgeheugen gezet (live-URL, geen-SSH-werkwijze via scheduled tasks, en de regel "nooit vol-seeden op prod"). 
+
+Kleine nazorg wanneer je zin hebt: log één keer in op https://musicbrain.nl/admin en check dat je erin komt (het admin-wachtwoord op prod is wat je daar bij de seed als `SEED_ADMIN_PASSWORD` instelde) — en de backlog-toppers voor een volgende sessie zijn CI (zodat een kapotte build nooit meer live kan) en de as-of-preview. Gefeliciteerd met de livegang! 🚀
+
+---
+
+## 👤 Gebruiker (41)
+
+Cool!
+
+Wil je dit nog ergens opschrijven?
+
+**🤖 Claude:**
+
+Ja — op drie plekken hoort dit thuis: de README (status + het bewezen no-SSH-patroon), de backlog (deploy afvinken) en de handleiding (de live-URL). Even de juiste plekken erbij pakken:
+> 🔧 `Bash` — Locate README spots to update
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+
+**🤖 Claude:**
+
+Nu de backlog afvinken en de live-URL in de handleiding:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `PowerShell` — Commit livegang documentation and push
+
+**🤖 Claude:**
+
+Opgeschreven en gepusht (`205bb89`) — op elke plek waar het hoort:
+
+- **README**: een *Live*-banner bovenaan (URL, sinds wanneer, hoe updaten), het deploy-item afgevinkt, en — het waardevolste — het **Scheduled-Task-patroon** zoals jij het vandaag bewezen hebt, met het exacte werkende commando (`cd imprint && export PATH=... && npm run ...`), de "Notify Every time"-tip en de waarschuwing over de jaarlijkse run. Dat patroon is jouw algemene servertoegang zonder SSH — ook voor `npm run user` (wachtwoord-reset) en toekomstig bijseeden.
+- **Backlog**: "Deploy naar Plesk" afgestreept, met de bewezen update-flow erbij.
+- **Handleiding**: de live- en admin-URL bovenaan, zodat redacteuren weten waar ze moeten zijn.
+- **Mijn projectgeheugen** had ik al bijgewerkt (live-URL, geen-SSH-werkwijze, "nooit vol-seeden op prod") — dus volgende sessies weten dit meteen.
+
+Daarmee is de cirkel rond: van "een compleet blanco project" op 6 juli naar een live, geversioneerde, zichzelf documenterende publicatie-motor op musicbrain.nl — met studio, thema's, widgets, gebruikersbeheer, een board-pipeline vanuit KiCad, en een bewezen update-routine van laptop naar productie. 🚀
+
+---
+
+## 👤 Gebruiker (42)
+
+Een vraag van het MMB project (de klant, zeg maar). Zie bestand.
+
+En zou je meertaligheid op de backlog willen zetten? Ik zie het er net tussen staan, maar kan eroverheen gelezen hebben.
+
+**🤖 Claude:**
+
+Twee dingen: de MMB-testcase draai ik meteen tegen de live site (vooral assert 3, die zij niet konden checken), en meertaligheid ga ik na in de backlog — je hebt gelijk dat die W5 verdacht stil is. Eerst de testcase:
+> 🔧 `Bash` — Run testcase asserts 1-2 against live site
+> 🔧 `Bash` — Assert 3: old hashed asset URLs still serve 200
+> 🔧 `Bash` — Complete assert 3 + check assert 4 on live component page
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\testcases\oude-releases-blijven-benaderbaar.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `PowerShell` — Commit testcase results and backlog additions
+
+**🤖 Claude:**
+
+Beide gedaan, gecommit en gepusht (`2782feb`).
+
+## De MMB-testcase: uitgevoerd en geslaagd ✓
+
+Ik heb alle asserts live tegen musicbrain.nl gedraaid (read-only, dus veilig):
+
+1. **Release-lijst** ✓ — `modular-mb v0.2` staat er nog gewoon naast `cortex v0.2` (en er blijkt zelfs al een `guitar-switcher v0.1` bij — MMB is productief).
+2. **Component-versies** ✓ — `adc8` toont v1.2 én v2.0, elk met hun spec-verwijzing.
+3. **De assert die MMB niet kon checken** ✓ — dit is de mooiste: de oude spec `adc8@v1.2` is opvraagbaar en **alle vier de content-hashed asset-URL's geven HTTP 200**, ook ná de v2.0-ingest (o.a. `/api/assets/adc8/v1.2/render-top.e66095d5.png`). Dit is precies waarvoor we de content-hashing bouwden: v2.0-assets krijgen nieuwe URL's en kúnnen de v1.2-bestanden dus niet verdringen.
+4. **Site-weergave** ✓ basis — `/components/adc8` toont beide board-versies volledig plus "Used in". MMB's verfijning (de door de nieuwste release gepinde versie prominent, oudere ingeklapt als archief) heb ik als backlog-item genoteerd — klein en zinnig.
+
+De testcase-met-uitslag staat nu in **[docs/testcases/oude-releases-blijven-benaderbaar.md](docs/testcases/oude-releases-blijven-benaderbaar.md)** — herhaalbaar, met de exacte URL's. Dat is meteen het begin van een testcases-map; als MMB er meer aanlevert, groeit daar een regressie-set.
+
+## Meertaligheid: je had gelijk
+
+**Stond er niet in** — W5 was ik bij het samenstellen van de backlog overgeslagen. Nu toegevoegd, met een eerlijke stand van zaken: het *fundament* bestaat al sinds dag één (elk item heeft `lang`, EN→NL-fallback in beide stores, `?lang=nl` op de API), maar er is nog geen gezicht: geen taal-switcher op de site, geen NL-content, geen "vertaal dit item"-flow in de admin, en de URL-strategie (`/nl/`-prefix of cookie) is een open ontwerpkeuze. Als L-formaat genoteerd onder de open requirements.
+
+---
+
+## 👤 Gebruiker (43)
+
+sorry, maar ik zie geen antwoord op alle vragen. Bijv:
+"2. Release terugtrekken / corrigeren
+Er staat nu een verkeerd genummerde release live: cortex-v0.2 (2026-07-16) naast de oudere modular-mb@v0.2 — het had cortex-v0.3 moeten zijn.
+
+Vraag: ondersteunt de write-API een DELETE (of tombstone) voor een content-item, bv. DELETE /api/content/release/<slug>? De store-interface kent deleteItem, de ingest-gids noemt alleen POSTs.
+Zo nee: verzoek — een nette terugtrek-route die past bij het bitemporale model (niet wissen maar verbergen/superseden), zodat een vergissing niet eeuwig in de publieke lijst staat.
+Tot die tijd: mogen wij cortex-v0.2 op een andere manier laten verdwijnen/hernoemen, of laten staan en gewoon v0.3 ernaast posten??"
+
+**🤖 Claude:**
+
+Je hebt gelijk — het document dat ik binnenkreeg bevatte alleen de testcase (4 asserts), niet de overige vragen; vraag 2 zie ik nu pas via jouw citaat. Het antwoord daarop is tweeledig: **de terugtrek-route bestaat al in het model** (bitemporale tombstone via `deleteItem`, precies wat MMB vraagt: niet wissen maar superseden — de admin-Delete-knop gebruikt 'm al), maar **de write-API mist 'm inderdaad**. Die bouw ik nu:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\content\[[...path]]\route.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\content\[[...path]]\route.ts
+
+**🤖 Claude:**
+
+Nu de ingest-gids uitbreiden en end-to-end testen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-ingest-guide.md
+> 🔧 `Bash` — Typecheck and check dev server
+> 🔧 `Bash` — E2E test DELETE retraction flow
+> 🔧 `PowerShell` — Lint and build
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `PowerShell` — Commit DELETE route and push
+
+**🤖 Claude:**
+
+Gebouwd, getest en gepusht (`a136090`). Het antwoord op MMB's vraag 2:
+
+## Release terugtrekken / corrigeren — nu volledig beantwoord
+
+**Ondersteunde de write-API DELETE?** Nee — dat was een terecht gesignaleerd gat: `deleteItem` bestond in de store (de admin-Delete-knop gebruikt 'm al), maar de API had alleen POSTs. **Nu wel:**
+
+```
+DELETE /api/content/release/cortex-v0.2     (Authorization: Bearer <token>)
+```
+
+En het is precies de "nette terugtrek-route die past bij het bitemporale model" waar ze om vragen: een **tombstone, geen wissing**. Het item verdwijnt onmiddellijk uit alle publieke lijsten en API's, maar de volledige historie blijft bewaard en is via de admin (History → Restore) terug te halen. E2e getest: post → in lijst → DELETE → weg uit lijst → historie intact → tweede DELETE geeft 404.
+
+**Antwoord op hun tussenvraag** ("mogen wij v0.2 laten verdwijnen/hernoemen, of laten staan?"):
+- **Hernoemen bestaat niet** — de slug ís de identiteit. Het recept is: terugtrekken + opnieuw posten onder de juiste slug (staat nu uitgewerkt in de ingest-gids, sectie 5, met hun exacte cortex-voorbeeld).
+- **Ze kunnen het zelf doen zodra jij de nieuwe code naar Plesk pullt** (Pull updates in de Git-extensie — de DELETE-route zit in de push van zonet).
+- **Wil je het nú alvast opruimen**: jij kunt `cortex v0.2` vandaag al terugtrekken via https://musicbrain.nl/admin → Releases → Delete — dat is exact hetzelfde mechanisme. Daarna post MMB gewoon `cortex-v0.3`.
+
+## De andere vragen
+
+Hier moet ik eerlijk zijn: het bestand dat ik (twee keer) binnenkreeg bevat **alleen de testcase** — de vier asserts, die ik vorige beurt heb uitgevoerd en vastgelegd. Vraag 2 ken ik alleen uit jouw citaat, en als er een vraag 1, 3, … zijn, dan hebben die mij niet bereikt. Plak ze even in de chat (of stuur het volledige vragen-document), dan werk ik ze allemaal af.
+
+---
+
+## 👤 Gebruiker (44)
+
+aaah.... ik snap het. Mijn fout. Ik heb het verkeerde bestand opgestuurd :-/
+
+vond het al zo raar.... 
+
+Bij deze de vragen....
+
+**🤖 Claude:**
+
+Haha, dat verklaart alles — nu heb ik ze. Zes punten; nr. 2 (DELETE) is al af van zonet, nr. 5 (testcase) deels. De rest pak ik nu allemaal op:
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\ingest\board-spec\route.ts
+
+**🤖 Claude:**
+
+**V1** — de URL-alias (`/hw/<naam>` → `/components/<naam>`), configureerbaar per contenttype via de site-config:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\site.json
+
+**🤖 Claude:**
+
+**V5** — de testcase als herhaalbaar script:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\testcase-bitemporal.mjs
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\package.json
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-ingest-guide.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `PowerShell` — Typecheck, lint, build
+> 🔧 `Bash` — E2E: alias redirect, pinned_by warning, testcase script, project in list
+> 🔧 `Bash` — Verify project name in release link text
+
+**🤖 Claude:**
+
+Alles bevestigd. Changelog en commit:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+---
+
+## 👤 Gebruiker (45)
+
+This session is being continued from a previous conversation that ran out of context. The summary below covers the earlier portion of the conversation.
+
+Summary:
+1. Primary Request and Intent:
+Mark Westbroek is building **Imprint** — one publishing engine, many brand sites ("imprints"); first imprint is **MusicBrain** (live at https://musicbrain.nl). Over the session (2026-07-06 → 2026-07-16) his explicit requests were, in order: fix local build (stale workspace junction); implement his UML content model (Page◆PageLayout◇Widget, free definable widgets); v1 with dynamic data + editor UI (chose: MariaDB everywhere, Node-app on Plesk, full widget composer); Pleio-style visual editor (rows/cells/"vakken" with +-buttons, canvas = real page, sidebar per widget, live effect); widget = viewer + editor contract; content API (pluriform types); WYSIWYG markdown with tabs; table & graphical widgets (gallery, carousel, Lightroom/external album, interactive map, kanban); product/component/release domain (component reusable across products, release pins component-versions, itinerary derived); relations between content types "optie 2" with beheerscherm; board-spec content type in 3 steps (schema → AssetStore/multipart-ingest → viewing incl. hybrid hover-toggle); versioning via git tags + release ritual + changelog + backlog; theming (theme = content, dark/light/neon user switcher); documentation agreement (functional docs/handleiding.md + technical docs/architecture.md per change, in CLAUDE.md); chat-exports by Mark appear spontaneously in doc/copilot-chats/exports/ and may be committed/released; update live site (pull + deploy; no SSH → Plesk Scheduled Task pattern); execute MMB testcase; add meertaligheid to backlog; and finally answer/implement the six MMB questions from `imprint-vragen-2026-07.md`.
+
+2. Key Technical Concepts:
+- npm-workspaces monorepo: `packages/content-core` (zod schemas, ContentStore/WritableContentStore, FileContentStore, DbContentStore, WidgetTypeRegistry, AssetStore, DbUserStore, relations, itinerary) + `sites/musicbrain` (Next.js 16 App Router, Tailwind v4, React 19).
+- Bitemporal-light storage (§B3): one generic `content_items` table (type, slug, lang, JSON data, valid_from/valid_to, tx_from/tx_to); every save = new row; `tx_to IS NULL` = current; delete = tombstone (restorable via History).
+- ContentTypes: site, product, component, board-spec, release, page, menu, theme, relations. MariaDB JSON = LONGTEXT → "thaw" JSON.parse on read.
+- Widget contract: configschema (registry.ts, no React/store) + viewer (components.tsx, async server component receiving `{config, subject}`) + editor (editors.tsx client, default = SchemaForm from z.toJSONSchema). Widget catalogue entries carry `version` + `help`.
+- PageLayout v2: rows → cells (span 1-4 fr) → widgets `{type, config}`; legacy template/region format converts via `layoutRows()`.
+- Studio: server-side drafts (`page-draft.ts` globalThis Map, key user:slug:lang), pure ops in `layout-ops.ts`, dispatch → server action → router.refresh(); `_view/<type>` pages = studio-editable default views with `?previewAs=` sample subject.
+- APIs: GET `/api/content/...` (lang/asOf/drafts params), POST single + bundle + multipart `/api/ingest/board-spec` (asset-name→URL rewrite), DELETE (bitemporal tombstone) — all writes Bearer INGest_TOKEN (constant-time check; empty token = writes off).
+- AssetStore: `put(path,bytes)→url` with content-hash fingerprinting (`render-top.<sha8>.png`) so immutable caching stays correct; served via `/api/assets/[...path]`.
+- Relations: RelationRule {fromType, field ("a", "a[]", "a[].b"), toType, enforce}; stored as content type "relations"; enforced in DbContentStore.putItem; admin at /admin/relations; DEFAULT_RELATION_RULES.
+- Theming: ThemeSchema (7 color tokens + font stacks), CSS vars on `[data-theme]`, `@theme inline` Tailwind binding, ThemeInit no-flash inline script, ThemeSwitcher via useSyncExternalStore mounted idiom, ThemeEditor color pickers; DTCG-inspired.
+- Auth: scrypt hashes (passwords.ts), HMAC-signed stateless session cookie (12h), DbUserStore (deliberately NOT bitemporal — password hashes shouldn't be kept), last-admin guard, `npm run user` CLI.
+- Release ritual: `npm run release -- x.y.z` (bump 3 package.json, roll CHANGELOG [Unreleased], lockfile, commit+tag; CRLF-tolerant); tags v0.1.0…v0.9.0.
+- Deploy: Plesk Git pull + deployment action `export PATH="/opt/plesk/node/21/bin:$PATH" && npm ci --include=dev && npm run db:migrate && npm run build && mkdir -p sites/musicbrain/tmp && touch sites/musicbrain/tmp/restart.txt`; Passenger server.js; migrate BEFORE build (SSG queries DB); no SSH → Scheduled Task with `cd imprint && export PATH=…`, Notify "Every time", Run Now.
+- Tools: `npm run smoke -- <url>`, `npm run db:seed -- --only=<types>`, `npm run testcase:bitemporal -- <url> <component>@<version>`.
+
+3. Files and Code Sections:
+- `packages/content-core/src/schemas.ts` — all zod content schemas: Product (components[], docs), Component (children[], versions[{number,date,notes,spec?}]), VersionNumber regex `/^v?\d+(\.\d+)*([.-][0-9A-Za-z-]+)*$/`, Release (product?, components[{component,version}]), BoardSpec (slug regex `/^[a-z0-9@.\-]+$/`, connectors, assets{renderTop,renderBottom,overview,pinouts record}, points[{x,y,label?,connector?,markdown?}], sections, fab, related), ComponentItinerary type, PageMetaSchema (slug regex now `/^[a-z0-9_/-]+$/` to allow `_view/`), Menu/MenuItem, ThemeSchema/ThemeColorsSchema, User/RoleType/ContentUserRoleType. **Latest edit (this turn)**: SiteConfigSchema gained `aliases: z.record(z.string(), z.string()).default({})` for URL aliases (MMB Q1).
+- `packages/content-core/src/store.ts` — ContentStore interface (getSiteConfig, list/getProducts, listReleases(project?, product?), list/getComponents, list/getBoardSpecs(component?), list/getPages, getMenu, listThemes) + WritableContentStore (listItems, getItem, putItem, deleteItem, listVersions) + ContentType union + ContentRecord.
+- `packages/content-core/src/db-store.ts` — DbContentStore: thaw (MariaDB JSON strings), currentRows (tx_to null + valid window), pickLang EN-fallback, validate switch per type, checkReferences (loads "relations" rules, validateReferences → throw), putItem (supersede + insert in transaction), deleteItem (tombstone), listVersions. `createDb(url)` mysql2 pool.
+- `packages/content-core/src/{relations.ts, itinerary.ts, board.ts, asset-store.ts, passwords.ts, user-store.ts, widgets.ts, file-store.ts, db-schema.ts}` — relations (RelationRule, extractRefs dot/[]-paths, validateReferences, DEFAULT_RELATION_RULES incl. board-spec.component→component); computeItinerary(releases); boardSpecToBoardConfig (D4, svgRef from pinouts); FileAssetStore with `fingerprintPath` content-hashing; scrypt password policy + DbUserStore (parallel session); WidgetTypeRegistry + LayoutRow/Cell (+legacy WidgetPlacement); users/content_items drizzle tables.
+- `sites/musicbrain/src/widgets/registry.ts` — full catalogue (~21 widgets) with version "1.0.0" + help per entry; configs: Text, Table, Image, Gallery/Carousel (ImageItem[], useSubjectMedia), Album (json-api | lightroom-share), Map (markers lat/lng/label/markdown), Kanban, Hero, Video, Accordion, Divider, Downloads, Posts, Itinerary, BoardSpec (spec optional → subject-derived), Board (points with markdown?/svgRef?, mode hover|expanded), Template (Mustache), List (query|refs modes, linkPattern), Treeview, Api, Releases, Products; `widgetRegistry = widgetCatalog.reduce(... register(def as WidgetTypeDef))`.
+- `sites/musicbrain/src/widgets/components.tsx` — all viewers; WidgetComponent = `(props: {config: unknown; subject?: unknown}) => Promise<ReactNode>`; Mustache.escape disabled (markdown-safe); loadLightroomImages walks share→space→resources→album→renditions with `api_key=LightroomMobileWeb1` + `while (1) {}` prefix strip; getPath dot-path helper.
+- `sites/musicbrain/src/app/api/content/[[...path]]/route.ts` — GET (index/site/products/components/board-specs/releases/itinerary/pages/menus; lang/asOf/drafts; Cache-Control 60s unless asOf/drafts), POST single/bundle (order components→product→releases; revalidatePath), and (previous turn) **DELETE**:
+```ts
+export async function DELETE(req, ctx) {
+  if (!checkIngestToken(req)) return error(401, ...);
+  ...
+  const existing = await writableStore.getItem(type, slug, lang);
+  if (!existing) return error(404, ...);
+  await writableStore.deleteItem(type, slug, lang);
+  revalidatePath("/", "layout");
+  return json({ ok: true, type, slug, note: "retracted (tombstone) — history retained, restorable via admin History" }, false);
+}
+```
+- `sites/musicbrain/src/app/api/ingest/board-spec/route.ts` — multipart ingest; **this turn added pinned_by (MMB Q6)**:
+```ts
+const releases = await writableStore.listItems("release");
+const pinnedBy = releases.filter((r) =>
+  ((r.data as {components?: {component:string;version:string}[]}).components ?? [])
+    .some((c) => c.component === component && c.version === version)
+).map((r) => r.slug);
+return NextResponse.json({ ok: true, slug, assets: urls, pinned_by: pinnedBy,
+  ...(pinnedBy.length === 0 && { warning: `No release pins ${component}@${version} yet — ...` }) });
+```
+- `sites/musicbrain/src/app/(site)/[...slug]/page.tsx` — catch-all; `_view/` guard; **this turn added alias redirect (MMB Q1)**:
+```ts
+const site = await store.getSiteConfig();
+const target = site.aliases[slug[0]];
+if (target) permanentRedirect(`/${[target, ...slug.slice(1)].join("/")}`);
+```
+- `sites/musicbrain/src/app/(site)/products/[slug]/page.tsx` — DefaultView wrapper, media Gallery (W3), components with BoardSpecView, releases list; **this turn (MMB Q3)** release link now `{r.data.project} {displayVersion(r.data.version)}` with typed pick including `project`.
+- `sites/musicbrain/content/site.json` — **this turn added** `"aliases": { "hw": "components" }`.
+- `scripts/testcase-bitemporal.mjs` — **new this turn (MMB Q5)**: parametric read-only asserts (releases list >1; component keeps old version + spec ref; old spec's hashed asset URLs all 200); `npm run testcase:bitemporal -- <url> <component>@<oldversion>` (default localhost, adc8@v1.2); HEAD with GET fallback.
+- `scripts/{smoke.mjs, seed.ts, release.mjs, user.ts}` — smoke checks (home/admin/API/products/releases/product page/write-API-401/themes-warnOnly); seed with `--only=<types>` filter (`want(type)`, strips trailing s); release ritual (CRLF-tolerant rollover + guard); user CLI (parallel session).
+- `docs/mmb-ingest-guide.md` — consumer guide; **this turn added** section "Welke versie toont de site? (MMB-vraag 4)" (component page shows ALL versions, no release/channel logic; release page shows pinned; product page shows product releases) and renumbered "6. Item terugtrekken (DELETE)" with cortex-v0.2→v0.3 recipe.
+- `docs/{architecture.md, handleiding.md, backlog.md, testcases/oude-releases-blijven-benaderbaar.md}` — architecture §3b/3c product+theming; functional editor guide (live URLs at top); backlog with checked-off items, **this turn** extended component-page item with channel weighting, earlier added W5/S9 meertaligheid item; testcase doc with verified results (4/4 assets 200).
+- `CLAUDE.md` — werkafspraken incl.: docs split functioneel/technisch + changelog line per change; backlog maintenance; release ritual; **Mark's chat-exports in doc/copilot-chats/exports/ appear spontaneously, don't be startled, commit/release them along**; ContentStore-only access; widget model; relations; no loose hex colors.
+- `.env` / `sites/musicbrain/.env.local` (git-ignored; local: DATABASE_URL mysql://imprint:imprint-dev@localhost:3306/musicbrain, SESSION_SECRET, SEED_ADMIN_USER=mark, SEED_ADMIN_PASSWORD=74ug-kjam-vfmx-dzxf, INGEST_TOKEN=test-ingest-token-123) — never commit.
+
+4. Errors and fixes:
+- Stale workspace junction after folder rename → fresh `npm install` (recorded in memory).
+- PowerShell here-string commit messages break on `"`/`(` in message → **always use `git commit -F <scratchpad>/commitmsg.txt`**; also `[type]` globs in git pathspecs → `:(literal)...`; `/tmp` path mangling between Git Bash and node on Windows → use repo-local temp dirs.
+- MariaDB returns JSON columns as strings → DbContentStore.thaw.
+- Release script missed CHANGELOG rollover on Windows (CRLF vs LF in replace) → CRLF-tolerant regex + abort guard; had to `git tag -fa v0.8.0` before push.
+- `.next` corruption (prod build + dev server mixed) → all /api/* routes 404'd falling through to page catch-all (telltale: generate-params timing on API calls); fix: stop dev, delete `.next`, restart.
+- Map editor couldn't type decimals (controlled input parsed each keystroke, "52." → 52) → NumInput with local text state using **"adjust state during render"** pattern (lint forbids setState-in-effect); comma accepted as decimal separator. User confirmed paste worked but typing didn't.
+- ThemeSwitcher setState-in-effect lint error → rewritten effect-free with `useSyncExternalStore(subscribeNoop, () => true, () => false)` mounted idiom + uncontrolled select (consequence: switcher not in SSR HTML — by design).
+- Carousel cropped photos (object-cover) → object-contain letterboxed (user feedback with screenshot).
+- Lightroom scrape found no images (SPA; renditions have no file extension) → real API chain: share URL redirect → space id → `/v2c...photos.adobe.io/v2/spaces/{id}/resources` → album link `/rels/space_album_images_videos` → per-asset rendition 1280/2048/640 with `api_key=LightroomMobileWeb1`, strip `while (1) {}` prefix; verified with Mark's real share (11 photos); graceful link-card fallback retained.
+- Immutable asset caching served stale renders on republish (MMB note) → content-hash filenames in FileAssetStore.put.
+- Shell safety classifier outage (claude-sonnet-5 unavailable) → waited/retried; explained to user: not local, remedies = retry / permission mode / allowlist.
+- `/fewer-permission-prompts` skill invocation denied by classifier (self-modification) → told Mark to type it himself.
+- Parallel sessions editing shared files mid-flight (board widget chat, users-beheer chat): typecheck caught mid-edit snapshots; resolved by waiting, committing their completed work as separate attributed commits; duplicate `"user"` npm script I added removed.
+- Cleanup mistake: I removed demo linkage (cortex→busboard + release) that Mark was actively browsing → restored; lesson: links are data-driven.
+- Seed full-run on prod would supersede prod edits → built `--only=` filter; **never full-seed prod**.
+- Scheduled task lacked cwd/PATH → documented pattern `cd imprint && export PATH="/opt/plesk/node/21/bin:$PATH" && …`; warned Yearly schedule re-runs annually.
+- MMB testcase file was sent twice without the questions (user sent wrong file) — user apologized and sent `imprint-vragen-2026-07.md`.
+
+5. Problem Solving:
+Solved: full engine from scratch to live production; bitemporal storage with history/restore verified live (MMB testcase 4/4 asserts, incl. old hashed assets 200 after new ingest); machine ingest pipeline (MMB published 13 components + releases to prod themselves); update flow proven end-to-end on musicbrain.nl (v0.9.0 live, themes seeded via Scheduled Task, smoke 8/8 green); parallel-session coordination (users-beheer, board widget) via separate attributed commits. Ongoing: MMB question batch (this turn) — code done & builds green, e2e + commit pending; MMB's referenced `imprint-fr-url-alias.md` (full alias acceptance criteria) not yet received.
+
+6. All user messages:
+- "lees transcript-sessie-e88de4a9.md voor de voorgeschiedenis. Wil je de website actief maken? npm run build faalde bij mij"
+- "Ik dacht meer aan een dynamisch systeem zoals in bijgaande UML. Kun je dit volgen? … Ik wil vrije Widgets kunnen definieren… Zou je dit op kunnen zetten?" (+ mid-turn "hier de UML" with image)
+- "cool! Een paar vragen: wat zijn zod schemas? wat is een drizzle migratie? 1 Node.js is er, weet ik zeker. 2 waar stel ik de db url enz, in? … wil je uitleggen of ik de hele repo kan syncen met de plesk site… Ja, als je er nog delen van kunt maken, handig, maar anders commit maar met wat description…"
+- Pleio screenshots: "Okee, ik ben te moe voor deployment nu, maar nog een paar wensen... Een menu editor… Zijn products nu een content type? Wil je het design documenteren in een architectuur document. Liefst met wat plaatjes (mermaid is okee). ik snap de widget layout nog niet zo. Is het mogelijk dat meer drag en drop visueel te maken? … vakken met daarin widgets. Vakken kun je bijmaken (+) links, rechts of boven en onder."
+- "Dank! De widget layout is nu nog wel erg technisch van aard. Pleio geeft… meer grafische weergave… eerst voeg je een rij toe… die heeft dan 2 verschijningsvormen: de view-vorm… de editor links voor parameters… parameters aanpassen toont meteen het effect… dus de pagina editor is eigenlijk zoals de pagina is, met een sidebar voor de settings van 1 widget tegelijk… pagina leeft binnen de context van de website… architectureel is dit patroon nodig denk ik: een widget heeft een viewer en een editor. Hebben we al een soort widget interface bedacht?"
+- "ja, graag" (continue studio build)
+- MMB text about publishing busboard + question re publishing remaining 12 boards.
+- "ad 1 Interactieve hotspots: de widget view had ik eigenlijk hybride bedacht… ad 2: ja, ik zou denken dat MMB dat kan… Staat dat duidelijk genoeg in de handleiding…? En ja, hoe zou je dat doen, een pagina die automatisch al deze content toont? … de tekstuele lijst van connector naar pin mag wel ingeklapt of weg… Is een API-call naar tekst Widget iets? … {{status}} … {{component.blok}} als blok[] dan herhaalt dit… Dan moet je op de productpagina een index van releases tonen… En in de Release pagina een lijst Componenten… En die Component pagina toont dan wat je nu gemaakt hebt"
+- "wat is het verschil tussen /c/<type>/<slug> en /components/<slug>?"
+- "okee. B — wil je de rest bouwen?"
+- "http://localhost:3000/products/cortex hadden we al. Hoe kom ik dan nu bij de release vanuit daar? Hoe bewerk ik de default pagina's van een CT?"
+- "ah, verversen... paar kleine dingen: Releases vv0.1 · … twee keer een v; navigatie terug vanuit component … is er niet"
+- "dank! graag het template ontwerp bouwen met preview optie. Kan MMB uploaden? was de ingest guide uitgebreid, qua hele pad dat gestuurd moet? (product - release - component)"
+- "ja, graag starten met 1. En ja, dit klopt: 'eerst de open keuze wilt bevestigen dat een board-spec per ComponentVersion hangt.'" (+ mid-turn "( en wil je aan het eind architecture.md bijwerken?)")
+- "ja, graag naar stap 2"
+- "kun je eerst een instructie schrijven voor de MMB consumer, die boardspecs (en componenten onder twee producten (cortex en reflex) → kan ie dat ook?) gaat 'uploaden'. Weet ie de slug van cortex en van reflex? Daarna: wil je stap 3 doen? … Daarna: is architecture.md bij?"
+- MMB board-spec requirements document (D1–D10) + "optie 2 lijkt mij goed. Hoe configureer je dat? Kun je er een beheerscherm bij maken? 'ComponentVersion … {id}' → klopt eigenlijk niet helemaal: versie is relatief aan het component… de combinatie is uniek. Verantwoordelijkheid geautomatiseerde content ligt bij de consumer, dus die moet read-modify-post doen"
+- MMB publish report + "ad 1 hybride… ad 2 MMB kan dat… hoe zou je dat doen…" (covered above)
+- Widget questions: "'Hebben widgets een versienummer?': ik bedoel de software-versie van het ding. Kan een requirement zijn… en ja, widget is een component van het product Imprint-Engine ;-) Hebben de widgets een readme/handleiding voor de site-editor? wysiwyg: technical quote kan handig zijn. Product: is versienummer een soort datatype? … hoe werkt het met relaties tussen contenttypen? … Hoe voeg je als consumer content toe aan een bestaand contentItem…? image en board widget… Ik zou ze nog even apart houden"
+- "Was onderstaande wel ongeveer in de release log geland? …" (users-beheer release-log text)
+- "Dus ik zou de site kunnen updaten op plesk. Gewoon pullen en deployen toch?"
+- "ja, graag" (walk through deploy) + mid-turn: "Ja, heb eergister enorm lopen zoeken in een andere sessie op mijn laptop… Het is dit geworden: `export PATH=\"/opt/plesk/node/21/bin:$PATH\" && npm ci --include=dev && npm run db:migrate && npm run build && mkdir -p sites/musicbrain/tmp && touch sites/musicbrain/tmp/restart.txt`" + "De site is al gedeployed nu!" + "hij moet alleen geupdate!"
+- "Ik heb geen SSH. Scheduled task kan. Zo?" (screenshots)
+- Screenshot + output: seed task ran, theme ✓ dark/light/neon (task set Yearly Jan 1, description "thema's seeden", Notify Every time)
+- "deployment task complete"
+- "Cool! Wil je dit nog ergens opschrijven?"
+- "Ja, leuk om te doen. Qua werkvoorraad ideeen: er mogen nog wel wat grafische ideen bij: een foto-galerij, een foto carroussel, een view op een andere online foto repo, bijv. een van mijn Lightroom mobile verzamelingen, een interactieve kaart, een klein Canban bord. Zou je een aantal widgets willen oppakken? Ga gewoon lekker door als je wilt; ik moet even weg en laat mij verrassen!"
+- "Super! In de kaart (map) edit-widget kan ik de coordinaten niet achter de komma (punt) invoeren… Ik kan het wel inkopieren… LR: https://adobe.ly/4weXk4I geeft wel het aantal foto's, maar geen beeld. De map is openbaar." (+ mid-turn carousel crop screenshot: "caroussel lijkt een doorsnede te geven (niet de hele foto)")
+- "Cool! Zou je verder willen met de andere widgets? Daarnaast… thema. De site heeft nu een donker thema… Hoe zit dat nu in het systeem en is dat goed te parameteriseren? Hoe kun je een thema-formaat definieren…? Zijn daar standaarden voor of moeten we iets bedenken? Een coole optie… de thema switcher door de gebruiker… dark, light en neon... :-)"
+- "wat kunnen we doen om die shell terug werkend te krijgen? Wat kan daar aan de hand zijn?"
+- Mid-turn: "# Paar dingen tussendoor: documenteer je alles wat je doet ook? Wil je dat ook in claude.md vermelden… zowel functioneel als technisch (liefst in aparte bestanden). die allowlist hulp is wel handig. Wil je die draaien zo?"
+- "Ja, de andere sessie heeft iets met gebruikersbeheer gedaan… Het mag wel mee in dezelfde release. Wil jij in claude.md schrijven dat ik af en toe chat exports maak met de hand… Daar moet je niet van schrikken en ze gaan over waar we nu mee bezig zijn, dus het mag gewoon mee in de release. Gecommit enz."
+- MMB testcase file + "Een vraag van het MMB project (de klant, zeg maar). Zie bestand. En zou je meertaligheid op de backlog willen zetten? Ik zie het er net tussen staan, maar kan eroverheen gelezen hebben."
+- "sorry, maar ik zie geen antwoord op alle vragen. Bijv: '2. Release terugtrekken / corrigeren…'" (quoted Q2 about DELETE)
+- `imprint-vragen-2026-07.md` (6 questions) + "aaah.... ik snap het. Mijn fout. Ik heb het verkeerde bestand opgestuurd :-/ vond het al zo raar.... Bij deze de vragen...."
+Security/ops constraints stated: secrets in `.env`/`.env.local` never committed; `INGEST_TOKEN` empty = writes disabled; Mark has **no SSH** (use Plesk Scheduled Tasks); chat-export files are Mark's and may be committed/released; production DB is source of truth — never full-seed prod.
+
+7. Pending Tasks:
+- **Current turn**: finish MMB questions V1–V6: e2e verify new code (alias redirect `/hw/<slug>` → 308 to `/components/<slug>`; `pinned_by`/warning in ingest response; project shown in product-page release list; run `npm run testcase:bitemporal` against localhost and https://musicbrain.nl), add CHANGELOG [Unreleased] entries for V1/V3/V6 (+V4 doc), commit + push.
+- Tell Mark: request MMB's `imprint-fr-url-alias.md` (full FR with acceptance criteria) to validate the alias implementation; note redirect is 308 (permanentRedirect) not literal 301; prod needs the alias config (admin → Site edit, or `npm run db:seed -- --only=site` — careful, that overwrites prod site config) and a Plesk pull for all new code (DELETE, pinned_by, alias, project-in-list).
+- MMB may now retract cortex-v0.2 via DELETE (after pull) or Mark via admin Delete, then post cortex-v0.3.
+- Backlog (not explicitly scheduled): component page pinned-version-prominent with channel weighting (MMB Q4/assert 4); meertaligheid (W5/S9); CI; as-of-preview; MMB's 12-board batch decision (hotspot points).
+
+8. Current Work:
+Implementing the six MMB questions from `imprint-vragen-2026-07.md`. Completed in this turn: **V3** product-page release list now shows `{r.data.project} {displayVersion(r.data.version)}`; **V6** `/api/ingest/board-spec` response now includes `pinned_by: string[]` + warning when empty; **V1** `SiteConfigSchema.aliases` record + `permanentRedirect` in `(site)/[...slug]/page.tsx` + `"aliases": {"hw": "components"}` in `content/site.json`; **V5** new `scripts/testcase-bitemporal.mjs` + npm script `testcase:bitemporal`; **V4** documented in `docs/mmb-ingest-guide.md` ("Welke versie toont de site?" — component page shows ALL versions, no release/channel logic; their mental model only holds on the release page) and backlog item extended with channel weighting. V2 (DELETE) was completed the previous turn (commit `a136090`) with e2e test (POST→list→401→DELETE 200→gone→history intact→404). Last action: verification run — typecheck clean, lint clean, build green (`npm run typecheck / lint / build` all passed). NOT yet done: e2e tests of the new V1/V3/V6 behavior, changelog entries, commit, push.
+
+9. Optional Next Step:
+Continue finishing the MMB-questions turn: run e2e checks against the local dev server (`curl -I http://localhost:3000/hw/adc8` expecting 308 → `/components/adc8`; re-ingest a board-spec to see `pinned_by`; check product page shows project in release rows; run `npm run testcase:bitemporal` locally and against `https://musicbrain.nl` with `adc8@v1.2`), then add CHANGELOG `[Unreleased]` entries for V1 (URL-aliases), V3 (project in release list), V4 (docs), V5 (testcase script), V6 (pinned_by), commit via the message-file pattern and push. This directly continues the user's request "Bij deze de vragen...." (the six MMB questions); the previous assistant message ended mid-flow right after the green verification: "Nu alles verifiëren — typecheck/lint/build, en de nieuwe features e2e (alias-redirect, pinned_by-waarschuwing, testcase-script, project in releaselijst)" — the typecheck/lint/build portion succeeded, the e2e portion is next.
+
+If you need specific details from before compaction (like exact code snippets, error messages, or content you generated), read the full transcript at: C:\Users\User\.claude\projects\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7.jsonl
+Continue the conversation from where it left off without asking the user any further questions. Resume directly — do not acknowledge the summary, do not recap what was happening, do not preface with "I'll continue" or similar. Pick up the last task as if the break never happened.
+> 🔧 `Bash` — Commit and push MMB-questions work
+> 🔧 `Bash` — Run bitemporal testcase against production
+
+**🤖 Claude:**
+
+Klaar — alle zes MMB-vragen zijn beantwoord en de code staat op `main` (`7b75d27`), build/lint/typecheck groen en alles e2e geverifieerd:
+
+**Wat er per vraag ligt**
+
+| # | Vraag | Antwoord/implementatie | Geverifieerd |
+|---|---|---|---|
+| V1 | URL-alias `/hw/<naam>` (silk-opdruk) | `aliases` in de site-config ([schemas.ts](packages/content-core/src/schemas.ts)), redirect in de catch-all; `{"hw": "components"}` staat in [site.json](sites/musicbrain/content/site.json) | `/hw/busboard-v2` → **308** → `/components/busboard-v2` ✓ |
+| V2 | Release terugtrekken | `DELETE /api/content/<type>/<slug>` (vorige commit `a136090`), recept in de ingest-gids | eerder e2e ✓ |
+| V3 | Twee projecten, zelfde versienummer | Productpagina toont nu **project + versie** per release | linktekst "cortex v0.1" ✓ |
+| V4 | Welke versie toont de site? | Gedocumenteerd in [mmb-ingest-guide.md](docs/mmb-ingest-guide.md): componentpagina volgt géén releases; kanaalweging staat op de backlog | — |
+| V5 | Testcase herhaalbaar | `npm run testcase:bitemporal -- <url> <component>@<versie>` | lokaal ✓ én **prod GESLAAGD** (adc8@v1.2, 4/4 assets 200) ✓ |
+| V6 | "Waarom zie ik niets?" | Ingest-response bevat nu `pinned_by: [...]` + warning bij nul pins | warning verscheen bij ongepinde testspec ✓ |
+
+**Nog te doen aan jouw/prod-kant**
+1. **Plesk pullen** (Scheduled Task "Run Now") — dan staan DELETE, `pinned_by`, de alias-code en project-in-lijst live.
+2. **Alias op prod zetten**: admin → Site bewerken → `aliases` `{"hw": "components"}` (níet full-seeden; de site-config op prod is van jou).
+3. **Aan MMB vragen**: hun `imprint-fr-url-alias.md` (de FR met acceptatiecriteria die ze noemden) — dan check ik of de implementatie exact dekt wat zij vroegen. Eén afwijking alvast: de FR noemde 301, Next's `permanentRedirect` geeft **308** (zelfde permanent-semantiek, methode-behoudend; crawlers behandelen het gelijk).
+4. Daarna kan MMB `cortex-v0.2` terugtrekken en `cortex-v0.3` posten.
+
+En let even op die meegecommitte `gswitch-loop8sh.png` — zeg het als die eruit moet.
+
+---
+
+## 👤 Gebruiker (46)
+
+gswitch-loop8sh.png > oh, waar komt die dan vandaan?
+
+**🤖 Claude:**
+
+Even kijken wat het is en wanneer het ontstond:
+> 🔧 `PowerShell` — Show file timestamps and folder contents
+> 🔧 `PowerShell` — List boards folder with names and git history
+
+**🤖 Claude:**
+
+Mysterie opgelost: die map [public/boards/](sites/musicbrain/public/boards/) is de serie board-renders die jij (of het MMB-spoor) er af en toe in zet — eerdere batches zitten in commits "plaatjes boards" en "Board-renders ververst (MMB-republish)". Er staat al een `gswitch-brain.png` en `gswitch-loop8.png` van 14 juli; `gswitch-loop8sh.png` is vanavond 23:48 op je schijf verschenen, vlak voor mijn commit — zelfde patroon, nieuwe render (loop8**sh**-variant). Niet door mij gemaakt, maar hij hoort duidelijk bij die reeks, dus prima dat hij meeging.
+
+En ja — hier een antwoordbriefje voor MMB, klaar om te plakken:
+
+---
+
+Hoi MMB,
+
+Antwoorden op jullie zes vragen (`imprint-vragen-2026-07.md`). Alles staat in de code; zodra de site is bijgewerkt (pull staat gepland) werkt het live.
+
+1. **URL-alias voor de silk-opdruk** — geregeld. `musicbrain.nl/hw/<component>` redirect permanent naar `/components/<component>` (bijv. `/hw/adc8`). Let op: het is een **308** i.p.v. de gevraagde 301 — zelfde permanente semantiek, crawlers behandelen het gelijk. Sturen jullie nog `imprint-fr-url-alias.md` met de acceptatiecriteria? Dan checken we of alles gedekt is.
+
+2. **Release terugtrekken** — kan nu: `DELETE /api/content/<type>/<slug>` met jullie Bearer-token. Het is een tombstone (historie blijft, herstelbaar via onze admin). Recept voor jullie cortex-v0.2→v0.3-geval staat in de ingest-gids, §6. Ga je gang zodra de site is bijgewerkt.
+
+3. **Twee projecten, zelfde versienummer** — de release-lijst op de productpagina toont nu *project + versie* ("cortex v0.2" vs "reflex v0.2"), dus dat is niet langer dubbelzinnig.
+
+4. **Welke versie toont de site?** — jullie mentale model ("de site toont wat de release pint") klopt alleen op de *release­pagina*. De *componentpagina* volgt geen releases: die toont álle versies uit `component.versions[]`, zonder kanaalweging. De verfijning (gepinde versie prominent, stable weegt zwaarder) staat op onze backlog. Volledige uitleg: ingest-gids, "Welke versie toont de site?".
+
+5. **Testcase herhaalbaar** — ja: `npm run testcase:bitemporal -- <url> <component>@<versie>` draait jullie asserts read-only. Vandaag groen tegen productie met `adc8@v1.2` (oude spec bereikbaar, alle 4 assets 200).
+
+6. **"Waarom zie ik niets op de site?"** — de ingest-response van `/api/ingest/board-spec` bevat nu `pinned_by: [...]`: welke releases jullie zojuist gepubliceerde componentversie pinnen. Is die lijst leeg, dan krijg je meteen een `warning` dat de versie nog op geen productpagina verschijnt.
+
+Groet, Imprint
+
+---
+
+Eén kanttekening voor jou: punt 1, 2, 3 en 6 werken pas op prod ná de Plesk-pull (+ de alias via admin → Site zetten). Als je het briefje nu al stuurt, weet MMB dat via de eerste zin.
+
+---
+
+## 👤 Gebruiker (47)
+
+dank!
+
+Wat zou je nu uit de backlog op kunnen pakken?
+> 🔧 `AskUserQuestion`
+> 🔧 `ToolSearch`
+> 🔧 `Grep` — channel
+> 🔧 `Glob` — sites/musicbrain/src/app/(site)/**/page.tsx
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+CI eerst. Even checken of de build zonder database kan draaien (file-store-fallback) en hoe de releases-index eruitziet als model:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Glob` — .github/**
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\content.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\store.ts
+> 🔧 `Bash` — Find draft mode docs in Next 16 package
+> 🔧 `Bash` — Locate Next docs dir in hoisted node_modules
+> 🔧 `Bash` — Find draftMode doc files
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\node_modules\next\dist\docs\01-app\03-api-reference\04-functions\draft-mode.md
+
+**🤖 Claude:**
+
+Draft mode werkt hier zoals verwacht. Nu bouwen — eerst de CI-workflow:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\.github\workflows\ci.yml
+
+**🤖 Claude:**
+
+CI staat. Nu de boards-index — even het BoardSpec-schema checken:
+> 🔧 `Grep` — export const BoardSpecSchema|BoardSpecSchema = z\.object|assets:|renderTop|title|component:|version:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\boards\page.tsx
+
+**🤖 Claude:**
+
+Nu de componentpagina — gepinde versie prominent met kanaalweging:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Nu de as-of-preview. Even de admin-sessie en site-layout bekijken:
+> 🔧 `Glob` — sites/musicbrain/src/lib/*.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\layout.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\auth.ts
+> 🔧 `Grep` — asOf
+> 🔧 `Grep` — async putItem|validFrom|validTo|txFrom|txTo
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\preview.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\preview\route.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\preview\exit\route.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\layout.tsx
+> 🔧 `Grep` — store\.(get|list)\w+\(
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\[slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\boards\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\boards\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Nu components/[slug], [...slug] en releases/[slug]:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\[...slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\releases\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Nu de knop in de admin — even het dashboard bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\page.tsx
+> 🔧 `Grep` — bg-accent|text-background
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\page.tsx
+
+**🤖 Claude:**
+
+As-of-preview staat. Nu de twee denkstukken als ontwerp-notities in `docs/design/`:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\design\meertaligheid.md
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\design\editor-demo.md
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Grep` — ^#{1,3}
+> 🔧 `Grep` — ^#{1,3}
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\architecture.md
+
+**🤖 Claude:**
+
+Backlog afstrepen en changelog aanvullen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Run typecheck and lint
+> 🔧 `Bash` — Show typecheck and lint errors
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\layout.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\layout.tsx
+> 🔧 `Bash` — Lint and production build
+
+**🤖 Claude:**
+
+Build groen. Nu e2e: eerst checken of de dev-server nog gezond is (prod-build en dev delen `.next`):
+> 🔧 `Bash` — Check dev server health and new /boards route
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Bash` — E2E: boards index and pinned-version badge
+> 🔧 `Bash` — E2E time-travel preview flow with forged admin session
+> 🔧 `Bash` — Prove tx-time travel returns superseded component version
+> 🔧 `Bash` — Verify asOf returns superseded row via version history
+> 🔧 `Bash` — Show working tree status
+> 🔧 `Bash` — Commit renders separately, then feature work; push
+
+**🤖 Claude:**
+
+Gepusht — nu meteen kijken of de allereerste CI-run groen wordt:
+> 🔧 `Bash` — Check GitHub Actions run started
+> 🔧 `Bash` — Retry listing Actions runs
+> 🔧 `Bash` — Retry Actions API after a minute
+> 🔧 `ToolSearch`
+> 🔧 `Monitor` — eerste CI-run op main (cd93936)
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+De hele ronde staat op `main` (`cd93936` + een los commitje `7be66f1` voor jouw ververste gswitch-renders). Alles e2e geverifieerd; alleen de allereerste GitHub Actions-run loopt nog (de API had een 503-dipje, een monitor houdt hem in de gaten en meldt zich).
+
+**De vier bouw-items**
+
+1. **Time travel (as-of-preview)** — op het admin-dashboard staat nu een "Time travel"-blok: kies een moment + startpagina en je bladert door de publieke site zoals hij tóen was (of met geplande content: wordt). Een banner bovenaan markeert de preview, met "Exit preview"; gewone bezoekers merken niets (Next draft mode, alleen jouw browser rendert dynamisch). De mooiste vondst zit eronder: [currentRows](packages/content-core/src/db-store.ts#L265) reist nu op *beide* bitemporale assen, dus een verleden-preview toont echt de oude, inmiddels overschreven versies — bewezen met een assert midden in een oud tx-venster, en e2e: op "10 juli" was `cortex-v0.3` netjes onzichtbaar en na exit weer terug. Bekende beperking (staat op de backlog): widgets die zélf content ophalen (posts, list, releases) kijken in de preview nog naar "nu".
+
+2. **Componentpagina: gepinde versie prominent** (MMB-vraag 4 écht opgelost) — de versie die de nieuwste release pint is de hoofdweergave, met een klikbare badge "pinned by cortex v0.1 · stable" en kanaalweging (stable > beta > dev); overige versies ingeklapt onder "Other versions". Zonder release-pins blijft de vlakke lijst.
+
+3. **[/boards](http://localhost:3000/boards)** — kaartenraster van alle 26 board-specs (render, componentnaam, versie, connector-telling), doorklikkend naar de componentpagina.
+
+4. **CI** — [ci.yml](.github/workflows/ci.yml): typecheck + lint + build bij elke push/PR. De build draait bewust zónder database en bewijst zo elke keer de file-store-fallback.
+
+**De twee denkstukken** (met open vragen voor jou)
+
+- **[Meertaligheid-beheer](docs/design/meertaligheid.md)** — kern: vertaling = eigen item (zelfde slug, `lang: nl`, model bestaat al). Beheer via taaltabs in de editor + "Vertaling maken"-knop, een dekking-kolom (`NL: ✓/—`) in de lijsten, en — de bitemporale bonus — *stale-detectie*: als EN een nieuwere `txFrom` heeft dan NL is de vertaling verouderd, met diff-link. Site-kant: `/nl/`-padprefix (EN-URL's blijven ongewijzigd, dus ook de silk-opdruk), switcher naast het thema, hreflang. Gefaseerd: admin-flow eerst, URL's daarna, stale-detectie als kers.
+
+- **[Editor-demo W9](docs/design/editor-demo.md)** — advies: géén demo-modus op prod (risico + drafts in RAM) en géén client-only studio (viewers zijn server components), maar een **aparte demo-imprint**: `sites/demo` met wegwerp-database, `/try`-route die je automatisch inlogt als demo-editor, en een nachtelijke reset via een Plesk Scheduled Task. Embed op musicbrain.nl via een iframe. Bonus: het bewijst meteen "one engine, many imprints" — de demo is gewoon imprint nummer twee. Open vragen voor jou staan onderaan het doc: welk subdomein, MusicBrain-content of neutraal speelmateriaal, en wanneer (vóór of na de W1/W4-musts).
+
+Handleiding (tijdreizen voor redacteuren + weergaveregels componentpagina), architecture.md (§4 opslag + §6 CI), backlog en changelog zijn bijgewerkt. Voor prod geldt straks weer: Plesk-pull en dan werkt alles direct; "Time travel" verschijnt vanzelf op het dashboard.
+
+---
+
+## 👤 Gebruiker (48)
+
+<task-notification>
+<task-id>b54p7g0wu</task-id>
+<summary>Monitor event: "eerste CI-run op main (cd93936)"</summary>
+<event>CI-run afgerond: success — Backlog-ronde: time travel, gepinde componentversie, /boards, CI + 2 …</event>
+</task-notification>
+
+**🤖 Claude:**
+
+De eerste CI-run is **groen** — typecheck, lint en de file-store-build draaien nu automatisch bij elke push en PR op GitHub Actions. Daarmee is de hele backlog-ronde afgerond en geverifieerd; er staat niets meer open van deze batch.
+
+---
+
+## 👤 Gebruiker (49)
+
+<task-notification>
+<task-id>b54p7g0wu</task-id>
+<tool-use-id>toolu_01LAkSgRFoN3zMpVtr3745im</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\tasks\b54p7g0wu.output</output-file>
+<status>completed</status>
+<summary>Monitor "eerste CI-run op main (cd93936)" stream ended</summary>
+</task-notification>
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+De monitor is netjes gestopt na het melden van de groene run — verder niets nieuws. De ronde is compleet: vier gebouwde backlog-items (gepusht als `cd93936`, CI groen) en twee ontwerpen die op jouw antwoorden wachten wanneer je eraan toe bent (subdomein/content/timing voor de demo-imprint, en of de meertaligheid-fasering je zo bevalt).
+
+---
+
+## 👤 Gebruiker (50)
+
+Een feature request van MMB (bijgaand).
+
+en nog een op @docs/mmb-request-3d-tab.md  
+
+Wil je hier naar kijken en ze maken als je kunt? Dan doet MMB de andere kant.
+
+**🤖 Claude:**
+
+Twee mooie verzoeken. Ik lees eerst de betrokken stukken: de board-view (waar de tabs zitten), de ingest-route (schema-whitelist + bestandsafhandeling) en de asset-serveerroute (content-type voor `.glb`):
+> 🔧 `Bash` — Check GLB files present and board components
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\ingest\board-spec\route.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\board-spec-view.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\board-spec-media.tsx
+> 🔧 `Bash` — Show asset serving route
+> 🔧 `Grep` — ComponentSchema = z\.object
+> 🔧 `Grep` — Board \{|>Board<|"Board|Board v
+
+**🤖 Claude:**
+
+Nu bouwen. Eerst de schema's (kind + model3d + view3d):
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\format.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\format.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\components\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+
+**🤖 Claude:**
+
+FR1 klaar. Nu FR2: content-type, model-viewer installeren:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\assets\[...path]\route.ts
+> 🔧 `Bash` — Install model-viewer in musicbrain workspace
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\board-spec-media.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\board-spec-view.tsx
+
+**🤖 Claude:**
+
+Typecheck-ronde voordat ik ga testen:
+> 🔧 `Bash` — Typecheck after 3D/kind changes
+> 🔧 `Bash` — Fetch existing gswitch-loop8sh board-spec
+> 🔧 `Bash` — Repost spec with GLB via multipart ingest
+> 🔧 `Bash` — E2E: GLB serving, 3D tab, kind heading, cleanup
+> 🔧 `Bash` — Verify adc8 heading and lazy model-viewer
+
+**🤖 Claude:**
+
+Alles groen. Nu docs + changelog. Eerst de ingest-gids:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-ingest-guide.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-ingest-guide.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-ingest-guide.md
+
+**🤖 Claude:**
+
+Handleiding + changelog:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+
+**🤖 Claude:**
+
+Nu lint + build, dan committen:
+> 🔧 `Bash` — Lint and build
+> 🔧 `Bash` — Commit and push both feature requests
+> 🔧 `Bash` — Verify commit contents; commit board assets separately
+> 🔧 `Bash` — Wait for CI on the two new commits
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Beide feature requests zijn gebouwd, e2e getest en gepusht (`6426753` + assets in `e1e5bd6`; een achtergrondcheck meldt zo de CI-uitslag).
+
+**FR1 — component-soort (`kind`)** — precies zoals gevraagd: open stringveld op het component (default `"board"`, dus nul migratie), mag ook per spec (spec-kind wint). De versiekop op de component- én productpagina volgt het veld. Acceptatie lokaal getest: een `kind: "software"`-component toont **"Software v0.5.48"**, en `adc8` blijft exact **"Board v1.2"**. De eerder gestripte herposts van `editor-cortex`/`editor-reflex` kunnen na de Plesk-pull dus gewoon opnieuw.
+
+**FR2 — 3D-tab** — de blokker zat inderdaad alleen in de schema-whitelist; de ingest-bestandsafhandeling en URL-rewrite waren al generiek. Toegevoegd: `assets.model3d` + `view3d`-blok in het schema, `.glb` → `model/gltf-binary` in de asset-route, en een derde toggle **3D** naast Overview/Interactive (alleen zichtbaar als er een model is). Viewer is een zelf-gehoste `<model-viewer>`, dubbel lazy: de ~300 KB bundel én de GLB laden pas bij de eerste klik, tot die tijd staat de poster. E2e: `gswitch-loop8sh` herpost met `model.glb` (2,6 MB) → `view3d`/`model3d` komen onveranderd terug bij GET, de GLB serveert met het juiste content-type, de tab staat op de pagina en er zit géén `<model-viewer>` in de SSR-HTML. Het enige dat ik headless niet kan checken is het draaien/zoomen zelf — klik even op de 3D-knop op [localhost:3000/hw/gswitch-loop8sh](http://localhost:3000/hw/gswitch-loop8sh) (de data staat er al).
+
+**Antwoordbriefje voor de MMB-chat:**
+
+---
+
+Hoi MMB,
+
+Beide requests zijn geïmplementeerd; na de eerstvolgende site-update werkt het live.
+
+**Component-soort:** `kind` wordt nu bewaard (component-doc én spec-doc; spec wint). Default `board`, open string zoals gevraagd. Herpost `editor-cortex` en `editor-reflex` één keer en de koppen worden "Software v…"; `adc8` blijft ongewijzigd (getest).
+
+**3D-tab, en jullie drie vragen:**
+- **(a) src:** de **versioned spec-asset heeft de voorkeur** — stuur de GLB als `assets.model3d` ("model.glb") in de multipart, dan krijgt hij een content-hash-URL en blijft de immutable cache correct bij herposts. `view3d.src` (statisch pad) blijft werken, maar `assets.model3d` wint als beide er zijn. `view3d.poster` mag; ontbreekt hij, dan pakken we `renderTop`.
+- **(b) viewer:** `<model-viewer>`, zelf gehost (geen CDN). Lazy zoals gevraagd: bundel en GLB laden pas bij activatie van de tab; beginstand camera-orbit 30°/55°, auto-rotate uit; geen tab zonder model.
+- **(c) GLB-variant:** houd de **lichte** aan — 2,6–2,9 MB is al stevig voor mobiel en de kopersporen-variant verdubbelt dat voor marginaal meer realisme. Als een specifiek bord erom vraagt kan die altijd per bord alsnog.
+
+Jullie localhost-post van de guitar-switcher-set hebben wij al herpost mét GLB als proef; die staat er goed in. Naar live posten kan zodra Mark go geeft na de deploy.
+
+Groet, Imprint
+
+---
+
+Voor jou nog: op prod is straks één Plesk-pull genoeg (schema + widget + content-type zitten allemaal in de code; geen migratie nodig — het is JSON-payload). En het `imprint-fr-url-alias.md` van gisteren is nog steeds welkom als het opduikt.
+
+---
+
+## 👤 Gebruiker (51)
+
+<task-notification>
+<task-id>bgxjvprkq</task-id>
+<tool-use-id>toolu_013CujrRL9yDCHTdoe5z5yMf</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\tasks\bgxjvprkq.output</output-file>
+<status>completed</status>
+<summary>Background command "Wait for CI on the two new commits" completed (exit code 0)</summary>
+</task-notification>
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\task...
+
+**🤖 Claude:**
+
+CI is groen op de laatste commit (`e1e5bd6`) — de kind- en 3D-wijzigingen bouwen dus ook schoon op GitHub Actions. Beide feature requests zijn daarmee volledig af; MMB kan aan hun kant verder zodra de site is bijgewerkt.
+
+---
+
+## 👤 Gebruiker (52)
+
+wow! Dat werkt!
+
+Wat nog zou kunnen is het window wat ruimer maken bij platte borden. Als die immers draaien, kunnen ze ook lang worden. Zie imgs. Of misschien sowieso een normale verhouding aanhouden en dan het bord uitvullen in de aanvangs-stand?
+
+**🤖 Claude:**
+
+Mooi om te zien! Dat kleine begin-beeld komt door de framing: model-viewer kadert standaard op de **omsluitende bol** van het model, en bij een lang plat bord is die bol veel groter dan het bord zelf oogt — vandaar postzegel-formaat tot je draait. De fix is jouw tweede suggestie: normale verhouding houden en het bord de beginstand laten vullen — met `bounds="tight"` (kaderen op de strakke bounding box i.p.v. de bol) plus iets dichterbij beginnen, en het venster breedbeeld maken (16:9 past lange borden beter dan 4:3):
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Bash` — Typecheck and lint the framing change
+> 🔧 `Bash` — Stage framing fix
+> 🔧 `Bash` — Commit and push framing fix
+
+**🤖 Claude:**
+
+Aangepast en gepusht (`f868583`). Drie dingen veranderd in de viewer:
+
+1. **`bounds="tight"`** — model-viewer kadert nu op de strakke bounding box in plaats van de omsluitende bol. Dit is de eigenlijke boosdoener van je eerste screenshot: bij een lang plat bord is die bol enorm ten opzichte van het bord, dus begon je uitgezoomd op postzegel-formaat.
+2. **Startafstand 92%** in plaats van 105% — net iets dichterbij dan de berekende kader-afstand, zodat het bord de beginstand echt vult.
+3. **16:9 in plaats van 4:3** — jouw "normale verhouding"-suggestie: borden zijn lang en plat, dus breedbeeld verspilt veel minder lege ruimte boven en onder.
+
+De dev-server pikt het via hot reload direct op — herlaad de pagina en klik nog eens op 3D. Als het bord nu nog te klein of juist afgesneden start, kan ik aan de knoppen draaien (de startafstand is één percentage, en de kijkhoek 30°/55° is ook maar een instelling).
+
+---
+
+## 👤 Gebruiker (53)
+
+Is het tijd voor een kleine mijlpaal, versie ophoging en git label?
+
+**🤖 Claude:**
+
+Ja, mooi moment — alles onder `[Unreleased]` zijn nieuwe capabilities (DELETE-API, MMB-vragenbatch, time travel, gepinde versie, /boards, CI, kind, 3D-tab), dus pre-1.0-semver zegt: **minor** → v0.10.0. Even de werkboom checken en dan het release-ritueel:
+> 🔧 `Bash` — Check working tree before release
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\mmb-bug-product-widget-zelfde-bord.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Bash` — Compare board renders per accordion on reflex page
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\board-canvas.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\board.ts
+
+**🤖 Claude:**
+
+De afleiding is puur — geen cache. Even live vergelijken met lokaal, per accordion:
+> 🔧 `Bash` — Check live reflex page accordions
+> 🔧 `Bash` — Count renderTop hashes in RSC payload live and local
+> 🔧 `Bash` — Check for headless browser tooling
+> 🔧 `Bash` — Install Playwright chromium for visual reproduction
+> 🔧 `Bash` — Reproduce MMB bug with headless Chromium clicks
+> 🔧 `Bash` — Run repro script from scratchpad with playwright installed
+> 🔧 `Bash` — Same click-test against live site
+> 🔧 `Bash` — Download the three live render-top PNGs
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Inspect bitemporal history of the three gswitch specs
+> 🔧 `Bash` — Fetch previous render batch from live and compare
+> 🔧 `Bash` — Fetch unhashed July-14 renders from live and compare bytes
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\mmb-bug-product-widget-zelfde-bord.md
+> 🔧 `Bash` — Commit MMB assets and bug investigation
+
+**🤖 Claude:**
+
+Nu de mijlpaal — `npm run release -- 0.10.0`:
+> 🔧 `Bash` — Run release ritual for 0.10.0 and push with tag
+> 🔧 `Bash` — Wait for CI on release commit
+
+**🤖 Claude:**
+
+**v0.10.0 staat erop** — gecommit, getagd en gepusht (`6106ee0`); de drie package-versies en de changelog zijn meegerold en de CI-uitslag volgt zo op de achtergrond. Een flinke release ook: 3D-tab, `kind`, time travel, gepinde componentversie, /boards, CI, URL-aliases, DELETE-API, `pinned_by` en de twee ontwerpnotities.
+
+Maar het belangrijkste van deze beurt: **het bug-rapport**. Ik heb hem grondig onderzocht en kan hem **niet reproduceren** — met een echte headless browser (Playwright/Chromium) tegen live én lokaal alle drie de accordions geopend en op Interactive geklikt: elk bord laadt aantoonbaar zijn eigen render (brain 13 hotspots, loop8 en loop8sh elk 12, drie verschillende beelden — ik heb de PNGs zelf bekeken). Ook uitgesloten:
+
+- De **React-key-hypothese** van MMB klopt niet: de keys zijn per component gescoped en de props zijn in SSR-HTML én RSC-payload per bord verschillend.
+- Via de bitemporale historie de **vorige asset-batch** (23:28 gisteravond) van live teruggehaald: ook die drie waren verschillende borden. Er is dus geen moment geweest waarop de specs naar hetzelfde beeld wezen.
+
+Meest waarschijnlijke verklaring: je keek tussen de twee republishes van vannacht in (23:28 en 00:19) met een verouderde client-cache; een harde refresh had hem waarschijnlijk verjaagd. Alles staat als "Onderzoek Imprint"-sectie in [het bug-doc](docs/mmb-bug-product-widget-zelfde-bord.md), inclusief het verzoek aan MMB: **komt het terug, noteer dan via devtools welke URL de verkeerde afbeelding laadt** — dat ene pad onderscheidt direct data- van renderfout, en met de historie halen we dat moment exact terug.
+
+Verder meegenomen in de release: de 13 GLB-modellen + ververste renders van jouw kant (26 MB aan boards — prima, maar zeg het als je die liever buiten git houdt). Voor live: Plesk-pull, en MMB kan daarna de hele set met `--3d` en `kind` herposten.
+
+---
+
+## 👤 Gebruiker (54)
+
+<task-notification>
+<task-id>bvni9dtac</task-id>
+<tool-use-id>toolu_0118xgd2n4YmaQMBb2TDYadm</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\tasks\bvni9dtac.output</output-file>
+<status>completed</status>
+<summary>Background command "Wait for CI on release commit" completed (exit code 0)</summary>
+</task-notification>
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\task...
+
+**🤖 Claude:**
+
+CI is groen op de release-commit — **v0.10.0 is compleet en geverifieerd**. De mijlpaal staat; wanneer je wilt kun je de Plesk-pull draaien (en daarna `npm run smoke -- https://musicbrain.nl` als check), dan gaan 3D-tab, `kind`, time travel en de rest live en kan MMB herposten.
+
+---
+
+## 👤 Gebruiker (55)
+
+Over 3D:
+- overview is groot
+- interactive ongeveer even groot
+- 3D wordt dan opeens heel klein. Kan dat niet gewoon even groot en dan uitvullen in die ruimte? De hoek is goed.
+
+**🤖 Claude:**
+
+Herkenbaar — dit is de bounding-sphere-val: `camera-orbit`-percentages rekenen op de omsluitende **bol**, en bij een plat breed bord is die veel groter dan het bord zelf. In plaats van blind aan percentages draaien ga ik het nu empirisch doen: met Playwright de 3D-tab openen, instellingen variëren en screenshots bekijken tot het bord de ruimte vult. Eerst kijken welk lokaal bord een model heeft:
+> 🔧 `Bash` — List specs with 3D models locally
+> 🔧 `Bash` — Experiment with 3D camera configs, screenshot each
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+45% vult mooi bij de busboard. Nu het lange bord checken:
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Test computed-fit camera distance on three board shapes
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Test shape-adaptive azimuth + tighter margin
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+
+**🤖 Claude:**
+
+Nu verifiëren dat de échte pagina (zonder injectie) het nu goed doet:
+> 🔧 `Bash` — Verify final 3D framing on real page
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Typecheck and lint the framing fix
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Commit framing fix and release v0.10.1
+> 🔧 `Bash` — Watch CI for v0.10.1 in background
+
+**🤖 Claude:**
+
+Opgelost en uitgebracht als **v0.10.1** (`8556e13`, getagd en gepusht; CI-check loopt mee op de achtergrond).
+
+De oorzaak was fundamenteler dan een maatje groter venster: model-viewers eigen framing (die `%`-afstanden) kadert op de omsluitende **bol** van het model. Bij een plat, lang bord is die bol reusachtig vergeleken met hoe het bord oogt — vandaar dat Overview en Interactive (gewone afbeeldingen) groot zijn en 3D opeens piepklein begon. Percentages verlagen was een pleister die per bordvorm anders uitpakte.
+
+De echte fix, precies jouw "uitvullen in die ruimte":
+
+1. **Camera-afstand wordt berekend** bij het laden van het model, uit de echte afmetingen (`getDimensions()`), de kijkhoek en de beeldverhouding van het venster — het bord past dan nét, met een klein beetje lucht (6%).
+2. **De lange as ligt horizontaal in beeld**: vierkantige borden starten op 20° azimut, lange smalle borden op 70° — de lengte loopt dan van links naar rechts door het brede 16:9-venster in plaats van diagonaal de diepte in. De hoek van schuin boven (55°) is gebleven, die was goed.
+
+Ik heb het empirisch afgeregeld met headless-browserschreenshots op drie vormen — busboard (breed, vult nu bijna rand tot rand), jack8 (lang en smal, de acht jacks mooi over de volle breedte) en gswitch-loop8sh — en daarna de definitieve pagina nogmaals geschoten: alle drie vullen ze de beginstand. Herlaad je pagina maar (hot reload staat al klaar) en klik op 3D.
+
+---
+
+## 👤 Gebruiker (56)
+
+<task-notification>
+<task-id>bzvy9lgwj</task-id>
+<tool-use-id>toolu_01Tgns81UTBx747LJQtE8vXC</tool-use-id>
+<output-file>C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\tasks\bzvy9lgwj.output</output-file>
+<status>completed</status>
+<summary>Background command "Watch CI for v0.10.1 in background" completed (exit code 0)</summary>
+</task-notification>
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\task...
+
+**🤖 Claude:**
+
+CI is groen op v0.10.1 — de patch is compleet en geverifieerd. Alles staat klaar voor de Plesk-pull wanneer jij wilt; daarna kan MMB de set met `--3d` en `kind` naar live posten en staat de 3D-tab er meteen goed op.
+
