@@ -20,6 +20,7 @@ declare global {
         src?: string;
         poster?: string;
         alt?: string;
+        bounds?: string;
         "camera-controls"?: boolean;
         "camera-orbit"?: string;
         "touch-action"?: string;
@@ -58,11 +59,16 @@ export function Model3D({ src, poster, alt }: { src: string; poster?: string; al
       poster={poster}
       alt={alt}
       camera-controls
-      // The informative angle: three-quarter view from slightly above.
-      camera-orbit="30deg 55deg 105%"
+      // Frame on the tight bounding box, not the bounding sphere — a long
+      // flat board otherwise starts out postage-stamp small until you drag.
+      bounds="tight"
+      // The informative angle: three-quarter view from slightly above,
+      // starting slightly inside the framed distance so the board fills.
+      camera-orbit="30deg 55deg 92%"
       touch-action="pan-y"
-      className="aspect-[4/3] w-full rounded-lg border border-line bg-surface"
-      style={{ display: "block", width: "100%", aspectRatio: "4 / 3" }}
+      className="w-full rounded-lg border border-line bg-surface"
+      // 16:9: boards are long and flat, widescreen wastes far less space.
+      style={{ display: "block", width: "100%", aspectRatio: "16 / 9" }}
     />
   );
 }
