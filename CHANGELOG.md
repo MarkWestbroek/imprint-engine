@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- 3D-tab: het 3D-vlak neemt nu de vorm van het bord aan (vierkantig bord →
+  vierkanter vlak, lang bord → breed vlak; verhouding op een wrapper, want
+  model-viewers interne styling won van `aspect-ratio` op het element zelf —
+  dáárom was het vlak ~5:1) en de camera-afstand rekent met perspectief
+  (near-face-fit: op bordschaal-afstand loomt de voorrand anders het kader
+  uit). Screenshot-geverifieerd op brain (vierkantig), busboard (breed) en
+  jack8 (lang): alle drie vullend én binnen kader.
 
 ## [0.10.1] - 2026-07-17
 - 3D-tab: het bord vult nu de beginstand. De camera-afstand wordt bij het

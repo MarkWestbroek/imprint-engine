@@ -39,34 +39,55 @@ type ModelViewerEl = HTMLElement & {
   jumpCameraToGoal(): void;
 };
 
+const ELEV = (35 * Math.PI) / 180; // camera 35° above the horizon (polar 55°)
+const DEFAULT_ASPECT = 16 / 9;
+
 /**
- * Start the camera so the board fills the frame (Mark: "uitvullen in die
- * ruimte"). model-viewer's own % radius frames the bounding *sphere*, which
- * for a long flat board is far bigger than the board looks — hence the
- * postage-stamp start. So: measure the model, put its long axis across the
- * (wide) viewport, and compute the distance at which it just fits.
+ * Fit pane and camera to the board (Mark: "uitvullen in die ruimte").
+ * model-viewer's own % radius frames the bounding *sphere* — for a flat
+ * board far bigger than it looks, hence the postage-stamp start. So we
+ * measure the model, lay its long axis across the view, shape the pane to
+ * the board's projected proportions (squarish board → squarish pane, long
+ * board → wide pane), and compute the distance at which it just fits.
+ * Two steps, because model-viewer re-derives its field of view when the
+ * pane resizes: first shape the pane, then (fresh fov in hand) place the
+ * camera.
  */
-function frameBoard(el: ModelViewerEl) {
+function projectedExtents(el: ModelViewerEl) {
   const { x: w, y: h, z: d } = el.getDimensions();
-  const rect = el.getBoundingClientRect();
-  if (!w || !rect.width) return;
+  if (!w && !d) return null;
   const azDeg = w >= d ? 20 : 70; // long axis left-to-right in view
   const az = (azDeg * Math.PI) / 180;
-  const elev = (35 * Math.PI) / 180; // camera 35° above the horizon (polar 55°)
   const hExt = w * Math.abs(Math.cos(az)) + d * Math.abs(Math.sin(az));
   const vExt =
-    (w * Math.abs(Math.sin(az)) + d * Math.abs(Math.cos(az))) * Math.sin(elev) +
-    h * Math.cos(elev);
+    (w * Math.abs(Math.sin(az)) + d * Math.abs(Math.cos(az))) * Math.sin(ELEV) +
+    h * Math.cos(ELEV);
+  // Extent along the view direction: the camera sits at board-scale distance,
+  // so perspective is strong — the fit must hold at the *near* face, not the
+  // centre, or the front edge looms out of frame.
+  const dExt =
+    (w * Math.abs(Math.sin(az)) + d * Math.abs(Math.cos(az))) * Math.cos(ELEV) +
+    h * Math.sin(ELEV);
+  return { azDeg, hExt, vExt, dExt };
+}
+
+function placeCamera(el: ModelViewerEl) {
+  const ext = projectedExtents(el);
+  const rect = el.getBoundingClientRect();
+  if (!ext || !rect.width || !rect.height) return;
   const tanV = Math.tan(((el.getFieldOfView() || 30) * Math.PI) / 360);
   const tanH = tanV * (rect.width / rect.height);
-  const r = Math.max(vExt / (2 * tanV), hExt / (2 * tanH)) * 1.06; // little air
+  // Distance from the near face, plus half the depth to reach the centre.
+  const r =
+    (Math.max(ext.vExt / (2 * tanV), ext.hExt / (2 * tanH)) + ext.dExt / 2) * 1.04;
   el.minCameraOrbit = "auto auto 5%"; // default clamp forbids coming this close
-  el.cameraOrbit = `${azDeg}deg 55deg ${r}m`;
+  el.cameraOrbit = `${ext.azDeg}deg 55deg ${r}m`;
   el.jumpCameraToGoal();
 }
 
 export function Model3D({ src, poster, alt }: { src: string; poster?: string; alt: string }) {
   const [ready, setReady] = useState(false);
+  const [aspect, setAspect] = useState(DEFAULT_ASPECT);
 
   useEffect(() => {
     let alive = true;
@@ -81,7 +102,14 @@ export function Model3D({ src, poster, alt }: { src: string; poster?: string; al
   const mount = useCallback((node: HTMLElement | null) => {
     if (!node) return;
     const el = node as ModelViewerEl;
-    const onLoad = () => frameBoard(el);
+    const onLoad = () => {
+      const ext = projectedExtents(el);
+      if (!ext) return;
+      // Step 1: shape the pane to the board. Step 2 (after the resize has
+      // gone through model-viewer): place the camera with the fresh fov.
+      setAspect(Math.min(2.4, Math.max(4 / 3, ext.hExt / ext.vExt)));
+      setTimeout(() => placeCamera(el), 150);
+    };
     if (el.loaded) onLoad();
     el.addEventListener("load", onLoad);
     return () => el.removeEventListener("load", onLoad);
@@ -98,17 +126,22 @@ export function Model3D({ src, poster, alt }: { src: string; poster?: string; al
   }
 
   return (
-    <model-viewer
-      ref={mount}
-      src={src}
-      poster={poster}
-      alt={alt}
-      camera-controls
-      bounds="tight"
-      touch-action="pan-y"
-      className="w-full rounded-lg border border-line bg-surface"
-      // 16:9: boards are long and flat, widescreen wastes far less space.
-      style={{ display: "block", width: "100%", aspectRatio: "16 / 9" }}
-    />
+    // The wrapper owns the shape: aspect-ratio on <model-viewer> itself loses
+    // from the element's internal host styling (the pane went ~5:1 wide).
+    <div
+      className="w-full overflow-hidden rounded-lg border border-line bg-surface"
+      style={{ aspectRatio: String(aspect) }}
+    >
+      <model-viewer
+        ref={mount}
+        src={src}
+        poster={poster}
+        alt={alt}
+        camera-controls
+        bounds="tight"
+        touch-action="pan-y"
+        style={{ display: "block", width: "100%", height: "100%" }}
+      />
+    </div>
   );
 }
