@@ -104,11 +104,13 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 
 ## 4. Board/MMB-spoor
 
-- [ ] **Overige 12 borden publiceren** — wacht op akkoord na de review van
-      `busboard-v2`. _(MMB; S aan hun kant)_
-- [ ] **Hotspot-punten meesturen** — zonder `points` blijft de interactieve
-      board-modus uit. Beslis dit vóór de batch, anders is de set inconsistent.
-      _(beslissing; S)_
+- [x] ~~**Overige 12 borden publiceren**~~ — gedaan: MMB heeft de volledige set
+      gepubliceerd (incl. gswitch-serie), sinds 0.10.x mét 3D-modellen.
+- [x] ~~**Hotspot-punten meesturen**~~ — gedaan: de specs komen met `points`
+      binnen (de interactieve modus staat overal aan).
+- [ ] **Herpost met `kind` + GLB naar live** — wacht op de Plesk-pull van
+      v0.10.2; daarna één herpost-run van MMB (editors → "Software",
+      3D-tabs live). _(MMB; S aan hun kant)_
 - [x] ~~**Boards-index**~~ — gedaan in 0.10.0: `/boards`, kaartenraster met
       render, component en versie.
 - [x] ~~**Componentpagina: gepinde versie prominent**~~ (MMB-testcase assert 4
