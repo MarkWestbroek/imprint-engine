@@ -6,6 +6,27 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **GitHub release-webhook** (W2/S7): `POST /api/webhooks/github` maakt van
+  elke gepubliceerde GitHub-release een release-item (HMAC-signature-check,
+  `GITHUB_WEBHOOK_SECRET`; mapping repo→project/product in de site-config
+  onder `releaseSources`; onbekende repos worden genegeerd). Edits
+  superseden bitemporaal.
+- **RSS-feed** voor de devlog op `/feed.xml` (W6-rest), aangekondigd via
+  `rel=alternate`.
+- **`GET /api/meta`**: het contentmodel machine-leesbaar — JSON Schema
+  (2020-12) per contenttype uit dezelfde zod-schema's die de content
+  valideren, plus de actieve relatieregels als referentietypen en de
+  afgeleide itinerary. Datakant voor de metamodel-gedreven formuliereditor
+  uit het bitemporal/Omnium-spoor.
+- **`npm run backup`**: DB (volledige bitemporale historie + users) en
+  assets in één gedateerde backup, Node-only (Plesk-Scheduled-Task-klaar),
+  retentie 14; zie docs/backups.md.
+- **`npm run assets:gc`**: ruimt asset-wezen op (bestanden zonder énkele
+  verwijzing in de hele historie); dry-run default, jonger dan een dag
+  blijft staan.
+- **Time travel compleet**: ook widgets die zelf content ophalen (posts,
+  list, releases, downloads, boardspec, itinerary, products) volgen nu de
+  as-of-preview.
 
 ## [0.10.2] - 2026-07-17
 - 3D-tab: het 3D-vlak neemt nu de vorm van het bord aan (vierkantig bord →

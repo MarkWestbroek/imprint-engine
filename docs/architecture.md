@@ -379,6 +379,16 @@ niet van elkaar afwijken.
   posts hebben volledige historie en rollback. Schrijven revalideert de
   site-cache. Een handleiding voor de consument staat in
   [mmb-ingest-guide.md](mmb-ingest-guide.md).
+- **Webhook**: `POST /api/webhooks/github` (W2/S7) maakt van GitHub-releases
+  release-items — HMAC-signed (`GITHUB_WEBHOOK_SECRET`), mapping
+  repo→project/product in de site-config (`releaseSources`), onbekende repos
+  genegeerd.
+- **Metamodel**: `GET /api/meta` publiceert het contentmodel als JSON Schema
+  (2020-12) per type — gegenereerd uit dezelfde zod-schema's, dus per
+  definitie synchroon — plus de actieve relatieregels als referentietypen.
+  Bedoeld voor externe form-builders (het bitemporal/Omnium-formulierspoor);
+  een V3-vertaling kan er later naast onder `?format=v3`.
+- **Feed**: `GET /feed.xml` — RSS 2.0 van de devlog (`posts/`-pagina's).
 
 ## 5. Admin (/admin)
 
@@ -444,6 +454,9 @@ flowchart LR
   typecheck + lint + build bij elke push/PR. De build draait zonder
   `DATABASE_URL` en valt dus terug op de file-store — precies de
   v0-belofte "een checkout bouwt zonder database".
+- **Backups**: `npm run backup` (Node-only; hele bitemporale historie +
+  users + assets, retentie) — zie [backups.md](backups.md); asset-wezen
+  opruimen met `npm run assets:gc` (houdt alles wat óóit gerefereerd is).
 
 ## 7. Nieuwe site ("imprint") toevoegen
 

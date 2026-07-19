@@ -2,6 +2,7 @@ import Link from "next/link";
 import Mustache from "mustache";
 import { computeItinerary, type ContentType, type Page } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
+import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
 import { StatusBadge } from "@/components/status-badge";
 import { displayVersion } from "@/lib/format";
@@ -170,7 +171,7 @@ async function BoardSpecWidget({
   subject?: unknown;
 }) {
   const slug = resolveSpecSlug(config, subject);
-  const spec = slug ? await store.getBoardSpec(slug) : null;
+  const spec = slug ? await store.getBoardSpec(slug, await readOpts()) : null;
   return (
     <WidgetFrame title={config.title}>
       {spec ? (
@@ -489,7 +490,7 @@ async function ItineraryWidget({
 }) {
   const product =
     config.product ?? (subject as { slug?: string } | undefined)?.slug;
-  const releases = product ? await store.listReleases({ product }) : [];
+  const releases = product ? await store.listReleases({ product, ...(await readOpts()) }) : [];
   const itinerary = computeItinerary(releases);
 
   return (
@@ -636,7 +637,7 @@ async function DividerWidget({ config }: { config: DividerConfig }) {
 }
 
 async function DownloadsWidget({ config }: { config: DownloadsConfig }) {
-  const releases = await store.listReleases({ project: config.project });
+  const releases = await store.listReleases({ project: config.project, ...(await readOpts()) });
   const rows = releases
     .flatMap((r) =>
       r.downloads.map((d) => ({
@@ -675,7 +676,9 @@ async function DownloadsWidget({ config }: { config: DownloadsConfig }) {
 }
 
 async function PostsWidget({ config }: { config: PostsConfig }) {
-  const posts = (await store.listPages({ prefix: config.prefix })).slice(0, config.limit);
+  const posts = (
+    await store.listPages({ prefix: config.prefix, ...(await readOpts()) })
+  ).slice(0, config.limit);
   return (
     <WidgetFrame title={config.title}>
       {posts.length === 0 ? (
@@ -791,7 +794,7 @@ function Tree({ nodes }: { nodes: TreeNode[] }) {
 async function TreeviewWidget({ config }: { config: TreeviewConfig }) {
   let nodes = config.items;
   if (config.pagesPrefix !== undefined) {
-    const pages = await store.listPages({ prefix: config.pagesPrefix });
+    const pages = await store.listPages({ prefix: config.pagesPrefix, ...(await readOpts()) });
     nodes = [...nodes, ...pagesToTree(pages)];
   }
   return (
@@ -869,7 +872,7 @@ async function ApiWidget({ config }: { config: ApiConfig }) {
 }
 
 async function ReleasesWidget({ config }: { config: ReleasesConfig }) {
-  const releases = (await store.listReleases({ project: config.project })).slice(
+  const releases = (await store.listReleases({ project: config.project, ...(await readOpts()) })).slice(
     0,
     config.limit
   );
@@ -892,7 +895,7 @@ async function ReleasesWidget({ config }: { config: ReleasesConfig }) {
 }
 
 async function ProductsWidget({ config }: { config: ProductsConfig }) {
-  const products = await store.listProducts();
+  const products = await store.listProducts(await readOpts());
   return (
     <WidgetFrame title={config.title}>
       <div className="grid gap-4 sm:grid-cols-2">

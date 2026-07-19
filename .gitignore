@@ -23,3 +23,6 @@ Thumbs.db
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# lokale/serverside backups (npm run backup)
+backups/

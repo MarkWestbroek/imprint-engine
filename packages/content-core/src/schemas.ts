@@ -366,5 +366,20 @@ export const SiteConfigSchema = z.object({
    * de silk-opdruk op de MusicBrain-borden (musicbrain.nl/hw/<naam>).
    */
   aliases: z.record(z.string(), z.string()).default({}),
+  /**
+   * GitHub-releasefeed (W2/S7): "owner/repo" → hoe binnenkomende release-
+   * webhooks gemapt worden. Repos die hier niet staan worden genegeerd.
+   */
+  releaseSources: z
+    .record(
+      z.string(),
+      z.object({
+        /** Release.project voor deze repo (bijv. "cortex-fw"). */
+        project: z.string().min(1),
+        /** Optioneel: product-slug waar de release onder hangt. */
+        product: z.string().optional(),
+      })
+    )
+    .default({}),
 });
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;

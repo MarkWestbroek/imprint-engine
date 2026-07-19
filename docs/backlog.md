@@ -56,8 +56,9 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 
 - [x] ~~**As-of-preview**~~ — gedaan in 0.10.0: "Time travel" op het
       admin-dashboard (draft mode + `asOf`-cookie; `currentRows` reist nu op
-      beide tijdassen). Nog open: widgets die zelf content ophalen (posts,
-      list, releases) kijken in de preview nog naar "nu". _(rest: S)_
+      beide tijdassen). Sinds 0.11.0 reizen ook de widgets met eigen
+      store-reads (posts, list, releases, boardspec, itinerary, downloads,
+      products) mee.
 - [ ] **Preview-URL voor drafts** (S5: draft → preview-URL → publish). Nu wel
       draft-vlag + studio-concept, geen deelbare preview-link. _(S5; M)_
 - [ ] **Drafts in een tabel** i.p.v. procesgeheugen — een niet-opgeslagen
@@ -76,8 +77,11 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       in het schema maar worden niet gehandhaafd; S3 vraagt ook een
       *product-editor*-rol. _(S3; M)_
 - [ ] **Default views uitbreiden** — het mechanisme staat; er zijn nog geen
-      ingerichte views (de hand-gecodeerde fallback doet het werk). Eventueel een
-      set startsjablonen meeleveren. _(S)_
+      ingerichte views. **Bewust geparkeerd** (juli 2026): een meegeleverd
+      `_view/<type>`-sjabloon zou de goede hand-gecodeerde fallbacks
+      (product-/component-/releasepagina) direct overrulen — startsjablonen
+      zijn pas nuttig mét een "gebruik sjabloon"-keuze per type in de admin.
+      _(S→M)_
 - [ ] **Media-bibliotheek** met automatische varianten (thumbnail/OG/hero). De
       AssetStore is er; upload-UI en varianten niet. _(S8; L)_
 - [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,
@@ -91,13 +95,16 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 - [ ] **Documentatie differentiëren** — `docs` is nu één optioneel veld (pagina-slug
       of inline markdown). Het UML liet `Documentation` bewust vaag; board-spec was
       de eerste uitwerking. _(open ontwerp; M)_
-- [ ] **Asset-opruiming** — content-hashing laat oude bestanden achter bij elke
-      her-publicatie. Onschuldig qua omvang, maar een GC-script is netjes. _(S)_
+- [x] ~~**Asset-opruiming**~~ — gedaan in 0.11.0: `npm run assets:gc`
+      (dry-run default, `--delete` om echt op te ruimen). Verwijdert alleen
+      bestanden waar geen énkele historische rij naar wijst — History en
+      time travel behouden hun assets.
 - [ ] **MinIO/S3 AssetStore** — de interface is er, alleen de implementatie +
       config-wissel ontbreekt. _(D7; M)_
 - [ ] **Migratie naar het bitemporal-register** (bitemporal2026) achter de
       `ContentStore`. _(README/§B3; L)_
-- [ ] **RSS-feed** voor de devlog. _(W6; S)_
+- [x] ~~**RSS-feed**~~ — gedaan in 0.11.0: `/feed.xml` (W6-rest), met
+      `rel=alternate` in de metadata.
 - [ ] **sitemap.xml + robots.txt**; OG-images per pagina genereren. _(W13; M)_
 
 ---
@@ -125,11 +132,25 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
 
 - [ ] **W1** Nieuwsbrief-signup met double opt-in (staat nu als "coming soon").
       Vergt S10. _(must; M)_
-- [ ] **W2/S7** Release-feed automatisch uit GitHub (webhook → release-item).
-      _(must; M)_
+- [x] ~~**W2/S7** Release-feed automatisch uit GitHub~~ — gedaan in 0.11.0:
+      `POST /api/webhooks/github` (HMAC-signature, `GITHUB_WEBHOOK_SECRET`);
+      repo→project/product-mapping in de site-config (`releaseSources`).
+      Nog te doen aan jouw kant: secret zetten + webhook aanmaken in de
+      GitHub-repo('s) + mapping invullen.
 - [ ] **W4** Beta-/interesse-aanmelding per product (formulier → lijst). _(must; M)_
 - [ ] **S10** Formulieren → DB + notificatie-mail + spam-bescherming (de basis
-      onder W1/W4). _(must; L)_
+      onder W1/W4). _(must; L)_ **Spooraanpassing (juli 2026)**: Mark bouwt in
+      het bitemporal-project (Omnium) een metamodel-gedreven formuliereditor +
+      React-renderer. Imprint levert de datakant:
+      - [x] ~~metamodel uitleesbaar~~ — gedaan in 0.11.0: `GET /api/meta`
+            (JSON Schema 2020-12 per contenttype, uit dezelfde zod-schema's,
+            plus de relatieregels als referentietypen en de afgeleide
+            itinerary).
+      - [ ] **V3-formaat** naast JSON Schema (`/api/meta?format=v3`) zodra de
+            spec uit het bitemporal-project er is. _(wacht op spec; S–M)_
+      - [ ] **Formulier-renderer als widget** — de Omnium-renderer (React)
+            inpluggen als `form`-widget: configschema verwijst naar een
+            formulierdefinitie, submits → S10-opslag. _(na renderer; M)_
 - [ ] **W3** Foto/video op de productpagina (zie gallery-widget). _(must; M)_
 - [ ] **W5/S9 Meertaligheid** — het fundament bestaat (elk item heeft `lang`,
       EN→NL-fallback in beide stores, `?lang=` op de API), maar er is nog
@@ -158,7 +179,10 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
       (patroon in de README).
 - [x] ~~**CI**~~ — gedaan in 0.10.0: GitHub Actions draait typecheck + lint +
       build (file-store, geen DB) bij elke push/PR.
-- [ ] **Backups** van de DB + assets op Plesk. _(niet eerder genoemd; S)_
+- [x] ~~**Backups**~~ — gedaan in 0.11.0: `npm run backup` (hele bitemporale
+      historie + users + assets, retentie 14, Node-only dus Plesk-Scheduled-
+      Task-klaar); zie [backups.md](backups.md). Nog te doen: de dagelijkse
+      taak aanmaken op Plesk + af en toe een backup van de server halen.
 
 ---
 
