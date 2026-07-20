@@ -33,8 +33,9 @@ const onlyArg = process.argv.find((a) => a.startsWith("--only="))?.slice(7);
 const only = onlyArg
   ? new Set(onlyArg.split(",").map((s) => s.trim().replace(/s$/, "")))
   : null;
-/** Should this section run? (no --only = everything) */
-const want = (type: string) => !only || only.has(type);
+/** Should this section run? (no --only = everything). Singularise both sides
+ * so `--only=relations` (plural) matches the `want("relations")` call. */
+const want = (type: string) => !only || only.has(type.replace(/s$/, ""));
 
 async function json(file: string): Promise<unknown> {
   return JSON.parse(await fs.readFile(file, "utf8"));

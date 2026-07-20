@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Content-model-pagina** in de admin (`/admin/model`): een read-only
+  overzicht van alle contenttypen met hun velden (type, verplicht, enum/
+  patroon) en de relatieregels — dezelfde bron als `/api/meta`. De types
+  zitten in code (zod), dus deze pagina toont, bewerkt niet.
+- Seed: `--only=<type>` matcht nu ook enkelvoud consequent (o.a.
+  `--only=relations` laadt de relatieregels; die matchte eerder niet).
 - **Planning-borden** (kanban als content): twee nieuwe contenttypen —
   `planning` (het bord: hoort bij een product, definieert de fasen) en
   `planning-item` (de kaart: titel, fase, eigenaar-gebruiker, rich-text-body,
