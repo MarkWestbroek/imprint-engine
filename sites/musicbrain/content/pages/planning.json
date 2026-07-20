@@ -1,0 +1,25 @@
+{
+  "slug": "planning",
+  "title": "Planning",
+  "description": "Van idee tot geproduceerd bord — de roadmap als levend kanban-bord.",
+  "body": "Dit bord wordt bijgehouden in de admin (**Planning**): kaarten worden tussen fasen gesleept en elke wijziging is een nieuwe versie. Met *Time travel* zie je het bord zoals het op een gekozen datum was.",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "planning",
+                "config": {
+                  "planning": "roadmap"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
