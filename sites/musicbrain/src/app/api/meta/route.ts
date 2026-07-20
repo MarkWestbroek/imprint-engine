@@ -12,7 +12,8 @@ import {
   SiteConfigSchema,
   ThemeSchema,
 } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { store, writableStore } from "@/lib/content";
+import { buildV3Model } from "@/lib/v3-export";
 
 /**
  * Metamodel-endpoint: het contentmodel van deze imprint, machine-leesbaar.
@@ -45,11 +46,7 @@ function toSchema(schema: z.ZodType): Record<string, unknown> {
   }
 }
 
-export async function GET() {
-  const types = Object.fromEntries(
-    Object.entries(TYPE_SCHEMAS).map(([name, schema]) => [name, toSchema(schema)])
-  );
-
+export async function GET(req: Request) {
   // Actieve relatieregels (beheerd in /admin/relations); zonder DB de defaults.
   let rules = DEFAULT_RELATION_RULES;
   if (writableStore) {
@@ -59,6 +56,19 @@ export async function GET() {
       if (parsed.success) rules = parsed.data.rules;
     }
   }
+
+  // ?format=v3: het geneste V3Model voor de Omnium-formuliereditor/ModelPicker
+  // (zie docs/design/v3-metamodel-spec.md en lib/v3-export.ts voor de mapping).
+  if (new URL(req.url).searchParams.get("format") === "v3") {
+    const site = await store.getSiteConfig();
+    return NextResponse.json(buildV3Model({ siteName: site.name, rules }), {
+      headers: { "Cache-Control": "public, max-age=300" },
+    });
+  }
+
+  const types = Object.fromEntries(
+    Object.entries(TYPE_SCHEMAS).map(([name, schema]) => [name, toSchema(schema)])
+  );
 
   return NextResponse.json(
     {

@@ -146,8 +146,11 @@ De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
             (JSON Schema 2020-12 per contenttype, uit dezelfde zod-schema's,
             plus de relatieregels als referentietypen en de afgeleide
             itinerary).
-      - [ ] **V3-formaat** naast JSON Schema (`/api/meta?format=v3`) zodra de
-            spec uit het bitemporal-project er is. _(wacht op spec; S–M)_
+      - [x] ~~**V3-formaat**~~ — gedaan in 0.11.0: `GET /api/meta?format=v3`
+            levert het geneste `V3Model` (spec: design/v3-metamodel-spec.md;
+            mapping: `v3-export.ts` — GE/relatie-splitsing, velden óp de
+            relatie zoals Release↔Component-versie, centrale enums,
+            datatypes Slug/Versienummer/Markdown/Kleur/AssetUrl/Json).
       - [ ] **Formulier-renderer als widget** — de Omnium-renderer (React)
             inpluggen als `form`-widget: configschema verwijst naar een
             formulierdefinitie, submits → S10-opslag. _(na renderer; M)_

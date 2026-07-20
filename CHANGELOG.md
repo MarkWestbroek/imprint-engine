@@ -13,6 +13,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   superseden bitemporaal.
 - **RSS-feed** voor de devlog op `/feed.xml` (W6-rest), aangekondigd via
   `rel=alternate`.
+- **`GET /api/meta?format=v3`**: het contentmodel als genest **V3Model**
+  (het metamodelformaat van het bitemporal/Omnium-project), zodat de
+  formuliereditor/ModelPicker daar direct de projectboom uit kan opbouwen.
+  Live afgeleid uit de zod-schema's; relatieregels worden V3-relaties (met
+  velden óp de relatie, zoals de versie op Release↔Component), zod-enums
+  centrale enums, en patronen/veldnamen de datatypes Slug, Versienummer,
+  Markdown (richtext), Kleur, AssetUrl (media) en Json. Spec + mapping in
+  docs/design/v3-metamodel-spec.md.
 - **`GET /api/meta`**: het contentmodel machine-leesbaar — JSON Schema
   (2020-12) per contenttype uit dezelfde zod-schema's die de content
   valideren, plus de actieve relatieregels als referentietypen en de
