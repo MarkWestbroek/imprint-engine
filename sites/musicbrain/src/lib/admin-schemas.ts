@@ -3,6 +3,8 @@ import {
   BoardSpecSchema,
   ComponentSchema,
   PageMetaSchema,
+  PlanningSchema,
+  PlanningItemSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
@@ -60,6 +62,10 @@ export function contentFormSchema(type: ContentType): JsonSchema {
         type: "object",
         properties: { name: { type: "string" }, label: { type: "string" }, order: { type: "integer" } },
       };
+    case "planning":
+      return objectSchema(PlanningSchema);
+    case "planning-item":
+      return objectSchema(PlanningItemSchema);
     case "relations":
       // Config type with its own screen (/admin/relations), not a generic form.
       return { type: "object", properties: {} };

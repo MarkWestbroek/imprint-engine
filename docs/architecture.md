@@ -208,6 +208,33 @@ hotspot-punten). Eén board-spec **per ComponentVersion** (slug
 `board-spec.component → component`). De technische kern is taalneutraal, alleen
 de `sections` zijn vertaalbaar (S9).
 
+### 3d. Planning (kanban als content)
+
+Een **planning** is een bord dat bij een product hoort en zijn **fasen**
+(kolommen) declareert; de kaarten zijn een eigen contenttype **planning-item**
+— want een kaart heeft een eigen eigenaar, een eigen rich-text-body en een
+eigen levensloop. Een kaart verschuiven ís een `status`-wijziging, geen nieuwe
+kaart, en dus **een nieuwe bitemporale versie**: de versiegeschiedenis van een
+planning-item *is* het verhaal van hoe het werk door de fasen liep, en
+`asOf`-preview toont het bord op elke datum. Relatieregels:
+`planning → product`, `planning-item → planning`, `planning-item → component`.
+De eigenaar is een gebruikersnaam (zachte verwijzing naar de users-tabel; geen
+contenttype, dus geen RelationRule).
+
+Bewerken gebeurt in de admin (`/admin/planning/<slug>`): een client-bord met
+HTML5-drag&drop tussen kolommen en een edit-paneel per kaart; de mutatielogica
+is puur ([`lib/planning.ts`](../sites/musicbrain/src/lib/planning.ts):
+`computeMove` renummert de bron- en doelkolom), de serveracties doen de
+bitemporale puts.
+
+De **`planning`-widget** rendert een bord op de site, in twee modi: *board*
+(een planning + zijn planning-items) of *generiek* — een read-only view over
+elk contenttype met een aanwijsbaar fase-, eigenaar- en titelveld en de fasen
+op de widget geconfigureerd. Zo toont hij bv. componenten gegroepeerd op hun
+optionele `phase`-veld (dat een project via de API bijwerkt) zonder aparte
+planning-items. Dit is Marks "widget = configureerbare view op data":
+hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
+
 - **Assets** (renders, pinout-SVG's) gaan via de **AssetStore** (D7,
   `content-core/asset-store.ts`): `put(path,bytes) → url`, file-backend nu,
   MinIO/S3 later als config-wissel. Upload via multipart

@@ -8,6 +8,7 @@ const TYPES: { type: ContentType; label: string }[] = [
   { type: "component", label: "Components" },
   { type: "board-spec", label: "Board specs" },
   { type: "release", label: "Releases" },
+  { type: "planning", label: "Planning" },
   { type: "menu", label: "Menus" },
   { type: "theme", label: "Themes" },
 ];

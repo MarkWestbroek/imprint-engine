@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Planning-borden** (kanban als content): twee nieuwe contenttypen —
+  `planning` (het bord: hoort bij een product, definieert de fasen) en
+  `planning-item` (de kaart: titel, fase, eigenaar-gebruiker, rich-text-body,
+  optionele component-link). In de admin (`/admin/planning`) sleep je kaarten
+  tussen fasen en klik je ze open om te bewerken; **elke verplaatsing is een
+  nieuwe versie**, dus een bord bewaart de volledige geschiedenis van hoe werk
+  door de fasen liep (en time-travel toont het bord op elke datum). De
+  `planning`-widget toont het bord op de site.
+- **Planning-widget als generieke view**: naast bord-modus (planning-items)
+  kan dezelfde widget elk contenttype als bord tonen — een aanwijsbaar
+  fase-, eigenaar- en titelveld, met de fasen op de widget geconfigureerd.
+  Zo rendert hij bv. `component`en gegroepeerd op hun nieuwe (optionele)
+  `phase`-veld, dat een project via de API bijwerkt. Generieke modus is
+  read-only (verschuiven gaat via het eigen beheer/de API van dat type).
 - **GitHub release-webhook** (W2/S7): `POST /api/webhooks/github` maakt van
   elke gepubliceerde GitHub-release een release-item (HMAC-signature-check,
   `GITHUB_WEBHOOK_SECRET`; mapping repo→project/product in de site-config

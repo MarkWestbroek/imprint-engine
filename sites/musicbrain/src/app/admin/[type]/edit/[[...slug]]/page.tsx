@@ -37,6 +37,15 @@ function emptyData(type: ContentType): Record<string, unknown> {
       };
     case "page":
       return {};
+    case "planning":
+      return { slug: "", lang: "en", name: "", product: "", description: "", phases: [
+        { key: "backlog", label: "Backlog", order: 0 },
+        { key: "in-progress", label: "In progress", order: 1 },
+        { key: "beta", label: "Beta", order: 2 },
+        { key: "done", label: "Done", order: 3 },
+      ], order: 0 };
+    case "planning-item":
+      return { slug: "", lang: "en", title: "", planning: "", status: "backlog", owner: "", body: "", order: 0 };
     case "relations":
       return { rules: [] };
   }

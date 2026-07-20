@@ -9,6 +9,8 @@ import {
   ComponentSchema,
   MenuSchema,
   PageMetaSchema,
+  PlanningSchema,
+  PlanningItemSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
@@ -317,6 +319,10 @@ export class DbContentStore implements WritableContentStore {
         return MenuSchema.parse(data);
       case "theme":
         return ThemeSchema.parse(data);
+      case "planning":
+        return PlanningSchema.parse(data);
+      case "planning-item":
+        return PlanningItemSchema.parse(data);
       case "relations":
         return RelationsDoc.parse(data);
       case "page": {

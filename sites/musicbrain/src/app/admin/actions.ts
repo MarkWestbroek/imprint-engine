@@ -33,7 +33,7 @@ export async function saveRelationsAction(
   return { ok: true };
 }
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "planning-item"];
 
 export async function loginAction(
   _prev: ActionResult | null,

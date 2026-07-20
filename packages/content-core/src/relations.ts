@@ -40,6 +40,9 @@ export const DEFAULT_RELATION_RULES: RelationRule[] = [
   { fromType: "release", field: "product", toType: "product", enforce: true, label: "Release → product" },
   { fromType: "release", field: "components[].component", toType: "component", enforce: true, label: "Release → components" },
   { fromType: "board-spec", field: "component", toType: "component", enforce: true, label: "Board-spec → component" },
+  { fromType: "planning", field: "product", toType: "product", enforce: true, label: "Planning → product" },
+  { fromType: "planning-item", field: "planning", toType: "planning", enforce: true, label: "Planning-item → planning" },
+  { fromType: "planning-item", field: "component", toType: "component", enforce: true, label: "Planning-item → component" },
 ];
 
 /** Collect the slugs a path points at, walking arrays (`[]`) as it goes. */

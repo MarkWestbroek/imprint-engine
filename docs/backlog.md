@@ -11,8 +11,26 @@ Maat: **S** ≈ een uurtje · **M** ≈ een dagdeel · **L** ≈ groter/meerdaag
 
 ## 1. Widgets
 
-De catalogus nu: `text`, `table`, `image`, `board`, `boardspec`, `template`,
-`list`, `callout`, `embed`, `treeview`, `api`, `releases`, `products`.
+De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
+`map`, `video`, `hero`, `accordion`, `divider`, `downloads`, `posts`,
+`itinerary`, `board`, `boardspec`, `template`, `list`, `callout`, `embed`,
+`treeview`, `api`, `releases`, `products`, `kanban`, `planning`.
+
+### Planning-borden (nieuw in 0.11.0)
+- [x] ~~**Planning als content**~~ — `planning` + `planning-item` contenttypen,
+      admin-bord met drag&drop + edit-drawer, `planning`-widget (board- én
+      generieke modus), `component.phase`-veld. Elke move = bitemporale versie.
+- [ ] **Fasen-editor** voor de generieke widgetmodus — de `phases`-lijst is nu
+      een JSON-box in de widget-config; verdient een rij-editor. _(S)_
+- [ ] **Kaart-body echte rich text** — nu markdown-textarea; de WYSIWYG-editor
+      (zie §7) zou hier ook passen, met een content-picker voor interne links
+      (`[[type/slug]]`-autolink). _(chat-idee; M)_
+- [ ] **Generieke modus verschuifbaar** — nu read-only; een gemachtigde
+      gebruiker zou ook een component tussen fasen mogen slepen (zet
+      `component.phase`). Meestal doet het project dit via de API. _(idee; M)_
+- [ ] **Board as-of in de widget** — de widget leest `listItems` (huidig); de
+      publieke weergave reist nog niet mee met time-travel (de historie zelf
+      wél, via de item-versies). _(S)_
 
 ### Custom editors (het editor-seam bestaat, wordt nog nauwelijks benut)
 - [ ] **Specs-editor** voor `product.specs` — nu een JSON-box, verdient hetzelfde

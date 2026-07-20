@@ -80,6 +80,7 @@ merken hier niets van.
 | **Components** | herbruikbare bouwblokken (één component kan in meerdere producten zitten); kunnen nesten. Het veld **kind** (board, software, …) bepaalt de versiekop op de site |
 | **Board specs** | machinaal gegenereerde borddocumentatie (komt binnen via de hardware-toolkit). Met een 3D-model erbij krijgt het bord een **3D**-knop: vrij draaien en zoomen; het model laadt pas als een bezoeker erop klikt |
 | **Releases** | uitgaves van een product, met per component de meegeleverde versie |
+| **Planning** | kanban-borden: kaarten die je tussen fasen sleept (zie onder) |
 | **Menus** | navigatiemenu's (het "main"-menu stuurt de header) |
 | **Themes** | kleurenschema's van de site (zie Thema's) |
 
@@ -114,6 +115,28 @@ zien, inclusief header en footer.
   geldt voor elk item van dat type. Kies "Preview as …" om met een echt
   voorbeeld-item te ontwerpen.
 
+## Planning-borden
+
+Onder **Planning** maak je kanban-borden. Een bord hoort bij een product en
+heeft **fasen** (de kolommen). De kaarten zijn eigen content, dus ze hebben
+een **eigenaar** (een gebruiker), een **rich-text-omschrijving** en een
+optionele link naar een **component** waaraan gewerkt wordt.
+
+- **Nieuwe kaart**: "＋ card" onderaan een kolom.
+- **Verschuiven**: sleep een kaart naar een andere kolom (= andere fase).
+- **Bewerken**: klik een kaart → paneel rechts (titel, fase, eigenaar,
+  component + versie, omschrijving). In de omschrijving link je naar andere
+  content met gewone markdown, bijv. `[ADC8](/components/adc8)`.
+
+Belangrijk: **elke verplaatsing en wijziging is een nieuwe versie**. Een bord
+bewaart dus de volledige geschiedenis van hoe elk kaartje door de fasen liep —
+en met **Time travel** (op het dashboard) zie je het bord zoals het op een
+gekozen datum was. Verwijderde kaarten zijn via History terug te halen.
+
+Op een pagina toon je een bord met de **Planning board**-widget. Die kan ook
+een ánder contenttype als bord tonen (bijv. componenten gegroepeerd op een
+fase-veld) — dan is het een read-only weergave.
+
 ## De widget-catalogus
 
 Tekst & structuur: **Text** (opgemaakte tekst; Visueel- en Markdown-tab),
@@ -129,7 +152,8 @@ Data-gedreven (vullen zichzelf): **Products**, **Releases**, **Downloads**,
 **Posts** (devlog-feed), **Component itinerary**, **Board spec**, **Board
 annotations**, **List** (links die de contentstructuur volgen), **Template**
 (tekst met invulvelden zoals `{{name}}` uit een content-item), **Treeview**,
-**API content**, **Embed**, **Kanban board**.
+**API content**, **Embed**, **Kanban board** (statische kaarten),
+**Planning board** (levend bord uit Planning-content; zie boven).
 
 Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 

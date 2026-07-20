@@ -66,6 +66,8 @@ export type ContentType =
   | "page"
   | "menu"
   | "theme"
+  | "planning"
+  | "planning-item"
   | "relations";
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */

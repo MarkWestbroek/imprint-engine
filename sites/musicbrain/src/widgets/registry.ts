@@ -192,6 +192,39 @@ export const KanbanConfig = z.object({
 });
 export type KanbanConfig = z.infer<typeof KanbanConfig>;
 
+/**
+ * A configurable board view (Mark's model): a main item groups sub-items into
+ * phases (columns), each sub-item carrying a phase field and optionally an
+ * owner. Two ways to point it at data:
+ *
+ *  - **Board mode** — set `planning` to a planning slug. Sub-items are its
+ *    planning-items (phase = `status`, owner = `owner`); phases come from the
+ *    planning. This is the default (planbord / kaart / gebruiker), editable
+ *    with drag & drop in the admin.
+ *  - **Generic mode** — set `itemType` to any content type (e.g. "component").
+ *    A read-only view: items are grouped by `phaseField` into the `phases`
+ *    you configure here. Moving items happens via their own admin/API (e.g.
+ *    the project sets `component.phase`).
+ */
+export const PlanningConfig = z.object({
+  title: z.string().optional(),
+  // Board mode
+  planning: z.string().default(""),
+  // Generic mode
+  itemType: z.string().optional(),
+  titleField: z.string().default("title"),
+  phaseField: z.string().default("status"),
+  ownerField: z.string().default("owner"),
+  /** Field holding a component slug to show as a chip (e.g. "slug" for components). */
+  componentField: z.string().optional(),
+  /** Columns for generic mode (board mode takes phases from the planning). */
+  phases: z.array(z.object({ key: z.string(), label: z.string().min(1) })).default([]),
+  /** Optional filter: only items whose `filterField` equals `filterValue`. */
+  filterField: z.string().optional(),
+  filterValue: z.string().optional(),
+});
+export type PlanningConfig = z.infer<typeof PlanningConfig>;
+
 export const HeroConfig = z.object({
   title: z.string().min(1),
   subtitle: z.string().default(""),
@@ -362,7 +395,8 @@ export const widgetCatalog = [
   { name: "carousel", label: "Photo carousel", version: "1.0.0", help: "One photo at a time with prev/next and optional auto-advance.", configSchema: CarouselConfig },
   { name: "album", label: "External album", version: "1.0.0", help: "A view on an online photo repo (JSON API, or a Lightroom share as link card).", configSchema: AlbumConfig },
   { name: "map", label: "Map", version: "1.0.0", help: "An interactive OpenStreetMap with markers and popups.", configSchema: MapConfig },
-  { name: "kanban", label: "Kanban board", version: "1.0.0", help: "A small board: columns with cards.", configSchema: KanbanConfig },
+  { name: "kanban", label: "Kanban board", version: "1.0.0", help: "A small board: columns with static cards.", configSchema: KanbanConfig },
+  { name: "planning", label: "Planning board", version: "1.0.0", help: "A live board backed by planning-items: phases as columns, cards with owner, rich text and component links. Edit it in the admin (drag & drop).", configSchema: PlanningConfig },
   { name: "hero", label: "Hero", version: "1.0.0", help: "Big heading + subtitle, optional image and CTA button.", configSchema: HeroConfig },
   { name: "video", label: "Video", version: "1.0.0", help: "YouTube/Vimeo (privacy embed) or a direct video file.", configSchema: VideoConfig },
   { name: "accordion", label: "Accordion / FAQ", version: "1.0.0", help: "Collapsible question/answer blocks (no JS needed).", configSchema: AccordionConfig },
