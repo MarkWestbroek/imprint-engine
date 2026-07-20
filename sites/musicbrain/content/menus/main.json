@@ -4,6 +4,8 @@
     { "label": "Products", "url": "/#products" },
     { "label": "Releases", "url": "/releases" },
     { "label": "Explore", "page": "explore" },
+    { "label": "Development", "page": "cortex" },
+    { "label": "Planning", "page": "planning" },
     { "label": "Devlog", "url": "/posts/hello-world" },
     { "label": "About", "page": "about" }
   ]
