@@ -1,0 +1,947 @@
+{
+  "versie": "imprint-v1",
+  "naam": "Imprint contentmodel — MusicBrain",
+  "beschrijving": "Afgeleid uit de zod-contentschema's van de Imprint-engine. Afgeleide content (itinerary) staat niet in het model: die is berekend, niet opgeslagen.",
+  "domeinen": [
+    {
+      "naam": "catalogus",
+      "beschrijving": "Product-, component- en release-catalogus",
+      "kleur": "#34d399"
+    },
+    {
+      "naam": "site",
+      "beschrijving": "Site-inrichting: pagina's, navigatie, thema's, configuratie",
+      "kleur": "#6366f1"
+    }
+  ],
+  "datatypes": [
+    {
+      "naam": "Slug",
+      "basistype": "string",
+      "validatie": {
+        "pattern": "^[a-z0-9-]+$",
+        "voorbeelden": [
+          "busboard-v2"
+        ]
+      },
+      "omschrijving": "Identiteit van een content-item; board-specs staan ook @ en punt toe, pagina's ook / en _"
+    },
+    {
+      "naam": "Versienummer",
+      "basistype": "string",
+      "validatie": {
+        "pattern": "^v?\\d+(\\.\\d+)*([.-][0-9A-Za-z-]+)*$",
+        "voorbeelden": [
+          "v2.5.12",
+          "1.0.0"
+        ]
+      }
+    },
+    {
+      "naam": "Markdown",
+      "basistype": "string",
+      "weergave": {
+        "widget": "richtext",
+        "multiline": true
+      }
+    },
+    {
+      "naam": "Kleur",
+      "basistype": "string",
+      "validatie": {
+        "pattern": "^#[0-9a-fA-F]{3,8}$"
+      },
+      "weergave": {
+        "widget": "color"
+      }
+    },
+    {
+      "naam": "AssetUrl",
+      "basistype": "string",
+      "weergave": {
+        "widget": "media"
+      },
+      "omschrijving": "URL uit de AssetStore (/api/assets/…) of statisch pad"
+    },
+    {
+      "naam": "Json",
+      "basistype": "string",
+      "weergave": {
+        "widget": "textarea",
+        "multiline": true
+      },
+      "omschrijving": "Substructuur die (nog) niet als velden is uitgeschreven; schema in de JSON Schema-vorm"
+    }
+  ],
+  "enums": [
+    {
+      "goType": "Locale",
+      "baseType": "string",
+      "waarden": [
+        {
+          "constNaam": "En",
+          "waarde": "en"
+        },
+        {
+          "constNaam": "Nl",
+          "waarde": "nl"
+        }
+      ]
+    },
+    {
+      "goType": "ProductStatus",
+      "baseType": "string",
+      "waarden": [
+        {
+          "constNaam": "Indevelopment",
+          "waarde": "in-development"
+        },
+        {
+          "constNaam": "Beta",
+          "waarde": "beta"
+        },
+        {
+          "constNaam": "Available",
+          "waarde": "available"
+        },
+        {
+          "constNaam": "Discontinued",
+          "waarde": "discontinued"
+        }
+      ]
+    },
+    {
+      "goType": "ReleaseChannel",
+      "baseType": "string",
+      "waarden": [
+        {
+          "constNaam": "Stable",
+          "waarde": "stable"
+        },
+        {
+          "constNaam": "Beta",
+          "waarde": "beta"
+        },
+        {
+          "constNaam": "Dev",
+          "waarde": "dev"
+        }
+      ]
+    }
+  ],
+  "referentielijstInstanties": [],
+  "entiteiten": [
+    {
+      "typenaam": "Product",
+      "meervoud": "products",
+      "domein": "catalogus",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "slug",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Slug"
+            },
+            {
+              "naam": "lang",
+              "goType": "Locale",
+              "type": "string",
+              "enum": "Locale"
+            },
+            {
+              "naam": "name",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "tagline",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "status",
+              "goType": "ProductStatus",
+              "type": "string",
+              "enum": "ProductStatus",
+              "verplicht": true
+            },
+            {
+              "naam": "description",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "docs",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "order",
+              "goType": "integer",
+              "type": "integer"
+            }
+          ]
+        },
+        {
+          "naam": "Specs",
+          "meervoud": "specs",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "label",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "value",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        },
+        {
+          "naam": "Media",
+          "meervoud": "media",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "value",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        }
+      ],
+      "relaties": [
+        {
+          "naam": "Rel_Product_Components",
+          "meervoud": "components",
+          "doelEntiteit": "Component",
+          "momentvoorkomen": "meervoudig",
+          "doelKardinaliteit": "0..*",
+          "velden": []
+        }
+      ]
+    },
+    {
+      "typenaam": "Component",
+      "meervoud": "components",
+      "domein": "catalogus",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "slug",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Slug"
+            },
+            {
+              "naam": "lang",
+              "goType": "Locale",
+              "type": "string",
+              "enum": "Locale"
+            },
+            {
+              "naam": "name",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "kind",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "description",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "phase",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "docs",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            }
+          ]
+        },
+        {
+          "naam": "Versions",
+          "meervoud": "versions",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "number",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Versienummer"
+            },
+            {
+              "naam": "date",
+              "goType": "string",
+              "type": "string",
+              "format": "date"
+            },
+            {
+              "naam": "notes",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "spec",
+              "goType": "string",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "relaties": [
+        {
+          "naam": "Rel_Component_Children",
+          "meervoud": "children",
+          "doelEntiteit": "Component",
+          "momentvoorkomen": "meervoudig",
+          "doelKardinaliteit": "0..*",
+          "velden": []
+        }
+      ]
+    },
+    {
+      "typenaam": "BoardSpec",
+      "meervoud": "board-specs",
+      "domein": "catalogus",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "slug",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Slug"
+            },
+            {
+              "naam": "lang",
+              "goType": "Locale",
+              "type": "string",
+              "enum": "Locale"
+            },
+            {
+              "naam": "version",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Versienummer"
+            },
+            {
+              "naam": "kind",
+              "goType": "string",
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "naam": "Connectors",
+          "meervoud": "connectors",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "ref",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "label",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "footprint",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "rows",
+              "goType": "integer",
+              "type": "integer"
+            },
+            {
+              "naam": "pins",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            }
+          ]
+        },
+        {
+          "naam": "Assets",
+          "meervoud": "assets",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "renderTop",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            },
+            {
+              "naam": "renderBottom",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            },
+            {
+              "naam": "overview",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            },
+            {
+              "naam": "model3d",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            },
+            {
+              "naam": "pinouts",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            }
+          ]
+        },
+        {
+          "naam": "View3d",
+          "meervoud": "view3d",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "mode",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "src",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            },
+            {
+              "naam": "poster",
+              "goType": "string",
+              "type": "string",
+              "datatype": "AssetUrl"
+            }
+          ]
+        },
+        {
+          "naam": "Points",
+          "meervoud": "points",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "x",
+              "goType": "number",
+              "type": "number",
+              "verplicht": true
+            },
+            {
+              "naam": "y",
+              "goType": "number",
+              "type": "number",
+              "verplicht": true
+            },
+            {
+              "naam": "label",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "connector",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "markdown",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            }
+          ]
+        },
+        {
+          "naam": "Sections",
+          "meervoud": "sections",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "heading",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "markdown",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Markdown"
+            }
+          ]
+        },
+        {
+          "naam": "Fab",
+          "meervoud": "fab",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "packageUrl",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "jlcNotes",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "bomHighlights",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            }
+          ]
+        },
+        {
+          "naam": "Related",
+          "meervoud": "related",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "value",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        }
+      ],
+      "relaties": [
+        {
+          "naam": "Rel_BoardSpec_Component",
+          "meervoud": "component",
+          "doelEntiteit": "Component",
+          "momentvoorkomen": "enkelvoudig",
+          "doelKardinaliteit": "1",
+          "velden": []
+        }
+      ]
+    },
+    {
+      "typenaam": "Release",
+      "meervoud": "releases",
+      "domein": "catalogus",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "project",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "version",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Versienummer"
+            },
+            {
+              "naam": "date",
+              "goType": "string",
+              "type": "string",
+              "format": "date",
+              "verplicht": true
+            },
+            {
+              "naam": "channel",
+              "goType": "ReleaseChannel",
+              "type": "string",
+              "enum": "ReleaseChannel"
+            },
+            {
+              "naam": "body",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "sourceUrl",
+              "goType": "string",
+              "type": "string",
+              "format": "uri"
+            }
+          ]
+        },
+        {
+          "naam": "Highlights",
+          "meervoud": "highlights",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "value",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        },
+        {
+          "naam": "Downloads",
+          "meervoud": "downloads",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "label",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "url",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "checksumSha256",
+              "goType": "string",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "relaties": [
+        {
+          "naam": "Rel_Release_Product",
+          "meervoud": "product",
+          "doelEntiteit": "Product",
+          "momentvoorkomen": "enkelvoudig",
+          "doelKardinaliteit": "0..1",
+          "velden": []
+        },
+        {
+          "naam": "Rel_Release_Components",
+          "meervoud": "components",
+          "doelEntiteit": "Component",
+          "momentvoorkomen": "meervoudig",
+          "doelKardinaliteit": "0..*",
+          "velden": [
+            {
+              "naam": "version",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Versienummer"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "typenaam": "Page",
+      "meervoud": "pages",
+      "domein": "site",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "slug",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Slug"
+            },
+            {
+              "naam": "lang",
+              "goType": "Locale",
+              "type": "string",
+              "enum": "Locale"
+            },
+            {
+              "naam": "title",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "description",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Markdown"
+            },
+            {
+              "naam": "ogImage",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "draft",
+              "goType": "boolean",
+              "type": "boolean"
+            },
+            {
+              "naam": "publishedAt",
+              "goType": "string",
+              "type": "string",
+              "format": "date"
+            }
+          ]
+        }
+      ],
+      "relaties": []
+    },
+    {
+      "typenaam": "Menu",
+      "meervoud": "menus",
+      "domein": "site",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "name",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        },
+        {
+          "naam": "Items",
+          "meervoud": "items",
+          "momentvoorkomen": "meervoudig",
+          "velden": [
+            {
+              "naam": "value",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            }
+          ]
+        }
+      ],
+      "relaties": []
+    },
+    {
+      "typenaam": "Theme",
+      "meervoud": "themes",
+      "domein": "site",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "name",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Slug"
+            },
+            {
+              "naam": "label",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "order",
+              "goType": "integer",
+              "type": "integer"
+            }
+          ]
+        },
+        {
+          "naam": "Colors",
+          "meervoud": "colors",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "background",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "surface",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "border",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "foreground",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "muted",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "accent",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            },
+            {
+              "naam": "accentStrong",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true,
+              "datatype": "Kleur"
+            }
+          ]
+        },
+        {
+          "naam": "Fonts",
+          "meervoud": "fonts",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "sans",
+              "goType": "string",
+              "type": "string"
+            },
+            {
+              "naam": "mono",
+              "goType": "string",
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "relaties": []
+    },
+    {
+      "typenaam": "Site",
+      "meervoud": "sites",
+      "domein": "site",
+      "gegevenselementen": [
+        {
+          "naam": "Kern",
+          "meervoud": "kernen",
+          "momentvoorkomen": "enkelvoudig",
+          "velden": [
+            {
+              "naam": "name",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "tagline",
+              "goType": "string",
+              "type": "string",
+              "verplicht": true
+            },
+            {
+              "naam": "baseUrl",
+              "goType": "string",
+              "type": "string",
+              "format": "uri",
+              "verplicht": true
+            },
+            {
+              "naam": "defaultLocale",
+              "goType": "Locale",
+              "type": "string",
+              "enum": "Locale"
+            },
+            {
+              "naam": "links",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            },
+            {
+              "naam": "aliases",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            },
+            {
+              "naam": "releaseSources",
+              "goType": "string",
+              "type": "string",
+              "datatype": "Json",
+              "description": "JSON-substructuur (zie JSON Schema-vorm van /api/meta)"
+            }
+          ]
+        }
+      ],
+      "relaties": []
+    }
+  ]
+}
