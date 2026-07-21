@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Admin met activity-rail** (VS Code-stijl): de lange bovenbalk is vervangen
+  door een smalle icon-rail links met vijf werkgebieden — **Overzicht**,
+  **Content** (Pages · catalogus · Planning), **Vormgeving** (menus, thema's,
+  default views), **Model & config** (content model, relations, site) en
+  **Beheer** (users, admin-only). Een secundair paneel toont de items van het
+  actieve gebied; het gebied volgt de route. Onderin de rail: bekijk site,
+  account en afmelden.
 - **Content-model-pagina** in de admin (`/admin/model`): een read-only
   overzicht van alle contenttypen met hun velden (type, verplicht, enum/
   patroon) en de relatieregels — dezelfde bron als `/api/meta`. De types
