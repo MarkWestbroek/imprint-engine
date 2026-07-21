@@ -1,7 +1,7 @@
 {
   "name": "neon",
   "label": "Neon",
-  "order": 2,
+  "order": 3,
   "colors": {
     "background": "#0a0118",
     "surface": "#170b2e",

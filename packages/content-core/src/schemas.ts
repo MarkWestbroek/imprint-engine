@@ -27,6 +27,8 @@ export const ProductSchema = z.object({
   lang: Locale.default("en"),
   name: z.string().min(1),
   tagline: z.string().min(1),
+  /** Small-caps audience line above the name on cards, e.g. "for modular synths". */
+  audience: z.string().default(""),
   status: ProductStatus,
   description: z.string().default(""),
   /** Ordered key/value spec list, rendered as the specs table (W3). */
@@ -401,6 +403,8 @@ export const ThemeColorsSchema = z.object({
   muted: z.string().min(1),
   accent: z.string().min(1),
   accentStrong: z.string().min(1),
+  /** Second accent (scope traces, secondary highlights); empty = falls back to `accent`. */
+  accent2: z.string().default(""),
 });
 export type ThemeColors = z.infer<typeof ThemeColorsSchema>;
 
@@ -422,6 +426,8 @@ export type Theme = z.infer<typeof ThemeSchema>;
 export const SiteConfigSchema = z.object({
   name: z.string(),
   tagline: z.string(),
+  /** Short brand line under the wordmark (e.g. "open hardware · est. NL"); empty = tagline. */
+  motto: z.string().default(""),
   baseUrl: z.string().url(),
   defaultLocale: Locale.default("en"),
   links: z.record(z.string(), z.string().url()).default({}),

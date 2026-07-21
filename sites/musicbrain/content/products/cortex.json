@@ -2,15 +2,16 @@
   "slug": "cortex",
   "lang": "en",
   "name": "Cortex",
-  "tagline": "The central brain: MIDI routing, processing and scenes in one box.",
+  "tagline": "Save and recall full patches. Play your analog oscillators polyphonically — up to 16 voices, allocated live from MIDI.",
+  "audience": "for modular synths",
   "status": "in-development",
-  "description": "Cortex is the heart of the MusicBrain family. It routes, filters and transforms MIDI between all your gear, and switches your entire rig with a single scene change.\n\nBuilt on open firmware — configure it with the free editor & simulator, or hack it yourself.",
+  "description": "Modular synths forget. Every patch, every routing, every knob — gone the moment you touch it. Cortex gives your case memory: save and recall full patches, and play your analog oscillators polyphonically with up to 16 voices, allocated live from MIDI.\n\nYour audio stays 100% analog; the brain speaks only CV and gate. Built on open firmware — configure it with the free editor & simulator, or hack it yourself.",
   "specs": [
-    { "label": "MIDI I/O", "value": "4x DIN in, 4x DIN out, USB host + device" },
-    { "label": "Scenes", "value": "128, switchable via footswitch/program change" },
-    { "label": "Processing", "value": "Filters, remapping, splits, layers, macros" },
-    { "label": "Editor", "value": "Free cross-platform editor & simulator" },
-    { "label": "Firmware", "value": "Open source, updatable over USB" }
+    { "label": "Latency", "value": "≤ 5 ms note-on → CV" },
+    { "label": "Pitch CV", "value": "16-bit, 1V/oct" },
+    { "label": "Voices", "value": "16, multi-case" },
+    { "label": "Editor", "value": "Free browser editor & simulator" },
+    { "label": "Firmware", "value": "Open source (MIT), updatable over USB" }
   ],
   "media": [],
   "order": 1

@@ -2,17 +2,28 @@
 
 /*
  * Design tokens (B1, ontwerper-rol): één plek voor huisstijl.
- * v0 is dark-only — de design-brief maakt dark de default (W15);
- * een light-thema kan later als extra tokenset erbij.
+ * De default is het "open brain"-palet (= het Amber-thema); andere thema's
+ * overschrijven deze variabelen via [data-theme] (zie ThemeStyles).
  */
 :root {
-  --background: #0b0d10;
-  --surface: #14181d;
-  --border: #262c33;
-  --foreground: #e8ebee;
-  --muted: #9aa4ae;
-  --accent: #4fd1c5;
-  --accent-strong: #2ab5a8;
+  --background: #0e1116;
+  --surface: #151b23;
+  --border: #232b36;
+  --foreground: #f2f4f8;
+  --muted: #8c96a5;
+  --accent: #f5a623;
+  --accent-strong: #b87f1f;
+  /* Second accent (scope traces e.d.); themes may override, falls back to accent. */
+  --accent-2: #3ec9d8;
+  /*
+   * Font-stacks als eigen variabelen (niet direct --font-sans/--font-mono):
+   * @theme inline zou de next/font-var ín de utilities bakken, waardoor
+   * thema-overrides font-mono-klassen niet meer raken. Deze indirectie
+   * gedraagt zich net als de kleuren: thema's overschrijven --sans/--mono.
+   */
+  --sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Cascadia Code", "JetBrains Mono", Consolas, "SF Mono",
+    var(--font-geist-mono), monospace;
 }
 
 @theme inline {
@@ -23,14 +34,47 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-accent-2: var(--accent-2);
+  --font-sans: var(--sans);
+  --font-mono: var(--mono);
+  /* Hardware-feel: crisp corners (mockup "open brain": near-sharp panels). */
+  --radius-md: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.375rem;
 }
 
 body {
-  background: var(--background);
+  /*
+   * Achtergrondtextuur uit de tokens (dot-grid + gloed bovenin), zodat hij
+   * met élk thema meekleurt — geen losse hexkleuren (design-afspraak B1).
+   */
+  background:
+    radial-gradient(
+      ellipse 90% 40% at 50% -5%,
+      color-mix(in srgb, var(--accent) 7%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      circle 1px at 1px 1px,
+      color-mix(in srgb, var(--muted) 13%, transparent) 1px,
+      transparent 1px
+    ) 0 0 / 26px 26px,
+    var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--sans), system-ui, sans-serif;
+}
+
+/*
+ * Sectielabel-stijl uit het "open brain"-ontwerp: mono, uppercase, ruime
+ * letterspacing, accentkleur. Gebruikt door widget-titels en eyebrows.
+ */
+.eyebrow {
+  font-family: var(--mono), monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
 /* Markdown body styling (pages, posts, release notes). */
@@ -67,7 +111,7 @@ body {
   text-underline-offset: 3px;
 }
 .markdown code {
-  font-family: var(--font-mono), monospace;
+  font-family: var(--mono), monospace;
   font-size: 0.875em;
   background: var(--surface);
   border: 1px solid var(--border);

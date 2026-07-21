@@ -62,6 +62,7 @@ export default async function ProductPage({ params }: Props) {
   const fallback = (
     <article className="max-w-3xl space-y-10">
       <header>
+        {product.audience && <p className="eyebrow mb-1">{product.audience}</p>}
         <div className="flex items-center gap-3">
           <h1 className="text-3xl font-semibold tracking-tight">{product.name}</h1>
           <StatusBadge status={product.status} />

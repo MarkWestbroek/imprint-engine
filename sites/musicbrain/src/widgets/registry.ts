@@ -226,6 +226,7 @@ export const PlanningConfig = z.object({
 export type PlanningConfig = z.infer<typeof PlanningConfig>;
 
 export const HeroConfig = z.object({
+  /** Wrap one word in *asterisks* to give it the accent colour. */
   title: z.string().min(1),
   subtitle: z.string().default(""),
   /** Background/side image (URL or public/ path). */
@@ -233,6 +234,8 @@ export const HeroConfig = z.object({
   buttonLabel: z.string().optional(),
   buttonUrl: z.string().optional(),
   align: z.enum(["left", "center"]).default("left"),
+  /** "panel" = card on a surface; "open" = straight on the page background. */
+  variant: z.enum(["panel", "open"]).default("panel"),
 });
 export type HeroConfig = z.infer<typeof HeroConfig>;
 
@@ -253,11 +256,31 @@ export const AccordionConfig = z.object({
 export type AccordionConfig = z.infer<typeof AccordionConfig>;
 
 export const DividerConfig = z.object({
-  style: z.enum(["line", "dots", "space"]).default("line"),
+  /** "scope" draws a gate/CV step-trace (oscilloscope look) in accent-2. */
+  style: z.enum(["line", "dots", "scope", "space"]).default("line"),
   /** Vertical breathing room, 1 (subtle) … 4 (roomy). */
   size: z.number().int().min(1).max(4).default(2),
 });
 export type DividerConfig = z.infer<typeof DividerConfig>;
+
+/**
+ * Specs strip: a row of key figures in mono — big value, small caption —
+ * like the spec bar in the "open brain" design (≤ 5 ms · note-on → CV).
+ */
+export const SpecsConfig = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        /** The big figure, e.g. "≤ 5 ms" or "16-bit". */
+        value: z.string().min(1),
+        /** Small caption underneath, e.g. "note-on → CV". */
+        label: z.string().default(""),
+      })
+    )
+    .default([]),
+});
+export type SpecsConfig = z.infer<typeof SpecsConfig>;
 
 export const DownloadsConfig = z.object({
   title: z.string().optional(),
@@ -397,10 +420,11 @@ export const widgetCatalog = [
   { name: "map", label: "Map", version: "1.0.0", help: "An interactive OpenStreetMap with markers and popups.", configSchema: MapConfig },
   { name: "kanban", label: "Kanban board", version: "1.0.0", help: "A small board: columns with static cards.", configSchema: KanbanConfig },
   { name: "planning", label: "Planning board", version: "1.0.0", help: "A live board backed by planning-items: phases as columns, cards with owner, rich text and component links. Edit it in the admin (drag & drop).", configSchema: PlanningConfig },
-  { name: "hero", label: "Hero", version: "1.0.0", help: "Big heading + subtitle, optional image and CTA button.", configSchema: HeroConfig },
+  { name: "hero", label: "Hero", version: "1.1.0", help: "Big heading + subtitle, optional image and CTA button. *Word* in the title gets the accent colour; variant \"open\" drops the panel.", configSchema: HeroConfig },
+  { name: "specs", label: "Specs strip", version: "1.0.0", help: "A row of key figures in mono: big value + small caption.", configSchema: SpecsConfig },
   { name: "video", label: "Video", version: "1.0.0", help: "YouTube/Vimeo (privacy embed) or a direct video file.", configSchema: VideoConfig },
   { name: "accordion", label: "Accordion / FAQ", version: "1.0.0", help: "Collapsible question/answer blocks (no JS needed).", configSchema: AccordionConfig },
-  { name: "divider", label: "Divider", version: "1.0.0", help: "Visual rest between rows: line, dots or just space.", configSchema: DividerConfig },
+  { name: "divider", label: "Divider", version: "1.1.0", help: "Visual rest between rows: line, dots, a scope-trace or just space.", configSchema: DividerConfig },
   { name: "downloads", label: "Downloads", version: "1.0.0", help: "Release downloads with version and checksum (W7).", configSchema: DownloadsConfig },
   { name: "posts", label: "Posts / news feed", version: "1.0.0", help: "Latest devlog posts as linked cards (W6).", configSchema: PostsConfig },
   { name: "itinerary", label: "Component itinerary", version: "1.0.0", help: "The journey of each component through a product's releases.", configSchema: ItineraryConfig },

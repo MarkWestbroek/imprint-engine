@@ -1,7 +1,7 @@
 {
   "name": "dark",
   "label": "Dark",
-  "order": 0,
+  "order": 1,
   "colors": {
     "background": "#0b0d10",
     "surface": "#14181d",
@@ -10,5 +10,9 @@
     "muted": "#9aa4ae",
     "accent": "#4fd1c5",
     "accentStrong": "#2ab5a8"
+  },
+  "fonts": {
+    "sans": "var(--font-geist-sans), system-ui, sans-serif",
+    "mono": "var(--font-geist-mono), monospace"
   }
 }

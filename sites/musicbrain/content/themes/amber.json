@@ -1,0 +1,19 @@
+{
+  "name": "amber",
+  "label": "Amber",
+  "order": 0,
+  "colors": {
+    "background": "#0e1116",
+    "surface": "#151b23",
+    "border": "#232b36",
+    "foreground": "#f2f4f8",
+    "muted": "#8c96a5",
+    "accent": "#f5a623",
+    "accentStrong": "#b87f1f",
+    "accent2": "#3ec9d8"
+  },
+  "fonts": {
+    "sans": "\"Segoe UI\", \"Helvetica Neue\", Arial, sans-serif",
+    "mono": "\"Cascadia Code\", \"JetBrains Mono\", Consolas, \"SF Mono\", monospace"
+  }
+}

@@ -1,6 +1,7 @@
 {
   "name": "MusicBrain",
-  "tagline": "Open-source brains for your music rig",
+  "tagline": "The open brain for your analog rig",
+  "motto": "open hardware · est. NL",
   "baseUrl": "https://musicbrain.example",
   "defaultLocale": "en",
   "links": {

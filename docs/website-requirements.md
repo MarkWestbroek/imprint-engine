@@ -13,7 +13,7 @@
 
 ```
 /                       Home (hero, familie, status, open source, signup)
-/products/cortex        Productpagina (+ /reflex, /relay, /synapse)
+/products/cortex        Productpagina (+ /reflex, /relay; Synapse geparkeerd juli 2026)
 /editor                 Editor & simulator (link naar live editor, download)
 /releases               Release-feed + devlog (nieuws)
 /docs → GitHub          (v1: doorlinken; later eigen docs-sectie)

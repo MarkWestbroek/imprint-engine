@@ -20,8 +20,7 @@
                       "children": [
                         { "label": "Cortex", "href": "/products/cortex" },
                         { "label": "Reflex", "href": "/products/reflex" },
-                        { "label": "Relay", "href": "/products/relay" },
-                        { "label": "Synapse", "href": "/products/synapse" }
+                        { "label": "Relay", "href": "/products/relay" }
                       ]
                     }
                   ],

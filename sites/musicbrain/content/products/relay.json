@@ -2,7 +2,8 @@
   "slug": "relay",
   "lang": "en",
   "name": "Relay",
-  "tagline": "Amp switching and control, driven by your MIDI rig.",
+  "tagline": "Any pre-amp to any power amp to any cab. Pop-free, pure relays, recalled from your desk.",
+  "audience": "for studios",
   "status": "in-development",
   "specs": [
     { "label": "Switching", "value": "4x relay loops, amp channel switching" },

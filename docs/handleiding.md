@@ -156,7 +156,11 @@ fase-veld) — dan is het een read-only weergave.
 
 Tekst & structuur: **Text** (opgemaakte tekst; Visueel- en Markdown-tab),
 **Table**, **Accordion/FAQ**, **Callout/CTA** (gekleurd blok met knop),
-**Hero** (grote kop met knop), **Divider**.
+**Hero** (grote kop met knop; zet één woord tussen `*sterretjes*` voor de
+accentkleur, en kies variant "open" voor een kop zónder paneel eromheen),
+**Divider** (lijn, stipjes, ruimte — of "scope": een oscilloscoop-achtige
+puls-lijn in de tweede accentkleur), **Specs strip** (rij kerncijfers in
+monospace: grote waarde + klein bijschrift, zoals "≤ 5 ms · note-on → CV").
 
 Beeld & media: **Image**, **Photo gallery** (raster + lightbox), **Photo
 carousel**, **External album** (bijv. een Lightroom-share-link — plak de URL
@@ -175,17 +179,23 @@ Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 ## Thema's
 
 Onder **Themes** beheer je kleurenschema's (met kleurpickers en een live
-voorbeeld). De site levert er drie: **Dark**, **Light** en **Neon**. Bezoekers
-kunnen zelf wisselen via de keuzelijst in de header; hun keuze wordt
-onthouden. Een nieuw thema toevoegen = een nieuw Theme-item aanmaken — het
-verschijnt vanzelf in de keuzelijst.
+voorbeeld). De site levert er vier: **Dark**, **Light**, **Neon** en
+**Amber** (het "open brain"-ontwerp: blauwzwart met amber en een cyaan
+tweede accent). Bezoekers kunnen zelf wisselen via de keuzelijst in de
+header; hun keuze wordt onthouden. Een nieuw thema toevoegen = een nieuw
+Theme-item aanmaken — het verschijnt vanzelf in de keuzelijst.
+
+Naast de gewone accentkleur kent een thema een optionele **Accent 2** — een
+tweede accent voor sierelementen zoals de scope-divider. Leeg gelaten valt
+hij terug op de gewone accentkleur.
 
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een
   pagina (kieslijst) of een URL en kan subitems hebben.
 - **Relations**: welke verwijzingen tussen contenttypen worden afgedwongen.
-- **Site**: naam, tagline en links van de site zelf.
+- **Site**: naam, tagline, motto (het regeltje onder het logo; leeg =
+  tagline) en links van de site zelf.
 - Machine-koppelingen (hardware-toolkit die borden publiceert, andere
   systemen die content lezen/schrijven): zie
   [mmb-ingest-guide.md](mmb-ingest-guide.md) en de API-sectie in de README.

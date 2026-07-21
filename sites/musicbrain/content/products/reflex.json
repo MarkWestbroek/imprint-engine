@@ -2,7 +2,8 @@
   "slug": "reflex",
   "lang": "en",
   "name": "Reflex",
-  "tagline": "Programmable foot controller that talks to everything.",
+  "tagline": "Silent relay switching for your whole board in one tap. Configure over WiFi from any browser — no app.",
+  "audience": "for pedalboards",
   "status": "in-development",
   "specs": [
     { "label": "Switches", "value": "8 footswitches, RGB LED rings" },

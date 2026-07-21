@@ -14,6 +14,7 @@ const TOKENS: { key: string; label: string }[] = [
   { key: "muted", label: "Muted text" },
   { key: "accent", label: "Accent" },
   { key: "accentStrong", label: "Accent (strong)" },
+  { key: "accent2", label: "Accent 2 (optioneel)" },
 ];
 
 type Colors = Record<string, string>;

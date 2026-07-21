@@ -13,8 +13,8 @@ export function ThemeStyles({ themes }: { themes: Theme[] }) {
     .map((t) => {
       const c = t.colors;
       const fonts = [
-        t.fonts.sans && `--font-sans:${t.fonts.sans};`,
-        t.fonts.mono && `--font-mono:${t.fonts.mono};`,
+        t.fonts.sans && `--sans:${t.fonts.sans};`,
+        t.fonts.mono && `--mono:${t.fonts.mono};`,
       ]
         .filter(Boolean)
         .join("");
@@ -22,7 +22,7 @@ export function ThemeStyles({ themes }: { themes: Theme[] }) {
         `[data-theme="${t.name}"]{` +
         `--background:${c.background};--surface:${c.surface};--border:${c.border};` +
         `--foreground:${c.foreground};--muted:${c.muted};--accent:${c.accent};` +
-        `--accent-strong:${c.accentStrong};${fonts}}`
+        `--accent-strong:${c.accentStrong};--accent-2:${c.accent2 || c.accent};${fonts}}`
       );
     })
     .join("\n");

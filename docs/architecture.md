@@ -295,7 +295,12 @@ geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
 - **Tokens als CSS custom properties** — componenten gebruiken uitsluitend
   token-klassen (`bg-background`, `text-accent`, …; afgedwongen door de
   werkafspraak "geen losse hexkleuren"). `globals.css` houdt de
-  default-waarden op `:root` (tevens de no-JS-fallback).
+  default-waarden op `:root` (tevens de no-JS-fallback); die default is het
+  **Amber-thema** (het "open brain"-palet). Fonts gaan via een indirectie
+  (`--sans`/`--mono` op `:root`, door `@theme inline` gemapt naar Tailwinds
+  `--font-*`): zou `@theme inline` direct naar de next/font-variabelen
+  wijzen, dan bakt Tailwind die ín de `font-mono`-utilities en raken
+  thema-overrides ze niet meer.
 - **`[data-theme="<naam>"]`-switching** — de site rendert per thema een
   CSS-blok dat de variabelen overschrijft (`ThemeStyles`). Omdat Tailwind v4
   de tokens via `@theme inline` aan de variabelen bindt, restylet één
@@ -303,10 +308,16 @@ geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
 - **Gebruikers-switcher** (IDE-stijl) in de header: zet `data-theme` op
   `<html>` en bewaart de keuze in localStorage; een klein inline-script
   bovenin `<body>` past de keuze vóór de eerste paint toe (geen flash).
-- **Formaat**: het zod-`ThemeSchema` is bewust plat (7 kleurtokens +
-  optionele font-stacks) — in de geest van het W3C **Design Tokens
-  (DTCG)**-formaat (tokens als data), maar zonder de volle diepte daarvan.
-  Import/export naar DTCG-JSON kan later een dunne mapping zijn.
+- **Formaat**: het zod-`ThemeSchema` is bewust plat (7 kleurtokens + een
+  optioneel achtste, `accent2`, voor sierelementen zoals de scope-divider —
+  leeg valt het serverside terug op `accent` — plus optionele font-stacks) —
+  in de geest van het W3C **Design Tokens (DTCG)**-formaat (tokens als
+  data), maar zonder de volle diepte daarvan. Import/export naar DTCG-JSON
+  kan later een dunne mapping zijn.
+- **Afgeleide textuur**: de achtergrond (dot-grid + accentgloed bovenin,
+  uit het "open brain"-ontwerp) staat in `globals.css` en is met
+  `color-mix()` afgeleid van de tokens `--muted`/`--accent`; hij kleurt dus
+  automatisch mee met elk thema zonder eigen tokens nodig te hebben.
 - **Afbakening**: tokens (kleur/typografie) zijn client-side wisselbaar; de
   **grove pagina-indeling** (logo-positie, header-variant) is een
   server-concern en hoort bij een aparte chrome-variant per site — bewust

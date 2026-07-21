@@ -6,6 +6,36 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **"Open brain"-copy & branding**: de mockup-teksten overgenomen — verhalend
+  vanuit de gebruiker ("they forget…") in hero en product-taglines; nieuw
+  `audience`-veld op Product ("for modular synths" als kapiteel-regel op
+  kaarten en productpagina); patch-brain-logo in de header met de klemtoon op
+  **Brain** (accent) en meer lucht rond de naam; site-tagline nu "The open
+  brain for your analog rig"; GitHub uit de hoofdnavigatie naar de footer
+  (samen met Discord); "Try it before it exists" / "Open, top to
+  bottom"-blokken op de home. **Synapse geparkeerd** (seed naar
+  `content/_parked/`, tombstone in de DB — herstelbaar via History).
+  Fijnslijperij na review: nieuw `motto`-veld op Site ("open hardware ·
+  est. NL" onder de wordmark; de tagline blijft voor SEO/feed), logo en
+  naam groter in de header, "Meet the family"-knop weg (de familie staat er
+  direct onder), en het Amber-thema draagt nu de mockup-fontstacks (Segoe
+  UI-systeemstack + Cascadia/JetBrains Mono) via de bestaande
+  thema-fontvelden. **Amber is nu het default-thema**: de
+  `:root`-tokens in `globals.css` dragen het "open brain"-palet en de
+  systeemfont-stacks (volgorde in de switcher: Amber, Dark, Light, Neon;
+  Dark en Light behouden Geist via hun eigen fontvelden). Fonts lopen nu
+  via een `--sans`/`--mono`-indirectie zodat thema-fontwissels ook
+  Tailwinds `font-mono`-utilities raken (voorheen bleven die op Geist
+  Mono staan).
+- **"Open brain"-designpass** naar het eerder ontworpen MusicBrain-artifact:
+  nieuw **Amber-thema** (blauwzwart + amber, cyaan als tweede accent),
+  optioneel `accent2`-token in het thema-schema (leeg = valt terug op
+  accent), achtergrondtextuur (dot-grid + gloed) afgeleid van de
+  thematokens, mono-eyebrows als sectielabels, krappere hoekradius,
+  tagline in de header en mono-statusbadges. Widgets: nieuwe **Specs
+  strip** (kerncijfers in mono), **Divider-stijl "scope"**
+  (oscilloscoop-pulslijn in accent 2) en een vettere **Hero** met
+  `*accentwoord*`-markering en een "open" variant zonder paneel.
 - Planning-bord: een bord is nu **verwijderbaar** (Delete board op de
   bordpagina — met bevestiging; tombstonet ook de kaarten, herstelbaar via
   History). Nieuwe/bewerkte/verwijderde kaarten verschijnen **direct** (geen

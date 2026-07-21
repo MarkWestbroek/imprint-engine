@@ -1,7 +1,7 @@
 {
   "name": "light",
   "label": "Light",
-  "order": 1,
+  "order": 2,
   "colors": {
     "background": "#faf9f7",
     "surface": "#ffffff",
@@ -10,5 +10,9 @@
     "muted": "#5c6670",
     "accent": "#0e8377",
     "accentStrong": "#0a6459"
+  },
+  "fonts": {
+    "sans": "var(--font-geist-sans), system-ui, sans-serif",
+    "mono": "var(--font-geist-mono), monospace"
   }
 }

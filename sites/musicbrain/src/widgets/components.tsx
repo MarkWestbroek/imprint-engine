@@ -38,6 +38,7 @@ import type {
   PostsConfig,
   ProductsConfig,
   ReleasesConfig,
+  SpecsConfig,
   ListConfig,
   MapConfig,
   TableConfig,
@@ -73,11 +74,7 @@ function WidgetFrame({
 }) {
   return (
     <section className="rounded-xl border border-line bg-surface p-5">
-      {title && (
-        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted">
-          {title}
-        </h2>
-      )}
+      {title && <h2 className="eyebrow mb-3">{title}</h2>}
       {children}
     </section>
   );
@@ -679,13 +676,29 @@ async function ItineraryWidget({
   );
 }
 
+/** `*word*` in a hero title → that word in the accent colour. */
+function accentTitle(title: string): React.ReactNode {
+  const parts = title.split("*");
+  if (parts.length < 3) return title;
+  return parts.map((part, i) =>
+    i % 2 === 1 ? (
+      <em key={i} className="not-italic text-accent">
+        {part}
+      </em>
+    ) : (
+      part
+    )
+  );
+}
+
 async function HeroWidget({ config }: { config: HeroConfig }) {
   const center = config.align === "center";
+  const panel = config.variant === "panel";
   return (
     <section
-      className={`relative overflow-hidden rounded-xl border border-line bg-surface p-8 sm:p-12 ${
-        center ? "text-center" : ""
-      }`}
+      className={`relative overflow-hidden ${
+        panel ? "rounded-xl border border-line bg-surface p-8 sm:p-12" : "py-6 sm:py-10"
+      } ${center ? "text-center" : ""}`}
     >
       {config.image && (
         // eslint-disable-next-line @next/next/no-img-element -- content image
@@ -697,9 +710,11 @@ async function HeroWidget({ config }: { config: HeroConfig }) {
         />
       )}
       <div className="relative">
-        <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{config.title}</h2>
+        <h2 className="text-balance text-4xl font-extrabold leading-[1.05] tracking-tighter sm:text-5xl">
+          {accentTitle(config.title)}
+        </h2>
         {config.subtitle && (
-          <p className={`mt-3 max-w-2xl text-lg text-muted ${center ? "mx-auto" : ""}`}>
+          <p className={`mt-4 max-w-2xl text-lg text-muted ${center ? "mx-auto" : ""}`}>
             {config.subtitle}
           </p>
         )}
@@ -776,7 +791,48 @@ async function DividerWidget({ config }: { config: DividerConfig }) {
       {config.style === "dots" && (
         <span className="tracking-[1em] text-muted">•••</span>
       )}
+      {config.style === "scope" && (
+        // Gate/CV step-trace over a baseline, like an oscilloscope readout.
+        <svg
+          viewBox="0 0 780 46"
+          preserveAspectRatio="none"
+          className="h-10 w-full text-accent-2"
+        >
+          <line x1="0" y1="23" x2="780" y2="23" className="stroke-line" strokeWidth="1" />
+          <path
+            d="M0 36 H90 V10 H210 V36 H330 V10 H400 V36 H560 V18 H660 V36 H780"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            opacity="0.9"
+          />
+        </svg>
+      )}
     </div>
+  );
+}
+
+async function SpecsWidget({ config }: { config: SpecsConfig }) {
+  const cols = Math.min(Math.max(config.items.length, 1), 4);
+  return (
+    <section>
+      {config.title && <h2 className="eyebrow mb-3">{config.title}</h2>}
+      <div
+        className="grid grid-cols-2 gap-4 border border-line bg-surface px-6 py-5 font-mono sm:grid-cols-(--specs-cols)"
+        style={{ "--specs-cols": `repeat(${cols}, minmax(0, 1fr))` } as React.CSSProperties}
+      >
+        {config.items.map((item, i) => (
+          <div key={i}>
+            <span className="block text-lg font-semibold tabular-nums">{item.value}</span>
+            {item.label && (
+              <span className="mt-0.5 block text-[11px] uppercase tracking-wider text-muted">
+                {item.label}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -1049,6 +1105,11 @@ async function ProductsWidget({ config }: { config: ProductsConfig }) {
             href={`/products/${p.slug}`}
             className="rounded-lg border border-line p-4 hover:border-accent"
           >
+            {p.audience && (
+              <span className="mb-1 block font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                {p.audience}
+              </span>
+            )}
             <div className="flex items-center justify-between gap-2">
               <span className="font-semibold">{p.name}</span>
               <StatusBadge status={p.status} />
@@ -1081,6 +1142,7 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   video: VideoWidget as WidgetComponent,
   accordion: AccordionWidget as WidgetComponent,
   divider: DividerWidget as WidgetComponent,
+  specs: SpecsWidget as WidgetComponent,
   downloads: DownloadsWidget as WidgetComponent,
   posts: PostsWidget as WidgetComponent,
   board: BoardWidget as WidgetComponent,
