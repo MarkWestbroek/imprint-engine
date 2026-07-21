@@ -11,6 +11,8 @@ import {
   type CardInput,
 } from "@/app/admin/planning/actions";
 
+type ComponentRef = { slug: string; name: string };
+
 /**
  * The interactive planning board (admin only). Cards are draggable between
  * phase columns; clicking one opens an edit panel. Every move/edit is a
@@ -34,7 +36,7 @@ export function PlanningBoard({
   planning: Planning;
   items: PlanningItem[];
   users: string[];
-  components: string[];
+  components: ComponentRef[];
   currentUser: string;
 }) {
   const router = useRouter();
@@ -95,16 +97,23 @@ export function PlanningBoard({
 
   function save() {
     if (!draft) return;
+    const wasNew = !draft.slug;
     startTransition(async () => {
       const res = await saveCardAction({
         ...draft,
         component: draft.component || undefined,
         componentVersion: draft.componentVersion || undefined,
       });
-      if (!res.ok) {
+      if (!res.ok || !res.item) {
         alert(res.error ?? "Save failed");
         return;
       }
+      const saved = res.item;
+      // Optimistic: reflect the save immediately (router.refresh alone won't
+      // re-seed this component's useState from the new server props).
+      setItems((prev) =>
+        wasNew ? [...prev, saved] : prev.map((it) => (it.slug === saved.slug ? saved : it))
+      );
       setDraft(null);
       router.refresh();
     });
@@ -113,8 +122,10 @@ export function PlanningBoard({
   function remove() {
     if (!draft?.slug) return;
     if (!confirm("Delete this card? (History is kept — restorable via admin.)")) return;
+    const slug = draft.slug;
     startTransition(async () => {
-      await deleteCardAction(planning.slug, draft.slug!, draft.lang ?? "en");
+      await deleteCardAction(planning.slug, slug, draft.lang ?? "en");
+      setItems((prev) => prev.filter((it) => it.slug !== slug));
       setDraft(null);
       router.refresh();
     });
@@ -251,12 +262,22 @@ export function PlanningBoard({
               <select
                 className={`mt-1 ${input}`}
                 value={draft.component ?? ""}
-                onChange={(e) => setDraft({ ...draft, component: e.target.value })}
+                onChange={(e) => {
+                  const slug = e.target.value;
+                  const comp = components.find((c) => c.slug === slug);
+                  // Prefill an empty body with a link to the picked component —
+                  // never overwrite text the editor already typed.
+                  const body =
+                    draft.body.trim() === "" && comp
+                      ? `Werken aan [${comp.name}](/components/${comp.slug}).`
+                      : draft.body;
+                  setDraft({ ...draft, component: slug, body });
+                }}
               >
                 <option value="">—</option>
                 {components.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
                   </option>
                 ))}
               </select>

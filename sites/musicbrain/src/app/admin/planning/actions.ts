@@ -92,7 +92,9 @@ export type CardInput = {
 };
 
 /** Create or update a card. Returns the slug (generated on create). */
-export async function saveCardAction(input: CardInput): Promise<ActionResult & { slug?: string }> {
+export async function saveCardAction(
+  input: CardInput
+): Promise<ActionResult & { slug?: string; item?: PlanningItem }> {
   const session = await getSession();
   if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
   try {
@@ -119,7 +121,7 @@ export async function saveCardAction(input: CardInput): Promise<ActionResult & {
     });
     await writableStore.putItem("planning-item", slug, data, { by: session.name });
     refresh(input.planning);
-    return { ok: true, slug };
+    return { ok: true, slug, item: data };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
@@ -134,4 +136,20 @@ export async function deleteCardAction(
   if (!canEdit(session) || !writableStore) return;
   await writableStore.deleteItem("planning-item", slug, lang || "en");
   refresh(planningSlug);
+}
+
+/** Delete a whole board (and tombstone its cards, so none dangle). */
+export async function deletePlanningAction(formData: FormData): Promise<void> {
+  const session = await getSession();
+  if (!canEdit(session) || !writableStore) return;
+  const slug = String(formData.get("slug") ?? "");
+  if (!slug) return;
+  const cards = (await writableStore.listItems("planning-item"))
+    .map((r) => PlanningItemSchema.parse(r.data))
+    .filter((i) => i.planning === slug);
+  for (const c of cards) await writableStore.deleteItem("planning-item", c.slug, c.lang);
+  const rec = await writableStore.getItem("planning", slug);
+  await writableStore.deleteItem("planning", slug, rec?.lang ?? "en");
+  revalidatePath("/", "layout");
+  redirect("/admin/planning");
 }

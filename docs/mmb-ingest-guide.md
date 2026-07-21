@@ -7,7 +7,12 @@ Alles gaat via de write-API; niets met de hand.
 ## Kernpunten vooraf
 
 - **Auth:** elke schrijf-call stuurt `Authorization: Bearer <INGEST_TOKEN>`
-  (het token staat in de deploy-omgeving van MMB, niet in git).
+  (het token staat in de deploy-omgeving van MMB, niet in git). **Vindplaats
+  (2026-07-21):** `MusicBrain/hardware/kicad-generators/.env` (gitignored),
+  sleutels `INGEST_TOKEN` + optioneel `IMPRINT_BASE` (doel-site).
+  `publish_product.mjs`, `publish_board.py` en `publish_matrix.py` lezen dat
+  bestand automatisch; expliciete `--base`/`--token`-argumenten winnen.
+  Lokaal = `http://localhost:3000` (dev-token), live = `https://musicbrain.nl`.
 - **Een component is herbruikbaar over producten.** Eén component = één slug.
   Wil je hetzelfde component onder **cortex én reflex**, dan zet je die ene
   component-slug in de `components`-lijst van *beide* producten. Ja, dat kan.

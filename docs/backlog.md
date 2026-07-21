@@ -25,6 +25,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Kaart-body echte rich text** — nu markdown-textarea; de WYSIWYG-editor
       (zie §7) zou hier ook passen, met een content-picker voor interne links
       (`[[type/slug]]`-autolink). _(chat-idee; M)_
+- [ ] **Kaart-body-template configureerbaar** — bij het kiezen van een
+      component vult een lege body nu vast met `Werken aan [naam](/…)`. Een
+      per-bord of per-widget sjabloon met velden (`{{component}}`,
+      `{{component.description}}`) zou dit vrij definieerbaar maken (à la de
+      template-widget). _(chat-idee; M)_
 - [ ] **Generieke modus verschuifbaar** — nu read-only; een gemachtigde
       gebruiker zou ook een component tussen fasen mogen slepen (zet
       `component.phase`). Meestal doet het project dit via de API. _(idee; M)_

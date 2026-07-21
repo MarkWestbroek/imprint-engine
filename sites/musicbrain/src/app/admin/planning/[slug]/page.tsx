@@ -5,6 +5,7 @@ import { writableStore } from "@/lib/content";
 import { getSession } from "@/lib/auth";
 import { userStore } from "@/lib/auth";
 import { PlanningBoard } from "@/components/admin/planning-board";
+import { DeleteBoardButton } from "@/components/admin/delete-board-button";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -19,7 +20,10 @@ export default async function PlanningBoardPage({ params }: Props) {
     .map((r) => PlanningItemSchema.parse(r.data))
     .filter((i) => i.planning === slug);
   const users = userStore ? (await userStore.list()).map((u) => u.name) : [];
-  const components = (await store.listItems("component")).map((c) => c.slug);
+  const components = (await store.listItems("component")).map((c) => ({
+    slug: c.slug,
+    name: String((c.data as { name?: string }).name ?? c.slug),
+  }));
   const session = await getSession();
 
   return (
@@ -37,6 +41,7 @@ export default async function PlanningBoardPage({ params }: Props) {
             {planning.product}
           </Link>
         )}
+        <DeleteBoardButton slug={slug} cardCount={items.length} />
       </div>
       <p className="mb-4 text-sm text-muted">
         Drag cards between phases; click a card to edit. Every change is versioned.

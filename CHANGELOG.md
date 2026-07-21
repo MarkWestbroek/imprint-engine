@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- Planning-bord: een bord is nu **verwijderbaar** (Delete board op de
+  bordpagina — met bevestiging; tombstonet ook de kaarten, herstelbaar via
+  History). Nieuwe/bewerkte/verwijderde kaarten verschijnen **direct** (geen
+  refresh meer nodig). Een component kiezen **vult een lege kaart-body**
+  automatisch met een link naar dat component.
 - **Admin met activity-rail** (VS Code-stijl): de lange bovenbalk is vervangen
   door een smalle icon-rail links met vijf werkgebieden — **Overzicht**,
   **Content** (Pages · catalogus · Planning), **Vormgeving** (menus, thema's,
