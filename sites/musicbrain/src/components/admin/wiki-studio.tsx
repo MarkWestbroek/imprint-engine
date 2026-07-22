@@ -35,10 +35,13 @@ export function WikiStudio({
   wiki,
   folders,
   pages,
+  publishTarget,
 }: {
   wiki: Wiki;
   folders: WikiFolder[];
   pages: WikiPage[];
+  /** Host van het publicatiedoel; null = publiceren niet ingericht (bijv. op live). */
+  publishTarget: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -394,23 +397,26 @@ export function WikiStudio({
                 >
                   Bekijk op site ↗
                 </Link>
-                <button
-                  type="button"
-                  disabled={pending}
-                  onClick={() => {
-                    if (!window.confirm(`Hele wiki "${wiki.title}" naar live publiceren?`)) return;
-                    setPublishMsg(null);
-                    run(async () => {
-                      const result = await publishWikiAction(wiki.slug);
-                      if (result.ok) setPublishMsg(`Gepubliceerd: ${result.published} items`);
-                      return result;
-                    });
-                  }}
-                  className="rounded border border-accent px-2 py-0.5 text-xs text-accent hover:bg-accent/10 disabled:opacity-40"
-                  title="POST alle items van deze wiki naar de live content-API (PUBLISH_URL + PUBLISH_TOKEN)"
-                >
-                  Publiceer → live
-                </button>
+                {publishTarget && (
+                  <button
+                    type="button"
+                    disabled={pending}
+                    onClick={() => {
+                      if (!window.confirm(`Hele wiki "${wiki.title}" publiceren naar ${publishTarget}?`))
+                        return;
+                      setPublishMsg(null);
+                      run(async () => {
+                        const result = await publishWikiAction(wiki.slug);
+                        if (result.ok) setPublishMsg(`Gepubliceerd: ${result.published} items`);
+                        return result;
+                      });
+                    }}
+                    className="rounded border border-accent px-2 py-0.5 text-xs text-accent hover:bg-accent/10 disabled:opacity-40"
+                    title="POST alle items van deze wiki naar de content-API van het doel"
+                  >
+                    Publiceer → {publishTarget}
+                  </button>
+                )}
               </>
             )}
             {(selectedPage || selectedFolder) && (

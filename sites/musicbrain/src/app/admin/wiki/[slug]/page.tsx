@@ -38,7 +38,22 @@ export default async function WikiStudioPage({ params }: Props) {
         <h1 className="text-2xl font-semibold tracking-tight">{wiki.title}</h1>
         <span className="font-mono text-xs text-muted">/{wiki.slug}</span>
       </div>
-      <WikiStudio wiki={wiki} folders={folders} pages={pages} />
+      <WikiStudio wiki={wiki} folders={folders} pages={pages} publishTarget={publishTarget()} />
     </div>
   );
+}
+
+/**
+ * Doel van de publiceer-knop, of null als publiceren hier niet is ingericht.
+ * Live heeft geen PUBLISH_URL/PUBLISH_TOKEN — daar verschijnt de knop dus
+ * niet (op live publiceer je niet nog een keer naar live).
+ */
+function publishTarget(): string | null {
+  const url = process.env.PUBLISH_URL;
+  if (!url || !process.env.PUBLISH_TOKEN) return null;
+  try {
+    return new URL(url).host;
+  } catch {
+    return url;
+  }
 }
