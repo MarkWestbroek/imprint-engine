@@ -1,5 +1,9 @@
 # Imprint — handleiding voor redacteuren
 
+> **Let op:** deze handleiding leeft nu ook als de **Help-wiki** op de site
+> (`/help`, bewerkbaar in de admin onder Content → Wikis). De wiki is de
+> levende versie; dit bestand blijft voorlopig als reservekopie staan.
+
 Wat je als site-redacteur met Imprint kunt, zonder techniek. De technische
 tegenhanger is [architecture.md](architecture.md); wat er per versie bij kwam
 staat in de [CHANGELOG](../CHANGELOG.md).

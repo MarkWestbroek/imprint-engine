@@ -25,6 +25,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- Wiki-studio: **inline hernoemen** (dubbelklik op een boom-item; Enter/blur
+  bewaart, Escape annuleert). Hernoemen wijzigt alléén de titel — de slug
+  blijft stabiel, dus interne verwijzingen en URL's breken niet.
+- Wiki: **Publiceer → live** — knop in de studio die de hele wiki (wiki →
+  folders, ouders eerst → pagina's) naar de live content-API POST met het
+  INGEST_TOKEN van het doel (`PUBLISH_URL`/`PUBLISH_TOKEN` in de lokale
+  `.env.local`; zie .env.example). Nogmaals publiceren = nieuwe versies op
+  live. De wiki-typen zijn daarvoor INGESTABLE geworden op de API.
+- **Gedogfood**: de redacteurshandleiding leeft nu als **Help-wiki**
+  (`/help`) — vier folders (Aan de slag, Content bewerken, Vormgeving,
+  Gevorderd) met de secties als pagina's. `docs/handleiding.md` blijft
+  voorlopig als reservekopie (met verwijzing bovenin).
 - Wiki-studio: **volgorde slepen** — tijdens het slepen verschijnen
   invoeg-streepjes tussen pagina's en folders; droppen voegt in op die
   positie en hernummert de broertjes server-side (computeMove-stijl, zoals

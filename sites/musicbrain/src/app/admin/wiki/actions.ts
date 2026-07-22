@@ -198,6 +198,81 @@ export async function moveWikiItemAction(
   }
 }
 
+/**
+ * Publiceer een lokaal opgebouwde wiki naar de live site: POST per item op
+ * de content-API van het doel (Bearer INGEST_TOKEN), in relatie-veilige
+ * volgorde — wiki → folders (ouders eerst) → pagina's. Elke publicatie is
+ * daar gewoon een nieuwe bitemporele versie; nogmaals publiceren = update.
+ * Vereist in .env.local: PUBLISH_URL (bijv. https://musicbrain.nl) en
+ * PUBLISH_TOKEN (het INGEST_TOKEN van het doel).
+ */
+export async function publishWikiAction(
+  wikiSlug: string
+): Promise<ActionResult & { published?: number }> {
+  const session = await getSession();
+  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const base = process.env.PUBLISH_URL?.replace(/\/+$/, "");
+  const token = process.env.PUBLISH_TOKEN;
+  if (!base || !token) {
+    return { ok: false, error: "Zet PUBLISH_URL en PUBLISH_TOKEN in sites/musicbrain/.env.local" };
+  }
+
+  try {
+    const wikiRec = (await writableStore.listItems("wiki")).find((i) => i.slug === wikiSlug);
+    if (!wikiRec) return { ok: false, error: `Wiki "${wikiSlug}" niet gevonden` };
+    const wiki = WikiSchema.parse(wikiRec.data);
+
+    const folders = (await writableStore.listItems("wiki-folder")).flatMap((r) => {
+      const f = WikiFolderSchema.safeParse(r.data);
+      return f.success && f.data.wiki === wikiSlug ? [f.data] : [];
+    });
+    const pages = (await writableStore.listItems("wiki-page")).flatMap((r) => {
+      const p = WikiPageSchema.safeParse(r.data);
+      return p.success && p.data.wiki === wikiSlug ? [p.data] : [];
+    });
+
+    // Ouders vóór kinderen (relatieregel wiki-folder.parent is enforced).
+    const ordered: WikiFolder[] = [];
+    const emitted = new Set<string>([""]);
+    let remaining = [...folders];
+    while (remaining.length > 0) {
+      const ready = remaining.filter((f) => emitted.has(f.parent || ""));
+      if (ready.length === 0) {
+        ordered.push(...remaining); // wees-parents: laat de API het zeggen
+        break;
+      }
+      for (const f of ready) {
+        ordered.push(f);
+        emitted.add(f.slug);
+      }
+      remaining = remaining.filter((f) => !emitted.has(f.slug));
+    }
+
+    const post = async (type: string, slug: string, data: unknown) => {
+      const res = await fetch(`${base}/api/content/${type}/${encodeURIComponent(slug)}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`${type}/${slug}: ${res.status} ${text.slice(0, 200)}`);
+      }
+    };
+
+    await post("wiki", wiki.slug, wiki);
+    for (const f of ordered) await post("wiki-folder", f.slug, f);
+    for (const p of pages) await post("wiki-page", p.slug, p);
+
+    return { ok: true, published: 1 + ordered.length + pages.length };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 /** Verwijderen (tombstone). Folders alleen als ze leeg zijn — geen cascade. */
 export async function deleteWikiItemAction(
   kind: "wiki-folder" | "wiki-page",

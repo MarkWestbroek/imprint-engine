@@ -165,14 +165,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         nummering); folders verwijderen alleen als ze leeg zijn. De platte
         typelijsten zijn uit de rail; generiek bewerken kan nog via
         /admin/wiki-folder e.d. Volgorde slepen met invoeg-streepjes zit
-        erin (hernummering server-side). Nog open: inline hernoemen in de
-        boom. _(was M)_
-      - [ ] **Publiceer-knop** — lokaal opgebouwde wiki met één knop naar
-        live via bundle-POST op de content-API (INGEST_TOKEN); volgorde
-        wiki → folders → pagina's. _(S–M)_
-      - [ ] Gedogfood: Help-wiki vullen met de handleiding (de eerste
-        aanzet — wiki "help" met één folder/pagina — staat al in de
-        lokale DB).
+        erin (hernummering server-side), net als inline hernoemen
+        (dubbelklik; slug blijft stabiel dus links breken niet). _(was M)_
+      - [x] **Publiceer-knop** (juli 2026) — "Publiceer → live" in de
+        studio: POST per item naar de live content-API (wiki → folders,
+        ouders eerst → pagina's) met PUBLISH_URL/PUBLISH_TOKEN uit de
+        lokale .env.local. Wiki-typen zijn INGESTABLE.
+      - [x] Gedogfood (juli 2026): de handleiding leeft als Help-wiki
+        (/help, 4 folders, 12 pagina's); docs/handleiding.md blijft als
+        reservekopie.
       - [ ] Later: policies als content (PDP/PAP), `[[wiki-links]]`,
         drag-&-drop verplaatsen, overerving, `visibility: members` op de
         route (dynamisch/guard). _(M–L)_

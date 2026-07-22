@@ -9,6 +9,7 @@ import {
   createPageAction,
   deleteWikiItemAction,
   moveWikiItemAction,
+  publishWikiAction,
   saveFolderAction,
   savePageAction,
   saveWikiAction,
@@ -49,6 +50,9 @@ export function WikiStudio({
   const [dragging, setDragging] = useState<Selection>(null);
   /** Actieve invoegpositie tijdens slepen: "kind:parent:index" → streepje. */
   const [dropMark, setDropMark] = useState<string | null>(null);
+  /** Inline hernoemen in de boom (dubbelklik): welke node + concepttitel. */
+  const [renaming, setRenaming] = useState<{ sel: NonNullable<Selection>; title: string } | null>(null);
+  const [publishMsg, setPublishMsg] = useState<string | null>(null);
 
   const selectedFolder =
     selected?.kind === "folder" ? folders.find((f) => f.slug === selected.slug) : undefined;
@@ -187,6 +191,37 @@ export function WikiStudio({
     });
   };
 
+  // ── Inline hernoemen (dubbelklik) — wijzigt alléén de titel; de slug
+  // blijft stabiel, dus verwijzingen en URL's breken niet. ───────────────
+  const commitRename = () => {
+    if (!renaming) return;
+    const title = renaming.title.trim();
+    const { sel } = renaming;
+    setRenaming(null);
+    if (!title) return;
+    if (sel.kind === "page") {
+      const page = pages.find((p) => p.slug === sel.slug);
+      if (page && page.title !== title) run(() => savePageAction({ ...page, title }));
+    } else {
+      const folder = folders.find((f) => f.slug === sel.slug);
+      if (folder && folder.title !== title) run(() => saveFolderAction({ ...folder, title }));
+    }
+  };
+
+  const renameInput = (
+    <input
+      autoFocus
+      value={renaming?.title ?? ""}
+      onChange={(e) => renaming && setRenaming({ ...renaming, title: e.target.value })}
+      onBlur={commitRename}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") commitRename();
+        if (e.key === "Escape") setRenaming(null);
+      }}
+      className="w-full rounded border border-accent bg-background px-1.5 py-0.5 text-sm focus:outline-none"
+    />
+  );
+
   // ── Boom ──────────────────────────────────────────────────────────────
   const renderTree = (parent: string, depth: number): React.ReactNode => {
     const childFolders = folders.filter((f) => (f.parent || "") === parent);
@@ -197,18 +232,26 @@ export function WikiStudio({
         {childPages.map((p, i) => (
           <li key={p.slug}>
             <DropZone kind="page" parent={parent} index={i} />
-            <button
-              type="button"
-              {...dragProps({ kind: "page", slug: p.slug })}
-              onClick={() => select({ kind: "page", slug: p.slug })}
-              className={`w-full cursor-grab rounded px-1.5 py-0.5 text-left text-sm ${
-                selected?.kind === "page" && selected.slug === p.slug
-                  ? "bg-accent/15 font-semibold text-accent"
-                  : "text-foreground hover:bg-surface"
-              }`}
-            >
-              {p.title}
-            </button>
+            {renaming?.sel.kind === "page" && renaming.sel.slug === p.slug ? (
+              renameInput
+            ) : (
+              <button
+                type="button"
+                {...dragProps({ kind: "page", slug: p.slug })}
+                onClick={() => select({ kind: "page", slug: p.slug })}
+                onDoubleClick={() =>
+                  setRenaming({ sel: { kind: "page", slug: p.slug }, title: p.title })
+                }
+                title="Dubbelklik om te hernoemen"
+                className={`w-full cursor-grab rounded px-1.5 py-0.5 text-left text-sm ${
+                  selected?.kind === "page" && selected.slug === p.slug
+                    ? "bg-accent/15 font-semibold text-accent"
+                    : "text-foreground hover:bg-surface"
+                }`}
+              >
+                {p.title}
+              </button>
+            )}
           </li>
         ))}
         <li>
@@ -217,18 +260,26 @@ export function WikiStudio({
         {childFolders.map((f, i) => (
           <li key={f.slug} className="mt-1" {...dropProps(f.slug)}>
             <DropZone kind="folder" parent={parent} index={i} />
-            <button
-              type="button"
-              {...dragProps({ kind: "folder", slug: f.slug })}
-              onClick={() => select({ kind: "folder", slug: f.slug })}
-              className={`w-full cursor-grab rounded px-1.5 py-0.5 text-left font-mono text-[11px] uppercase tracking-[0.14em] ${
-                selected?.kind === "folder" && selected.slug === f.slug
-                  ? "bg-accent/15 font-semibold text-accent"
-                  : "text-muted hover:bg-surface hover:text-foreground"
-              }`}
-            >
-              ▸ {f.title}
-            </button>
+            {renaming?.sel.kind === "folder" && renaming.sel.slug === f.slug ? (
+              renameInput
+            ) : (
+              <button
+                type="button"
+                {...dragProps({ kind: "folder", slug: f.slug })}
+                onClick={() => select({ kind: "folder", slug: f.slug })}
+                onDoubleClick={() =>
+                  setRenaming({ sel: { kind: "folder", slug: f.slug }, title: f.title })
+                }
+                title="Dubbelklik om te hernoemen"
+                className={`w-full cursor-grab rounded px-1.5 py-0.5 text-left font-mono text-[11px] uppercase tracking-[0.14em] ${
+                  selected?.kind === "folder" && selected.slug === f.slug
+                    ? "bg-accent/15 font-semibold text-accent"
+                    : "text-muted hover:bg-surface hover:text-foreground"
+                }`}
+              >
+                ▸ {f.title}
+              </button>
+            )}
             {renderTree(f.slug, depth + 1)}
           </li>
         ))}
@@ -335,13 +386,32 @@ export function WikiStudio({
               </Link>
             )}
             {!selected && (
-              <Link
-                href={`/${wiki.slug}`}
-                target="_blank"
-                className="text-xs text-accent underline underline-offset-4"
-              >
-                Bekijk op site ↗
-              </Link>
+              <>
+                <Link
+                  href={`/${wiki.slug}`}
+                  target="_blank"
+                  className="text-xs text-accent underline underline-offset-4"
+                >
+                  Bekijk op site ↗
+                </Link>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => {
+                    if (!window.confirm(`Hele wiki "${wiki.title}" naar live publiceren?`)) return;
+                    setPublishMsg(null);
+                    run(async () => {
+                      const result = await publishWikiAction(wiki.slug);
+                      if (result.ok) setPublishMsg(`Gepubliceerd: ${result.published} items`);
+                      return result;
+                    });
+                  }}
+                  className="rounded border border-accent px-2 py-0.5 text-xs text-accent hover:bg-accent/10 disabled:opacity-40"
+                  title="POST alle items van deze wiki naar de live content-API (PUBLISH_URL + PUBLISH_TOKEN)"
+                >
+                  Publiceer → live
+                </button>
+              </>
             )}
             {(selectedPage || selectedFolder) && (
               <button
@@ -364,6 +434,7 @@ export function WikiStudio({
         </div>
 
         {error && <p className="mb-3 text-sm text-red-400">{error}</p>}
+        {publishMsg && <p className="mb-3 text-sm text-accent">{publishMsg}</p>}
 
         <div className="space-y-3">
           <label className="block">

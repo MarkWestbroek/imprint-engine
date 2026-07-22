@@ -32,6 +32,10 @@ const INGESTABLE = new Set<ContentType>([
   "board-spec",
   "release",
   "page",
+  // Wiki-publicatie (lokaal → live): volgorde wiki → folders → pagina's.
+  "wiki",
+  "wiki-folder",
+  "wiki-page",
 ]);
 
 function json(data: unknown, cache = true) {
