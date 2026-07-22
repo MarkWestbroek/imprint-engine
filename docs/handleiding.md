@@ -110,6 +110,32 @@ het opslaan geweigerd met een duidelijke melding. Verwijzingen tussen content
 (bijv. een release die naar een component wijst) worden gecontroleerd — je
 kunt niet naar iets verwijzen dat niet bestaat (instelbaar onder **Relations**).
 
+## Vaste pagina's vs. content-pagina's
+
+Niet elke pagina op de site is in de admin te bewerken — en dat is bewust.
+Er zijn twee soorten:
+
+### Content-pagina's (bewerk je in de studio)
+
+Alles onder **Pages**: `/editor`, `/about`, `/planning`, de devlog-posts, en
+elke pagina die je zelf aanmaakt. Deze zijn gecomponeerd uit widgets en/of
+markdown en verschijnen in de pagina-lijst van de admin.
+
+### Vaste pagina's (weergaven, in code)
+
+De home (`/`), **`/releases`**, `/products/…`, `/components/…` en `/boards`
+zijn hand-gebouwde weergaven ("views") in de code van de site. Ze tonen
+content úit de database — de releases, producten en componenten die je in de
+admin beheert — maar hun **opmaak en indeling** liggen in code vast. Je ziet
+ze dus niet in de pagina-lijst.
+
+Vuistregel: **de inhoud is van jou** (releases komen bijv. automatisch
+binnen via GitHub en zijn in de admin te bewerken), **de weergave is van de
+site**. Wil je de indeling van zo'n vaste pagina anders, dan is dat een
+code-wijziging — geen redactie. Voor product-, component- en releasepagina's
+bestaat wel een tussenweg: onder **Default views** kun je per contenttype de
+standaardweergave vervangen door een zelf gecomponeerde paginasjabloon.
+
 ## Pagina's maken in de studio
 
 **Pages → Edit** (of **+ New page**) opent de studio: links de instellingen,

@@ -135,6 +135,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Documentatie differentiëren** — `docs` is nu één optioneel veld (pagina-slug
       of inline markdown). Het UML liet `Documentation` bewust vaag; board-spec was
       de eerste uitwerking. _(open ontwerp; M)_
+- [ ] **Wiki (site-in-de-site)** — drie nieuwe contenttypen (Wiki /
+      WikiFolder / WikiPage): een op zichzelf staande informatiebundel met
+      eigen treeview-navigatie onder één URL-voorvoegsel (Help, Cortex
+      deep-dive). Pagina's verplaatsbaar via het folder-veld. Plus
+      **autorisatie als PBAC-lite**: eerst één centraal `authorize()`-PEP
+      met de vaste regelset (admin alles / editor schrijft / reader leest /
+      publiek alleen `visibility: public`), later policies als content
+      (PDP/PAP) en wiki-overerving. Ontwerp: docs/design/wiki.md. _(M–L)_
 - [x] ~~**Asset-opruiming**~~ — gedaan in 0.11.0: `npm run assets:gc`
       (dry-run default, `--delete` om echt op te ruimen). Verwijdert alleen
       bestanden waar geen énkele historische rij naar wijst — History en

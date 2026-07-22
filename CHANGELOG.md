@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- Docs: handleiding legt nu **vaste pagina's vs. content-pagina's** uit
+  (welke routes code zijn en welke je in de studio bewerkt); nieuw
+  ontwerpdoc **wiki + PBAC-lite-autorisatie** (docs/design/wiki.md) met
+  bijbehorend backlog-item.
 - **Meer doorklikbaar**: de "Latest release"-tegel op de home en de
   release-titels op `/releases` linken nu naar de release-detailpagina
   (`/releases/<project>-<versie>`); het "Try it before it exists"-blok op de
