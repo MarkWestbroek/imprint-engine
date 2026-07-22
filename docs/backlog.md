@@ -156,6 +156,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         `visibility: members` gaat door het PEP en rendert dynamisch
         (ledencontent komt niet in statische HTML). Boom-query in
         lib/wiki.ts, view in components/wiki-view.tsx.
+      - [ ] **Wiki-studio** — boom links (slepen = folder/parent-veld
+        wijzigen), eigenschappen + inhoud rechts; slugs per wiki
+        scopen/genereren i.p.v. handmatig prefixen. Zie wiki.md §4b. _(M)_
+      - [ ] **Publiceer-knop** — lokaal opgebouwde wiki met één knop naar
+        live via bundle-POST op de content-API (INGEST_TOKEN); volgorde
+        wiki → folders → pagina's. _(S–M)_
       - [ ] Gedogfood: Help-wiki vullen met de handleiding (de eerste
         aanzet — wiki "help" met één folder/pagina — staat al in de
         lokale DB).

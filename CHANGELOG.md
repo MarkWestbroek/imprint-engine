@@ -25,6 +25,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- Wiki-fixes uit de eerste testronde: een met **lang=nl** aangemaakte wiki
+  404'te (de lookup zocht hard op "en"; nu taal-tolerant tot echte
+  meertaligheid er is), en in de **Visueel-tab** van markdown-velden in
+  schema-formulieren sprong de focus steeds uit het schrijfvlak (het veld
+  zat in een `<label>`, die elke klik doorstuurde naar de eerste knop).
+  Ontwerp bijgewerkt met de **wiki-studio**-richting (boom links, inhoud
+  rechts; slugs per wiki scopen) en een **publiceer-knop** (lokale wiki →
+  live via bundle-POST op de content-API) — beide op de backlog.
 - Docs: handleiding legt nu **vaste pagina's vs. content-pagina's** uit
   (welke routes code zijn en welke je in de studio bewerkt); nieuw
   ontwerpdoc **wiki + PBAC-lite-autorisatie** (docs/design/wiki.md) met

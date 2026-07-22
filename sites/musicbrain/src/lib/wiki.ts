@@ -19,9 +19,15 @@ const byOrder = <T extends { order: number; title: string }>(a: T, b: T) =>
 
 export async function getWiki(slug: string): Promise<Wiki | null> {
   if (!writableStore) return null;
-  const item = await writableStore.getItem("wiki", slug);
-  if (!item) return null;
-  const parsed = WikiSchema.safeParse(item.data);
+  // Taal-tolerant: een wiki is (nog) niet meertalig, dus we matchen op slug
+  // ongeacht lang — anders 404't een met lang=nl aangemaakte wiki, omdat
+  // getItem standaard op "en" zoekt. Echte meertaligheid volgt later het
+  // design/meertaligheid.md-mechanisme.
+  const items = await writableStore.listItems("wiki");
+  const matches = items.filter((i) => i.slug === slug);
+  const preferred = matches.find((i) => i.lang === "en") ?? matches[0];
+  if (!preferred) return null;
+  const parsed = WikiSchema.safeParse(preferred.data);
   return parsed.success ? parsed.data : null;
 }
 

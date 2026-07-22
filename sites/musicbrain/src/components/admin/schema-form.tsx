@@ -97,13 +97,16 @@ function Field({
   }
 
   if (type === "string" && MARKDOWN_KEYS.has(name)) {
+    // Géén <label>-wrapper: een klik in een label focust het eerste
+    // focusbare element erin (de "Visueel"-tabknop), waardoor de caret
+    // steeds uit het contentEditable-schrijfvlak springt.
     return (
-      <label className="block">
+      <div className="block">
         <span className={labelCls}>{name}</span>
         <div className="mt-1">
           <MarkdownEditor value={String(value ?? "")} onChange={onChange} />
         </div>
-      </label>
+      </div>
     );
   }
 

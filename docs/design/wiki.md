@@ -120,6 +120,26 @@ diepere policy het overneemt. Dit is het ingewikkelde deel (maskeren,
 conflicten) — bewust uitgesteld; het model hoeft er alleen op voorbereid te
 zijn doordat resources hun `wiki→`/`folder→`-keten kennen (en dat doen ze).
 
+## 4b. Wiki-studio (admin-ervaring, uit Marks eerste testronde)
+
+De platte typelijsten (alle folders van alle wiki's door elkaar) zijn
+contra-intuïtief voor genest materiaal: `Wiki ◆— WikiFolder ◆— WikiPage`
+is compositie, en zo wil je het ook bewerken. Richting:
+
+- **Wiki-studio** per wiki: navigatieboom links (folders/pagina's,
+  verplaatsen door slepen — datamodel: alleen het `folder`/`parent`-veld
+  wijzigt), eigenschappen + inhoud rechts. Leesrichting-principe van Mark:
+  in de pagina-studio staan de props links omdat *props → weergave* is
+  (L→R); in de wiki-studio is de boom links omdat *structuur → inhoud* de
+  leesrichting is.
+- **Slugs scopen per wiki**: slugs zijn nu globaal per type, waardoor je in
+  de praktijk handmatig prefixt ("deepdive-cortex-inleiding"). De studio
+  hoort slugs per wiki te genereren/scopen.
+- **Publiceren lokaal → live**: een wiki lokaal opbouwen en dan met één
+  knop naar live zetten — als bundle-POST naar de bestaande content-API
+  (`POST /api/content` met INGEST_TOKEN), zoals de hardware-toolkit borden
+  post. Volgorde binnen de bundle: wiki → folders → pagina's (relatieregels).
+
 ## 5. Bouwvolgorde
 
 1. Schema's (Wiki/WikiFolder/WikiPage + `visibility`) + relatieregels. _(S)_
