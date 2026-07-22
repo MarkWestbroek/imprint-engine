@@ -149,8 +149,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         zodat later een policies-als-content-PDP of Marks ODRL-gebaseerde
         taal kan inpluggen). `staticPdp` = vaste regelset; `canEdit()` is
         een wrapper over het PEP.
-      - [ ] Publieke route + wiki-chrome (treeview links) + boom-query.
-      - [ ] Gedogfood: Help-wiki vullen met de handleiding.
+      - [x] Publieke route + wiki-chrome (juli 2026): `/<wiki>/…` rendert in
+        de catch-all met navigatieboom links en pagina rechts. Opgelost op
+        het laatste segment (paginaslug uniek per wiki), dus verplaatsen
+        breekt geen links; het folderpad in de URL is cosmetisch.
+        `visibility: members` gaat door het PEP en rendert dynamisch
+        (ledencontent komt niet in statische HTML). Boom-query in
+        lib/wiki.ts, view in components/wiki-view.tsx.
+      - [ ] Gedogfood: Help-wiki vullen met de handleiding (de eerste
+        aanzet — wiki "help" met één folder/pagina — staat al in de
+        lokale DB).
       - [ ] Later: policies als content (PDP/PAP), `[[wiki-links]]`,
         drag-&-drop verplaatsen, overerving, `visibility: members` op de
         route (dynamisch/guard). _(M–L)_

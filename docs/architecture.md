@@ -337,6 +337,31 @@ reader leest / publiek alleen `visibility: "public"`; later policies als
 content, of een ODRL-gebaseerde taal). `canEdit()` in auth.ts is een dunne
 wrapper over het PEP. Ontwerp en groeipad: design/wiki.md §4.
 
+```mermaid
+sequenceDiagram
+    autonumber
+    participant R as Route / Server Action<br/>(bijv. saveAction, wiki-route)
+    participant PEP as PEP<br/>authorize()
+    participant PDP as PDP<br/>PolicyDecisionPoint.decide()
+    participant PIP as PIP<br/>sessie (+ attrs, later)
+    participant PAP as PAP<br/>(later: policies als content)
+
+    R->>PEP: authorize(session, action, resource)
+    PEP->>PIP: subject uit sessie (rol, naam)
+    PIP-->>PEP: { role, name }
+    PEP->>PDP: decide({ subject, action, resource, context })
+    Note over PDP: nu: staticPdp (vaste regelset)<br/>later: policies-PDP of ODRL-PDP
+    PDP-->>PAP: (later) lees policies uit de bitemporale tabel
+    PAP-->>PDP: (later) regels
+    PDP-->>PEP: { allow, reason }
+    PEP-->>R: boolean
+    Note over R: allow → uitvoeren<br/>deny → 403 / login / verborgen
+```
+
+De verwisselbaarheid zit in stap 4: `decide()` is het hele contract. Een
+andere beslisser (policies-als-content, ODRL-vertaling) vervangt alleen de
+PDP-deelnemer; route-code en PEP blijven identiek.
+
 ## 4. Opslag: bitemporal-light (§B3)
 
 Eén generieke tabel `content_items`; de payload per type blijft een

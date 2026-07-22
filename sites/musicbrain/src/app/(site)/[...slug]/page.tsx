@@ -2,13 +2,19 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { store } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
+import { getSession } from "@/lib/auth";
+import { authorize } from "@/lib/authorize";
+import { getWiki, getWikiTree } from "@/lib/wiki";
 import { Markdown } from "@/components/markdown";
 import { PageRenderer } from "@/components/page-renderer";
+import { WikiView } from "@/components/wiki-view";
 
 /**
  * Generic content pages: anything in content/pages/ that isn't claimed by a
  * dedicated route renders here — markdown pages (about, posts/*, …) as an
  * article, composed pages (.json with a layout) through the widget engine.
+ * A first segment that matches a Wiki-slug renders the wiki instead
+ * (site-in-de-site, design/wiki.md): tree navigation left, page right.
  */
 
 type Props = { params: Promise<{ slug: string[] }> };
@@ -28,8 +34,17 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = await store.getPage(slug.join("/"));
-  if (!page) return {};
-  return { title: page.title, description: page.description };
+  if (page) return { title: page.title, description: page.description };
+  const wiki = await getWiki(slug[0]);
+  if (wiki && wiki.visibility === "public") {
+    const { pages } = await getWikiTree(wiki.slug);
+    const wikiPage = slug.length > 1 ? pages.find((p) => p.slug === slug[slug.length - 1]) : null;
+    return {
+      title: wikiPage ? `${wikiPage.title} — ${wiki.title}` : wiki.title,
+      description: wiki.description,
+    };
+  }
+  return {};
 }
 
 export default async function ContentPage({ params }: Props) {
@@ -43,6 +58,30 @@ export default async function ContentPage({ params }: Props) {
   const target = site.aliases[slug[0]];
   if (target) {
     permanentRedirect(`/${[target, ...slug.slice(1)].join("/")}`);
+  }
+
+  // Wiki? Het eerste segment kan een wiki-slug zijn. Opgelost wordt op het
+  // laatste segment (paginaslug, uniek per wiki) — het folderpad in de URL
+  // is cosmetisch, dus een verplaatste pagina breekt geen oude links.
+  const wiki = await getWiki(slug[0]);
+  if (wiki) {
+    // PEP: members-wiki's vragen een sessie (maakt de render dynamisch —
+    // precies goed: ledencontent hoort niet in statische HTML); publieke
+    // wiki's checken zonder cookies en blijven cachebaar.
+    const session = wiki.visibility === "members" ? await getSession() : null;
+    const allowed = authorize(session, "read", {
+      type: "wiki",
+      slug: wiki.slug,
+      visibility: wiki.visibility,
+      wiki: wiki.slug,
+    });
+    if (!allowed) notFound();
+
+    const { folders, pages } = await getWikiTree(wiki.slug);
+    const wikiPage =
+      slug.length > 1 ? (pages.find((p) => p.slug === slug[slug.length - 1]) ?? null) : null;
+    if (slug.length > 1 && !wikiPage) notFound();
+    return <WikiView wiki={wiki} folders={folders} pages={pages} current={wikiPage} />;
   }
 
   const page = await store.getPage(joined, await readOpts());

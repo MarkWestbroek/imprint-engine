@@ -16,9 +16,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   `PolicyDecisionPoint`-interface (AuthZEN-snijvlak): vandaag de vaste
   regelset (`staticPdp`), later policies-als-content of een ODRL-gebaseerde
   policytaal — zonder dat call-sites veranderen. `canEdit()` is een dunne
-  wrapper over het PEP geworden. De publieke wiki-route (eigen
-  navigatieboom) volgt. Na deploy: `db:seed -- --only=relations` voor de
-  nieuwe regels.
+  wrapper over het PEP geworden. Na deploy: `db:seed -- --only=relations`
+  voor de nieuwe regels.
+- **Wiki publiek** (stap 3): `/<wiki>/…` rendert de wiki met navigatieboom
+  links en pagina rechts. URL's zijn `/<wiki>/<folderpad>/<pagina>`, maar
+  opgelost wordt op de paginaslug — een verplaatste pagina breekt geen oude
+  links. `visibility: members` loopt door het PEP en rendert dynamisch;
+  publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
+  mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
+  AuthZEN-snijvlak).
 - Docs: handleiding legt nu **vaste pagina's vs. content-pagina's** uit
   (welke routes code zijn en welke je in de studio bewerkt); nieuw
   ontwerpdoc **wiki + PBAC-lite-autorisatie** (docs/design/wiki.md) met
