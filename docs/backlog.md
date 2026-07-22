@@ -164,8 +164,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         wiki gescopet en uit de titel gegenereerd (wiki-prefix +
         nummering); folders verwijderen alleen als ze leeg zijn. De platte
         typelijsten zijn uit de rail; generiek bewerken kan nog via
-        /admin/wiki-folder e.d. Nog open: inline hernoemen in de boom,
-        volgorde slepen (nu order-veld). _(was M)_
+        /admin/wiki-folder e.d. Volgorde slepen met invoeg-streepjes zit
+        erin (hernummering server-side). Nog open: inline hernoemen in de
+        boom. _(was M)_
       - [ ] **Publiceer-knop** — lokaal opgebouwde wiki met één knop naar
         live via bundle-POST op de content-API (INGEST_TOKEN); volgorde
         wiki → folders → pagina's. _(S–M)_

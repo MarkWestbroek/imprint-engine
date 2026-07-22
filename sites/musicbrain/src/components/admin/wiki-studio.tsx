@@ -8,6 +8,7 @@ import {
   createFolderAction,
   createPageAction,
   deleteWikiItemAction,
+  moveWikiItemAction,
   saveFolderAction,
   savePageAction,
   saveWikiAction,
@@ -46,6 +47,8 @@ export function WikiStudio({
   const [draft, setDraft] = useState<Record<string, unknown> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState<Selection>(null);
+  /** Actieve invoegpositie tijdens slepen: "kind:parent:index" → streepje. */
+  const [dropMark, setDropMark] = useState<string | null>(null);
 
   const selectedFolder =
     selected?.kind === "folder" ? folders.find((f) => f.slug === selected.slug) : undefined;
@@ -97,8 +100,61 @@ export function WikiStudio({
   const dragProps = (sel: NonNullable<Selection>) => ({
     draggable: true,
     onDragStart: () => setDragging(sel),
-    onDragEnd: () => setDragging(null),
+    onDragEnd: () => {
+      setDragging(null);
+      setDropMark(null);
+    },
   });
+
+  /**
+   * Dunne zone tussen items: licht op als invoeg-streepje wanneer er een
+   * passend item overheen sleept; droppen voegt in op die positie
+   * (moveWikiItemAction hernummert de broertjes server-side).
+   */
+  const DropZone = ({ kind, parent, index }: { kind: "page" | "folder"; parent: string; index: number }) => {
+    const key = `${kind}:${parent}:${index}`;
+    const accepts =
+      dragging?.kind === kind &&
+      !(kind === "page" && parent === "") &&
+      !(kind === "folder" &&
+        dragging !== null &&
+        (parent === dragging.slug || isDescendant(parent, dragging.slug)));
+    if (!dragging) return null;
+    return (
+      <div
+        onDragOver={(e) => {
+          if (!accepts) return;
+          e.preventDefault();
+          setDropMark(key);
+        }}
+        onDragLeave={() => setDropMark((m) => (m === key ? null : m))}
+        onDrop={(e) => {
+          if (!accepts || !dragging) return;
+          e.preventDefault();
+          e.stopPropagation();
+          const moved = dragging.slug;
+          setDragging(null);
+          setDropMark(null);
+          run(() =>
+            moveWikiItemAction(
+              kind === "page" ? "wiki-page" : "wiki-folder",
+              moved,
+              wiki.slug,
+              parent,
+              index
+            )
+          );
+        }}
+        className="-my-0.5 h-2"
+      >
+        <div
+          className={`mx-1 h-0.5 rounded transition-colors ${
+            dropMark === key ? "bg-accent" : "bg-transparent"
+          }`}
+        />
+      </div>
+    );
+  };
   const dropProps = (targetFolder: string) => ({
     onDragOver: (e: React.DragEvent) => e.preventDefault(),
     onDrop: (e: React.DragEvent) => {
@@ -137,8 +193,9 @@ export function WikiStudio({
     if (childFolders.length === 0 && childPages.length === 0) return null;
     return (
       <ul className={depth > 0 ? "ml-2 border-l border-line pl-2" : undefined}>
-        {childPages.map((p) => (
+        {childPages.map((p, i) => (
           <li key={p.slug}>
+            <DropZone kind="page" parent={parent} index={i} />
             <button
               type="button"
               {...dragProps({ kind: "page", slug: p.slug })}
@@ -153,8 +210,12 @@ export function WikiStudio({
             </button>
           </li>
         ))}
-        {childFolders.map((f) => (
+        <li>
+          <DropZone kind="page" parent={parent} index={childPages.length} />
+        </li>
+        {childFolders.map((f, i) => (
           <li key={f.slug} className="mt-1" {...dropProps(f.slug)}>
+            <DropZone kind="folder" parent={parent} index={i} />
             <button
               type="button"
               {...dragProps({ kind: "folder", slug: f.slug })}
@@ -170,6 +231,9 @@ export function WikiStudio({
             {renderTree(f.slug, depth + 1)}
           </li>
         ))}
+        <li>
+          <DropZone kind="folder" parent={parent} index={childFolders.length} />
+        </li>
       </ul>
     );
   };

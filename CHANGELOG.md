@@ -25,6 +25,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- Wiki-studio: **volgorde slepen** — tijdens het slepen verschijnen
+  invoeg-streepjes tussen pagina's en folders; droppen voegt in op die
+  positie en hernummert de broertjes server-side (computeMove-stijl, zoals
+  het planbord: alleen gewijzigde items krijgen een nieuwe versie).
+  Cykel-bescherming zit ook client-side, dus onmogelijke posities lichten
+  niet op.
 - **Wiki-studio** (wiki.md §4b): /admin/wiki is nu een echt wiki-overzicht
   (aanmaken op titel; slug volgt) en /admin/wiki/[slug] de studio — boom
   links (slepen verplaatst: alleen het folder/parent-veld wijzigt, met

@@ -130,6 +130,74 @@ export async function savePageAction(page: WikiPage): Promise<ActionResult> {
   }
 }
 
+/**
+ * Verplaats een pagina/folder naar `targetParent` op positie `index`, en
+ * hernummer de broertjes (computeMove-stijl, zoals het planbord): alleen
+ * items waarvan order of ouder wijzigt krijgen een nieuwe versie.
+ * `targetParent` is de folderslug (pagina's) of de parent-folderslug —
+ * "" = bovenin de wiki (alleen folders).
+ */
+export async function moveWikiItemAction(
+  kind: "wiki-page" | "wiki-folder",
+  slug: string,
+  wikiSlug: string,
+  targetParent: string,
+  index: number
+): Promise<ActionResult> {
+  const session = await getSession();
+  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  try {
+    const records = await writableStore.listItems(kind);
+    const items = records.flatMap((r) => {
+      const parsed = (kind === "wiki-page" ? WikiPageSchema : WikiFolderSchema).safeParse(r.data);
+      return parsed.success && parsed.data.wiki === wikiSlug ? [parsed.data] : [];
+    }) as Array<WikiPage | WikiFolder>;
+
+    const moved = items.find((i) => i.slug === slug);
+    if (!moved) return { ok: false, error: `"${slug}" niet gevonden` };
+    if (kind === "wiki-page" && !targetParent) {
+      return { ok: false, error: "Pagina's leven in een folder" };
+    }
+    if (kind === "wiki-folder") {
+      // Cykel-check: niet in zichzelf of een eigen nakomeling.
+      const folders = items as WikiFolder[];
+      let cursor = folders.find((f) => f.slug === targetParent);
+      const seen = new Set<string>();
+      while (cursor && !seen.has(cursor.slug)) {
+        if (cursor.slug === slug) return { ok: false, error: "Kan een folder niet in zichzelf plaatsen" };
+        seen.add(cursor.slug);
+        cursor = folders.find((f) => f.slug === cursor!.parent);
+      }
+    }
+
+    const parentOf = (i: WikiPage | WikiFolder) =>
+      kind === "wiki-page" ? (i as WikiPage).folder : ((i as WikiFolder).parent || "");
+    const siblings = items
+      .filter((i) => parentOf(i) === targetParent && i.slug !== slug)
+      .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+    const clamped = Math.max(0, Math.min(index, siblings.length));
+    const movedNext =
+      kind === "wiki-page"
+        ? { ...(moved as WikiPage), folder: targetParent }
+        : { ...(moved as WikiFolder), parent: targetParent };
+    siblings.splice(clamped, 0, movedNext);
+
+    for (let i = 0; i < siblings.length; i++) {
+      const item = siblings[i];
+      const changed = item.order !== i || (item.slug === slug && parentOf(moved) !== targetParent);
+      if (!changed) continue;
+      await writableStore.putItem(kind, item.slug, { ...item, order: i }, {
+        lang: item.lang,
+        by: session.name,
+      });
+    }
+    refresh(wikiSlug);
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
 /** Verwijderen (tombstone). Folders alleen als ze leeg zijn — geen cascade. */
 export async function deleteWikiItemAction(
   kind: "wiki-folder" | "wiki-page",
