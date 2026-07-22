@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RoleType } from "@imprint/content-core";
 import { logoutAction } from "@/app/admin/actions";
+import { DialogHost } from "./dialog";
 
 /**
  * Admin chrome: a VS Code-style activity rail (grouped by what you're doing,
@@ -182,6 +183,7 @@ export function AdminShell({
 
   return (
     <div className="flex h-screen overflow-hidden">
+      <DialogHost />
       {/* activity rail */}
       <nav className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-background py-2">
         <Link href="/admin" className="mb-1 grid h-9 w-9 place-items-center rounded-md bg-accent/15 text-sm font-bold text-accent">

@@ -25,6 +25,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- Admin: **eigen dialoogjes** i.p.v. de ouderwetse window.confirm/prompt —
+  een popover in de huisstijl die opklapt bij je muis (waar je net
+  klikte), met Enter/Escape, gevaar-variant in rood en een invoerveld voor
+  vragen. Overal doorgevoerd: wiki-studio (nieuw/verwijder/publiceer),
+  planbord-delete en de link-knop in de markdown-editor (met behoud van de
+  tekstselectie).
 - Wiki: **folder verwijderen cascadeert** (compositie — Wiki ◆— Folder ◆—
   Page): subfolders en pagina's gaan mee, met vooraf een waarschuwing die
   de echte aantallen noemt; alles tombstones, dus herstelbaar via History.

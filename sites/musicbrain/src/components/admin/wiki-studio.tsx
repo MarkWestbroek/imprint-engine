@@ -15,6 +15,7 @@ import {
   saveWikiAction,
 } from "@/app/admin/wiki/actions";
 import { wikiPageHref } from "@/lib/wiki-href";
+import { confirmDialog, promptDialog } from "./dialog";
 import { MarkdownEditor } from "./markdown-editor";
 
 /**
@@ -173,19 +174,19 @@ export function WikiStudio({
   });
 
   // ── Nieuw ─────────────────────────────────────────────────────────────
-  const newFolder = () => {
-    const title = window.prompt("Titel van de nieuwe folder");
+  const newFolder = async () => {
+    const title = await promptDialog("Titel van de nieuwe folder", { confirmLabel: "Maak" });
     if (!title?.trim()) return;
     const parent = selectedFolder?.slug ?? "";
     run(() => createFolderAction(wiki.slug, parent, title.trim(), wiki.lang));
   };
-  const newPage = () => {
+  const newPage = async () => {
     const folder = selectedFolder?.slug ?? selectedPage?.folder ?? folders[0]?.slug;
     if (!folder) {
       setError("Maak eerst een folder — pagina's leven in een folder");
       return;
     }
-    const title = window.prompt("Titel van de nieuwe pagina");
+    const title = await promptDialog("Titel van de nieuwe pagina", { confirmLabel: "Maak" });
     if (!title?.trim()) return;
     run(async () => {
       const result = await createPageAction(wiki.slug, folder, title.trim(), wiki.lang);
@@ -309,7 +310,7 @@ export function WikiStudio({
     setDraft(null);
   };
 
-  const remove = () => {
+  const remove = async () => {
     const target = selectedPage ?? selectedFolder;
     if (!target || !selected) return;
     // Compositie: een folder neemt zijn subfolders en pagina's mee — zeg
@@ -336,7 +337,7 @@ export function WikiStudio({
           `Alles is herstelbaar via History.`;
       }
     }
-    if (!window.confirm(message)) return;
+    if (!(await confirmDialog(message, { confirmLabel: "Verwijder", danger: true }))) return;
     run(async () => {
       const result = await deleteWikiItemAction(
         selected.kind === "page" ? "wiki-page" : "wiki-folder",
@@ -425,9 +426,12 @@ export function WikiStudio({
                   <button
                     type="button"
                     disabled={pending}
-                    onClick={() => {
-                      if (!window.confirm(`Hele wiki "${wiki.title}" publiceren naar ${publishTarget}?`))
-                        return;
+                    onClick={async () => {
+                      const ok = await confirmDialog(
+                        `Hele wiki "${wiki.title}" publiceren naar ${publishTarget}?`,
+                        { confirmLabel: "Publiceer" }
+                      );
+                      if (!ok) return;
                       setPublishMsg(null);
                       run(async () => {
                         const result = await publishWikiAction(wiki.slug);

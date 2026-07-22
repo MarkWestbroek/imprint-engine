@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { marked } from "marked";
 import TurndownService from "turndown";
+import { promptDialog } from "./dialog";
 
 /**
  * Markdown field with two tabs: "Visueel" (a WYSIWYG surface — you edit the
@@ -116,9 +117,23 @@ export function MarkdownEditor({
             </Btn>
             <Btn
               title="Link"
-              onClick={() => {
-                const url = window.prompt("Link URL");
-                if (url) exec("createLink", url);
+              onClick={async () => {
+                // Selectie vasthouden: de dialoog steelt de focus, dus we
+                // bewaren de range en zetten hem terug vóór createLink.
+                const sel = window.getSelection();
+                const range = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+                const url = await promptDialog("Link-URL", {
+                  placeholder: "https://… of /pagina",
+                  confirmLabel: "Link",
+                });
+                if (!url) return;
+                editable.current?.focus();
+                if (range) {
+                  const restored = window.getSelection();
+                  restored?.removeAllRanges();
+                  restored?.addRange(range);
+                }
+                exec("createLink", url);
               }}
             >
               🔗
