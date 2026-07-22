@@ -120,6 +120,13 @@ const ICONS: Record<string, React.ReactNode> = {
     </>
   ),
   out: <path d="M14 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H14M17 15l3-3-3-3M10 12h10" />,
+  help: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.6 9.3a2.4 2.4 0 1 1 3.4 2.9c-.7.4-1 .9-1 1.8" />
+      <circle cx="12" cy="16.6" r="0.4" fill="currentColor" />
+    </>
+  ),
 };
 
 function Icon({ name, className }: { name: string; className?: string }) {
@@ -193,6 +200,11 @@ export function AdminShell({
           );
         })}
         <div className="flex-1" />
+        {/* De handleiding leeft als Help-wiki op de site zelf (gedogfood). */}
+        <a href="/help" target="_blank" rel="noreferrer" className={railBtn}>
+          <Icon name="help" className="h-[21px] w-[21px]" />
+          <span className={tip}>Help ↗</span>
+        </a>
         <a href="/" target="_blank" rel="noreferrer" className={railBtn}>
           <Icon name="site" className="h-[21px] w-[21px]" />
           <span className={tip}>Bekijk site ↗</span>
