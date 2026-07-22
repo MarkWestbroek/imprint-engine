@@ -25,13 +25,15 @@ export default async function ReleasesPage() {
         {releases.map((release) => (
           <article
             key={`${release.project}-${release.version}`}
-            className="rounded-xl border border-line bg-surface p-5"
+            className="relative rounded-xl border border-line bg-surface p-5 transition-colors hover:border-accent"
           >
             <header className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-mono text-lg font-semibold text-accent">
+                {/* Stretched link: overspant de hele tegel; download/GitHub-links
+                    hieronder krijgen `relative z-10` en blijven los klikbaar. */}
                 <Link
                   href={`/releases/${release.project}-${release.version}`}
-                  className="hover:underline"
+                  className="hover:underline after:absolute after:inset-0"
                 >
                   {release.project} {displayVersion(release.version)}
                 </Link>
@@ -56,7 +58,7 @@ export default async function ReleasesPage() {
               <ul className="mt-3 space-y-1 text-sm">
                 {release.downloads.map((d) => (
                   <li key={d.url}>
-                    <a href={d.url} className="text-accent underline underline-offset-4">
+                    <a href={d.url} className="relative z-10 text-accent underline underline-offset-4">
                       {d.label}
                     </a>
                     {d.checksumSha256 && (
@@ -73,7 +75,7 @@ export default async function ReleasesPage() {
                 href={release.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-3 inline-block text-sm text-muted underline underline-offset-4 hover:text-foreground"
+                className="relative z-10 mt-3 inline-block text-sm text-muted underline underline-offset-4 hover:text-foreground"
               >
                 View on GitHub
               </a>
