@@ -312,7 +312,31 @@ export function WikiStudio({
   const remove = () => {
     const target = selectedPage ?? selectedFolder;
     if (!target || !selected) return;
-    if (!window.confirm(`"${target.title}" verwijderen? (herstelbaar via History)`)) return;
+    // Compositie: een folder neemt zijn subfolders en pagina's mee — zeg
+    // er dus eerlijk bij hoeveel dat er zijn.
+    let message = `"${target.title}" verwijderen? (herstelbaar via History)`;
+    if (selectedFolder) {
+      const doomed = new Set<string>([selectedFolder.slug]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const f of folders) {
+          if (!doomed.has(f.slug) && f.parent && doomed.has(f.parent)) {
+            doomed.add(f.slug);
+            grew = true;
+          }
+        }
+      }
+      const subfolders = doomed.size - 1;
+      const pageCount = pages.filter((p) => doomed.has(p.folder)).length;
+      if (subfolders > 0 || pageCount > 0) {
+        message =
+          `Folder "${target.title}" verwijderen, inclusief ` +
+          `${subfolders} subfolder(s) en ${pageCount} pagina('s)?\n\n` +
+          `Alles is herstelbaar via History.`;
+      }
+    }
+    if (!window.confirm(message)) return;
     run(async () => {
       const result = await deleteWikiItemAction(
         selected.kind === "page" ? "wiki-page" : "wiki-folder",

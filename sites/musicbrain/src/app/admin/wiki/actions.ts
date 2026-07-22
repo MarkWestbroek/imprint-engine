@@ -273,31 +273,60 @@ export async function publishWikiAction(
   }
 }
 
-/** Verwijderen (tombstone). Folders alleen als ze leeg zijn — geen cascade. */
+/**
+ * Verwijderen (tombstone, herstelbaar via History). Compositie: een folder
+ * verwijderen neemt zijn subfolders en pagina's mee — geen wees-pagina's.
+ * De studio waarschuwt vooraf met de aantallen; hier voeren we alleen uit.
+ */
 export async function deleteWikiItemAction(
   kind: "wiki-folder" | "wiki-page",
   slug: string,
   lang: string,
   wikiSlug: string
-): Promise<ActionResult> {
+): Promise<ActionResult & { deleted?: number }> {
   const session = await getSession();
   if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
   try {
+    let deleted = 0;
     if (kind === "wiki-folder") {
-      const [folders, pages] = await Promise.all([
+      const [folderRecs, pageRecs] = await Promise.all([
         writableStore.listItems("wiki-folder"),
         writableStore.listItems("wiki-page"),
       ]);
-      const hasChildren =
-        folders.some((f) => (f.data as { parent?: string }).parent === slug) ||
-        pages.some((p) => (p.data as { folder?: string }).folder === slug);
-      if (hasChildren) {
-        return { ok: false, error: "Folder is niet leeg — verplaats of verwijder eerst de inhoud" };
+      const folders = folderRecs.flatMap((r) => {
+        const f = WikiFolderSchema.safeParse(r.data);
+        return f.success && f.data.wiki === wikiSlug ? [f.data] : [];
+      });
+      // Alle nakomeling-folders (BFS over parent-verwijzingen).
+      const doomed = new Set<string>([slug]);
+      let grew = true;
+      while (grew) {
+        grew = false;
+        for (const f of folders) {
+          if (!doomed.has(f.slug) && doomed.has(f.parent || "__none__")) {
+            doomed.add(f.slug);
+            grew = true;
+          }
+        }
+      }
+      for (const r of pageRecs) {
+        const p = WikiPageSchema.safeParse(r.data);
+        if (p.success && p.data.wiki === wikiSlug && doomed.has(p.data.folder)) {
+          await writableStore.deleteItem("wiki-page", p.data.slug, p.data.lang);
+          deleted++;
+        }
+      }
+      for (const f of folders) {
+        if (doomed.has(f.slug) && f.slug !== slug) {
+          await writableStore.deleteItem("wiki-folder", f.slug, f.lang);
+          deleted++;
+        }
       }
     }
     await writableStore.deleteItem(kind, slug, lang);
+    deleted++;
     refresh(wikiSlug);
-    return { ok: true };
+    return { ok: true, deleted };
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
