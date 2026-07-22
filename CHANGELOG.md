@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- Productpagina: releases staan nu **nieuwste eerst** (de lijst ging via
+  `listItems` en was ongesorteerd; `/releases` en de widget waren dat al).
 - **"Open brain"-copy & branding**: de mockup-teksten overgenomen — verhalend
   vanuit de gebruiker ("they forget…") in hero en product-taglines; nieuw
   `audience`-veld op Product ("for modular synths" als kapiteel-regel op

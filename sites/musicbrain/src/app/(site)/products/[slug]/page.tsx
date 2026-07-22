@@ -54,6 +54,8 @@ export default async function ProductPage({ params }: Props) {
           slug: r.slug,
           data: r.data as { project: string; version: string; date: string; channel: string },
         }))
+        // Newest first (listItems is unsorted; the /releases page & widget already sort).
+        .sort((a, b) => b.data.date.localeCompare(a.data.date))
     : [];
   const components = (
     await Promise.all(product.components.map((c) => loadComponent(c, opts)))
