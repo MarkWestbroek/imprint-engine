@@ -1,0 +1,74 @@
+{
+  "slug": "editor",
+  "title": "Editor & simulator",
+  "description": "Patch MusicBrain in your browser — the free editor runs the exact same firmware core in simulation, no hardware and no account needed.",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Patch it in your *browser*.",
+                  "subtitle": "The free editor patches modules, turns knobs live and shows every CV on a built-in scope. No hardware yet? The simulator runs the exact same firmware core on your laptop — a complete synth, in a browser tab.",
+                  "buttonLabel": "Open the editor",
+                  "buttonUrl": "https://editor.musicbrain.nl",
+                  "variant": "open",
+                  "align": "left"
+                }
+              },
+              {
+                "type": "divider",
+                "config": { "style": "scope", "size": 2 }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "specs",
+                "config": {
+                  "title": "What runs in the tab",
+                  "items": [
+                    { "value": "16 voices", "label": "polyphonic, live from MIDI" },
+                    { "value": "Built-in scope", "label": "every CV and gate, live" },
+                    { "value": "No install", "label": "no account, nothing to set up" },
+                    { "value": "MIT", "label": "same firmware core, open" }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Try it before it exists.",
+                  "markdown": "The editor is the same tool you'll use with the hardware — so you can design patches, learn the routing and hear the simulation today, and load them onto a **Cortex** the day it arrives. It talks only relays, CV and gate; your ideas stay yours.",
+                  "tone": "accent",
+                  "buttonLabel": "Open the editor",
+                  "buttonUrl": "https://editor.musicbrain.nl"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

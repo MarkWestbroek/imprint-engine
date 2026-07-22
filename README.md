@@ -293,12 +293,30 @@ home-directory en heeft npm niet op het pad. Zet de taak daarna op inactief
 is eenmalig, de productie-DB is de bron van waarheid. Controleer daarna met
 `npm run smoke -- https://<domein>` (read-only checks: home, admin, API).
 
+Dat automatische pullen hangt aan een **webhook**: kopieer de *Webhook URL*
+uit Plesk (Git-repo-instellingen, `…/modules/git/public/web-hook.php?uuid=…`)
+naar GitHub → repo → *Settings* → *Webhooks* (push events, content type json).
+Zónder die webhook doet "Automatic" niets uit zichzelf en moet je in Plesk op
+**Pull now** klikken — de map `…/imprint` is géén git-checkout (Plesk pullt
+naar een eigen repo-kopie en kopieert de bestanden), dus `git pull` in die map
+werkt niet.
+
+> **Niet dubbel bouwen.** Nu de webhook actief is, start elke push al een
+> deploy (npm ci + build). Draai er dus **geen** handmatige build-taak
+> doorheen: twee gelijktijdige `next build`-runs vreten het geheugen op en
+> geven een Turbopack-`FATAL`-panic. De `&&`-keten stopt dan vóór de
+> `restart.txt`-touch, dus de vorige goede build blijft draaien (de site
+> blijft heel) — maar de rebuild is mislukt. Wachten tot de deploy klaar is
+> en dan pas eventueel opnieuw.
+
 **Nieuwe seed-content na een update** (bijv. de thema's van 0.9.0): seed
 gericht bij met `npm run db:seed -- --only=themes` — dat raakt alleen dat
-type en laat je bewerkte productie-content met rust. Draai daarna de
-deployment-action nogmaals (of doe een Save in de admin): de publieke
-pagina's zijn prerendered en tonen nieuwe thema's pas na een rebuild of
-cache-flush.
+type en laat je bewerkte productie-content met rust. **Volgorde telt:** seed
+vóór de build, want de publieke pagina's zijn prerendered en `db:seed`
+schrijft rechtstreeks in de DB zónder de Next-cache te legen. Kwam de build
+er toch eerder (zoals bij een push-deploy): draai de deployment-action
+nogmaals, óf doe een willekeurige **Save in de admin** (die revalideert de
+cache) — dan verschijnt de nieuwe content pas.
 
 **Als de site de Passenger-foutpagina toont** ("We're sorry, but something went
 wrong") — kijk in Plesk → *Logs* (of het Passenger-log) en check op volgorde:

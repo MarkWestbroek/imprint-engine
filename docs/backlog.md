@@ -110,13 +110,22 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,
       header/footer-variant) parameteriseren per site, als server-side laag
       naast de client-side thema-tokens (zie architecture.md §3c). _(M)_
-- [ ] **Editor-demo online** (`/editor`, eis A1) — de MusicBrain-editor is een
+- [~] **Editor-demo online** (`/editor`, eis A1) — de MusicBrain-editor is een
       zelfstandige Vite/React-SPA zonder database (draait een complete synth
-      in simulatiemodus). Plan: statisch bouwen (`vite build` met
-      `base: '/editor/'` of eigen subdomein `editor.musicbrain.nl` als
-      aparte Plesk-vhost), en in Imprint een `/editor`-pagina met verhaal +
-      link (en evt. de embed-widget als teaser). De editor blijft zijn eigen
-      repo/release-ritme houden — geen koppeling met de ContentStore nodig.
+      in simulatiemodus). **Gekozen (juli 2026): eigen subdomein**
+      `editor.musicbrain.nl` als aparte Plesk-vhost, gedeployd uit het
+      MusicBrain-repo op eigen release-tempo; de editor is puur statisch
+      (geen Node/Passenger, `vite base` blijft `/`). Imprint's `/editor`
+      linkt erheen — geen ContentStore-koppeling.
+      - [x] Imprint-kant: `/editor`-landingspagina gebouwd
+        (`content/pages/editor.json`: hero + scope-divider + specs + CTA naar
+        `editor.musicbrain.nl`). Nog **niet** in het hoofdmenu (geen dode link
+        vóór het subdomein leeft) — menu-item + seed = de "aanzetten"-stap.
+      - [ ] MusicBrain-repo: editor stylen met de tokens uit `doc/styleguide.md`
+        en een deploy-action (`cd editor && npm ci && npm run build`, docroot =
+        `editor/dist`).
+      - [ ] Plesk: subdomein `editor.musicbrain.nl` (statische docroot op
+        `editor/dist`), git-deploy uit MusicBrain-repo + webhook.
       _(A1; M)_
 
 ---

@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Editor-landingspagina** (`/editor`, eis A1): hero + scope-divider + specs +
+  CTA naar de live MusicBrain browser-editor/simulator op
+  `editor.musicbrain.nl` (aparte statische Vite-SPA, eigen repo/deploy). "Editor"
+  toegevoegd aan het hoofdmenu.
 - Productpagina: releases staan nu **nieuwste eerst** (de lijst ging via
   `listItems` en was ongesorteerd; `/releases` en de widget waren dat al).
 - **"Open brain"-copy & branding**: de mockup-teksten overgenomen — verhalend
