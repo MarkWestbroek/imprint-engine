@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Meer doorklikbaar**: de "Latest release"-tegel op de home en de
+  release-titels op `/releases` linken nu naar de release-detailpagina
+  (`/releases/<project>-<versie>`); het "Try it before it exists"-blok op de
+  home is een link naar `/editor`. Explore-testpagina verwijderd (uit het menu
+  + seed geparkeerd naar `content/_parked/`).
 - **Editor-landingspagina** (`/editor`, eis A1): hero + scope-divider + specs +
   CTA naar de live MusicBrain browser-editor/simulator op
   `editor.musicbrain.nl` (aparte statische Vite-SPA, eigen repo/deploy). "Editor"

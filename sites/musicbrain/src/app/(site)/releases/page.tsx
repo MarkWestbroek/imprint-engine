@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { store } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
 import { Markdown } from "@/components/markdown";
@@ -28,7 +29,12 @@ export default async function ReleasesPage() {
           >
             <header className="flex flex-wrap items-baseline justify-between gap-2">
               <h2 className="font-mono text-lg font-semibold text-accent">
-                {release.project} {displayVersion(release.version)}
+                <Link
+                  href={`/releases/${release.project}-${release.version}`}
+                  className="hover:underline"
+                >
+                  {release.project} {displayVersion(release.version)}
+                </Link>
               </h2>
               <p className="text-sm text-muted">
                 {release.date} · {release.channel}

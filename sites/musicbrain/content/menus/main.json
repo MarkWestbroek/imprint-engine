@@ -3,7 +3,6 @@
   "items": [
     { "label": "Products", "url": "/#products" },
     { "label": "Releases", "url": "/releases" },
-    { "label": "Explore", "page": "explore" },
     { "label": "Editor", "page": "editor" },
     { "label": "Development", "page": "cortex" },
     { "label": "Planning", "page": "planning" },

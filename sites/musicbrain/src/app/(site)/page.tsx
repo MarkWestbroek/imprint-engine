@@ -73,7 +73,10 @@ export default async function Home() {
         <section>
           <p className="eyebrow">Fresh from the bench</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight">Latest release</h2>
-          <div className="mt-4 rounded-xl border border-line bg-surface p-5">
+          <Link
+            href={`/releases/${latest.project}-${latest.version}`}
+            className="mt-4 block rounded-xl border border-line bg-surface p-5 transition-colors hover:border-accent"
+          >
             <p className="font-mono text-sm text-accent">
               {latest.project} {displayVersion(latest.version)} · {latest.date}
             </p>
@@ -82,18 +85,21 @@ export default async function Home() {
                 <li key={h}>{h}</li>
               ))}
             </ul>
-            <Link
-              href="/releases"
-              className="mt-3 inline-block text-sm text-accent underline underline-offset-4"
-            >
-              All releases
-            </Link>
-          </div>
+          </Link>
+          <Link
+            href="/releases"
+            className="mt-3 inline-block text-sm text-accent underline underline-offset-4"
+          >
+            All releases →
+          </Link>
         </section>
       )}
 
       <section className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-line bg-surface p-6">
+        <Link
+          href="/editor"
+          className="block rounded-xl border border-line bg-surface p-6 transition-colors hover:border-accent"
+        >
           <h2 className="text-xl font-semibold tracking-tight">
             Try it before it exists.
           </h2>
@@ -107,7 +113,10 @@ export default async function Home() {
             <strong className="font-semibold text-foreground">simulator</strong>{" "}
             runs the exact same firmware core on your laptop.
           </p>
-        </div>
+          <span className="mt-3 inline-block text-sm text-accent underline underline-offset-4">
+            Open the editor →
+          </span>
+        </Link>
         <div className="rounded-xl border border-line bg-surface p-6">
           <h2 className="text-xl font-semibold tracking-tight">
             Open, top to bottom.
