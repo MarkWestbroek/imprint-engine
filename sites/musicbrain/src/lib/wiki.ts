@@ -66,21 +66,5 @@ export async function getWikiTree(wiki: string): Promise<WikiTree> {
   return { folders, pages };
 }
 
-/**
- * Canonieke URL van een wikipagina: /<wiki>/<folder-pad>/<pagina>. Opgelost
- * wordt er op het láátste segment (paginaslug, uniek binnen de wiki) — een
- * verplaatste pagina breekt oude links dus niet, de URL is alleen cosmetisch
- * de folderketen.
- */
-export function wikiPageHref(page: WikiPage, folders: WikiFolder[]): string {
-  const byName = new Map(folders.map((f) => [f.slug, f]));
-  const chain: string[] = [];
-  let cursor = byName.get(page.folder);
-  const seen = new Set<string>();
-  while (cursor && !seen.has(cursor.slug)) {
-    seen.add(cursor.slug);
-    chain.unshift(cursor.slug);
-    cursor = cursor.parent ? byName.get(cursor.parent) : undefined;
-  }
-  return `/${[page.wiki, ...chain, page.slug].join("/")}`;
-}
+// Pure helpers (ook client-side bruikbaar) staan in wiki-href.ts.
+export { wikiPageHref } from "./wiki-href";

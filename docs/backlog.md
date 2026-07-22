@@ -156,9 +156,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         `visibility: members` gaat door het PEP en rendert dynamisch
         (ledencontent komt niet in statische HTML). Boom-query in
         lib/wiki.ts, view in components/wiki-view.tsx.
-      - [ ] **Wiki-studio** — boom links (slepen = folder/parent-veld
-        wijzigen), eigenschappen + inhoud rechts; slugs per wiki
-        scopen/genereren i.p.v. handmatig prefixen. Zie wiki.md §4b. _(M)_
+      - [x] **Wiki-studio v1** (juli 2026) — /admin/wiki (overzicht +
+        aanmaken op titel) en /admin/wiki/[slug]: boom links (pagina's en
+        folders slepen = folder/parent-veld wijzigen, cykel-bescherming),
+        eigenschappen + markdown-tekst rechts, niets geselecteerd = de
+        wiki zelf (titel/beschrijving/zichtbaarheid). Slugs worden per
+        wiki gescopet en uit de titel gegenereerd (wiki-prefix +
+        nummering); folders verwijderen alleen als ze leeg zijn. De platte
+        typelijsten zijn uit de rail; generiek bewerken kan nog via
+        /admin/wiki-folder e.d. Nog open: inline hernoemen in de boom,
+        volgorde slepen (nu order-veld). _(was M)_
       - [ ] **Publiceer-knop** — lokaal opgebouwde wiki met één knop naar
         live via bundle-POST op de content-API (INGEST_TOKEN); volgorde
         wiki → folders → pagina's. _(S–M)_

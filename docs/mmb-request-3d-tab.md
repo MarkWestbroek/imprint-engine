@@ -7,6 +7,33 @@ zie `MusicBrain/doc/imprint-widget-3d-voorstel.md`); besluit Mark: **echt
 3D met GLB** — beste beleving, en de assets zijn zelfs kleiner dan een
 sprite-set.
 
+## Update 2026-07-22 — widget werkt live; matrix-GLB staat klaar
+
+- **De 3D-tab werkt inmiddels live** (bv. busboard "Board v3.1" toont hem;
+  `/boards/musicbrain-busboard.glb` wordt statisch geserveerd, 200). Punt 2
+  (widget-tab) is dus af. 👍
+- **Nieuw bord klaar: de patchmatrix (center-variant).**
+  `musicbrain-matrix-c.glb` (5,7 MB) is met `widget_export.py --3d`
+  gegenereerd en staat in `sites/musicbrain/public/boards/`. **Alleen de
+  center-variant (component `matrix`, versie `v0.3c`) heeft 3D nodig** — de
+  edge-variant `v0.2` is het afgeserveerde alternatief, dat hoeft niet.
+- **Localhost vs live wijken af (2026-07-22 getest):** op **localhost:3000**
+  stript de ingest `assets.model3d` én het `view3d`-blok nog (POST mét
+  `--glb`/`view3d` → beide velden `null` bij GET). Op **live** kon ik het
+  níét betrouwbaar vaststellen: het endpoint `GET /api/content/board-spec/
+  <slug>` bestaat daar niet (`Unknown content type "board-spec"`) — live
+  draait dus een andere build. Een `publish_board.py --glb` naar live gaf
+  wél `"ok":true` maar `model3d` bleef leeg via het (afwijkende) GET-pad.
+  Kortom: de wiring is vanaf de MMB-kant niet te introspecteren; busboard's
+  live-3D werkt, maar hóe precies zien wij hier niet.
+- **Graag terug naar de MMB-chat (jullie zien de live-DB/-build wél):**
+  (1) accepteert de **live**-ingest `model3d`/`view3d` al, of moet dat nog?
+  (2) hoe is busboard's 3D gekoppeld — versioned `assets.model3d` of
+  statisch `view3d.src` + GLB in `public/boards/`? Met dat antwoord posten
+  wij matrix in één commando (`publish_board.py --glb`) of leveren we de
+  GLB voor de statische route aan. De `musicbrain-matrix-c.glb` staat
+  hoe dan ook al klaar.
+
 ## Wat er al klaarstaat (MMB-kant is af)
 
 - **GLB per bord** in `sites/musicbrain/public/boards/`:

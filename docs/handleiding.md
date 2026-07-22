@@ -203,6 +203,25 @@ annotations**, **List** (links die de contentstructuur volgen), **Template**
 
 Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 
+## Wiki's bewerken
+
+Onder **Content → Wikis** staat het wiki-overzicht; een nieuwe wiki maak je
+op titel (de slug volgt vanzelf). Een wiki open je in de **wiki-studio**:
+links de boom (folders en pagina's), rechts de eigenschappen en de tekst
+van wat je selecteert — niets geselecteerd = de wiki zelf (titel,
+beschrijving, zichtbaarheid).
+
+- **Verplaatsen**: sleep een pagina naar een andere folder, of een folder
+  in een andere folder (of op de wiki-titel voor bovenin). Elke
+  verplaatsing is een nieuwe versie — History vertelt het verhaal.
+- **Nieuw**: "+ folder" en "+ pagina" maken iets in de geselecteerde
+  folder; alleen een titel is nodig.
+- **Zichtbaarheid**: `public` is voor iedereen; `members` alleen voor
+  ingelogde gebruikers (de pagina's komen dan ook niet in de statische
+  site-cache).
+- **Verwijderen** kan per pagina of lege folder en is herstelbaar via
+  History.
+
 ## Thema's
 
 Onder **Themes** beheer je kleurenschema's (met kleurpickers en een live

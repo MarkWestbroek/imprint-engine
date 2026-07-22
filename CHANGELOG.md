@@ -25,6 +25,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- **Wiki-studio** (wiki.md §4b): /admin/wiki is nu een echt wiki-overzicht
+  (aanmaken op titel; slug volgt) en /admin/wiki/[slug] de studio — boom
+  links (slepen verplaatst: alleen het folder/parent-veld wijzigt, met
+  cykel-bescherming), eigenschappen + markdown-editor rechts; niets
+  geselecteerd = de wiki zelf. Slugs worden per wiki gescopet en uit de
+  titel gegenereerd; folders verwijderen alleen als ze leeg zijn
+  (tombstone, herstelbaar). Structuur → inhoud, links naar rechts —
+  Marks leesrichting-principe.
 - Wiki-fixes uit de eerste testronde: een met **lang=nl** aangemaakte wiki
   404'te (de lookup zocht hard op "en"; nu taal-tolerant tot echte
   meertaligheid er is), en in de **Visueel-tab** van markdown-velden in
