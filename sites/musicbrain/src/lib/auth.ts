@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { DbUserStore } from "@imprint/content-core/user-store";
 import type { RoleType } from "@imprint/content-core";
 import { db } from "@/lib/content";
+import { authorize } from "./authorize";
 
 /**
  * Minimal auth for /admin (UML: User + RoleType): scrypt password hashes in
@@ -80,9 +81,13 @@ export async function getSession(): Promise<Session | null> {
   return token ? decodeSession(token) : null;
 }
 
-/** Editors and admins may write content; readers may not (RoleType). */
+/**
+ * Editors and admins may write content; readers may not (RoleType).
+ * Thin wrapper over the PEP (`authorize`, lib/authorize.ts) so every
+ * write-check flows through the same gate — see design/wiki.md §4.
+ */
 export function canEdit(session: Session | null): session is Session {
-  return session !== null && (session.role === "admin" || session.role === "editor");
+  return session !== null && authorize(session, "update", { type: "*" });
 }
 
 /**

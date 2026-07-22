@@ -43,6 +43,10 @@ export const DEFAULT_RELATION_RULES: RelationRule[] = [
   { fromType: "planning", field: "product", toType: "product", enforce: true, label: "Planning → product" },
   { fromType: "planning-item", field: "planning", toType: "planning", enforce: true, label: "Planning-item → planning" },
   { fromType: "planning-item", field: "component", toType: "component", enforce: true, label: "Planning-item → component" },
+  { fromType: "wiki-folder", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-folder → wiki" },
+  { fromType: "wiki-folder", field: "parent", toType: "wiki-folder", enforce: true, label: "Wiki-folder → parent" },
+  { fromType: "wiki-page", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-page → wiki" },
+  { fromType: "wiki-page", field: "folder", toType: "wiki-folder", enforce: true, label: "Wiki-page → folder" },
 ];
 
 /** Collect the slugs a path points at, walking arrays (`[]`) as it goes. */

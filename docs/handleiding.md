@@ -98,6 +98,7 @@ merken hier niets van.
 | **Planning** | kanban-borden: kaarten die je tussen fasen sleept (zie onder) |
 | **Menus** | navigatiemenu's (het "main"-menu stuurt de header) |
 | **Themes** | kleurenschema's van de site (zie Thema's) |
+| **Wikis** | op zichzelf staande informatiebundels (Wiki → Folders → Wiki pages); een pagina verplaatsen = het folder-veld wijzigen. De publieke weergave (eigen navigatieboom per wiki) volgt nog — nu alvast te vullen via de admin |
 
 Goed om te weten over de weergave op de site: de **componentpagina** toont de
 versie die door de nieuwste release wordt gepind (stable weegt zwaarder dan

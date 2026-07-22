@@ -323,6 +323,20 @@ geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
   server-concern en hoort bij een aparte chrome-variant per site — bewust
   níet in het thema gestopt (staat op de backlog).
 
+## 3d. Autorisatie: PEP met inplugbare PDP
+
+Elke lees/schrijf-beslissing hoort door één poortje: `authorize()` in
+[authorize.ts](../sites/musicbrain/src/lib/authorize.ts) — het **Policy
+Enforcement Point**. Het PEP beslist zelf niets; het bouwt een
+`DecisionRequest` (subject/action/resource/context) en vraagt een
+**PolicyDecisionPoint** om een besluit. Dat interface is het
+AuthZEN-snijvlak: we standaardiseren op het contract tussen PEP en PDP,
+niet op een policytaal, zodat de beslisser verwisselbaar is (nu
+`staticPdp` met de vaste regelset — admin alles / editor schrijft /
+reader leest / publiek alleen `visibility: "public"`; later policies als
+content, of een ODRL-gebaseerde taal). `canEdit()` in auth.ts is een dunne
+wrapper over het PEP. Ontwerp en groeipad: design/wiki.md §4.
+
 ## 4. Opslag: bitemporal-light (§B3)
 
 Eén generieke tabel `content_items`; de payload per type blijft een

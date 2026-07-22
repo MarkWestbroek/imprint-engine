@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Wiki-fundament + PEP** (stap 1–2 van design/wiki.md): drie nieuwe
+  contenttypen — `wiki` (met `visibility: public|members`), `wiki-folder`
+  (nestbaar via parent) en `wiki-page` (verplaatsen = folder-veld wijzigen)
+  — met enforced relatieregels (page→folder→wiki) en volledig beheer in de
+  admin (Content → Wiki, formulieren uit de zod-schema's, History werkt
+  zoals overal). Autorisatie loopt nu door één centraal **PEP**
+  (`authorize()`, lib/authorize.ts) met een inplugbaar
+  `PolicyDecisionPoint`-interface (AuthZEN-snijvlak): vandaag de vaste
+  regelset (`staticPdp`), later policies-als-content of een ODRL-gebaseerde
+  policytaal — zonder dat call-sites veranderen. `canEdit()` is een dunne
+  wrapper over het PEP geworden. De publieke wiki-route (eigen
+  navigatieboom) volgt. Na deploy: `db:seed -- --only=relations` voor de
+  nieuwe regels.
 - Docs: handleiding legt nu **vaste pagina's vs. content-pagina's** uit
   (welke routes code zijn en welke je in de studio bewerkt); nieuw
   ontwerpdoc **wiki + PBAC-lite-autorisatie** (docs/design/wiki.md) met

@@ -44,6 +44,14 @@ const GROUPS: Group[] = [
         ],
       },
       { label: "Planning", items: [{ href: "/admin/planning", label: "Planning" }] },
+      {
+        label: "Wiki",
+        items: [
+          { href: "/admin/wiki", label: "Wikis" },
+          { href: "/admin/wiki-folder", label: "Folders" },
+          { href: "/admin/wiki-page", label: "Wiki pages" },
+        ],
+      },
     ],
   },
   {

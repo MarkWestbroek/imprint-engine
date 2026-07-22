@@ -4,7 +4,7 @@ import type { ContentType } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
 import { restoreVersionAction } from "../../../actions";
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "wiki", "wiki-folder", "wiki-page"];
 
 type Props = {
   params: Promise<{ type: string; slug: string[] }>;

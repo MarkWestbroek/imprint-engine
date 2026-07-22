@@ -6,7 +6,7 @@ import { contentFormSchema } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
 import { PageStudio } from "@/components/admin/studio";
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme"];
+const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "wiki", "wiki-folder", "wiki-page"];
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
@@ -46,6 +46,12 @@ function emptyData(type: ContentType): Record<string, unknown> {
       ], order: 0 };
     case "planning-item":
       return { slug: "", lang: "en", title: "", planning: "", status: "backlog", owner: "", body: "", order: 0 };
+    case "wiki":
+      return { slug: "", lang: "en", title: "", description: "", visibility: "public", order: 0 };
+    case "wiki-folder":
+      return { slug: "", lang: "en", wiki: "", parent: "", title: "", order: 0 };
+    case "wiki-page":
+      return { slug: "", lang: "en", wiki: "", folder: "", title: "", body: "", order: 0 };
     case "relations":
       return { rules: [] };
   }

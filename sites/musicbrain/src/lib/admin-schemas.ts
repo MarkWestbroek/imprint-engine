@@ -8,6 +8,9 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
+  WikiSchema,
+  WikiFolderSchema,
+  WikiPageSchema,
   type ContentType,
 } from "@imprint/content-core";
 import { widgetCatalog } from "@/widgets/registry";
@@ -66,6 +69,12 @@ export function contentFormSchema(type: ContentType): JsonSchema {
       return objectSchema(PlanningSchema);
     case "planning-item":
       return objectSchema(PlanningItemSchema);
+    case "wiki":
+      return objectSchema(WikiSchema);
+    case "wiki-folder":
+      return objectSchema(WikiFolderSchema);
+    case "wiki-page":
+      return objectSchema(WikiPageSchema);
     case "relations":
       // Config type with its own screen (/admin/relations), not a generic form.
       return { type: "object", properties: {} };

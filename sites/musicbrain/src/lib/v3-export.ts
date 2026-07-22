@@ -8,6 +8,9 @@ import {
   ReleaseSchema,
   SiteConfigSchema,
   ThemeSchema,
+  WikiSchema,
+  WikiFolderSchema,
+  WikiPageSchema,
   type RelationRule,
 } from "@imprint/content-core";
 
@@ -78,6 +81,9 @@ const TYPES: { type: string; typenaam: string; meervoud: string; domein: string;
   { type: "component", typenaam: "Component", meervoud: "components", domein: "catalogus", schema: ComponentSchema },
   { type: "board-spec", typenaam: "BoardSpec", meervoud: "board-specs", domein: "catalogus", schema: BoardSpecSchema },
   { type: "release", typenaam: "Release", meervoud: "releases", domein: "catalogus", schema: ReleaseSchema },
+  { type: "wiki", typenaam: "Wiki", meervoud: "wikis", domein: "wiki", schema: WikiSchema },
+  { type: "wiki-folder", typenaam: "WikiFolder", meervoud: "wiki-folders", domein: "wiki", schema: WikiFolderSchema },
+  { type: "wiki-page", typenaam: "WikiPage", meervoud: "wiki-pages", domein: "wiki", schema: WikiPageSchema },
   { type: "page", typenaam: "Page", meervoud: "pages", domein: "site", schema: PageMetaSchema },
   { type: "menu", typenaam: "Menu", meervoud: "menus", domein: "site", schema: MenuSchema },
   { type: "theme", typenaam: "Theme", meervoud: "themes", domein: "site", schema: ThemeSchema },

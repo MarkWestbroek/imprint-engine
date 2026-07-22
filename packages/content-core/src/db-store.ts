@@ -11,6 +11,9 @@ import {
   PageMetaSchema,
   PlanningSchema,
   PlanningItemSchema,
+  WikiSchema,
+  WikiFolderSchema,
+  WikiPageSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
@@ -323,6 +326,12 @@ export class DbContentStore implements WritableContentStore {
         return PlanningSchema.parse(data);
       case "planning-item":
         return PlanningItemSchema.parse(data);
+      case "wiki":
+        return WikiSchema.parse(data);
+      case "wiki-folder":
+        return WikiFolderSchema.parse(data);
+      case "wiki-page":
+        return WikiPageSchema.parse(data);
       case "relations":
         return RelationsDoc.parse(data);
       case "page": {

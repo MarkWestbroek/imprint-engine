@@ -135,14 +135,25 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Documentatie differentiëren** — `docs` is nu één optioneel veld (pagina-slug
       of inline markdown). Het UML liet `Documentation` bewust vaag; board-spec was
       de eerste uitwerking. _(open ontwerp; M)_
-- [ ] **Wiki (site-in-de-site)** — drie nieuwe contenttypen (Wiki /
+- [~] **Wiki (site-in-de-site)** — drie nieuwe contenttypen (Wiki /
       WikiFolder / WikiPage): een op zichzelf staande informatiebundel met
       eigen treeview-navigatie onder één URL-voorvoegsel (Help, Cortex
-      deep-dive). Pagina's verplaatsbaar via het folder-veld. Plus
-      **autorisatie als PBAC-lite**: eerst één centraal `authorize()`-PEP
-      met de vaste regelset (admin alles / editor schrijft / reader leest /
-      publiek alleen `visibility: public`), later policies als content
-      (PDP/PAP) en wiki-overerving. Ontwerp: docs/design/wiki.md. _(M–L)_
+      deep-dive). Ontwerp: docs/design/wiki.md.
+      - [x] Schema's + relatieregels + admin (juli 2026): de drie typen
+        bestaan, met `visibility` op Wiki, enforced refs
+        (page→folder→wiki), en beheer onder Content → Wiki. Verplaatsen =
+        het folder-veld wijzigen.
+      - [x] **PEP** (juli 2026): `authorize()` in lib/authorize.ts met
+        inplugbaar `PolicyDecisionPoint`-interface (AuthZEN-snijvlak —
+        gestandaardiseerd op het PEP↔PDP-contract, niet op een policytaal,
+        zodat later een policies-als-content-PDP of Marks ODRL-gebaseerde
+        taal kan inpluggen). `staticPdp` = vaste regelset; `canEdit()` is
+        een wrapper over het PEP.
+      - [ ] Publieke route + wiki-chrome (treeview links) + boom-query.
+      - [ ] Gedogfood: Help-wiki vullen met de handleiding.
+      - [ ] Later: policies als content (PDP/PAP), `[[wiki-links]]`,
+        drag-&-drop verplaatsen, overerving, `visibility: members` op de
+        route (dynamisch/guard). _(M–L)_
 - [x] ~~**Asset-opruiming**~~ — gedaan in 0.11.0: `npm run assets:gc`
       (dry-run default, `--delete` om echt op te ruimen). Verwijdert alleen
       bestanden waar geen énkele historische rij naar wijst — History en

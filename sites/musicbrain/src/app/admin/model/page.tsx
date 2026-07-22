@@ -13,6 +13,9 @@ import {
   RelationsDoc,
   SiteConfigSchema,
   ThemeSchema,
+  WikiSchema,
+  WikiFolderSchema,
+  WikiPageSchema,
   type RelationRule,
 } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
@@ -30,6 +33,9 @@ const TYPES: { type: string; domain: string; schema: z.ZodType }[] = [
   { type: "release", domain: "catalogus", schema: ReleaseSchema },
   { type: "planning", domain: "planning", schema: PlanningSchema },
   { type: "planning-item", domain: "planning", schema: PlanningItemSchema },
+  { type: "wiki", domain: "wiki", schema: WikiSchema },
+  { type: "wiki-folder", domain: "wiki", schema: WikiFolderSchema },
+  { type: "wiki-page", domain: "wiki", schema: WikiPageSchema },
   { type: "page", domain: "site", schema: PageMetaSchema },
   { type: "menu", domain: "site", schema: MenuSchema },
   { type: "theme", domain: "site", schema: ThemeSchema },

@@ -277,6 +277,54 @@ export const PageDocSchema = PageMetaSchema.extend({
 export type PageDoc = z.infer<typeof PageDocSchema>;
 
 /**
+ * Wiki (site-in-de-site, design/wiki.md): a self-contained bundle of
+ * information about one subject — like a book: folders are chapters, pages
+ * are pages, and neither means anything without the binding. The wiki slug
+ * is the URL prefix (`/<wiki>/…`); navigation is the folder/page tree.
+ */
+
+/** Who may read a piece of content; "members" = any signed-in user. */
+export const Visibility = z.enum(["public", "members"]);
+export type Visibility = z.infer<typeof Visibility>;
+
+export const WikiSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  title: z.string().min(1),
+  description: z.string().default(""),
+  visibility: Visibility.default("public"),
+  order: z.number().int().default(0),
+});
+export type Wiki = z.infer<typeof WikiSchema>;
+
+/** A chapter/section in a wiki; nestable via `parent`. */
+export const WikiFolderSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  /** Slug of the Wiki this folder belongs to. */
+  wiki: z.string().min(1),
+  /** Slug of the parent folder; empty = top level of the wiki. */
+  parent: z.string().default(""),
+  title: z.string().min(1),
+  order: z.number().int().default(0),
+});
+export type WikiFolder = z.infer<typeof WikiFolderSchema>;
+
+export const WikiPageSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  /** Slug of the Wiki this page belongs to. */
+  wiki: z.string().min(1),
+  /** Slug of the WikiFolder holding this page; moving a page = changing this field. */
+  folder: z.string().min(1),
+  title: z.string().min(1),
+  /** Markdown body; plain links (`/help/…`) work, `[[page]]`-shortcuts come later. */
+  body: z.string().default(""),
+  order: z.number().int().default(0),
+});
+export type WikiPage = z.infer<typeof WikiPageSchema>;
+
+/**
  * Menu / MenuItem (UML): a named menu of nestable items; an item points to a
  * Page (0..1, by slug), to an external/anchor URL, or is just a group label.
  */

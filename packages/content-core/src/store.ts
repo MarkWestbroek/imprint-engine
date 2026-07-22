@@ -68,6 +68,9 @@ export type ContentType =
   | "theme"
   | "planning"
   | "planning-item"
+  | "wiki"
+  | "wiki-folder"
+  | "wiki-page"
   | "relations";
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */

@@ -78,23 +78,41 @@ default `public`) — te beginnen bij `Wiki` (en door te voeren waar nuttig).
 Sites/routes roepen niet zelf `session.role === …` aan maar altijd
 `authorize()`; `canEdit()` wordt een dunne wrapper of verdwijnt erin.
 
-### Later: policies als data (de "lite" AuthZen-lijn)
-Het volwassen patroon (bekend uit Marks bitemporele project/FTV, daar met
-een echte backend; hier bewust de lite-variant die op Plesk past):
+### De PDP is inplugbaar (het AuthZEN-snijvlak)
+Ontwerpbeslissing (juli 2026): we standaardiseren niet op een policy*taal*
+maar op de **interface tussen PEP en PDP** — dezelfde conclusie als de
+FTV/NLGov AuthZEN-lijn en Marks ODRL-Register-Toegangsbeleid-werk. Het PEP
+praat met de beslisser via één klein contract:
 
-- **PEP** — het poortje hierboven (blijft, alleen de beslisser wisselt).
-- **PDP** — een TS-componentje (geen sidecar-proces; gewoon een module) dat
-  policies evalueert met contextinfo.
-- **PIP** — de contextbron: sessie + attributen van de gebruiker
-  (`UserSchema` uitbreiden met vrije attributen, bijv. `beroep`).
-- **PAP** — beheer: policies als content (`type: "policy"`) in de bestaande
-  bitemporale tabel — dus geversioneerd, met historie, bewerkbaar in de
-  admin zoals RelationRules dat al zijn.
+```ts
+interface PolicyDecisionPoint {
+  decide(req: {
+    subject:  { role?: RoleType; name?: string; attrs?: Record<string, string> };
+    action:   "read" | "create" | "update" | "delete";
+    resource: { type: string; slug?: string; visibility?: string; wiki?: string };
+    context?: Record<string, unknown>;
+  }): Decision; // { allow: boolean; reason?: string }
+}
+```
 
-Policyvorm: klein en declaratief, bijv.
-`{ effect: "allow", role: "editor", attr: { beroep: "electrotechnicus" }, action: "update", resourceType: "component" }`.
-Geen rule-engine-taal; een array van dit soort regels + first-match of
-deny-overrides volstaat lang.
+De beslisser is daarmee verwisselbaar zonder dat call-sites veranderen:
+
+1. **Nu**: `staticPdp` — de vaste regelset hieronder, hardgecodeerd.
+2. **Later**: policies als content (`type: "policy"` in de bitemporale
+   tabel = PAP; een TS-module evalueert = PDP; gebruikersattributen = PIP).
+   Policyvorm klein en declaratief, bijv. `{ effect: "allow", role:
+   "editor", attr: { beroep: "electrotechnicus" }, action: "update",
+   resourceType: "component" }` + deny-overrides.
+3. **Later²**: een hoogover, **ODRL-gebaseerde, menselijk leesbare
+   policytaal** (in ontwikkeling bij Marks werkgroep; zie het
+   Register-Toegangsbeleid-ontwerp in het bitemporele project). Die plugt
+   in als alternatieve PDP — het register beschrijft (ODRL/Set met
+   Permission/Prohibition/Duty), een dunne vertaalslag beslist. Zolang de
+   uitkomst door `decide()` past, hoeft Imprint er niets voor om.
+
+Het PEP blijft in álle drie de gevallen hetzelfde poortje; alleen de
+`PolicyDecisionPoint`-implementatie wisselt (een constructor-argument /
+module-import, geen sidecar-proces — dit moet op Plesk blijven draaien).
 
 ### Later²: hiërarchische overerving in wiki's
 Een recht op de **Wiki** drilt door naar folders en pagina's, tot een

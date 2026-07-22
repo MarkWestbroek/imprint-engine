@@ -9,6 +9,7 @@ const TYPES: { type: ContentType; label: string }[] = [
   { type: "board-spec", label: "Board specs" },
   { type: "release", label: "Releases" },
   { type: "planning", label: "Planning" },
+  { type: "wiki", label: "Wikis" },
   { type: "menu", label: "Menus" },
   { type: "theme", label: "Themes" },
 ];
