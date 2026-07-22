@@ -119,7 +119,8 @@ export function WikiStudio({
       !(kind === "folder" &&
         dragging !== null &&
         (parent === dragging.slug || isDescendant(parent, dragging.slug)));
-    if (!dragging) return null;
+    // Altijd renderen: verschijnen de zones pas bij dragstart, dan muteert
+    // de DOM rond het gesleepte element en annuleert Chrome de drag.
     return (
       <div
         onDragOver={(e) => {
@@ -145,10 +146,10 @@ export function WikiStudio({
             )
           );
         }}
-        className="-my-0.5 h-2"
+        className="h-1.5"
       >
         <div
-          className={`mx-1 h-0.5 rounded transition-colors ${
+          className={`mx-1 h-0.5 translate-y-0.5 rounded transition-colors ${
             dropMark === key ? "bg-accent" : "bg-transparent"
           }`}
         />
