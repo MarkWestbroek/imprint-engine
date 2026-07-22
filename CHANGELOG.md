@@ -25,6 +25,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   publieke wiki's blijven cachebaar. Architectuur: §3d kreeg een
   mermaid-sequencediagram van de PEP→PDP-flow (het inplugbare
   AuthZEN-snijvlak).
+- Wiki: **folder verwijderen cascadeert** (compositie — Wiki ◆— Folder ◆—
+  Page): subfolders en pagina's gaan mee, met vooraf een waarschuwing die
+  de echte aantallen noemt; alles tombstones, dus herstelbaar via History.
+  De publiceer-knop verschijnt bovendien alleen nog waar publiceren is
+  ingericht (PUBLISH_URL/PUBLISH_TOKEN) en toont het doel in het label —
+  live heeft hem dus niet meer. Admin-rail kreeg een **?-Help-knop** naar
+  de Help-wiki.
 - Wiki-studio: **inline hernoemen** (dubbelklik op een boom-item; Enter/blur
   bewaart, Escape annuleert). Hernoemen wijzigt alléén de titel — de slug
   blijft stabiel, dus interne verwijzingen en URL's breken niet.
