@@ -213,6 +213,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       (patroon in de README).
 - [x] ~~**CI**~~ — gedaan in 0.10.0: GitHub Actions draait typecheck + lint +
       build (file-store, geen DB) bij elke push/PR.
+- [ ] **Seed triggert revalidatie** — `db:seed` schrijft rechtstreeks in de
+      DB en leegt de Next-cache niet; geseede content verschijnt pas na een
+      rebuild óf een willekeurige admin-save (juli 2026 live gebleken bij de
+      "open brain"-uitrol: build vóór seed = oude content in de statische
+      pagina's). Seed zou na afloop de revalidate-hook moeten aanroepen, dan
+      is de volgorde niet meer belangrijk. _(S)_
 - [x] ~~**Backups**~~ — gedaan in 0.11.0: `npm run backup` (hele bitemporale
       historie + users + assets, retentie 14, Node-only dus Plesk-Scheduled-
       Task-klaar); zie [backups.md](backups.md). Nog te doen: de dagelijkse
