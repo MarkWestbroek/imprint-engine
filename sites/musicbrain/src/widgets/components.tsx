@@ -6,7 +6,14 @@ import {
   PlanningItemSchema,
   type ContentType,
   type Page,
+  type Product,
 } from "@imprint/content-core";
+import {
+  ProductComponents,
+  ProductHeader,
+  ProductReleases,
+  ProductSpecs,
+} from "@/components/product-sections";
 import { store, writableStore } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
 import { bucketInto, groupIntoColumns } from "@/lib/planning";
@@ -39,6 +46,9 @@ import type {
   ProductsConfig,
   ReleasesConfig,
   SpecsConfig,
+  SpecTableConfig,
+  SubjectHeaderConfig,
+  ComponentsConfig,
   ListConfig,
   MapConfig,
   TableConfig,
@@ -300,6 +310,9 @@ async function GalleryWidget({
   subject?: unknown;
 }) {
   const images = collectImages(config, subject);
+  // Subject-driven and empty = the section simply isn't there (parity with
+  // the hand-coded page); the hint only helps for hand-filled galleries.
+  if (images.length === 0 && config.useSubjectMedia) return null;
   return (
     <WidgetFrame title={config.title}>
       {images.length > 0 ? (
@@ -1071,7 +1084,20 @@ async function ApiWidget({ config }: { config: ApiConfig }) {
   );
 }
 
-async function ReleasesWidget({ config }: { config: ReleasesConfig }) {
+async function ReleasesWidget({
+  config,
+  subject,
+}: {
+  config: ReleasesConfig;
+  subject?: unknown;
+}) {
+  // Product mode: an explicit product, or (on a default view) the subject —
+  // "the releases of this product", identical to the product page's section.
+  const product =
+    config.product ?? (config.project ? undefined : (subject as { slug?: string } | undefined)?.slug);
+  if (product) {
+    return <ProductReleases product={{ slug: product }} title={config.title ?? "Releases"} />;
+  }
   const releases = (await store.listReleases({ project: config.project, ...(await readOpts()) })).slice(
     0,
     config.limit
@@ -1091,6 +1117,72 @@ async function ReleasesWidget({ config }: { config: ReleasesConfig }) {
         ))}
       </ul>
     </WidgetFrame>
+  );
+}
+
+/**
+ * Subject-widgets: render the item this (default-view) page is about, via the
+ * same shared sections the hand-coded product page uses — parity by
+ * construction. Without a subject they show a gentle hint (studio: pick
+ * "Preview as …").
+ */
+function NoSubjectHint({ what }: { what: string }) {
+  return (
+    <p className="text-sm text-muted">
+      {what}: geen subject op deze pagina — gebruik dit op een default view
+      (kies &ldquo;Preview as …&rdquo; in de studio).
+    </p>
+  );
+}
+
+async function SubjectHeaderWidget({
+  config,
+  subject,
+}: {
+  config: SubjectHeaderConfig;
+  subject?: unknown;
+}) {
+  const product = subject as Product | undefined;
+  if (!product?.name) return <NoSubjectHint what="Subject header" />;
+  return (
+    <ProductHeader
+      product={product}
+      title={config.title}
+      showStatus={config.showStatus}
+      showTagline={config.showTagline}
+      showDescription={config.showDescription}
+    />
+  );
+}
+
+async function SpecTableWidget({
+  config,
+  subject,
+}: {
+  config: SpecTableConfig;
+  subject?: unknown;
+}) {
+  const product = subject as Product | undefined;
+  if (!product?.name) return <NoSubjectHint what="Specs table" />;
+  return <ProductSpecs product={product} title={config.title} />;
+}
+
+async function ComponentsWidget({
+  config,
+  subject,
+}: {
+  config: ComponentsConfig;
+  subject?: unknown;
+}) {
+  const product = subject as Product | undefined;
+  if (!product?.name) return <NoSubjectHint what="Product components" />;
+  return (
+    <ProductComponents
+      product={product}
+      title={config.title}
+      showBoards={config.showBoards}
+      opts={await readOpts()}
+    />
   );
 }
 
@@ -1155,4 +1247,7 @@ export const widgetComponents: Record<string, WidgetComponent> = {
   api: ApiWidget as WidgetComponent,
   releases: ReleasesWidget as WidgetComponent,
   products: ProductsWidget as WidgetComponent,
+  subjectheader: SubjectHeaderWidget as WidgetComponent,
+  spectable: SpecTableWidget as WidgetComponent,
+  components: ComponentsWidget as WidgetComponent,
 };

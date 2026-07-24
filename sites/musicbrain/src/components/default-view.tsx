@@ -1,6 +1,7 @@
 import type { ContentType } from "@imprint/content-core";
 import { store } from "@/lib/content";
 import { PageRenderer } from "@/components/page-renderer";
+import { layoutRows } from "@/widgets/templates";
 
 /**
  * Default views per content type are just pages at slug "_view/<type>",
@@ -45,7 +46,16 @@ export async function DefaultView({
   const view = await store.getPage(viewSlugFor(type), { includeDrafts: true });
   if (view?.layout) {
     const layout = view.layout;
-    return <PageRenderer page={{ ...view, title, body: "", layout }} subject={subject} />;
+    // A view with its own subjectheader owns the h1 — don't render the title twice.
+    const ownsHeader = layoutRows(layout).some((row) =>
+      row.cells.some((cell) => cell.widgets.some((w) => w.type === "subjectheader"))
+    );
+    return (
+      <PageRenderer
+        page={{ ...view, title: ownsHeader ? "" : title, body: "", layout }}
+        subject={subject}
+      />
+    );
   }
   return <>{fallback}</>;
 }

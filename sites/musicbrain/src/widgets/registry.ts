@@ -57,6 +57,11 @@ export type ApiConfig = z.infer<typeof ApiConfig>;
 export const ReleasesConfig = z.object({
   title: z.string().optional(),
   project: z.string().optional(),
+  /**
+   * Limit to one product's releases. Empty on a default view = the subject
+   * product (so _view/product shows "releases of this product").
+   */
+  product: z.string().optional(),
   limit: z.number().int().positive().default(5),
 });
 export type ReleasesConfig = z.infer<typeof ReleasesConfig>;
@@ -290,6 +295,35 @@ export const DownloadsConfig = z.object({
 });
 export type DownloadsConfig = z.infer<typeof DownloadsConfig>;
 
+/**
+ * Subject-widgets (default views): they read the content item the page is
+ * about — a product on _view/product — so a view can reproduce everything
+ * the hand-coded page shows, but stay studio-editable.
+ */
+
+/** Header of the subject: audience eyebrow, name + status badge, tagline, description. */
+export const SubjectHeaderConfig = z.object({
+  /** Override the heading; default is the subject's name/title. */
+  title: z.string().optional(),
+  showStatus: z.boolean().default(true),
+  showTagline: z.boolean().default(true),
+  showDescription: z.boolean().default(true),
+});
+export type SubjectHeaderConfig = z.infer<typeof SubjectHeaderConfig>;
+
+/** The subject's specs (label/value list) as a table. */
+export const SpecTableConfig = z.object({
+  title: z.string().default("Specs"),
+});
+export type SpecTableConfig = z.infer<typeof SpecTableConfig>;
+
+/** The subject product's components, with their board-specs collapsed. */
+export const ComponentsConfig = z.object({
+  title: z.string().default("Components"),
+  showBoards: z.boolean().default(true),
+});
+export type ComponentsConfig = z.infer<typeof ComponentsConfig>;
+
 export const PostsConfig = z.object({
   title: z.string().optional(),
   /** Page-slug prefix that marks a post. */
@@ -422,6 +456,9 @@ export const widgetCatalog = [
   { name: "planning", label: "Planning board", version: "1.0.0", help: "A live board backed by planning-items: phases as columns, cards with owner, rich text and component links. Edit it in the admin (drag & drop).", configSchema: PlanningConfig },
   { name: "hero", label: "Hero", version: "1.1.0", help: "Big heading + subtitle, optional image and CTA button. *Word* in the title gets the accent colour; variant \"open\" drops the panel.", configSchema: HeroConfig },
   { name: "specs", label: "Specs strip", version: "1.0.0", help: "A row of key figures in mono: big value + small caption.", configSchema: SpecsConfig },
+  { name: "subjectheader", label: "Subject header", version: "1.0.0", help: "Header of the item this view is about: eyebrow, name + status, tagline, description.", configSchema: SubjectHeaderConfig },
+  { name: "spectable", label: "Specs table", version: "1.0.0", help: "The subject's specs (label/value) as a table.", configSchema: SpecTableConfig },
+  { name: "components", label: "Product components", version: "1.0.0", help: "The subject product's components, with their board-specs collapsed.", configSchema: ComponentsConfig },
   { name: "video", label: "Video", version: "1.0.0", help: "YouTube/Vimeo (privacy embed) or a direct video file.", configSchema: VideoConfig },
   { name: "accordion", label: "Accordion / FAQ", version: "1.0.0", help: "Collapsible question/answer blocks (no JS needed).", configSchema: AccordionConfig },
   { name: "divider", label: "Divider", version: "1.1.0", help: "Visual rest between rows: line, dots, a scope-trace or just space.", configSchema: DividerConfig },

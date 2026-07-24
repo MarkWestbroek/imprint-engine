@@ -75,9 +75,13 @@ export function SiteChrome({
                 {item.label}
               </Link>
             ))}
-            <ThemeSwitcher
-              themes={themes.map((t) => ({ name: t.name, label: t.label }))}
-            />
+            {/* Stays clickable in the studio's inert chrome: trying themes is
+                exactly what the canvas preview is for. */}
+            <span className={inert ? "pointer-events-auto" : undefined}>
+              <ThemeSwitcher
+                themes={themes.map((t) => ({ name: t.name, label: t.label }))}
+              />
+            </span>
           </nav>
         </div>
       </header>

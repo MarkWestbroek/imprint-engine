@@ -227,3 +227,77 @@ Voor het geval dat je écht buitengesloten raakt, is `npm run user -- passwd <na
 
 **Let op met git.** Terwijl ik bouwde heeft een parallelle sessie mijn werk-in-uitvoering al gecommit als `346f9f2` ("Users-beheer … (parallelle sessie)"), en mijn doc-wijzigingen zijn meegegaan in `727764b`. Dat zit dus al in `main`. De gecommitte code is identiek aan wat ik hierboven geverifieerd heb. Wat nog openstaat is alleen de README-sectie en een verwijzing in een comment die naar het verkeerde document wees. Die twee heb ik bewust niet gecommit — zeg het als je wilt dat ik dat alsnog doe.
 
+---
+
+## 👤 Gebruiker (3)
+
+okee. dank. Wil je dit nog documenteren ergens? Zodat ik het kan terugvinden hoe ik dit doe als het nodig is?
+
+**🤖 Claude:**
+
+Goede vraag — en er is net iets veranderd dat daarop ingaat: die HEAD-commit voegde `docs/handleiding.md` toe plus een "documentatie-afspraak" in CLAUDE.md. Die wil ik eerst lezen voordat ik iets op de verkeerde plek zet.
+> 🔧 `PowerShell` — Show the new documentation convention in CLAUDE.md
+
+**🤖 Claude:**
+
+De afspraak is helder: functioneel in `docs/handleiding.md`, technisch in `architecture.md`. Dat eerste ontbreekt nog — precies wat je vraagt. Even de handleiding lezen zodat ik de stijl volg.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+
+**🤖 Claude:**
+
+De parallelle sessie heeft al een sectie "Inloggen & account" geschreven, maar daar zit precies jouw scenario níét in: er staat "een admin reset het" — en dat helpt je niet als jij de enige admin bént. Dat vul ik aan.
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+
+**🤖 Claude:**
+
+Ik verwees naar een anker in de README — dat moet wel kloppen. Even controleren.
+> 🔧 `Grep` — ^#{1,4}
+
+**🤖 Claude:**
+
+Het anker klopt (README:128). Eén ding nog: die sectie staat verstopt onder "Commando's", terwijl je hem zoekt op het moment dat je over inloggen leest. Ik zet er een verwijzing bij.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Bash` — Verify the other docs already carry the change
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+
+**🤖 Claude:**
+
+Regel 26-30 gaf geen concreet antwoord ("overleg even"). Er ís er één: het sessiegeheim roteren verloopt álle sessies direct. Dat is een betere instructie.
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+
+**🤖 Claude:**
+
+Ik claim nu iets in de docs dat ik nog niet getest heb. Dat kan ik veilig controleren zonder je dev-server te storen: een cookie ondertekend met een ánder geheim moet geweigerd worden — dat ís precies wat roteren doet.
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\tmp-check-secret.ts
+> 🔧 `PowerShell` — Verify that rotating the session secret invalidates cookies
+> 🔧 `Bash` — Clean up temp script and show final status
+
+**🤖 Claude:**
+
+Ja — en er bleek net een afspraak voor te bestaan die ik moest volgen. Die HEAD-commit van 22:13 legde in CLAUDE.md vast: functioneel in `docs/handleiding.md`, technisch in `docs/architecture.md`, plus een changelog-regel. Het technische deel, de changelog en de backlog stonden er al (die zijn meegegaan in jouw commits); de functionele kant ontbrak nog.
+
+**Waar je het nu terugvindt.** Voor het paniekmoment: [README.md](README.md#wachtwoord-kwijt) onder "Wachtwoord kwijt" — het `npm run user -- passwd <naam>`-recept, ook voor Plesk via SSH. Ik heb er een verwijzing naartoe gezet bij de inlog-instructie, want dáár lees je erover op het moment dat je het zoekt, niet onder "Commando's". In [docs/handleiding.md](docs/handleiding.md) staat nu de functionele kant: wat je onder **Users** kunt, dat een reset het wachtwoord één keer toont, en wat je juist niet kunt (de laatste admin slopen).
+
+**Eén gat gedicht.** De handleiding uit de parallelle sessie zei bij "wachtwoord kwijt": *"een admin reset het"*. Dat helpt precies jou niet — jij bént de enige admin, en dat was de aanleiding voor deze hele exercitie. Die sectie splitst nu naar rol: editors vragen een admin, de enige admin gaat via de server.
+
+**En iets nieuws geleerd onderweg.** Ik had opgeschreven dat je een sessie niet op afstand kunt beëindigen, met als advies "overleg even" — waardeloos als er echt iemand in zit waar je vanaf wilt. Er ís een concrete knop: `SESSION_SECRET` vervangen en herstarten verloopt in één klap álle sessies. Dat had ik uit de code afgeleid, dus heb ik het getest — een cookie ondertekend met een ander geheim wordt inderdaad geweigerd, wat exact het roteer-scenario is. Dat staat nu met het genereer-commando in de README, en de handleiding verwijst ernaar. Je moet er zelf ook opnieuw door inloggen; dat staat erbij.
+
+Nog niet gecommit: `README.md`, `docs/handleiding.md` en die comment-regel in `page.tsx`. Zeg maar of ik dat moet doen.
+
+---
+
+## 👤 Gebruiker (4)
+
+wil je heel kort zeggen wat je gebouwd hebt voor de release log van v0.9?
+
+**🤖 Claude:**
+
+Voor v0.9:
+
+> **Gebruikersbeheer** — `/admin/users`: admins beheren accounts, rollen en wachtwoord-resets (gegenereerd, één keer getoond); iedereen wijzigt er zijn eigen wachtwoord. De laatste admin kan zichzelf niet slopen. Buitengesloten? `npm run user -- passwd <naam>` op de server is de weg terug — geen reset-mail nodig.
+
+Dat is de kern in één regel. De uitgebreide versie staat al onder `## [0.9.0]` in de changelog; hashing/`DbUserStore` en de 12u-sessienuance zijn daar beter op hun plek dan in een release-log.
+

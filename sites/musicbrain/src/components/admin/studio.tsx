@@ -78,6 +78,8 @@ export async function PageStudio({
 
   const site = await store.getSiteConfig();
   const menu = await store.getMenu("main");
+  // Themes in the canvas chrome, so editors can try a page in every theme.
+  const themes = await store.listThemes();
   const title = targetType
     ? `Default view: ${targetType}`
     : String(draft.meta.title ?? "") || "Untitled";
@@ -101,7 +103,7 @@ export async function PageStudio({
 
         <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-line">
           <div className="flex min-h-[60vh] flex-col bg-background">
-            <SiteChrome site={site} nav={menuToNav(menu)} inert>
+            <SiteChrome site={site} nav={menuToNav(menu)} themes={themes} inert>
               <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
               {draft.body && (
                 <div className="mt-4 max-w-3xl">

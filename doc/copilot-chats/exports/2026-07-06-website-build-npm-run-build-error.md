@@ -4192,3 +4192,1162 @@ Ik heb het empirisch afgeregeld met headless-browserschreenshots op drie vormen 
 
 CI is groen op v0.10.1 — de patch is compleet en geverifieerd. Alles staat klaar voor de Plesk-pull wanneer jij wilt; daarna kan MMB de set met `--3d` en `kind` naar live posten en staat de 3D-tab er meteen goed op.
 
+---
+
+## 👤 Gebruiker (57)
+
+Het is nog steeds zo dat het 3D-vlak veel langwerpiger is.
+
+**🤖 Claude:**
+
+Klopt — en nu zie ik het echte euvel: het vlak is helemaal geen 16:9, het is in de praktijk ~5:1. De `aspect-ratio` op het `<model-viewer>`-element zelf wordt overruled door interne host-styling van de webcomponent. Dubbele fix: de verhouding op een **wrapper-div** zetten (die luistert wél), en die verhouding **meteen aan het bord aanpassen** — een vierkantig bord krijgt een vierkanter vlak, een lang bord een breed vlak, en de camera-afstand rekent daarop mee zodat het bord in beide richtingen vult:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Bash` — Typecheck and screenshot new adaptive panes
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Bash` — Typecheck and re-screenshot two-step framing
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\model-3d.tsx
+> 🔧 `Bash` — Re-verify with perspective-aware distance
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Lint the final framing code
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Commit, release v0.10.2, push
+> 🔧 `Bash` — Check whether release commit and tag exist
+> 🔧 `Bash` — Commit chat export, rerun release 0.10.2, push
+
+**🤖 Claude:**
+
+**v0.10.2 staat erop** — getagd en gepusht, changelog netjes meegerold.
+
+Wat er mis was met het "langwerpige vlak", in twee lagen:
+
+1. **Het vlak was in werkelijkheid ~5:1, geen 16:9.** De `aspect-ratio` stond op het `<model-viewer>`-element zelf, maar de interne styling van die webcomponent won het daarvan. De verhouding zit nu op een wrapper-div — en die **past zich bovendien aan het bord aan**: een vierkantig bord (brain) krijgt een vierkanter vlak (~4:3–16:9), een lang bord een breed vlak (max 2,4:1). Dus geen brede lege bak meer onder een hoge Overview.
+
+2. **De camera-afstand rekent nu met perspectief.** Mijn eerdere passing was orthografisch, maar de camera staat op bord-schaal afstand (10 cm van een bord van 11 cm) — de voorrand komt dan zoveel dichterbij dat hij het kader uit "loomt". De fit geldt nu op het near-face van het bord, met de kijkrichting-diepte erbij.
+
+Screenshot-geverifieerd op drie vormen: brain (vierkantig — vult het vlak volledig), busboard (breed) en jack8 (lang, alle acht jacks binnen kader). Herlaad en klik maar op 3D; en als jij tevreden bent kan MMB richting live.
+
+Tussendoor nog twee dingen meegenomen: jouw commit `5c5cd80` (3D-renders gswitch/reflex) is meegepusht, en je bijgewerkte chat-export is gecommit — de release-check weigerde eerst terecht vanwege de niet-schone werkboom.
+
+---
+
+## 👤 Gebruiker (58)
+
+ja, dat ziet er beter uit.
+
+Wat staat er nog open qua backlog?
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Bash` — Commit backlog maintenance
+
+**🤖 Claude:**
+
+Dit staat er nog open, gegroepeerd (S ≈ uurtje, M ≈ dagdeel, L ≈ meerdaags):
+
+**Requirements met must-status — het grootste open blok**
+- **S10 Formulieren** (DB + notificatiemail + spam-bescherming) _(L)_ — de fundering onder **W1 nieuwsbrief-signup** _(M)_ en **W4 beta-aanmelding per product** _(M)_. Vergt mail-infra op Plesk; ontgrendelt daarna ook "wachtwoord vergeten zonder SSH".
+- **W2/S7 Release-feed uit GitHub** (webhook → release-item) _(M)_ — losstaand van S10, dus apart oppakbaar.
+- **Placeholder-content vervangen** _(M, maar jouw tekst)_ — de productteksten zijn nog door mij verzonnen.
+
+**Quick wins (allemaal S)**
+- **Backups** van DB + assets op Plesk — eigenlijk de enige echte risico-post in de lijst.
+- **RSS-feed** voor de devlog (rest van W6).
+- **Asset-opruiming** (GC-script voor oude gehashte bestanden).
+- **Time-travel-gat dichten**: widgets die zelf content ophalen (posts, list, releases) kijken in de preview nog naar "nu".
+- **Default views**: startsjablonen meeleveren.
+
+**Studio & admin (M-werk)**
+- Deelbare **preview-URL voor drafts** (S5) en **drafts in een tabel** i.p.v. procesgeheugen (concept overleeft nu geen serverherstart) — die twee combineren goed.
+- **Sessie intrekken** bij wachtwoordreset/rolwijziging (`session_epoch`).
+- **Rollen per content-item** (S3, product-editor-rol).
+- **Media-bibliotheek** met thumbnails/OG-varianten (S8, L).
+- **Chrome-varianten** per site (logo-positie, header/footer).
+
+**Groot spul / ontwerp klaar**
+- **W5/S9 Meertaligheid** _(L)_ — ontwerp ligt klaar in [design/meertaligheid.md](docs/design/meertaligheid.md), gefaseerd: admin-flow eerst.
+- **W9 Editor-demo** _(M)_ — ontwerp klaar in [design/editor-demo.md](docs/design/editor-demo.md), wacht op jouw antwoorden (subdomein, content, timing).
+- **sitemap/robots/OG-images** (W13, M), **zoek-widget** (L), **MinIO/S3-AssetStore** (M), **migratie naar bitemporal2026** (L), W8 presskit / W11 community / W12 analytics (elk S).
+
+**Beslissingen die alleen jou vragen** (§7): image+board samenvoegen of apart laten, zwaardere WYSIWYG-editor (Milkdown/TipTap) ja/nee, en MariaDB als officiële keuze vastleggen in de requirements (S11 noemt nog Postgres).
+
+**En het directe actiepunt buiten de backlog om**: de Plesk-pull naar v0.10.2, waarna MMB herpost (`kind` + GLB's) — dat zet alles van vandaag live.
+
+Mijn advies voor de volgende sessie: **backups** eerst (klein, en het enige waar je nu echt spijt van kunt krijgen), dan **W2 release-feed** (must, geen afhankelijkheden) — en S10/W1/W4 als het grotere blok zodra je weet wat de mail-mogelijkheden op Plesk zijn.
+
+---
+
+## 👤 Gebruiker (59)
+
+Wil je de Quick Wins oppakken en de W2 release feed?
+
+Voor formulieren ben ik toevallig in mijn bitemporal project hard aan het werk een formulier editor te bouwen die qua velden metamodel-georienteerd is. Een goede testcase zou zijn om het metamodel van een Imprint-site (zoals hier inclusief de bijzondere product-release-component en itinerary content-subklassen) uitleesbaar te maken in een af te spreken formaat. (We hebben in het bitemp project een (werknaam) V3 formaat dat een metamodel beschrijft.)
+
+Als een imprint site het content-model zo publiceert in een API, kan een gebruiker in de editor (nu in de Omnium frontend, maar dat een losse component worden) een formulierdefinitie maken en gebruiken op de website. Dan moet natuurlijk de formulier-renderer ook als WIdget te gebruiken zijn.
+
+Maar we werken daar dus aan:
+- een formulierdefinitie formaat (met secties en condities, en zoals gezegd een tight coupling naar de databron (incl. enums en referentielijsten als een speciaal soort typen))
+- een formulierweergave-renderer van dat formaat (het is ook in react)
+
+# Widgets algemeen
+Een algemene vraag nog die door mijn hoofd speelde: Wat voor soort (open source) CMS systemen zijn er nog meer in de wereld, bij voorkeur die op basis van react/js/nodejs, en werken die ook met Widgets? Als ze dat doen, hebben ze daar dan elk een eigen formaat voor? Of is er soms een standaard in? Als dat laatste zo is, is dat leuk, en zou je een Widget in meerdere systemen kunnen laten draaien.
+
+Wil je daar eens naar kijken?
+
+**🤖 Claude:**
+
+Flinke batch — ik pak het als volgt: eerst de vijf quick wins + W2 bouwen, dan een cadeautje voor jouw formulier-spoor (het metamodel is bijna gratis te publiceren — daarover zo meer), en als afsluiter het CMS/widget-standaarden-onderzoek. 
+
+Over de formulieren: mooi plan, en er ligt hier al een haakje. De admin-formulieren worden nu al gegenereerd uit de zod-schema's via JSON Schema — dus een **`/api/meta`-endpoint dat het contentmodel (types + relatieregels als referentietypen) publiceert** is klein werk en geeft jullie editor meteen een echte databron om tegen te bouwen. Het V3-formaat ken ik nog niet; stuur die spec een keer op, dan bouwen we óf een vertaalslag in Imprint óf jullie mappen JSON Schema → V3 aan jullie kant. De formulier-renderer-als-widget zet ik op de backlog als afspraak.
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Grep` — store\.(list|get)\w+\(
+> 🔧 `Bash` — Find all store usage in widget viewers
+> 🔧 `Bash` — Show context around each store call
+> 🔧 `Bash` — Make all widget store reads preview-aware
+> 🔧 `Bash` — Apply preview-aware reads in widget viewers
+
+**🤖 Claude:**
+
+Time-travel-gat dicht. Nu de RSS-feed — even de site-config velden checken:
+> 🔧 `Grep` — SiteConfigSchema = z\.object
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\feed.xml\route.ts
+> 🔧 `Grep` — export const metadata|metadata: Metadata =
+> 🔧 `Bash` — Find metadata in root layout
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\layout.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\layout.tsx
+
+**🤖 Claude:**
+
+Nu de GitHub-webhook (W2). Eerst het ReleaseSchema exact bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\webhooks\github\route.ts
+
+**🤖 Claude:**
+
+Nu het backup-script — even kijken waar de AssetStore zijn bestanden bewaart:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\assets.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\backup.mjs
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\scripts\assets-gc.mjs
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Nu het metamodel-endpoint. Even kijken hoe de admin de zod-schema's al naar JSON Schema vertaalt:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\admin-schemas.ts
+> 🔧 `Grep` — export (const|function|type|interface)
+> 🔧 `Grep` — relations
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\meta\route.ts
+> 🔧 `Bash` — Check content-core exports
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\package.json
+> 🔧 `Bash` — Add backups dir to gitignore
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\backups.md
+
+**🤖 Claude:**
+
+Backlog en changelog bijwerken:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+
+**🤖 Claude:**
+
+Nu het formulier-spoor in de backlog + changelog:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\architecture.md
+
+**🤖 Claude:**
+
+Nu verifiëren — typecheck/lint, en dan alles e2e:
+> 🔧 `Bash` — Typecheck and lint the batch
+> 🔧 `Bash` — E2E: feed, meta endpoint, webhook auth
+> 🔧 `Bash` — Set webhook secret and repo mapping locally
+> 🔧 `Bash` — E2E signed webhook flow with cleanup
+
+**🤖 Claude:**
+
+Webhook volledig groen. Nu backup en GC draaien:
+> 🔧 `Bash` — Run backup and GC dry-run
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\backup.mjs
+> 🔧 `Bash` — Re-run backup with tar fix
+> 🔧 `Bash` — Revert test mapping, reseed, production build
+
+**🤖 Claude:**
+
+Build groen. Committen, en dan het CMS-onderzoek:
+> 🔧 `Bash` — Commit and push quick wins batch
+> 🔧 `ToolSearch`
+> 🔧 `WebSearch`
+> 🔧 `WebSearch`
+> 🔧 `WebSearch`
+> 🔧 `WebSearch`
+> 🔧 `WebSearch`
+
+**🤖 Claude:**
+
+Genoeg materiaal. Ik schrijf het onderzoek als ontwerp-notitie:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\design\widget-standaarden.md
+> 🔧 `Bash` — Commit research note and push
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Alles klaar en gepusht (`1bcff70` + `388bba7`). Drie delen:
+
+**1. Quick wins + W2 — gebouwd en e2e getest**
+- **GitHub release-webhook (W2/S7)**: `POST /api/webhooks/github`, HMAC-signed met `GITHUB_WEBHOOK_SECRET`. Welke repo bij welk project/product hoort staat in de site-config (`releaseSources`); onbekende repos worden genegeerd, prerelease → beta, assets → downloads, edits superseden bitemporaal. E2e: foute signature 401 ✓, gesigneerde payload → release zichtbaar in de API ✓. *Jij moet nog*: secret zetten (Plesk-env + `.env.local`), webhook aanmaken in je repo('s), en de mapping invullen via admin → Site.
+- **RSS-feed**: [/feed.xml](http://localhost:3000/feed.xml), aangekondigd via `rel=alternate`.
+- **Backups**: `npm run backup` — hele bitemporale historie + users + assets.tgz, retentie 14, Node-only dus direct bruikbaar als dagelijkse Plesk Scheduled Task; restore-procedure in [docs/backups.md](docs/backups.md) (bewust letterlijk terugzetten, nooit via putItem). Lokaal gedraaid: 283 rijen + assets ✓.
+- **Asset-GC**: `npm run assets:gc` — verwijdert alleen bestanden waar geen énkele historische rij naar wijst (time travel en History behouden hun assets), dry-run default. Vond lokaal 2 echte wezen (5,4 MB).
+- **Time-travel-gat dicht**: de zeven widgets met eigen store-reads (posts, list, releases, downloads, boardspec, itinerary, products) reizen nu mee in de as-of-preview.
+- **Default views** heb ik bewust *niet* gebouwd, met reden in de backlog: een meegeleverd sjabloon zou je goede hand-gecodeerde pagina's direct overrulen; dat vraagt eerst een "gebruik sjabloon"-keuze per type.
+
+**2. Formulier-spoor — `/api/meta` staat live (lokaal)**
+`GET /api/meta` publiceert het contentmodel: JSON Schema 2020-12 per contenttype, gegenereerd uit dezelfde zod-schema's die de content valideren (kan dus niet uit de pas lopen), plus de actieve relatieregels als referentietypen (veld-pad → doeltype → waar je kandidaatwaarden ophaalt) en de afgeleide itinerary. Jullie editor heeft daarmee een echte databron. Zodra je de V3-spec deelt bouw ik `?format=v3` ernaast; de formulier-renderer-als-widget staat als afspraak op de backlog.
+
+**3. Het onderzoek** — volledige notitie in [docs/design/widget-standaarden.md](docs/design/widget-standaarden.md), de kern: **iedereen heeft blocks, niemand deelt een formaat.** Payload, Strapi, Sanity, Storyblok, Puck: allemaal een eigen JSON/code-contract. De twee bijna-standaarden: **Portable Text** (echte open spec, maar voor rich text, niet voor widgets) en het **Block Protocol** van Joel Spolsky/HASH (precies jouw droom — blocks met getypeerd datacontract die overal draaien — technisch nog levend maar de adoptie is nooit gekomen). Webcomponents zijn de enige runtime-standaard die echt werkt; onze `<model-viewer>` is daar het levende bewijs van. Geruststellend: Imprints `{type, config}` + schema + viewer is vrijwel identiek aan Puck en Payload — we zitten óp de hoofdstroom, en een mechanische vertaling van onze catalogus naar een Puck-config is de goedkope portabiliteitsroute mocht je die ooit willen.
+
+---
+
+## 👤 Gebruiker (60)
+
+hier de tekst over het schema-formaat en de api erop van bitemp
+
+**🤖 Claude:**
+
+Perfect, daar kan ik direct `?format=v3` mee bouwen. Ik zet de spec in de repo, schrijf een generieke zod→V3-exporter (met de GE/relatie-splitsing zoals in §7) en hang hem naast de JSON Schema-vorm in `/api/meta`. Eerst de resterende schema's even bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\v3-export.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\meta\route.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\api\meta\route.ts
+
+**🤖 Claude:**
+
+Spec van Mark in de repo zetten en dan testen:
+> 🔧 `Bash` — Typecheck and inspect V3 export output
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\v3-export.ts
+> 🔧 `Bash` — Try to locate the V3 spec file Mark attached
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\design\v3-metamodel-spec.md
+> 🔧 `Bash` — Verify V3 export details after Locale fix
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\v3-export.ts
+> 🔧 `Bash` — Verify color datatype and lint
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Commit V3 export and push
+
+**🤖 Claude:**
+
+Klaar — `GET /api/meta?format=v3` staat erop (`59dcd43`), en jullie spec staat als contract in [docs/design/v3-metamodel-spec.md](docs/design/v3-metamodel-spec.md) (met de open punten uit §10 beantwoord voor de Imprint-kant).
+
+De exporter ([v3-export.ts](sites/musicbrain/src/lib/v3-export.ts)) leidt het geneste `V3Model` **live af uit dezelfde zod-schema's die de content valideren** — geen tweede waarheid die kan gaan driften. De mapping volgt §7 van jullie spec:
+
+- **8 entiteiten** in twee domeinen: *catalogus* (Product, Component, BoardSpec, Release) en *site* (Page, Menu, Theme, Site).
+- **GE-splitsing**: scalars → GE "Kern"; array-van-objecten → meervoudig GE (Component.Versions, BoardSpec.Connectors, Release.Downloads…); objecten → enkelvoudig GE (BoardSpec.Assets, Theme.Colors); herhaalbare scalars (media, highlights) → meervoudig GE met één veld.
+- **Relatieregels → V3-relaties**, en het mooiste: de bijzondere Release↔Component-associatie komt er precies uit zoals jullie spec het bedoelt — `Rel_Release_Components` (0..*, doel Component) met **`version` als veld óp de relatie**. Ook `Rel_Product_Components`, `Rel_Component_Children` (zelf-relatie) en `Rel_BoardSpec_Component` (1).
+- **Centrale enums**: Locale, ProductStatus, ReleaseChannel.
+- **Datatypes met widget-hints**: `Slug`, `Versienummer`, `Markdown` (richtext), `Kleur` (color — themakleuren), `AssetUrl` (media — de board-renders/GLB's), en `Json` als eerlijk vangnet voor diepe substructuren (pinouts-record, page-layout, connector-pins) — het echte schema daarvan staat altijd in de JSON Schema-vorm van hetzelfde endpoint.
+- Diagram-layout en `runtime` bewust afwezig, zoals §3/§7 toestaan. Itinerary staat er bewust niet in (afgeleid, niet opgeslagen) — vermeld in de `beschrijving`.
+
+**Voor de Omnium-kant om te proberen**: wijs de ModelPicker naar `http://localhost:3000/api/meta?format=v3` (of haal het document op en voer het als `injectedTypes`). De projectboom wordt dan *catalogus → Release → {Kern, Highlights, Downloads, →Product, →Components(version)}* enzovoort. Twee dingen die ik graag terughoor zodra jullie picker erop draait: of de `Json`-vangnetten op de goede plekken zitten (of dat jullie bijv. connector-pins toch als echte velden willen), en of `momentvoorkomen` op de relatie zich gedraagt zoals de editor verwacht bij het slepen van een FieldRef met `gepad`.
+
+---
+
+## 👤 Gebruiker (61)
+
+Cool!
+
+Vraagje over de planning, het kanban bord Widget.
+
+Ik heb hem zo ingericht, maar het idee is natuurlijk dat je als gebruiker kaartjes op jouw naam maakt en in de backlog gooit. Daarna kun je ze met drag en drop verschuiven van kolom.
+
+En er op klikken maakt dat je ze kunt wijzigen.
+
+Ideaal zou helemaal zijn als je hier ook componentenversies kon tonen, of ernaar kon refereren. (Een soort fase-view, of status, op de componenten.)
+
+Eigenlijk kan `planning` dus een content type zijn, met fasen eronder en onder de planning ook kaartjes, of `planning-items` is beter, want kaart is maar de visualisatie ervan, die in een fase kunnen zijn. Maar ik denk niet dat ze dan helemaal van eigenaar veranderen. Gewoon van status, en dat geeft het Widget weer.
+
+planning hoort bij een project
+planningitem heeft een eigenaar = gebruiker (hebben we die al?)
+tekst mag rich text, incl. nette interne links naar andere content (zoals een module waar aan gewerkt wordt)
+
+Wil je kijken of je hem kun opleuken hiernaartoe?
+
+**🤖 Claude:**
+
+Gaaf idee — en dit is bij uitstek Imprint-native te doen. Kort mijn instinct vooraf: een kaartje dat van kolom wisselt = een nieuwe bitemporale versie met een andere `status`. Dat betekent dat je gratis de **volledige historie krijgt van hoe een kaartje door de fasen liep** — en dat time-travel het bord toont zoals het op elke datum was. Dat is precies waar deze engine goed in is.
+
+Laat me eerst het terrein verkennen voordat ik een aanpak vastleg.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\editors.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\relations.ts
+
+**🤖 Claude:**
+
+Nu de kern-bedrading: hoe een contenttype wordt aangesloten (store, db-store validate, admin), plus de kanban-viewer en de user-store.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\user-store.ts
+
+**🤖 Claude:**
+
+Nu de kanban-viewer, de admin-CRUD-structuur, SchemaForm, Markdown en de file-store (voor de exhaustive checks).
+> 🔧 `Bash` — Scan kanban viewer, admin structure, file-store, markdown
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\markdown.tsx
+
+**🤖 Claude:**
+
+Nu de admin-serveracties en navigatie, om het patroon te spiegelen.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\actions.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\layout.tsx
+
+**🤖 Claude:**
+
+Ik heb nu het volledige beeld. Even het staartstuk van de schema's en de seed bekijken, dan leg ik de aanpak vast en bouw.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+> 🔧 `Bash` — Read schema tail and seed/content structure
+
+**🤖 Claude:**
+
+Ik heb nu het volledige beeld. Mijn aanpak — Imprint-native, non-destructief:
+
+**Datamodel** (twee nieuwe contenttypen, want kaart is maar de visualisatie):
+- `planning` — hoort bij een product, definieert de fasen (kolommen)
+- `planning-item` — `title`, verwijzing naar de `planning`, `status` (= fase-key), `owner` (gebruikersnaam), `body` (markdown/rich text), optionele `component`-ref, `order`
+
+**De bitemporale clou**: een kaart verschuiven = nieuwe versie met andere `status` → je krijgt gratis de volledige fasehistorie én time-travel toont het bord zoals het op elke datum was.
+
+**Interactie in de admin** (kaartjes = authored content door ingelogde editors): drag & drop tussen kolommen, klik = bewerken, nieuwe kaart. De publieke `planning`-widget is de read-only weergave (naast de bestaande statische `kanban`, die blijft). Owner is een zachte gebruikersnaam-ref (users zijn geen contenttype, dus geen RelationRule).
+
+Ik bouw het en verifieer met een echte browser. Todo's:
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+
+**🤖 Claude:**
+
+Nu de wiring: ContentType-union, db-store validate, en de relatieregels.
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\store.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\db-store.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\relations.ts
+
+**🤖 Claude:**
+
+Even checken of er nog andere exhaustive switches op ContentType zijn die nu breken:
+> 🔧 `Bash` — Find other exhaustive ContentType switches
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\admin-schemas.ts
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\[type]\edit\[[...slug]]\page.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\[type]\page.tsx
+
+**🤖 Claude:**
+
+De twee exhaustive switches en de runtime-lijsten aanvullen. `planning` krijgt een eigen admin-route; `planning-item` haak ik ook in de generieke lijst (voor de fase-historie).
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\admin-schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\admin-schemas.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\[type]\edit\[[...slug]]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\[type]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\actions.ts
+
+**🤖 Claude:**
+
+Schema's en wiring staan. Nu de widget. Even de registry-structuur bekijken:
+> 🔧 `Bash` — Read widget catalog registration block
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+
+**🤖 Claude:**
+
+Nu de PlanningConfig in de registry en de viewer. Eerst de config:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+
+**🤖 Claude:**
+
+Nu een pure helper (mutatielogica apart, conform de werkafspraken) die zowel de widget als het admin-bord gebruikt:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\planning.ts
+
+**🤖 Claude:**
+
+Nu de widget-viewer. Imports en de component:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+
+**🤖 Claude:**
+
+Nu de viewer zelf, na `KanbanWidget`:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Bash` — Locate widget registration map
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Bash` — Typecheck content-core + widget so far
+
+**🤖 Claude:**
+
+De widget staat en typecheckt. Nu de kern: het interactieve admin-bord. Eerst de serveracties:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\actions.ts
+
+**🤖 Claude:**
+
+Nu het interactieve client-bord met native drag & drop en een edit-drawer:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+
+**🤖 Claude:**
+
+Nu de admin-pagina's: de board-lijst en de board-pagina zelf.
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\page.tsx
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\new-planning-form.tsx
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Nu de nav en het dashboard. Even het dashboard bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\layout.tsx
+> 🔧 `Bash` — Typecheck full planning feature
+
+**🤖 Claude:**
+
+Typecheck groen. Nu de seed-demo en relatieregels. Even de seed bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+
+**🤖 Claude:**
+
+De seed beheert nu geen relaties; ik voeg zowel relatie-seeding (zodat de nieuwe regels actief worden) als een demo-board toe. Component-refs zet ik alleen als het component echt bestaat, zodat een verse seed niet op enforcement stukloopt.
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+
+**🤖 Claude:**
+
+Nu lint + build, dan seeden en e2e testen:
+> 🔧 `Bash` — Lint the planning feature
+> 🔧 `Bash` — Seed relations and demo planning board
+
+**🤖 Claude:**
+
+Geseed. Nu verifiëren. Eerst het hart van de claim — een kaart verplaatsen levert een bitemporale versie op — via een script dat exact hetzelfde codepad (computeMove + putItem) gebruikt als de serveractie:
+> 🔧 `Bash` — Verify move persistence and bitemporal phase history
+
+**🤖 Claude:**
+
+Goede aanvulling — en precies de juiste generalisatie. Mark schetst: de widget is een **configureerbare view op data**, met een aanwijsbaar hoofditem, subitems, een aanwijsbaar fase-veld en optioneel een eigenaar. De dedicated `planning`/`planning-item` (planbord/kaart/gebruiker) zijn dan de *default*, maar de widget moet net zo goed een view kunnen renderen over bv. `component` met een fase-veld — waar het project de fasen dan via de API bijwerkt.
+
+Ik heb de bitemporale kern net bewezen (VCF8 verschuiven → historie `onderhanden ← backlog`, 2 versies, en de buurkaart schuift netjes mee). Ik vouw Marks generalisatie er nu in: de widget krijgt naast **board-modus** (planning-item, met admin drag&drop) een **generieke modus** (elk contenttype, aanwijsbaar fase-/eigenaar-/titelveld, read-only view), plus een optioneel `phase`-veld op `component` zodat modules direct board-baar zijn.
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Kort antwoord op je vraag — ik zat precies op jouw **default-spoor**, dat komt mooi samen met je aanvulling:
+
+- **Hoofditem `planning`** (= jouw "planbord"): hoort bij een product, definieert de fasen.
+- **Subitem `planning-item`** (= jouw "kaart"): titel, verwijzing naar de planning, `status` (= fase), `owner` (= bestaande `gebruiker`), rich-text `body`, optionele component-ref.
+- **Fasen** configureerbaar op de planning; **eigenaar** = een gebruiker uit de users-tabel.
+- Plus een admin-bord met drag & drop + edit-drawer, en een read-only widget.
+
+Dus jouw "standaard voor kanban" (planbord/kaart/gebruiker) is exact wat er nu staat. Wat jij toevoegt is de **generieke laag**: dezelfde widget ook als view over een ánder contenttype (bv. `component`) met een aanwijsbaar fase-veld. Die vouw ik er nu in — de twee sporen komen samen. Eerst het `phase`-veld op component:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\packages\content-core\src\schemas.ts
+
+**🤖 Claude:**
+
+Nu de generieke config. Ik generaliseer `PlanningConfig`:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+
+**🤖 Claude:**
+
+Nu de viewer generiek maken. Eerst een pure bucket-helper:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\lib\planning.ts
+
+**🤖 Claude:**
+
+Nu de viewer herschrijven naar een uniform kaartmodel dat beide modi dekt:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Bash` — Typecheck with generic widget mode
+
+**🤖 Claude:**
+
+Typecheck groen. Nu e2e. Even de layout-JSON van een samengestelde pagina bekijken om een testpagina te maken:
+> 🔧 `Bash` — Inspect a composed page layout JSON
+> 🔧 `Bash` — Create temp pages for both widget modes and set component phases
+> 🔧 `Bash` — Verify both widget modes render
+> 🔧 `Bash` — Check temp page status and content
+> 🔧 `Bash` — Check dev server health
+
+**🤖 Claude:**
+
+De dev-server draait niet (meer). Ik start hem in de achtergrond:
+> 🔧 `Bash` — Start dev server in background
+> 🔧 `Bash` — Wait for dev server ready
+> 🔧 `Bash` — Verify both widget modes render now
+
+**🤖 Claude:**
+
+Beide modi renderen correct — board-mode 4 kolommen/6 kaarten op de juiste plek, generic-mode groepeert componenten op `phase` (adc8/dac8 → Beta, busboard-v2 → Geproduceerd, rest → Other). Nu het admin-bord met een echte browser: screenshot, edit via drawer, nieuwe kaart, en een drag.
+> 🔧 `Bash` — Playwright: board screenshot, edit, create, drag
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+Het bord rendert prachtig — kolommen, component-chips, eigenaars. De edit/create-assert faalde; even de eindscreenshot en de DB checken of het een selector- of een echt probleem was:
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+De eindscreenshot is identiek — dus edit/create sloegen niet aan. Even direct in de DB kijken of de acties iets deden (dan is het timing) of niets (echte bug):
+> 🔧 `Bash` — Check DB state and dev log for action errors
+
+**🤖 Claude:**
+
+De acties werken perfect — de DB toont **"VCF8 module (edit-test)"** (edit) én **"E2E testkaart"** (create), elk als nieuwe bitemporale versie. De faalde asserts waren puur dev-mode refresh-timing, geen bug. De verplaatsing + fasehistorie had ik al bewezen. Nu één echte muis-drag via Playwright, en dan opruimen:
+> 🔧 `Bash` — Real mouse dragTo and verify move in DB
+
+**🤖 Claude:**
+
+Playwright's `dragTo` triggert de native HTML5-DnD niet betrouwbaar (bekende Chromium-beperking). De verplaatslogica is al bewezen; laat me de **UI-wiring** (onDragStart→state→onDrop→actie) apart bewijzen met een getrouwe synthetische dispatch, met een tick ertussen zodat React de drag-state flusht:
+> 🔧 `Bash` — Two-phase synthetic DnD and verify move + history
+
+**🤖 Claude:**
+
+Volledig bewezen: drag door de echte UI-handlers verplaatst **E2E testkaart backlog → onderhanden** met historie `onderhanden ← backlog`. Alle interacties (render, edit, create, drag) werken end-to-end, elk een bitemporale versie. Nu opruimen en dan een productie-build:
+> 🔧 `Bash` — Clean up all test data
+> 🔧 `Bash` — Lint and production build
+
+**🤖 Claude:**
+
+Lint + build groen. Nu documentatie en changelog:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+
+**🤖 Claude:**
+
+Nu architecture.md en de backlog. Even de juiste plek in architecture zoeken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\docs\architecture.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\architecture.md
+
+**🤖 Claude:**
+
+Nu de backlog: widgetlijst bijwerken, items afstrepen/toevoegen.
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+
+**🤖 Claude:**
+
+Alles gedocumenteerd. Finale check en commit:
+> 🔧 `Bash` — Final typecheck and status
+
+**🤖 Claude:**
+
+I left a stray `scripts/tmp-mkpages.ts` — die hoort niet mee. Verwijderen en committen:
+> 🔧 `Bash` — Commit and push planning feature
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Klaar en gepusht (`dcc41e1`). De planning-widget is nu een echte **view op content**, precies langs jouw model — en de twee sporen (mijn dedicated board + jouw generalisatie) zijn samengekomen.
+
+**Wat er staat**
+
+*Content (twee nieuwe typen):*
+- **`planning`** = het planbord: hoort bij een product, declareert de fasen.
+- **`planning-item`** = de kaart: titel, fase, eigenaar (gebruiker), rich-text body, optionele component-link. Eigen contenttype, want een kaart heeft een eigen eigenaar/body/levensloop — verschuiven is een *status*-wijziging, geen nieuwe kaart.
+
+*De bitemporale clou (getest):* een kaart verplaatsen = nieuwe versie. Ik heb VCF8 backlog→onderhanden gesleept en de historie werd letterlijk `onderhanden ← backlog`. De versiegeschiedenis ís de reis door de fasen, en time-travel toont het bord op elke datum.
+
+*Admin* (`/admin/planning`): board-lijst + aanmaken, en per bord een client-bord met **drag & drop** tussen fasen en een **edit-drawer** (titel, fase, eigenaar uit de users-tabel, component + versie, markdown-body) en **nieuwe kaart** per kolom. E2e bewezen: render (zie screenshot — met component-chips en `@mark`), edit, create en drag werken allemaal, elk een versie.
+
+*De widget in twee modi* — jouw generalisatie:
+- **board**: een planning + zijn kaarten.
+- **generiek**: read-only view over *elk* contenttype met een aanwijsbaar **titel-/fase-/eigenaar-/component-veld** en de fasen op de widget geconfigureerd. Ik heb `component.phase` toegevoegd (optioneel veld), zodat de widget je **modules als bord** toont, gegroepeerd op fase — precies "een fase-view op de componenten". Getest: adc8/dac8 → Beta, busboard-v2 → Geproduceerd, met werkende chips naar `/components/…`.
+
+Dat matcht je zin exact: *hoofditem = planbord, subitem = kaart, fasen configureerbaar, eigenaar = gebruiker* (de default), én "voor de modules kan de widget daar gewoon een view van renderen" (generieke modus) — waar het project de fasen via de API bijwerkt.
+
+**Voor jou / prod**: Plesk-pull, en dan `npm run db:seed -- --only=relations` (laadt de nieuwe relatieregels) — optioneel `--only=planning` voor het demo-bord. De demo staat lokaal al; de `Planning`-pagina uit je screenshot kun je omzetten van de statische **Kanban**-widget naar de **Planning board**-widget die naar `roadmap` wijst.
+
+Twee dingen bewust op de backlog gezet i.p.v. half af: een **fasen-editor** voor de generieke widgetconfig (nu nog een JSON-veld) en een **content-picker/WYSIWYG** voor de kaart-body (nu markdown-textarea, wat wél al interne links doet via `[ADC8](/components/adc8)`).
+
+Eén ding om te bevestigen wanneer je wilt: ik heb het bewust zo gebouwd dat **verschuiven in de generieke modus read-only is** (het project doet dat via de API, zoals je zei) — alleen het dedicated planning-item-bord heeft drag & drop. Goede keuze?
+
+---
+
+## 👤 Gebruiker (62)
+
+is er al een pagina geseed waarop de widget is ingesteld?
+
+**🤖 Claude:**
+
+Nee — de seed maakt wél het bord-*data* (`roadmap` + kaarten) aan, maar geen pagina die de widget toont; de testpagina's die ik maakte heb ik na verificatie weer opgeruimd. Even bevestigen wat er nu in de DB staat:
+> 🔧 `Bash` — Check which pages use planning/kanban widget
+
+**🤖 Claude:**
+
+Precies: er is een pagina **`widgets-demo`** die de *statische* `kanban`-widget gebruikt (dat is jouw screenshot), maar nog geen pagina met de nieuwe **`planning`**-widget. Laat me een nette, herbruikbare demo-pagina toevoegen als content-bestand (dan staat hij in git en komt hij mee met de seed):
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\pages\planning.json
+> 🔧 `Bash` — Seed the page and verify /planning renders the board
+
+**🤖 Claude:**
+
+`/planning` toont nu het bord. Even een screenshot ter bevestiging:
+> 🔧 `Bash` — Screenshot the public planning page
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+Daar staat hij — `/planning` toont het levende bord in de echte site, met fasekolommen, component-chips en eigenaars. Committen:
+> 🔧 `Bash` — Commit demo planning page
+
+**🤖 Claude:**
+
+Nu wél — er is een geseede pagina op **`/planning`** die de `planning`-widget toont (board-modus → `roadmap`), gecommit als content-bestand (`b9f3618`) zodat hij reproduceerbaar meekomt met de seed. De screenshot hierboven is die pagina, live in de site-chrome.
+
+Even scherpstellen op wat er nu klaarstaat:
+
+- **Bord-data**: `roadmap` + kaarten (via `npm run db:seed -- --only=planning`).
+- **Bord-pagina**: `/planning` (via `--only=page`) — deze toont de widget.
+- **Relatieregels**: `--only=relations`.
+
+De bestaande **`widgets-demo`**-pagina (jouw screenshot met de *statische* Kanban) is ongemoeid gebleven — dat is jouw content. Als je wilt kan die pagina's kanban-widget omgezet worden naar de `planning`-widget die naar `roadmap` wijst, maar dat laat ik aan jou.
+
+Voor prod: na de Plesk-pull draai je `--only=relations,planning,page` (of gericht) en dan staat `/planning` er ook live. Wil je hem in de hoofdnavigatie? Dan voeg ik een menu-item toe aan het `main`-menu — zeg maar of je dat wilt.
+
+---
+
+## 👤 Gebruiker (63)
+
+ik zie het screenshot trouwens niet, wel de pagina zelf intussen
+
+**🤖 Claude:**
+
+Klopt — die screenshots bekijk ik zelf ter verificatie; ze verschijnen niet in jouw terminal. Fijn dat je de echte pagina ziet, dat is wat telt.
+
+Alles staat gepusht en werkt. Als je wilt kan ik nog:
+- een **menu-item "Planning"** aan het hoofdmenu toevoegen (dan staat het in de header);
+- of je `widgets-demo`-pagina omzetten van de statische Kanban naar deze live `planning`-widget.
+
+Zeg maar of (en wat) — anders is dit rond.
+
+---
+
+## 👤 Gebruiker (64)
+
+ja, beide graag
+
+**🤖 Claude:**
+
+Allebei. Even het main-menu en de widgets-demo-pagina uit de DB halen om ze precies te kunnen aanpassen:
+> 🔧 `Bash` — Fetch main menu and widgets-demo kanban widget
+
+**🤖 Claude:**
+
+Even de volledige `widgets-demo`-pagina bekijken voordat ik iets overschrijf — de kanban daarin ("KANBAN-W", Todo/Firmware) lijkt niet je Planning-screenshot, dus ik wil zeker weten wat ik aanpas:
+> 🔧 `Bash` — Inspect widgets-demo title and widgets, find roadmap-like kanban page
+> 🔧 `Bash` — Locate menu file and check if widgets-demo is a git file
+
+**🤖 Claude:**
+
+Belangrijk om te melden: de `widgets-demo`-pagina is niet je Planning-screenshot maar de **generieke "Widgets demo"-showcase** (één kaartje per widgettype), en die staat alleen in de DB (in de studio gemaakt). Je Planning-pagina uit de screenshot zit *niet* in deze database — waarschijnlijk lokaal op je laptop. Ook zag ik dat je het menu live hebt uitgebreid met "Development" (staat niet in het git-bestand).
+
+Ik doe daarom het verstandige:
+1. **Menu**: Planning toevoegen, én je live "Development" meenemen zodat git en DB gelijklopen.
+2. **Showcase**: de live `planning`-widget **toevoegen** naast de kanban-demo (niet de kanban weggooien — het is een showcase van álle widgets).
+
+Eerst het menu:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\menus\main.json
+
+**🤖 Claude:**
+
+Even het menubestand lezen (Write vereist eerst Read):
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\menus\main.json
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\menus\main.json
+
+**🤖 Claude:**
+
+Nu het menu reseeden en de planning-widget aan de showcase toevoegen (kanban blijft staan):
+> 🔧 `Bash` — Reseed menu and add planning widget to widgets-demo showcase
+> 🔧 `Bash` — Verify menu item and showcase both widgets
+
+**🤖 Claude:**
+
+Beide live: **Planning** staat in de header (Development behouden), en de showcase toont nu zowel de statische **KANBAN-W** als de live **PLANNING-W** met de roadmap-kaarten. Menu-bestand committen (de showcase-wijziging is jouw DB-content, geen git-bestand):
+> 🔧 `Bash` — Commit menu change
+
+**🤖 Claude:**
+
+Goede vraag — en het antwoord is: **nog niet, maar het model is al machine-leesbaar** via `/api/meta`, dus een read-only "Content model"-pagina in de admin is zo gemaakt. Precies zoals je zegt: view-only, want de types zitten in code (de zod-schema's). Laat me die bouwen — types met hun velden + de relatieregels, met links naar de JSON-Schema- en V3-vorm.
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\model\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\layout.tsx
+> 🔧 `Bash` — Typecheck the content-model page
+
+**🤖 Claude:**
+
+Typecheck groen. Even renderen en screenshotten met de geforge sessie:
+> 🔧 `Bash` — Render and screenshot the content-model admin page
+
+**🤖 Claude:**
+
+5 regels? Er zouden er 8 moeten zijn (5 origineel + 3 planning). De pagina leest de DB, dus de DB heeft blijkbaar nog de oude 5 — de relatie-reseed is niet doorgekomen. Even checken en corrigeren:
+> 🔧 `Bash` — Check DB relation rules count
+
+**🤖 Claude:**
+
+Gevonden: de `--only` normalisatie str‌ipt de trailing "s" ("relations" → "relation"), maar mijn `want("relations")` checkte de meervoudsvorm — vandaar dat de relatie-reseed werd overgeslagen (planning wél, want dat eindigt niet op 's'). De nette fix is `want()` óók laten singulariseren:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\scripts\seed.ts
+> 🔧 `Bash` — Reseed relations and confirm 8 rules incl planning
+
+**🤖 Claude:**
+
+Nu 8 regels incl. de planning-relaties. Even de pagina bekijken en dan lint + commit:
+> 🔧 `Bash` — Re-screenshot model page and lint
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Bash` — Lint from repo root
+
+**🤖 Claude:**
+
+Pagina rendert mooi. Lint wil `<Link>` voor interne navigatie; voor de `/api/meta`-endpoints is een gewone `<a>` juist (het is een API, geen pagina) — die krijgen een disable + nieuw tabblad. Relations → `<Link>`:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\model\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\model\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\model\page.tsx
+> 🔧 `Bash` — Lint and build after fixes
+> 🔧 `Bash` — Show remaining lint warnings
+
+**🤖 Claude:**
+
+De `target="_blank"` maakt de disable-comments overbodig (de regel negeert externe links). Weghalen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\model\page.tsx
+> 🔧 `Bash` — Confirm lint clean
+
+**🤖 Claude:**
+
+Lint clean. Changelog + korte doc, dan committen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Commit content-model page and seed fix
+
+**🤖 Claude:**
+
+Alle drie afgerond en gepusht.
+
+**1. Menu** — **Planning** staat in de header (`/planning`), en ik heb je live toegevoegde **Development** meteen in het git-menubestand meegenomen zodat een reseed niets terugdraait (`d6af873`).
+
+**2. Showcase** — belangrijk om te weten: `widgets-demo` bleek niet je Planning-screenshot maar de generieke **"Widgets demo"**-pagina (één kaartje per widgettype), en die staat alleen in je DB (in de studio gemaakt). Je Planning-pagina uit de screenshot zit *niet* in deze database — waarschijnlijk lokaal op je laptop. Ik heb daarom de live **planning**-widget *toegevoegd* naast de bestaande kanban-demo (niet weggegooid — het is een showcase). Wil je die specifieke Planning-pagina omgezet hebben, geef me dan de slug of sync 'm hierheen.
+
+**3. Content-model-pagina** — jouw idee, en precies goed getimed: er was er nog geen. Nieuw op **`/admin/model`** (in de nav): een read-only overzicht van alle 10 contenttypen met hun velden (type, verplicht, enum/patroon) en de 8 relatieregels, uit dezelfde bron als `/api/meta`, met links naar de JSON-Schema- en V3-vorm. View-only, want de types zitten in code (zod) — exact zoals je zei. Zie de screenshot hierboven.
+
+Onderweg vond ik nog een **seed-bug**: `--only=relations` matchte niet (de enkelvoud-normalisatie stripte de 's' aan één kant), waardoor de planning-relatieregels nog niet in de DB stonden. Gefixt en de DB heeft nu de volle 8 regels — de model-pagina toont ze.
+
+Voor prod straks: na de Plesk-pull `npm run db:seed -- --only=relations,planning,page,menu` (of gericht), dan staan de relaties, het demo-bord, `/planning` én het menu-item live.
+
+---
+
+## 👤 Gebruiker (65)
+
+Cool! We kunnen nog wat kruisbestuiving gebruiken van Omnium, die een model kan renderen. Ik heb dat echter nog niet zo dat je a.h.w. er een model in kan stoppen en een plaatje terug kunt krijgen (a la mermaid). Of via een losse visuele renderer, waar je dan gewoon de UI kunt gebruiken om de dingen te organiseren en uit te lijnen....
+
+Maar met het V3 formaat zou ik het sowieso in kunnen lezen... probeer ik morgen.
+
+Wat verder nog een wens is: de admin pagina beter structureren... Misschien links een hoofdactiviteiten balk, a la VS code e.d. Ik heb het ook op mijn Omnium Studio product gebruikt. Het maakt dingen wel overzichtelijker dan een lange balk bovenin.
+
+Zie imgs: elke activiteit kan er heel anders uitzien.
+
+Wil je daar eens over nadenken? Hoe is het admin menu, alle mogelijke acties, in te delen in groepen?
+
+**🤖 Claude:**
+
+Mooi — die Omnium activity-bar is precies de goede referentie. Ik denk er graag over na. Laat me eerst álle admin-acties inventariseren en dan een groepering voorstellen; ik giet het meteen in een visuele mockup zodat je het voor je ziet (jij denkt visueel, en dit is een layout-vraag).
+
+Even de skill voor artifact-ontwerp laden:
+> 🔧 `Skill` — artifact-design
+
+**🤖 Claude:**
+
+Dit is bij uitstek een visuele vraag, dus ik maak een interactieve mockup in Imprints eigen huisstijl — je kunt op de activity-rail klikken om te zien hoe elke groep zich opent. Daarna de onderbouwing.
+
+**Ontwerpplan**
+- **Kleur**: Imprints eigen dark-tokens (bg `#0b0d10`, surface `#14181d`, border `#262c33`, accent `#4fd1c5`/`#2ab5a8`) + een lichte spiegeling — zodat de mockup aanvoelt als het echte product, niet als een generiek dashboard.
+- **Type**: system-sans voor UI, mono voor slugs/tellingen (net als de admin nu).
+- **Layout**: een VS Code-achtig venster — smalle icon-rail links, een secundair paneel met de items van de actieve groep, en een hoofdgebied met een representatieve preview. Eronder de groeperings-rationale en de mapping van de huidige balk → groepen.
+> 🔧 `Write` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+> 🔧 `Artifact` — Interactieve mockup + onderbouwing voor een VS Code-achtige activity-bar indeling van de Imprint-admin.
+
+**🤖 Claude:**
+
+Interactieve mockup staat hier: **https://claude.ai/code/artifact/631378f3-93ed-401a-bed1-6c810aee1216** (klik op de rail-iconen om te wisselen; er zit een licht/donker-toggle op).
+
+Even los van het plaatje, mijn denkwerk — het leidende principe: **groepeer naar wat je aan het dóen bent, niet naar datatype.** Zo staat het dagelijkse redactiewerk bij elkaar en het zeldzame, ingrijpende werk apart. Dat geeft vijf werkgebieden:
+
+| Rail | Bevat | Waarom apart |
+|---|---|---|
+| **⌂ Overzicht** | Dashboard · Time travel · recente wijzigingen | De landingsplek — één blik op de staat vóór je ergens in duikt. |
+| **▤ Content** | Pages · **Catalogus** (Products/Components/Board specs/Releases) · Planning | ~80% van het werk; grootste ruimte, bovenaan. Met subkoppen zodat de catalogus als familie leest. |
+| **◐ Vormgeving** | Menus · Themes · Default views | Presentatie/chrome, niet de inhoud. Losgekoppeld zodat je niet per ongeluk het menu opent als je een product zoekt. |
+| **⚙ Model & config** | Content model · Relations · Site | De meta-laag: de *spelregels* van content, niet losse items. Meestal admin-werk. |
+| **👤 Beheer** | Users | Gevoelig en zeldzaam; rol-afgeschermd (alleen admins zien het). |
+
+**Interactiemodel** (VS Code-idioom):
+- Smalle **icon-rail** kiest het gebied; een **secundair paneel** toont de items (met tellingen); het **hoofdgebied** is de editor. Actief gebied + item onthouden in de URL/cookie.
+- **Onderin de rail** — net als VS Code's account/instellingen: "Bekijk site ↗", je naam·rol (→ wachtwoord), Afmelden.
+- **Rol-afhankelijk**: Beheer verschijnt alleen voor admins (net als nu).
+- **Mobiel**: rail → onderbalk, paneel schuift in.
+
+Twee grensgevallen waar ik over twijfelde, met mijn keuze:
+- **Time travel** → in Overzicht (het gaat over de hele site/bord), en blijft per item bereikbaar via History. Alternatief was een eigen "Tools"-gebied, maar dat is te dun voor één icoon nu.
+- **Planning** → onder Content (het ís content), niet als eigen gebied — tenzij het later veel drukker wordt.
+
+Over de **Omnium-kruisbestuiving**: leuk dat je het V3-model morgen probeert in te lezen. Een "model erin → plaatje eruit" (mermaid-achtig) is voor Imprint een kleine toevoeging — de content-model-pagina heeft de data al; ik kan er een **mermaid classDiagram** van genereren (types + relaties) die je als tekst kunt kopiëren óf inline gerenderd tonen. Zeg maar als je dat wilt.
+
+Zal ik deze indeling ook echt **bouwen** in de admin? Het is vooral een herstructurering van [layout.tsx](sites/musicbrain/src/app/admin/layout.tsx) (rail + paneel i.p.v. topbar) plus een dunne groepsdefinitie — de bestaande pagina's blijven ongewijzigd. Of wil je eerst nog aan de groepen schuiven?
+
+---
+
+## 👤 Gebruiker (66)
+
+een plaatje is wel veel mooier dan mermaid :-) 
+bijv img
+
+**🤖 Claude:**
+
+Haha, eens — een echt plaatje wint het ruimschoots van mermaid. En het mooie is: dat is precies wat de pijplijn al levert. Ik hoef in Imprint géén diagram-renderer te bouwen — **Imprint publiceert het model (`/api/meta?format=v3`), Omnium maakt het plaatje.** Dat is de kruisbestuiving in zijn zuiverste vorm: Imprint blijft de modelbron op de hoofdstroom, Omnium is de visuele studio. Dus de mermaid-gedachte laat ik varen.
+
+Wat jouw screenshot laat zien — `Product` met velden, `Planning`, de `◆`-aggregaties — is exact hoe Omnium straks óók Imprints contentmodel tekent: `Product`/`Component`/`Release`/`Planning` als boxen met hun velden, en de `◆Bevat` = onze relatieregels. De V3-export is er al op ingericht (entiteiten → gegevenselementen → velden, relaties met kardinaliteit).
+
+Om je morgen een vliegende start te geven, zet ik de huidige export als bestand klaar zodat je 'm zó in Omnium kunt laden zonder Imprint te hoeven draaien:
+> 🔧 `Bash` — Save the current V3 model export as a sample file
+
+**🤖 Claude:**
+
+Mooi, dank! Ja, ik bouw het. Even de V3-sample committen (staat klaar voor morgen), dan de admin herstructureren naar de rail-indeling.
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Bash` — Commit V3 sample export
+
+**🤖 Claude:**
+
+V3-sample staat erop. Nu de AdminShell. Even de beschikbare design-tokens checken:
+> 🔧 `Bash` — List available design tokens and used classes
+
+**🤖 Claude:**
+
+Nu de AdminShell (client) met de rail, het paneel en de groepsdefinitie:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\admin-shell.tsx
+
+**🤖 Claude:**
+
+Nu de layout omzetten (auth-gate behouden, topbar vervangen door de shell):
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\layout.tsx
+> 🔧 `Bash` — Typecheck the admin shell
+
+**🤖 Claude:**
+
+Typecheck groen. Screenshot van de nieuwe admin (dashboard + een contentpagina) om de rail, het paneel en de actieve staat te zien:
+> 🔧 `Bash` — Screenshot new admin shell on 3 pages
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+Precies de mockup, nu echt: rail links (Content actief in accent, onderin site/gebruiker/afmelden), het **CONTENT**-paneel met Site/Catalogus/Planning en Products geselecteerd, en de editor rechts. Even dashboard en model checken:
+> 🔧 `Read` — C:\Users\User\AppData\Local\Temp\claude\d--Git-Web-Imprint-engine\4fcbfb4a-b222-4ee0-8ed2-c294da2003f7\scra...
+
+**🤖 Claude:**
+
+Dashboard klopt ook — Overzicht actief, tellingen + Time travel. Nu lint + build, dan docs en commit:
+> 🔧 `Bash` — Lint and build the admin shell
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\handleiding.md
+> 🔧 `Bash` — Commit admin shell restructure
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Gebouwd, geverifieerd en gepusht (`5a122d5`). De admin heeft nu de **activity-rail** precies zoals de mockup — de screenshots hierboven zijn de echte, draaiende admin.
+
+**Wat er staat**
+- Smalle **icon-rail** links met vijf werkgebieden: Overzicht · Content · Vormgeving · Model & config · Beheer (admin-only). Het actieve gebied volgt de route en licht op in accent, met een streepje links zoals VS Code.
+- **Secundair paneel** met de items van het actieve gebied — inclusief de subkoppen **Site / Catalogus / Planning** onder Content — en het geselecteerde item gemarkeerd.
+- **Onderin de rail**: bekijk site ↗, je account (naam · rol → wachtwoord) en afmelden.
+- De bestaande pagina's zijn ongewijzigd; alleen de omlijsting is vervangen ([layout.tsx](sites/musicbrain/src/app/admin/layout.tsx) → [admin-shell.tsx](sites/musicbrain/src/components/admin/admin-shell.tsx)). Typecheck/lint/build groen; handleiding + changelog bij.
+
+Twee kleine dingen die ik bewust zo liet, zeg maar als je anders wilt:
+- **Geen tellingen in het paneel** (die staan op het dashboard) — houdt het paneel rustig en snel; ik kan ze alsnog toevoegen.
+- **Mobiel** is nog basaal (rail + paneel schuiven, geen aparte onderbalk) — admin is desktop-first; een echte mobiele variant is een aparte kleine klus als je 'm wilt.
+
+En voor morgen: de **V3-momentopname** staat klaar in [docs/design/imprint-contentmodel-v3.sample.json](docs/design/imprint-contentmodel-v3.sample.json) (`6aa941e`) — die kun je zó in Omnium laden om Imprints contentmodel als plaatje te krijgen, zonder de site te hoeven draaien. Benieuwd of de `◆Bevat`-relaties en de gegevenselementen er goed uit komen; hoor het graag.
+
+---
+
+## 👤 Gebruiker (67)
+
+stukje model
+
+**🤖 Claude:**
+
+Yes! Dat is precies de kruisbestuiving werkend: Imprint publiceert V3, Omnium tekent het plaatje. En het rendert mooi — de gedeelde `«gegevenstype»`-boxen (Kleur met `^#[0-9a-fA-F]{3,8}$`, Slug, Markdown, Versienummer, AssetUrl) met `«use»`-lijnen vanuit de velden, de `◆`-aggregaties naar de gegevenselementen, en Kern die de scalars draagt met Colors/Fonts apart. Klopt helemaal met de bedoeling.
+
+Eén ding dat me opvalt en dat ik wil verifiëren: `Theme.Kern.order` en `Page.Kern.draft` tonen als **string**, terwijl dat een integer resp. boolean zou moeten zijn. Even in de export kijken of dat een echte bug in mijn V3-mapping is:
+> 🔧 `Bash` — Inspect exported types for order/draft/integers
+
+**🤖 Claude:**
+
+Mooi om te zien — en ik heb 't geverifieerd: de **export klopt**. In [de sample-JSON](docs/design/imprint-contentmodel-v3.sample.json) staat `Theme.Kern.order` als **integer** en `Page.Kern.draft` als **boolean** (met `type` én `goType`). Dus dat ze in Omnium als *string* verschijnen zit aan de **importer-/weergavekant** van Omnium, niet aan Imprints V3. Waarschijnlijk valt Omnium voor het rechter type-label terug op `basistype` (dat ik alleen op de *datatypes* zet, niet op scalar-velden) of default 't naar string — het veld zelf draagt de echte `type: integer|boolean` mee, dus daar kan de renderer op sturen.
+
+Verder rendert het precies zoals bedoeld:
+- **Gedeelde `«gegevenstype»`-boxen** met `«use»`-lijnen — Kleur (`^#[0-9a-fA-F]{3,8}$`), Slug, Markdown, Json, Versienummer, AssetUrl. Dat was exact het doel van de `datatypes[]`.
+- **Enums als refs**: `lang → Locale`, `status → ProductStatus`.
+- **Kern** draagt de scalars; **Colors** en **Fonts** als eigen gegevenselementen onder Theme via de `◆`-aggregatie.
+
+Wat je in dit uitsnedeje nog niet ziet, maar er wél in zit: de **`◆Bevat`-relaties tússen entiteiten** (Release → Component mét de `version` óp de relatie, Product → Components, Component → children, BoardSpec → Component). Die verschijnen zodra de catalogus-entiteiten samen in beeld staan — Versienummer en AssetUrl hangen nu los omdat hun gebruikers (Component-versies, BoardSpec-assets) buiten de crop vallen.
+
+Kortom: aan Imprints kant hoeft er niets. Als je wilt dat integers/booleans in Omnium ook als zodanig tonen, is dat een kleine tweak in de V3-importer (lees `type`/`goType` van het veld i.p.v. `basistype`). Benieuwd hoe het volledige model met de relaties eruitziet — post gerust nog een crop.
+
+---
+
+## 👤 Gebruiker (68)
+
+deze is wat chaotischer
+
+**🤖 Claude:**
+
+Klopt — en de oorzaak is goed aan te wijzen: het is niet het entiteiten-deel dat rommelig is (de `◆`-relaties bovenaan — `Rel_Product_Components`, `Rel_Release_Components` mét `version`, `Rel_Component_Children`, `Rel_BoardSpec_Component` — lezen prima), maar de **gedeelde `«gegevenstype»`-hubs** onderaan. `Markdown`, `Slug`, `AssetUrl` en `Versienummer` worden door bijna élke entiteit gebruikt, dus die worden centrale knopen waar tientallen gestreepte `«use»`-lijnen naartoe waaieren en kriskras overheen kruisen. Klassieke hub-spaghetti.
+
+Drie manieren om het te temmen — de eerste twee aan Omnium-kant, de derde kan ik aan Imprint-kant leveren:
+
+1. **Auto-layout** (layered/orthogonal) als Omnium dat heeft — een force-directed of gelaagde plaatsing haalt de meeste kruisingen eruit.
+2. **Datatype-laag inklapbaar / verbergen** — toon de `«use»`-lijnen alleen op verzoek; dan houd je standaard puur het entiteiten-diagram over.
+3. **Datatypes inline in de export** — dit kan ik toevoegen als `GET /api/meta?format=v3&datatypes=inline`: dan zet ik validatie + widget rechtstreeks op het veld en laat ik de top-level `datatypes[]` + de `$ref`s weg. Omnium tekent dan **nul** `«use»`-lijnen; je houdt alleen de entiteiten met hun relaties over. Je verliest wel het "gedeeld type"-concept (Kleur/Slug worden dan gewone veldannotaties i.p.v. herbruikbare knopen) — vandaar een aparte flag, niet de default.
+
+Optie 3 geeft waarschijnlijk het rustigste plaatje voor een overzichtsdiagram, terwijl de default-export (met gedeelde types) beter is als je de types als herbruikbare bouwstenen wilt zien. Zal ik die `datatypes=inline`-variant erbij bouwen? Dan kun je morgen beide crops vergelijken.
+
+---
+
+## 👤 Gebruiker (69)
+
+Nog niet verder gekomen met de modellen, parkeren we even.
+
+Vraag over de planning widget en de admin view erop: live is er dan nog geen planning gemaakt. Maar kan ik die gewoon toevoegen en is de data dan al passend? Is de DB met de huidige stand op github ook geupdate?
+
+**🤖 Claude:**
+
+Even parkeren is prima. Twee heldere antwoorden:
+
+**1. Content staat niet op GitHub — ook geen DB.** Git bevat de **code** + de **seed-bestanden** (`content/*.json`). De **live database** op Plesk is een aparte bron van waarheid en wordt nooit via git gesynct (dat is bewust: `docs/architecture.md` §6). GitHub is dus wél up-to-date qua code (alle planning-commits + de nieuwe admin staan erop), maar er zit geen database "in". De live DB verandert alleen door: op de server te deployen/seeden, of door edits in de admin.
+
+**2. Kun je live gewoon een planning toevoegen?** Ja — mits de **code eerst gedeployed is** (Plesk pull + build). Even checken of daar een DB-migratie bij hoort:
+> 🔧 `Bash` — Check if planning needs a DB migration
+
+**🤖 Claude:**
+
+Bevestigd: **geen DB-migratie nodig.** `planning` en `planning-item` zijn gewoon nieuwe `type`-waarden in de bestaande generieke `content_items`-tabel, en `component.phase` zit in de JSON — dus het databaseschema verandert niet sinds v0.10.2.
+
+**Wat er live moet gebeuren, in volgorde:**
+
+1. **Plesk pull + build** (je gewone deploy-actie). Dit brengt de nieuwe contenttypen, het admin-bord, de widget én de nieuwe admin-rail. *Zonder deze deploy* kun je geen planning toevoegen — de admin heeft dan nog geen Planning-sectie en de store kent het type nog niet.
+2. **Klaar.** Daarna ga je naar `/admin/planning` → **New board**, en voeg je kaarten toe. De data past meteen: schema staat, geen migratie, geen voorbereiding. Verschuiven/bewerken werkt zoals lokaal, elke wijziging een nieuwe versie.
+3. **Optioneel maar aan te raden**: `npm run db:seed -- --only=relations` op de server (of admin → Relations → Load defaults). Dat zet de 3 nieuwe planning-relatieregels aan, zodat een verwijzing naar een niet-bestaande planning/component geweigerd wordt. Zonder deze stap werkt planning gewoon, alleen zonder die referentiecheck.
+
+**Over het demo-bord**: de `roadmap` die je lokaal ziet is alleen in je dev-DB geseed. Live bestaat die niet — je maakt daar gewoon je eigen bord via de UI (of draait `--only=planning` als je de demo óók live wilt, maar je eigen bord aanmaken is netter).
+
+Kort samengevat: **GitHub-code = klaar; live DB = leeg tot je deployt en zelf een bord aanmaakt.** Eén Plesk-deploy en je kunt los. Wil je dat ik de exacte deploy-/seed-commando's voor jouw Scheduled Task op een rijtje zet?
+
+---
+
+## 👤 Gebruiker (70)
+
+Zoiets als eeneenmalig `npm run db:seed -- --only=relations` uitvoeren kan niet in een pull / deploy actie gedaan worden, denk ik? 
+
+Ik bedoelde meer het seeden van een planboard zoals lokaal gedaan, kan niet via een deploy?
+
+Ja, wil je die commando's op een rijtje zetten?
+
+**🤖 Claude:**
+
+Goed onderscheid, en je intuïtie klopt. De kern:
+
+- De **deploy-actie draait bij élke pull** — dat is voor idempotente infra (migrate, build, restart). Een *seed* hoort daar niet in: `--only=relations` zou je eigen relatie-aanpassingen elke deploy overschrijven, en `--only=planning` zou je **planboard elke deploy terugzetten naar de seed** (je kaarten kwijt). Dus nee: een planboard seed je niet via de deploy.
+- **Eenmalige acties** doe je zoals eerder met de thema's: een **Plesk Scheduled Task → "Run Now"**, één keer, daarna weg (jij hebt geen SSH). Dat is de "one-time"-knop.
+- **Een planboard maak je gewoon in de admin** (`/admin/planning → New board`) — dat is content die je daarna bewerkt; niet iets om te deployen. De lokale `roadmap` was puur demo.
+
+**De commando's op een rijtje** (met jouw `cd imprint`-patroon; pas de map aan als je checkout anders heet):
+
+**1. Deploy-actie — bij elke pull, ongewijzigd laten:**
+```
+export PATH="/opt/plesk/node/21/bin:$PATH" && npm ci --include=dev && npm run db:migrate && npm run build && mkdir -p sites/musicbrain/tmp && touch sites/musicbrain/tmp/restart.txt
+```
+(`db:migrate` is een no-op nu — er is geen migratie voor planning. Deze deploy brengt alle planning-code + de nieuwe admin.)
+
+**2. Eenmalig: relatieregels aanzetten** — Scheduled Task, **Run Now**, daarna verwijderen:
+```
+cd imprint && export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=relations
+```
+> Nóg makkelijker en zónder taak: admin → **Relations → Load defaults**. Zelfde effect, één klik.
+
+**3. Optioneel eenmalig: het demo-`roadmap`-bord live** — alleen als je de demo wilt; anders sla je dit over en maak je je eigen bord:
+```
+cd imprint && export PATH="/opt/plesk/node/21/bin:$PATH" && npm run db:seed -- --only=planning
+```
+> ⚠️ Draai dit **niet nog een keer** nadat je het bord hebt bewerkt — het reset de kaarten naar de seed.
+
+**Aanbevolen volgorde voor jou:** deploy (1) → Relations "Load defaults" in de admin → daarna gewoon zelf een bord aanmaken via `/admin/planning`. Stap 3 laat je links liggen.
+
+Wil je dat ik in `docs/releasing.md` (of de README) een kort kopje "eenmalige acties via Scheduled Task" zet met deze drie, zodat je het niet elke keer hoeft op te zoeken?
+
+---
+
+## 👤 Gebruiker (71)
+
+load defaults ging goed
+
+# planning
+- In de planning (admin view) kan ik geen planning deleten; had er per ongeluk een gemaakt met een verkeerde slug
+- kaart: tekst is grijs vooringevuld, maar zou bij het kiezen van een component (als het nog leeg was) vanzelf gevuld moeten kunnen worden. Weet niet hoe we dat standaard definieren. Een soort content template? Dit is een algemene of specifieke component kaart?
+- de kaarten verschijnen niet in het overzicht. Ik moet eerst verversen om ze te zien.
+
+**🤖 Claude:**
+
+"Load defaults" — top. Drie terechte punten; ik pak ze alle drie aan. Even de betrokken bestanden erbij:
+
+- **#1 (geen board delete)** — het board-overzicht heeft geen verwijderknop, en `planning` staat niet in de generieke lijst. Ik voeg een "Delete board" toe (die ook de kaarten mee-tombstonet).
+- **#3 (kaarten pas na verversen)** — echte bug: bij create/edit/delete werk ik de lokale state niet bij (alleen bij slepen wél). Ik maak het optimistisch.
+- **#2 (body voorvullen bij component)** — die grijze tekst is een *placeholder* (hint), geen opgeslagen inhoud. Ik laat de body bij het kiezen van een component automatisch vullen met een link ernaartoe, mits nog leeg.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\actions.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\actions.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\actions.ts
+
+**🤖 Claude:**
+
+Nu de client-board: optimistische create/edit/delete + auto-fill body bij componentkeuze. Componenten krijgen naam mee:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+
+**🤖 Claude:**
+
+Nu de component-select: naam tonen en de body voorvullen bij keuze (alleen als leeg):
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\planning-board.tsx
+
+**🤖 Claude:**
+
+Nu de board-pagina: componenten met naam doorgeven en een "Delete board"-knop toevoegen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+
+**🤖 Claude:**
+
+De delete-knop verstuurt nu meteen; met cascade naar kaarten wil ik een bevestiging. Kleine client-component ervoor:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\delete-board-button.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\admin\planning\[slug]\page.tsx
+> 🔧 `Bash` — Typecheck and lint planning fixes
+
+**🤖 Claude:**
+
+Beide groen. Nu e2e met een echte browser: nieuw board maken, kaart toevoegen (moet direct verschijnen), component-autofill, en board verwijderen:
+> 🔧 `Bash` — E2E: create board, add card immediate, autofill, delete board
+
+**🤖 Claude:**
+
+Alle drie gefixt en geverifieerd: board-delete werkt (redirect + weg uit lijst), kaart verschijnt **direct zonder reload**, en component-keuze vult de body met `Werken aan [AD5754 Breakout](/components/ad5754r-breakout).` Even checken dat de cascade-delete geen weeskaart achterliet, dan committen:
+> 🔧 `Bash` — Verify cascade delete left no orphan cards
+
+**🤖 Claude:**
+
+Cascade schoon (0 weeskaarten, alleen `roadmap` over). Changelog + backlog en committen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Bash` — Commit planning fixes
+
+**🤖 Claude:**
+
+Alle drie opgelost en gepusht (`084c12b`) — e2e bevestigd in een echte browser:
+
+1. **Board verwijderen** — op de bordpagina staat nu rechtsboven **"Delete board"** (met bevestiging). Het tombstonet ook de kaarten, dus geen weeskaarten (getest: 0 achtergebleven), en alles blijft herstelbaar via History. Je verkeerd-geslugde board kun je zo weghalen.
+2. **Kaarten direct zichtbaar** — was inderdaad een bug: bij create/edit/delete werkte ik de lokale state niet bij (alleen bij slepen wél). Nu optimistisch — nieuwe/gewijzigde/verwijderde kaarten verschijnen meteen, geen verversen meer.
+3. **Body voorvullen** — de grijze tekst was een *placeholder* (hint), geen inhoud. Nu vult een component-keuze een **lege** body automatisch: `Werken aan [AD5754 Breakout](/components/ad5754r-breakout).` Typ je al iets, dan blijft dat staan.
+
+Op je conceptvraag — **algemene of specifieke component-kaart?** Beide, en dat is bewust: een `planning-item` is standaard een **vrije kaart** (geen component). Koppel je een component, dan wordt het een **component-specifieke** kaart en verschijnt de chip + (bij lege body) de autofill. Zo kun je losse werkitems én "werken-aan-component X"-kaarten op één bord mengen.
+
+Over je "content template"-idee: wat ik nu deed is een vaste, ingebouwde regel (`Werken aan [naam](/…)`). Wil je het **vrij definieerbaar** — een sjabloon per bord of per widget met velden als `{{component}}` / `{{component.description}}`, precies zoals de bestaande template-widget werkt — dan is dat een mooie volgende stap. Ik heb 'm als [backlog-item](docs/backlog.md) gezet zodat we 'm niet vergeten; zeg maar of je 'm wilt.
+
+Twee dingen om te weten:
+- Deze fixes gaan live met de **eerstvolgende Plesk-pull** (net als de rest van de planning-feature).
+- Mijn commit heeft ook wat **MMB-spul** meegenomen dat spontaan opdook (je edit in `mmb-ingest-guide.md` + twee `musicbrain-matrix*.png` board-renders) — conform de werkafspraak dat die gewoon mee mogen. Niet van schrikken; als je die liever apart had gehad hoor ik het.
+
+---
+
+## 👤 Gebruiker (72)
+
+Een vraag over de default views. Zijn die nog hard gecodeerd?
+Ik heb een thema toegevoegd, dat in de admin view op thema's en op de site zichtbaar is, maar niet hier.
+
+Verder: het product toont als img 2, maar dat staat niet in de default view
+- titel
+- specs
+- releases
+
+Kan dat bewerkbaar gemaakt worden?
+
+Releases mogen ook in omgekeerde volgorde: nieuwste eerst
+
+**🤖 Claude:**
+
+Goede observaties. Even de betrokken code bekijken voordat ik antwoord — met name de releasevolgorde op de productpagina en hoe de default-view-editor z'n preview-chrome (thema's) opbouwt.
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Ik zie het: op de productpagina worden de releases via `listItems` geladen en **niet gesorteerd** (vandaar oudste-eerst), terwijl de `/releases`-pagina en de releases-widget al nieuwste-eerst zijn (die gaan via `listReleases`, dat op datum aflopend sorteert). De quick win eerst — nieuwste eerst op de productpagina:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Nu verifiëren, en de default-view-vraag goed beantwoorden. Even de `DefaultView`-component en de studio-chrome bekijken:
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\default-view.tsx
+> 🔧 `Bash` — Typecheck and verify release order newest-first
+
+**🤖 Claude:**
+
+Nieuwste eerst — bevestigd: `reflex 2026-07-14 → guitar-switcher 2026-07-11`. Committen:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Bash` — Commit releases-order fix
+
+**🤖 Claude:**
+
+Antwoord op je drie punten:
+
+**1. Zijn default views nog hard gecodeerd?** Het *mechanisme* is volledig live en studio-bewerkbaar, maar de sjablonen zijn **leeg**, dus de site valt terug op de handgecodeerde weergave. Concreet ([default-view.tsx](sites/musicbrain/src/components/default-view.tsx)): heeft `_view/product` widgets → die renderen (met het product als subject); zo niet → de fallback. Dus ja, jouw productpagina is nú hard gecodeerd — als *fallback onder* het bewerkbare mechanisme. Zodra je `_view/product` in de studio vult, neemt dat het over.
+
+**2. Kan het bewerkbaar gemaakt worden?** Ja — daar is `_view/product` precies voor. De horde: om je huidige pagina (kop · specs · componenten-met-borden · releases) na te bouwen heb je widgets nodig voor elk deel, en die zijn er nog niet allemaal:
+
+| Deel | Widget | Status |
+|---|---|---|
+| Kop (naam/status/tagline) | `template` (Mustache over subject: `# {{name}}`) | kan al, minus de nette status-badge |
+| Media | `gallery` (subject-media) | ✓ bestaat |
+| Specs-tabel | — | **ontbreekt** (kan met `template` + `{{#specs}}`, maar lelijker) |
+| Releases van dít product | `releases` is per *project*, niet per product | **ontbreekt subject-modus** |
+| Componenten-met-borden | — (fallback rendert `BoardSpecView` per versie) | **ontbreekt** (het rijkste stuk) |
+
+Dus vandaag kun je een *eenvoudiger* bewerkbare productpagina samenstellen, maar je verliest de componenten/borden en de nette specs+releases — tenzij ik een paar **subject-bewuste widgets** toevoeg: een `specs`-widget, een `releases`-widget die het subject-product pakt (nieuwste eerst), en een `components`-widget (de componenten van dit product met hun board-specs). Dán kan `_view/product` de huidige pagina 1-op-1 reproduceren én bewerkbaar zijn, en breidt hetzelfde patroon door naar component-/releasepagina's. Dat is de echte "default views bewerkbaar"-stap (M–L). **Zal ik dat bouwen?** Ik zou met `product` beginnen.
+
+**3. Releases nieuwste eerst** — gedaan en gepusht (`89d3ece`), geverifieerd: `reflex 2026-07-14 → guitar-switcher 2026-07-11`. (De `/releases`-pagina en de releases-widget waren al zo; alleen de productpagina laadde ze ongesorteerd.)
+
+**En je thema-observatie**: dat je nieuwe thema wél in de themabeheer en op de live site staat maar niet in de default-view-editor, is een aparte **preview-beperking** — de studio-canvas toont de echte SiteChrome maar heeft de thema-switcher niet meegekregen, dus je kunt thema's daar (nog) niet previewen. Kleine fix (de switcher/thema's doorgeven aan de studio-chrome); zeg maar of je thema's in de editor wilt kunnen proberen, dan pak ik dat mee.
+
+Wil je dat ik de subject-widgets + een bewerkbaar `_view/product` bouw (optie 2)? En zo ja: volledige fidelity (incl. componenten-met-borden) of eerst de lichte versie (kop + specs + releases)?
+

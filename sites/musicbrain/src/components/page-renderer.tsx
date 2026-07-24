@@ -35,7 +35,8 @@ export function PageRenderer({
   const rows = layoutRows(page.layout);
   return (
     <div>
-      <h1 className="text-3xl font-semibold tracking-tight">{page.title}</h1>
+      {/* Empty title = the layout owns its own header (e.g. a subjectheader widget). */}
+      {page.title && <h1 className="text-3xl font-semibold tracking-tight">{page.title}</h1>}
       {page.body && (
         <div className="mt-4 max-w-3xl">
           <Markdown>{page.body}</Markdown>

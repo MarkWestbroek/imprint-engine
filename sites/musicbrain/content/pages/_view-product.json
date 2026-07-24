@@ -1,0 +1,14 @@
+{
+  "slug": "_view/product",
+  "title": "Default view: product",
+  "description": "De standaardweergave van een productpagina — bewerkbaar in de studio (Vormgeving → Default views). Zonder deze view valt de site terug op de ingebouwde pagina; deze view reproduceert die 1-op-1 met subject-widgets.",
+  "layout": {
+    "rows": [
+      { "cells": [ { "span": 1, "widgets": [ { "type": "subjectheader", "config": {} } ] } ] },
+      { "cells": [ { "span": 1, "widgets": [ { "type": "gallery", "config": { "useSubjectMedia": true, "columns": 3, "images": [] } } ] } ] },
+      { "cells": [ { "span": 1, "widgets": [ { "type": "spectable", "config": {} } ] } ] },
+      { "cells": [ { "span": 1, "widgets": [ { "type": "components", "config": {} } ] } ] },
+      { "cells": [ { "span": 1, "widgets": [ { "type": "releases", "config": {} } ] } ] }
+    ]
+  }
+}

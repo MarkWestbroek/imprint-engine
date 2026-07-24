@@ -99,12 +99,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Rollen per content-item** (`ContentUser`: creator/owner/contributor) staan
       in het schema maar worden niet gehandhaafd; S3 vraagt ook een
       *product-editor*-rol. _(S3; M)_
-- [ ] **Default views uitbreiden** — het mechanisme staat; er zijn nog geen
-      ingerichte views. **Bewust geparkeerd** (juli 2026): een meegeleverd
-      `_view/<type>`-sjabloon zou de goede hand-gecodeerde fallbacks
-      (product-/component-/releasepagina) direct overrulen — startsjablonen
-      zijn pas nuttig mét een "gebruik sjabloon"-keuze per type in de admin.
-      _(S→M)_
+- [x] ~~**Default views uitbreiden (product)**~~ — gedaan in 0.12.0: vier
+      subject-widgets (subjectheader, spectable, components, releases in
+      product-modus) delen de secties met de ingebouwde pagina
+      (`product-sections.tsx`), en `_view/product` wordt meegeseed als
+      1-op-1-reproductie — overrulen is nu veilig én bewerkbaar. Nog open:
+      - [ ] zelfde behandeling voor **component** en **release** (hun
+            fallbacks zijn rijker: gepinde versie/kanaalweging resp.
+            component-lijst). _(M)_
 - [ ] **Media-bibliotheek** met automatische varianten (thumbnail/OG/hero). De
       AssetStore is er; upload-UI en varianten niet. _(S8; L)_
 - [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,

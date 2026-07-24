@@ -6,6 +6,21 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Productpagina is nu écht bewerkbaar** (default views voorbij "geparkeerd"):
+  vier subject-widgets — **Subject header** (eyebrow, naam + status, tagline,
+  omschrijving), **Specs table**, **Product components** (met ingeklapte
+  board-specs) en de **releases**-widget in product-modus (expliciet product
+  of het subject; nieuwste eerst) — renderen via dezelfde gedeelde secties als
+  de ingebouwde pagina (`product-sections.tsx`), dus een studio-view is per
+  constructie identiek. `_view/product` wordt meegeseed en reproduceert de
+  pagina 1-op-1; bewerken in Vormgeving → Default views verandert vanaf nu
+  écht de productpagina's. Een view met een subjectheader bezit zijn eigen
+  h1 (geen dubbele titel); subject-loze gallery's verdwijnen stil i.p.v.
+  "No photos yet.".
+- **Thema's proberen in de studio**: de canvas-chrome heeft nu de echte
+  themaswitcher (alle thema's uit de store, dus ook nieuwe), klikbaar ondanks
+  de verder inerte omlijsting. Let op: wisselen zet je eigen themavoorkeur,
+  net als op de site.
 - **Wiki-fundament + PEP** (stap 1–2 van design/wiki.md): drie nieuwe
   contenttypen — `wiki` (met `visibility: public|members`), `wiki-folder`
   (nestbaar via parent) en `wiki-page` (verplaatsen = folder-veld wijzigen)
