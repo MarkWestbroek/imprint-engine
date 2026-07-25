@@ -363,6 +363,12 @@ Meegeleverd in musicbrain: `text` (markdown), `treeview` (handmatige boom
 en/of automatisch uit pagina-slugs), `api` (JSON-endpoint → lijst met
 veldselectie), `releases`, `products`.
 
+## Op een andere machine verder werken
+
+**[docs/overdracht.md](docs/overdracht.md)** is het startpunt: laptop
+opzetten (incl. de secrets die niet in git staan), wat er live draait, de
+valkuilen die ons al een keer pakten, en waar we gebleven zijn.
+
 ## Nog te doen
 
 De volledige lijst met open punten staat in **[docs/backlog.md](docs/backlog.md)**
