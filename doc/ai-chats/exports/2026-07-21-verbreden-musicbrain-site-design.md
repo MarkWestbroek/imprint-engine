@@ -3249,3 +3249,79 @@ Gevalideerd met typecheck + lint (geen build naast je dev-server). Ververs de ad
 
 Als de stijl bevalt kan hetzelfde component later ook de save-meldingen en foutjes vervangen (toasts bij de muis of rechtsonder) — maar dat is polijst voor een andere keer.
 
+---
+
+## 👤 Gebruiker (76)
+
+mooi! Hadden we hier nog losse eindjes of werk gepland?
+
+**🤖 Claude:**
+
+Even de backlog en losse notities nalopen zodat ik niets verzin:
+> 🔧 `Bash` — List open backlog items
+> 🔧 `Bash` — Read editor-demo and wiki backlog entries
+
+**🤖 Claude:**
+
+Goed beeld. Er zijn drie soorten: achterhaalde backlog-items, echte losse eindjes die nergens staan, en acties voor jou. Ik werk de backlog eerst bij:
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Bash` — Commit backlog cleanup
+
+**🤖 Claude:**
+
+Backlog is opgeschoond en bijgewerkt (`6d2da9b`). Er staan drie soorten dingen open:
+
+**Klaarliggende acties voor jou** (klein, geen code):
+- **Explore opruimen op live** — dat was je eigen wens en is half af: het seed-bestand is geparkeerd en het menu-item is uit git, maar op live moet nog `db:seed -- --only=menu` + één keer `/explore` deleten in de admin.
+- **Deepdive in Cortex publiceren** zodra je 'm af hebt — knop staat klaar.
+- **Help members-only?** Je zei dat de help voor admins/editors is. De ?-knop in de rail is er, maar `/help` staat nog op `public`. Eén veld in de studio als je hem wilt afschermen.
+- **Reflex- en Relay-specs** — die vertellen nog het oude MIDI-verhaal (footswitches/OLED, program change) terwijl hun kaartteksten de nieuwe positionering hebben. Dat vlagde ik bij de copy-ronde; het is redactiewerk dat ik niet kon verzinnen.
+
+**Losse eindjes uit deze sessies, nu vastgelegd:**
+- **Publiceren spiegelt niet** — de knop telt op; lokaal verwijderde pagina's blijven op live staan. Vraagt ooit een "wat verdwijnt er"-check of sync-modus.
+- **Wiki verwijderen** bestaat nog niet (folders/pagina's wel).
+- **Vijf losse `ContentType`-allowlists** — de bron van die "Unknown content type"-val die jij ving. Eén gedeelde bron per context maakt een nieuw type weer één regel.
+- **Handleiding heeft nu twee bronnen** (md-bestand + Help-wiki). Dubbel onderhoud loopt uit de pas; keuze nodig welke leidend is.
+
+**Groter, al gepland:** de PBAC-lite-vervolgstappen (policies als content, dan jouw ODRL-taal inpluggen), `[[wiki-links]]`, zoeken in een wiki, en het oude bekende "seed triggert revalidatie".
+
+Niets is urgent en niets hangt half. Als je een volgende sessie wilt: de **typelijsten consolideren** is het soort kleine opruiming dat toekomstige valkuilen wegneemt, en **wiki verwijderen** maakt het CRUD-plaatje af. Maar de mooiste is misschien de handleiding-bronkeuze — want die gaat eigenlijk over de vraag of Imprint z'n eigen documentatie durft te dragen.
+
+---
+
+## 👤 Gebruiker (77)
+
+ik werk komende weken op mijn laptop: wil je een overdrachtsdocument maken voor de volgende chat daar op mijn laptop?
+
+**🤖 Claude:**
+
+Goed idee — dat is precies waar zo'n doc voor is. Even de feiten checken zodat het klopt:
+> 🔧 `Bash` — Gather repo state: commits, tags, version, scripts
+> 🔧 `Bash` — Check clean tree, sync state, and content of e93c236
+
+**🤖 Claude:**
+
+Alles is gepusht en in sync. Ik schrijf het overdrachtsdocument:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\docs\overdracht.md
+> 🔧 `Bash` — Find README doc index to add overdracht link
+> 🔧 `Bash` — Read README tail around backlog reference
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\README.md
+> 🔧 `Bash` — Commit and push handover document
+
+**🤖 Claude:**
+
+Klaar en gepusht (`6793e82`) — [docs/overdracht.md](docs/overdracht.md), ook gelinkt vanuit de README zodat een nieuwe sessie hem vindt.
+
+Het staat bewust **in git** en niet in mijn geheugen, want dat reist niet mee: op je laptop begint Claude zonder de context van deze sessies. Het doc vervangt dat — kaart van de docs, de opzet-stappen, wat er live draait, de valkuilen die we tegenkwamen (dubbel bouwen, de vijf typelijsten, `lang` in lookups, trage Plesk-docroot), waar we gebleven zijn en wat er klaarligt.
+
+**Het belangrijkste om nu al te weten voor de overstap:** de seed vult alleen wat als bestand in git staat, en **wiki's staan niet in bestanden**. Op je laptop zijn de Help-wiki en Deepdive in Cortex er dus niet — die leven alleen in je desktop-database en op live. Drie manieren om daarmee om te gaan:
+
+1. **Niets doen** — je bewerkt wiki's gewoon in de **live admin** (musicbrain.nl/admin) vanaf je laptop. Live is toch de bron van waarheid; alleen de publiceer-knop (lokaal → live) heb je dan niet nodig.
+2. **Overnemen via de API** — de lees-API is publiek: `musicbrain.nl/api/content/wiki/help` en de bijbehorende folders/pagina's. Zeg het maar als je wilt dat ik daar een klein "haal wiki op van live"-scriptje voor maak; dat is het spiegelbeeld van de publiceer-knop en meteen een stap richting het backlog-punt "publiceren spiegelt niet".
+3. **Opnieuw beginnen** lokaal — prima voor de Deepdive als je die toch nog aan het schrijven bent.
+
+Verder heb je op de laptop alleen nodig: de repo clonen, `npm ci`, Docker voor de database, en je twee `.env`-bestanden overzetten (die staan niet in git — neem ze mee via je wachtwoordmanager of maak nieuwe; alleen `DATABASE_URL` en `SESSION_SECRET` zijn echt vereist).
+

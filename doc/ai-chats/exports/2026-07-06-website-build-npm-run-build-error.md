@@ -5351,3 +5351,108 @@ Dus vandaag kun je een *eenvoudiger* bewerkbare productpagina samenstellen, maar
 
 Wil je dat ik de subject-widgets + een bewerkbaar `_view/product` bouw (optie 2)? En zo ja: volledige fidelity (incl. componenten-met-borden) of eerst de lichte versie (kop + specs + releases)?
 
+---
+
+## 👤 Gebruiker (73)
+
+ad 2: ja wil je dat bouwen?
+ad 3: ja, wil je dat bouwen? Ik wil de thema's wel kunnen proberen. Je laatste 2 zinnen snap ik niet.
+
+**🤖 Claude:**
+
+Allebei bouwen — helder. En sorry voor de cryptische slotzinnen; wat ik bedoelde, in gewone taal: ik ga widgets maken die **automatisch de gegevens van het bekeken product pakken** (kop, specs, componenten, releases). Daarmee kan de default view álles tonen wat de huidige productpagina toont, en is hij dus volledig in de studio te bewerken. Dat bouw ik nu, plus de themaswitcher in de editor-preview.
+
+Er is intussen veel bijgekomen van je andere sessies (wiki, Amber-thema, dialoogjes) — eerst de actuele stand inlezen:
+> 🔧 `Bash` — Current widget catalog and releases/specs configs
+> 🔧 `Bash` — Find studio chrome usage, page-renderer title, gallery subject option
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\page-renderer.tsx
+> 🔧 `Bash` — Read page-renderer; find where Studio gets chrome data
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\studio.tsx
+> 🔧 `Bash` — SiteChrome signature: themes and inert props
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\site-chrome.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Bash` — Find catalog spot to insert new entries
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\registry.ts
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\product-sections.tsx
+> 🔧 `Read` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\product-sections.tsx
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\app\(site)\products\[slug]\page.tsx
+
+**🤖 Claude:**
+
+Nu de widget-viewers. Even de huidige `ReleasesWidget` bekijken:
+> 🔧 `Bash` — Read current ReleasesWidget and registration map
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\product-sections.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\product-sections.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\product-sections.tsx
+> 🔧 `Bash` — Find import block and registration map entries
+> 🔧 `Bash` — Show import block and registration map
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\page-renderer.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\default-view.tsx
+> 🔧 `Bash` — Check PageLayout shape (rows direct or legacy union)
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\default-view.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\default-view.tsx
+
+**🤖 Claude:**
+
+Nu de `_view/product`-seed en de themaswitcher in de studio:
+> 🔧 `Write` — d:\Git\Web\Imprint-engine\sites\musicbrain\content\pages\_view-product.json
+> 🔧 `Bash` — Check gallery config and empty behavior
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\widgets\components.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\studio.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\admin\studio.tsx
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\sites\musicbrain\src\components\site-chrome.tsx
+> 🔧 `Bash` — Typecheck and lint the batch
+> 🔧 `Bash` — Ensure dev up and seed the _view/product page
+> 🔧 `Bash` — Verify _view/product renders with full parity
+> 🔧 `Bash` — Check whether cortex has components in data
+> 🔧 `Bash` — Temporarily link a component to prove the components widget
+> 🔧 `Bash` — Verify theme switcher works inside studio canvas
+> 🔧 `Bash` — Production build
+
+**🤖 Claude:**
+
+Turbopack-panic (worker-verbinding weggevallen — vermoedelijk transient, dev-server draait ernaast). Nogmaals:
+> 🔧 `Bash` — Retry production build
+> 🔧 `Bash` — Stop dev server on port 3000
+> 🔧 `Bash` — Build with dev server stopped
+> 🔧 `Bash` — Clean .next and rebuild
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\CHANGELOG.md
+> 🔧 `Edit` — d:\Git\Web\Imprint-engine\docs\backlog.md
+> 🔧 `Bash` — Commit subject-widgets and studio theme switcher
+
+**🤖 Claude:**
+
+Nog even je dev-server terugstarten (die had ik gestopt voor de build):
+> 🔧 `Bash` — Restart dev server with clean cache
+> 🔧 `TodoWrite` — takenlijst bijgewerkt
+
+**🤖 Claude:**
+
+Allebei gebouwd, e2e getest en gepusht (`e93c236`).
+
+**Ad 2 — de productpagina is nu écht bewerkbaar.** Vier nieuwe subject-widgets die automatisch het bekeken product renderen:
+
+| Widget | Toont |
+|---|---|
+| **Subject header** | eyebrow (audience), naam + statusbadge, tagline, omschrijving — elk aan/uit te zetten |
+| **Specs table** | de specs als label/waarde-tabel |
+| **Product components** | de componenten met hun ingeklapte board-specs |
+| **Releases** (product-modus) | de releases van dít product, nieuwste eerst |
+
+De truc: deze widgets en de ingebouwde pagina renderen door **dezelfde gedeelde secties** ([product-sections.tsx](sites/musicbrain/src/components/product-sections.tsx)) — identiek per constructie, niet per copy-paste. En `_view/product` wordt nu meegeseed als 1-op-1-reproductie: wat je in **Vormgeving → Default views** bij *product* ziet, ís voortaan de echte productpagina, en elke wijziging daar (sectie verplaatsen, weghalen, widgets tussenvoegen) verandert álle productpagina's. Geverifieerd op `/products/cortex`: één h1, badge, specs, releases nieuwste-eerst, geen dubbele titel; de components-widget positief bewezen met een tijdelijke koppeling. (Dat Specs/Components in jouw screenshot "ontbraken" klopte trouwens met de data: cortex/reflex hebben momenteel lege `components[]` — lege secties verschijnen gewoon niet, net als voorheen.)
+
+**Ad 3 — thema's proberen in de studio**: de canvas-omlijsting heeft nu de echte themaswitcher, gevuld uit de store — **jouw nieuwe thema staat er dus automatisch in**, en elk volgend thema ook. Getest: Amber/Dark/Light/Neon zichtbaar en wisselen werkt direct in de canvas. Eén eigenschap om te weten: wisselen zet je persoonlijke themavoorkeur (zelfde mechanisme als op de site), dus de keuze blijft staan tot je terugwisselt.
+
+En de onduidelijke zinnen van vorige keer, nu concreet gemaakt: ik heb **niet** de lichte versie gebouwd maar de volledige — inclusief componenten-met-borden — precies zodat er geen verschil is tussen "bewerkbaar" en "compleet". Voor **component-** en **releasepagina's** kan hetzelfde patroon (staat als vervolg op de backlog).
+
+Voor live: Plesk-pull + `db:seed -- --only=page` (zet `_view/product` erin; je eigen pagina-edits blijven staan — alleen paginaslugs uit de seed worden opnieuw geasserteerd). Daarna kun je op live de productpagina herschikken in de studio.
+
