@@ -119,21 +119,33 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       MusicBrain-repo op eigen release-tempo; de editor is puur statisch
       (geen Node/Passenger, `vite base` blijft `/`). Imprint's `/editor`
       linkt erheen — geen ContentStore-koppeling.
-      - [x] Imprint-kant: `/editor`-landingspagina gebouwd
-        (`content/pages/editor.json`: hero + scope-divider + specs + CTA naar
-        `editor.musicbrain.nl`). Nog **niet** in het hoofdmenu (geen dode link
-        vóór het subdomein leeft) — menu-item + seed = de "aanzetten"-stap.
-      - [ ] MusicBrain-repo: editor stylen met de tokens uit `doc/styleguide.md`
-        en een deploy-action (`cd editor && npm ci && npm run build`, docroot =
-        `editor/dist`).
-      - [ ] Plesk: subdomein `editor.musicbrain.nl` (statische docroot op
-        `editor/dist`), git-deploy uit MusicBrain-repo + webhook.
-      _(A1; M)_
+      - [x] Imprint-kant: `/editor`-landingspagina + menu-item (juli 2026).
+      - [x] MusicBrain-repo: editor in de huisstijl (variant B — licht
+        werkinstrument met merk-accenten; `doc/styleguide.md` +
+        `editor/src/tokens.css`), deploy-doc in `doc/editor-deploy.md`.
+      - [x] Plesk: subdomein **editor.musicbrain.nl draait live** (statische
+        docroot `editor/dist`, `npm install` i.p.v. `npm ci`, webhook aan).
+      - [ ] Rest-styling: de laatste blauwtjes in uitklapmenu's, de
+        cyaan-hue gelijktrekken met `--accent-2`, en de emoji in submenu's.
+        Donker thema voor de editor is bewust géén doel (Mark werkt overdag
+        liever licht); een kleurswitch ooit misschien. _(S)_
+      _(A1; grotendeels af)_
 
 ---
 
 ## 3. Contentmodel, API & opslag
 
+- [ ] **Typelijsten consolideren** — `ContentType` staat in vijf losse
+      allowlists (admin-action, list/edit/history-routes, content-API's
+      INGESTABLE). Bij de wiki-typen vergat ik er één en dat gaf een
+      cryptisch "Unknown content type" pas bij het opslaan. Eén gedeelde
+      bron per context (schrijfbaar / lijstbaar / ingestbaar) maakt een
+      nieuw type weer één regel. _(S)_
+- [ ] **Handleiding: één bron kiezen** — de redacteurshandleiding leeft nu
+      twee keer: `docs/handleiding.md` (git, reservekopie) en de Help-wiki
+      (live, bewerkbaar). Dubbel onderhoud loopt uit de pas. Opties: de
+      wiki leidend maken en het md-bestand laten vervallen (of genereren
+      uit de wiki), of andersom een "publiceer docs → wiki"-script. _(S)_
 - [ ] **Documentatie differentiëren** — `docs` is nu één optioneel veld (pagina-slug
       of inline markdown). Het UML liet `Documentation` bewust vaag; board-spec was
       de eerste uitwerking. _(open ontwerp; M)_
@@ -164,11 +176,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         eigenschappen + markdown-tekst rechts, niets geselecteerd = de
         wiki zelf (titel/beschrijving/zichtbaarheid). Slugs worden per
         wiki gescopet en uit de titel gegenereerd (wiki-prefix +
-        nummering); folders verwijderen alleen als ze leeg zijn. De platte
-        typelijsten zijn uit de rail; generiek bewerken kan nog via
-        /admin/wiki-folder e.d. Volgorde slepen met invoeg-streepjes zit
-        erin (hernummering server-side), net als inline hernoemen
-        (dubbelklik; slug blijft stabiel dus links breken niet). _(was M)_
+        nummering). De platte typelijsten zijn uit de rail; generiek
+        bewerken kan nog via /admin/wiki-folder e.d. Volgorde slepen met
+        invoeg-streepjes zit erin (hernummering server-side), net als
+        inline hernoemen (dubbelklik; slug blijft stabiel dus links breken
+        niet) en cascade-delete van folders (compositie, met waarschuwing
+        die de aantallen noemt). _(was M)_
       - [x] **Publiceer-knop** (juli 2026) — "Publiceer → live" in de
         studio: POST per item naar de live content-API (wiki → folders,
         ouders eerst → pagina's) met PUBLISH_URL/PUBLISH_TOKEN uit de
@@ -176,9 +189,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] Gedogfood (juli 2026): de handleiding leeft als Help-wiki
         (/help, 4 folders, 12 pagina's); docs/handleiding.md blijft als
         reservekopie.
+      - [ ] **Publiceren spiegelt niet** — de knop telt op (nieuwe versies);
+        een lokaal verwijderde pagina/folder blijft op het doel staan.
+        Optie: een "wat verdwijnt er"-vergelijking vóór publiceren, of een
+        expliciete sync-modus. _(S–M)_
+      - [ ] **Wiki verwijderen** kan nergens (folders/pagina's wel). Zelfde
+        patroon als delete-board: cascade + waarschuwing met aantallen.
+        _(S)_
       - [ ] Later: policies als content (PDP/PAP), `[[wiki-links]]`,
-        drag-&-drop verplaatsen, overerving, `visibility: members` op de
-        route (dynamisch/guard). _(M–L)_
+        overerving van rechten, zoeken binnen een wiki. _(M–L)_
 - [x] ~~**Asset-opruiming**~~ — gedaan in 0.11.0: `npm run assets:gc`
       (dry-run default, `--delete` om echt op te ruimen). Verwijdert alleen
       bestanden waar geen énkele historische rij naar wijst — History en
