@@ -4,12 +4,30 @@
 > (`/help`, bewerkbaar in de admin onder Content → Wikis). De wiki is de
 > levende versie; dit bestand blijft voorlopig als reservekopie staan.
 
-Wat je als site-redacteur met Imprint kunt, zonder techniek. De technische
-tegenhanger is [architecture.md](architecture.md); wat er per versie bij kwam
-staat in de [CHANGELOG](../CHANGELOG.md).
+Imprint is de publicatiemotor achter MusicBrain en toekomstige merk- en
+productsites. Als redacteur beheer je er de inhoud, structuur en vormgeving
+van een site mee zonder in de code te werken. Je bouwt pagina's met widgets,
+beheert productinformatie en wiki's, plant publicaties en kunt altijd naar een
+eerdere versie terug.
+
+Deze handleiding legt uit wat je in de beheeromgeving kunt doen. Zoek je de
+techniek achter Imprint, lees dan de [architectuur](architecture.md). Een kaart
+van alle documenten staat in het [documentatieoverzicht](README.md).
 
 De eerste imprint draait live: **https://musicbrain.nl**, beheer via
 **https://musicbrain.nl/admin**.
+
+## Beginnen
+
+Voor dagelijks redactiewerk is dit de kortste route:
+
+1. Log in op `/admin`.
+2. Open **Content** om bestaande inhoud te bewerken of nieuwe inhoud te maken.
+3. Open bij een pagina **Edit** om die in de visuele studio samen te stellen.
+4. Gebruik **History** als je een eerdere versie wilt bekijken of herstellen.
+
+De rest van deze handleiding begint bij accounts en de indeling van de admin,
+en behandelt daarna pagina's, contenttypen, planning, wiki's en vormgeving.
 
 ## Inloggen & account
 

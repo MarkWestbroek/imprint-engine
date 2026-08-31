@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Documentatie heeft een publieke voordeur**: de hoofd-README legt nu eerst
+  in gewone taal uit wat Imprint is, wat een team ermee kan en hoe MusicBrain
+  het gebruikt. Een nieuw documentatieoverzicht biedt routes voor redacteuren,
+  ontwikkelaars en ontwerpbeslissingen; ook de redacteurshandleiding en de
+  MusicBrain-workspace verwijzen nieuwe lezers gericht door.
 - **Productpagina is nu écht bewerkbaar** (default views voorbij "geparkeerd"):
   vier subject-widgets — **Subject header** (eyebrow, naam + status, tagline,
   omschrijving), **Specs table**, **Product components** (met ingeklapte

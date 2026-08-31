@@ -1,44 +1,77 @@
 # Imprint
 
-Eén publicatie-motor, meerdere merk-sites — zoals een uitgeverij meerdere
-*imprints* voert: elk met een eigen gezicht, allemaal op dezelfde machinerie.
-Geen klassiek CMS dus. Eerste imprint: **MusicBrain** (werknaam).
-Requirements: zie [docs/website-requirements.md](docs/website-requirements.md).
+**Imprint is een publicatieplatform voor meerdere zelfstandige merk- en
+productsites.** Zoals een uitgever verschillende imprints heeft, kan één
+Imprint-installatie meerdere sites aandrijven: elk met een eigen naam,
+vormgeving, navigatie en inhoud, maar met dezelfde betrouwbare motor eronder.
 
-> **Live**: https://musicbrain.nl (sinds juli 2026, v0.9.0) — beheer via
-> `/admin`. Updaten = `git push` → Plesk *Pull updates*; controleren met
-> `npm run smoke -- https://musicbrain.nl`. Zie "Deploy naar Plesk".
+De eerste site die op Imprint draait is [MusicBrain](https://musicbrain.nl),
+een productsite voor een modulair muziekinstrument. Imprint is nog volop in
+ontwikkeling en is op dit moment vooral het platform achter deze site, geen
+kant-en-klaar SaaS-product.
 
-## Opzet
+## Wat kun je ermee?
 
-npm-workspaces-monorepo, gefaseerd volgens §C van het requirements-doc:
+Met Imprint kan een klein team zonder code te wijzigen:
 
-- **v0:** statische site, content als bestanden in git. Werkt nog steeds:
-  zonder `DATABASE_URL` valt de site terug op de file-store.
-- **v1 (nu):** MariaDB met **bitemporal-light**-tabellen (§B3:
-  `valid_from/valid_to/tx_from/tx_to` — elke wijziging is een nieuwe rij,
-  historie en terugrollen gratis) + admin-UI met widget-composer op
-  `/admin`. Alleen de `ContentStore`-implementatie wisselde; de pagina's
-  bleven ongewijzigd. Doel-hosting: Plesk (Node.js-app + MariaDB).
+- pagina's samenstellen uit rijen, vakken en herbruikbare widgets;
+- producten, componenten, releases, downloads en technische documentatie
+  publiceren;
+- wiki's, menu's, thema's en planning-borden beheren;
+- publicatie vooruit plannen en de site bekijken zoals die vroeger was of in
+  de toekomst zal zijn;
+- elke wijziging als een nieuwe versie bewaren, vergelijken en terugzetten;
+- content via een API laten aanleveren door andere projecten.
 
+Pagina's worden in een visuele studio bewerkt, in de echte vormgeving van de
+site. De onderliggende contentregels genereren de beheerformulieren en bewaken
+verwijzingen tussen bijvoorbeeld producten, componenten en releases. Zo kan
+een imprint zijn eigen inhoud en uitstraling hebben zonder een eigen CMS te
+hoeven bouwen.
+
+## Een voorbeeld
+
+MusicBrain gebruikt Imprint voor meer dan losse webpagina's. Producten bestaan
+uit herbruikbare hardware- en softwarecomponenten; releases leggen vast welke
+versie van elk component is meegeleverd. Een hardwaretool kan automatisch
+borddocumentatie, afbeeldingen en 3D-modellen publiceren. Redacteuren kunnen
+diezelfde informatie vervolgens gebruiken in productpagina's, wiki's en
+samengestelde pagina's.
+
+Bekijk de [live site](https://musicbrain.nl) om het publieke resultaat te zien.
+De beheeromgeving staat achter een login en is beschreven in de
+[handleiding voor redacteuren](docs/handleiding.md).
+
+## Waar begin je?
+
+| Je wilt... | Begin hier |
+|---|---|
+| begrijpen wat redacteuren kunnen | [Handleiding voor redacteuren](docs/handleiding.md) |
+| het project lokaal bekijken of eraan ontwikkelen | [Lokaal draaien](#lokaal-draaien-from-scratch) |
+| begrijpen hoe Imprint technisch werkt | [Architectuur](docs/architecture.md) |
+| alle documentatie per onderwerp vinden | [Documentatieoverzicht](docs/README.md) |
+| zien wat af is en wat nog openstaat | [Changelog](CHANGELOG.md) en [backlog](docs/backlog.md) |
+| de oorspronkelijke doelen en eisen lezen | [Website-requirements](docs/website-requirements.md) |
+
+## Hoe zit de repository in elkaar?
+
+Imprint is een npm-workspaces-monorepo. De gedeelde publicatiemotor staat in
+`packages/content-core`; iedere site staat apart onder `sites`. De eerste
+imprint, MusicBrain, is een Next.js-site met een publieke website en een
+beheeromgeving op `/admin`.
+
+```text
+packages/content-core/  contentmodel, validatie, historie en opslag
+sites/musicbrain/       publieke MusicBrain-site en beheeromgeving
+drizzle/                database-migraties
+docs/                   functionele en technische documentatie
 ```
-packages/
-  content-core/        Zod-schemas + ContentStore-interface + widget-model
-                       (PageLayout, WidgetTypeRegistry) + twee stores:
-                       file-store (v0, git) en db-store (v1, bitemporal-light)
-sites/
-  musicbrain/          Next.js 16-site (App Router, Tailwind v4, dark)
-    content/           v0-content (files) — ook de seed-bron voor de DB
-    src/widgets/       De widget-catalogus van deze site:
-                       registry.ts (configschema's) + components.tsx
-    src/app/admin/     Admin-UI: login, lijsten, formulieren uit zod-schema's,
-                       widget-composer, versiehistorie met restore, users
-drizzle/               Gegenereerde SQL-migraties (in git; nooit handmatig)
-scripts/seed.ts        Contentbestanden + eerste admin-user → database
-scripts/user.ts        Gebruikersbeheer vanaf de CLI (noodingang, zie onder)
-docs/
-  website-requirements.md
-```
+
+Content kan uit MariaDB komen of, zonder database, rechtstreeks uit bestanden
+in de repository. Publieke pagina's spreken altijd dezelfde `ContentStore`
+aan. Daardoor kan de opslag veranderen zonder dat iedere sitepagina moet
+worden herschreven. De technische uitwerking staat in de
+[architectuurdocumentatie](docs/architecture.md).
 
 ## Lokaal draaien (from scratch)
 
