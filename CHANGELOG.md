@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Imprint heeft een eigen productsite en merkvoorstel**: `sites/imprint` is
+  een tweede Next.js-workspace met een statische, responsieve productsite die
+  het platform uitlegt en MusicBrain als praktijkvoorbeeld toont. Het
+  toegepaste logo "Registerdruk" verbeeldt versiehistorie als twee verschoven
+  afdrukken; "Colofon" en "Veelvoud" blijven als alternatieven zichtbaar en
+  zijn samen met exporteerbare SVG's gedocumenteerd in `docs/design/brand.md`.
+  Mogelijkheden, praktijk en merk hebben eigen routes in plaats van
+  ankersecties; de homepage kreeg een rustigere kop en matrix zonder centrale
+  lijn. Deze prototype-site heeft nog geen database; een volledige instantie
+  krijgt later een eigen MariaDB-database naast die van MusicBrain.
 - **Documentatie heeft een publieke voordeur**: de hoofd-README legt nu eerst
   in gewone taal uit wat Imprint is, wat een team ermee kan en hoe MusicBrain
   het gebruikt. Een nieuw documentatieoverzicht biedt routes voor redacteuren,

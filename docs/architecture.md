@@ -537,6 +537,15 @@ flowchart LR
 
 ## 7. Nieuwe site ("imprint") toevoegen
 
+De repository bevat naast MusicBrain een tweede site onder `sites/imprint`:
+de publieke productsite van Imprint zelf. Deze eerste versie is bewust een
+statisch prototype voor positionering, huisstijl en logo-onderzoek. Hij
+gebruikt nog geen `ContentStore`, admin of database. De volgende stap is hem
+volgens onderstaand patroon als volledige imprint aan te sluiten, met een eigen
+`DATABASE_URL` en een eigen MariaDB-database (dus niet de contentdatabase van
+MusicBrain); tot die tijd bewijst hij alleen de onafhankelijke
+frontend/workspace, niet de hele contentketen.
+
 1. `sites/<naam>/` scaffolden (Next.js), `@imprint/content-core` als
    dependency.
 2. Eigen `src/widgets/registry.ts` + `components.tsx` (de catalogus mag

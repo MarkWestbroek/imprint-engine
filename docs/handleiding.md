@@ -17,6 +17,11 @@ van alle documenten staat in het [documentatieoverzicht](README.md).
 De eerste imprint draait live: **https://musicbrain.nl**, beheer via
 **https://musicbrain.nl/admin**.
 
+Imprint heeft daarnaast een eigen productsite in de repository. Die is nu een
+statisch merk- en positioneringsprototype en heeft nog geen beheeromgeving;
+redactioneel werken zoals hieronder beschreven gebeurt voorlopig alleen in de
+MusicBrain-instantie.
+
 ## Beginnen
 
 Voor dagelijks redactiewerk is dit de kortste route:
