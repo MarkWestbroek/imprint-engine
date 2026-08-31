@@ -24,6 +24,27 @@
       }
     },
     {
+      "label": "Imprint: dev stoppen",
+      "type": "npm",
+      "script": "dev:stop",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Imprint: dev herstarten",
+      "type": "npm",
+      "script": "dev:restart",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
+      "label": "Imprint: dev status",
+      "type": "npm",
+      "script": "dev:status",
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "shared" }
+    },
+    {
       "label": "Imprint: build (musicbrain)",
       "type": "npm",
       "script": "build",

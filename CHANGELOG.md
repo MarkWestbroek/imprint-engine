@@ -11,6 +11,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   het gebruikt. Een nieuw documentatieoverzicht biedt routes voor redacteuren,
   ontwikkelaars en ontwerpbeslissingen; ook de redacteurshandleiding en de
   MusicBrain-workspace verwijzen nieuwe lezers gericht door.
+- **Lokale database bijpraten vanaf een draaiende site**:
+  `node scripts/sync-from-live.mjs` haalt componenten + board-specs (en de
+  assets waar ze naar wijzen) via de publieke read-API op en post ze op het
+  doel via de ingest-API — strikt eenrichtingsverkeer (alleen GET's op de
+  bron), identieke items worden overgeslagen en items die alleen lokaal
+  bestaan blijven staan. Nodig als de KiCad-toolkit lokaal een release post
+  die naar componentversies verwijst die alleen live bestaan (404 op
+  `/components/<slug>`, missende 3D-tabs). `--dry` toont eerst wat er zou
+  gebeuren.
+- **Dev-server stoppen/herstarten zonder de terminal te zoeken**:
+  `npm run dev:start|dev:stop|dev:restart|dev:status` (script
+  `scripts/dev-server.mjs`, praat met de *poort* i.p.v. een proceshandle)
+  plus dezelfde drie als VS Code-tasks. Handig na een `npm install` of een
+  gewijzigde dependency; `npm run dev` blijft de gewone voorgrond-start.
 - **Productpagina is nu écht bewerkbaar** (default views voorbij "geparkeerd"):
   vier subject-widgets — **Subject header** (eyebrow, naam + status, tagline,
   omschrijving), **Specs table**, **Product components** (met ingeklapte

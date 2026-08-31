@@ -142,6 +142,9 @@ de file-store: content uit `sites/musicbrain/content/`, geen admin.
 
 ```bash
 npm run dev        # dev-server musicbrain (http://localhost:3000)
+npm run dev:status # draait er een dev-server, en waar?
+npm run dev:stop   # stop wat er op poort 3000 luistert
+npm run dev:restart# stop + start in de achtergrond (log: .next-dev.log)
 npm run build      # productie-build
 npm run lint
 npm run typecheck
@@ -150,6 +153,10 @@ npm run db:up      # lokale MariaDB 10.11 (docker compose), zelfde major als Ple
 npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/
 npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL
 npm run db:seed      # contentbestanden + admin-user importeren (idempotent)
+
+# Lokale DB achter op live? Componenten + board-specs (incl. assets) ophalen.
+# Leest alleen van de bron, schrijft alleen op het doel; --dry toont het plan.
+node scripts/sync-from-live.mjs [--from=https://musicbrain.nl] [--to=http://localhost:3000] [--dry]
 
 npm run user -- list                     # gebruikers + rollen
 npm run user -- add <naam> [rol] [ww]    # toevoegen (rol default editor)

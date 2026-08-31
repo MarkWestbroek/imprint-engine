@@ -9,6 +9,10 @@
   ],
   "scripts": {
     "dev": "npm run dev --workspace=musicbrain",
+    "dev:start": "node scripts/dev-server.mjs start",
+    "dev:stop": "node scripts/dev-server.mjs stop",
+    "dev:restart": "node scripts/dev-server.mjs restart",
+    "dev:status": "node scripts/dev-server.mjs status",
     "build": "npm run build --workspace=musicbrain",
     "start": "npm run start --workspace=musicbrain",
     "lint": "npm run lint --workspaces --if-present",
