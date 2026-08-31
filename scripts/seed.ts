@@ -27,7 +27,8 @@ import { DbUserStore } from "@imprint/content-core/user-store";
  * `--only=relations` to (re)load the default relation rules.
  */
 
-const CONTENT_DIR = path.join(process.cwd(), "sites", "musicbrain", "content");
+const siteArg = process.argv.find((a) => a.startsWith("--site="))?.slice(7) ?? "musicbrain";
+const CONTENT_DIR = path.join(process.cwd(), "sites", siteArg, "content");
 
 const onlyArg = process.argv.find((a) => a.startsWith("--only="))?.slice(7);
 const only = onlyArg

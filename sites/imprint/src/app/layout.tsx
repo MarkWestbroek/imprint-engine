@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
+import { store } from "@/lib/content";
 import "./globals.css";
 
 const display = Fraunces({
@@ -12,11 +13,14 @@ const sans = Manrope({
   variable: "--font-sans",
 });
 
-export const metadata: Metadata = {
-  title: "Imprint — één motor, elke site een eigen gezicht",
-  description:
-    "Een publicatieplatform voor zelfstandige merk- en productsites, met een visuele studio, versiehistorie en een open contentmodel.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const site = await store.getSiteConfig();
+  return {
+    metadataBase: new URL(site.baseUrl),
+    title: { default: `${site.name} — ${site.tagline}`, template: `%s — ${site.name}` },
+    description: site.tagline,
+  };
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

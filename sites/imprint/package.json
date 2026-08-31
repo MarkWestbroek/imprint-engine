@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@imprint/content-core": "*",
     "lucide-react": "^0.468.0",
     "next": "^16.2.10",
     "react": "^19.2.4",

@@ -2,9 +2,21 @@
 
 Dit is de tweede site in de monorepo: de publieke website voor Imprint zelf.
 De eerste versie onderzoekt positionering, huisstijl en drie logorichtingen.
-Hij is bewust statisch en gebruikt nog geen `ContentStore`, admin of database.
-Een toekomstige volledige instantie krijgt een eigen `DATABASE_URL` en eigen
-MariaDB-database; hij deelt nadrukkelijk niet de contentdatabase van MusicBrain.
+De publieke routes zijn statisch en de siteconfig loopt via `ContentStore`.
+Lokaal gebruikt de site een eigen MariaDB-database via zijn eigen
+`DATABASE_URL`; zonder die variabele valt hij terug op `content/`. Hij deelt
+nadrukkelijk niet de contentdatabase van MusicBrain. De overige pagina-inhoud
+staat in deze eerste versie nog in code en er is nog geen admin.
+
+Eigen database lokaal inrichten:
+
+```bash
+docker compose exec -T db mariadb -uroot -pimprint-root -e \
+	"CREATE DATABASE IF NOT EXISTS imprint; GRANT ALL ON imprint.* TO 'imprint'@'%';"
+DATABASE_URL=mysql://imprint:imprint-dev@localhost:3306/imprint npm run db:migrate
+DATABASE_URL=mysql://imprint:imprint-dev@localhost:3306/imprint \
+	npm run db:seed -- --site=imprint --only=site
+```
 
 Start vanuit de repository-root:
 

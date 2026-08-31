@@ -14,8 +14,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   zijn samen met exporteerbare SVG's gedocumenteerd in `docs/design/brand.md`.
   Mogelijkheden, praktijk en merk hebben eigen routes in plaats van
   ankersecties; de homepage kreeg een rustigere kop en matrix zonder centrale
-  lijn. Deze prototype-site heeft nog geen database; een volledige instantie
-  krijgt later een eigen MariaDB-database naast die van MusicBrain.
+  lijn. De siteconfig gebruikt nu de `ContentStore` met een eigen MariaDB-
+  database en eigen file-storefallback; pagina-inhoud en admin volgen later.
 - **Documentatie heeft een publieke voordeur**: de hoofd-README legt nu eerst
   in gewone taal uit wat Imprint is, wat een team ermee kan en hoe MusicBrain
   het gebruikt. Een nieuw documentatieoverzicht biedt routes voor redacteuren,

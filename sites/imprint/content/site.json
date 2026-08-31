@@ -1,0 +1,12 @@
+{
+  "name": "Imprint",
+  "tagline": "Eén motor voor sites met een eigen gezicht",
+  "motto": "publiceren zonder eenheidsworst",
+  "baseUrl": "http://localhost:3100",
+  "defaultLocale": "nl",
+  "links": {
+    "github": "https://github.com/MarkWestbroek/imprint-engine"
+  },
+  "aliases": {},
+  "releaseSources": {}
+}
