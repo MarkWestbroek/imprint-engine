@@ -5,6 +5,12 @@ het ontwerp zoals het er staat; de requirements staan in
 [website-requirements.md](website-requirements.md) (eisnummers W*/S*/§B/§C
 worden in code-comments aangehaald).
 
+De voorgestelde revisie waarin runtime, admin, widgets en plugins werkelijk
+site-onafhankelijke engineonderdelen worden staat in
+[Revisievoorstel — engine, instanties, widgets en plugins](design/engine-instance-plugin-architectuur.md).
+Dat document is normatief voor de gewenste richting, maar nog niet volledig
+geïmplementeerd; dit document blijft de beschrijving van de huidige werking.
+
 ## 1. Overzicht
 
 npm-workspaces-monorepo. De kern (`@imprint/content-core`) kent schema's,

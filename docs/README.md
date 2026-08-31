@@ -34,6 +34,9 @@ Plesk staan voorlopig bij elkaar in de [hoofd-README](../README.md).
 
 ### Ik wil begrijpen waarom het zo is gebouwd
 
+- [Revisievoorstel engine/instanties/plugins](design/engine-instance-plugin-architectuur.md)
+	- gewenste scheiding tussen motor en sites, gedeelde admin, configureerbare
+	widgets, pluginmodel en gefaseerd migratieplan.
 - [Website-requirements](website-requirements.md) - oorspronkelijke
 	functionele en technische eisen voor MusicBrain en de publicatiemotor.
 - [Ontwerpdocumenten](design/) - uitwerkingen van onder meer het contentmodel,

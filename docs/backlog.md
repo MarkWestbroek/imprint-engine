@@ -135,6 +135,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 3. Contentmodel, API & opslag
 
+- [ ] **Engine en instanties werkelijk scheiden** — voer het
+      [architectuurrevisievoorstel](design/engine-instance-plugin-architectuur.md)
+      gefaseerd uit: composition root, gedeelde renderer/standaardwidgets,
+      generieke admin en studio, daarna Planning als eerste proefplugin.
+      MusicBrain blijft tijdens iedere fase releasable; Imprint is de tweede
+      instantiatietest. Begin met Fase 0 (besluiten + karakterisatietests), niet
+      met het kopiëren van `/admin`. _(architectuurrevisie; L)_
+
 - [ ] **Typelijsten consolideren** — `ContentType` staat in vijf losse
       allowlists (admin-action, list/edit/history-routes, content-API's
       INGESTABLE). Bij de wiki-typen vergat ik er één en dat gaf een

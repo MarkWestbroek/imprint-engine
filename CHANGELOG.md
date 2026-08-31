@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Architectuurrevisie ontworpen**: `docs/design/engine-instance-plugin-architectuur.md`
+  beschrijft uitgebreid hoe Imprint van de huidige, deels in MusicBrain
+  ingebouwde motor naar gedeelde core/runtime/adminpackages en dunne
+  site-instanties kan groeien. Het voorstel definieert widgets versus plugins,
+  een veilig build-time extensionmodel, package- en deploymentgrenzen,
+  teststrategie, zes migratiefasen en de nog te nemen besluiten.
 - **Imprint heeft een eigen productsite en merkvoorstel**: `sites/imprint` is
   een tweede Next.js-workspace met een statische, responsieve productsite die
   het platform uitlegt en MusicBrain als praktijkvoorbeeld toont. Het
