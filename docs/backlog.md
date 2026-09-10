@@ -141,7 +141,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       generieke admin en studio, daarna Planning als eerste proefplugin.
       MusicBrain blijft tijdens iedere fase releasable; Imprint is de tweede
       instantiatietest. Begin met Fase 0 (besluiten + karakterisatietests), niet
-      met het kopiëren van `/admin`. _(architectuurrevisie; L)_
+      met het kopiëren van `/admin`. Opdracht en volgorde:
+      [opdrachtbrief](design/opdracht-engine-bibliotheek-backend-site.md)
+      (vier lagen; Postgres-backend als spike vóór de composition root).
+      _(architectuurrevisie; L)_
 
 - [ ] **Typelijsten consolideren** — `ContentType` staat in vijf losse
       allowlists (admin-action, list/edit/history-routes, content-API's

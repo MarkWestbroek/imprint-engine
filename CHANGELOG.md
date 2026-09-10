@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Opdrachtbrief voor het lostrekken van de engine**:
+  `docs/design/opdracht-engine-bibliotheek-backend-site.md` vertaalt het
+  revisievoorstel naar vier lagen — engine, bibliotheek (nieuw begrip),
+  backend (nieuw als eigen laag, Postgres eerst, MariaDB blijft) en site — legt
+  vast wat al besloten is, wat nog open staat, en geeft de eerste concrete
+  opdracht (architectuurcontract + karakterisatietests, Postgres-spike, dan pas
+  composition root).
 - **Architectuurrevisie ontworpen**: `docs/design/engine-instance-plugin-architectuur.md`
   beschrijft uitgebreid hoe Imprint van de huidige, deels in MusicBrain
   ingebouwde motor naar gedeelde core/runtime/adminpackages en dunne
