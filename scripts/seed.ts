@@ -13,7 +13,8 @@ import {
   SiteConfigSchema,
   ThemeSchema,
 } from "@imprint/content-core";
-import { createDb, DbContentStore } from "@imprint/content-core/db-store";
+import { openContentDatabase } from "@imprint/content-core/db";
+import { createDb, type Db } from "@imprint/content-core/db-store";
 import { DbUserStore } from "@imprint/content-core/user-store";
 
 /**
@@ -56,9 +57,11 @@ async function listFiles(dir: string, ext: string): Promise<string[]> {
 async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set (create .env from .env.example)");
-  const db = createDb(url);
-  const store = new DbContentStore(db);
+  // Backend by URL scheme (mysql:// or postgres://) — architecture.md §0.
+  const opened = openContentDatabase(url);
+  const store = opened.store;
   const by = "seed";
+  let userDb: Db | null = null;
 
   // site config
   if (want("site")) {
@@ -195,10 +198,13 @@ async function main() {
   }
 
   // first admin user — later ones go through /admin/users or `npm run user`
-  if (want("user")) {
+  if (want("user") && opened.dialect !== "mysql") {
+    console.log("user      ! users live in MariaDB only for now (no admin on Postgres yet) — skipped");
+  } else if (want("user")) {
     const name = process.env.SEED_ADMIN_USER ?? "admin";
     const password = process.env.SEED_ADMIN_PASSWORD;
-    const userStore = new DbUserStore(db);
+    userDb = createDb(url);
+    const userStore = new DbUserStore(userDb);
     if (!password) {
       console.log("user      ! SEED_ADMIN_PASSWORD empty — no admin user created");
     } else if (await userStore.get(name)) {
@@ -209,7 +215,8 @@ async function main() {
     }
   }
 
-  await db.$client.end();
+  await opened.close();
+  await userDb?.$client.end();
   console.log("Done.");
 }
 

@@ -6,6 +6,31 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Postgres als tweede databasebackend (opdracht B)**: de Imprint-productsite
+  draait op Postgres (`DATABASE_URL=postgres://…`), MusicBrain ongewijzigd op
+  MariaDB. De lees-/schrijfsemantiek van de databasestore is naar één
+  abstracte `DbContentStoreBase` gebracht; `DbContentStore` (MariaDB) en het
+  nieuwe `PgContentStore` (Postgres, `jsonb`, `timestamptz`) implementeren
+  elk alleen zes rij-operaties. Eigen schema en migratiejournal per dialect
+  (`db-schema.pg.ts`, `drizzle-pg/`, `drizzle.config.pg.ts`,
+  `npm run db:generate:pg` / `db:migrate:pg`); `openContentDatabase(url)` in
+  `@imprint/content-core/db` kiest de backend op het URL-schema, gebruikt door
+  de composition root van de Imprint-site en door `db:seed`. `docker compose`
+  heeft nu ook een Postgres 17-service (poort 5433, maakt `imprint_test` zelf
+  aan). Beide backends draaien dezelfde lees- én schrijfcontractsuite
+  (`npm run test:db`). Nog MariaDB-only: users/admin-login, backup, assets-gc.
+- **Architectuurcontract en karakterisatietests (Fase 0)**:
+  `docs/architecture.md` §0 legt de vier lagen vast — engine, bibliotheek,
+  backend, site — met hun afhankelijkheidsregels (site → engine, nooit
+  andersom; engine kent geen site-naam; backend alleen via `ContentStore`;
+  tijd als leesparameter van het contract), de besluiten die zonder Mark
+  genomen konden worden en de open vragen. Nieuw: `npm test` (Node's eigen
+  testrunner via tsx, ook in CI) met een gedeelde `ContentStore`-contractsuite
+  die tegen de file-store en — met `TEST_DATABASE_URL`, `npm run test:db` —
+  tegen de MariaDB-store draait, plus tests voor de schrijfkant (versies,
+  tijdreizen, tombstone, referentieweigering), het widget-model, relaties,
+  itinerary, `layoutRows()`, de studio-ops en de exacte MusicBrain-
+  widgetcatalogus. Gedrag is alleen vastgelegd, niet veranderd.
 - **Opdrachtbrief voor het lostrekken van de engine**:
   `docs/design/opdracht-engine-bibliotheek-backend-site.md` vertaalt het
   revisievoorstel naar vier lagen — engine, bibliotheek (nieuw begrip),

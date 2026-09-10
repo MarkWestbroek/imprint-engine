@@ -2,7 +2,7 @@
   "name": "@imprint/content-core",
   "version": "0.10.2",
   "private": true,
-  "description": "Content schemas (zod) and the ContentStore interface. Storage-agnostic: file-backed today, bitemporal database later.",
+  "description": "Content schemas (zod) and the ContentStore interface. Storage-agnostic: file-backed, MariaDB or Postgres (bitemporal-light).",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -11,6 +11,9 @@
     "./file-store": "./src/file-store.ts",
     "./db-schema": "./src/db-schema.ts",
     "./db-store": "./src/db-store.ts",
+    "./db-store.pg": "./src/db-store.pg.ts",
+    "./db-schema.pg": "./src/db-schema.pg.ts",
+    "./db": "./src/db.ts",
     "./passwords": "./src/passwords.ts",
     "./user-store": "./src/user-store.ts"
   },
@@ -21,10 +24,12 @@
     "drizzle-orm": "^0.44.2",
     "gray-matter": "^4.0.3",
     "mysql2": "^3.14.1",
+    "pg": "^8.23.0",
     "zod": "^4.1.5"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "typescript": "^5"
   }
 }

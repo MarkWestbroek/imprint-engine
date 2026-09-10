@@ -28,5 +28,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Test (karakterisatie; DB-suite wordt zonder TEST_DATABASE_URL overgeslagen)
+        run: npm test
+
       - name: Build (file-store, geen DB)
         run: npm run build

@@ -1,45 +1,39 @@
 import { and, desc, eq, gt, isNull, lte, or } from "drizzle-orm";
-import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import pg from "pg";
 
-import { contentItems, users } from "./db-schema";
+import { contentItems, users } from "./db-schema.pg";
 import { DbContentStoreBase, type ContentRow, type NewContentRow } from "./db-store-base";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentType } from "./store";
 
-export type Db = MySql2Database & { $client: mysql.Pool };
+export type PgDb = NodePgDatabase & { $client: pg.Pool };
 
 /** One pool per process; Next.js dev reloads modules, so keep it lazy. */
-export function createDb(url: string): Db {
-  const pool = mysql.createPool({ uri: url, connectionLimit: 5 });
-  return drizzle(pool) as Db;
+export function createPgDb(url: string): PgDb {
+  const pool = new pg.Pool({ connectionString: url, max: 5 });
+  return drizzle(pool) as PgDb;
 }
 
 export { contentItems, users };
 
 /**
- * MariaDB/MySQL backend (v1). All read/write semantics live in
- * DbContentStoreBase; this class is only the six row operations in the
- * MySQL dialect. Its Postgres twin is db-store.pg.ts.
+ * Postgres backend — the second database backend behind the same
+ * ContentStore contract (architecture.md §0). Same six row operations as
+ * the MariaDB store, in the pg dialect; `jsonb` comes back parsed, so no
+ * thaw step. Everything observable is inherited from DbContentStoreBase and
+ * proven equal by the shared contract suite.
  */
-export class DbContentStore extends DbContentStoreBase {
+export class PgContentStore extends DbContentStoreBase {
   constructor(
-    private readonly db: Db,
+    private readonly db: PgDb,
     opts: { widgets?: WidgetTypeRegistry } = {}
   ) {
     super(opts);
   }
 
-  /**
-   * MariaDB's JSON type is an alias for LONGTEXT, so mysql2 hands the payload
-   * back as a string (real MySQL parses it). Normalize on every read.
-   */
-  private static thaw(row: typeof contentItems.$inferSelect): ContentRow {
-    return typeof row.data === "string" ? { ...row, data: JSON.parse(row.data) } : row;
-  }
-
   protected async selectValidAt(type: ContentType, asOf: Date): Promise<ContentRow[]> {
-    const rows = await this.db
+    return this.db
       .select()
       .from(contentItems)
       .where(
@@ -51,16 +45,14 @@ export class DbContentStore extends DbContentStoreBase {
           or(isNull(contentItems.validTo), gt(contentItems.validTo, asOf))
         )
       );
-    return rows.map(DbContentStore.thaw);
   }
 
   protected async selectCurrent(type: ContentType): Promise<ContentRow[]> {
-    const rows = await this.db
+    return this.db
       .select()
       .from(contentItems)
       .where(and(eq(contentItems.type, type), isNull(contentItems.txTo)))
       .orderBy(contentItems.slug, contentItems.lang);
-    return rows.map(DbContentStore.thaw);
   }
 
   protected async selectCurrentOne(type: ContentType, slug: string, lang: string): Promise<ContentRow | null> {
@@ -76,11 +68,11 @@ export class DbContentStore extends DbContentStoreBase {
         )
       )
       .limit(1);
-    return rows[0] ? DbContentStore.thaw(rows[0]) : null;
+    return rows[0] ?? null;
   }
 
   protected async selectVersions(type: ContentType, slug: string, lang: string): Promise<ContentRow[]> {
-    const rows = await this.db
+    return this.db
       .select()
       .from(contentItems)
       .where(
@@ -91,7 +83,6 @@ export class DbContentStore extends DbContentStoreBase {
         )
       )
       .orderBy(desc(contentItems.txFrom));
-    return rows.map(DbContentStore.thaw);
   }
 
   protected async supersede(

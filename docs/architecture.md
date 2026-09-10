@@ -11,6 +11,119 @@ site-onafhankelijke engineonderdelen worden staat in
 Dat document is normatief voor de gewenste richting, maar nog niet volledig
 geïmplementeerd; dit document blijft de beschrijving van de huidige werking.
 
+## 0. Architectuurcontract: vier lagen
+
+Vastgelegd in september 2026 (Fase 0 van het
+[revisievoorstel](design/engine-instance-plugin-architectuur.md), volgens de
+[opdrachtbrief](design/opdracht-engine-bibliotheek-backend-site.md)). Dit is
+het contract waar de extractie in de volgende fasen aan getoetst wordt; de
+rest van dit document beschrijft hoe de code er *nu* bij ligt, en die twee
+lopen bewust nog uiteen.
+
+| laag | inhoud | staat nu in | mag afhangen van |
+|---|---|---|---|
+| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); renderer, API, admin, auth/PEP, studio-ops nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
+| **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
+| **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
+| **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `src/lib/content.ts` | engine + bibliotheek + precies één backend |
+
+```mermaid
+flowchart TB
+    subgraph site["Site (per imprint)"]
+        ROOT["composition root<br/>src/lib/content.ts (straks imprint.config.ts)"]
+        CHROME["SiteChrome, globals.css, content/, secrets"]
+    end
+    subgraph lib["Bibliotheek"]
+        WIDG["widgets: registry + viewers + editors"]
+        PLUG["plugins (later)"]
+    end
+    subgraph engine["Engine"]
+        CONTRACT["contracten: schemas, ContentStore,<br/>WidgetTypeRegistry, RelationRules"]
+        RT["runtime: renderer, publieke API"]
+        ADM["admin/studio"]
+    end
+    subgraph backend["Backend"]
+        FILE["FileContentStore"]
+        MARIA["DbContentStore (MariaDB)"]
+        PG["PgContentStore (Postgres)"]
+        BT["bitemporeel register (later)"]
+    end
+
+    ROOT --> RT
+    ROOT --> ADM
+    ROOT --> WIDG
+    ROOT -- "kiest één" --> backend
+    CHROME --> RT
+    WIDG --> CONTRACT
+    PLUG --> CONTRACT
+    RT --> CONTRACT
+    ADM --> CONTRACT
+    FILE -. implementeert .-> CONTRACT
+    MARIA -. implementeert .-> CONTRACT
+    PG -. implementeert .-> CONTRACT
+    BT -. implementeert .-> CONTRACT
+```
+
+Pijlen zijn de *enige* toegestane afhankelijkheden. Concreet:
+
+1. **Site → engine, nooit andersom.** Enginecode bevat geen verwijzing naar
+   `musicbrain`, `imprint` of een ander site-id; sitekeuzes komen binnen via
+   de composition root (dependency injection), niet via `if (site === …)`.
+2. **Engine-contracten kennen geen React of Next.js.** `content-core` blijft
+   framework-vrij; renderer en admin (die wél React kennen) horen bij de
+   engine maar zijn een aparte laag dáárboven (het toekomstige
+   `@imprint/runtime-admin`-package, eerst één package — voorstel §18).
+3. **Backend alleen via `ContentStore`.** Site-, admin- en widgetcode praten
+   uitsluitend via `ContentStore`/`WritableContentStore` met content; nooit
+   met drizzle, SQL of bestanden. Alleen de composition root instantieert een
+   backend. Een nieuwe backend = één implementatie van het contract die de
+   contractsuite (§8) doorstaat; hij raakt geen paginacode.
+4. **Bibliotheek → engine-contracten, nooit een site.** Een widget importeert
+   geen site-globaal storebestand en geen SiteChrome; hij krijgt zijn context
+   (store, subject) aangereikt. Een site kiest widgets **individueel** (de
+   registry werkt al per widget); een "bundel" is niet meer dan een
+   gemaks-export.
+5. **Per site: eigen database, assets, secrets en sessiecookienaam.** Gedeelde
+   code, aparte app en database per instantie; geen multitenant admin in deze
+   fase (voorstel §18, bevestigd in de opdrachtbrief).
+6. **Tijd is een leesparameter van het contract, niet van de backend.**
+   `ReadOptions.asOf` is de materiële tijd ("gold op"). Het contract moet
+   later ook een formele tijd ("beweerden wij op") als aparte leesparameter
+   kunnen dragen zonder site-code te raken, zodat een `BitempContentStore` op
+   het bitemporele register inplugbaar blijft. Nu vullen de backends dat
+   verschillend in: de DB-store legt `asOf` op **beide** assen, de file-store
+   kent alleen valid time (vastgelegd in de karakterisatietests, §8).
+
+### Besluiten (genomen zonder Mark, terug te draaien als hij anders wil)
+
+- **Product/component/release blijven voorlopig in core.** `plugin-catalog`
+  komt pas in Fase 5 aan bod, ná Planning en Wiki (de volgorde van het
+  voorstel §12); vroeger extraheren geeft nu geen tweede gebruiker.
+- **Standaardwidgets zijn individueel kiesbaar** (regel 4); de catalogus van
+  MusicBrain is met een test vastgepind zodat verplaatsen niets verandert.
+- **Onbekende of uitgeschakelde widget blijft een harde fout** bij lezen én
+  opslaan (huidig principe, nu getest). Een placeholder voor beheerders is
+  een Fase 6-verfijning, geen contractwijziging.
+- **Pluginconfig is code-only** in de composition root. Bewerkbare
+  beheerconfig als content (met eigen schema) mag een plugin later zélf
+  toevoegen; het contract sluit dat niet uit.
+- **Postgres als tweede databasebackend, MariaDB blijft** (opdracht B,
+  gerealiseerd — zie §4); het argument "MariaDB omdat shared hosting dat
+  biedt" is met de VPS vervallen.
+- **Reikwijdte van de bibliotheek** (Mark, september 2026): de bibliotheek
+  levert *basisthema's/presets* (design-tokens, een neutrale SiteChrome); de
+  site blijft eigenaar van haar merk. Herbruikbaar = bibliotheek, identiteit
+  = site.
+- **"Bibliotheek" is voorlopig een verzamelnaam** voor `widgets-standard` +
+  `plugin-*` (Mark, september 2026); een package-prefix (`packages/library-*`)
+  pas als er meer dan twee bibliotheek-packages zijn.
+
+### Nog open
+
+- **Vierde backend** (bitemporeel register, Omnium): niet bouwen; wel de
+  formele-tijd-parameter uit regel 6 meenemen zodra het contract wordt
+  aangeraakt (Bitemporal_2026 `docs/BACKLOG.md` §27.2).
+
 ## 1. Overzicht
 
 npm-workspaces-monorepo. De kern (`@imprint/content-core`) kent schema's,
@@ -400,7 +513,11 @@ tx_to` (wat we op dat moment beweerden) én `valid_from ≤ asOf < valid_to`
 tx-clausule gelijkwaardig aan `tx_to IS NULL` — maar met een `asOf` in het
 verleden komen de tóen actuele (inmiddels gesuperseerde of getombstonede)
 rijen terug: echt tijdreizen. Terugrollen = een oude payload opnieuw
-asserteren; de geschiedenis zelf wordt nooit herschreven.
+asserteren; de geschiedenis zelf wordt nooit herschreven. Let op het
+verschil met de file-store: die kent alleen valid time (`publishedAt`,
+releasedatum), dus een `asOf` vóór de eerste assertie geeft in de DB-store
+níets en in de file-store gewoon de content van toen (§0 regel 6; getest
+in §8).
 
 **As-of-preview** (S6) maakt dat tijdreizen zichtbaar: het admin-dashboard
 ("Time travel") opent de publieke site met een gekozen moment. Technisch:
@@ -434,12 +551,57 @@ classDiagram
         listVersions(type, slug, lang)
     }
     class FileContentStore { v0: bestanden in git }
-    class DbContentStore { v1: MariaDB, bitemporal-light }
+    class DbContentStoreBase {
+        <<abstract>>
+        alle lees-/schrijfsemantiek
+        selectValidAt() / selectCurrent() / …
+        supersede()
+    }
+    class DbContentStore { MariaDB: drizzle/mysql2 }
+    class PgContentStore { Postgres: drizzle/node-postgres }
 
     ContentStore <|-- WritableContentStore
     ContentStore <|.. FileContentStore
-    WritableContentStore <|.. DbContentStore
+    WritableContentStore <|.. DbContentStoreBase
+    DbContentStoreBase <|-- DbContentStore
+    DbContentStoreBase <|-- PgContentStore
 ```
+
+### Twee databasedialecten, één semantiek
+
+Sinds september 2026 zijn er twee databasebackends achter hetzelfde contract
+(§0 regel 3): **MariaDB** (MusicBrain, ongewijzigd) en **Postgres** (de
+Imprint-productsite). De opzet is bewust *geen* kopie van de store:
+
+- [db-store-base.ts](../packages/content-core/src/db-store-base.ts) bevat
+  álles wat een site kan waarnemen — taal-overlay, drafts, `asOf` op beide
+  tijdassen, validatie, referentiecontrole, supersede-in-plaats-van-overschrijven
+  — en declareert zes abstracte rij-operaties (`selectValidAt`,
+  `selectCurrent`, `selectCurrentOne`, `selectVersions`, `supersede`).
+- [db-store.ts](../packages/content-core/src/db-store.ts) (`DbContentStore`)
+  en [db-store.pg.ts](../packages/content-core/src/db-store.pg.ts)
+  (`PgContentStore`) implementeren alleen die zes in hun dialect; elk ~100
+  regels drizzle. De MariaDB-variant houdt de "JSON is LONGTEXT"-thaw, de
+  Postgres-variant krijgt `jsonb` al geparsed terug.
+- Het schema is per dialect een eigen bestand met **dezelfde kolomnamen**
+  ([db-schema.ts](../packages/content-core/src/db-schema.ts) `mysqlTable`,
+  [db-schema.pg.ts](../packages/content-core/src/db-schema.pg.ts) `pgTable`:
+  `bigserial`, `jsonb`, `timestamptz(3)`), met een eigen migratiejournal
+  (`drizzle/` resp. `drizzle-pg/`, `drizzle.config.ts` resp.
+  `drizzle.config.pg.ts`; `npm run db:generate:pg` / `db:migrate:pg`).
+- [db.ts](../packages/content-core/src/db.ts) (`openContentDatabase(url)`)
+  kiest de backend op het URL-schema (`mysql://` → MariaDB, `postgres://` →
+  Postgres). Dat is de enige plek in de kern die weet dat er twee dialecten
+  zijn; de composition root van een site en de seed roepen alleen dít aan.
+- Beide draaien **dezelfde contract- en schrijfsuite** (§8) — dat is het
+  bewijs dat ze gelijk zijn, niet de code-review.
+
+Wat (nog) MariaDB-only is: `DbUserStore` (users, admin-login), `npm run user`,
+`npm run backup` en `npm run assets:gc`. De Imprint-site heeft nog geen admin,
+dus dat knelt niet; het staat in de backlog bij Fase 3. Waarom Postgres
+wenselijk is voor de bitemporele route: `jsonb` i.p.v. tekst, en
+`tstzrange` + exclusion constraints maken de stap van bitemporal-light naar
+echt bitemporeel klein.
 
 Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
 (taal-fallback naar EN, S9) en `includeDrafts` (previews).
@@ -514,7 +676,8 @@ sequenceDiagram
 ```mermaid
 flowchart LR
     subgraph dev["Lokaal (dev)"]
-        NX["next dev :3000"] --> MDBL[("MariaDB 10.11<br/>docker compose")]
+        NX["next dev :3000 (musicbrain)"] --> MDBL[("MariaDB 10.11<br/>docker compose, :3306")]
+        NXI["next dev :3100 (imprint)"] --> PGL[("Postgres 17<br/>docker compose, :5433")]
     end
     subgraph plesk["Plesk (prod)"]
         PSG["Passenger → server.js<br/>(Node.js-extensie)"] --> MDBP[("MariaDB 10.11<br/>Plesk-database")]
@@ -527,7 +690,13 @@ flowchart LR
 - **Code en schema** reizen via git: `db:generate` maakt van een wijziging
   in [db-schema.ts](../packages/content-core/src/db-schema.ts) een
   SQL-migratie in `drizzle/`; elke omgeving haalt zichzelf bij met
-  `db:migrate`.
+  `db:migrate`. Voor Postgres: `db-schema.pg.ts` → `db:generate:pg` →
+  `drizzle-pg/` → `db:migrate:pg`. Een schemawijziging hoort dus in **beide**
+  schemabestanden (zelfde kolomnamen), met een migratie per journal.
+- **Lokale databases**: `npm run db:up` start MariaDB (poort 3306) én
+  Postgres (poort **5433**, omdat 5432 lokaal vaak al bezet is); de
+  Postgres-container maakt bij de eerste start ook `imprint_test` aan
+  (`docker/pg-init.sql`).
 - **Content** wordt níet gesynct: de productie-database is de bron van
   waarheid; `db:seed` importeert de bestanden éénmalig (idempotent — draait
   hij nogmaals, dan wordt dat een nieuwe versie in de historie).
@@ -545,8 +714,9 @@ flowchart LR
 
 De repository bevat naast MusicBrain een tweede site onder `sites/imprint`:
 de publieke productsite van Imprint zelf. De siteconfig loopt via de
-`ContentStore`: lokaal met een eigen `DATABASE_URL` naar de aparte MariaDB-
-database `imprint`, zonder URL via de eigen `content/`-map. De publieke routes
+`ContentStore`: lokaal met een eigen `DATABASE_URL` naar de aparte
+**Postgres**-database `imprint` (de tweede backend, §4), zonder URL via de
+eigen `content/`-map. De publieke routes
 zijn statisch; hun overige inhoud staat in deze eerste versie nog in code en
 er is nog geen admin. Daarmee zijn opslag en identiteit al geïsoleerd van
 MusicBrain, terwijl de volledige redactionele keten nog moet worden aangesloten.
@@ -557,6 +727,52 @@ MusicBrain, terwijl de volledige redactionele keten nog moet worden aangesloten.
    compleet anders zijn dan die van musicbrain).
 3. Eigen design-tokens in `globals.css`.
 4. Store aanwijzen in `src/lib/content.ts` (eigen `content/`-map of eigen
-   database).
+   database via `openContentDatabase(DATABASE_URL)` — MariaDB of Postgres,
+   het URL-schema beslist).
 
 De kern verandert daarbij niet — dat is de kern van het ontwerp.
+
+## 8. Tests: contractsuite en karakterisatie
+
+`npm test` draait de suite met Node's ingebouwde testrunner (`node --test`
+via `tsx`, geen extra framework); CI doet hetzelfde. De tests zijn
+**karakterisatietests** (Fase 0): ze leggen het huidige gedrag vast, zodat de
+extractie in Fase 1–4 aantoonbaar niets verandert. Ze schrijven géén
+verwachtingen voor die de code nu niet waarmaakt.
+
+| suite | bestand | bewaakt |
+|---|---|---|
+| **ContentStore-contract** | `packages/content-core/test/store-contract.ts` | de leessemantiek die élke backend moet delen: taal-overlay op EN, drafts/toekomst verborgen, `asOf` in de toekomst, prefix, sortering, schema-defaults, widget-validatie bij lezen. Eén fixture-set (`fixtures.ts`), door elke backend zelf gematerialiseerd |
+| file-store | `test/file-store.test.ts` | contract + file-eigen: `asOf` = alleen valid time, lege mappen, kapot bestand breekt de build |
+| **WritableContentStore-contract** | `test/writable-contract.ts` | de schrijfkant die elke databasebackend deelt: nieuwe versie supersedeert, historie nieuwste eerst, tijdreizen op beide assen, tombstone, `listItems` negeert valid time en sorteert op slug/lang, zod- en referentieweigering, onbekende widget geweigerd bij opslaan |
+| db-store (MariaDB) | `test/db-store.test.ts` | lees- + schrijfcontract tegen `TEST_DATABASE_URL`, tabellen uit `drizzle/` |
+| db-store (Postgres) | `test/db-store.pg.test.ts` | exact dezelfde suites tegen `TEST_PG_DATABASE_URL`, tabellen uit `drizzle-pg/` |
+| backendkeuze | `test/db.test.ts` | `dialectOf()`: URL-schema → dialect |
+| widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |
+| relaties, itinerary | `test/relations.test.ts`, `test/itinerary.test.ts` | `extractRefs`/`validateReferences`, afgeleide reis |
+| renderer-normalisatie | `sites/musicbrain/test/templates.test.ts` | `layoutRows()`: legacy template+regio's → rijen, presets |
+| studio-ops | `sites/musicbrain/test/layout-ops.test.ts` | `applyOp()`: alle draft-mutaties, geen widgetverlies, limieten |
+| catalogus | `sites/musicbrain/test/catalog.test.ts` | de exacte widgetset van MusicBrain, en dat alle `content/`-pagina's ertegen valideren |
+
+De databasesuites draaien alleen met `TEST_DATABASE_URL` (MariaDB) en/of
+`TEST_PG_DATABASE_URL` (Postgres): wegwerpdatabases waarvan de naam op
+`_test` eindigt; de suites droppen en hermaken de tabellen met de échte
+drizzle-migraties van het dialect. Lokaal: de Postgres-container maakt
+`imprint_test` zelf aan; voor MariaDB eenmalig
+
+```bash
+docker compose exec -T db mariadb -uroot -pimprint-root -e \
+  "CREATE DATABASE IF NOT EXISTS imprint_test; GRANT ALL ON imprint_test.* TO 'imprint'@'%';"
+npm run test:db
+```
+
+Zonder die variabelen worden de suites overgeslagen, zodat `npm test` op een
+kale checkout en in CI groen is. Een derde databasebackend (het bitemporele
+register) is straks: één klasse op `DbContentStoreBase` plus één testbestand
+van twintig regels dat dezelfde twee suites aanroept.
+
+**Nog niet gekarakteriseerd** (bewust; staat in de backlog): de HTML van
+`PageRenderer` en de widget-viewers (server components, alleen binnen Next te
+renderen), de admin-flows (login, save, restore, studio-save) en de
+API-routes. Die worden nu alleen end-to-end bewaakt door `npm run smoke` en
+`npm run testcase:bitemporal` tegen een draaiende site.

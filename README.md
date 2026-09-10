@@ -148,10 +148,13 @@ npm run dev:restart# stop + start in de achtergrond (log: .next-dev.log)
 npm run build      # productie-build
 npm run lint
 npm run typecheck
+npm test           # karakterisatietests (file-store, widget-model, studio-ops, …)
+npm run test:db    # idem + de databasestores tegen de wegwerp-DB's imprint_test (MariaDB én Postgres)
 
-npm run db:up      # lokale MariaDB 10.11 (docker compose), zelfde major als Plesk
-npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/
-npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL
+npm run db:up      # lokale MariaDB 10.11 (:3306) + Postgres 17 (:5433) via docker compose
+npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/ (MariaDB)
+npm run db:migrate   # migraties toepassen op de DB uit DATABASE_URL (MariaDB)
+npm run db:generate:pg / db:migrate:pg   # idem voor Postgres (drizzle-pg/)
 npm run db:seed      # contentbestanden + admin-user importeren (idempotent)
 
 # Lokale DB achter op live? Componenten + board-specs (incl. assets) ophalen.

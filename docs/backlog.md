@@ -145,6 +145,29 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       [opdrachtbrief](design/opdracht-engine-bibliotheek-backend-site.md)
       (vier lagen; Postgres-backend als spike vóór de composition root).
       _(architectuurrevisie; L)_
+      - [x] **A. Fase 0 — architectuurcontract** (september 2026):
+        `docs/architecture.md` §0 (vier lagen + regels + besluiten + open
+        vragen) en karakterisatietests (`npm test`, §8): contractsuite voor
+        file- en DB-store, schrijfkant, widget-model, relaties, itinerary,
+        `layoutRows`, studio-ops, MusicBrain-catalogus.
+      - [x] **Open vragen uit A** beslist (Mark, september 2026): basisthema's/
+        presets horen in de bibliotheek, identiteit blijft van de site;
+        "bibliotheek" is voorlopig een verzamelnaam, geen package-groep.
+      - [x] **B. Postgres naast MariaDB** (september 2026): `DbContentStoreBase`
+        + `PgContentStore`, schema/journal per dialect, Postgres in compose,
+        beide backends door dezelfde lees- en schrijfcontractsuite;
+        `sites/imprint` op Postgres, `sites/musicbrain` ongewijzigd.
+      - [ ] **Users op Postgres** — `DbUserStore`, `npm run user`, `backup` en
+        `assets-gc` zijn nog MariaDB-only; nodig zodra de gedeelde admin
+        (Fase 3) op de Imprint-site landt. Zelfde recept: base + dialect. _(S)_
+      - [ ] **MusicBrain naar Postgres?** — aparte beslissing nu B bewezen is;
+        migratiepad = backup → seed via `openContentDatabase` (historie
+        meenemen vraagt een rij-voor-rij kopie, geen `putItem`). _(M)_
+      - [ ] **C. Fase 1** — composition root (`imprint.config.ts` per site).
+      - [ ] **Karakterisatie uitbreiden**: HTML van `PageRenderer`/viewers,
+        admin-flows (login, save, restore, studio-save) en API-routes zijn
+        nog alleen end-to-end bewaakt (`npm run smoke`,
+        `npm run testcase:bitemporal`). _(M)_
 
 - [ ] **Typelijsten consolideren** — `ContentType` staat in vijf losse
       allowlists (admin-action, list/edit/history-routes, content-API's
