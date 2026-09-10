@@ -1,4 +1,12 @@
 @import "tailwindcss";
+/*
+ * Tailwind v4 scant zelf alle bestanden onder de app-map op class-namen — ook
+ * de binaire .glb-3D-modellen en honderden SVG's in public/ en .assets/. Dat
+ * kostte minuten en >10 GB per koude compile (en Turbopack-timeouts). Daar
+ * staan geen class-namen in, dus sla ze over.
+ */
+@source not "../../public";
+@source not "../../.assets";
 
 /*
  * Design tokens (B1, ontwerper-rol): één plek voor huisstijl.

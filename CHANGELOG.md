@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix: koude compile van MusicBrain duurde minuten** — Tailwind v4 scande
+  ook de `.glb`-3D-modellen en honderden SVG's in `public/` en `.assets/` op
+  class-namen (>2 min en >10 GB per compile, Turbopack-timeouts in dev en
+  build sinds de 3D-tab van juli). Twee `@source not`-regels in
+  `globals.css` slaan die mappen over: de Tailwind-stap gaat van >120 s naar
+  ~0,2 s.
 - **Postgres als tweede databasebackend (opdracht B)**: de Imprint-productsite
   draait op Postgres (`DATABASE_URL=postgres://…`), MusicBrain ongewijzigd op
   MariaDB. De lees-/schrijfsemantiek van de databasestore is naar één
