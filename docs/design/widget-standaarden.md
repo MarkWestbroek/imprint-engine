@@ -63,6 +63,37 @@ alleen de renderkant, niet het configschema/editor-deel.
    datacontracten — dat is precies de richting van `/api/meta` en het
    formulier-spoor met het bitemporal-project.
 
+## Payload-blocks nader bekeken (september 2026)
+
+Vervolgvraag: zijn Payloads blocks (ook React, zelfde Next.js 16 +
+Tailwind v4-stack) als Imprint-widget te hergebruiken? **Nee, niet zinvol.**
+
+- Payload levert geen widgetbibliotheek. Wat erop lijkt: (1) de blocks in de
+  MIT-**website-template** (Archive, Banner, CallToAction, Code, Content, Form,
+  MediaBlock, RelatedPosts) — voorbeeldcode om te kopiëren, geen package;
+  (2) **dashboard-widgets** (sinds 3.69) — alleen voor het admin-startscherm,
+  lezen via `req.payload`; (3) `@payloadcms/ui` — admin-componenten, gebonden
+  aan Payloads formuliercontext.
+- Een template-block is dun op de renderkant en dik verweven op de datakant.
+  `CallToAction` is ~25 regels Tailwind, maar props = gegenereerd
+  `@/payload-types`, tekst = Lexical-JSON via `@payloadcms/richtext-lexical`,
+  knoppen = `CMSLink` over Payloads link-veld, kleuren = shadcn-tokens.
+  Imprints `callout` (markdown, `tone`, `buttonLabel`/`buttonUrl`, async
+  server-viewer met store-toegang) deelt er alleen de opmaak mee: porten is
+  herschrijven.
+- Tegen de catalogus: CallToAction/Banner ≈ `callout`, Content (kolommen) ≈
+  het rijen→cellen-model, MediaBlock ≈ `image`/`video`, Archive/RelatedPosts ≈
+  `posts`/`list`. Alleen **Code** en **Form** ontbreken. Het Form-block is
+  het bestuderen waard voor S10 (veld-`blockType` → component-map,
+  `react-hook-form`, POST naar een submissions-endpoint, bevestiging of
+  redirect) — de opzet, niet de code.
+
+**Conclusie:** hergebruik voor grafische widgets komt uit generieke
+React-bibliotheken, niet uit CMS-blocks — als `"use client"`-eiland in een
+dunne server-viewer, zoals `map` (Leaflet) en de 3D-tab (`<model-viewer>`) al
+doen. Kandidaten: shadcn/ui en Radix (accordion, tabs, dialog, carousel; wel
+hun tokens op de Imprint-tokens mappen), een chartbibliotheek zoals Recharts.
+
 ## Bronnen
 
 - [Headless CMS 2026: Contentful vs Strapi vs Sanity vs Payload](https://dev.to/pooyagolchian/headless-cms-2026-contentful-vs-strapi-vs-sanity-vs-payload-compared-5bi3)
@@ -70,4 +101,5 @@ alleen de renderkant, niet het configschema/editor-deel.
 - [Puck — GitHub](https://github.com/puckeditor/puck) · [docs](https://puckeditor.com/docs)
 - [Automattic isolated-block-editor](https://github.com/Automattic/isolated-block-editor) · [Gutenberg custom block editor guide](https://github.com/WordPress/gutenberg/blob/trunk/docs/how-to-guides/platform/custom-block-editor.md)
 - [Portable Text-specificatie](https://www.portabletext.org/specification/) · [GitHub](https://github.com/portabletext/portabletext)
+- [Payload website-template blocks](https://github.com/payloadcms/payload/tree/main/templates/website/src/blocks) · [Payload dashboard-widgets](https://payloadcms.com/docs/custom-components/dashboard)
 - [Block Protocol](https://blockprotocol.org/) · [GitHub](https://github.com/blockprotocol/blockprotocol) · [Joel on Software over de voortgang](https://www.joelonsoftware.com/2022/12/19/progress-on-the-block-protocol/)
