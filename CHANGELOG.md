@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Docs: overdracht bijgewerkt (16 september)** — `docs/overdracht.md` §0:
+  MusicBrain is offline sinds 1 september (Quickhost heeft Node/Passenger
+  uitgezet), er is een VPS (vps1.paratmos.nl, Omnium draait er al), verhuisplan
+  voor MusicBrain in zes stappen, wat er sinds juli op `main` is gekomen, en
+  Windows-specifieke aanwijzingen. §3 gemarkeerd als historie.
 - **Composition root per site (Fase 1, opdracht C)**: nieuw package
   `@imprint/extension-api` met `defineImprint()`/`createImprint()`. Elke site
   beschrijft zichzelf in `imprint.config.ts` (id, backend-URL + contentmap,
