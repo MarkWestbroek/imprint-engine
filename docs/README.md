@@ -39,9 +39,10 @@ Plesk staan voorlopig bij elkaar in de [hoofd-README](../README.md).
 - [Revisievoorstel engine/instanties/plugins](design/engine-instance-plugin-architectuur.md)
 	- gewenste scheiding tussen motor en sites, gedeelde admin, configureerbare
 	widgets, pluginmodel en gefaseerd migratieplan.
-- [Ontwerp Fase 3: admin, toegang en tijdreizen](design/fase-3-admin-toegang-tijdreizen.md)
-	- gedeelde admin, rechten via PEP en een sidecar-PDP (AuthZEN, FTV),
-	formulieren en lijsten volgens Omnium, en de hele site door de tijd.
+- [Ontwerp Fase 3: admin, toegang, register en tijdreizen](design/fase-3-admin-toegang-tijdreizen.md)
+	- gedeelde admin, rechten via PEP en twee sidecar-PDP's (AuthZEN, FTV),
+	formulieren en lijsten volgens Omnium, opslag als gegenereerd register,
+	en de hele site door de tijd.
 - [Website-requirements](website-requirements.md) - oorspronkelijke
 	functionele en technische eisen voor MusicBrain en de publicatiemotor.
 - [Ontwerpdocumenten](design/) - uitwerkingen van onder meer het contentmodel,

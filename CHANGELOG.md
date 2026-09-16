@@ -7,12 +7,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 
 ## [Unreleased]
 - **Ontwerp Fase 3**: `docs/design/fase-3-admin-toegang-tijdreizen.md` legt
-  de besluiten vast voor de gedeelde admin (eigen admin, alleen ideeën lenen),
-  rechten via het PxP-patroon met een sidecar-PDP binnen AuthZEN NL Gov en
-  FTV, formulieren en lijsten volgens Omnium, een eigen contenttypecatalogus,
-  en het principe dat inhoud, vormgeving en configuratie samen door de tijd
-  te reizen zijn. Met de gemeten tijdreislekken, een richting voor
-  widgetversies, een bijgesteld stappenplan en de open vragen.
+  de besluiten vast voor de gedeelde admin (eigen admin, alleen ideeën lenen);
+  rechten via het PxP-patroon met twee sidecar-PDP's, aan de voorkant en bij
+  gegevenstoegang, binnen AuthZEN NL Gov en FTV; `publiek` of `beperkt` op
+  alle content, waarbij publieke content zonder PDP werkt; een browsertest
+  voor de admin-flows; formulieren en lijsten volgens Omnium; en de richting
+  om het contentmodel te modelleren, er een bitemporeel register uit te
+  genereren en daarnaar te migreren, met de voorwaarden die daarvoor nog in
+  Omnium open staan. Verder het principe dat inhoud, vormgeving en
+  configuratie samen door de tijd te reizen zijn, de gemeten tijdreislekken,
+  een richting voor widgetversies, het stappenplan en de open vragen.
 - **Fase 2 afgerond: de Imprint-site rendert pagina's uit de database
   (stap 5)**: `sites/imprint` heeft een catch-all-route die pagina's uit de
   contentstore toont (Postgres, of `content/` zonder database) via dezelfde

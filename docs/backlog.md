@@ -218,22 +218,35 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         kent. _(S)_
       - [x] **Bouwen of lenen vóór Fase 3** — beslist (Mark, 16 september
         2026): eigen admin, van andere CMS'en alleen ideeën; formulieren en
-        lijsten volgens Omnium; rechten via PxP met een sidecar-PDP
-        (AuthZEN NL Gov, FTV). Zie [ontwerp Fase 3](design/fase-3-admin-toegang-tijdreizen.md); open
-        vragen staan in §10 daarvan.
-      - [ ] **Spoor toegang: PDP als sidecar** — OpenFTV in Docker Compose
-        zoals in Omnium, poortje in AuthZEN-vorm en asynchroon (29
-        aanroepen), weigeren bij een onbereikbare PDP, correlatie met het
-        besluitenlog. Ontwerp §3. _(M–L)_
+        lijsten volgens Omnium; rechten via PxP met twee sidecar-PDP's
+        (AuthZEN NL Gov, FTV); opslag op termijn als gegenereerd register.
+        Zie [ontwerp Fase 3](design/fase-3-admin-toegang-tijdreizen.md); open vragen staan in §11.3
+        daarvan.
+      - [ ] **Spoor toegang: twee PDP's als sidecar** — voorkant vóór het
+        tonen, achterkant bij gegevenstoegang (besluit Mark); OpenFTV zoals
+        in Omnium; poortje in AuthZEN-vorm en asynchroon (29 aanroepen);
+        weigeren bij een onbereikbare PDP voor beperkte content en
+        schrijven; correlatie met het logboek. Ontwerp §4. _(M–L)_
+      - [ ] **Toegangswaarde `publiek` of `beperkt` op alle content** —
+        publiek werkt zonder PDP en blijft statisch; `members` gaat op in
+        `beperkt` (besluit Mark). Ontwerp §4.3. _(M)_
+      - [ ] **Spoor register: Imprint op een gegenereerd register** —
+        contentmodel in V3 en het canonieke model, register genereren en als
+        container draaien, `BitempContentStore` door de contractsuites,
+        migratie met droogloop; eerst de Imprint-site. Ontwerp §3. _(L)_
+      - [ ] **Voorwaarden in Omnium voor het register** — echte formele tijd,
+        historie inlezen, bevragen op materiële tijd, apart register per
+        toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en
+        item, standaard weigeren. Werk in Omnium; ontwerp §3.3.
       - [ ] **Tijdreislekken dichten** — `getSiteConfig()` zonder
         leesopties, thema-CSS in de root-layout en default views zonder
-        `asOf`. Ontwerp §7.4. _(3 × S)_
+        `asOf`. Ontwerp §8.4. _(3 × S)_
       - [ ] **Widgetversie per instantie** — hoofdversie opslaan bij de
         widget, zodat een brekende widgetwijziging zichtbaar is bij
-        tijdreizen. Ontwerp §8. _(M)_
+        tijdreizen. Ontwerp §9. _(M)_
       - [ ] **Fase 7 — configuratie in de tijd (voorstel)** — actieve
         catalogus, instellingen, formulier- en lijstdefinities en
-        toegangsbeleid als bitemporele configuratie. Ontwerp §7.5; nog te
+        toegangsbeleid als bitemporele configuratie. Ontwerp §8.5; nog te
         besluiten. _(L)_
       - [ ] **Karakterisatie uitbreiden**: admin-flows (login, save,
         restore, studio-save) en API-routes zijn nog alleen end-to-end
