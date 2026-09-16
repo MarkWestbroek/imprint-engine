@@ -4,12 +4,12 @@
  *
  *   npm run release -- 0.8.0
  *
- * Doet: package-versies bumpen (root + beide workspaces), de CHANGELOG
+ * Doet: package-versies bumpen (root + alle workspaces), de CHANGELOG
  * [Unreleased]-notities onder een nieuwe versiekop schuiven, de lockfile
  * bijwerken, committen en een geannoteerde tag zetten. Pusht NIET — je
  * reviewt eerst, dan `git push origin main --follow-tags`.
  */
-import { readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { execSync } from "node:child_process";
 
 const version = process.argv[2]?.replace(/^v/, "");
@@ -33,12 +33,21 @@ try {
   /* tag bestaat nog niet — goed */
 }
 
-// 1. package-versies gelijktrekken.
-const pkgs = [
-  "package.json",
-  "packages/content-core/package.json",
-  "sites/musicbrain/package.json",
-];
+// 1. package-versies gelijktrekken: de root plus élke workspace uit de
+//    `workspaces`-globs, zodat een nieuw package niet stil achterblijft.
+const pkgs = ["package.json"];
+for (const pattern of JSON.parse(readFileSync("package.json", "utf8")).workspaces ?? []) {
+  if (!pattern.endsWith("/*")) {
+    console.error(`Onverwacht workspace-patroon "${pattern}" — breid release.mjs uit.`);
+    process.exit(1);
+  }
+  const dir = pattern.slice(0, -2);
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const file = `${dir}/${entry.name}/package.json`;
+    if (entry.isDirectory() && existsSync(file)) pkgs.push(file);
+  }
+}
+console.log(`Versie ${version} in: ${pkgs.join(", ")}`);
 for (const file of pkgs) {
   const pkg = JSON.parse(readFileSync(file, "utf8"));
   pkg.version = version;

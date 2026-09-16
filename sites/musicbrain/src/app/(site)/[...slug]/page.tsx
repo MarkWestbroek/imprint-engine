@@ -5,7 +5,7 @@ import { readOpts } from "@/lib/preview";
 import { getSession } from "@/lib/auth";
 import { authorize } from "@/lib/authorize";
 import { getWiki, getWikiTree } from "@/lib/wiki";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { PageRenderer } from "@/components/page-renderer";
 import { WikiView } from "@/components/wiki-view";
 

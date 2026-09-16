@@ -58,9 +58,9 @@ describe("renderer characterisation", () => {
       });
     }
 
-    it("an unregistered widget type throws instead of rendering nothing", () => {
-      assert.throws(
-        () => renderer.Widget({ widget: { type: "does-not-exist", config: {} } }),
+    it("an unregistered widget type fails the render instead of rendering nothing", async () => {
+      await assert.rejects(
+        renderHtml(<renderer.Widget widget={{ type: "does-not-exist", config: {} }} />),
         /No component for widget type "does-not-exist"/
       );
     });

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { store } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { displayVersion } from "@/lib/format";
 
 export const metadata: Metadata = {

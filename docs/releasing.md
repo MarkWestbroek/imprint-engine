@@ -1,8 +1,8 @@
 # Releasen van de Imprint-engine
 
 Versies volgen semver. Pre-1.0: **minor** (`0.8.0`) per nieuwe capability,
-**patch** (`0.7.2`) per fix. Eén git-tag = één release; de drie
-`package.json`-versies (root + `content-core` + `musicbrain`) lopen gelijk met
+**patch** (`0.7.2`) per fix. Eén git-tag = één release; alle
+`package.json`-versies (root en elke workspace) lopen gelijk met
 de tag.
 
 ## Tijdens het werk
@@ -19,7 +19,7 @@ npm run release -- 0.8.0
 
 Dat script:
 
-1. bumpt de drie `package.json`-versies naar `0.8.0`;
+1. bumpt alle `package.json`-versies (root en elke workspace uit `workspaces`) naar `0.8.0`;
 2. schuift de `[Unreleased]`-notities onder een nieuwe kop `## [0.8.0] - <datum>`;
 3. werkt de lockfile bij;
 4. commit (`Release v0.8.0`) en zet een geannoteerde tag `v0.8.0`.
@@ -35,7 +35,7 @@ weigert anders).
 
 ## Handmatig (als je liever geen script gebruikt)
 
-Bump de drie versies, verplaats de changelog-notities, dan:
+Bump alle versies, verplaats de changelog-notities, dan:
 
 ```bash
 git commit -am "Release v0.8.0"

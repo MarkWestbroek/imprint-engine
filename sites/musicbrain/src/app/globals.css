@@ -7,6 +7,18 @@
  */
 @source not "../../public";
 @source not "../../.assets";
+/*
+ * Tests sturen de CSS niet: de golden HTML in test/ bevat dezelfde classes
+ * als de componenten, en zou zo een vergeten @source voor een engine-package
+ * maskeren (architecture.md §8).
+ */
+@source not "../../test";
+/*
+ * Engine-packages leveren componenten met classes; die staan buiten de
+ * site-map en worden dus niet vanzelf gescand. Elk package met viewers of
+ * renderer-markup hoort hier (architecture.md §8).
+ */
+@source "../../../../packages/runtime-admin/src";
 
 /*
  * Design tokens (B1, ontwerper-rol): één plek voor huisstijl.

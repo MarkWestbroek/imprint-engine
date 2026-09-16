@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Renderer naar de engine (Fase 2, stap 2)**: `PageRenderer`, `Widget`, de
+  layouthelpers (`layoutRows`, `LAYOUT_PRESETS`) en `Markdown` staan nu in het
+  nieuwe package `@imprint/runtime-admin`. De renderer kent geen concrete
+  widgets meer; MusicBrain bindt hem in `src/components/page-renderer.tsx` aan
+  zijn eigen viewers. Golden HTML en gegenereerde CSS zijn aantoonbaar
+  ongewijzigd. Tailwind scant het engine-package en slaat de testmap over; een
+  nieuwe test bewaakt dat elke gerenderde class CSS krijgt. De site-tests
+  draaien met `tsconfig.test.json`, zodat JSX in engine-packages werkt.
+- **Fix: `npm run release` hoogt alle workspaces op**: het script had een
+  vaste lijst van drie `package.json`-bestanden, waardoor `extension-api` en
+  de Imprint-site achterbleven. Het leest nu de `workspaces` uit de root.
 - **Renderer vastgelegd vóór de verhuizing (Fase 2, stap 1)**: nieuwe
   karakterisatiesuite in `sites/musicbrain/test/render/` rendert de echte
   `PageRenderer`, alle 30 widget-viewers, `DefaultView` en `SiteChrome` naar

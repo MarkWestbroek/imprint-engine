@@ -4,7 +4,7 @@ import { describe, it } from "node:test";
 
 import { FileContentStore } from "@imprint/content-core";
 import { widgetRegistry } from "../src/widgets/registry";
-import { layoutRows } from "../src/widgets/templates";
+import { layoutRows } from "@imprint/runtime-admin/layout";
 
 /**
  * Characterisation of the MusicBrain widget catalogue against the site's own

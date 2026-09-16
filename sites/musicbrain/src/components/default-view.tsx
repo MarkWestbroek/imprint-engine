@@ -1,7 +1,7 @@
 import type { ContentType } from "@imprint/content-core";
 import { store } from "@/lib/content";
 import { PageRenderer } from "@/components/page-renderer";
-import { layoutRows } from "@/widgets/templates";
+import { layoutRows } from "@imprint/runtime-admin/layout";
 
 /**
  * Default views per content type are just pages at slug "_view/<type>",

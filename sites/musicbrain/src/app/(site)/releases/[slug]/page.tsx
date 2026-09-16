@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ReleaseSchema, type ReadOptions, type Release } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { DefaultView } from "@/components/default-view";
 import { displayVersion } from "@/lib/format";
 

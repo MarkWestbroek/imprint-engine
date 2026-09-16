@@ -1,0 +1,28 @@
+{
+  "name": "@imprint/runtime-admin",
+  "version": "0.10.2",
+  "private": true,
+  "description": "Engine runtime (and, from Fase 3, the shared admin): the page renderer and layout helpers every Imprint site uses. Knows no concrete widget; a site hands in its catalogue.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./layout": "./src/layout.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "peerDependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}

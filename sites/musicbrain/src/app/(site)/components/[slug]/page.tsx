@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { store, writableStore } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { DefaultView } from "@/components/default-view";
 import { displayVersion, kindLabel } from "@/lib/format";

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Wiki, WikiFolder, WikiPage } from "@imprint/content-core";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { wikiPageHref } from "@/lib/wiki";
 
 /**

@@ -538,7 +538,7 @@ instanties werkelijk scheiden".
 | 0 — Architectuurcontract | **klaar**: vier lagen en afhankelijkheidsregels, besluiten, karakterisatietests (`d7b1606`) | [architecture.md](../architecture.md) §0 en §8 |
 | extra — Postgres naast MariaDB | **klaar**: `PgContentStore` op dezelfde basis als MariaDB, door dezelfde contractsuites (`d7b1606`) | architecture.md §4 |
 | 1 — Composition root | **klaar**: `@imprint/extension-api`, `imprint.config.ts` in beide sites (`3930ffb`) | architecture.md §0 |
-| 2 — Renderer en standard widgets | **bezig**: stap 1 van 5 klaar, de renderer is vastgelegd in golden HTML | backlog; architecture.md §8 |
+| 2 — Renderer en standard widgets | **bezig**: stap 2 van 5 klaar. Renderer vastgelegd in golden HTML (`933de2c`); renderer en layouthelpers verhuisd naar `@imprint/runtime-admin` | backlog; architecture.md §3 en §8 |
 | 3 — Generieke adminbasis | open; voorwaarden staan in de backlog | |
 | 4 — Studio en widgeteditors | open | |
 | 5 — Eerste echte plugins | open | |

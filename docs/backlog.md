@@ -174,10 +174,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         - [x] Stap 1, renderer vastgelegd (september 2026): golden HTML van
           `PageRenderer`, alle viewers, `DefaultView` en `SiteChrome` op de
           nieuwe `MemoryContentStore` (`sites/musicbrain/test/render/`).
-        - [ ] Stap 2, renderer en layouthelpers naar de engine. Let op:
-          staan viewers in een package, dan moet Tailwind dat scannen
-          (`@source` in `globals.css`), anders verdwijnen hun classes stil;
-          de golden HTML ziet dat niet, de build wel.
+        - [x] Stap 2, renderer en layouthelpers naar de engine (september
+          2026): `@imprint/runtime-admin` met `PageRenderer`, `Widget`,
+          `layoutRows` en `Markdown`; de site bindt hem aan haar viewers.
+          Golden HTML en CSS ongewijzigd. Tailwind scant het package en slaat
+          `test/` over; `css-coverage.test.ts` bewaakt dat voortaan.
         - [ ] Stap 3, viewers een expliciete `WidgetContext` (store, subject,
           leesopties) in plaats van `@/lib/content` en `next/headers`.
         - [ ] Stap 4, catalogus splitsen in standaard- en domeinwidgets;

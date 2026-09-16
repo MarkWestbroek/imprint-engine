@@ -4,10 +4,10 @@ import { store, writableStore } from "@/lib/content";
 import { contentFormSchema, widgetFormSchemas } from "@/lib/admin-schemas";
 import { draftKey, getDraft, setDraft } from "@/lib/page-draft";
 import type { PageDraft } from "@/lib/layout-ops";
-import { layoutRows } from "@/widgets/templates";
+import { layoutRows } from "@imprint/runtime-admin/layout";
 import { widgetRegistry, widgetCatalog } from "@/widgets/registry";
 import { Widget } from "@/components/page-renderer";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { menuToNav, SiteChrome } from "@/components/site-chrome";
 import { viewTargetType } from "@/components/default-view";
 import {

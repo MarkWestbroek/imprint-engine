@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { LAYOUT_PRESETS, layoutRows } from "../src/widgets/templates";
+import { LAYOUT_PRESETS, layoutRows } from "../src/layout";
 
 /**
  * Characterisation of the renderer's layout normalisation: PageRenderer and

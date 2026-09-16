@@ -17,7 +17,7 @@ import {
 import { store, writableStore } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
 import { bucketInto, groupIntoColumns } from "@/lib/planning";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { StatusBadge } from "@/components/status-badge";
 import { displayVersion } from "@/lib/format";
 import { BoardCanvas } from "./board-canvas";

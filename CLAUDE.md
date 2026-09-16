@@ -23,7 +23,7 @@
 - Widget-model (UML-contentmodel): pagina's zijn composeerbaar als
   `PageLayout` = rijen → cellen (met `span`-breedte) → widgets
   `{ type, config }`; het oude template/regio-formaat parseert nog en
-  wordt via `layoutRows()` (site, `src/widgets/templates.ts`) omgezet.
+  wordt via `layoutRows()` (engine, `@imprint/runtime-admin/layout`) omgezet.
   De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
   widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
   (configschema's, geen React/store-imports — de store valideert hiermee)
@@ -47,7 +47,7 @@
   `docs/design/engine-instance-plugin-architectuur.md`: werk die tabel bij
   bij elke afgeronde stap.
 - Versies: semver via git-tags (pre-1.0: minor = capability, patch = fix);
-  de drie `package.json`-versies lopen gelijk met de tag. Zet bij elke
+  alle `package.json`-versies (root en elke workspace) lopen gelijk met de tag. Zet bij elke
   noemenswaardige wijziging een regel onder `## [Unreleased]` in
   `CHANGELOG.md`. Releasen = `npm run release -- <versie>` (bumpt versies,
   verplaatst de changelog-notities, commit + tag); zie `docs/releasing.md`.

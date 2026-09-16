@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { BoardSpec, Component, Product, ReadOptions } from "@imprint/content-core";
 import { store, writableStore } from "@/lib/content";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { StatusBadge } from "@/components/status-badge";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { displayVersion, kindLabel } from "@/lib/format";

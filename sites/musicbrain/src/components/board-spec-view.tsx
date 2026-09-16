@@ -1,6 +1,6 @@
 import type { BoardSpec } from "@imprint/content-core";
 import { boardSpecToBoardConfig } from "@imprint/content-core";
-import { Markdown } from "@/components/markdown";
+import { Markdown } from "@imprint/runtime-admin";
 import { BoardSpecMedia } from "@/components/board-spec-media";
 
 /**

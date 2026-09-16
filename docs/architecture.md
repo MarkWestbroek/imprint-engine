@@ -22,7 +22,7 @@ lopen bewust nog uiteen.
 
 | laag | inhoud | staat nu in | mag afhangen van |
 |---|---|---|---|
-| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); renderer, API, admin, auth/PEP, studio-ops nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
+| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, layouthelpers, `Markdown`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
 | **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
 | **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres) + `memory-store.ts` (in geheugen, voor tests); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
 | **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
@@ -174,11 +174,15 @@ flowchart LR
         DBS["db-store.ts"]
     end
 
+    subgraph runtime["packages/runtime-admin"]
+        REN["PageRenderer + layoutRows<br/>kent geen concrete widgets"]
+    end
+
     subgraph site["sites/musicbrain (Next.js 16)"]
         PUB["(site)/ publieke pagina's"]
         ADM["admin/ editor-UI"]
         CAT["src/widgets/<br/>registry.ts + components.tsx"]
-        REN["page-renderer.tsx"]
+        BIND["components/page-renderer.tsx<br/>renderer + eigen viewers"]
     end
 
     FILES[("content/ bestanden<br/>(v0 + seed-bron)")]
@@ -186,7 +190,9 @@ flowchart LR
 
     PUB --> ST
     ADM --> ST
-    REN --> CAT
+    PUB --> BIND
+    BIND --> REN
+    BIND -. viewers .-> CAT
     ST --> FS --> FILES
     ST --> DBS --> DB
     CAT -. "valideert configs" .-> WID
@@ -289,6 +295,10 @@ flowchart LR
     ETS -->|sidebar| STU
 ```
 
+- De **renderer** zelf (`PageRenderer`, `Widget`, `layoutRows`, `Markdown`)
+  staat sinds Fase 2 in `@imprint/runtime-admin` en kent geen concrete
+  widgets. De site bindt hem in `src/components/page-renderer.tsx` aan haar
+  eigen viewers; de rest van de site importeert die binding.
 - De **store** valideert elke widget-config tegen het geregistreerde schema:
   een kapotte widget breekt de build/save met een duidelijke fout, in plaats
   van stil verkeerd te renderen.
@@ -798,10 +808,11 @@ verwachtingen voor die de code nu niet waarmaakt.
 | composition root | `packages/extension-api/test/imprint.test.ts` | `defineImprint` weigert ongeldige config; `resolveImprint` levert file-/MariaDB-/Postgres-instantie met juiste write-side, users, sessie- en asset-defaults; `createImprint` is één instantie per id |
 | widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |
 | relaties, itinerary | `test/relations.test.ts`, `test/itinerary.test.ts` | `extractRefs`/`validateReferences`, afgeleide reis |
-| renderer-normalisatie | `sites/musicbrain/test/templates.test.ts` | `layoutRows()`: legacy template+regio's → rijen, presets |
+| renderer-normalisatie | `packages/runtime-admin/test/layout.test.ts` | `layoutRows()`: legacy template+regio's → rijen, presets |
 | studio-ops | `sites/musicbrain/test/layout-ops.test.ts` | `applyOp()`: alle draft-mutaties, geen widgetverlies, limieten |
 | catalogus | `sites/musicbrain/test/catalog.test.ts` | de exacte widgetset van MusicBrain, en dat alle `content/`-pagina's ertegen valideren |
 | **renderer (golden HTML)** | `sites/musicbrain/test/render/` | de HTML van `PageRenderer`, alle viewers, `DefaultView` en `SiteChrome`; zie hieronder |
+| **CSS-dekking** | `sites/musicbrain/test/render/css-coverage.test.ts` | dat elke class in de golden HTML CSS krijgt uit de eigen bronnen van de site; zie hieronder |
 
 De databasesuites draaien alleen met `TEST_DATABASE_URL` (MariaDB) en/of
 `TEST_PG_DATABASE_URL` (Postgres): wegwerpdatabases waarvan de naam op
@@ -862,10 +873,23 @@ flowchart LR
 - **Bewust gewijzigde weergave?** Draai
   `UPDATE_GOLDEN=1 npm test --workspace=musicbrain` en review de diff van de
   golden files zoals elke andere codewijziging.
-- **Wat deze suite níet ziet**: de gegenereerde CSS. Zodra viewers in een
-  engine-package staan, moet Tailwind dat package scannen (`@source` in
-  `globals.css`), anders verdwijnen hun classes stil. Daar blijven
-  `npm run build` en een visuele check de bewaking.
+- **Engine-packages in de test**: `tsx` past de JSX-instellingen van een
+  tsconfig alleen toe op bestanden binnen diens map. Daarom draaien de
+  site-tests met `sites/musicbrain/tsconfig.test.json`, die de
+  site-instellingen uitbreidt naar `packages/*/src`. Next en `tsc` gebruiken
+  gewoon `tsconfig.json`.
+- **CSS-dekking**: de golden HTML ziet niet of een class ook CSS krijgt, en
+  een build faalt er ook niet op. Staan componenten in een engine-package,
+  dan moet Tailwind dat package scannen via een `@source`-regel in
+  `globals.css`, anders verdwijnen hun classes stil. De testmap staat juist
+  buiten de scan: de golden HTML bevat dezelfde classes en zou een vergeten
+  `@source` maskeren. `css-coverage.test.ts` bouwt de CSS twee keer, zoals
+  ingesteld en mét de golden HTML gescand (testcode blijft buiten, anders
+  tellen class-achtige strings in tests mee), en eist dat die gelijk zijn.
+  Elke bouw draait in een eigen Node-proces: de Tailwind-plugin cachet per
+  invoerbestand, waardoor een tweede bouw in hetzelfde proces stil het
+  eerste resultaat teruggeeft. Een gevoeligheidstest met een verzonnen class
+  bewaakt dat de vergelijking echt iets kan vangen.
 
 Gevonden bij het vastleggen, niet gerepareerd (karakterisatie verandert geen
 gedrag): de releases-sectie in productmodus, dus ook op de productpagina,
