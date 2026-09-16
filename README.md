@@ -148,8 +148,9 @@ npm run dev:restart# stop + start in de achtergrond (log: .next-dev.log)
 npm run build      # productie-build
 npm run lint
 npm run typecheck
-npm test           # karakterisatietests (file-store, widget-model, studio-ops, …)
+npm test           # karakterisatietests van alle workspaces (stores, widget-model, studio-ops, renderer)
 npm run test:db    # idem + de databasestores tegen de wegwerp-DB's imprint_test (MariaDB én Postgres)
+UPDATE_GOLDEN=1 npm test --workspace=musicbrain   # bewust gewijzigde weergave: golden HTML bijwerken
 
 npm run db:up      # lokale MariaDB 10.11 (:3306) + Postgres 17 (:5433) via docker compose
 npm run db:generate  # schema gewijzigd? → nieuwe SQL-migratie in drizzle/ (MariaDB)

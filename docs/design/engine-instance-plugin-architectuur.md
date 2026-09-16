@@ -1,6 +1,7 @@
 # Revisievoorstel — engine, instanties, widgets en plugins
 
-Status: **ontwerpvoorstel**, augustus 2026. Dit document beschrijft een
+Status: **ontwerpvoorstel**, augustus 2026; in uitvoering sinds september
+2026, de stand per fase staat in [§12](#12-migratieplan). Dit document beschrijft een
 architectuurrevisie; het is geen beschrijving van volledig gerealiseerd gedrag.
 De huidige implementatie staat in [architecture.md](../architecture.md).
 
@@ -525,6 +526,23 @@ beheerervaring echt waarde toevoegt.
 
 Iedere fase moet zelfstandig releasable zijn. MusicBrain blijft gedurende de
 hele revisie werken.
+
+### Stand van uitvoering
+
+Bijgewerkt bij elke afgeronde stap (werkafspraak in `CLAUDE.md`). De
+deelpunten per fase staan in [backlog.md](../backlog.md), onder "Engine en
+instanties werkelijk scheiden".
+
+| fase | stand | beschreven in |
+|---|---|---|
+| 0 — Architectuurcontract | **klaar**: vier lagen en afhankelijkheidsregels, besluiten, karakterisatietests (`d7b1606`) | [architecture.md](../architecture.md) §0 en §8 |
+| extra — Postgres naast MariaDB | **klaar**: `PgContentStore` op dezelfde basis als MariaDB, door dezelfde contractsuites (`d7b1606`) | architecture.md §4 |
+| 1 — Composition root | **klaar**: `@imprint/extension-api`, `imprint.config.ts` in beide sites (`3930ffb`) | architecture.md §0 |
+| 2 — Renderer en standard widgets | **bezig**: stap 1 van 5 klaar, de renderer is vastgelegd in golden HTML | backlog; architecture.md §8 |
+| 3 — Generieke adminbasis | open; voorwaarden staan in de backlog | |
+| 4 — Studio en widgeteditors | open | |
+| 5 — Eerste echte plugins | open | |
+| 6 — Hardening | open | |
 
 ### Fase 0 — Architectuurcontract vastleggen
 

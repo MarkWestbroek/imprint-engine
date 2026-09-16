@@ -1,0 +1,51 @@
+<!-- case: fields -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<h2 class="eyebrow mb-3">Artists</h2>
+<ul class="space-y-3">
+<li class="rounded-lg border border-line p-3 text-sm">
+<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+<div class="contents">
+<dt class="text-muted">Name</dt>
+<dd>Kraftwerk</dd>
+</div>
+<div class="contents">
+<dt class="text-muted">Country</dt>
+<dd>Germany</dd>
+</div>
+</dl>
+</li>
+<li class="rounded-lg border border-line p-3 text-sm">
+<dl class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+<div class="contents">
+<dt class="text-muted">Name</dt>
+<dd>Kraftwerk Tribute</dd>
+</div>
+<div class="contents">
+<dt class="text-muted">Country</dt>
+<dd>—</dd>
+</div>
+</dl>
+</li>
+</ul>
+<p class="mt-3 text-xs text-muted">Source: <!-- -->api.example.test</p>
+</section>
+<!-- case: raw-object -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<ul class="space-y-3">
+<li class="rounded-lg border border-line p-3 text-sm">
+<pre class="overflow-x-auto font-mono text-xs">{
+  &quot;name&quot;: &quot;Solo&quot;,
+  &quot;tags&quot;: [
+    &quot;a&quot;,
+    &quot;b&quot;
+  ]
+}</pre>
+</li>
+</ul>
+<p class="mt-3 text-xs text-muted">Source: <!-- -->api.example.test</p>
+</section>
+<!-- case: unreachable -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<h2 class="eyebrow mb-3">Down</h2>
+<p class="text-sm text-muted">Could not load <!-- -->down.example.test<!-- -->:<!-- --> <!-- -->HTTP 500</p>
+</section>

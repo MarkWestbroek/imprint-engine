@@ -24,7 +24,7 @@ lopen bewust nog uiteen.
 |---|---|---|---|
 | **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); renderer, API, admin, auth/PEP, studio-ops nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
 | **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
-| **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
+| **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres) + `memory-store.ts` (in geheugen, voor tests); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
 | **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
 
 ```mermaid
@@ -593,12 +593,14 @@ classDiagram
     }
     class DbContentStore { MariaDB: drizzle/mysql2 }
     class PgContentStore { Postgres: drizzle/node-postgres }
+    class MemoryContentStore { in geheugen: tests, demo }
 
     ContentStore <|-- WritableContentStore
     ContentStore <|.. FileContentStore
     WritableContentStore <|.. DbContentStoreBase
     DbContentStoreBase <|-- DbContentStore
     DbContentStoreBase <|-- PgContentStore
+    DbContentStoreBase <|-- MemoryContentStore
 ```
 
 ### Twee databasedialecten, één semantiek
@@ -629,6 +631,11 @@ Imprint-productsite). De opzet is bewust *geen* kopie van de store:
   zijn; de composition root van een site en de seed roepen alleen dít aan.
 - Beide draaien **dezelfde contract- en schrijfsuite** (§8) — dat is het
   bewijs dat ze gelijk zijn, niet de code-review.
+- Een derde implementatie op dezelfde basis, `MemoryContentStore`
+  ([memory-store.ts](../packages/content-core/src/memory-store.ts)), houdt de
+  rijen in een array. Hij haalt dezelfde lees- en schrijfsuites en is daarmee
+  een bewezen stand-in voor een database: de renderer-karakterisatie (§8)
+  draait erop. Niet persistent, nooit een productiebackend.
 
 Wat (nog) MariaDB-only is: `DbUserStore` (users, admin-login), `npm run user`,
 `npm run backup` en `npm run assets:gc`. De Imprint-site heeft nog geen admin,
@@ -769,8 +776,12 @@ De kern verandert daarbij niet — dat is de kern van het ontwerp.
 
 ## 8. Tests: contractsuite en karakterisatie
 
-`npm test` draait de suite met Node's ingebouwde testrunner (`node --test`
-via `tsx`, geen extra framework); CI doet hetzelfde. De tests zijn
+`npm test` draait in elke workspace diens eigen `test`-script (`npm run test
+--workspaces`), met Node's ingebouwde testrunner (`node --test` via `tsx`,
+geen extra framework); CI doet hetzelfde. Per workspace, omdat `tsx` de
+tsconfig van de map pakt waarin hij draait: de site-tests hebben de
+`@/`-paden van de site nodig, en straks hebben engine-packages hun eigen
+tsconfig. De tests zijn
 **karakterisatietests** (Fase 0): ze leggen het huidige gedrag vast, zodat de
 extractie in Fase 1–4 aantoonbaar niets verandert. Ze schrijven géén
 verwachtingen voor die de code nu niet waarmaakt.
@@ -782,6 +793,7 @@ verwachtingen voor die de code nu niet waarmaakt.
 | **WritableContentStore-contract** | `test/writable-contract.ts` | de schrijfkant die elke databasebackend deelt: nieuwe versie supersedeert, historie nieuwste eerst, tijdreizen op beide assen, tombstone, `listItems` negeert valid time en sorteert op slug/lang, zod- en referentieweigering, onbekende widget geweigerd bij opslaan |
 | db-store (MariaDB) | `test/db-store.test.ts` | lees- + schrijfcontract tegen `TEST_DATABASE_URL`, tabellen uit `drizzle/` |
 | db-store (Postgres) | `test/db-store.pg.test.ts` | exact dezelfde suites tegen `TEST_PG_DATABASE_URL`, tabellen uit `drizzle-pg/` |
+| memory-store | `test/memory-store.test.ts` | exact dezelfde suites tegen de geheugen-backend; draait altijd, geen database nodig |
 | backendkeuze | `test/db.test.ts` | `dialectOf()`: URL-schema → dialect |
 | composition root | `packages/extension-api/test/imprint.test.ts` | `defineImprint` weigert ongeldige config; `resolveImprint` levert file-/MariaDB-/Postgres-instantie met juiste write-side, users, sessie- en asset-defaults; `createImprint` is één instantie per id |
 | widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |
@@ -789,6 +801,7 @@ verwachtingen voor die de code nu niet waarmaakt.
 | renderer-normalisatie | `sites/musicbrain/test/templates.test.ts` | `layoutRows()`: legacy template+regio's → rijen, presets |
 | studio-ops | `sites/musicbrain/test/layout-ops.test.ts` | `applyOp()`: alle draft-mutaties, geen widgetverlies, limieten |
 | catalogus | `sites/musicbrain/test/catalog.test.ts` | de exacte widgetset van MusicBrain, en dat alle `content/`-pagina's ertegen valideren |
+| **renderer (golden HTML)** | `sites/musicbrain/test/render/` | de HTML van `PageRenderer`, alle viewers, `DefaultView` en `SiteChrome`; zie hieronder |
 
 De databasesuites draaien alleen met `TEST_DATABASE_URL` (MariaDB) en/of
 `TEST_PG_DATABASE_URL` (Postgres): wegwerpdatabases waarvan de naam op
@@ -807,8 +820,59 @@ kale checkout en in CI groen is. Een derde databasebackend (het bitemporele
 register) is straks: één klasse op `DbContentStoreBase` plus één testbestand
 van twintig regels dat dezelfde twee suites aanroept.
 
-**Nog niet gekarakteriseerd** (bewust; staat in de backlog): de HTML van
-`PageRenderer` en de widget-viewers (server components, alleen binnen Next te
-renderen), de admin-flows (login, save, restore, studio-save) en de
-API-routes. Die worden nu alleen end-to-end bewaakt door `npm run smoke` en
-`npm run testcase:bitemporal` tegen een draaiende site.
+### Renderer-karakterisatie (Fase 2, stap 1)
+
+Voordat de renderer naar de engine verhuist, ligt vast wat hij nu oplevert.
+De suite rendert de échte server components naar HTML in gewone Node, met
+React's eigen prerenderer (die async server components aankan), en vergelijkt
+met *golden files* in `sites/musicbrain/test/render/__golden__/`: per
+widgettype één bestand met al zijn gevallen, plus pagina's, default views en
+de chrome.
+
+```mermaid
+flowchart LR
+    FIX["fixtures.ts<br/>content + gevallen per widget"] --> MEM[("MemoryContentStore<br/>lees- én schrijfkant")]
+    subgraph mocks["vervangen in de test"]
+        C["@/lib/content"]
+        H["next/headers"]
+        F["fetch"]
+    end
+    MEM --> C
+    C --> VIEW["echte PageRenderer,<br/>viewers, DefaultView, SiteChrome"]
+    H --> VIEW
+    F --> VIEW
+    VIEW --> HTML["HTML"] --> CMP{"gelijk aan<br/>golden?"}
+```
+
+- **Wat vervangen wordt, zijn precies de koppelingen die Fase 2 weghaalt**:
+  `@/lib/content` (de store-singletons) wordt de geheugen-backend,
+  `next/headers` (gelezen door `readOpts()` voor de as-of-preview) zegt "geen
+  preview", en `fetch` (album- en api-widget) krijgt vaste antwoorden. Dat
+  vervangen loopt via `mock.module` van de Node-testrunner, vandaar de vlag
+  `--experimental-test-module-mocks` in het site-testscript.
+- **Productieconfiguratie, niet de hint-paden**: de store heeft een
+  schrijfkant, dus `planning`, `list` en `template` renderen echte data zoals
+  op de databasesite, in plaats van "needs the database".
+- **Dekking wordt afgedwongen**: een test faalt als een geregistreerd
+  widgettype geen gevallen heeft, en een andere als een widget een URL
+  ophaalt die geen vast antwoord heeft.
+- **Deterministisch**: vaste antwoorden in plaats van netwerk, datums in 2025
+  of 2026 en 2099 zodat "nu" er altijd tussen valt, en het footerjaar wordt
+  geneutraliseerd.
+- **Bewust gewijzigde weergave?** Draai
+  `UPDATE_GOLDEN=1 npm test --workspace=musicbrain` en review de diff van de
+  golden files zoals elke andere codewijziging.
+- **Wat deze suite níet ziet**: de gegenereerde CSS. Zodra viewers in een
+  engine-package staan, moet Tailwind dat package scannen (`@source` in
+  `globals.css`), anders verdwijnen hun classes stil. Daar blijven
+  `npm run build` en een visuele check de bewaking.
+
+Gevonden bij het vastleggen, niet gerepareerd (karakterisatie verandert geen
+gedrag): de releases-sectie in productmodus, dus ook op de productpagina,
+toont releases met een datum in de toekomst, terwijl `/releases` die
+verbergt. Staat in de backlog.
+
+**Nog niet gekarakteriseerd** (bewust; staat in de backlog): de admin-flows
+(login, save, restore, studio-save) en de API-routes. Die worden nu alleen
+end-to-end bewaakt door `npm run smoke` en `npm run testcase:bitemporal`
+tegen een draaiende site.

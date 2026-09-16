@@ -18,7 +18,7 @@
     "start": "npm run start --workspace=musicbrain",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "node --import tsx --test \"packages/*/test/**/*.test.ts\" \"sites/*/test/**/*.test.ts\"",
+    "test": "npm run test --workspaces --if-present",
     "test:db": "TEST_DATABASE_URL=\"${TEST_DATABASE_URL:-mysql://imprint:imprint-dev@localhost:3306/imprint_test}\" TEST_PG_DATABASE_URL=\"${TEST_PG_DATABASE_URL:-postgres://imprint:imprint-dev@localhost:5433/imprint_test}\" npm test",
     "db:up": "docker compose up -d --wait",
     "db:generate": "drizzle-kit generate",

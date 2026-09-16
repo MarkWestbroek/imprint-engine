@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Renderer vastgelegd vóór de verhuizing (Fase 2, stap 1)**: nieuwe
+  karakterisatiesuite in `sites/musicbrain/test/render/` rendert de echte
+  `PageRenderer`, alle 30 widget-viewers, `DefaultView` en `SiteChrome` naar
+  HTML en vergelijkt met golden files (`UPDATE_GOLDEN=1` om bewust bij te
+  werken). Store, `next/headers` en `fetch` worden in de test vervangen, dus
+  geen database en geen netwerk nodig. Daarvoor kreeg `content-core` een
+  `MemoryContentStore`: dezelfde bitemporal-light semantiek als MariaDB en
+  Postgres, door dezelfde contractsuites gehaald. Tests draaien nu per
+  workspace (`npm test` roept ze allemaal aan). Geen gedragswijziging.
 - **Docs: overdracht bijgewerkt (16 september)** — `docs/overdracht.md` §0:
   MusicBrain is offline sinds 1 september (Quickhost heeft Node/Passenger
   uitgezet), er is een VPS (vps1.paratmos.nl, Omnium draait er al), verhuisplan

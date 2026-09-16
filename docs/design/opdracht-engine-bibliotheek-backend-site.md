@@ -3,6 +3,10 @@
 > Datum: 2026-09-10 · Voor: een nieuwe werksessie (chat) over de Imprint-engine
 > Opdrachtgever: Mark · Status: opdracht, geen ontwerp — het ontwerp bestaat al
 > Tijdsbudget: beperkt; kleine, afgeronde stappen die elk apart committeerbaar zijn
+>
+> **Stand:** opdracht A, B en C zijn uitgevoerd (september 2026). Deze brief
+> dekt alleen die eerste opdracht; het volledige plan en de stand van alle
+> fasen staan in §12 van het [revisievoorstel](engine-instance-plugin-architectuur.md#12-migratieplan).
 
 ## 1. Waar dit over gaat
 

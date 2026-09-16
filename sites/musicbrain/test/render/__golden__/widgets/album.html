@@ -1,0 +1,30 @@
+<!-- case: lightroom-share -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<h2 class="eyebrow mb-3">Street</h2>
+<div class="grid gap-2" style="grid-template-columns:repeat(3, minmax(0, 1fr))">
+<button type="button" class="group relative overflow-hidden rounded-lg border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" title="">
+<img src="https://photos.adobe.io/v2/spaces/0123abcd/assets/p1/renditions/1280?api_key=LightroomMobileWeb1" alt="" loading="lazy" class="aspect-square h-full w-full object-cover transition group-hover:scale-105"/>
+</button>
+<button type="button" class="group relative overflow-hidden rounded-lg border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" title="">
+<img src="https://photos.adobe.io/v2/spaces/0123abcd/assets/p2/renditions/640?api_key=LightroomMobileWeb1" alt="" loading="lazy" class="aspect-square h-full w-full object-cover transition group-hover:scale-105"/>
+</button>
+</div>
+<a href="https://adobe.ly/street" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block text-sm text-accent underline underline-offset-4">Open album on <!-- -->adobe.ly<!-- --> ↗</a>
+</section>
+<!-- case: json-api -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<div class="grid gap-2" style="grid-template-columns:repeat(2, minmax(0, 1fr))">
+<button type="button" class="group relative overflow-hidden rounded-lg border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" title="One">
+<img src="https://photos.example.test/1.jpg" alt="" loading="lazy" class="aspect-square h-full w-full object-cover transition group-hover:scale-105"/>
+</button>
+<button type="button" class="group relative overflow-hidden rounded-lg border border-line focus:outline-none focus-visible:ring-2 focus-visible:ring-accent" title="">
+<img src="/local/2.jpg" alt="" loading="lazy" class="aspect-square h-full w-full object-cover transition group-hover:scale-105"/>
+</button>
+</div>
+<a href="https://photos.example.test/album.json" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block text-sm text-accent underline underline-offset-4">Open album on <!-- -->photos.example.test<!-- --> ↗</a>
+</section>
+<!-- case: unreachable -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">Could not load down.example.test: HTTP 503</p>
+<a href="https://down.example.test/album.json" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block text-sm text-accent underline underline-offset-4">Open album on <!-- -->down.example.test<!-- --> ↗</a>
+</section>

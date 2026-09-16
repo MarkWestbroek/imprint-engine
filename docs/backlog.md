@@ -168,9 +168,23 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] **C. Fase 1** (september 2026): `@imprint/extension-api` met
         `defineImprint()`/`createImprint()`; `imprint.config.ts` in beide
         sites, `content.ts`/`auth.ts`/`assets.ts` lezen uit de instantie.
-      - [ ] **Fase 2** — renderer + standaardwidgets naar de engine; viewers
+      - [~] **Fase 2** — renderer + standaardwidgets naar de engine; viewers
         krijgen een expliciete `WidgetContext`; `chrome`, viewers en editors
         krijgen dan hun slot in `ImprintConfig`. _(L)_
+        - [x] Stap 1, renderer vastgelegd (september 2026): golden HTML van
+          `PageRenderer`, alle viewers, `DefaultView` en `SiteChrome` op de
+          nieuwe `MemoryContentStore` (`sites/musicbrain/test/render/`).
+        - [ ] Stap 2, renderer en layouthelpers naar de engine. Let op:
+          staan viewers in een package, dan moet Tailwind dat scannen
+          (`@source` in `globals.css`), anders verdwijnen hun classes stil;
+          de golden HTML ziet dat niet, de build wel.
+        - [ ] Stap 3, viewers een expliciete `WidgetContext` (store, subject,
+          leesopties) in plaats van `@/lib/content` en `next/headers`.
+        - [ ] Stap 4, catalogus splitsen in standaard- en domeinwidgets;
+          slots voor `chrome`, viewers en editors in `ImprintConfig`.
+        - [ ] Stap 5, het exitcriterium van Fase 2: de Imprint-site rendert
+          een databasepagina met dezelfde renderer en een eigen, kleinere
+          widgetselectie.
       - [ ] **Secrets in de config?** — `SESSION_SECRET`, `INGEST_TOKEN`,
         `GITHUB_WEBHOOK_SECRET`, `PUBLISH_*` worden nog gelezen waar ze
         gebruikt worden; bij de admin-extractie (Fase 3) via
@@ -182,10 +196,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         heeft; besluit per onderdeel wat Imprint zelf bouwt en welke
         ideeën het overneemt. Zie [positionering.md](positionering.md).
         _(beslissing; S)_
-      - [ ] **Karakterisatie uitbreiden**: HTML van `PageRenderer`/viewers,
-        admin-flows (login, save, restore, studio-save) en API-routes zijn
-        nog alleen end-to-end bewaakt (`npm run smoke`,
-        `npm run testcase:bitemporal`). _(M)_
+      - [ ] **Karakterisatie uitbreiden**: admin-flows (login, save,
+        restore, studio-save) en API-routes zijn nog alleen end-to-end
+        bewaakt (`npm run smoke`, `npm run testcase:bitemporal`); vóór
+        Fase 3 vastleggen zoals de renderer. _(M)_
 
 - [ ] **Typelijsten consolideren** — `ContentType` staat in vijf losse
       allowlists (admin-action, list/edit/history-routes, content-API's
@@ -322,6 +336,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             - [ ] Inzendingen buiten de bitemporele store (AVG: wisbaar).
             - [ ] NLDS-formulierrichtlijnen afvinken voor de widget en voor
                   `SchemaForm` in de admin. _(S)_
+- [ ] **Productpagina toont toekomstige releases** — de releases-sectie in
+      productmodus (`ProductReleases`, ook de `releases`-widget met een
+      product) leest `listItems` zonder datumfilter, dus een release met een
+      datum in de toekomst staat er al, terwijl `/releases` en de
+      `downloads`-widget hem verbergen. Gevonden bij de renderer-
+      karakterisatie (september 2026); bewust nog niet gerepareerd. _(S)_
 - [ ] **W3** Foto/video op de productpagina (zie gallery-widget). _(must; M)_
 - [ ] **W5/S9 Meertaligheid** — het fundament bestaat (elk item heeft `lang`,
       EN→NL-fallback in beide stores, `?lang=` op de API), maar er is nog

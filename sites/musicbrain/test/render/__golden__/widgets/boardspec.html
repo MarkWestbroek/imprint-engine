@@ -1,0 +1,107 @@
+<!-- case: explicit-spec -->
+<link rel="preload" as="image" href="/api/assets/adc8/v1.2/overview.svg"/>
+<link rel="preload" as="image" href="/api/assets/adc8/v1.2/pinout-J1.svg"/>
+<section class="rounded-xl border border-line bg-surface p-5">
+<h2 class="eyebrow mb-3">ADC8 v1.2</h2>
+<div class="space-y-4">
+<div>
+<div class="mb-2 flex gap-1 text-xs">
+<button type="button" class="rounded px-2 py-1 bg-accent text-background">Overview</button>
+<button type="button" class="rounded px-2 py-1 border border-line text-muted hover:text-foreground">Interactive</button>
+<button type="button" class="rounded px-2 py-1 border border-line text-muted hover:text-foreground">3D</button>
+</div>
+<img src="/api/assets/adc8/v1.2/overview.svg" alt="Board overview" class="h-auto max-w-full rounded-lg"/>
+</div>
+<details class="rounded-lg border border-line px-3 py-2">
+<summary class="cursor-pointer text-sm text-muted">Connectors (<!-- -->2<!-- -->)</summary>
+<div class="mt-2 overflow-x-auto">
+<table class="w-full border-collapse text-sm">
+<tbody>
+<tr class="border-b border-line align-top">
+<td class="py-1.5 pr-4 font-mono whitespace-nowrap">J1<span class="text-muted"> · <!-- -->Bus</span>
+</td>
+<td class="py-1.5 font-mono text-xs">1→+12V  2→GND</td>
+</tr>
+<tr class="border-b border-line align-top">
+<td class="py-1.5 pr-4 font-mono whitespace-nowrap">J2<span class="text-muted"> · <!-- -->CV in</span>
+</td>
+<td class="py-1.5 font-mono text-xs">1→CV1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<details class="rounded-lg border border-line px-3 py-2">
+<summary class="cursor-pointer text-sm text-muted">Pinout diagrams (<!-- -->1<!-- -->)</summary>
+<div class="mt-2 grid gap-3 sm:grid-cols-2">
+<figure class="rounded-lg border border-line p-2">
+<img src="/api/assets/adc8/v1.2/pinout-J1.svg" alt="Pinout J1" class="max-w-full"/>
+<figcaption class="mt-1 text-xs text-muted">J1</figcaption>
+</figure>
+</div>
+</details>
+<section>
+<h3 class="mb-1 text-base font-semibold">Calibration</h3>
+<div class="markdown">
+<p>Turn the trimmer until the LED is steady.</p>
+</div>
+</section>
+</div>
+</section>
+<!-- case: from-subject-component -->
+<link rel="preload" as="image" href="/api/assets/adc8/v1.2/overview.svg"/>
+<link rel="preload" as="image" href="/api/assets/adc8/v1.2/pinout-J1.svg"/>
+<section class="rounded-xl border border-line bg-surface p-5">
+<div class="space-y-4">
+<div>
+<div class="mb-2 flex gap-1 text-xs">
+<button type="button" class="rounded px-2 py-1 bg-accent text-background">Overview</button>
+<button type="button" class="rounded px-2 py-1 border border-line text-muted hover:text-foreground">Interactive</button>
+<button type="button" class="rounded px-2 py-1 border border-line text-muted hover:text-foreground">3D</button>
+</div>
+<img src="/api/assets/adc8/v1.2/overview.svg" alt="Board overview" class="h-auto max-w-full rounded-lg"/>
+</div>
+<details class="rounded-lg border border-line px-3 py-2">
+<summary class="cursor-pointer text-sm text-muted">Connectors (<!-- -->2<!-- -->)</summary>
+<div class="mt-2 overflow-x-auto">
+<table class="w-full border-collapse text-sm">
+<tbody>
+<tr class="border-b border-line align-top">
+<td class="py-1.5 pr-4 font-mono whitespace-nowrap">J1<span class="text-muted"> · <!-- -->Bus</span>
+</td>
+<td class="py-1.5 font-mono text-xs">1→+12V  2→GND</td>
+</tr>
+<tr class="border-b border-line align-top">
+<td class="py-1.5 pr-4 font-mono whitespace-nowrap">J2<span class="text-muted"> · <!-- -->CV in</span>
+</td>
+<td class="py-1.5 font-mono text-xs">1→CV1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</details>
+<details class="rounded-lg border border-line px-3 py-2">
+<summary class="cursor-pointer text-sm text-muted">Pinout diagrams (<!-- -->1<!-- -->)</summary>
+<div class="mt-2 grid gap-3 sm:grid-cols-2">
+<figure class="rounded-lg border border-line p-2">
+<img src="/api/assets/adc8/v1.2/pinout-J1.svg" alt="Pinout J1" class="max-w-full"/>
+<figcaption class="mt-1 text-xs text-muted">J1</figcaption>
+</figure>
+</div>
+</details>
+<section>
+<h3 class="mb-1 text-base font-semibold">Calibration</h3>
+<div class="markdown">
+<p>Turn the trimmer until the LED is steady.</p>
+</div>
+</section>
+</div>
+</section>
+<!-- case: missing-spec -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">No board-spec &quot;nope@v1&quot;.</p>
+</section>
+<!-- case: no-spec -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">No board-spec (set one, or use on a component).</p>
+</section>

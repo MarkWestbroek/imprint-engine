@@ -1,0 +1,20 @@
+<!-- case: images -->
+<link rel="preload" as="image" href="/a.jpg"/>
+<section class="rounded-xl border border-line bg-surface p-5">
+<figure class="relative overflow-hidden rounded-lg border border-line">
+<img src="/a.jpg" alt="A" class="aspect-video w-full bg-black/40 object-contain"/>
+<figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pb-3 pt-8 text-sm text-white">A</figcaption>
+<button type="button" aria-label="Previous" class="absolute top-1/2 -translate-y-1/2 rounded-full bg-black/40 px-2.5 py-1.5 text-white hover:bg-black/70 left-2">←</button>
+<button type="button" aria-label="Next" class="absolute top-1/2 -translate-y-1/2 rounded-full bg-black/40 px-2.5 py-1.5 text-white hover:bg-black/70 right-2">→</button>
+<div class="absolute inset-x-0 top-2 flex justify-center gap-1.5">
+<button type="button" aria-label="Photo 1" class="h-1.5 w-4 rounded-full transition bg-white">
+</button>
+<button type="button" aria-label="Photo 2" class="h-1.5 w-4 rounded-full transition bg-white/40 hover:bg-white/70">
+</button>
+</div>
+</figure>
+</section>
+<!-- case: empty -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">No photos yet.</p>
+</section>

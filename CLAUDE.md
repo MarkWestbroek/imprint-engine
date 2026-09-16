@@ -43,6 +43,9 @@
   **technisch** (hoe zit het in elkaar) in `docs/architecture.md` (mermaid),
   plus een regel onder `## [Unreleased]` in `CHANGELOG.md`. Open punten
   staan in `docs/backlog.md`; streep af/vul aan als er iets af of bij komt.
+  De stand van de engine-revisie staat in §12 van
+  `docs/design/engine-instance-plugin-architectuur.md`: werk die tabel bij
+  bij elke afgeronde stap.
 - Versies: semver via git-tags (pre-1.0: minor = capability, patch = fix);
   de drie `package.json`-versies lopen gelijk met de tag. Zet bij elke
   noemenswaardige wijziging een regel onder `## [Unreleased]` in

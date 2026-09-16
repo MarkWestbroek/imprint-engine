@@ -14,11 +14,13 @@
     "./db-store.pg": "./src/db-store.pg.ts",
     "./db-schema.pg": "./src/db-schema.pg.ts",
     "./db": "./src/db.ts",
+    "./memory-store": "./src/memory-store.ts",
     "./passwords": "./src/passwords.ts",
     "./user-store": "./src/user-store.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
   },
   "dependencies": {
     "drizzle-orm": "^0.44.2",
