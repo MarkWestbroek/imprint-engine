@@ -46,6 +46,12 @@ slug-referenties, bewaakt door RelationRules — bestaand mechanisme):
 
 ## 4. Autorisatie — PBAC-lite (PEP/PDP/PIP/PAP)
 
+> **Bijgewerkt september 2026.** De PDP wordt een sidecar die via AuthZEN NL
+> Gov wordt aangesproken, binnen het FTV-kader; zie
+> [ontwerp Fase 3 §3](fase-3-admin-toegang-tijdreizen.md). Het groeipad
+> hieronder ("policies als content", "geen sidecar-proces") is daarmee
+> vervangen. De reden voor "geen sidecar", de Plesk-hosting, is vervallen.
+
 ### Wat er al is
 - `RoleType = admin | editor | reader` ([schemas.ts](../../packages/content-core/src/schemas.ts)),
   sessies (HMAC-cookie), en `canEdit()` in

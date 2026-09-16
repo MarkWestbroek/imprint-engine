@@ -216,12 +216,25 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         gebruikt worden; bij de admin-extractie (Fase 3) via
         `ImprintConfig` injecteren zodat de gedeelde admin geen `process.env`
         kent. _(S)_
-      - [ ] **Bouwen of lenen vóór Fase 3** — de generieke adminbasis
-        (rechten per veld/item, media met varianten, localisatie-UI,
-        formulieren, jobs) overlapt sterk met wat Payload in de MIT-kern
-        heeft; besluit per onderdeel wat Imprint zelf bouwt en welke
-        ideeën het overneemt. Zie [positionering.md](positionering.md).
-        _(beslissing; S)_
+      - [x] **Bouwen of lenen vóór Fase 3** — beslist (Mark, 16 september
+        2026): eigen admin, van andere CMS'en alleen ideeën; formulieren en
+        lijsten volgens Omnium; rechten via PxP met een sidecar-PDP
+        (AuthZEN NL Gov, FTV). Zie [ontwerp Fase 3](design/fase-3-admin-toegang-tijdreizen.md); open
+        vragen staan in §10 daarvan.
+      - [ ] **Spoor toegang: PDP als sidecar** — OpenFTV in Docker Compose
+        zoals in Omnium, poortje in AuthZEN-vorm en asynchroon (29
+        aanroepen), weigeren bij een onbereikbare PDP, correlatie met het
+        besluitenlog. Ontwerp §3. _(M–L)_
+      - [ ] **Tijdreislekken dichten** — `getSiteConfig()` zonder
+        leesopties, thema-CSS in de root-layout en default views zonder
+        `asOf`. Ontwerp §7.4. _(3 × S)_
+      - [ ] **Widgetversie per instantie** — hoofdversie opslaan bij de
+        widget, zodat een brekende widgetwijziging zichtbaar is bij
+        tijdreizen. Ontwerp §8. _(M)_
+      - [ ] **Fase 7 — configuratie in de tijd (voorstel)** — actieve
+        catalogus, instellingen, formulier- en lijstdefinities en
+        toegangsbeleid als bitemporele configuratie. Ontwerp §7.5; nog te
+        besluiten. _(L)_
       - [ ] **Karakterisatie uitbreiden**: admin-flows (login, save,
         restore, studio-save) en API-routes zijn nog alleen end-to-end
         bewaakt (`npm run smoke`, `npm run testcase:bitemporal`); vóór
