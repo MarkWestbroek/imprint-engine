@@ -16,6 +16,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   ongewijzigd (cookienaam blijft `imprint_session`). `openContentDatabase()`
   levert nu ook de `DbUserStore` (MariaDB), zodat de seed geen tweede pool
   meer opent.
+- **Docs: positionering** — `docs/positionering.md` zet Imprint naast Drupal
+  en Payload: wat het wel en niet is, waar het iets eigens doet en waar het
+  (nog) achterloopt. `docs/design/widget-standaarden.md` kreeg een vervolg
+  over Payload-blocks als widgetbron (conclusie: niet zinvol; hergebruik komt
+  uit generieke React-bibliotheken als client-eiland).
+- **Docs: NL Design System** — `docs/design/nl-design-system.md` inventariseert
+  wat Omnium al met NL Design System doet (Utrecht-CSS-klassen en tokens, geen
+  React-imports) en hoe het in Imprint past: CSS op eigen markup vanwege
+  server-components, een tokenbrug naar de Imprint-thema's en een `form`-widget
+  voor S10 op de losgemaakte Omnium-renderer. Het backlogpunt
+  "Formulier-renderer als widget" is in stappen opgesplitst.
 - **Fix: koude compile van MusicBrain duurde minuten** — Tailwind v4 scande
   ook de `.glb`-3D-modellen en honderden SVG's in `public/` en `.assets/` op
   class-namen (>2 min en >10 GB per compile, Turbopack-timeouts in dev en

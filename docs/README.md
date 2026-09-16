@@ -34,6 +34,8 @@ Plesk staan voorlopig bij elkaar in de [hoofd-README](../README.md).
 
 ### Ik wil begrijpen waarom het zo is gebouwd
 
+- [Imprint naast andere CMS'en](positionering.md) - wat Imprint wel en niet
+	is, vergeleken met Drupal en Payload.
 - [Revisievoorstel engine/instanties/plugins](design/engine-instance-plugin-architectuur.md)
 	- gewenste scheiding tussen motor en sites, gedeelde admin, configureerbare
 	widgets, pluginmodel en gefaseerd migratieplan.

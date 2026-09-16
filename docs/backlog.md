@@ -176,6 +176,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         gebruikt worden; bij de admin-extractie (Fase 3) via
         `ImprintConfig` injecteren zodat de gedeelde admin geen `process.env`
         kent. _(S)_
+      - [ ] **Bouwen of lenen vóór Fase 3** — de generieke adminbasis
+        (rechten per veld/item, media met varianten, localisatie-UI,
+        formulieren, jobs) overlapt sterk met wat Payload in de MIT-kern
+        heeft; besluit per onderdeel wat Imprint zelf bouwt en welke
+        ideeën het overneemt. Zie [positionering.md](positionering.md).
+        _(beslissing; S)_
       - [ ] **Karakterisatie uitbreiden**: HTML van `PageRenderer`/viewers,
         admin-flows (login, save, restore, studio-save) en API-routes zijn
         nog alleen end-to-end bewaakt (`npm run smoke`,
@@ -302,7 +308,20 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             datatypes Slug/Versienummer/Markdown/Kleur/AssetUrl/Json).
       - [ ] **Formulier-renderer als widget** — de Omnium-renderer (React)
             inpluggen als `form`-widget: configschema verwijst naar een
-            formulierdefinitie, submits → S10-opslag. _(na renderer; M)_
+            formulierdefinitie, submits → S10-opslag. Aangescherpt
+            (september 2026, [design/nl-design-system.md](design/nl-design-system.md)):
+            - [ ] Utrecht in Omnium van `^13` naar 15 bijwerken. _(Omnium; S)_
+            - [ ] Renderer uit Omnium losmaken als package: schema,
+                  validatie en referentielijst-opties aangereikt i.p.v.
+                  `useSchema()`/`fetch` naar `/api/viz/…`. _(Omnium; M)_
+            - [ ] `form`-widget: server-viewer + renderer als client-eiland,
+                  NL Design System als **CSS-klassen** (losse
+                  `@utrecht/*-css`-packages, niet de React-bibliotheek: geen
+                  `"use client"`) en een `nlds-bridge.css` die de
+                  `--utrecht-*`-tokens aan de Imprint-tokens koppelt. _(M)_
+            - [ ] Inzendingen buiten de bitemporele store (AVG: wisbaar).
+            - [ ] NLDS-formulierrichtlijnen afvinken voor de widget en voor
+                  `SchemaForm` in de admin. _(S)_
 - [ ] **W3** Foto/video op de productpagina (zie gallery-widget). _(must; M)_
 - [ ] **W5/S9 Meertaligheid** — het fundament bestaat (elk item heeft `lang`,
       EN→NL-fallback in beide stores, `?lang=` op de API), maar er is nog
