@@ -19,6 +19,7 @@
  * renderer-markup hoort hier (architecture.md §8).
  */
 @source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
 
 /*
  * Design tokens (B1, ontwerper-rol): één plek voor huisstijl.

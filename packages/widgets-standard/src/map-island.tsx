@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { MapConfig } from "./registry";
+import type { MapConfig } from "./schemas";
 
 /**
  * Leaflet touches `window` at import time, so the actual map (map-inner) is

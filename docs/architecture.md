@@ -22,8 +22,8 @@ lopen bewust nog uiteen.
 
 | laag | inhoud | staat nu in | mag afhangen van |
 |---|---|---|---|
-| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, `DefaultView`, `WidgetContext`, layouthelpers, `Markdown`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
-| **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
+| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, `DefaultView`, `WidgetContext`, layouthelpers, `Markdown`, `WidgetFrame`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
+| **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | `packages/widgets-standard` (twintig standaardwidgets: schema's en viewers); MusicBrains domeinwidgets en alle editors nog in `sites/musicbrain/src/widgets/` | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
 | **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres) + `memory-store.ts` (in geheugen, voor tests); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
 | **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
 
@@ -179,10 +179,14 @@ flowchart LR
         REN["PageRenderer + layoutRows<br/>kent geen concrete widgets"]
     end
 
+    subgraph lib["packages/widgets-standard"]
+        STD["standaardwidgets<br/>schema's + viewers"]
+    end
+
     subgraph site["sites/musicbrain (Next.js 16)"]
         PUB["(site)/ publieke pagina's"]
         ADM["admin/ editor-UI"]
-        CAT["src/widgets/<br/>registry.ts + components.tsx"]
+        CAT["src/widgets/<br/>catalogus: standaard + domein"]
         BIND["components/page-renderer.tsx<br/>renderer + eigen viewers"]
     end
 
@@ -194,6 +198,7 @@ flowchart LR
     PUB --> BIND
     BIND --> REN
     BIND -. viewers .-> CAT
+    CAT -. kiest .-> STD
     ST --> FS --> FILES
     ST --> DBS --> DB
     CAT -. "valideert configs" .-> WID
@@ -272,8 +277,8 @@ handwerk, de editor heeft een schema-gedreven default:
 
 | stuk | bestand | draait | rol |
 |---|---|---|---|
-| **configschema** | `src/widgets/registry.ts` | overal (geen React/store) | valideert de config; bron voor het default-editorformulier |
-| **viewer** | `src/widgets/components.tsx` | server | rendert de widget op de site; leest content via de aangereikte `ctx`, mag externe API's aanroepen |
+| **configschema** | `@imprint/widgets-standard/schemas` of `src/widgets/registry.ts` | overal (geen React/store) | valideert de config; bron voor het default-editorformulier |
+| **viewer** | `@imprint/widgets-standard/viewers` of `src/widgets/components.tsx` | server | rendert de widget op de site; leest content via de aangereikte `ctx`, mag externe API's aanroepen |
 | **editor** | `src/widgets/editors.tsx` | client | bewerkt de config in de studio; default = formulier uit het schema, alleen overriden voor rijkere bewerking |
 
 ```mermaid
@@ -317,15 +322,24 @@ flowchart LR
 - Interactieve viewers (hover/klik) zijn een dun server-component met een
   `"use client"`-eiland erin; `treeview`/`api` hebben dat niet nodig, een
   geannoteerde-afbeelding-widget wel.
-- Catalogus van musicbrain: `text`, `table` (met custom grid-editor),
-  `image`, `gallery` (fotoraster + lightbox, kan subject-media meenemen),
-  `carousel`, `album` (externe foto-repo: JSON-API of Lightroom-share
-  best-effort), `map` (Leaflet/OSM met markers), `kanban`, `itinerary`
-  (component-reis door releases), `callout`/CTA, `embed` (iframe),
-  `board` (geannoteerde render), `boardspec` (rendert een board-spec),
-  `template` (markdown met Mustache merge fields over een content-item/
-  subject), `list` (links die de content-graaf volgen), `treeview`,
-  `api` (JSON-endpoint met veldselectie), `releases`, `products`.
+- **Catalogus van MusicBrain**, samengesteld in `src/widgets/registry.ts` en
+  `src/widgets/components.tsx`, in de volgorde die de studio toont (vastgepind
+  in `test/catalog.test.ts`):
+  - *standaard*, uit `@imprint/widgets-standard`: `text`, `table`, `image`,
+    `gallery`, `carousel`, `album`, `map`, `kanban`, `hero`, `video`,
+    `accordion`, `divider`, `specs`, `posts`, `template`, `list`, `callout`,
+    `embed`, `treeview`, `api`. Ze kennen alleen generieke contracten
+    (pagina's, content-items).
+  - *domein*, in de site: `planning`, `itinerary`, `downloads`, `board`,
+    `boardspec`, `releases`, `products`, `subjectheader`, `spectable`,
+    `components`. Ze kennen producten, componenten, releases, board-specs of
+    planning, en worden in Fase 5 plugins.
+- **Wat een site levert voor de standaardwidgets**: de design-tokens
+  `background`, `surface`, `line`, `foreground`, `muted`, `accent`,
+  `accent-strong` en `accent-2` als Tailwind-kleuren (`@theme`), de classes
+  `eyebrow` en `markdown`, en per engine-package een `@source`-regel in
+  `globals.css`. De bibliotheek levert geen merk; dat blijft van de site
+  (besluit in §0).
 
 ## 3b. Product / component / release
 
@@ -891,6 +905,8 @@ flowchart LR
   `@source` maskeren. `css-coverage.test.ts` bouwt de CSS twee keer, zoals
   ingesteld en mét de golden HTML gescand (testcode blijft buiten, anders
   tellen class-achtige strings in tests mee), en eist dat die gelijk zijn.
+  In Fase 2 stap 4 ving hij in het echt een ontbrekende `@source` voor
+  `widgets-standard`.
   Elke bouw draait in een eigen Node-proces: de Tailwind-plugin cachet per
   invoerbestand, waardoor een tweede bouw in hetzelfde proces stil het
   eerste resultaat teruggeeft. Een gevoeligheidstest met een verzonnen class

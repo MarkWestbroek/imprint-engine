@@ -184,8 +184,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           gebouwd in `src/lib/widget-context.ts`; lintregel tegen de oude
           imports; `DefaultView` mee naar de engine; module-mocks en de
           experimentele vlag weg uit de tests.
-        - [ ] Stap 4, catalogus splitsen in standaard- en domeinwidgets;
-          slots voor `chrome`, viewers en editors in `ImprintConfig`.
+        - [x] Stap 4, catalogus splitsen (september 2026): twintig
+          standaardwidgets naar `@imprint/widgets-standard` (schema's en
+          viewers, per widget te kiezen); tien domeinwidgets blijven in
+          MusicBrain; studio-catalogus aantoonbaar ongewijzigd; `WidgetFrame`
+          naar de engine.
+        - [ ] Slots voor `chrome` en editors in `ImprintConfig` — verschoven
+          naar Fase 4, waar de studio ze nodig heeft. Viewers blijven een
+          sitebinding (`src/components/page-renderer.tsx`), omdat
+          `extension-api` framework-vrij blijft.
         - [ ] Stap 5, het exitcriterium van Fase 2: de Imprint-site rendert
           een databasepagina met dezelfde renderer en een eigen, kleinere
           widgetselectie.

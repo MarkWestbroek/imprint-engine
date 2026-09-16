@@ -24,12 +24,17 @@
   `PageLayout` = rijen → cellen (met `span`-breedte) → widgets
   `{ type, config }`; het oude template/regio-formaat parseert nog en
   wordt via `layoutRows()` (engine, `@imprint/runtime-admin/layout`) omgezet.
-  De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
-  widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
-  (configschema's, geen React/store-imports — de store valideert hiermee)
-  + `src/widgets/components.tsx` (viewers, server; content alleen via de aangereikte `WidgetContext`) + optioneel
-  `src/widgets/editors.tsx` (custom editor; default is het formulier uit
-  het schema). Nieuwe widget = één schema + één viewer.
+  De kern (`packages/content-core/src/widgets.ts`) en de renderer
+  (`@imprint/runtime-admin`) kennen géén concrete widgets. Elke site stelt
+  haar catalogus samen in `src/widgets/registry.ts` (configschema's, geen
+  React/store-imports — de store valideert hiermee) + `src/widgets/components.tsx`
+  (viewers, server), uit standaardwidgets van `@imprint/widgets-standard`
+  (`/schemas` + `/viewers`, per widget te kiezen) en eigen domeinwidgets.
+  Viewers lezen content alleen via de aangereikte `WidgetContext` (lint).
+  Optioneel `src/widgets/editors.tsx` (custom editor; default is het
+  formulier uit het schema). Nieuwe widget = één schema + één viewer:
+  generiek in `widgets-standard`, domeingebonden in de site. Een nieuw
+  engine-package met markup vraagt een `@source`-regel in `globals.css`.
 - Pagina's bewerk je in de studio (`/admin/page/edit/...`): canvas met
   echte viewers in de echte SiteChrome, sidebar per widget, wijzigingen in
   een serverside draft (`src/lib/page-draft.ts`); pas "Save" maakt een

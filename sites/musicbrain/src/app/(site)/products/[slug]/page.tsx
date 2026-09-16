@@ -9,7 +9,7 @@ import {
   ProductReleases,
   ProductSpecs,
 } from "@/components/product-sections";
-import { Gallery } from "@/widgets/media-islands";
+import { Gallery } from "@imprint/widgets-standard/media";
 
 /**
  * Product page. The sections live in components/product-sections.tsx, shared

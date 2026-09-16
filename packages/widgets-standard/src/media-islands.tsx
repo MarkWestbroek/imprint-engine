@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ImageItem } from "./registry";
+import type { ImageItem } from "./schemas";
 
 /**
  * Client islands for the photo widgets: a gallery grid with a lightbox, and

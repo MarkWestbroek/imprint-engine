@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Standaardwidgets als bibliotheek (Fase 2, stap 4)**: de twintig widgets
+  zonder domeinkennis (tekst, tabel, afbeelding, galerij, carrousel, album,
+  kaart, kanban, hero, video, accordeon, scheiding, specs, posts, template,
+  lijst, callout, embed, boomweergave, api) staan nu in het nieuwe package
+  `@imprint/widgets-standard`, met schema's en viewers. MusicBrain stelt zijn
+  catalogus samen uit die standaardwidgets en zijn tien domeinwidgets, in de
+  vertrouwde volgorde; de studio toont exact dezelfde widgets, labels,
+  versies en helpteksten (vastgepind in een test). `WidgetFrame` staat nu in
+  de engine. Golden HTML en routetabel ongewijzigd; de CSS-dekkingstest ving
+  onderweg een ontbrekende Tailwind-bron. Leaflet en mustache verhuisden als
+  afhankelijkheid mee, zonder versiewijziging.
 - **Viewers krijgen hun content aangereikt (Fase 2, stap 3)**: widget-viewers
   ontvangen een `WidgetContext` (`store`, `writableStore`, `readOptions`) in
   plaats van zelf `@/lib/content` en `next/headers` te importeren. De site

@@ -7,6 +7,7 @@
 export { DefaultView, viewSlugFor, viewTargetType } from "./default-view";
 export { LAYOUT_PRESETS, layoutRows } from "./layout";
 export { Markdown } from "./markdown";
+export { WidgetFrame } from "./widget-frame";
 export {
   PageRenderer,
   Widget,
