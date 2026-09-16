@@ -93,9 +93,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       stateless (HMAC, 12u), dus een gereset of gedegradeerde gebruiker blijft
       tot 12u ingelogd in een browser die al openstond. Vraagt een
       `session_epoch`-kolom die `getSession()` meeneemt. _(M)_
-- [ ] **Wachtwoord vergeten zonder SSH** — nu is de CLI de enige weg terug.
-      Wacht op mail-infra op Plesk; dan liever meteen de magic-link uit de
-      requirements (§C) dan een reset-token-flow. _(S10-afhankelijk; M)_
+- [ ] **Wachtwoord vergeten zonder SSH** — nu is `npm run user -- passwd`
+      (CLI, bij de database) de enige weg terug; september 2026 weer nodig
+      gehad. Wacht op de configureerbare mail (§6); dan liever meteen de
+      magic-link uit de requirements (§C) dan een reset-token-flow, met een
+      "wachtwoord vergeten"-link op het loginscherm. _(S10-afhankelijk; M)_
 - [ ] **Rollen per content-item** (`ContentUser`: creator/owner/contributor) staan
       in het schema maar worden niet gehandhaafd; S3 vraagt ook een
       *product-editor*-rol. _(S3; M)_
@@ -163,7 +165,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] **MusicBrain naar Postgres?** — aparte beslissing nu B bewezen is;
         migratiepad = backup → seed via `openContentDatabase` (historie
         meenemen vraagt een rij-voor-rij kopie, geen `putItem`). _(M)_
-      - [ ] **C. Fase 1** — composition root (`imprint.config.ts` per site).
+      - [x] **C. Fase 1** (september 2026): `@imprint/extension-api` met
+        `defineImprint()`/`createImprint()`; `imprint.config.ts` in beide
+        sites, `content.ts`/`auth.ts`/`assets.ts` lezen uit de instantie.
+      - [ ] **Fase 2** — renderer + standaardwidgets naar de engine; viewers
+        krijgen een expliciete `WidgetContext`; `chrome`, viewers en editors
+        krijgen dan hun slot in `ImprintConfig`. _(L)_
+      - [ ] **Secrets in de config?** — `SESSION_SECRET`, `INGEST_TOKEN`,
+        `GITHUB_WEBHOOK_SECRET`, `PUBLISH_*` worden nog gelezen waar ze
+        gebruikt worden; bij de admin-extractie (Fase 3) via
+        `ImprintConfig` injecteren zodat de gedeelde admin geen `process.env`
+        kent. _(S)_
       - [ ] **Karakterisatie uitbreiden**: HTML van `PageRenderer`/viewers,
         admin-flows (login, save, restore, studio-save) en API-routes zijn
         nog alleen end-to-end bewaakt (`npm run smoke`,
@@ -325,6 +337,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       "open brain"-uitrol: build vóór seed = oude content in de statische
       pagina's). Seed zou na afloop de revalidate-hook moeten aanroepen, dan
       is de volgorde niet meer belangrijk. _(S)_
+- [ ] **Mail configureerbaar per instantie** — een `mail`-blok in
+      `imprint.config.ts` (SMTP-host/poort/credentials uit de omgeving,
+      afzender per site) met één `sendMail()` in de engine; geen mail
+      geconfigureerd = functies die mail nodig hebben nette melding. Eerste
+      gebruikers: wachtwoord-vergeten/magic-link (§2) en admin-mededelingen
+      (nieuwe gebruiker aangemaakt, ingest-fout, backup mislukt, wekelijkse
+      samenvatting). Op de VPS is een eigen SMTP-relay of een externe
+      transactionele dienst allebei mogelijk; beslissen bij de VPS-inrichting
+      (SPF/DKIM regelen). _(vraag van Mark, september 2026; M)_
 - [x] ~~**Backups**~~ — gedaan in 0.11.0: `npm run backup` (hele bitemporale
       historie + users + assets, retentie 14, Node-only dus Plesk-Scheduled-
       Task-klaar); zie [backups.md](backups.md). Nog te doen: de dagelijkse

@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Composition root per site (Fase 1, opdracht C)**: nieuw package
+  `@imprint/extension-api` met `defineImprint()`/`createImprint()`. Elke site
+  beschrijft zichzelf in `imprint.config.ts` (id, backend-URL + contentmap,
+  widgetcatalogus, sessiecookie, assets); `src/lib/content.ts` maakt daar de
+  instantie van en `auth.ts`/`assets.ts` halen cookie, users en asset-store
+  uit die instantie in plaats van uit losse modules en env-reads. MusicBrain
+  en de Imprint-site starten nu vanuit hetzelfde configuratiecontract; gedrag
+  ongewijzigd (cookienaam blijft `imprint_session`). `openContentDatabase()`
+  levert nu ook de `DbUserStore` (MariaDB), zodat de seed geen tweede pool
+  meer opent.
 - **Fix: koude compile van MusicBrain duurde minuten** — Tailwind v4 scande
   ook de `.glb`-3D-modellen en honderden SVG's in `public/` en `.assets/` op
   class-namen (>2 min en >10 GB per compile, Turbopack-timeouts in dev en

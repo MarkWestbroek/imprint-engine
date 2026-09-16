@@ -14,8 +14,6 @@ import {
   ThemeSchema,
 } from "@imprint/content-core";
 import { openContentDatabase } from "@imprint/content-core/db";
-import { createDb, type Db } from "@imprint/content-core/db-store";
-import { DbUserStore } from "@imprint/content-core/user-store";
 
 /**
  * One-time (idempotent) import: the v0 content files → database, plus the
@@ -61,7 +59,6 @@ async function main() {
   const opened = openContentDatabase(url);
   const store = opened.store;
   const by = "seed";
-  let userDb: Db | null = null;
 
   // site config
   if (want("site")) {
@@ -198,13 +195,12 @@ async function main() {
   }
 
   // first admin user — later ones go through /admin/users or `npm run user`
-  if (want("user") && opened.dialect !== "mysql") {
+  if (want("user") && !opened.users) {
     console.log("user      ! users live in MariaDB only for now (no admin on Postgres yet) — skipped");
   } else if (want("user")) {
     const name = process.env.SEED_ADMIN_USER ?? "admin";
     const password = process.env.SEED_ADMIN_PASSWORD;
-    userDb = createDb(url);
-    const userStore = new DbUserStore(userDb);
+    const userStore = opened.users!;
     if (!password) {
       console.log("user      ! SEED_ADMIN_PASSWORD empty — no admin user created");
     } else if (await userStore.get(name)) {
@@ -216,7 +212,6 @@ async function main() {
   }
 
   await opened.close();
-  await userDb?.$client.end();
   console.log("Done.");
 }
 

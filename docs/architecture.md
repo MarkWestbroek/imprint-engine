@@ -25,12 +25,12 @@ lopen bewust nog uiteen.
 | **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); renderer, API, admin, auth/PEP, studio-ops nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
 | **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
 | **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
-| **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `src/lib/content.ts` | engine + bibliotheek + precies één backend |
+| **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
 
 ```mermaid
 flowchart TB
     subgraph site["Site (per imprint)"]
-        ROOT["composition root<br/>src/lib/content.ts (straks imprint.config.ts)"]
+        ROOT["composition root<br/>imprint.config.ts → createImprint()"]
         CHROME["SiteChrome, globals.css, content/, secrets"]
     end
     subgraph lib["Bibliotheek"]
@@ -38,6 +38,7 @@ flowchart TB
         PLUG["plugins (later)"]
     end
     subgraph engine["Engine"]
+        EXT["extension-api:<br/>defineImprint / createImprint"]
         CONTRACT["contracten: schemas, ContentStore,<br/>WidgetTypeRegistry, RelationRules"]
         RT["runtime: renderer, publieke API"]
         ADM["admin/studio"]
@@ -49,10 +50,12 @@ flowchart TB
         BT["bitemporeel register (later)"]
     end
 
+    ROOT --> EXT
+    EXT -- "kiest één" --> backend
+    EXT --> CONTRACT
     ROOT --> RT
     ROOT --> ADM
     ROOT --> WIDG
-    ROOT -- "kiest één" --> backend
     CHROME --> RT
     WIDG --> CONTRACT
     PLUG --> CONTRACT
@@ -117,6 +120,37 @@ Pijlen zijn de *enige* toegestane afhankelijkheden. Concreet:
 - **"Bibliotheek" is voorlopig een verzamelnaam** voor `widgets-standard` +
   `plugin-*` (Mark, september 2026); een package-prefix (`packages/library-*`)
   pas als er meer dan twee bibliotheek-packages zijn.
+
+### Composition root (Fase 1, september 2026)
+
+Elke site beschrijft zichzelf één keer in `imprint.config.ts` met
+`defineImprint()` uit [`@imprint/extension-api`](../packages/extension-api/src/index.ts):
+
+```ts
+export default defineImprint({
+  id: "musicbrain",
+  store: { databaseUrl: process.env.DATABASE_URL, contentDir: path.join(process.cwd(), "content") },
+  widgets: widgetRegistry,                       // de catalogus (configschema's)
+  session: { cookie: "imprint_session", hours: 12 },
+  assets: { root: process.env.ASSET_ROOT, baseUrl: process.env.ASSET_BASE_URL },
+});
+```
+
+`createImprint(config)` in `src/lib/content.ts` maakt daar de levende
+instantie van (`ImprintInstance`): `store`, `writableStore` (null in
+file-modus), `users` (null zonder MariaDB), `widgets`, `assets` en
+`session`. Eén instantie per proces per id (cache op `globalThis`, dezelfde
+truc als vroeger voor de connection pool). De backend volgt het URL-schema
+via `openContentDatabase()`; geen URL = file-store op `contentDir`.
+
+Wat daarmee verschoven is: `auth.ts` haalt cookienaam, sessieduur en de
+`DbUserStore` uit de instantie; `assets.ts` de `FileAssetStore`; `content.ts`
+de stores. De 36 modules die `@/lib/content` importeren merken niets — dat
+was de eis van Fase 1 ("zonder zichtbaar gedrag te veranderen"). Het package
+is bewust framework-vrij: SiteChrome, viewers en editors blijven in de site
+tot de renderer- en admin-extractie (Fase 2 en 4) ze een getypeerd slot
+geeft. Secrets (`SESSION_SECRET`, `INGEST_TOKEN`, …) blijven in de
+omgeving en worden gelezen waar ze gebruikt worden.
 
 ### Nog open
 
@@ -726,9 +760,10 @@ MusicBrain, terwijl de volledige redactionele keten nog moet worden aangesloten.
 2. Eigen `src/widgets/registry.ts` + `components.tsx` (de catalogus mag
    compleet anders zijn dan die van musicbrain).
 3. Eigen design-tokens in `globals.css`.
-4. Store aanwijzen in `src/lib/content.ts` (eigen `content/`-map of eigen
-   database via `openContentDatabase(DATABASE_URL)` — MariaDB of Postgres,
-   het URL-schema beslist).
+4. `imprint.config.ts` schrijven (`defineImprint`: id, `store.databaseUrl`
+   + `contentDir`, widgetcatalogus, sessiecookie, assets) en in
+   `src/lib/content.ts` met `createImprint()` tot instantie maken — MariaDB
+   of Postgres, het URL-schema beslist; zonder URL de eigen `content/`-map.
 
 De kern verandert daarbij niet — dat is de kern van het ontwerp.
 
@@ -748,6 +783,7 @@ verwachtingen voor die de code nu niet waarmaakt.
 | db-store (MariaDB) | `test/db-store.test.ts` | lees- + schrijfcontract tegen `TEST_DATABASE_URL`, tabellen uit `drizzle/` |
 | db-store (Postgres) | `test/db-store.pg.test.ts` | exact dezelfde suites tegen `TEST_PG_DATABASE_URL`, tabellen uit `drizzle-pg/` |
 | backendkeuze | `test/db.test.ts` | `dialectOf()`: URL-schema → dialect |
+| composition root | `packages/extension-api/test/imprint.test.ts` | `defineImprint` weigert ongeldige config; `resolveImprint` levert file-/MariaDB-/Postgres-instantie met juiste write-side, users, sessie- en asset-defaults; `createImprint` is één instantie per id |
 | widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |
 | relaties, itinerary | `test/relations.test.ts`, `test/itinerary.test.ts` | `extractRefs`/`validateReferences`, afgeleide reis |
 | renderer-normalisatie | `sites/musicbrain/test/templates.test.ts` | `layoutRows()`: legacy template+regio's → rijen, presets |

@@ -1,8 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import { DbUserStore } from "@imprint/content-core/user-store";
+import type { DbUserStore } from "@imprint/content-core/user-store";
 import type { RoleType } from "@imprint/content-core";
-import { db } from "@/lib/content";
+import { imprint } from "@/lib/content";
 import { authorize } from "./authorize";
 
 /**
@@ -11,11 +11,12 @@ import { authorize } from "./authorize";
  * fine for the handful of users this needs (§C: "weinig users").
  */
 
-const COOKIE = "imprint_session";
-const SESSION_HOURS = 12;
+// Per instance (imprint.config.ts): cookie name and session length.
+const COOKIE = imprint.session.cookie;
+const SESSION_HOURS = imprint.session.hours;
 
 /** User CRUD for /admin/users. Null in file mode: v0 has no users table. */
-export const userStore: DbUserStore | null = db ? new DbUserStore(db) : null;
+export const userStore: DbUserStore | null = imprint.users;
 
 export type Session = { name: string; role: RoleType; exp: number };
 

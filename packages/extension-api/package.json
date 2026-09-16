@@ -1,0 +1,20 @@
+{
+  "name": "@imprint/extension-api",
+  "version": "0.10.2",
+  "private": true,
+  "description": "Composition-root contract for an Imprint instance: defineImprint()/createImprint(). Framework-free; the one place a site chooses backend, widget catalogue and instance settings.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@imprint/content-core": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "typescript": "^5"
+  }
+}
