@@ -788,23 +788,56 @@ flowchart LR
 ## 7. Nieuwe site ("imprint") toevoegen
 
 De repository bevat naast MusicBrain een tweede site onder `sites/imprint`:
-de publieke productsite van Imprint zelf. De siteconfig loopt via de
-`ContentStore`: lokaal met een eigen `DATABASE_URL` naar de aparte
-**Postgres**-database `imprint` (de tweede backend, §4), zonder URL via de
-eigen `content/`-map. De publieke routes
-zijn statisch; hun overige inhoud staat in deze eerste versie nog in code en
-er is nog geen admin. Daarmee zijn opslag en identiteit al geïsoleerd van
-MusicBrain, terwijl de volledige redactionele keten nog moet worden aangesloten.
+de publieke productsite van Imprint zelf. Ze draait op een eigen
+**Postgres**-database (`DATABASE_URL`, §4), zonder URL op de eigen
+`content/`-map, en deelt met MusicBrain alleen de engine-packages. De vaste
+routes (`/`, `/mogelijkheden`, `/praktijk`, `/merk`) zijn code; alle andere
+pagina's komen uit de contentstore en lopen door dezelfde engine-renderer als
+MusicBrain, met een eigen selectie van acht standaardwidgets. Dat was het
+exitcriterium van Fase 2. Een admin heeft de site nog niet (Fase 3).
 
-1. `sites/<naam>/` scaffolden (Next.js), `@imprint/content-core` als
-   dependency.
-2. Eigen `src/widgets/registry.ts` + `components.tsx` (de catalogus mag
-   compleet anders zijn dan die van musicbrain).
-3. Eigen design-tokens in `globals.css`.
-4. `imprint.config.ts` schrijven (`defineImprint`: id, `store.databaseUrl`
-   + `contentDir`, widgetcatalogus, sessiecookie, assets) en in
-   `src/lib/content.ts` met `createImprint()` tot instantie maken — MariaDB
-   of Postgres, het URL-schema beslist; zonder URL de eigen `content/`-map.
+```mermaid
+flowchart LR
+    subgraph shared["engine + bibliotheek"]
+        REN["@imprint/runtime-admin<br/>PageRenderer"]
+        STD["@imprint/widgets-standard"]
+    end
+    subgraph mb["sites/musicbrain"]
+        MBC["catalogus<br/>20 standaard + 10 domein"]
+        MBDB[("MariaDB")]
+    end
+    subgraph imp["sites/imprint"]
+        IMC["catalogus<br/>8 standaard"]
+        IMDB[("Postgres")]
+    end
+    MBC -. kiest .-> STD
+    IMC -. kiest .-> STD
+    MBC --> REN
+    IMC --> REN
+    MBDB -- ContentStore --> REN
+    IMDB -- ContentStore --> REN
+```
+
+Stappen voor een nieuwe site:
+
+1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,
+   `@imprint/extension-api`, `@imprint/runtime-admin` en
+   `@imprint/widgets-standard` als dependencies en in `transpilePackages`.
+2. Catalogus samenstellen: `src/widgets/registry.ts` kiest schema's uit
+   `standardWidgets` (plus eventuele eigen widgets), `src/widgets/components.tsx`
+   de bijbehorende viewers uit `standardViewers`.
+3. `imprint.config.ts` schrijven (`defineImprint`: id, `store.databaseUrl` +
+   `contentDir`, `widgets: widgetRegistry`, sessiecookie, assets) en in
+   `src/lib/content.ts` met `createImprint()` tot instantie maken. MariaDB of
+   Postgres: het URL-schema beslist.
+4. `src/lib/widget-context.ts` voor de `WidgetContext`, en een route die
+   `PageRenderer` met de eigen viewers en die context aanroept; zie
+   `sites/imprint/src/app/[...slug]/page.tsx`.
+5. Huisstijl in `globals.css`: het tokencontract van de standaardwidgets (§3)
+   vullen met het eigen palet, de classes `eyebrow` en `markdown`, en een
+   `@source` per engine-package. Eigen globale elementregels horen in
+   `@layer base`: buiten een laag overschrijven ze élke Tailwind-utility, dus
+   ook die van de widgets.
 
 De kern verandert daarbij niet — dat is de kern van het ontwerp.
 

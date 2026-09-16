@@ -6,8 +6,16 @@ De publieke routes zijn statisch en de siteconfig loopt via `ContentStore`.
 Lokaal gebruikt de site een eigen **Postgres**-database via zijn eigen
 `DATABASE_URL` (`postgres://…`, de tweede backend achter `ContentStore`);
 zonder die variabele valt hij terug op `content/`. Hij deelt nadrukkelijk
-niet de contentdatabase van MusicBrain (die op MariaDB blijft). De overige
-pagina-inhoud staat in deze eerste versie nog in code en er is nog geen admin.
+niet de contentdatabase van MusicBrain (die op MariaDB blijft). De vaste
+routes (`/`, `/mogelijkheden`, `/praktijk`, `/merk`) staan in code. Alle andere
+pagina's komen uit de contentstore en lopen door dezelfde engine-renderer als
+MusicBrain (`src/app/[...slug]/page.tsx`), met acht zelfgekozen
+standaardwidgets (`src/widgets/`). De site heeft nog geen admin.
+
+De standaardwidgets gebruiken design-tokens (`background`, `surface`, `line`,
+`foreground`, `muted`, `accent`, `accent-strong`, `accent-2`) en de classes
+`eyebrow` en `markdown`; `src/app/globals.css` vult die met het Imprint-palet.
+Zie architecture.md §3 en §7.
 
 Eigen database lokaal inrichten (`npm run db:up` start de Postgres-container
 op poort 5433 en maakt de database `imprint` aan):
@@ -16,8 +24,12 @@ op poort 5433 en maakt de database `imprint` aan):
 npm run db:up
 npm run db:migrate:pg
 DATABASE_URL=postgres://imprint:imprint-dev@localhost:5433/imprint \
-	npm run db:seed -- --site=imprint --only=site
+	npm run db:seed -- --site=imprint --only=site,page
 ```
+
+De voorbeeldpagina `content/pages/techniek.json` is dan bereikbaar op
+http://localhost:3100/techniek. Pagina's staan als `en` in de store, ook al is
+de site Nederlandstalig: Engels is nog de basistaal (backlog).
 
 Zet dezelfde URL in `sites/imprint/.env.local` (zie `.env.example`).
 

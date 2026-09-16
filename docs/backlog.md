@@ -168,7 +168,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] **C. Fase 1** (september 2026): `@imprint/extension-api` met
         `defineImprint()`/`createImprint()`; `imprint.config.ts` in beide
         sites, `content.ts`/`auth.ts`/`assets.ts` lezen uit de instantie.
-      - [~] **Fase 2** — renderer + standaardwidgets naar de engine; viewers
+      - [x] **Fase 2** — renderer + standaardwidgets naar de engine; viewers
         krijgen een expliciete `WidgetContext`; `chrome`, viewers en editors
         krijgen dan hun slot in `ImprintConfig`. _(L)_
         - [x] Stap 1, renderer vastgelegd (september 2026): golden HTML van
@@ -193,9 +193,24 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           naar Fase 4, waar de studio ze nodig heeft. Viewers blijven een
           sitebinding (`src/components/page-renderer.tsx`), omdat
           `extension-api` framework-vrij blijft.
-        - [ ] Stap 5, het exitcriterium van Fase 2: de Imprint-site rendert
-          een databasepagina met dezelfde renderer en een eigen, kleinere
-          widgetselectie.
+        - [x] Stap 5, het exitcriterium (september 2026): de Imprint-site
+          rendert `/techniek` uit Postgres of `content/` met dezelfde
+          renderer en acht gekozen standaardwidgets; tokencontract gevuld met
+          het Imprint-palet.
+        - [ ] **Basistaal per site** — de store gebruikt Engels als basis
+          (`pickLang`), dus de Nederlandstalige Imprint-site moet haar
+          pagina's als `en` opslaan om ze zonder taalparameter te tonen. Een
+          `defaultLocale` uit de siteconfig als basis maakt dat recht. _(S9; M)_
+        - [ ] **Viewers per widget importeerbaar** — `standardViewers` is één
+          object, dus elke site bundelt alle twintig viewers en hun
+          client-eilanden, ook als ze er acht kiest. Losse exports per widget
+          laten de bundler de rest weglaten. _(S)_
+        - [ ] **CSS-dekking ook voor de Imprint-site** — de golden-HTML- en
+          CSS-dekkingstests bestaan alleen voor MusicBrain; de Imprint-CSS is
+          bij stap 5 met de hand gecontroleerd. Het harnas delen zodra een
+          tweede site het nodig heeft. _(S)_
+        - [ ] **Navigatie van de Imprint-site uit de contentstore** — het menu
+          is nog code, dus `/techniek` is alleen via de URL bereikbaar. _(S)_
       - [ ] **Secrets in de config?** — `SESSION_SECRET`, `INGEST_TOKEN`,
         `GITHUB_WEBHOOK_SECRET`, `PUBLISH_*` worden nog gelezen waar ze
         gebruikt worden; bij de admin-extractie (Fase 3) via

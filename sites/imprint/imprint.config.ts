@@ -1,12 +1,12 @@
 import path from "node:path";
-import { WidgetTypeRegistry } from "@imprint/content-core";
 import { defineImprint } from "@imprint/extension-api";
+import { widgetRegistry } from "@/widgets/registry";
 
 /**
  * The Imprint product site — the instance description (architecture.md §0).
  * Runs on Postgres via DATABASE_URL (`postgres://…`), on `content/` without.
- * No widget catalogue yet: pages are still code; the shared renderer and
- * admin arrive with the next phases.
+ * The hand-built routes are code; pages from the store render through the
+ * engine renderer with this site's own widget selection (src/widgets/).
  */
 export default defineImprint({
   id: "imprint",
@@ -14,5 +14,5 @@ export default defineImprint({
     databaseUrl: process.env.DATABASE_URL,
     contentDir: path.join(process.cwd(), "content"),
   },
-  widgets: new WidgetTypeRegistry(),
+  widgets: widgetRegistry,
 });

@@ -538,8 +538,8 @@ instanties werkelijk scheiden".
 | 0 — Architectuurcontract | **klaar**: vier lagen en afhankelijkheidsregels, besluiten, karakterisatietests (`d7b1606`) | [architecture.md](../architecture.md) §0 en §8 |
 | extra — Postgres naast MariaDB | **klaar**: `PgContentStore` op dezelfde basis als MariaDB, door dezelfde contractsuites (`d7b1606`) | architecture.md §4 |
 | 1 — Composition root | **klaar**: `@imprint/extension-api`, `imprint.config.ts` in beide sites (`3930ffb`) | architecture.md §0 |
-| 2 — Renderer en standard widgets | **bezig**: stap 4 van 5 klaar. Renderer vastgelegd in golden HTML (`933de2c`); renderer en layouthelpers naar `@imprint/runtime-admin` (`231abc1`); viewers krijgen een `WidgetContext` (`d04aa40`); twintig standaardwidgets naar `@imprint/widgets-standard`. Nog: de Imprint-site rendert een databasepagina | backlog; architecture.md §3 en §8 |
-| 3 — Generieke adminbasis | open; voorwaarden staan in de backlog | |
+| 2 — Renderer en standard widgets | **klaar**: renderer vastgelegd in golden HTML (`933de2c`); renderer en layouthelpers naar `@imprint/runtime-admin` (`231abc1`); viewers krijgen een `WidgetContext` (`d04aa40`); twintig standaardwidgets naar `@imprint/widgets-standard` (`0069778`); de Imprint-site rendert databasepagina's met acht daarvan | architecture.md §3, §7 en §8; backlog |
+| 3 — Generieke adminbasis | **volgende**; voorwaarden staan in de backlog | |
 | 4 — Studio en widgeteditors | open | |
 | 5 — Eerste echte plugins | open | |
 | 6 — Hardening | open | |

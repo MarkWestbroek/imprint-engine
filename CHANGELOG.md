@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 2 afgerond: de Imprint-site rendert pagina's uit de database
+  (stap 5)**: `sites/imprint` heeft een catch-all-route die pagina's uit de
+  contentstore toont (Postgres, of `content/` zonder database) via dezelfde
+  engine-renderer als MusicBrain, met een eigen selectie van acht
+  standaardwidgets. De huisstijl vult het tokencontract van de
+  standaardwidgets met het Imprint-palet; de globale basisregels van de site
+  staan nu in Tailwinds base-laag, zodat ze widget-utilities niet
+  overschrijven. Een voorbeeldpagina `/techniek` staat in `content/` en in de
+  lokale Postgres-database; een test bewaakt de widgetselectie en de
+  weergave. MusicBrain ongewijzigd (routetabel identiek).
 - **Standaardwidgets als bibliotheek (Fase 2, stap 4)**: de twintig widgets
   zonder domeinkennis (tekst, tabel, afbeelding, galerij, carrousel, album,
   kaart, kanban, hero, video, accordeon, scheiding, specs, posts, template,

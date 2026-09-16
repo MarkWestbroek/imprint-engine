@@ -1,0 +1,106 @@
+{
+  "slug": "techniek",
+  "title": "Zo rendert Imprint deze pagina",
+  "description": "Een pagina uit de database, opgebouwd uit widgets en gerenderd door dezelfde motor als MusicBrain.",
+  "publishedAt": "2026-09-16",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Deze pagina komt uit de *database*.",
+                  "subtitle": "Geen handgeschreven route, maar rijen, vakken en widgets, gerenderd door dezelfde engine als MusicBrain.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Wat hier gebeurt",
+                  "markdown": "De route leest deze pagina via de `ContentStore`: uit Postgres als `DATABASE_URL` is gezet, anders uit de map `content/`. De engine-renderer legt de rijen en vakken uit en geeft elke widget zijn configuratie en een `WidgetContext` mee.\n\nDeze site gebruikt acht standaardwidgets. De domeinwidgets van MusicBrain, zoals planning en board-specs, kent ze niet: een pagina die ze toch gebruikt, geeft bij het lezen een duidelijke fout."
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "specs",
+                "config": {
+                  "items": [
+                    { "value": "1", "label": "renderer" },
+                    { "value": "2", "label": "sites" },
+                    { "value": "8", "label": "widgets hier" }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "title": "Wie levert wat",
+                  "headers": ["Laag", "Levert"],
+                  "rows": [
+                    ["Engine", "renderer, contracten en opslaghistorie"],
+                    ["Bibliotheek", "de standaardwidgets"],
+                    ["Backend", "Postgres of MariaDB, achter hetzelfde contract"],
+                    ["Site", "merk, navigatie, widgetkeuze en inhoud"]
+                  ]
+                }
+              },
+              {
+                "type": "accordion",
+                "config": {
+                  "title": "Vragen",
+                  "items": [
+                    {
+                      "title": "Waarom geen gewone code?",
+                      "markdown": "Omdat een redacteur zo'n pagina straks in de studio samenstelt, zonder nieuwe release."
+                    },
+                    {
+                      "title": "Ziet dit er op elke site hetzelfde uit?",
+                      "markdown": "Nee. De widgets gebruiken de design-tokens van de site; het merk blijft van Imprint."
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Broncode",
+                  "markdown": "De engine, de bibliotheek en beide sites zijn open source.",
+                  "buttonLabel": "Bekijk de code",
+                  "buttonUrl": "https://github.com/MarkWestbroek/imprint-engine"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

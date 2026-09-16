@@ -3,8 +3,12 @@
 - Projectnaam is **Imprint**: één publicatie-motor, sites zijn "imprints"
   (de map heet mogelijk nog CMS2026; de naam in code/docs is Imprint).
 
-- npm-workspaces-monorepo: `packages/content-core` (schemas + ContentStore),
-  `sites/musicbrain` (Next.js 16, App Router, Tailwind v4). Requirements in
+- npm-workspaces-monorepo. Packages: `content-core` (schema's, ContentStore,
+  backends), `extension-api` (composition root: `defineImprint`),
+  `runtime-admin` (renderer, `WidgetContext`; later de gedeelde admin) en
+  `widgets-standard` (bibliotheek: standaardwidgets). Sites:
+  `sites/musicbrain` (Next.js 16, App Router, Tailwind v4, MariaDB) en
+  `sites/imprint` (productsite, Postgres). Requirements in
   `docs/website-requirements.md` zijn leidend (eisnummers W*/S* worden in
   code-comments aangehaald).
 - Sites praten uitsluitend via de `ContentStore`-interface

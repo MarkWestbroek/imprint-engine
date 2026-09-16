@@ -7,11 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "TSX_TSCONFIG_PATH=tsconfig.test.json node --import tsx --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\""
   },
   "dependencies": {
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
+    "@imprint/runtime-admin": "*",
+    "@imprint/widgets-standard": "*",
     "lucide-react": "^0.468.0",
     "next": "^16.2.10",
     "react": "^19.2.4",
