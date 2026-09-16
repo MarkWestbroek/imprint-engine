@@ -231,11 +231,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         publiek werkt zonder PDP en blijft statisch; `members` gaat op in
         `beperkt` (besluit Mark). Ontwerp §4.3. _(M)_
       - [ ] **Spoor register: Imprint op een gegenereerd register** —
-        contentmodel in V3 en het canonieke model, register genereren en als
+        contentmodel in V3 en het canonieke model (bron van waarheid; de
+        eerste versie uit de zod-schema's), register genereren en als
         container draaien, `BitempContentStore` door de contractsuites,
         migratie met droogloop; eerst de Imprint-site. Ontwerp §3. _(L)_
       - [ ] **Voorwaarden in Omnium voor het register** — echte formele tijd,
-        historie inlezen, bevragen op materiële tijd, apart register per
+        historie inlezen, materiële tijd als tijdstip en bevraagbaar, de
+        gebruiker vastleggen bij een registratie, apart register per
         toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en
         item, standaard weigeren. Werk in Omnium; ontwerp §3.3.
       - [ ] **Tijdreislekken dichten** — `getSiteConfig()` zonder

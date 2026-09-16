@@ -1,6 +1,7 @@
 # Ontwerp Fase 3 — gedeelde admin, toegang, register en de site in de tijd
 
-Status: **ontwerp met besluiten**, 16 september 2026 (tweede versie).
+Status: **ontwerp met besluiten**, 16 september 2026 (derde versie, met de
+antwoorden van Mark op de open vragen).
 Besluiten van Mark zijn als zodanig gemarkeerd; wat nog open is, staat in
 §11. Dit document werkt Fase 3 uit het
 [revisievoorstel](engine-instance-plugin-architectuur.md) (§10 en §12)
@@ -43,6 +44,10 @@ komen dan mee als eigenschappen van dat register.
 | formulieren | Omnium-formulierdefinities; niet zelf verzinnen | besloten (Mark); §5 |
 | lijsten | Omnium-lijstdefinities en het REST-lijstcontract | besloten (Mark); §6 |
 | contenttypen | eigen catalogus, uit het model | besloten (Mark); §7 |
+| bron van waarheid | het canonieke model; zod-schema's worden daarvan afgeleid. De eerste versies ontstaan andersom, uit zod | besloten (Mark); §3.4 |
+| tijd | beide tijdassen als datum-tijd; het principe vraagt alleen lineaire tijd | besloten (Mark); §3.4 |
+| modelwijzigingen | een groeiend model is geen probleem voor tijdreizen; een brekende wijziging vraagt, net als code, eerst een downgrade | besloten (Mark); §8.2 |
+| gebruikers | aanmelden in het eigen systeem; gebruikers als tabel in dezelfde database; de registratie legt de redacteur vast; geen single sign-on; één gebruikersbestand pas bij multisite op één engine, lage prioriteit | besloten (Mark); §4.2 |
 | de site in de tijd | configuratie, inhoud en vormgeving bitemporeel; code en omgeving niet | principe besloten (Mark); §8 |
 | widgetversies | brekende wijziging = nieuwe hoofdversie of nieuwe widget | richting (Mark); §9 |
 | media en formulieren | als plugin; Fase 3 maakt er ruimte voor | besloten (Mark); §10 |
@@ -144,7 +149,8 @@ Gemeten in de code, september 2026. Dit is werk in Omnium, niet in Imprint.
 | echte formele tijd | het registratietijdstip is synthetisch: 1 januari 2026 plus een uur per registratienummer (`handlers/registration_core.go`) | tijdreizen op formele tijd, en elke gewone save |
 | historie inlezen met oude formele tijd | niet mogelijk, volgt uit het vorige punt | migratie zonder verlies van de versiegeschiedenis |
 | bevragen op materiële tijd | backlog B31, niet gebouwd | `asOf` op geldigheid: geplande publicatie en "site zoals op datum X" |
-| precisie van materiële tijd | alleen een datum (`datum DATE`) | Imprint legt geldigheid nu vast tot op de milliseconde; zie §11 |
+| materiële tijd als tijdstip | alleen een datum (`datum DATE`) | Imprint legt geldigheid tot op de milliseconde vast; besluit: beide tijdassen als datum-tijd (§3.4) |
+| de registratie legt de gebruiker vast | `Registratie` heeft geen gebruikersveld, alleen verzoek, pad en antwoord voor audit (`model/model_plumbing.go`); een tabel `Gebruiker` bestaat wel | de redacteur is degene die registreert (§4.2); Imprint legt nu `created_by` vast |
 | een apart register per toepassing | niet als functie; codegen schrijft in dezelfde Go-module, dus nu een kopie van de repository | een Imprint-register met alleen Imprint-domeinen, eigen image, eigen releases |
 | schemawijzigingen uitvoeren | bij het starten worden alleen ontbrekende tabellen gemaakt; migratie-SQL uit de diff wordt niet uitgevoerd | elk nieuw veld op een contenttype na de eerste uitrol |
 | bulkimport | gepland als backlog N4; nu alleen replay via de UI | migratie van duizenden versies |
@@ -159,16 +165,22 @@ Hier zitten de echte ontwerpvragen (§11):
   JSON-document. Het register modelleert entiteiten met gegevenselementen en
   relaties. Diepe structuren zoals de paginaopbouw (rijen, vakken, widgets)
   blijven waarschijnlijk een JSON-veld; eenvoudige velden worden echte velden.
+  Nog open; Mark denkt erover na.
 - **Relaties.** Imprint heeft zachte slug-verwijzingen met RelationRules als
   bewerkbare content. Het register kent relaties met foreign keys. Harde
   relaties zijn strenger; dat verandert wat een redacteur mag opslaan.
 - **Taal.** Imprint heeft per item een `lang` met een overlay op Engels. In
   het register is dat een ontwerpkeuze: een gegevenselement per taal, of een
   taalveld.
-- **Bron van waarheid.** Nu zijn de zod-schema's de bron, en V3 wordt eruit
-  geëxporteerd. Met een register wordt het canonieke model de bron, en zijn
-  zod-schema's afgeleid of vervangen door de validatie van het register.
-  Dit is ook het open punt in `docs/imprint-contentmodel-v3.md`.
+- **Bron van waarheid (besluit Mark).** Het canonieke model wordt de bron;
+  zod-schema's worden daarvan afgeleid, of vervangen door de validatie van het
+  register. De eerste versies ontstaan juist andersom: V3 wordt uit de huidige
+  zod-schema's geëxporteerd en in Studio ingelezen. Daarmee is ook het open
+  punt in `docs/imprint-contentmodel-v3.md` beantwoord.
+- **Tijd (besluit Mark).** Voor het bitemporele principe maakt de eenheid van
+  tijd niet uit, zolang de tijd lineair is: één dimensie. Een site staat in
+  deze wereld online, dus beide tijdassen worden een gewone datum-tijd. Voor
+  Omnium betekent dat materiële tijd als tijdstip, niet alleen als datum.
 
 ### 3.5 Migreren
 
@@ -228,6 +240,14 @@ Met het register als achterkant zit de achterkant-PEP al in Omnium
 (`middleware/authz_pep.go`, via `authz/authzen_client.go` naar een
 OpenFTV-sidecar). Imprint moet dan de identiteit van de gebruiker doorgeven,
 zodat de achterkant-PDP het echte subject ziet en niet een servicerekening.
+
+**Gebruikers (besluit Mark).** Gebruikers melden zich aan in het eigen
+systeem. Hun gegevens staan als tabel in dezelfde database; in het register is
+dat `Gebruiker`. De redacteur is degene die content registreert, dus elke
+registratie legt vast wie registreerde. Het register doet dat nog niet
+(§3.3). Single sign-on en gebruikers uit andere registers zijn nu geen doel.
+Pas bij multisite op één engine kan één gebruikersbestand zinvol worden, en dat
+heeft lage prioriteit.
 
 ### 4.3 Publiek en beperkt (besluit Mark)
 
@@ -395,15 +415,23 @@ instantie en kijkt daar naar de oude inhoud, vormgeving en configuratie.
 |---|---|---|---|---|
 | omgeving | databaselocatie, secrets, assetmap | omgevingsvariabelen | nee | nooit |
 | code | engine, plugins, widgets, gegenereerd register | git, versietags, images | nee | nee; oud = oude instantie |
-| model | contenttypen, velden, relaties | zod-schema's in git | nee | het canonieke model; zie §11 |
+| model | contenttypen, velden, relaties | zod-schema's in git | nee | het canonieke model, met versies; groeien kan, brekend vraagt een downgrade |
 | configuratie | actieve catalogus, formulier- en lijstdefinities, toegangsbeleid, relatieregels, aliassen | deels content, deels code | deels | ja |
 | vormgeving | thema's, menu's, default views; SiteChrome-varianten | deels content, chrome in code | deels | ja, voor wat configureerbaar is |
 | inhoud | pagina's, producten, releases | content | ja | ja |
 
-Het model staat bewust apart. In Omnium zijn schemaversies (`schema_versies`)
-niet bitemporeel, en Studio-modellen staan nog in `localStorage`
-(Omnium-backlog §27.2). Of een modelwijziging in de tijdlijn hoort, of net als
-code een nieuwe instantie vraagt, is een open vraag.
+Het model staat bewust apart (besluit Mark):
+
+- **Een model dat groeit**, zoals Imprint 1.2 ten opzichte van 1.1, is geen
+  probleem voor tijdreizen. Oude content gebruikt het nieuwe deel van het model
+  niet, en nieuwe content het verdwenen deel niet.
+- **Een brekende modelwijziging** breekt het vermogen om terug te reizen tot
+  vóór die wijziging. Dat is niet anders dan bij code: eerst het systeem
+  downgraden, dan terugkijken.
+
+Dat is hetzelfde principe als bij widgetversies (§9). In Omnium zijn
+schemaversies (`schema_versies`) overigens nog niet bitemporeel, en
+Studio-modellen staan nog in `localStorage` (Omnium-backlog §27.2).
 
 ### 8.3 Ontwerpregel: beschikbaar in code, actief in de tijd
 
@@ -497,42 +525,45 @@ bitemporele store vanwege de AVG.
 | spoor | wat | waar |
 |---|---|---|
 | toegang | twee OpenFTV-sidecars, HTTP-adapter, weigeren bij onbereikbare PDP voor beperkt en schrijven, correlatie met het logboek | Imprint; M–L |
-| register, voorwaarden | echte formele tijd, historie inlezen, bevragen op materiële tijd, apart register per toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en item, standaard weigeren | Omnium; §3.3 |
+| register, voorwaarden | echte formele tijd, historie inlezen, materiële tijd als tijdstip en bevraagbaar, gebruiker bij de registratie, apart register per toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en item, standaard weigeren | Omnium; §3.3 |
 | register, Imprint | contentmodel in V3 en in het canonieke model; Imprint-register genereren; `BitempContentStore` door de contractsuites; migratie met droogloop; eerst de Imprint-site | Imprint en Omnium; L |
 | tijdreizen | de drie leesreparaties (§8.4); later Fase 7 | Imprint; 3 × S, dan L |
 
 ### 11.3 Open vragen
 
-1. **Opzet van Fase 3.** In één keer, of in twee helften: eerst login, lijst,
+1. **Volgorde register en Fase 3.** Eerst Fase 3 op de huidige opslag en dan
+   het register, of het register eerder, zodat formulieren, lijsten en
+   configuratie meteen uit het register komen? Mark denkt hierover na.
+2. **JSON of structuur** (§3.4). Welke delen worden echte velden in het
+   register, en welke blijven een JSON-veld, zoals de paginaopbouw? Mark denkt
+   hierover na.
+3. **Relaties en taal** (§3.4). Zachte verwijzingen of relaties met foreign
+   keys? Taal als gegevenselement per taal, of als veld?
+4. **Opzet van Fase 3.** In één keer, of in twee helften: eerst login, lijst,
    bewerken en historie; dan gebruikers, relaties, menu's, thema's en
    modeloverzichten?
-2. **PAP.** Nu OpenFTV-beheer met Rego-bundels, later het Register
+5. **PAP.** Nu OpenFTV-beheer met Rego-bundels, later het Register
    Toegangsbeleid uit het bitemporele register?
-3. **Login en identiteit.** Blijft een eigen wachtwoordlogin voldoende, of moet
-   het subject-ontwerp al rekening houden met OIDC of een federatieve login?
-   En hoe krijgt het register de identiteit van de gebruiker mee: een token van
-   Imprint, of één gedeelde login met het register?
-4. **Volgorde register en Fase 3.** Eerst Fase 3 op de huidige opslag en dan
-   het register, of het register eerder, zodat formulieren, lijsten en
-   configuratie meteen uit het register komen?
-5. **Afbeelding op het register** (§3.4): paginaopbouw als JSON-veld? Zachte
-   verwijzingen of relaties met foreign keys? Taal als gegevenselement per taal
-   of als veld?
-6. **Bron van waarheid voor het model.** Het canonieke model, met zod-schema's
-   daarvan afgeleid? En in de overgang: V3 uit zod exporteren, of vanaf nu in
-   Studio tekenen?
-7. **Precisie van materiële tijd.** Volstaat een datum voor geldigheid, of
-   moet het register tijdstippen kunnen vastleggen?
-8. **Het model in de tijd.** Hoort een modelwijziging in de tijdlijn, of vraagt
-   die net als code een nieuwe instantie?
-9. **Configuratie in de tijd.** Een nieuwe Fase 7, of verweven in Fase 3 tot en
-   met 5? En de drie leesreparaties nu al doen?
-10. **Widgetversies.** De hoofdversie per widgetinstantie opslaan? Oude
-    hoofdversies naast nieuwe laten bestaan?
-11. **Tijdreis naar een verdwenen widget.** Een melding in de preview, terwijl
-    opslaan en bouwen hard blijven falen?
-12. **Lijstdefinities.** Al in Fase 3 in de vorm van `WeergaveDefinitie`, of
-    pas met het register?
+6. **Configuratie in de tijd.** Een nieuwe Fase 7, of verweven in Fase 3 tot en
+   met 5? En de drie leesreparaties uit §8.4 nu al doen?
+7. **Widgetversies.** De hoofdversie per widgetinstantie opslaan? Oude
+   hoofdversies naast nieuwe laten bestaan?
+8. **Tijdreis naar een verdwenen widget.** Een melding in de preview, terwijl
+   opslaan en bouwen hard blijven falen?
+9. **Lijstdefinities.** Al in Fase 3 in de vorm van `WeergaveDefinitie`, of
+   pas met het register?
+
+### 11.4 Beantwoord
+
+| vraag | antwoord (Mark) | verwerkt in |
+|---|---|---|
+| browsertest voor de admin-flows | ja | §11.1, stap 2 |
+| één of twee PDP's | twee: voorkant vóór het tonen, achterkant bij gegevenstoegang | §4.2 |
+| onbereikbare PDP | met `publiek` of `beperkt` op alle content werkt publieke content zonder PDP | §4.3 |
+| bron van waarheid voor het model | het canonieke model; de eerste versies ontstaan andersom | §3.4 |
+| precisie van tijd | datum-tijd is prima; het principe vraagt alleen lineaire tijd | §3.4 |
+| het model in de tijd | groeien is geen probleem; een brekende wijziging vraagt eerst een downgrade | §8.2 |
+| login en identiteit | eigen systeem, gebruikers in dezelfde database, de registratie legt de redacteur vast; single sign-on en één gebruikersbestand later, lage prioriteit | §4.2 |
 
 ## Bronnen
 
