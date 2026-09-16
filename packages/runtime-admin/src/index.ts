@@ -4,11 +4,13 @@
  * when the boundary proves stable during extraction. `./layout` is the
  * React-free subset.
  */
+export { DefaultView, viewSlugFor, viewTargetType } from "./default-view";
 export { LAYOUT_PRESETS, layoutRows } from "./layout";
 export { Markdown } from "./markdown";
 export {
   PageRenderer,
   Widget,
+  type WidgetContext,
   type WidgetViewer,
   type WidgetViewers,
   type WidgetViewProps,

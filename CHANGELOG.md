@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Viewers krijgen hun content aangereikt (Fase 2, stap 3)**: widget-viewers
+  ontvangen een `WidgetContext` (`store`, `writableStore`, `readOptions`) in
+  plaats van zelf `@/lib/content` en `next/headers` te importeren. De site
+  bouwt die context per verzoek in `src/lib/widget-context.ts`; een lintregel
+  verbiedt de oude imports in de viewer-graaf. `DefaultView` verhuisde daardoor
+  ook naar `@imprint/runtime-admin`. Golden HTML, CSS en de routetabel
+  (statisch/SSG/dynamisch) zijn ongewijzigd. De renderertests hebben geen
+  experimentele module-mocks meer nodig.
 - **Renderer naar de engine (Fase 2, stap 2)**: `PageRenderer`, `Widget`, de
   layouthelpers (`layoutRows`, `LAYOUT_PRESETS`) en `Markdown` staan nu in het
   nieuwe package `@imprint/runtime-admin`. De renderer kent geen concrete

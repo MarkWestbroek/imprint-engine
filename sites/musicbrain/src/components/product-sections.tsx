@@ -1,7 +1,6 @@
 import Link from "next/link";
-import type { BoardSpec, Component, Product, ReadOptions } from "@imprint/content-core";
-import { store, writableStore } from "@/lib/content";
-import { Markdown } from "@imprint/runtime-admin";
+import type { BoardSpec, Component, Product } from "@imprint/content-core";
+import { Markdown, type WidgetContext } from "@imprint/runtime-admin";
 import { StatusBadge } from "@/components/status-badge";
 import { BoardSpecView } from "@/components/board-spec-view";
 import { displayVersion, kindLabel } from "@/lib/format";
@@ -70,13 +69,13 @@ export function ProductSpecs({ product, title = "Specs" }: { product: Product; t
 /** A component plus any board-specs found for its versions. */
 export async function loadComponent(
   slug: string,
-  opts?: ReadOptions
+  ctx: WidgetContext
 ): Promise<{ component: Component; specs: { version: string; spec: BoardSpec }[] } | null> {
-  const component = await store.getComponent(slug, opts);
+  const component = await ctx.store.getComponent(slug, ctx.readOptions);
   if (!component) return null;
   const specs: { version: string; spec: BoardSpec }[] = [];
   for (const v of component.versions) {
-    const spec = await store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`, opts);
+    const spec = await ctx.store.getBoardSpec(v.spec ?? `${component.slug}@${v.number}`, ctx.readOptions);
     if (spec) specs.push({ version: v.number, spec });
   }
   return { component, specs };
@@ -87,15 +86,15 @@ export async function ProductComponents({
   product,
   title = "Components",
   showBoards = true,
-  opts,
+  ctx,
 }: {
   product: Product;
   title?: string;
   showBoards?: boolean;
-  opts?: ReadOptions;
+  ctx: WidgetContext;
 }) {
   const components = (
-    await Promise.all((product.components ?? []).map((c) => loadComponent(c, opts)))
+    await Promise.all((product.components ?? []).map((c) => loadComponent(c, ctx)))
   ).filter((c): c is NonNullable<typeof c> => c !== null);
   if (components.length === 0) return null;
 
@@ -142,10 +141,13 @@ export async function ProductComponents({
 export async function ProductReleases({
   product,
   title = "Releases",
+  ctx,
 }: {
   product: Product | { slug: string };
   title?: string;
+  ctx: WidgetContext;
 }) {
+  const { writableStore } = ctx;
   const releases = writableStore
     ? (await writableStore.listItems("release"))
         .filter((r) => (r.data as { product?: string }).product === product.slug)

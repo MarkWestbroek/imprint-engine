@@ -14,10 +14,8 @@ import {
   ProductReleases,
   ProductSpecs,
 } from "@/components/product-sections";
-import { store, writableStore } from "@/lib/content";
-import { readOpts } from "@/lib/preview";
 import { bucketInto, groupIntoColumns } from "@/lib/planning";
-import { Markdown } from "@imprint/runtime-admin";
+import { Markdown, type WidgetContext, type WidgetViewer, type WidgetViewers } from "@imprint/runtime-admin";
 import { StatusBadge } from "@/components/status-badge";
 import { displayVersion } from "@/lib/format";
 import { BoardCanvas } from "./board-canvas";
@@ -64,16 +62,11 @@ Mustache.escape = (text) => text;
 
 /**
  * One React component per widget type (async server components, so widgets
- * may talk to the ContentStore or fetch external data). The config each
+ * may read content through the WidgetContext `ctx` they receive, or fetch
+ * external data). The config each
  * component receives has already been validated against the schema in
  * ./registry.ts by the store.
  */
-
-type WidgetComponent = (props: {
-  config: unknown;
-  /** The content item a default-view page is about (for template/list widgets). */
-  subject?: unknown;
-}) => Promise<React.ReactNode>;
 
 function WidgetFrame({
   title,
@@ -181,12 +174,14 @@ function resolveSpecSlug(config: BoardSpecConfig, subject?: unknown): string | u
 async function BoardSpecWidget({
   config,
   subject,
+  ctx,
 }: {
   config: BoardSpecConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
   const slug = resolveSpecSlug(config, subject);
-  const spec = slug ? await store.getBoardSpec(slug, await readOpts()) : null;
+  const spec = slug ? await ctx.store.getBoardSpec(slug, ctx.readOptions) : null;
   return (
     <WidgetFrame title={config.title}>
       {spec ? (
@@ -203,10 +198,13 @@ async function BoardSpecWidget({
 async function TemplateWidget({
   config,
   subject,
+  ctx,
 }: {
   config: TemplateConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
+  const { writableStore } = ctx;
   // Data source: an explicit content item, or the page's own subject.
   let data: unknown = subject ?? {};
   if (config.type && config.slug && writableStore) {
@@ -232,7 +230,16 @@ function itemLabel(data: unknown, field?: string): string {
   return String(d.name ?? d.title ?? d.slug ?? "?");
 }
 
-async function ListWidget({ config, subject }: { config: ListConfig; subject?: unknown }) {
+async function ListWidget({
+  config,
+  subject,
+  ctx,
+}: {
+  config: ListConfig;
+  subject?: unknown;
+  ctx: WidgetContext;
+}) {
+  const { writableStore } = ctx;
   const links: { href: string; label: string }[] = [];
   const fill = (slug: string) => config.linkPattern.replace(/\{slug\}/g, slug);
   const subj = subject as Record<string, unknown> | undefined;
@@ -560,7 +567,8 @@ function Board({ title, columns }: { title?: string; columns: ViewColumn[] }) {
   );
 }
 
-async function PlanningWidget({ config }: { config: PlanningConfig }) {
+async function PlanningWidget({ config, ctx }: { config: PlanningConfig; ctx: WidgetContext }) {
+  const { writableStore } = ctx;
   if (!writableStore) {
     return (
       <WidgetFrame title={config.title}>
@@ -638,13 +646,15 @@ async function PlanningWidget({ config }: { config: PlanningConfig }) {
 async function ItineraryWidget({
   config,
   subject,
+  ctx,
 }: {
   config: ItineraryConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
   const product =
     config.product ?? (subject as { slug?: string } | undefined)?.slug;
-  const releases = product ? await store.listReleases({ product, ...(await readOpts()) }) : [];
+  const releases = product ? await ctx.store.listReleases({ product, ...ctx.readOptions }) : [];
   const itinerary = computeItinerary(releases);
 
   return (
@@ -849,8 +859,8 @@ async function SpecsWidget({ config }: { config: SpecsConfig }) {
   );
 }
 
-async function DownloadsWidget({ config }: { config: DownloadsConfig }) {
-  const releases = await store.listReleases({ project: config.project, ...(await readOpts()) });
+async function DownloadsWidget({ config, ctx }: { config: DownloadsConfig; ctx: WidgetContext }) {
+  const releases = await ctx.store.listReleases({ project: config.project, ...ctx.readOptions });
   const rows = releases
     .flatMap((r) =>
       r.downloads.map((d) => ({
@@ -888,9 +898,9 @@ async function DownloadsWidget({ config }: { config: DownloadsConfig }) {
   );
 }
 
-async function PostsWidget({ config }: { config: PostsConfig }) {
+async function PostsWidget({ config, ctx }: { config: PostsConfig; ctx: WidgetContext }) {
   const posts = (
-    await store.listPages({ prefix: config.prefix, ...(await readOpts()) })
+    await ctx.store.listPages({ prefix: config.prefix, ...ctx.readOptions })
   ).slice(0, config.limit);
   return (
     <WidgetFrame title={config.title}>
@@ -1004,10 +1014,10 @@ function Tree({ nodes }: { nodes: TreeNode[] }) {
   );
 }
 
-async function TreeviewWidget({ config }: { config: TreeviewConfig }) {
+async function TreeviewWidget({ config, ctx }: { config: TreeviewConfig; ctx: WidgetContext }) {
   let nodes = config.items;
   if (config.pagesPrefix !== undefined) {
-    const pages = await store.listPages({ prefix: config.pagesPrefix, ...(await readOpts()) });
+    const pages = await ctx.store.listPages({ prefix: config.pagesPrefix, ...ctx.readOptions });
     nodes = [...nodes, ...pagesToTree(pages)];
   }
   return (
@@ -1087,18 +1097,20 @@ async function ApiWidget({ config }: { config: ApiConfig }) {
 async function ReleasesWidget({
   config,
   subject,
+  ctx,
 }: {
   config: ReleasesConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
   // Product mode: an explicit product, or (on a default view) the subject —
   // "the releases of this product", identical to the product page's section.
   const product =
     config.product ?? (config.project ? undefined : (subject as { slug?: string } | undefined)?.slug);
   if (product) {
-    return <ProductReleases product={{ slug: product }} title={config.title ?? "Releases"} />;
+    return <ProductReleases product={{ slug: product }} title={config.title ?? "Releases"} ctx={ctx} />;
   }
-  const releases = (await store.listReleases({ project: config.project, ...(await readOpts()) })).slice(
+  const releases = (await ctx.store.listReleases({ project: config.project, ...ctx.readOptions })).slice(
     0,
     config.limit
   );
@@ -1170,9 +1182,11 @@ async function SpecTableWidget({
 async function ComponentsWidget({
   config,
   subject,
+  ctx,
 }: {
   config: ComponentsConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
   const product = subject as Product | undefined;
   if (!product?.name) return <NoSubjectHint what="Product components" />;
@@ -1181,13 +1195,13 @@ async function ComponentsWidget({
       product={product}
       title={config.title}
       showBoards={config.showBoards}
-      opts={await readOpts()}
+      ctx={ctx}
     />
   );
 }
 
-async function ProductsWidget({ config }: { config: ProductsConfig }) {
-  const products = await store.listProducts(await readOpts());
+async function ProductsWidget({ config, ctx }: { config: ProductsConfig; ctx: WidgetContext }) {
+  const products = await ctx.store.listProducts(ctx.readOptions);
   return (
     <WidgetFrame title={config.title}>
       <div className="grid gap-4 sm:grid-cols-2">
@@ -1219,35 +1233,35 @@ async function ProductsWidget({ config }: { config: ProductsConfig }) {
  * the store has validated each config against the matching schema before a
  * component ever sees it.
  */
-export const widgetComponents: Record<string, WidgetComponent> = {
-  text: TextWidget as WidgetComponent,
-  table: TableWidget as WidgetComponent,
-  image: ImageWidget as WidgetComponent,
-  gallery: GalleryWidget as WidgetComponent,
-  carousel: CarouselWidget as WidgetComponent,
-  album: AlbumWidget as WidgetComponent,
-  map: MapWidget as WidgetComponent,
-  kanban: KanbanWidget as WidgetComponent,
-  planning: PlanningWidget as WidgetComponent,
-  itinerary: ItineraryWidget as WidgetComponent,
-  hero: HeroWidget as WidgetComponent,
-  video: VideoWidget as WidgetComponent,
-  accordion: AccordionWidget as WidgetComponent,
-  divider: DividerWidget as WidgetComponent,
-  specs: SpecsWidget as WidgetComponent,
-  downloads: DownloadsWidget as WidgetComponent,
-  posts: PostsWidget as WidgetComponent,
-  board: BoardWidget as WidgetComponent,
-  boardspec: BoardSpecWidget as WidgetComponent,
-  template: TemplateWidget as WidgetComponent,
-  list: ListWidget as WidgetComponent,
-  callout: CalloutWidget as WidgetComponent,
-  embed: EmbedWidget as WidgetComponent,
-  treeview: TreeviewWidget as WidgetComponent,
-  api: ApiWidget as WidgetComponent,
-  releases: ReleasesWidget as WidgetComponent,
-  products: ProductsWidget as WidgetComponent,
-  subjectheader: SubjectHeaderWidget as WidgetComponent,
-  spectable: SpecTableWidget as WidgetComponent,
-  components: ComponentsWidget as WidgetComponent,
+export const widgetComponents: WidgetViewers = {
+  text: TextWidget as WidgetViewer,
+  table: TableWidget as WidgetViewer,
+  image: ImageWidget as WidgetViewer,
+  gallery: GalleryWidget as WidgetViewer,
+  carousel: CarouselWidget as WidgetViewer,
+  album: AlbumWidget as WidgetViewer,
+  map: MapWidget as WidgetViewer,
+  kanban: KanbanWidget as WidgetViewer,
+  planning: PlanningWidget as WidgetViewer,
+  itinerary: ItineraryWidget as WidgetViewer,
+  hero: HeroWidget as WidgetViewer,
+  video: VideoWidget as WidgetViewer,
+  accordion: AccordionWidget as WidgetViewer,
+  divider: DividerWidget as WidgetViewer,
+  specs: SpecsWidget as WidgetViewer,
+  downloads: DownloadsWidget as WidgetViewer,
+  posts: PostsWidget as WidgetViewer,
+  board: BoardWidget as WidgetViewer,
+  boardspec: BoardSpecWidget as WidgetViewer,
+  template: TemplateWidget as WidgetViewer,
+  list: ListWidget as WidgetViewer,
+  callout: CalloutWidget as WidgetViewer,
+  embed: EmbedWidget as WidgetViewer,
+  treeview: TreeviewWidget as WidgetViewer,
+  api: ApiWidget as WidgetViewer,
+  releases: ReleasesWidget as WidgetViewer,
+  products: ProductsWidget as WidgetViewer,
+  subjectheader: SubjectHeaderWidget as WidgetViewer,
+  spectable: SpecTableWidget as WidgetViewer,
+  components: ComponentsWidget as WidgetViewer,
 };

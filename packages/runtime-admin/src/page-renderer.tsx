@@ -1,5 +1,12 @@
 import type { ReactNode } from "react";
-import type { Page, PageLayout, WidgetInstance } from "@imprint/content-core";
+import type {
+  ContentStore,
+  Page,
+  PageLayout,
+  ReadOptions,
+  WidgetInstance,
+  WritableContentStore,
+} from "@imprint/content-core";
 import { layoutRows } from "./layout";
 import { Markdown } from "./markdown";
 
@@ -10,8 +17,26 @@ import { Markdown } from "./markdown";
  *
  * Engine code (architecture.md §0): it knows no concrete widget. A site hands
  * in its viewers — widget type name → component — composed from its own
- * catalogue, and usually binds them once in a thin wrapper.
+ * catalogue, and usually binds them once in a thin wrapper. Viewers read
+ * content only through the WidgetContext (`ctx`) the site builds per request.
  */
+
+/**
+ * Everything a viewer may use to read content (architecture.md §3). The site
+ * builds it once per request and hands it down, so viewers import no store
+ * singleton and no request API — which is what lets them live in packages.
+ */
+export type WidgetContext = {
+  /** Read side: what a visitor may see, filtered by `readOptions`. */
+  store: ContentStore;
+  /**
+   * Current assertions regardless of valid time (listItems/getItem); null in
+   * file mode. Used by viewers that list raw items (planning, list, template).
+   */
+  writableStore: WritableContentStore | null;
+  /** Per request: {} for visitors, asOf + drafts in the as-of preview. Spread into store reads. */
+  readOptions: ReadOptions;
+};
 
 /** What a widget viewer receives. */
 export type WidgetViewProps = {
@@ -19,6 +44,7 @@ export type WidgetViewProps = {
   config: unknown;
   /** The content item a default-view page is about (for template/list widgets). */
   subject?: unknown;
+  ctx: WidgetContext;
 };
 
 /** A widget viewer; usually an async server component. */
@@ -31,28 +57,32 @@ export function Widget({
   widget,
   subject,
   viewers,
+  ctx,
 }: {
   widget: WidgetInstance;
   subject?: unknown;
   viewers: WidgetViewers;
+  ctx: WidgetContext;
 }) {
   const Component = viewers[widget.type];
   if (!Component) {
     // Store validation should have caught this; fail loudly, not silently.
     throw new Error(`No component for widget type "${widget.type}"`);
   }
-  return <Component config={widget.config} subject={subject} />;
+  return <Component config={widget.config} subject={subject} ctx={ctx} />;
 }
 
 export function PageRenderer({
   page,
   subject,
   viewers,
+  ctx,
 }: {
   page: Page & { layout: PageLayout };
   /** The content item this page is about (default views bind widgets to it). */
   subject?: unknown;
   viewers: WidgetViewers;
+  ctx: WidgetContext;
 }) {
   const rows = layoutRows(page.layout);
   return (
@@ -76,7 +106,7 @@ export function PageRenderer({
             {row.cells.map((cell, c) => (
               <div key={c} className="min-w-0 space-y-6">
                 {cell.widgets.map((widget, w) => (
-                  <Widget key={w} widget={widget} subject={subject} viewers={viewers} />
+                  <Widget key={w} widget={widget} subject={subject} viewers={viewers} ctx={ctx} />
                 ))}
               </div>
             ))}

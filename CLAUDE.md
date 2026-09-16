@@ -27,7 +27,7 @@
   De kern (`packages/content-core/src/widgets.ts`) kent géén concrete
   widgets; elke site declareert zijn catalogus in `src/widgets/registry.ts`
   (configschema's, geen React/store-imports — de store valideert hiermee)
-  + `src/widgets/components.tsx` (viewers, server) + optioneel
+  + `src/widgets/components.tsx` (viewers, server; content alleen via de aangereikte `WidgetContext`) + optioneel
   `src/widgets/editors.tsx` (custom editor; default is het formulier uit
   het schema). Nieuwe widget = één schema + één viewer.
 - Pagina's bewerk je in de studio (`/admin/page/edit/...`): canvas met

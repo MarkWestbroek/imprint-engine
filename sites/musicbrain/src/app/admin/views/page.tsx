@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ContentType } from "@imprint/content-core";
 import { writableStore } from "@/lib/content";
-import { viewSlugFor } from "@/components/default-view";
+import { viewSlugFor } from "@imprint/runtime-admin";
 
 /**
  * Entry point for editing the per-content-type default views. Each links into

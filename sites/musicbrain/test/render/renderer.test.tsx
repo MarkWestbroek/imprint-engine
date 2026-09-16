@@ -3,37 +3,35 @@ import { before, describe, it } from "node:test";
 
 import { PageLayoutSchema, type Page, type PageLayout } from "@imprint/content-core";
 import type { MemoryContentStore } from "@imprint/content-core/memory-store";
-import type * as DefaultViewModule from "../../src/components/default-view";
-import type * as PageRendererModule from "../../src/components/page-renderer";
-import type * as SiteChromeModule from "../../src/components/site-chrome";
+import { DefaultView, PageRenderer, Widget, type WidgetContext } from "@imprint/runtime-admin";
+import { menuToNav, SiteChrome } from "../../src/components/site-chrome";
+import { widgetComponents } from "../../src/widgets/components";
 import { widgetRegistry } from "../../src/widgets/registry";
 import { buildStore, CANNED_RESPONSES, PAGE_CASES, resolveSubject, WIDGET_CASES } from "./fixtures";
-import { expectGolden, formatHtml, installRenderMocks, renderHtml, unexpectedFetches } from "./harness";
+import { expectGolden, formatHtml, installFetchMock, renderHtml, unexpectedFetches } from "./harness";
 
 /**
- * Characterisation of the public renderer (Fase 2, step 1): the HTML that
- * PageRenderer, every widget viewer, DefaultView and SiteChrome produce
- * *today*, pinned in `__golden__/`. Fase 2 moves these into the engine and
- * rewires their context; this suite is the proof that the output didn't
- * change. The store is the in-memory backend with a write side, i.e. the
- * database configuration production runs, not the file-store hint paths.
+ * Characterisation of the public renderer (Fase 2): the HTML that the engine
+ * renderer produces with MusicBrain's viewers — every widget, whole pages,
+ * default views — plus SiteChrome, pinned in `__golden__/`. Recorded before
+ * the renderer moved into the engine (step 1); every later step must leave
+ * these files untouched.
+ *
+ * The WidgetContext is the in-memory backend with a write side, i.e. the
+ * database configuration production runs, and `readOptions: {}`, i.e. what
+ * every visitor gets outside the as-of preview.
  *
  * Intended rendering change? `UPDATE_GOLDEN=1 npm test --workspace=musicbrain`
  * and review the golden diff.
  */
 
 let store: MemoryContentStore;
-let renderer: typeof PageRendererModule;
-let defaultView: typeof DefaultViewModule;
-let chrome: typeof SiteChromeModule;
+let ctx: WidgetContext;
 
 before(async () => {
   store = await buildStore();
-  installRenderMocks({ store, writableStore: store, responses: CANNED_RESPONSES });
-  // Only now, with the mocks in place, load the components.
-  renderer = await import("../../src/components/page-renderer");
-  defaultView = await import("../../src/components/default-view");
-  chrome = await import("../../src/components/site-chrome");
+  ctx = { store, writableStore: store, readOptions: {} };
+  installFetchMock(CANNED_RESPONSES);
 });
 
 const parseLayout = (layout: unknown): PageLayout => widgetRegistry.parseLayout(PageLayoutSchema.parse(layout));
@@ -51,7 +49,9 @@ describe("renderer characterisation", () => {
           // Parsed like the store does: viewers only ever see validated configs.
           const widget = widgetRegistry.parse({ type, config: c.config });
           const subject = c.subject ? await resolveSubject(store, c.subject) : undefined;
-          const html = await renderHtml(<renderer.Widget widget={widget} subject={subject} />);
+          const html = await renderHtml(
+            <Widget widget={widget} subject={subject} viewers={widgetComponents} ctx={ctx} />
+          );
           parts.push(`<!-- case: ${c.name} -->\n${formatHtml(html)}`);
         }
         await expectGolden(`widgets/${type}`, parts.join("\n"));
@@ -60,7 +60,9 @@ describe("renderer characterisation", () => {
 
     it("an unregistered widget type fails the render instead of rendering nothing", async () => {
       await assert.rejects(
-        renderHtml(<renderer.Widget widget={{ type: "does-not-exist", config: {} }} />),
+        renderHtml(
+          <Widget widget={{ type: "does-not-exist", config: {} }} viewers={widgetComponents} ctx={ctx} />
+        ),
         /No component for widget type "does-not-exist"/
       );
     });
@@ -71,7 +73,9 @@ describe("renderer characterisation", () => {
       it(c.name, async () => {
         const page = { ...c.page, layout: parseLayout(c.page.layout) } as Page & { layout: PageLayout };
         const subject = c.subject ? await resolveSubject(store, c.subject) : undefined;
-        const html = await renderHtml(<renderer.PageRenderer page={page} subject={subject} />);
+        const html = await renderHtml(
+          <PageRenderer page={page} subject={subject} viewers={widgetComponents} ctx={ctx} />
+        );
         await expectGolden(`pages/${c.name}`, formatHtml(html));
       });
     }
@@ -83,7 +87,14 @@ describe("renderer characterisation", () => {
     it("a view with its own subjectheader suppresses the page title", async () => {
       const subject = await resolveSubject(store, "product:cortex");
       const html = await renderHtml(
-        <defaultView.DefaultView type="product" subject={subject} title="Cortex" fallback={fallback} />
+        <DefaultView
+          type="product"
+          subject={subject}
+          title="Cortex"
+          fallback={fallback}
+          viewers={widgetComponents}
+          ctx={ctx}
+        />
       );
       assert.ok(!html.includes("hand-coded fallback"));
       await expectGolden("default-view/product", formatHtml(html));
@@ -92,14 +103,28 @@ describe("renderer characterisation", () => {
     it("a view without a subjectheader keeps the title", async () => {
       const subject = await resolveSubject(store, "component:adc8");
       const html = await renderHtml(
-        <defaultView.DefaultView type="component" subject={subject} title="ADC8" fallback={fallback} />
+        <DefaultView
+          type="component"
+          subject={subject}
+          title="ADC8"
+          fallback={fallback}
+          viewers={widgetComponents}
+          ctx={ctx}
+        />
       );
       await expectGolden("default-view/component", formatHtml(html));
     });
 
     it("no view page renders the hand-coded fallback", async () => {
       const html = await renderHtml(
-        <defaultView.DefaultView type="release" subject={{}} title="v0.2" fallback={fallback} />
+        <DefaultView
+          type="release"
+          subject={{}}
+          title="v0.2"
+          fallback={fallback}
+          viewers={widgetComponents}
+          ctx={ctx}
+        />
       );
       assert.equal(html, "<p>hand-coded fallback</p>");
     });
@@ -108,12 +133,12 @@ describe("renderer characterisation", () => {
   describe("SiteChrome", () => {
     it("header with menu and theme switcher, footer with links", async () => {
       const site = await store.getSiteConfig();
-      const nav = chrome.menuToNav(await store.getMenu("main"));
+      const nav = menuToNav(await store.getMenu("main"));
       const themes = await store.listThemes();
       const html = await renderHtml(
-        <chrome.SiteChrome site={site} nav={nav} themes={themes}>
+        <SiteChrome site={site} nav={nav} themes={themes}>
           <p>page content</p>
-        </chrome.SiteChrome>
+        </SiteChrome>
       );
       await expectGolden("chrome/public", formatHtml(html));
     });
@@ -121,9 +146,9 @@ describe("renderer characterisation", () => {
     it("studio mode (inert) with the fallback nav and no themes", async () => {
       const site = await store.getSiteConfig();
       const html = await renderHtml(
-        <chrome.SiteChrome site={site} nav={chrome.menuToNav(null)} inert>
+        <SiteChrome site={site} nav={menuToNav(null)} inert>
           <p>canvas</p>
-        </chrome.SiteChrome>
+        </SiteChrome>
       );
       await expectGolden("chrome/studio-inert", formatHtml(html));
     });

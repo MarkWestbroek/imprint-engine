@@ -22,7 +22,7 @@ lopen bewust nog uiteen.
 
 | laag | inhoud | staat nu in | mag afhangen van |
 |---|---|---|---|
-| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, layouthelpers, `Markdown`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
+| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, `DefaultView`, `WidgetContext`, layouthelpers, `Markdown`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
 | **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | de catalogus in `sites/musicbrain/src/widgets/` (`registry.ts`, `components.tsx`, `editors.tsx`) | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
 | **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres) + `memory-store.ts` (in geheugen, voor tests); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
 | **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
@@ -83,7 +83,8 @@ Pijlen zijn de *enige* toegestane afhankelijkheden. Concreet:
    contractsuite (§8) doorstaat; hij raakt geen paginacode.
 4. **Bibliotheek → engine-contracten, nooit een site.** Een widget importeert
    geen site-globaal storebestand en geen SiteChrome; hij krijgt zijn context
-   (store, subject) aangereikt. Een site kiest widgets **individueel** (de
+   (store, subject) aangereikt. Sinds Fase 2 is dat de `WidgetContext`,
+   afgedwongen met een lintregel in de site. Een site kiest widgets **individueel** (de
    registry werkt al per widget); een "bundel" is niet meer dan een
    gemaks-export.
 5. **Per site: eigen database, assets, secrets en sessiecookienaam.** Gedeelde
@@ -272,7 +273,7 @@ handwerk, de editor heeft een schema-gedreven default:
 | stuk | bestand | draait | rol |
 |---|---|---|---|
 | **configschema** | `src/widgets/registry.ts` | overal (geen React/store) | valideert de config; bron voor het default-editorformulier |
-| **viewer** | `src/widgets/components.tsx` | server | rendert de widget op de site (mag store/API's gebruiken) |
+| **viewer** | `src/widgets/components.tsx` | server | rendert de widget op de site; leest content via de aangereikte `ctx`, mag externe API's aanroepen |
 | **editor** | `src/widgets/editors.tsx` | client | bewerkt de config in de studio; default = formulier uit het schema, alleen overriden voor rijkere bewerking |
 
 ```mermaid
@@ -295,10 +296,19 @@ flowchart LR
     ETS -->|sidebar| STU
 ```
 
-- De **renderer** zelf (`PageRenderer`, `Widget`, `layoutRows`, `Markdown`)
-  staat sinds Fase 2 in `@imprint/runtime-admin` en kent geen concrete
-  widgets. De site bindt hem in `src/components/page-renderer.tsx` aan haar
-  eigen viewers; de rest van de site importeert die binding.
+- De **renderer** zelf (`PageRenderer`, `Widget`, `DefaultView`,
+  `layoutRows`, `Markdown`) staat sinds Fase 2 in `@imprint/runtime-admin` en
+  kent geen concrete widgets. De site bindt hem in
+  `src/components/page-renderer.tsx` en `src/components/default-view.tsx` aan
+  haar eigen viewers; de rest van de site importeert die bindingen.
+- Viewers krijgen een **`WidgetContext`** (`ctx`) mee: `store`,
+  `writableStore` (null in file-modus) en de `readOptions` van het verzoek.
+  De site bouwt die per verzoek in `src/lib/widget-context.ts`, waar ook de
+  as-of-preview (`readOpts()`) wordt uitgelezen. Viewers importeren dus geen
+  store-singleton en geen request-API meer; een `no-restricted-imports`-regel
+  in `eslint.config.mjs` houdt dat zo. Precies dat maakt ze verplaatsbaar naar
+  een package. De handgeschreven productpagina gebruikt dezelfde context voor
+  de gedeelde productsecties.
 - De **store** valideert elke widget-config tegen het geregistreerde schema:
   een kapotte widget breekt de build/save met een duidelijke fout, in plaats
   van stil verkeerd te renderen.
@@ -843,24 +853,19 @@ de chrome.
 ```mermaid
 flowchart LR
     FIX["fixtures.ts<br/>content + gevallen per widget"] --> MEM[("MemoryContentStore<br/>lees- én schrijfkant")]
-    subgraph mocks["vervangen in de test"]
-        C["@/lib/content"]
-        H["next/headers"]
-        F["fetch"]
-    end
-    MEM --> C
-    C --> VIEW["echte PageRenderer,<br/>viewers, DefaultView, SiteChrome"]
-    H --> VIEW
+    MEM --> CTX["WidgetContext<br/>lege leesopties"]
+    F["fetch<br/>vaste antwoorden"]
+    CTX --> VIEW["engine-renderer en DefaultView,<br/>MusicBrain-viewers, SiteChrome"]
     F --> VIEW
     VIEW --> HTML["HTML"] --> CMP{"gelijk aan<br/>golden?"}
 ```
 
-- **Wat vervangen wordt, zijn precies de koppelingen die Fase 2 weghaalt**:
-  `@/lib/content` (de store-singletons) wordt de geheugen-backend,
-  `next/headers` (gelezen door `readOpts()` voor de as-of-preview) zegt "geen
-  preview", en `fetch` (album- en api-widget) krijgt vaste antwoorden. Dat
-  vervangen loopt via `mock.module` van de Node-testrunner, vandaar de vlag
-  `--experimental-test-module-mocks` in het site-testscript.
+- **Geen modules vervangen**: de test geeft de viewers een `WidgetContext`
+  met de geheugen-backend en lege leesopties, precies wat een bezoeker buiten
+  de as-of-preview krijgt. Alleen `fetch` (album- en api-widget) krijgt vaste
+  antwoorden. Tot stap 3 importeerden viewers zelf `@/lib/content` en
+  `next/headers`, en moest de test die via de experimentele `mock.module`
+  vervangen; die afhankelijkheid en de vlag zijn weg.
 - **Productieconfiguratie, niet de hint-paden**: de store heeft een
   schrijfkant, dus `planning`, `list` en `template` renderen echte data zoals
   op de databasesite, in plaats van "needs the database".

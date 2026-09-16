@@ -179,8 +179,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           `layoutRows` en `Markdown`; de site bindt hem aan haar viewers.
           Golden HTML en CSS ongewijzigd. Tailwind scant het package en slaat
           `test/` over; `css-coverage.test.ts` bewaakt dat voortaan.
-        - [ ] Stap 3, viewers een expliciete `WidgetContext` (store, subject,
-          leesopties) in plaats van `@/lib/content` en `next/headers`.
+        - [x] Stap 3, viewers een expliciete `WidgetContext` (september
+          2026): `ctx` met store, schrijfkant en leesopties, per verzoek
+          gebouwd in `src/lib/widget-context.ts`; lintregel tegen de oude
+          imports; `DefaultView` mee naar de engine; module-mocks en de
+          experimentele vlag weg uit de tests.
         - [ ] Stap 4, catalogus splitsen in standaard- en domeinwidgets;
           slots voor `chrome`, viewers en editors in `ImprintConfig`.
         - [ ] Stap 5, het exitcriterium van Fase 2: de Imprint-site rendert

@@ -9,7 +9,7 @@ import { widgetRegistry, widgetCatalog } from "@/widgets/registry";
 import { Widget } from "@/components/page-renderer";
 import { Markdown } from "@imprint/runtime-admin";
 import { menuToNav, SiteChrome } from "@/components/site-chrome";
-import { viewTargetType } from "@/components/default-view";
+import { viewTargetType } from "@imprint/runtime-admin";
 import {
   AddWidgetButton,
   CellChrome,

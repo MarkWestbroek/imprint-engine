@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { store } from "@/lib/content";
-import { readOpts } from "@/lib/preview";
+import { widgetContext } from "@/lib/widget-context";
 import { DefaultView } from "@/components/default-view";
 import {
   ProductComponents,
@@ -33,8 +33,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const opts = await readOpts();
-  const product = await store.getProduct(slug, opts);
+  const ctx = await widgetContext();
+  const product = await store.getProduct(slug, ctx.readOptions);
   if (!product) notFound();
 
   const fallback = (
@@ -49,8 +49,8 @@ export default async function ProductPage({ params }: Props) {
       )}
 
       <ProductSpecs product={product} />
-      <ProductComponents product={product} opts={opts} />
-      <ProductReleases product={product} />
+      <ProductComponents product={product} ctx={ctx} />
+      <ProductReleases product={product} ctx={ctx} />
     </article>
   );
 
