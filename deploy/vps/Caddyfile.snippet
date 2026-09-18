@@ -1,0 +1,29 @@
+# Blokken voor /etc/caddy/Caddyfile op de VPS (de bron van die Caddyfile staat
+# in het Bitemporal-repo: bitemp_register_v06/deploy/vps/Caddyfile — het
+# (veilig)-snippet staat daar bovenaan). Na wijzigen: sudo systemctl reload caddy
+#
+# Zet een blok pas aan als het A-record naar de VPS wijst; anders blijft Caddy
+# vergeefs een certificaat proberen op te halen. Geen AAAA naar een
+# parkeeradres laten staan: dat breekt Let's Encrypt.
+
+musicbrain.nl {
+	import veilig
+	# Uploads via de admin en /api/ingest (board-renders, 3D-modellen).
+	request_body {
+		max_size 50MB
+	}
+	reverse_proxy 127.0.0.1:3000
+}
+
+www.musicbrain.nl {
+	redir https://musicbrain.nl{uri} permanent
+}
+
+imprint-engine.nl {
+	import veilig
+	reverse_proxy 127.0.0.1:3100
+}
+
+www.imprint-engine.nl {
+	redir https://imprint-engine.nl{uri} permanent
+}

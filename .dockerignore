@@ -1,0 +1,13 @@
+# Houd de build-context klein en secrets buiten de image.
+.git
+**/node_modules
+**/.next
+**/.assets
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.example
+backups
+doc
+docs
+*.log

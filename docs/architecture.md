@@ -782,13 +782,23 @@ flowchart LR
         NX["next dev :3000 (musicbrain)"] --> MDBL[("MariaDB 10.11<br/>docker compose, :3306")]
         NXI["next dev :3100 (imprint)"] --> PGL[("Postgres 17<br/>docker compose, :5434")]
     end
-    subgraph plesk["Plesk (prod)"]
-        PSG["Passenger → server.js<br/>(Node.js-extensie)"] --> MDBP[("MariaDB 10.11<br/>Plesk-database")]
+    subgraph vps["VPS (prod) — Caddy ervoor"]
+        CMB["container musicbrain<br/>127.0.0.1:3000"] --> PGP[("Postgres 17<br/>database per site")]
+        CIM["container imprint<br/>127.0.0.1:3100"] --> PGP
     end
     GH["GitHub (git)"]
     dev -- "push<br/>code + drizzle-migraties" --> GH
-    GH -- "pull + npm ci + build<br/>+ db:migrate" --> plesk
+    GH -- "deploy.sh: pull → db:migrate:pg<br/>→ docker build → up" --> vps
 ```
+
+- **Productie** is de VPS: git levert de bron, per site één container-image
+  (standalone Next-server), één Postgres met een database per imprint, uploads
+  op een volume, Caddy voor TLS. De compositie van een imprint is buildtime
+  (widgets, CSS), dus een deploy is een nieuwe image; content zit in de
+  database. De build leest die database (SSG) en draait daarom op de VPS.
+  Runbook en afwegingen: [deploy-vps.md](deploy-vps.md). Tot september 2026
+  was productie Plesk (Passenger → `server.js`, MariaDB); die host heeft
+  Node.js uitgezet.
 
 - **Code en schema** reizen via git: `db:generate` maakt van een wijziging
   in [db-schema.ts](../packages/content-core/src/db-schema.ts) een

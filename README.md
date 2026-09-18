@@ -250,7 +250,16 @@ vers. De file-backend schrijft naar `ASSET_ROOT` en serveert via
 `/api/assets/...`; MinIO/S3 later is een config-wissel (`.env`), geen
 herschrijving.
 
-## Deploy naar Plesk (musicbrain.nl)
+## Deploy
+
+Productie is de VPS: één container-image per site, Postgres, Caddy ervoor.
+Zie **[docs/deploy-vps.md](docs/deploy-vps.md)** (`Dockerfile` + `deploy/vps/`).
+
+## Deploy naar Plesk (musicbrain.nl) — historie
+
+> Sinds 1 september 2026 niet meer in gebruik: de shared hosting heeft Node.js
+> uitgezet. Bewaard omdat de stappen (env, seed, assets) bij de verhuizing
+> terugkomen.
 
 Model: **dezelfde repo als lokaal**, maar de app draait onder Passenger
 (Plesk Node.js-extensie) tegen een MariaDB op de server. De secrets komen uit

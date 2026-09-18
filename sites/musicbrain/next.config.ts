@@ -1,9 +1,15 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@imprint/content-core", "@imprint/extension-api", "@imprint/runtime-admin", "@imprint/widgets-standard"],
-  // Native/dynamic-require packages the server should load from node_modules.
-  serverExternalPackages: ["mysql2"],
+  // Native/dynamic-require database drivers the server loads from node_modules.
+  serverExternalPackages: ["mysql2", "pg"],
+  // Container build (Dockerfile sets NEXT_OUTPUT): a self-contained server in
+  // .next/standalone. Opt-in, so local builds and `next start` stay as they were.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+  // Trace from the monorepo root, so the workspace packages end up in the output.
+  outputFileTracingRoot: path.join(__dirname, "../../"),
 };
 
 export default nextConfig;

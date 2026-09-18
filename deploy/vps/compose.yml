@@ -1,0 +1,109 @@
+# compose.yml — Imprint op de VPS (vps1.paratmos.nl), achter Caddy op de host.
+#
+# Zelfde patroon als Omnium (/srv/omnium): geen container publiceert een poort
+# op het publieke IP. Elke site luistert op een loopback-poort; Caddy zet er
+# HTTPS voor (Caddyfile.snippet). Postgres alleen op loopback: voor de
+# SSG-build, backups en een SSH-tunnel.
+#
+#   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
+#   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
+#
+# Eén Postgres, per imprint een eigen database + rol (pg-init.sh). Eén image
+# per site uit dezelfde Dockerfile (build-arg SITE). De build leest de database
+# (SSG) via een BuildKit-secret en `network: host`; daarom bouwen we hier op de
+# VPS en niet in CI. Alles loopt via ./deploy.sh — zie docs/deploy-vps.md.
+
+name: imprint
+
+x-site: &site
+  restart: unless-stopped
+  depends_on:
+    postgres:
+      condition: service_healthy
+  networks: [imprint_net]
+
+services:
+
+  postgres:
+    image: ${POSTGRES_IMAGE:-postgres:17.5}
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD ontbreekt in .env}
+      MUSICBRAIN_DB_PASSWORD: ${MUSICBRAIN_DB_PASSWORD:?MUSICBRAIN_DB_PASSWORD ontbreekt in .env}
+      IMPRINT_DB_PASSWORD: ${IMPRINT_DB_PASSWORD:?IMPRINT_DB_PASSWORD ontbreekt in .env}
+    ports:
+      - "127.0.0.1:${PG_PORT:-5434}:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./pg-init.sh:/docker-entrypoint-initdb.d/10-imprint-databases.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [imprint_net]
+
+  musicbrain:
+    <<: *site
+    image: imprint/musicbrain:${MUSICBRAIN_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: musicbrain, BUILD_ID: "${BUILD_ID:-dev}" }
+      network: host
+      secrets: [database_url]
+    environment:
+      DATABASE_URL: postgres://musicbrain:${MUSICBRAIN_DB_PASSWORD}@postgres:5432/musicbrain
+      SESSION_SECRET: ${MUSICBRAIN_SESSION_SECRET:?MUSICBRAIN_SESSION_SECRET ontbreekt in .env}
+      INGEST_TOKEN: ${MUSICBRAIN_INGEST_TOKEN:-}
+      GITHUB_WEBHOOK_SECRET: ${MUSICBRAIN_GITHUB_WEBHOOK_SECRET:-}
+    ports:
+      - "127.0.0.1:${MUSICBRAIN_PORT:-3000}:3000"
+    volumes:
+      - musicbrain_assets:/data/assets
+
+  imprint:
+    <<: *site
+    image: imprint/imprint:${IMPRINT_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: imprint, BUILD_ID: "${BUILD_ID:-dev}" }
+      network: host
+      secrets: [database_url]
+    environment:
+      DATABASE_URL: postgres://imprint:${IMPRINT_DB_PASSWORD}@postgres:5432/imprint
+      SESSION_SECRET: ${IMPRINT_SESSION_SECRET:?IMPRINT_SESSION_SECRET ontbreekt in .env}
+      INGEST_TOKEN: ${IMPRINT_INGEST_TOKEN:-}
+    ports:
+      - "127.0.0.1:${IMPRINT_PORT:-3100}:3000"
+    volumes:
+      - imprint_assets:/data/assets
+
+  # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
+  # productiedatabase. Draait alleen op verzoek:
+  #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
+  tools:
+    image: imprint/tools:latest
+    profiles: ["tools"]
+    build:
+      context: ../..
+      target: tools
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [imprint_net]
+
+secrets:
+  # Alleen tijdens de build, en via loopback (build.network: host) — niet de
+  # servicenaam `postgres`, want het compose-netwerk bestaat tijdens een build
+  # niet. deploy.sh zet BUILD_DATABASE_URL per site, vlak voor diens build.
+  database_url:
+    environment: BUILD_DATABASE_URL
+
+volumes:
+  pg_data:
+  musicbrain_assets:
+  imprint_assets:
+
+networks:
+  imprint_net:
+    driver: bridge

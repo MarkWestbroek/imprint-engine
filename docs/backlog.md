@@ -434,6 +434,22 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       (patroon in de README).
 - [x] ~~**CI**~~ — gedaan in 0.10.0: GitHub Actions draait typecheck + lint +
       build (file-store, geen DB) bij elke push/PR.
+- [x] ~~**Deploy-inrichting VPS**~~ — september 2026: Dockerfile + `deploy/vps/`
+      (compose, `deploy.sh`, `backup.sh`, Caddy-blok), lokaal getest voor beide
+      sites; zie [deploy-vps.md](deploy-vps.md). Nog te doen op de VPS zelf:
+      clone + `.env`, Imprint-site live (wacht op registratie
+      imprint-engine.nl), cron voor `backup.sh` + NAS-pull.
+- [ ] **MusicBrain-data van MariaDB naar Postgres** — eenmalig kopieerscript
+      dat de tabellen rij voor rij overzet mét historie en users (zelfde
+      kolomnamen in beide schema's); daarna DNS om en de Plesk-webhook weg.
+      Stappen in [deploy-vps.md](deploy-vps.md). _(M)_
+- [ ] **`npm run backup` en `assets:gc` op Postgres** — beide zijn nog
+      MariaDB-only (`mysql2` rechtstreeks). Op de VPS vangt `backup.sh`
+      (pg_dump) de backup op; `assets:gc` heeft nog geen vervanger. _(S)_
+- [ ] **Image bouwen zonder database (CI/registry)** — kan zodra de publieke
+      routes niet meer bij de build prerenderen maar bij het eerste verzoek
+      (lege `generateStaticParams` + ISR); dan is de image
+      omgevingsonafhankelijk en kan GitHub Actions hem bouwen. _(M)_
 - [ ] **Seed triggert revalidatie** — `db:seed` schrijft rechtstreeks in de
       DB en leegt de Next-cache niet; geseede content verschijnt pas na een
       rebuild óf een willekeurige admin-save (juli 2026 live gebleken bij de

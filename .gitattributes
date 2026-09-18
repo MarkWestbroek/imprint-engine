@@ -1,0 +1,5 @@
+# Scripts die in een Linux-container of op de VPS draaien: altijd LF, ook bij
+# een checkout op Windows (core.autocrlf) — een CRLF-shebang start niet.
+*.sh text eol=lf
+Dockerfile text eol=lf
+deploy/vps/Caddyfile.snippet text eol=lf

@@ -10,6 +10,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   bash-syntax en werden onder cmd.exe stil overgeslagen; de golden-HTML-tests
   struikelden bovendien over CRLF uit `core.autocrlf`. `npm test` draait nu
   overal alle suites.
+- **Deploy op de VPS: één container-image per site** — `Dockerfile` in de
+  root (build-arg `SITE`, Next `output: "standalone"` via `NEXT_OUTPUT`, dus
+  lokale builds blijven ongewijzigd) en `deploy/vps/`: compose met één
+  Postgres 17 (database + rol per imprint), `deploy.sh` (git pull/tag →
+  migreren → bouwen → herstarten, plus `migrate`/`seed`/`user`), `backup.sh`
+  (pg_dump + assets) en het Caddy-blok. De SSG-build leest de database via een
+  BuildKit-secret; daarom bouwt de VPS zelf. Lokaal getest voor beide sites,
+  MusicBrain daarbij voor het eerst op Postgres. De Imprint-site leest
+  `ASSET_ROOT`/`ASSET_BASE_URL` nu ook uit de omgeving; `.gitattributes`
+  houdt shell-scripts op LF. Runbook: [docs/deploy-vps.md](docs/deploy-vps.md).
 - **Tijdreizen: drie lekken dicht** (ontwerp Fase 3 §8.4). In de
   as-of-preview reizen nu ook mee: de siteconfiguratie (naam, tagline,
   URL-aliassen; `getSiteConfig(opts)` in het storecontract), de thema-CSS in

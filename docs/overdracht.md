@@ -32,6 +32,13 @@ deployt.
 
 ### 0.2 Verhuizing MusicBrain naar de VPS — nog niet gedaan
 
+> **Bijgewerkt 18 september 2026:** stap 3–5 hieronder zijn ingericht
+> (Dockerfile, `deploy/vps/`, runbook in [deploy-vps.md](deploy-vps.md)) en
+> stap 2 is achterhaald: users werken inmiddels op Postgres, dus de VPS
+> draait **alleen Postgres** en MusicBrain verhuist van MariaDB naar
+> Postgres. Wat overblijft: stap 1 (data van Quickhost halen) en het
+> overzetten van die data — zie deploy-vps.md §"MusicBrain verhuizen".
+
 Volgorde, ongeveer een dagdeel werk:
 
 1. **Data van Quickhost halen zolang het nog kan** (via Plesk, want SSH/Node

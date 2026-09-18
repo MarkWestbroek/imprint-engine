@@ -60,6 +60,11 @@
   noemenswaardige wijziging een regel onder `## [Unreleased]` in
   `CHANGELOG.md`. Releasen = `npm run release -- <versie>` (bumpt versies,
   verplaatst de changelog-notities, commit + tag); zie `docs/releasing.md`.
+- Productie is de VPS (Plesk is vervallen): één container-image per site uit
+  de root-`Dockerfile` (build-arg `SITE`), alleen Postgres, Caddy ervoor;
+  alles in `deploy/vps/`, runbook in `docs/deploy-vps.md`. De SSG-build leest
+  de database, dus de VPS bouwt zelf (`deploy.sh`). Een nieuwe site of een
+  nieuw workspace-package vraagt een `COPY`-regel in de Dockerfile.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);
   geen losse hexkleuren in componenten.
 - Build verifiëren met `npm run build` vanuit de root. Publieke pagina's
