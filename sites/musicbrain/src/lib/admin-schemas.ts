@@ -27,7 +27,9 @@ export type JsonSchema = Record<string, unknown>;
 
 function fieldSchema(field: z.ZodType): JsonSchema {
   try {
-    return z.toJSONSchema(field, { io: "input" }) as JsonSchema;
+    // Through JSON: zod hangs a non-enumerable `~standard` (with methods) on the
+    // result, and React refuses anything but plain data as a client prop.
+    return JSON.parse(JSON.stringify(z.toJSONSchema(field, { io: "input" }))) as JsonSchema;
   } catch {
     return {}; // recursive/unrepresentable → JSON textarea in the form
   }

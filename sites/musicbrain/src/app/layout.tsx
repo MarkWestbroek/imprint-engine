@@ -31,9 +31,12 @@ export default async function RootLayout({
 }>) {
   const themes = await store.listThemes();
   return (
+    // ThemeInit sets data-theme on <html> before hydration (no flash), so the
+    // client legitimately differs from the server here — this element only.
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         {/* Before anything paints: apply the saved theme (no flash). */}
