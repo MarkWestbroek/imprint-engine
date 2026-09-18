@@ -61,8 +61,11 @@ kan de andere niet lezen. MariaDB blijft een geteste backend
 
 ## Eerste keer
 
-Vereist: SSH-toegang tot de VPS (Bitemporal-handover §4) en Docker + Caddy
-zoals in het Omnium-runbook.
+Vereist: SSH-toegang tot de VPS en Docker + Caddy zoals in het
+Omnium-runbook. `vps1` in de opdrachten hieronder is de alias uit
+`~/.ssh/config` (Bitemporal-handover §4.1): gebruiker `omnium`, en het
+**IP-adres** 62.129.142.42 — het A-record van `vps1.paratmos.nl` wijst nog
+naar de oude webhosting. Wachtwoordlogin staat uit; alleen sleutels werken.
 
 ```bash
 # op de VPS
@@ -128,7 +131,7 @@ en zijn géén bron voor deze kopie.
 
 1. Op de VPS het schema aanmaken: `./deploy.sh migrate musicbrain`.
 2. Vanaf je eigen machine een tunnel naar de Postgres van de VPS:
-   `ssh -N -L 5435:127.0.0.1:5434 <gebruiker>@vps1.paratmos.nl`
+   `ssh -N -L 5435:127.0.0.1:5434 vps1`
 3. Lokaal, in een tweede terminal (wachtwoord = `MUSICBRAIN_DB_PASSWORD` uit
    de `.env` op de VPS):
    ```bash
@@ -140,7 +143,7 @@ en zijn géén bron voor deze kopie.
 4. Assets naar het volume: lokaal `sites/musicbrain/.assets` (±80 MB) of de
    asset-map uit de Quickhost-export.
    ```bash
-   tar czf assets.tgz -C sites/musicbrain/.assets . && scp assets.tgz <gebruiker>@vps1.paratmos.nl:/srv/imprint/
+   tar czf assets.tgz -C sites/musicbrain/.assets . && scp assets.tgz vps1:/srv/imprint/
    # op de VPS:
    docker run --rm -v imprint_musicbrain_assets:/data -v /srv/imprint:/in alpine      sh -c 'tar xzf /in/assets.tgz -C /data && chown -R 1000:1000 /data'
    ```
@@ -148,7 +151,7 @@ en zijn géén bron voor deze kopie.
    uit de Plesk-omgeving (of je lokale `sites/musicbrain/.env.local`)
    overnemen in `.env`; `SITES=musicbrain imprint`.
 6. `SITES=musicbrain ./deploy.sh` en controleren vóór de DNS om gaat:
-   `ssh -N -L 3000:127.0.0.1:3000 …` en dan http://localhost:3000 (ook `/admin`).
+   `ssh -N -L 3000:127.0.0.1:3000 vps1` en dan http://localhost:3000 (ook `/admin`).
 7. Caddy-blok aanzetten, bij Quickhost het A-record van `musicbrain.nl` en
    `www` naar de VPS zetten (`editor.musicbrain.nl` blijft voorlopig bij
    Quickhost, dat is statisch en werkt nog), `npm run smoke` tegen de
