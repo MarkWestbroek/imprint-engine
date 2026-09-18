@@ -45,7 +45,8 @@ export class FileContentStore implements ContentStore {
     private readonly opts: { widgets?: WidgetTypeRegistry } = {}
   ) {}
 
-  async getSiteConfig(): Promise<SiteConfig> {
+  /** One file, no history: `asOf` has nothing to select between. */
+  async getSiteConfig(_opts?: ReadOptions): Promise<SiteConfig> {
     const raw = await fs.readFile(path.join(this.contentDir, "site.json"), "utf8");
     return SiteConfigSchema.parse(JSON.parse(raw));
   }

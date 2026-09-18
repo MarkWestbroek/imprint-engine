@@ -106,7 +106,9 @@ pas op de site) en "geldig tot".
 Op het admin-dashboard staat **Time travel**: kies een moment en een
 startpagina en klik **Preview**. Je bladert dan door de publieke site zoals
 hij er op dat moment uitzag — oude productteksten, verdwenen releases,
-ge-restorede content, alles zoals toen. Kies je een moment in de toekomst,
+ge-restorede content, alles zoals toen. Ook het menu, de thema's, de
+sitenaam en de standaardweergaven (Default views) zijn die van dat moment.
+Kies je een moment in de toekomst,
 dan zie je geplande content (Validity) alvast staan.
 
 Een balk bovenaan de site markeert de preview; alleen jouw browser ziet hem.

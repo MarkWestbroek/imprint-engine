@@ -33,7 +33,12 @@ export interface ReadOptions {
 }
 
 export interface ContentStore {
-  getSiteConfig(): Promise<SiteConfig>;
+  /**
+   * Site configuration travels in time like everything else (only `asOf`
+   * matters here). Before the first assertion a store answers with the current
+   * config instead of nothing: no page, not even a 404, renders without one.
+   */
+  getSiteConfig(opts?: ReadOptions): Promise<SiteConfig>;
 
   listProducts(opts?: ReadOptions): Promise<Product[]>;
   getProduct(slug: string, opts?: ReadOptions): Promise<Product | null>;

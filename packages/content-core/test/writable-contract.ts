@@ -50,6 +50,20 @@ export function writableStoreContract(name: string, factory: WritableFactory): v
       assert.equal((await store.getPage("travel", { asOf: between }))?.title, "before");
     });
 
+    it("site config time-travels too; before the first assertion it is the current one", async () => {
+      const store = await factory();
+      const original = await store.getSiteConfig();
+      await sleep(10);
+      const between = new Date();
+      await sleep(10);
+      await store.putItem("site", "site", { ...original, name: "Renamed" });
+
+      assert.equal((await store.getSiteConfig()).name, "Renamed");
+      assert.equal((await store.getSiteConfig({ asOf: between })).name, original.name);
+      assert.equal((await store.getSiteConfig({ asOf: new Date("2019-06-01") })).name, "Renamed");
+      await store.putItem("site", "site", original);
+    });
+
     it("a past asOf before the first assertion sees nothing (transaction time, unlike the file store)", async () => {
       const store = await factory();
       assert.equal(await store.getPage("about", { asOf: new Date("2026-01-07") }), null);

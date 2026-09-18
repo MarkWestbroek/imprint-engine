@@ -77,7 +77,7 @@ export async function GET(
       });
 
     case "site":
-      return json(await store.getSiteConfig(), !noCache);
+      return json(await store.getSiteConfig(opts), !noCache);
 
     case "products": {
       if (!slug) return json(await store.listProducts(opts), !noCache);

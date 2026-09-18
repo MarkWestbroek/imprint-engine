@@ -249,9 +249,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         gebruiker vastleggen bij een registratie, apart register per
         toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en
         item, standaard weigeren. Werk in Omnium; ontwerp §3.3.
-      - [ ] **Tijdreislekken dichten** — `getSiteConfig()` zonder
-        leesopties, thema-CSS in de root-layout en default views zonder
-        `asOf`. Ontwerp §8.4. _(3 × S)_
+      - [x] **Tijdreislekken gedicht** (september 2026) —
+        `getSiteConfig(opts)`, thema-CSS in de root-layout en default views
+        lezen met de leesopties van het request. Ontwerp §8.4. Wat in code
+        staat (widgetselectie, SiteChrome) en widgetversies blijven open.
       - [ ] **Widgetversie per instantie** — hoofdversie opslaan bij de
         widget, zodat een brekende widgetwijziging zichtbaar is bij
         tijdreizen. Ontwerp §9. _(M)_

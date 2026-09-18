@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Tests draaien nu ook op Windows**: de testscripts van beide sites gebruikten
+  bash-syntax en werden onder cmd.exe stil overgeslagen; de golden-HTML-tests
+  struikelden bovendien over CRLF uit `core.autocrlf`. `npm test` draait nu
+  overal alle suites.
+- **Tijdreizen: drie lekken dicht** (ontwerp Fase 3 §8.4). In de
+  as-of-preview reizen nu ook mee: de siteconfiguratie (naam, tagline,
+  URL-aliassen; `getSiteConfig(opts)` in het storecontract), de thema-CSS in
+  de root-layout en de default views (`_view/<type>`). Bestond de site op het
+  gekozen moment nog niet, dan geeft de store de huidige siteconfiguratie,
+  zodat de pagina (of de 404) blijft renderen. Publieke pagina's blijven
+  statisch.
 - **Fix: studio gaf een reeks "Only plain objects"-meldingen** — zod 4.4 hangt
   een verborgen `~standard`-object aan elk JSON-schema; de formulierschema's
   gaan nu als kale JSON naar de client (`admin-schemas.ts`).

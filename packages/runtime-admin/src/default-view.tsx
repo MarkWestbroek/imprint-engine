@@ -47,7 +47,8 @@ export async function DefaultView({
   viewers: WidgetViewers;
   ctx: WidgetContext;
 }) {
-  const view = await ctx.store.getPage(viewSlugFor(type), { includeDrafts: true });
+  // With the request's read options: in an as-of preview, the view of that moment.
+  const view = await ctx.store.getPage(viewSlugFor(type), { ...ctx.readOptions, includeDrafts: true });
   if (view?.layout) {
     const layout = view.layout;
     // A view with its own subjectheader owns the h1 — don't render the title twice.

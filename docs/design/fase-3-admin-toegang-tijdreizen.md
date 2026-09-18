@@ -463,7 +463,8 @@ In Imprint, gemeten in de code:
 - De widgetselectie staat in code.
 - Widgetinstanties noteren geen versie (§9).
 
-De eerste drie zijn kleine, losse reparaties. In Omnium lekt het op dezelfde
+De eerste drie zijn gerepareerd (september 2026); de laatste twee blijven
+open. In Omnium lekt het op dezelfde
 manier: formulier- en lijstdefinities zijn bitemporeel opgeslagen, maar
 `useFormulierDefinitie` en `useWeergaveDefinitie` lezen altijd de huidige
 versie.
@@ -527,7 +528,7 @@ bitemporele store vanwege de AVG.
 | toegang | twee OpenFTV-sidecars, HTTP-adapter, weigeren bij onbereikbare PDP voor beperkt en schrijven, correlatie met het logboek | Imprint; M–L |
 | register, voorwaarden | echte formele tijd, historie inlezen, materiële tijd als tijdstip en bevraagbaar, gebruiker bij de registratie, apart register per toepassing, schemawijzigingen uitvoeren, bulkimport, PEP per type en item, standaard weigeren | Omnium; §3.3 |
 | register, Imprint | contentmodel in V3 en in het canonieke model; Imprint-register genereren; `BitempContentStore` door de contractsuites; migratie met droogloop; eerst de Imprint-site | Imprint en Omnium; L |
-| tijdreizen | de drie leesreparaties (§8.4); later Fase 7 | Imprint; 3 × S, dan L |
+| tijdreizen | de drie leesreparaties (§8.4): klaar; later Fase 7 | Imprint; dan L |
 
 ### 11.3 Open vragen
 

@@ -79,7 +79,8 @@ export async function expectGolden(name: string, actual: string): Promise<void> 
   }
   let expected: string;
   try {
-    expected = await fs.readFile(file, "utf8");
+    // A Windows checkout (core.autocrlf) has CRLF on disk; the renderer speaks LF.
+    expected = (await fs.readFile(file, "utf8")).replace(/\r\n/g, "\n");
   } catch {
     assert.fail(`golden file ${rel} is missing — run: UPDATE_GOLDEN=1 npm test --workspace=musicbrain`);
   }

@@ -96,8 +96,10 @@ export abstract class DbContentStoreBase implements WritableContentStore {
 
   // ---------- read side (ContentStore) ----------
 
-  async getSiteConfig(): Promise<SiteConfig> {
-    const rows = await this.currentRows("site");
+  async getSiteConfig(opts?: ReadOptions): Promise<SiteConfig> {
+    let rows = await this.currentRows("site", opts);
+    // Before the site existed: the current config (see ContentStore.getSiteConfig).
+    if (rows.length === 0 && opts?.asOf) rows = await this.currentRows("site");
     if (rows.length === 0) throw new Error("No site config in database (seed it first)");
     return SiteConfigSchema.parse(rows[0].data);
   }

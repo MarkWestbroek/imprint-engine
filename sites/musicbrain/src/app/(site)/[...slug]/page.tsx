@@ -54,7 +54,8 @@ export default async function ContentPage({ params }: Props) {
 
   // URL-aliases uit de site-config (MMB-vraag 1): /hw/adc8 → /components/adc8.
   // Permanente redirect, dus zoekmachines volgen de echte route.
-  const site = await store.getSiteConfig();
+  const opts = await readOpts();
+  const site = await store.getSiteConfig(opts);
   const target = site.aliases[slug[0]];
   if (target) {
     permanentRedirect(`/${[target, ...slug.slice(1)].join("/")}`);
@@ -84,7 +85,7 @@ export default async function ContentPage({ params }: Props) {
     return <WikiView wiki={wiki} folders={folders} pages={pages} current={wikiPage} />;
   }
 
-  const page = await store.getPage(joined, await readOpts());
+  const page = await store.getPage(joined, opts);
   if (!page) notFound();
 
   if (page.layout) {

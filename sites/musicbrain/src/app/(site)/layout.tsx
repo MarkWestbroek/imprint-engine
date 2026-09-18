@@ -9,7 +9,7 @@ export default async function SiteLayout({
   children: React.ReactNode;
 }>) {
   const [preview, opts] = [await getPreview(), await readOpts()];
-  const site = await store.getSiteConfig();
+  const site = await store.getSiteConfig(opts);
   const menu = await store.getMenu("main", opts);
   const themes = await store.listThemes(opts);
   return (

@@ -7,7 +7,7 @@ import { displayVersion } from "@/lib/format";
 export default async function Home() {
   const opts = await readOpts();
   const [site, products, releases] = await Promise.all([
-    store.getSiteConfig(),
+    store.getSiteConfig(opts),
     store.listProducts(opts),
     store.listReleases(opts),
   ]);

@@ -618,6 +618,11 @@ renderen voor déze browser) plus een `imprint_asof`-cookie met het moment;
 naar `ReadOptions` en elke publieke pagina geeft die door aan de store.
 In-/uitstappen via `/api/preview?asOf=…&to=…` (editors only) en
 `/api/preview/exit`; een banner in de site-layout markeert de preview.
+Wat meereist: inhoud, menu, thema's (ook de thema-CSS in de root-layout),
+default views (`_view/<type>`) en de siteconfiguratie — `getSiteConfig(opts)`
+valt vóór de eerste assertie terug op de huidige config, omdat zonder
+siteconfig geen pagina rendert. `readOpts()` is `{}` voor bezoekers, dus de
+root-layout blijft statisch.
 Beperking: widgets die zelf content ophalen (posts, list, releases…) kijken
 nog naar "nu" — de kernpagina's reizen mee. Dit model migreert later naadloos naar het echte
 bitemporal-register (bitemporal2026) — de site merkt daar niets van, want
