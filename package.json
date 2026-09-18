@@ -19,7 +19,7 @@
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "test:db": "TEST_DATABASE_URL=\"${TEST_DATABASE_URL:-mysql://imprint:imprint-dev@localhost:3306/imprint_test}\" TEST_PG_DATABASE_URL=\"${TEST_PG_DATABASE_URL:-postgres://imprint:imprint-dev@localhost:5433/imprint_test}\" npm test",
+    "test:db": "node scripts/test-db.mjs",
     "db:up": "docker compose up -d --wait",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

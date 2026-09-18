@@ -11,7 +11,7 @@ const envUrl = process.env.DATABASE_URL;
 const url =
   envUrl && /^postgres(ql)?:/.test(envUrl)
     ? envUrl
-    : "postgres://imprint:imprint-dev@localhost:5433/imprint";
+    : "postgres://imprint:imprint-dev@localhost:5434/imprint";
 
 export default defineConfig({
   dialect: "postgresql",

@@ -1,10 +1,14 @@
 # Lokale dev-databases — start met: npm run db:up
 #  - db: MariaDB 10.11 (MusicBrain; zelfde major als de vorige Plesk-hosting)
 #  - pg: Postgres 17 (Imprint-productsite; de tweede backend achter ContentStore)
-# Poort 5433 op de host, omdat 5432 lokaal vaak al bezet is (Omnium/Bitemporal).
+# Poort 5434 op de host: 5432 en 5433 zijn lokaal vaak al bezet door
+# Omnium/Bitemporal (register en regressietest).
+# restart: unless-stopped = beide starten vanzelf mee met Docker, tot je ze
+# zelf stopt (docker compose stop).
 services:
   db:
     image: mariadb:10.11
+    restart: unless-stopped
     ports:
       - "3306:3306"
     environment:
@@ -25,8 +29,9 @@ services:
 
   pg:
     image: postgres:17.5
+    restart: unless-stopped
     ports:
-      - "5433:5432"
+      - "5434:5432"
     environment:
       POSTGRES_USER: imprint
       POSTGRES_PASSWORD: imprint-dev

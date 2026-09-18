@@ -18,12 +18,12 @@ De standaardwidgets gebruiken design-tokens (`background`, `surface`, `line`,
 Zie architecture.md §3 en §7.
 
 Eigen database lokaal inrichten (`npm run db:up` start de Postgres-container
-op poort 5433 en maakt de database `imprint` aan):
+op poort 5434 en maakt de database `imprint` aan):
 
 ```bash
 npm run db:up
 npm run db:migrate:pg
-DATABASE_URL=postgres://imprint:imprint-dev@localhost:5433/imprint \
+DATABASE_URL=postgres://imprint:imprint-dev@localhost:5434/imprint \
 	npm run db:seed -- --site=imprint --only=site,page
 ```
 

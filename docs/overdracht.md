@@ -77,7 +77,7 @@ te deployen).
   migraties (`drizzle-pg/`, `npm run db:migrate:pg`), `openContentDatabase(url)`
   kiest op het URL-schema. De Imprint-productsite (`sites/imprint`) draait
   lokaal op Postgres; MusicBrain op MariaDB. `docker compose` heeft nu ook
-  Postgres 17 op poort 5433.
+  Postgres 17 op poort 5434.
 - **Fase 1** (`3930ffb`): package `@imprint/extension-api` met
   `defineImprint()`/`createImprint()`; elke site heeft een
   `imprint.config.ts` (composition root). Gedrag ongewijzigd.
@@ -100,7 +100,7 @@ backend als eigen laag). Open vragen staan in `docs/architecture.md` §0 en
 - Repo op Windows staat onder `D:\Git\` (andere padnaam dan op de laptop;
   begin daar een verse Claude-sessie, de laptopsessie past niet).
 - Node 21+ en Docker Desktop zoals in §2; `npm run db:up` start MariaDB
-  **en** Postgres 17 (5433). Poorten vrijhouden.
+  **en** Postgres 17 (5434). Poorten vrijhouden.
 - `.env` en `sites/musicbrain/.env.local` overzetten (staan niet in git);
   zie §2. Zolang Quickhost nog bestaat is de Plesk-env de bron van de
   live-waarden.
