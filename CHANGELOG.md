@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 2 af: browsertests voor de hele bewerkcyclus** — naast
+  inloggen en lijsten nu ook: opslaan (en dat de publieke pagina meeverandert),
+  een ongeldige waarde die geweigerd wordt, historie (nieuwste eerst, met
+  auteur), herstel (een nieuwe versie; de historie blijft), een product
+  aanmaken en verwijderen, en gebruikersbeheer (toevoegen, zwak wachtwoord en
+  bezette naam geweigerd, rol wijzigen, je eigen adminrol niet afgeven,
+  verwijderen; een editor ziet het beheer niet). 22 tests, groen tegen de
+  productiebuild en tegen `next dev`. Getoetst: zonder de revalidatie na een
+  save faalt de test.
 - **Fase 3, stap 2 (eerste helft): browsertests van de admin** — Playwright in
   `sites/musicbrain/e2e/`, `npm run test:e2e`. De run maakt de wegwerpdatabase
   `imprint_e2e` leeg, seedt haar via de store, bouwt de site en test in

@@ -221,10 +221,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         Fase 3 stap 1) — `CONTENT_TYPES` + `contentTypes` in de config; de
         zeven losse typelijsten zijn weg. Het admin-menu leest er nog niet
         uit; dat hoort bij stap 5.
-      - [ ] **Browsertests, tweede helft** (Fase 3 stap 2) — opslaan (met
-        revalidatie van de publieke pagina), historie en herstel,
-        gebruikersbeheer. De infrastructuur, login, lijsten en een
-        studio-rooktest staan er (`sites/musicbrain/e2e/`). _(M)_
+      - [x] **Browsertests van de admin** (september 2026, Fase 3 stap 2) —
+        `sites/musicbrain/e2e/`: login, lijsten, opslaan met revalidatie,
+        validatie, historie, herstel, aanmaken, verwijderen,
+        gebruikersbeheer, studio-rooktest; productie én `next dev`.
+      - [ ] **Leesbare validatiefouten in de itemeditor** — een ongeldige
+        waarde geeft nu de ruwe zod-issues als JSON naast de knop
+        (`[{"code":"too_small", … "path":["tagline"] …}]`). Per veld tonen,
+        bij het veld. Hoort bij de formulieren (ontwerp §5); de browsertest
+        in `e2e/content.spec.ts` moet dan mee. _(S)_
       - [ ] **Thema-script via `next/script`** — `ThemeInit` rendert een kale
         `<script>`; op een 404 in dev waarschuwt React dat die in de browser
         niet draait. Onschuldig (de server-HTML heeft hem al uitgevoerd), maar
