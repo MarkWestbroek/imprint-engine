@@ -150,6 +150,8 @@ npm run lint
 npm run typecheck
 npm test           # karakterisatietests van alle workspaces (stores, widget-model, studio-ops, renderer)
 npm run test:db    # idem + de databasestores tegen de wegwerp-DB's imprint_test (MariaDB én Postgres)
+npm run test:e2e   # browsertests van de admin (Playwright) tegen de wegwerp-DB imprint_e2e; eenmalig: npx playwright install chromium
+npm run test:e2e:dev  # dezelfde specs tegen next dev — vangt hydration- en propfouten die een productiebuild verzwijgt
 UPDATE_GOLDEN=1 npm test --workspace=musicbrain   # bewust gewijzigde weergave: golden HTML bijwerken
 
 npm run db:up      # lokale MariaDB 10.11 (:3306) + Postgres 17 (:5434) via docker compose

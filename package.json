@@ -20,6 +20,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "test:db": "node scripts/test-db.mjs",
+    "test:e2e": "npm run test:e2e --workspace=musicbrain --",
+    "test:e2e:dev": "npm run test:e2e:dev --workspace=musicbrain --",
     "db:up": "docker compose up -d --wait",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",

@@ -3,6 +3,7 @@ node_modules/
 
 # builds
 .next/
+.next-e2e/
 .next-dev.log
 out/
 dist/
@@ -27,3 +28,8 @@ next-env.d.ts
 
 # lokale/serverside backups (npm run backup)
 backups/
+
+# browser tests (npm run test:e2e): signed-in state, traces, reports
+e2e/.auth/
+test-results/
+playwright-report/

@@ -514,7 +514,7 @@ bitemporele store vanwege de AVG.
 |---|---|---|
 | 0 | besluiten vastleggen (dit document) | S, klaar |
 | 1 | gebruikers op Postgres, secrets via de config, catalogus beschikbaar/actief | 3 × S, klaar |
-| 2 | admin-flows vastleggen met een browsertest (Playwright): login, lijst, opslaan, historie, herstel, gebruikers | L |
+| 2 | admin-flows vastleggen met een browsertest (Playwright): login, lijst, opslaan, historie, herstel, gebruikers | L; infrastructuur, login, lijst en studio-rooktest klaar |
 | 3 | poortje in AuthZEN-vorm en asynchroon, beslisser in het proces; `publiek` of `beperkt` op alle content | M |
 | 4 | admin-context, en de generieke clientcomponenten naar het package | M |
 | 5 | routes en server actions in het package, dunne routebestanden, menu uit de catalogus | L |

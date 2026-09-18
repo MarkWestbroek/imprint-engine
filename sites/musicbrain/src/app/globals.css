@@ -7,6 +7,8 @@
  */
 @source not "../../public";
 @source not "../../.assets";
+@source not "../../.next-e2e";
+@source not "../../e2e";
 /*
  * Tests sturen de CSS niet: de golden HTML in test/ bevat dezelfde classes
  * als de componenten, en zou zo een vergeten @source voor een engine-package

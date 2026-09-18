@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 2 (eerste helft): browsertests van de admin** — Playwright in
+  `sites/musicbrain/e2e/`, `npm run test:e2e`. De run maakt de wegwerpdatabase
+  `imprint_e2e` leeg, seedt haar via de store, bouwt de site en test in
+  Chromium: inloggen (fout wachtwoord, uitloggen, reader komt er niet in) en
+  lijsten (producten, dashboardtellingen, 404 op onbekend type, menu per rol),
+  plus een rooktest van de studio. Elke test faalt op een console-error.
+  `npm run test:e2e:dev` draait dezelfde specs tegen `next dev` in een eigen
+  map (`.next-e2e`, dus naast een draaiende dev-server): alleen daar meldt
+  React hydration- en propfouten, zoals de twee die in september opdoken.
+  Aparte CI-job met MariaDB-service. Nog te doen: opslaan, historie, herstel
+  en gebruikersbeheer.
 - **Tests draaien nu ook op Windows**: de testscripts van beide sites gebruikten
   bash-syntax en werden onder cmd.exe stil overgeslagen; de golden-HTML-tests
   struikelden bovendien over CRLF uit `core.autocrlf`. `npm test` draait nu

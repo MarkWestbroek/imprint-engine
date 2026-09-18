@@ -18,6 +18,8 @@ services:
       MARIADB_PASSWORD: imprint-dev
     volumes:
       - db-data:/var/lib/mysql
+      # Maakt eenmalig de wegwerpdatabases imprint_test en imprint_e2e aan.
+      - ./docker/db-init.sql:/docker-entrypoint-initdb.d/10-imprint-test.sql:ro
     # Zo weet 'docker compose up -d --wait' (npm run db:up) dat MariaDB écht
     # klaar is, zodat db:migrate er direct achteraan kan zonder race.
     healthcheck:

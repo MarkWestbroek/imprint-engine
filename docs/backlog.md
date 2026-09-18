@@ -221,6 +221,19 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         Fase 3 stap 1) — `CONTENT_TYPES` + `contentTypes` in de config; de
         zeven losse typelijsten zijn weg. Het admin-menu leest er nog niet
         uit; dat hoort bij stap 5.
+      - [ ] **Browsertests, tweede helft** (Fase 3 stap 2) — opslaan (met
+        revalidatie van de publieke pagina), historie en herstel,
+        gebruikersbeheer. De infrastructuur, login, lijsten en een
+        studio-rooktest staan er (`sites/musicbrain/e2e/`). _(M)_
+      - [ ] **Thema-script via `next/script`** — `ThemeInit` rendert een kale
+        `<script>`; op een 404 in dev waarschuwt React dat die in de browser
+        niet draait. Onschuldig (de server-HTML heeft hem al uitgevoerd), maar
+        het staat nu als bekende uitzondering in `e2e/test.ts`.
+        `strategy="beforeInteractive"` lost het op; toets dan het flitsvrije
+        laden. _(S)_
+      - [ ] **Dev-indicator bedekt de uitlogknop** — linksonder in de
+        admin-rail, alleen in `next dev`. Verplaatsen via `devIndicators.position`
+        of de knop. _(S)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

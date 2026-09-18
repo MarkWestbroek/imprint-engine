@@ -33,3 +33,51 @@ jobs:
 
       - name: Build (file-store, geen DB)
         run: npm run build
+
+  # Browsertests van de admin (ontwerp Fase 3, stap 2). Aparte job: deze heeft
+  # een database en een browser nodig, `verify` hierboven blijft snel.
+  # Twee keer dezelfde specs: tegen de productiebuild (wat bezoekers krijgen) en
+  # tegen `next dev` (alleen daar meldt React hydration- en propfouten).
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: mariadb:10.11
+        ports: ["3306:3306"]
+        env:
+          MARIADB_ROOT_PASSWORD: imprint-root
+          MARIADB_DATABASE: imprint_e2e
+          MARIADB_USER: imprint
+          MARIADB_PASSWORD: imprint-dev
+        options: >-
+          --health-cmd="mariadb-admin ping -h localhost -uimprint -pimprint-dev --silent"
+          --health-interval=3s --health-timeout=5s --health-retries=20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Browsertests (productiebuild)
+        run: npm run test:e2e
+
+      - name: Browsertests (next dev)
+        run: npm run test:e2e:dev
+
+      - name: Bewaar traces bij een fout
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: |
+            sites/musicbrain/test-results/
+            sites/musicbrain/playwright-report/
+          retention-days: 7
