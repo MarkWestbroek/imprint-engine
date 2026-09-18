@@ -457,10 +457,21 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       sites; zie [deploy-vps.md](deploy-vps.md). Nog te doen op de VPS zelf:
       clone + `.env`, Imprint-site live (wacht op registratie
       imprint-engine.nl), cron voor `backup.sh` + NAS-pull.
-- [ ] **MusicBrain-data van MariaDB naar Postgres** — eenmalig kopieerscript
-      dat de tabellen rij voor rij overzet mét historie en users (zelfde
-      kolomnamen in beide schema's); daarna DNS om en de Plesk-webhook weg.
-      Stappen in [deploy-vps.md](deploy-vps.md). _(M)_
+- [ ] **MusicBrain-data van MariaDB naar Postgres** — het kopieerscript is er
+      (`npm run db:copy-to-pg`, lokaal bewezen gelijk via de stores); nog te
+      doen is de uitvoering op de VPS, zie [deploy-vps.md](deploy-vps.md).
+      Daarna DNS om en de Plesk-webhook weg. _(S)_
+- [ ] **Volgorde van `listPages` is niet deterministisch** — pagina's met
+      dezelfde (of geen) `publishedAt` komen in database-volgorde terug; die
+      verschilt tussen MariaDB en Postgres bij reads met `asOf` (gezien bij de
+      kopie-controle). Tie-break op slug in `db-store-base.ts`; let op de
+      golden-HTML-tests. _(XS)_
+- [ ] **`npm run backup` schrijft verschoven tijden** — het leest met kale
+      mysql2, die DATETIME als lokale tijd interpreteert, terwijl drizzle er
+      UTC in zet. De ISO-tijden in `content_items.jsonl` liggen dus de
+      tijdzone van de server ernaast; terugzetten op dezelfde machine heft dat
+      op, elders niet. Fix: `dateStrings: true` en als UTC lezen, zoals
+      `copy-mariadb-to-pg.ts`. _(XS)_
 - [ ] **`npm run backup` en `assets:gc` op Postgres** — beide zijn nog
       MariaDB-only (`mysql2` rechtstreeks). Op de VPS vangt `backup.sh`
       (pg_dump) de backup op; `assets:gc` heeft nog geen vervanger. _(S)_

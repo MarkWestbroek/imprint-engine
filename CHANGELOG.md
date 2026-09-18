@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **`npm run db:copy-to-pg`**: eenmalige verhuizing van een MariaDB-database
+  naar Postgres — alle rijen met id's, historie en wachtwoordhashes, in één
+  transactie met controle rij voor rij (`--dry-run`, `--replace`). Leest de
+  tijden als UTC, zoals drizzle ze schreef. Bedoeld voor MusicBrain; stappen
+  in [docs/deploy-vps.md](docs/deploy-vps.md).
 - **Fase 3, stap 2 af: browsertests voor de hele bewerkcyclus** — naast
   inloggen en lijsten nu ook: opslaan (en dat de publieke pagina meeverandert),
   een ongeldige waarde die geweigerd wordt, historie (nieuwste eerst, met

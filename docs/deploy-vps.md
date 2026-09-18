@@ -104,27 +104,55 @@ opdracht met de vorige tag.
 
 Gebruikersbeheer: `./deploy.sh user musicbrain passwd mark` (= `npm run user`).
 
-## MusicBrain verhuizen (MariaDB → Postgres) — nog te doen
+## MusicBrain verhuizen (MariaDB → Postgres)
 
-MusicBrain draaide op MariaDB. De code is klaar voor Postgres (users, seed en
-migraties werken op beide dialecten; de hele keten is lokaal getest met een
-vers geseede Postgres), maar de **bestaande data** moet nog over:
+MusicBrain draaide op MariaDB. De data gaat over met
+`npm run db:copy-to-pg` ([copy-mariadb-to-pg.ts](../scripts/copy-mariadb-to-pg.ts)):
+`content_items` en `users` rij voor rij, met id's, de hele bitemporale
+historie en de wachtwoordhashes, in één transactie, met een controle rij voor
+rij achteraf. Lokaal bewezen: 433 rijen en 3 users, en via de stores gelezen
+(actuele content, versiegeschiedenis per item, publieke reads op vijf
+momenten in juli) geven MariaDB en de kopie dezelfde antwoorden.
 
-1. Export van Quickhost halen zolang het kan: MariaDB-dump, de twee
-   env-bestanden en de asset-map (zie [overdracht.md](overdracht.md) §0.2).
-2. Data overzetten **met behoud van historie**: de dump lokaal in de
-   MariaDB-container laden en de tabellen rij voor rij naar Postgres kopiëren
-   (zelfde kolomnamen in beide schema's). Een verse seed kan ook, maar begint
-   de historie opnieuw en mist alles wat in de admin is bewerkt. Dit
-   kopieerscript bestaat nog niet (backlog §6).
-3. Assets in het volume zetten:
-   `docker run --rm -v imprint_musicbrain_assets:/data -v "$PWD":/in alpine tar xzf /in/assets.tgz -C /data`
-   (eigenaar moet uid 1000 zijn: `chown -R 1000:1000 /data`).
-4. `MUSICBRAIN_SESSION_SECRET`, `_INGEST_TOKEN` en `_GITHUB_WEBHOOK_SECRET`
-   uit de Plesk-omgeving overnemen in `.env`.
-5. `SITES=musicbrain ./deploy.sh`, Caddy-blok aanzetten, DNS omzetten,
-   `npm run smoke` tegen de live-URL. Daarna de Plesk-webhook op GitHub
-   verwijderen.
+**Bron.** De lokale MariaDB is volgens Mark gelijk aan die van Quickhost (het
+MusicBrain-project pushte content naar allebei). De Quickhost-dump is toch
+het zekerst voor de **users**: wachtwoorden die live zijn gezet, staan niet
+lokaal. Laad die dump desgewenst in de lokale container als aparte database
+(`musicbrain_live`) en gebruik die als `--from`.
+
+**Tijden.** De store schrijft `datetime` via drizzle, en drizzle zet altijd UTC
+in de kolom — ongeacht de tijdzone van de server. Het script leest daarom als
+UTC (`--tz` bestaat voor het geval dat ooit niet zo blijkt). Let op: de
+`.jsonl`-bestanden van `npm run backup` bevatten verschoven tijden (backlog §6)
+en zijn géén bron voor deze kopie.
+
+1. Op de VPS het schema aanmaken: `./deploy.sh migrate musicbrain`.
+2. Vanaf je eigen machine een tunnel naar de Postgres van de VPS:
+   `ssh -N -L 5435:127.0.0.1:5434 <gebruiker>@vps1.paratmos.nl`
+3. Lokaal, in een tweede terminal (wachtwoord = `MUSICBRAIN_DB_PASSWORD` uit
+   de `.env` op de VPS):
+   ```bash
+   npm run db:copy-to-pg --      --from=mysql://imprint:imprint-dev@localhost:3306/musicbrain      --to=postgres://musicbrain:<wachtwoord>@localhost:5435/musicbrain --dry-run
+   # ziet het er goed uit (aantallen, steekproef): nogmaals zonder --dry-run
+   ```
+   Het doel moet leeg zijn; `--replace` leegt het eerst (bijv. om later
+   opnieuw te kopiëren vanuit de Quickhost-dump).
+4. Assets naar het volume: lokaal `sites/musicbrain/.assets` (±80 MB) of de
+   asset-map uit de Quickhost-export.
+   ```bash
+   tar czf assets.tgz -C sites/musicbrain/.assets . && scp assets.tgz <gebruiker>@vps1.paratmos.nl:/srv/imprint/
+   # op de VPS:
+   docker run --rm -v imprint_musicbrain_assets:/data -v /srv/imprint:/in alpine      sh -c 'tar xzf /in/assets.tgz -C /data && chown -R 1000:1000 /data'
+   ```
+5. `MUSICBRAIN_SESSION_SECRET`, `_INGEST_TOKEN` en `_GITHUB_WEBHOOK_SECRET`
+   uit de Plesk-omgeving (of je lokale `sites/musicbrain/.env.local`)
+   overnemen in `.env`; `SITES=musicbrain imprint`.
+6. `SITES=musicbrain ./deploy.sh` en controleren vóór de DNS om gaat:
+   `ssh -N -L 3000:127.0.0.1:3000 …` en dan http://localhost:3000 (ook `/admin`).
+7. Caddy-blok aanzetten, bij Quickhost het A-record van `musicbrain.nl` en
+   `www` naar de VPS zetten (`editor.musicbrain.nl` blijft voorlopig bij
+   Quickhost, dat is statisch en werkt nog), `npm run smoke` tegen de
+   live-URL. Daarna de Plesk-webhook op GitHub verwijderen.
 
 ## Backups
 
