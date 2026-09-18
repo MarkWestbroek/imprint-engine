@@ -1,6 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
-import type { DbUserStore } from "@imprint/content-core/user-store";
+import type { UserStore } from "@imprint/content-core/user-store";
 import type { RoleType } from "@imprint/content-core";
 import { imprint } from "@/lib/content";
 import { authorize } from "./authorize";
@@ -16,12 +16,12 @@ const COOKIE = imprint.session.cookie;
 const SESSION_HOURS = imprint.session.hours;
 
 /** User CRUD for /admin/users. Null in file mode: v0 has no users table. */
-export const userStore: DbUserStore | null = imprint.users;
+export const userStore: UserStore | null = imprint.users;
 
 export type Session = { name: string; role: RoleType; exp: number };
 
 function secret(): string {
-  const s = process.env.SESSION_SECRET;
+  const s = imprint.secrets.session;
   if (!s || s === "change-me") {
     throw new Error("Set a real SESSION_SECRET in sites/musicbrain/.env.local");
   }
@@ -96,7 +96,7 @@ export function canEdit(session: Session | null): session is Session {
  * content/assets). Constant-time; an unset INGEST_TOKEN disables writes.
  */
 export function checkIngestToken(req: Request): boolean {
-  const token = process.env.INGEST_TOKEN;
+  const token = imprint.secrets.ingestToken;
   if (!token) return false;
   const provided = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
   const a = Buffer.from(provided);

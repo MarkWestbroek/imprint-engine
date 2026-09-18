@@ -1,25 +1,12 @@
 import Link from "next/link";
-import type { ContentType } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
-
-const TYPES: { type: ContentType; label: string }[] = [
-  { type: "page", label: "Pages" },
-  { type: "product", label: "Products" },
-  { type: "component", label: "Components" },
-  { type: "board-spec", label: "Board specs" },
-  { type: "release", label: "Releases" },
-  { type: "planning", label: "Planning" },
-  { type: "wiki", label: "Wikis" },
-  { type: "menu", label: "Menus" },
-  { type: "theme", label: "Themes" },
-];
+import { contentTypes, writableStore } from "@/lib/content";
 
 export default async function AdminDashboard() {
   const store = writableStore!;
   const counts = await Promise.all(
-    TYPES.map(async ({ type, label }) => ({
+    contentTypes.types("overview").map(async (type) => ({
       type,
-      label,
+      label: contentTypes.info(type).label,
       count: (await store.listItems(type)).length,
     }))
   );

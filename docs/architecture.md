@@ -132,26 +132,47 @@ export default defineImprint({
   id: "musicbrain",
   store: { databaseUrl: process.env.DATABASE_URL, contentDir: path.join(process.cwd(), "content") },
   widgets: widgetRegistry,                       // de catalogus (configschema's)
+  contentTypes: ["page", "menu", "theme"],       // optioneel: welke typen actief zijn (default alle)
   session: { cookie: "imprint_session", hours: 12 },
   assets: { root: process.env.ASSET_ROOT, baseUrl: process.env.ASSET_BASE_URL },
+  secrets: { session: process.env.SESSION_SECRET, ingestToken: process.env.INGEST_TOKEN /* … */ },
 });
 ```
 
 `createImprint(config)` in `src/lib/content.ts` maakt daar de levende
 instantie van (`ImprintInstance`): `store`, `writableStore` (null in
-file-modus), `users` (null zonder MariaDB), `widgets`, `assets` en
-`session`. Eén instantie per proces per id (cache op `globalThis`, dezelfde
+file-modus), `users` (null in file-modus), `widgets`, `contentTypes`,
+`assets`, `session` en `secrets`. Eén instantie per proces per id (cache op `globalThis`, dezelfde
 truc als vroeger voor de connection pool). De backend volgt het URL-schema
 via `openContentDatabase()`; geen URL = file-store op `contentDir`.
 
 Wat daarmee verschoven is: `auth.ts` haalt cookienaam, sessieduur en de
-`DbUserStore` uit de instantie; `assets.ts` de `FileAssetStore`; `content.ts`
+`UserStore` uit de instantie; `assets.ts` de `FileAssetStore`; `content.ts`
 de stores. De 36 modules die `@/lib/content` importeren merken niets — dat
 was de eis van Fase 1 ("zonder zichtbaar gedrag te veranderen"). Het package
 is bewust framework-vrij: SiteChrome, viewers en editors blijven in de site
 tot de renderer- en admin-extractie (Fase 2 en 4) ze een getypeerd slot
-geeft. Secrets (`SESSION_SECRET`, `INGEST_TOKEN`, …) blijven in de
-omgeving en worden gelezen waar ze gebruikt worden.
+geeft.
+
+**Secrets** (`SESSION_SECRET`, `INGEST_TOKEN`, `GITHUB_WEBHOOK_SECRET`,
+`PUBLISH_*`) staan in de omgeving, maar alleen `imprint.config.ts` leest ze
+(`secrets`); de rest van de site, en straks de gedeelde admin, krijgt ze van
+de instantie en kent geen `process.env`. De config valideert ze bewust niet:
+een kale checkout moet bouwen, en een ontbrekend secret faalt of schakelt uit
+op de plek waar het nodig is (geen sessiesecret = niemand logt in; geen
+ingest-token = de schrijf-API staat uit).
+
+**Contenttypecatalogus** (ontwerp Fase 3 §7), in twee helften.
+*Beschikbaar*: `CONTENT_TYPES` in
+[content-types.ts](../packages/content-core/src/content-types.ts), één regel
+per `ContentType` met label en wat de generieke admin en de schrijf-API ermee
+mogen (`listable`, `editable`, `ingestable`, `overview`). *Actief*:
+`contentTypes` in `imprint.config.ts`, als `ContentTypeCatalog` op de
+instantie. Admin-routes, server actions, dashboard, relatie-editor en
+`/api/content` vragen `contentTypes.has(type, "editable")` in plaats van elk
+een eigen lijst te houden. De store zelf filtert niet: die bewaart elk type.
+"Actief" is configuratie en hoort op termijn in de tijdlijn (§8 van het
+ontwerp); nu is het code.
 
 ### Nog open
 
@@ -258,8 +279,10 @@ Verschillen met het oorspronkelijke UML:
   Gebruikers lopen **niet** via de `ContentStore`: ze zijn geen content en
   krijgen bewust géén historie — een bitemporale tabel bewaart elke rij voor
   altijd, en dat is precies wat je met wachtwoordhashes niet wilt. Ze hebben
-  een eigen `DbUserStore`
-  ([user-store.ts](../packages/content-core/src/user-store.ts)), gedeeld door
+  een eigen `UserStore`, opgezet als de contentstores: de regels in
+  [user-store-base.ts](../packages/content-core/src/user-store-base.ts), per
+  dialect vijf rij-operaties (`DbUserStore` voor MariaDB, `PgUserStore` voor
+  Postgres), gedeeld door
   **/admin/users**, de seed en de `npm run user`-CLI, zodat de regels
   (wachtwoordlengte, "laatste admin blijft admin") overal gelden. Hashing en
   wachtwoordbeleid staan apart in
@@ -671,9 +694,9 @@ Imprint-productsite). De opzet is bewust *geen* kopie van de store:
   een bewezen stand-in voor een database: de renderer-karakterisatie (§8)
   draait erop. Niet persistent, nooit een productiebackend.
 
-Wat (nog) MariaDB-only is: `DbUserStore` (users, admin-login), `npm run user`,
-`npm run backup` en `npm run assets:gc`. De Imprint-site heeft nog geen admin,
-dus dat knelt niet; het staat in de backlog bij Fase 3. Waarom Postgres
+Gebruikers werken op beide databases (`DbUserStore`, `PgUserStore`), en
+daarmee ook `npm run user` en de seed. Wat nog MariaDB-only is:
+`npm run backup` en `npm run assets:gc`; dat staat in de backlog. Waarom Postgres
 wenselijk is voor de bitemporele route: `jsonb` i.p.v. tekst, en
 `tstzrange` + exclusion constraints maken de stap van bitemporal-light naar
 echt bitemporeel klein.
@@ -752,7 +775,7 @@ sequenceDiagram
 flowchart LR
     subgraph dev["Lokaal (dev)"]
         NX["next dev :3000 (musicbrain)"] --> MDBL[("MariaDB 10.11<br/>docker compose, :3306")]
-        NXI["next dev :3100 (imprint)"] --> PGL[("Postgres 17<br/>docker compose, :5433")]
+        NXI["next dev :3100 (imprint)"] --> PGL[("Postgres 17<br/>docker compose, :5434")]
     end
     subgraph plesk["Plesk (prod)"]
         PSG["Passenger → server.js<br/>(Node.js-extensie)"] --> MDBP[("MariaDB 10.11<br/>Plesk-database")]
@@ -769,7 +792,7 @@ flowchart LR
   `drizzle-pg/` → `db:migrate:pg`. Een schemawijziging hoort dus in **beide**
   schemabestanden (zelfde kolomnamen), met een migratie per journal.
 - **Lokale databases**: `npm run db:up` start MariaDB (poort 3306) én
-  Postgres (poort **5433**, omdat 5432 lokaal vaak al bezet is); de
+  Postgres (poort **5434**, omdat 5432 en 5433 lokaal vaak al bezet zijn door Omnium); de
   Postgres-container maakt bij de eerste start ook `imprint_test` aan
   (`docker/pg-init.sql`).
 - **Content** wordt níet gesynct: de productie-database is de bron van
@@ -861,6 +884,8 @@ verwachtingen voor die de code nu niet waarmaakt.
 | db-store (MariaDB) | `test/db-store.test.ts` | lees- + schrijfcontract tegen `TEST_DATABASE_URL`, tabellen uit `drizzle/` |
 | db-store (Postgres) | `test/db-store.pg.test.ts` | exact dezelfde suites tegen `TEST_PG_DATABASE_URL`, tabellen uit `drizzle-pg/` |
 | memory-store | `test/memory-store.test.ts` | exact dezelfde suites tegen de geheugen-backend; draait altijd, geen database nodig |
+| **UserStore-contract** | `test/user-store-contract.ts` | aanmaken, lijst zonder hash, dubbele/ongeldige namen en zwakke wachtwoorden geweigerd, inloggen, eigen wachtwoord wijzigen, laatste-admin-bewaking, verwijderen; draait binnen de MariaDB- en de Postgres-suite |
+| contenttypecatalogus | `test/content-types.test.ts` | default alle typen, versmallen per site, onbekend type geweigerd; legt de lijsten vast die de admin vroeger met de hand bijhield |
 | backendkeuze | `test/db.test.ts` | `dialectOf()`: URL-schema → dialect |
 | composition root | `packages/extension-api/test/imprint.test.ts` | `defineImprint` weigert ongeldige config; `resolveImprint` levert file-/MariaDB-/Postgres-instantie met juiste write-side, users, sessie- en asset-defaults; `createImprint` is één instantie per id |
 | widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |

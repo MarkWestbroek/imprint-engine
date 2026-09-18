@@ -3,14 +3,13 @@ import {
   RelationsDoc,
   type RelationRule,
 } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { contentTypes, writableStore } from "@/lib/content";
 import { RelationsEditor } from "@/components/admin/relations-editor";
-
-// Reference rules that content types point at each other by.
-const TYPES = ["product", "component", "release", "page", "menu", "site"];
 
 export default async function AdminRelations() {
   const item = await writableStore!.getItem("relations", "relations");
+  // Rules may run between any two active types — except the rules document itself.
+  const relatable = contentTypes.types().filter((type) => type !== "relations");
   const rules: RelationRule[] = item ? RelationsDoc.parse(item.data).rules : [];
 
   return (
@@ -22,7 +21,7 @@ export default async function AdminRelations() {
         components that exist.
       </p>
       <div className="mt-6">
-        <RelationsEditor initialRules={rules} types={TYPES} defaults={DEFAULT_RELATION_RULES} />
+        <RelationsEditor initialRules={rules} types={relatable} defaults={DEFAULT_RELATION_RULES} />
       </div>
     </div>
   );

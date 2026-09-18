@@ -195,12 +195,10 @@ async function main() {
   }
 
   // first admin user — later ones go through /admin/users or `npm run user`
-  if (want("user") && !opened.users) {
-    console.log("user      ! users live in MariaDB only for now (no admin on Postgres yet) — skipped");
-  } else if (want("user")) {
+  if (want("user")) {
     const name = process.env.SEED_ADMIN_USER ?? "admin";
     const password = process.env.SEED_ADMIN_PASSWORD;
-    const userStore = opened.users!;
+    const userStore = opened.users;
     if (!password) {
       console.log("user      ! SEED_ADMIN_PASSWORD empty — no admin user created");
     } else if (await userStore.get(name)) {

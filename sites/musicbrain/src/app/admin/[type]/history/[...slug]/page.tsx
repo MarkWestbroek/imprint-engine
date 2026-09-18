@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ContentType } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { contentTypes, writableStore } from "@/lib/content";
 import { restoreVersionAction } from "../../../actions";
-
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "wiki", "wiki-folder", "wiki-page"];
 
 type Props = {
   params: Promise<{ type: string; slug: string[] }>;
@@ -19,13 +16,9 @@ function fmt(date: Date | null): string {
 export default async function AdminHistory({ params, searchParams }: Props) {
   const { type, slug: slugParts } = await params;
   const { lang } = await searchParams;
-  if (!CONTENT_TYPES.includes(type as ContentType)) notFound();
+  if (!contentTypes.has(type, "editable")) notFound();
   const slug = slugParts.map(decodeURIComponent).join("/");
-  const versions = await writableStore!.listVersions(
-    type as ContentType,
-    slug,
-    lang ?? "en"
-  );
+  const versions = await writableStore!.listVersions(type, slug, lang ?? "en");
   if (versions.length === 0) notFound();
 
   return (

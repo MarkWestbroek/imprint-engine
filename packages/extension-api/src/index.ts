@@ -1,13 +1,15 @@
 import path from "node:path";
 import {
+  ContentTypeCatalog,
   FileAssetStore,
   FileContentStore,
   WidgetTypeRegistry,
   type ContentStore,
+  type ContentType,
   type WritableContentStore,
 } from "@imprint/content-core";
 import { dialectOf, openContentDatabase, type Dialect } from "@imprint/content-core/db";
-import type { DbUserStore } from "@imprint/content-core/user-store";
+import type { UserStore } from "@imprint/content-core/user-store";
 
 /**
  * The composition root of an Imprint instance (architecture.md §0, Fase 1 of
@@ -34,12 +36,36 @@ export interface ImprintConfig {
     /** The v0 content folder: file-store fallback and seed source. */
     contentDir: string;
   };
+  /**
+   * The content types this site uses, out of those the model offers
+   * (`CONTENT_TYPES`). Absent = all of them. Drives the admin and the write
+   * API; the store itself holds whatever type it is given.
+   */
+  contentTypes?: ContentType[];
   /** The widget catalogue (config schemas) this instance supports; the store validates layouts against it. */
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
   session?: { cookie?: string; hours?: number };
   /** Uploaded assets (board renders, pinouts): where they live and where they're served. */
   assets?: { root?: string; baseUrl?: string };
+  /**
+   * Secrets and outbound targets. The config file is the only place that reads
+   * `process.env` for them, so shared code (the admin, Fase 3) never does.
+   * All optional and never validated here: a bare checkout must build without
+   * any of them, and each one fails or switches off where it is used.
+   */
+  secrets?: ImprintSecrets;
+}
+
+export interface ImprintSecrets {
+  /** Signs the admin session cookie. Absent = nobody can sign in. */
+  session?: string;
+  /** Bearer token for machine-to-machine writes (/api/content). Absent = writes off. */
+  ingestToken?: string;
+  /** HMAC secret of the GitHub release webhook. Absent = webhook off. */
+  githubWebhook?: string;
+  /** Publishing to another instance: its base URL and its ingest token. */
+  publish?: { url?: string; token?: string };
 }
 
 export type StoreDialect = "file" | Dialect;
@@ -51,9 +77,11 @@ export interface ImprintInstance {
   store: ContentStore;
   /** Write side for the admin; null in file mode (v0 content is edited in git). */
   writableStore: WritableContentStore | null;
-  /** Users/roles for admin login; null in file mode and, for now, on Postgres (backlog). */
-  users: DbUserStore | null;
+  /** Users/roles for admin login; null in file mode (no database, no users). */
+  users: UserStore | null;
   widgets: WidgetTypeRegistry;
+  /** The active content types (design/fase-3 §7). */
+  contentTypes: ContentTypeCatalog;
   /**
    * Typed as the file backend on purpose: it is the only one, and the route
    * that serves assets needs `resolve()`. An S3/MinIO backend later means a
@@ -61,6 +89,8 @@ export interface ImprintInstance {
    */
   assets: FileAssetStore;
   session: { cookie: string; hours: number };
+  /** As configured; empty strings count as absent. */
+  secrets: ImprintSecrets;
   /** Release connection pools (CLI/tests; a running site never calls this). */
   close(): Promise<void>;
 }
@@ -79,6 +109,7 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
   if (!(config.widgets instanceof WidgetTypeRegistry)) {
     throw new Error(`imprint.config (${config.id}): widgets must be a WidgetTypeRegistry`);
   }
+  new ContentTypeCatalog(config.contentTypes); // fail early on an unknown type
   if (config.session?.hours !== undefined && !(config.session.hours > 0)) {
     throw new Error(`imprint.config (${config.id}): session.hours must be positive`);
   }
@@ -105,10 +136,20 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     writableStore: opened?.store ?? null,
     users: opened?.users ?? null,
     widgets,
+    contentTypes: new ContentTypeCatalog(cfg.contentTypes),
     assets: new FileAssetStore(assetRoot, assetBase),
     session: {
       cookie: cfg.session?.cookie || `imprint_${cfg.id}_session`,
       hours: cfg.session?.hours ?? 12,
+    },
+    secrets: {
+      session: cfg.secrets?.session || undefined,
+      ingestToken: cfg.secrets?.ingestToken || undefined,
+      githubWebhook: cfg.secrets?.githubWebhook || undefined,
+      publish: {
+        url: cfg.secrets?.publish?.url || undefined,
+        token: cfg.secrets?.publish?.token || undefined,
+      },
     },
     close: () => (opened ? opened.close() : Promise.resolve()),
   };

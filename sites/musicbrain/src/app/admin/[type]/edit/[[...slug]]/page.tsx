@@ -1,12 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ContentType } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { contentTypes, writableStore } from "@/lib/content";
 import { contentFormSchema } from "@/lib/admin-schemas";
 import { ItemEditor } from "@/components/admin/item-editor";
 import { PageStudio } from "@/components/admin/studio";
-
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "wiki", "wiki-folder", "wiki-page"];
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
@@ -67,8 +65,8 @@ function toLocalInput(date: Date | null | undefined): string | undefined {
 export default async function AdminEdit({ params, searchParams }: Props) {
   const { type, slug: slugParts } = await params;
   const { lang, previewAs } = await searchParams;
-  if (!CONTENT_TYPES.includes(type as ContentType)) notFound();
-  const contentType = type as ContentType;
+  if (!contentTypes.has(type, "editable")) notFound();
+  const contentType = type;
   const slug = slugParts?.map(decodeURIComponent).join("/");
 
   // Pages get the visual studio (live canvas + sidebar), the rest a form.

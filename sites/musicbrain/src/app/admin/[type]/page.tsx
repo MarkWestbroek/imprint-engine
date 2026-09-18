@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ContentType } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { contentTypes, writableStore } from "@/lib/content";
 import { deleteItemAction } from "../actions";
-
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "planning-item", "wiki", "wiki-folder", "wiki-page"];
 
 type Props = { params: Promise<{ type: string }> };
 
@@ -15,9 +12,8 @@ function title(data: unknown, slug: string): string {
 
 export default async function AdminList({ params }: Props) {
   const { type } = await params;
-  if (!CONTENT_TYPES.includes(type as ContentType)) notFound();
-  const contentType = type as ContentType;
-  const items = await writableStore!.listItems(contentType);
+  if (!contentTypes.has(type, "listable")) notFound();
+  const items = await writableStore!.listItems(type);
 
   return (
     <div>

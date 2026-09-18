@@ -15,4 +15,10 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // A product site: pages and their chrome, no catalogue, planning or wiki.
+  contentTypes: ["page", "menu", "theme", "site", "relations"],
+  secrets: {
+    session: process.env.SESSION_SECRET,
+    ingestToken: process.env.INGEST_TOKEN,
+  },
 });

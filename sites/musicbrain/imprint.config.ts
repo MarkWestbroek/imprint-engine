@@ -7,9 +7,9 @@ import { widgetRegistry } from "@/widgets/registry";
  * root). Everything site-specific that the engine needs to know is declared
  * here, once; `src/lib/content.ts` turns it into the live instance.
  *
- * Secrets stay in the environment (.env.local): SESSION_SECRET, INGEST_TOKEN,
- * GITHUB_WEBHOOK_SECRET, PUBLISH_*. DATABASE_URL picks the backend by its
- * scheme; without it the site builds from `content/`.
+ * Secrets live in the environment (.env.local) and are read here, nowhere
+ * else: the rest of the site gets them from the instance. DATABASE_URL picks
+ * the backend by its scheme; without it the site builds from `content/`.
  */
 export default defineImprint({
   id: "musicbrain",
@@ -23,5 +23,11 @@ export default defineImprint({
   assets: {
     root: process.env.ASSET_ROOT,
     baseUrl: process.env.ASSET_BASE_URL,
+  },
+  secrets: {
+    session: process.env.SESSION_SECRET,
+    ingestToken: process.env.INGEST_TOKEN,
+    githubWebhook: process.env.GITHUB_WEBHOOK_SECRET,
+    publish: { url: process.env.PUBLISH_URL, token: process.env.PUBLISH_TOKEN },
   },
 });

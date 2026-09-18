@@ -1,14 +1,12 @@
 import { eq } from "drizzle-orm";
 
-import { users } from "./db-schema";
+import { users } from "./db-schema.pg";
 import { UserStore, type UserRow } from "./user-store-base";
-import type { Db } from "./db-store";
+import type { PgDb } from "./db-store.pg";
 
-export { UserStore, type UserRecord } from "./user-store-base";
-
-/** MariaDB/MySQL users — the row operations behind UserStore (user-store-base.ts). */
-export class DbUserStore extends UserStore {
-  constructor(private readonly db: Db) {
+/** Postgres users — the row operations behind UserStore (user-store-base.ts). */
+export class PgUserStore extends UserStore {
+  constructor(private readonly db: PgDb) {
     super();
   }
 

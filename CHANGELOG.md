@@ -6,6 +6,37 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix: studio gaf een reeks "Only plain objects"-meldingen** — zod 4.4 hangt
+  een verborgen `~standard`-object aan elk JSON-schema; de formulierschema's
+  gaan nu als kale JSON naar de client (`admin-schemas.ts`).
+- **Fix: hydration-melding op `<html>`** — het thema-script zet `data-theme`
+  vóór de hydratie (bewust, tegen flitsen); React meldde dat in dev als
+  mismatch zodra de browser een opgeslagen thema had. `<html>` heeft nu
+  `suppressHydrationWarning`.
+- **Lokale databases**: Postgres staat nu op poort **5434** (5433 botste met
+  de regressietest van Omnium); beide containers starten vanzelf mee met
+  Docker (`restart: unless-stopped`). `npm run test:db` is een Node-script en
+  werkt daardoor ook op Windows. Wie al een `.env.local` met 5433 heeft: poort
+  aanpassen en `npm run db:up` opnieuw draaien.
+- **Fase 3, stap 1: de grond onder de gedeelde admin**. Drie kleine
+  wijzigingen zonder zichtbaar gedrag voor MusicBrain:
+  - *Gebruikers op Postgres*: het gebruikersbeheer is gesplitst in een
+    gedeelde `UserStore` (regels: wachtwoordbeleid, laatste admin blijft
+    admin) en per dialect vijf rij-operaties (`DbUserStore`, `PgUserStore`),
+    bewezen gelijk door één contractsuite op beide databases.
+    `openContentDatabase()` levert nu altijd users; `npm run user` en de seed
+    werken op MariaDB en Postgres.
+  - *Secrets via de config*: `SESSION_SECRET`, `INGEST_TOKEN`,
+    `GITHUB_WEBHOOK_SECRET` en `PUBLISH_*` worden alleen nog in
+    `imprint.config.ts` gelezen (`secrets`) en komen via de instantie bij de
+    code; ontbreekt er een, dan faalt of zwijgt alleen de functie die hem
+    nodig heeft, zoals voorheen.
+  - *Contenttypecatalogus*: `CONTENT_TYPES` in `content-core` beschrijft wat
+    het model kent (label; lijstbaar, bewerkbaar, via de API aan te leveren,
+    op het dashboard); `contentTypes` in `imprint.config.ts` bepaalt welke een
+    site gebruikt. De zeven losse typelijsten in admin-routes, server actions,
+    dashboard, relatie-editor en `/api/content` zijn vervangen. Zichtbaar
+    gevolg: de relatie-editor biedt nu alle actieve typen aan.
 - **Ontwerp Fase 3**: `docs/design/fase-3-admin-toegang-tijdreizen.md` legt
   de besluiten vast voor de gedeelde admin (eigen admin, alleen ideeën lenen);
   rechten via het PxP-patroon met twee sidecar-PDP's, aan de voorkant en bij

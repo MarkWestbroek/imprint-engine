@@ -10,7 +10,7 @@ import {
   destroySession,
   getSession,
 } from "@/lib/auth";
-import { writableStore } from "@/lib/content";
+import { contentTypes, writableStore } from "@/lib/content";
 
 export type ActionResult = { ok: boolean; error?: string };
 
@@ -33,8 +33,6 @@ export async function saveRelationsAction(
   return { ok: true };
 }
 
-const CONTENT_TYPES: ContentType[] = ["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "planning-item", "wiki", "wiki-folder", "wiki-page"];
-
 export async function loginAction(
   _prev: ActionResult | null,
   formData: FormData
@@ -53,8 +51,8 @@ export async function logoutAction(): Promise<void> {
 }
 
 function parseType(value: unknown): ContentType {
-  const type = String(value) as ContentType;
-  if (!CONTENT_TYPES.includes(type)) throw new Error(`Unknown content type "${type}"`);
+  const type = String(value);
+  if (!contentTypes.has(type, "listable")) throw new Error(`Unknown content type "${type}"`);
   return type;
 }
 

@@ -85,12 +85,27 @@ describe("resolveImprint", () => {
     assert.ok(url.startsWith("/files/a/"), `served under baseUrl: ${url}`);
   });
 
-  for (const [envVar, dialect, users] of [
-    ["TEST_DATABASE_URL", "mysql", true],
-    ["TEST_PG_DATABASE_URL", "postgres", false],
+  it("hands secrets through; empty strings (an unset .env line) count as absent", async () => {
+    const imprint = resolveImprint({
+      id: "secrets",
+      store: { contentDir: await contentDir() },
+      widgets: registry(),
+      secrets: { session: "s3cret", ingestToken: "", publish: { url: "https://example.test", token: "" } },
+    });
+    assert.deepEqual(imprint.secrets, {
+      session: "s3cret",
+      ingestToken: undefined,
+      githubWebhook: undefined,
+      publish: { url: "https://example.test", token: undefined },
+    });
+  });
+
+  for (const [envVar, dialect] of [
+    ["TEST_DATABASE_URL", "mysql"],
+    ["TEST_PG_DATABASE_URL", "postgres"],
   ] as const) {
     const url = process.env[envVar];
-    it(`with a ${dialect} URL: writable store${users ? " and users" : ", no users yet"}`, { skip: url ? false : `${envVar} not set` }, async () => {
+    it(`with a ${dialect} URL: writable store and users`, { skip: url ? false : `${envVar} not set` }, async () => {
       const imprint = resolveImprint({
         id: `db-${dialect}`,
         store: { contentDir: await contentDir(), databaseUrl: url },
@@ -99,7 +114,7 @@ describe("resolveImprint", () => {
       assert.equal(imprint.dialect, dialect);
       assert.ok(imprint.writableStore, "write side present");
       assert.equal(imprint.writableStore, imprint.store, "read and write side are one store");
-      assert.equal(imprint.users !== null, users);
+      assert.ok(imprint.users, "users live next to the content");
       await imprint.close();
     });
   }

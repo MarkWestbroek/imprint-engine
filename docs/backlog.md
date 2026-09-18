@@ -159,9 +159,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         + `PgContentStore`, schema/journal per dialect, Postgres in compose,
         beide backends door dezelfde lees- en schrijfcontractsuite;
         `sites/imprint` op Postgres, `sites/musicbrain` ongewijzigd.
-      - [ ] **Users op Postgres** — `DbUserStore`, `npm run user`, `backup` en
-        `assets-gc` zijn nog MariaDB-only; nodig zodra de gedeelde admin
-        (Fase 3) op de Imprint-site landt. Zelfde recept: base + dialect. _(S)_
+      - [x] **Users op Postgres** (september 2026, Fase 3 stap 1) —
+        `UserStore`-basis + `DbUserStore`/`PgUserStore`, één contractsuite op
+        beide databases; `npm run user` en de seed volgen het URL-schema.
+      - [ ] **Backup en assets-gc op Postgres** — `npm run backup` en
+        `npm run assets:gc` zijn nog MariaDB-only; nodig vóór de Imprint-site
+        een admin met echte content krijgt (Fase 3 stap 7). _(S)_
       - [ ] **MusicBrain naar Postgres?** — aparte beslissing nu B bewezen is;
         migratiepad = backup → seed via `openContentDatabase` (historie
         meenemen vraagt een rij-voor-rij kopie, geen `putItem`). _(M)_
@@ -211,11 +214,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           tweede site het nodig heeft. _(S)_
         - [ ] **Navigatie van de Imprint-site uit de contentstore** — het menu
           is nog code, dus `/techniek` is alleen via de URL bereikbaar. _(S)_
-      - [ ] **Secrets in de config?** — `SESSION_SECRET`, `INGEST_TOKEN`,
-        `GITHUB_WEBHOOK_SECRET`, `PUBLISH_*` worden nog gelezen waar ze
-        gebruikt worden; bij de admin-extractie (Fase 3) via
-        `ImprintConfig` injecteren zodat de gedeelde admin geen `process.env`
-        kent. _(S)_
+      - [x] **Secrets in de config** (september 2026, Fase 3 stap 1) —
+        `secrets` in `ImprintConfig`; alleen `imprint.config.ts` leest nog
+        `process.env`.
+      - [x] **Contenttypecatalogus beschikbaar/actief** (september 2026,
+        Fase 3 stap 1) — `CONTENT_TYPES` + `contentTypes` in de config; de
+        zeven losse typelijsten zijn weg. Het admin-menu leest er nog niet
+        uit; dat hoort bij stap 5.
+      - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
+        maar nog zonder stap in het plan: een sessietabel of een
+        versieteller per gebruiker, zodat een wachtwoordreset of uitloggen
+        een gelekt cookie ongeldig maakt. _(S–M)_
       - [x] **Bouwen of lenen vóór Fase 3** — beslist (Mark, 16 september
         2026): eigen admin, van andere CMS'en alleen ideeën; formulieren en
         lijsten volgens Omnium; rechten via PxP met twee sidecar-PDP's

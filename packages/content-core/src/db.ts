@@ -1,6 +1,7 @@
 import { createDb, DbContentStore } from "./db-store";
 import { createPgDb, PgContentStore } from "./db-store.pg";
-import { DbUserStore } from "./user-store";
+import { DbUserStore, type UserStore } from "./user-store";
+import { PgUserStore } from "./user-store.pg";
 import type { WritableContentStore } from "./store";
 import type { WidgetTypeRegistry } from "./widgets";
 
@@ -24,8 +25,8 @@ export function dialectOf(url: string): Dialect {
 export type OpenedContentDatabase = {
   dialect: Dialect;
   store: WritableContentStore;
-  /** Users/roles for admin login. MariaDB only for now (backlog: Postgres twin). */
-  users: DbUserStore | null;
+  /** Users/roles for admin login, in the same database as the content. */
+  users: UserStore;
   /** Release the connection pool (CLI scripts; a long-running site never calls this). */
   close(): Promise<void>;
 };
@@ -37,7 +38,7 @@ export function openContentDatabase(
   const dialect = dialectOf(url);
   if (dialect === "postgres") {
     const db = createPgDb(url);
-    return { dialect, store: new PgContentStore(db, opts), users: null, close: () => db.$client.end() };
+    return { dialect, store: new PgContentStore(db, opts), users: new PgUserStore(db), close: () => db.$client.end() };
   }
   const db = createDb(url);
   return {

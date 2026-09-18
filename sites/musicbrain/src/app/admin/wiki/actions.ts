@@ -11,7 +11,7 @@ import {
   type WikiPage,
 } from "@imprint/content-core";
 import { canEdit, getSession } from "@/lib/auth";
-import { writableStore } from "@/lib/content";
+import { imprint, writableStore } from "@/lib/content";
 import { scopedSlug, slugify } from "@/lib/wiki-href";
 import type { ActionResult } from "../actions";
 
@@ -211,8 +211,8 @@ export async function publishWikiAction(
 ): Promise<ActionResult & { published?: number }> {
   const session = await getSession();
   if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
-  const base = process.env.PUBLISH_URL?.replace(/\/+$/, "");
-  const token = process.env.PUBLISH_TOKEN;
+  const base = imprint.secrets.publish?.url?.replace(/\/+$/, "");
+  const token = imprint.secrets.publish?.token;
   if (!base || !token) {
     return { ok: false, error: "Zet PUBLISH_URL en PUBLISH_TOKEN in sites/musicbrain/.env.local" };
   }

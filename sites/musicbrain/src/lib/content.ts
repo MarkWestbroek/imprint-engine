@@ -12,5 +12,8 @@ export const imprint = createImprint(config);
 
 export const store: ContentStore = imprint.store;
 
+/** The content types this site has switched on (imprint.config.ts; default all). */
+export const contentTypes = imprint.contentTypes;
+
 /** Write access for /admin. Null in file mode: v0 content is edited in git. */
 export const writableStore: WritableContentStore | null = imprint.writableStore;

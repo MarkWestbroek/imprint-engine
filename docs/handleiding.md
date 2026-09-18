@@ -267,6 +267,7 @@ hij terug op de gewone accentkleur.
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een
   pagina (kieslijst) of een URL en kan subitems hebben.
 - **Relations**: welke verwijzingen tussen contenttypen worden afgedwongen.
+  Je kunt kiezen uit alle contenttypen die op deze site actief zijn.
 - **Site**: naam, tagline, motto (het regeltje onder het logo; leeg =
   tagline) en links van de site zelf.
 - Machine-koppelingen (hardware-toolkit die borden publiceert, andere

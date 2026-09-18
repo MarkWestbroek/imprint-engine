@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { WikiSchema, WikiFolderSchema, WikiPageSchema } from "@imprint/content-core";
-import { writableStore } from "@/lib/content";
+import { imprint, writableStore } from "@/lib/content";
 import { WikiStudio } from "@/components/admin/wiki-studio";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -49,8 +49,8 @@ export default async function WikiStudioPage({ params }: Props) {
  * niet (op live publiceer je niet nog een keer naar live).
  */
 function publishTarget(): string | null {
-  const url = process.env.PUBLISH_URL;
-  if (!url || !process.env.PUBLISH_TOKEN) return null;
+  const { url, token } = imprint.secrets.publish ?? {};
+  if (!url || !token) return null;
   try {
     return new URL(url).host;
   } catch {

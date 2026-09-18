@@ -16,7 +16,8 @@
     "./db": "./src/db.ts",
     "./memory-store": "./src/memory-store.ts",
     "./passwords": "./src/passwords.ts",
-    "./user-store": "./src/user-store.ts"
+    "./user-store": "./src/user-store.ts",
+    "./user-store.pg": "./src/user-store.pg.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

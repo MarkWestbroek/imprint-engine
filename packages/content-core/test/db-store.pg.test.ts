@@ -2,9 +2,11 @@ import { after, before, describe } from "node:test";
 import { sql } from "drizzle-orm";
 
 import { createPgDb, PgContentStore, type PgDb } from "../src/db-store.pg";
+import { PgUserStore } from "../src/user-store.pg";
 import type { WidgetTypeRegistry } from "../src/widgets";
 import { migrationStatements, seedFixtures, testDatabaseUrl } from "./db-test-helpers";
 import { contentStoreContract } from "./store-contract";
+import { userStoreContract } from "./user-store-contract";
 import { writableStoreContract } from "./writable-contract";
 
 /**
@@ -33,4 +35,5 @@ describe("PgContentStore (Postgres)", { skip: url ? false : "TEST_PG_DATABASE_UR
   const factory = async (opts?: { widgets?: WidgetTypeRegistry }) => new PgContentStore(db, opts);
   contentStoreContract("PgContentStore", factory);
   writableStoreContract("PgContentStore", factory);
+  userStoreContract("PgUserStore", async () => new PgUserStore(db));
 });

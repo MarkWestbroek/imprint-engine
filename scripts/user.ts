@@ -1,7 +1,6 @@
 import "dotenv/config";
 
-import { createDb } from "@imprint/content-core/db-store";
-import { DbUserStore } from "@imprint/content-core/user-store";
+import { openContentDatabase } from "@imprint/content-core/db";
 import { generatePassword } from "@imprint/content-core/passwords";
 import { RoleType } from "@imprint/content-core";
 
@@ -9,8 +8,8 @@ import { RoleType } from "@imprint/content-core";
  * User administration from the command line — the way back in when nobody can
  * reach /admin/users any more (forgotten admin password, last admin deleted).
  * Runs wherever DATABASE_URL points, so on Plesk that means over SSH from the
- * app directory. Same DbUserStore as the admin UI, so the last-admin guard and
- * the password policy apply here too.
+ * app directory, on MariaDB or Postgres alike. Same UserStore as the admin
+ * UI, so the last-admin guard and the password policy apply here too.
  */
 
 const USAGE = `Usage: npm run user -- <command>
@@ -30,8 +29,8 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set (create .env from .env.example)");
 
-  const db = createDb(url);
-  const users = new DbUserStore(db);
+  const opened = openContentDatabase(url);
+  const users = opened.users;
 
   try {
     switch (command) {
@@ -87,7 +86,7 @@ async function main() {
         process.exitCode = command ? 1 : 0;
     }
   } finally {
-    await db.$client.end();
+    await opened.close();
   }
 }
 

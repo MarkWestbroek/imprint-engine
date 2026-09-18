@@ -2,9 +2,11 @@ import { after, before, describe } from "node:test";
 import { sql } from "drizzle-orm";
 
 import { createDb, DbContentStore, type Db } from "../src/db-store";
+import { DbUserStore } from "../src/user-store";
 import type { WidgetTypeRegistry } from "../src/widgets";
 import { migrationStatements, seedFixtures, testDatabaseUrl } from "./db-test-helpers";
 import { contentStoreContract } from "./store-contract";
+import { userStoreContract } from "./user-store-contract";
 import { writableStoreContract } from "./writable-contract";
 
 /**
@@ -34,4 +36,5 @@ describe("DbContentStore (MariaDB)", { skip: url ? false : "TEST_DATABASE_URL no
   const factory = async (opts?: { widgets?: WidgetTypeRegistry }) => new DbContentStore(db, opts);
   contentStoreContract("DbContentStore", factory);
   writableStoreContract("DbContentStore", factory);
+  userStoreContract("DbUserStore", async () => new DbUserStore(db));
 });

@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { computeItinerary, Locale, type ContentType } from "@imprint/content-core";
-import { store, writableStore } from "@/lib/content";
+import { contentTypes, store, writableStore } from "@/lib/content";
 import { canEdit, checkIngestToken, getSession } from "@/lib/auth";
 
 /**
@@ -22,21 +22,10 @@ import { canEdit, checkIngestToken, getSession } from "@/lib/auth";
  * POST (write, for product-projects to push their data — Bearer INGEST_TOKEN):
  *   /api/content/<type>/<slug>         one item (body = the content)
  *   /api/content                       bundle { product?, components?, releases? }
- *   ingestable types: product, component, release, page
+ *   ingestable types: those the catalogue marks so (content-types.ts), if active here
  */
 
 const CACHE = "public, max-age=60";
-const INGESTABLE = new Set<ContentType>([
-  "product",
-  "component",
-  "board-spec",
-  "release",
-  "page",
-  // Wiki-publicatie (lokaal → live): volgorde wiki → folders → pagina's.
-  "wiki",
-  "wiki-folder",
-  "wiki-page",
-]);
 
 function json(data: unknown, cache = true) {
   return NextResponse.json(data, {
@@ -168,13 +157,13 @@ export async function POST(
 
   const [type, ...slugParts] = path;
   const slug = slugParts.map(decodeURIComponent).join("/");
-  if (!INGESTABLE.has(type as ContentType)) {
-    return error(400, `Type "${type}" is not ingestable (${[...INGESTABLE].join(", ")})`);
+  if (!contentTypes.has(type, "ingestable")) {
+    return error(400, `Type "${type}" is not ingestable (${contentTypes.types("ingestable").join(", ")})`);
   }
   if (!slug) return error(400, "Slug required: POST /api/content/<type>/<slug>");
 
   try {
-    await putOne(type as ContentType, slug, body as Record<string, unknown>);
+    await putOne(type, slug, body as Record<string, unknown>);
   } catch (err) {
     return error(422, err instanceof Error ? err.message : String(err));
   }
@@ -208,16 +197,16 @@ export async function DELETE(
   const { path = [] } = await ctx.params;
   const [type, ...slugParts] = path;
   const slug = slugParts.map(decodeURIComponent).join("/");
-  if (!INGESTABLE.has(type as ContentType)) {
-    return error(400, `Type "${type}" is not retractable (${[...INGESTABLE].join(", ")})`);
+  if (!contentTypes.has(type, "ingestable")) {
+    return error(400, `Type "${type}" is not retractable (${contentTypes.types("ingestable").join(", ")})`);
   }
   if (!slug) return error(400, "Slug required: DELETE /api/content/<type>/<slug>");
 
   const lang = req.nextUrl.searchParams.get("lang") ?? "en";
-  const existing = await writableStore.getItem(type as ContentType, slug, lang);
+  const existing = await writableStore.getItem(type, slug, lang);
   if (!existing) return error(404, `No current ${type} "${slug}" (${lang})`);
 
-  await writableStore.deleteItem(type as ContentType, slug, lang);
+  await writableStore.deleteItem(type, slug, lang);
   revalidatePath("/", "layout");
   return json(
     { ok: true, type, slug, note: "retracted (tombstone) — history retained, restorable via admin History" },

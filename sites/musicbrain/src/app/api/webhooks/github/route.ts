@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
-import { store, writableStore } from "@/lib/content";
+import { imprint, store, writableStore } from "@/lib/content";
 
 /**
  * GitHub release-webhook (W2/S7): "de releaselijst gaat nooit meer stale".
@@ -27,7 +27,7 @@ function verifySignature(raw: string, header: string | null, secret: string): bo
 }
 
 export async function POST(req: NextRequest) {
-  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+  const secret = imprint.secrets.githubWebhook;
   if (!secret) return json(503, { error: "GITHUB_WEBHOOK_SECRET not set — webhook disabled" });
   if (!writableStore) return json(503, { error: "Writes require DATABASE_URL" });
 
