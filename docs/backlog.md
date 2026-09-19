@@ -289,6 +289,21 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       cryptisch "Unknown content type" pas bij het opslaan. Eén gedeelde
       bron per context (schrijfbaar / lijstbaar / ingestbaar) maakt een
       nieuw type weer één regel. _(S)_
+- [ ] **Hulp in de admin: zelfde principe als Omnium** (Mark, 19 september
+      2026) — nu is de admin-help een wiki op de publieke site (`/help`), en
+      dat wringt: het is hulp bij de admin, niet voor bezoekers (als
+      members-wiki gaf hij bovendien een 500, zie §6). Omnium heeft het
+      principe al uitgewerkt: *hulp is aanwezig en bewust van de toestand,
+      maar nooit modaal*, in oplopende "bij-de-hand-houden"-factor —
+      mouseover → lege staten die uitleggen → command palette → eenmalige
+      contextuele hints → checklist i.p.v. wizard; referentiedocumentatie
+      apart, met "Meer…"-links erheen. Ontwerp: Bitemporal-repo
+      `docs/plans/2026-09-10 Begeleiding in de Studio — palette, lege staten,
+      hints, checklist (ontwerp).md` (backlog §28 daar). Voor Imprint is het
+      metamodel het zod-schema: veldhulp afleiden uit `.describe()` in
+      `SchemaForm`, widgethulp uit het widget-contract (§1 "`help` als
+      markdown"), de Help-wiki als referentie. Eén ontwerp voor beide tools
+      maken. _(ontwerp eerst; M)_
 - [ ] **Handleiding: één bron kiezen** — de redacteurshandleiding leeft nu
       twee keer: `docs/handleiding.md` (git, reservekopie) en de Help-wiki
       (live, bewerkbaar). Dubbel onderhoud loopt uit de pas. Opties: de
@@ -474,8 +489,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       `MUSICBRAIN_GITHUB_WEBHOOK_SECRET` op de VPS is een testwaarde: echte
       waarde uit Plesk overnemen als er een release-webhook naar
       `/api/webhooks/github` wijst; README §"Deploy naar Plesk" en
-      overdracht.md §3 inkorten. Quickhost-hosting van musicbrain.nl kan
-      daarna weg (let op: `editor.musicbrain.nl` en de DNS/mail staan er nog). _(S)_
+      overdracht.md §3 inkorten. _(S)_ — **19 september:** Plesk-webhook
+      verwijderd; er wijst geen release-webhook naar musicbrain.nl en de
+      site-config heeft geen `releaseSources`, dus het secret is leeg
+      gemaakt (de route antwoordt 503 "webhook disabled"). Quickhost blijft
+      (all-in hostingpakket): DNS, mail en `editor.musicbrain.nl` staan daar.
+      Rest: README/overdracht inkorten.
 - [ ] **Volgorde van `listPages` is niet deterministisch** — pagina's met
       dezelfde (of geen) `publishedAt` komen in database-volgorde terug; die
       verschilt tussen MariaDB en Postgres bij reads met `asOf` (gezien bij de
