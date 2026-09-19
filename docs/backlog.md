@@ -527,7 +527,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       "open brain"-uitrol: build vóór seed = oude content in de statische
       pagina's). Seed zou na afloop de revalidate-hook moeten aanroepen, dan
       is de volgorde niet meer belangrijk. _(S)_
-- [ ] **Mail configureerbaar per instantie** — een `mail`-blok in
+- [ ] **Mail configureerbaar per instantie** — plan en keuze staan in
+      [design/mail.md](design/mail.md) (19 september 2026: eerst de
+      SMTP-relay van Quickhost, later een transactionele dienst). Kort: een
+      `mail`-blok in
       `imprint.config.ts` (SMTP-host/poort/credentials uit de omgeving,
       afzender per site) met één `sendMail()` in de engine; geen mail
       geconfigureerd = functies die mail nodig hebben nette melding. Eerste
