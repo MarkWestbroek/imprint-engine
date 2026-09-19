@@ -65,6 +65,14 @@ daarom een `BUILD_ID` mee dat een verse build afdwingt.
 kan de andere niet lezen. MariaDB blijft een geteste backend
 (`npm run test:db`), maar draait niet in productie.
 
+**Eigen Postgres, bewust niet die van Omnium** (besluit Mark, 19 september
+2026). Delen scheelt vrijwel niets (de Imprint-Postgres gebruikt ±30 MB), en
+kost wel: Omnium draait Postgres 16, Imprint is ontwikkeld en getest op 17; een
+upgrade of een `down` van de Omnium-stack (ander repo, andere releases) zou
+Imprint meenemen; en Imprint zou het netwerk en het superuser-wachtwoord van
+Omnium moeten kennen. Omnium zelf houdt OpenFTV om dezelfde reden op een eigen
+Postgres. Eén instantie per project, per site een database daarbinnen.
+
 ## Eerste keer
 
 Vereist: SSH-toegang tot de VPS en Docker + Caddy zoals in het
