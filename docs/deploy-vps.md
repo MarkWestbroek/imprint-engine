@@ -10,6 +10,12 @@ wat Imprint daar bovenop zet. Alles wat je nodig hebt staat in
 De Plesk-deploy (README §"Deploy naar Plesk") is sinds 1 september 2026
 historie: de shared hosting heeft Node.js uitgezet.
 
+**Stand (19 september 2026):** de Imprint-site draait op de VPS
+(`/srv/imprint`, `SITES=imprint`) en is live op https://imprint.musicbrain.nl
+— tijdelijk adres, `noindex`. `imprint-engine.nl` is geregistreerd en de
+records staan klaar; het Caddy-blok gaat aan zodra SIDN het domein
+publiceert. MusicBrain staat nog niet op de VPS (zie "MusicBrain verhuizen").
+
 ## Het model: git levert de bron, containers draaien hem
 
 ```mermaid

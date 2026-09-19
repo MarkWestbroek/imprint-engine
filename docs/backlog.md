@@ -454,9 +454,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       build (file-store, geen DB) bij elke push/PR.
 - [x] ~~**Deploy-inrichting VPS**~~ — september 2026: Dockerfile + `deploy/vps/`
       (compose, `deploy.sh`, `backup.sh`, Caddy-blok), lokaal getest voor beide
-      sites; zie [deploy-vps.md](deploy-vps.md). Nog te doen op de VPS zelf:
-      clone + `.env`, Imprint-site live (wacht op registratie
-      imprint-engine.nl), cron voor `backup.sh` + NAS-pull.
+      sites; zie [deploy-vps.md](deploy-vps.md). **Imprint-site live** sinds
+      19 september op https://imprint.musicbrain.nl (tijdelijk adres, noindex).
+- [ ] **imprint-engine.nl aanzetten** — geregistreerd bij mijn.host, A-records
+      (`@`, `www`) staan op de VPS, maar de delegatie bij SIDN was op 19
+      september nog niet actief. Zodra `nslookup imprint-engine.nl 1.1.1.1`
+      antwoordt: Caddy-blokken uit `Caddyfile.snippet` aanzetten en het
+      subdomein een redir maken. _(XS)_
+- [ ] **Cron voor `backup.sh` + NAS-pull** op de VPS, zoals bij Omnium. _(XS)_
 - [ ] **MusicBrain-data van MariaDB naar Postgres** — het kopieerscript is er
       (`npm run db:copy-to-pg`, lokaal bewezen gelijk via de stores); nog te
       doen is de uitvoering op de VPS, zie [deploy-vps.md](deploy-vps.md).

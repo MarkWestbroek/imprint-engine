@@ -27,3 +27,14 @@ imprint-engine.nl {
 www.imprint-engine.nl {
 	redir https://imprint-engine.nl{uri} permanent
 }
+
+# Tijdelijk adres (live sinds 19 september 2026, DNS bij Quickhost). Staat
+# imprint-engine.nl erbij, vervang dit blok dan door:
+#   imprint.musicbrain.nl {
+#   	redir https://imprint-engine.nl{uri} permanent
+#   }
+imprint.musicbrain.nl {
+	import veilig
+	header X-Robots-Tag "noindex"
+	reverse_proxy 127.0.0.1:3100
+}
