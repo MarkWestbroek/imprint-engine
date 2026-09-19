@@ -192,9 +192,23 @@ en zijn géén bron voor deze kopie.
 ## Backups
 
 [backup.sh](../deploy/vps/backup.sh): per site een `pg_dump -Fc` en een tar
-van het asset-volume naar `/srv/imprint-backups/<datum>/`; de NAS haalt die
-map op, net als bij Omnium. Cron-regel en terugzet-opdracht staan bovenin het
-script. `npm run backup` en `npm run assets:gc` zijn nog MariaDB-only.
+van het asset-volume, plus `env.txt` (de secrets, `chmod 600`) en een
+manifest, naar `/srv/imprint-backups/<datum>/`; 3 dagen bewaard. Terugzet-
+opdracht staat bovenin het script. `npm run backup` en `npm run assets:gc`
+zijn nog MariaDB-only.
+
+- **Cron** (sinds 19 september 2026, gebruiker `omnium`), een kwartier na
+  Omnium: `15 3 * * * /srv/imprint/deploy/vps/backup.sh >>
+  /srv/imprint-backups/backup.log 2>&1` — cron rekent in UTC, dus 05:15
+  zomertijd. Eerste run met de hand gecontroleerd (dumps leesbaar met
+  `pg_restore -l`, assets compleet).
+- **Buiten de VPS**: de NAS haalt de map op, zoals bij Omnium
+  (Bitemporal-runbook §8): TrueNAS → *Data Protection* → *Rsync Tasks* →
+  **Pull**, host `62.129.142.42`, user `omnium`, remote path
+  `/srv/imprint-backups/`, dagelijks 06:00, *Delete* uit. Zelfde SSH-sleutel
+  van de NAS als voor Omnium. **Nog niet ingesteld** (de NAS stond uit).
+  Tussendoor vanaf een eigen machine: `scp -r vps1:/srv/imprint-backups/<datum> …`
+  (buiten gesynchroniseerde mappen — `env.txt` bevat de secrets).
 
 ## Een site erbij
 
