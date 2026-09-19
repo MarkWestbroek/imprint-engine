@@ -10,11 +10,14 @@ wat Imprint daar bovenop zet. Alles wat je nodig hebt staat in
 De Plesk-deploy (README §"Deploy naar Plesk") is sinds 1 september 2026
 historie: de shared hosting heeft Node.js uitgezet.
 
-**Stand (19 september 2026):** de Imprint-site draait op de VPS
-(`/srv/imprint`, `SITES=imprint`) en is live op https://imprint.musicbrain.nl
-— tijdelijk adres, `noindex`. `imprint-engine.nl` is geregistreerd en de
-records staan klaar; het Caddy-blok gaat aan zodra SIDN het domein
-publiceert. MusicBrain staat nog niet op de VPS (zie "MusicBrain verhuizen").
+**Stand (19 september 2026):** beide sites draaien op de VPS (`/srv/imprint`,
+`SITES="musicbrain imprint"`):
+
+- **https://musicbrain.nl** (+ `www`) — sinds 19 september weer online, na
+  de verhuizing hieronder. DNS bij Quickhost; `editor.musicbrain.nl` staat daar
+  nog (statisch).
+- **https://imprint-engine.nl** (+ `www`) — DNS bij mijn.host.
+  `imprint.musicbrain.nl` (het tijdelijke adres) stuurt door.
 
 ## Het model: git levert de bron, containers draaien hem
 
@@ -123,6 +126,19 @@ Gebruikersbeheer: `./deploy.sh user musicbrain passwd mark` (= `npm run user`).
 
 ## MusicBrain verhuizen (MariaDB → Postgres)
 
+> **Gedaan op 19 september 2026.** Live (dump van Quickhost) en lokaal bleken
+> niet gelijk: lokaal had de opgeschoonde componentnamen, het nieuwere
+> board-spec-formaat, vier pagina's, de deepdive-wiki en álle assets; live had
+> een handvol admin-bewerkingen (menu, wiki `help` → members, planbord
+> `cortex` + 4 kaarten, release `modular-mb-v0.2`) en 38 asset-verwijzingen
+> met hash-namen die alleen op Quickhost stonden. Gekozen: **lokaal als basis**,
+> de acht live-onderdelen er als nieuwe versies bovenop (`putItem`, `by:
+> migratie-live`), `mark` met de live-wachtwoordhash, testaccounts weg. Dat
+> resultaat (441 rijen, 1 user) is met `db:copy-to-pg` via de tunnel gekopieerd;
+> de assets uit `sites/musicbrain/.assets` (389 bestanden) staan in het volume.
+> `npm run smoke https://musicbrain.nl` groen. De stappen hieronder blijven als
+> recept voor een volgende site.
+
 MusicBrain draaide op MariaDB. De data gaat over met
 `npm run db:copy-to-pg` ([copy-mariadb-to-pg.ts](../scripts/copy-mariadb-to-pg.ts)):
 `content_items` en `users` rij voor rij, met id's, de hele bitemporale
@@ -131,10 +147,12 @@ rij achteraf. Lokaal bewezen: 433 rijen en 3 users, en via de stores gelezen
 (actuele content, versiegeschiedenis per item, publieke reads op vijf
 momenten in juli) geven MariaDB en de kopie dezelfde antwoorden.
 
-**Bron.** De lokale MariaDB is volgens Mark gelijk aan die van Quickhost (het
-MusicBrain-project pushte content naar allebei). De Quickhost-dump is toch
-het zekerst voor de **users**: wachtwoorden die live zijn gezet, staan niet
-lokaal. Laad die dump desgewenst in de lokale container als aparte database
+**Bron.** Vergelijk eerst de productiedump met je lokale database — beide
+kregen content via de ingest, maar hebben elk een eigen historie en kunnen
+uiteenlopen (bij MusicBrain deden ze dat, zie hierboven). Vergelijk de
+*actuele* rijen per `(type, slug, lang)` met `JSON_EQUALS`, niet de rijen zelf.
+De productiedump is het zekerst voor de **users**: wachtwoorden die live zijn
+gezet, staan niet lokaal. Laad die dump desgewenst in de lokale container als aparte database
 (`musicbrain_live`) en gebruik die als `--from`.
 
 **Tijden.** De store schrijft `datetime` via drizzle, en drizzle zet altijd UTC

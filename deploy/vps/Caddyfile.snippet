@@ -2,7 +2,9 @@
 # in het Bitemporal-repo: bitemp_register_v06/deploy/vps/Caddyfile — het
 # (veilig)-snippet staat daar bovenaan). Na wijzigen: sudo systemctl reload caddy
 #
-# Zet een blok pas aan als het A-record naar de VPS wijst; anders blijft Caddy
+# Alle blokken hieronder staan sinds 19 september 2026 live.
+#
+# Zet een nieuw blok pas aan als het A-record naar de VPS wijst; anders blijft Caddy
 # vergeefs een certificaat proberen op te halen. Geen AAAA naar een
 # parkeeradres laten staan: dat breekt Let's Encrypt.
 
@@ -28,13 +30,7 @@ www.imprint-engine.nl {
 	redir https://imprint-engine.nl{uri} permanent
 }
 
-# Tijdelijk adres (live sinds 19 september 2026, DNS bij Quickhost). Staat
-# imprint-engine.nl erbij, vervang dit blok dan door:
-#   imprint.musicbrain.nl {
-#   	redir https://imprint-engine.nl{uri} permanent
-#   }
+# Het tijdelijke adres van de productsite (19 september 2026) stuurt door.
 imprint.musicbrain.nl {
-	import veilig
-	header X-Robots-Tag "noindex"
-	reverse_proxy 127.0.0.1:3100
+	redir https://imprint-engine.nl{uri} permanent
 }

@@ -30,7 +30,11 @@ Windows.md` (keuzes, stand, Windows-toegang). **Regel eerst je SSH-sleutel
 vanaf Windows op die VPS** (§4 van dat document) voordat je hier iets
 deployt.
 
-### 0.2 Verhuizing MusicBrain naar de VPS — nog niet gedaan
+### 0.2 Verhuizing MusicBrain naar de VPS — gedaan op 19 september 2026
+
+> musicbrain.nl draait op de VPS; verslag en keuzes in
+> [deploy-vps.md](deploy-vps.md) §"MusicBrain verhuizen". Wat hieronder staat
+> is het oorspronkelijke plan.
 
 > **Bijgewerkt 18 september 2026:** stap 3–5 hieronder zijn ingericht
 > (Dockerfile, `deploy/vps/`, runbook in [deploy-vps.md](deploy-vps.md)) en

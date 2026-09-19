@@ -456,16 +456,26 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       (compose, `deploy.sh`, `backup.sh`, Caddy-blok), lokaal getest voor beide
       sites; zie [deploy-vps.md](deploy-vps.md). **Imprint-site live** sinds
       19 september op https://imprint.musicbrain.nl (tijdelijk adres, noindex).
-- [ ] **imprint-engine.nl aanzetten** — geregistreerd bij mijn.host, A-records
-      (`@`, `www`) staan op de VPS, maar de delegatie bij SIDN was op 19
-      september nog niet actief. Zodra `nslookup imprint-engine.nl 1.1.1.1`
-      antwoordt: Caddy-blokken uit `Caddyfile.snippet` aanzetten en het
-      subdomein een redir maken. _(XS)_
+- [x] ~~**imprint-engine.nl aanzetten**~~ — live sinds 19 september 2026;
+      `www` en `imprint.musicbrain.nl` sturen door.
 - [ ] **Cron voor `backup.sh` + NAS-pull** op de VPS, zoals bij Omnium. _(XS)_
-- [ ] **MusicBrain-data van MariaDB naar Postgres** — het kopieerscript is er
-      (`npm run db:copy-to-pg`, lokaal bewezen gelijk via de stores); nog te
-      doen is de uitvoering op de VPS, zie [deploy-vps.md](deploy-vps.md).
-      Daarna DNS om en de Plesk-webhook weg. _(S)_
+- [x] ~~**MusicBrain naar de VPS**~~ — 19 september 2026: lokaal + live-
+      bewerkingen samengevoegd, naar Postgres gekopieerd, DNS om; smoke groen.
+      Verslag in [deploy-vps.md](deploy-vps.md).
+- [ ] **Members-wiki geeft 500 in productie** — `/help` (visibility
+      `members`) crasht met `DYNAMIC_SERVER_USAGE`: de catch-all
+      `(site)/[...slug]` is SSG (`generateStaticParams`), en `getSession()`
+      leest cookies tijdens een on-demand render. In `next dev` onzichtbaar.
+      Members-wiki's uit de statische route halen (eigen dynamische route, of
+      de sessiecheck client-side/in middleware). Hoort bij Fase 3 (publiek en
+      beperkt). _(S)_
+- [ ] **Opruimen na de verhuizing** — de Plesk-deploywebhook op GitHub
+      verwijderen (hook 655391019, naar `cordelia.exsilia.net`); het
+      `MUSICBRAIN_GITHUB_WEBHOOK_SECRET` op de VPS is een testwaarde: echte
+      waarde uit Plesk overnemen als er een release-webhook naar
+      `/api/webhooks/github` wijst; README §"Deploy naar Plesk" en
+      overdracht.md §3 inkorten. Quickhost-hosting van musicbrain.nl kan
+      daarna weg (let op: `editor.musicbrain.nl` en de DNS/mail staan er nog). _(S)_
 - [ ] **Volgorde van `listPages` is niet deterministisch** — pagina's met
       dezelfde (of geen) `publishedAt` komen in database-volgorde terug; die
       verschilt tussen MariaDB en Postgres bij reads met `asOf` (gezien bij de
