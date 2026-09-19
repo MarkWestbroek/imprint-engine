@@ -257,6 +257,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] **Toegangswaarde `publiek` of `beperkt` op alle content** —
         publiek werkt zonder PDP en blijft statisch; `members` gaat op in
         `beperkt` (besluit Mark). Ontwerp §4.3. _(M)_
+      - [ ] **Toegang per widget (deelcontent)** — een beperkte widget op
+        een publieke pagina. Besluit Mark (september 2026): later, als eigen
+        stap na Fase 3. Voorkeur Partial Prerendering (`cacheComponents`:
+        statische schil, dynamisch gat per beperkte widget); alternatief laden
+        in de browser via de API. Fase 3 reserveert alleen de plek in het
+        schema. Ontwerp §4.3. _(L)_
       - [ ] **Spoor register: Imprint op een gegenereerd register** —
         contentmodel in V3 en het canonieke model (bron van waarheid; de
         eerste versie uit de zod-schema's), register genereren en als

@@ -49,6 +49,7 @@ komen dan mee als eigenschappen van dat register.
 | modelwijzigingen | een groeiend model is geen probleem voor tijdreizen; een brekende wijziging vraagt, net als code, eerst een downgrade | besloten (Mark); §8.2 |
 | gebruikers | aanmelden in het eigen systeem; gebruikers als tabel in dezelfde database; de registratie legt de redacteur vast; geen single sign-on; één gebruikersbestand pas bij multisite op één engine, lage prioriteit | besloten (Mark); §4.2 |
 | de site in de tijd | configuratie, inhoud en vormgeving bitemporeel; code en omgeving niet | principe besloten (Mark); §8 |
+| toegang per widget | later, als eigen stap; Fase 3 handhaaft per pagina en item | besloten (Mark); §4.3 |
 | widgetversies | brekende wijziging = nieuwe hoofdversie of nieuwe widget | richting (Mark); §9 |
 | media en formulieren | als plugin; Fase 3 maakt er ruimte voor | besloten (Mark); §10 |
 
@@ -266,6 +267,35 @@ alleen `visibility` (`public`, `members`), en alleen op wiki's.
 
 `members` gaat op in `beperkt`: "alleen ingelogd" wordt een regel in het
 beleid, niet een waarde in de content.
+
+**Deelcontent: toegang per widget (besluit Mark: later).** Een pagina kan
+publiek zijn terwijl één widget erop beperkt is. Daarvoor zijn drie niveaus
+te onderscheiden:
+
+| niveau | voorbeeld | wanneer |
+|---|---|---|
+| pagina of item | een beperkte pagina, een beperkt product | Fase 3, stap 3 |
+| widget op een publieke pagina | een ledenblok op de homepage | later, eigen stap |
+| items in een lijstwidget | een beperkte post in een publieke `posts`-lijst | met de achterkant-PDP (batch- en zoekvraag) |
+
+Nu worden alle widgets als servercomponent in de statische HTML van de pagina
+meegebakken, ook hun externe data (`revalidate`, voor iedereen gelijk); de
+browsereilanden (kaart, media) doen alleen interactie. Beperkte inhoud mag
+nooit in die gedeelde HTML staan, ook niet verborgen met CSS. Voor widgets
+zijn er twee routes:
+
+- **Partial Prerendering** (Next.js `cacheComponents`): een statische schil
+  met een dynamisch gat per beperkte widget, per bezoek op de server gevuld
+  na een PDP-vraag. Voorkeur, want statisch waar het kan; maar de optie
+  verandert het cachingmodel van de hele site.
+- **Laden in de browser**: een lege plek in de statische HTML die de browser
+  met de sessie vult via de API, waar de achterkant-PEP beslist. Werkt zonder
+  `cacheComponents`, vraagt JavaScript.
+
+Wat Fase 3 wel al doet: het schema laat ruimte voor een toegangswaarde op de
+widgetinstantie (`{ type, config, toegang }`), zodat het latere werk geen
+contentmigratie vraagt. Tot die stap er is, weigert de store een widget met
+`toegang: beperkt` op te slaan, zodat niemand denkt dat hij beschermd is.
 
 ### 4.4 De standaarden
 
@@ -561,6 +591,7 @@ bitemporele store vanwege de AVG.
 | browsertest voor de admin-flows | ja | §11.1, stap 2 |
 | één of twee PDP's | twee: voorkant vóór het tonen, achterkant bij gegevenstoegang | §4.2 |
 | onbereikbare PDP | met `publiek` of `beperkt` op alle content werkt publieke content zonder PDP | §4.3 |
+| toegang per widget (deelcontent) | later, als eigen stap; Fase 3 handhaaft per pagina en item | §4.3 |
 | bron van waarheid voor het model | het canonieke model; de eerste versies ontstaan andersom | §3.4 |
 | precisie van tijd | datum-tijd is prima; het principe vraagt alleen lineaire tijd | §3.4 |
 | het model in de tijd | groeien is geen probleem; een brekende wijziging vraagt eerst een downgrade | §8.2 |

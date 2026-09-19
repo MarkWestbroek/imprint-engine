@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Ontwerp Fase 3: toegang per widget later** (besluit Mark). Stap 3
+  handhaaft `publiek`/`beperkt` per pagina en item; een beperkte widget op een
+  publieke pagina wordt een eigen stap daarna. De afweging (Partial
+  Prerendering of laden in de browser) staat in §4.3 van het ontwerp.
 - **`npm run db:copy-to-pg`**: eenmalige verhuizing van een MariaDB-database
   naar Postgres — alle rijen met id's, historie en wachtwoordhashes, in één
   transactie met controle rij voor rij (`--dry-run`, `--replace`). Leest de
