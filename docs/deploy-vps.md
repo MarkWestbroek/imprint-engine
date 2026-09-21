@@ -215,6 +215,30 @@ zijn nog MariaDB-only.
   Tussendoor vanaf een eigen machine: `scp -r vps1:/srv/imprint-backups/<datum> …`
   (buiten gesynchroniseerde mappen — `env.txt` bevat de secrets).
 
+## Periodieke controle
+
+Alleen lezen, niets wijzigen. Af en toe draaien, of in een nieuwe Claude-sessie
+vragen: "doe de periodieke controle uit docs/deploy-vps.md".
+
+```bash
+# 1. Backups gemaakt? Verwacht: één dagmap per nacht, ±40 MB (Imprint) en ±760 KB (Omnium).
+ssh vps1 'ls -1 /srv/imprint-backups /srv/omnium/backups; tail -5 /srv/imprint-backups/backup.log'
+
+# 2. Heeft de NAS opgehaald? Verwacht: elke ochtend rond 04:00 UTC twee logins.
+ssh vps1 'sudo journalctl -u ssh --since "-3 days" | grep tKLj6Xdk | grep Accepted'
+
+# 3. Draaien alle sites? Verwacht: 200, of 301/308 voor de doorverwijzingen.
+for u in musicbrain.nl imprint-engine.nl editor.musicbrain.nl volksgebouwzeist.nl          psycholog.pi-utrecht.nl/pl app.omnium-ide.nl/viz/react/ omnide.nl; do
+  printf "%-40s " $u; curl -s -o /dev/null -w "%{http_code}
+" https://$u; done
+
+# 4. Ruimte en geheugen.
+ssh vps1 'df -h / | tail -1; free -h | sed -n 2p; docker system df'
+```
+
+Op de NAS: in **Data Protection** moeten de twee Rsync-taken op SUCCESS staan en
+de snapshot-taak (`Pool1/backup/vps1`, 07:00, 2 weken) moet snapshots maken.
+
 ## Een site erbij
 
 1. `sites/<naam>/` met `next.config.ts` zoals de andere twee (`output` via
