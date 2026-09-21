@@ -481,7 +481,25 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       `www` en `imprint.musicbrain.nl` sturen door.
 - [~] **Cron voor `backup.sh` + NAS-pull** — cron staat sinds 19 september
       (03:15 UTC); de Rsync-pull door de NAS moet nog, samen met die van
-      Omnium. Stappen in [deploy-vps.md](deploy-vps.md) §Backups. _(XS)_
+      Omnium. Stappen in [deploy-vps.md](deploy-vps.md) §Backups en in het
+      Bitemporal-repo `docs/plans/2026-09-20 NAS haalt de VPS-backups op`.
+      **Neem `volksgebouw_data` en `psycholog_data` mee** (uploads, users.json,
+      evenementen): die twee sites hebben een eigen stack en vallen buiten het
+      huidige `backup.sh`. _(XS)_
+- [x] ~~**De andere twee Quickhost-sites naar de VPS**~~ — 21 september 2026:
+      **volksgebouwzeist.nl** (Next 14, agenda uit Google Calendar,
+      contactformulier via de Quickhost-relay; de open schrijfkant van
+      `/api/events` is dichtgezet) en **psycholog.pi-utrecht.nl** (Next 14,
+      PL/NL/EN, eigen mini-CMS dat naar GitHub commit). Elk repo heeft nu een
+      `Dockerfile` + `deploy/vps/` met README; de VPS heeft per privé-repo een
+      alleen-lezen deploy-key. Nog open daar: de uploads van
+      psycholog.pi-utrecht.nl van Plesk halen (staan nergens anders, dus de
+      `/d/<uuid>`-links werken nog niet), de klassieke GitHub-token vervangen
+      door de fine-grained `ewa-site-PAT`, en een Action voor automatisch
+      deployen. Een migratie van die twee náár Imprint is een aparte afweging:
+      wat Imprint daarvoor mist is meertaligheid in de admin (psycholog), een
+      agendawidget en formulieren met mail (volksgebouw), en een
+      mediabibliotheek met kiezer — zie §1, §2 en §5.
 - [x] ~~**MusicBrain naar de VPS**~~ — 19 september 2026: lokaal + live-
       bewerkingen samengevoegd, naar Postgres gekopieerd, DNS om; smoke groen.
       Verslag in [deploy-vps.md](deploy-vps.md).
