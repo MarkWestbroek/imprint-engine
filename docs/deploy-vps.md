@@ -80,7 +80,8 @@ Postgres. Eén instantie per project, per site een database daarbinnen.
 
 Vereist: SSH-toegang tot de VPS en Docker + Caddy zoals in het
 Omnium-runbook. `vps1` in de opdrachten hieronder is de alias uit
-`~/.ssh/config` (Bitemporal-handover §4.1): gebruiker `omnium`, en het
+`~/.ssh/config` (Bitemporal-handover §4.1): gebruikersnaam en sleutel staan daar,
+bewust niet in dit (openbare) repo, en het
 **IP-adres** 62.129.142.42 — het A-record van `vps1.paratmos.nl` wijst nog
 naar de oude webhosting. Wachtwoordlogin staat uit; alleen sleutels werken.
 
@@ -202,7 +203,7 @@ bovenin het script — een site erbij is daar één vermelding
 opdracht staat bovenin het script. `npm run backup` en `npm run assets:gc`
 zijn nog MariaDB-only.
 
-- **Cron** (sinds 19 september 2026, gebruiker `omnium`), een kwartier na
+- **Cron** (sinds 19 september 2026, in de crontab van de deploy-gebruiker), een kwartier na
   Omnium: `15 3 * * * /srv/imprint/deploy/vps/backup.sh >>
   /srv/imprint-backups/backup.log 2>&1` — cron rekent in UTC, dus 05:15
   zomertijd. Eerste run met de hand gecontroleerd (dumps leesbaar met
