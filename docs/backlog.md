@@ -536,9 +536,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       geconfigureerd = functies die mail nodig hebben nette melding. Eerste
       gebruikers: wachtwoord-vergeten/magic-link (§2) en admin-mededelingen
       (nieuwe gebruiker aangemaakt, ingest-fout, backup mislukt, wekelijkse
-      samenvatting). Op de VPS is een eigen SMTP-relay of een externe
-      transactionele dienst allebei mogelijk; beslissen bij de VPS-inrichting
-      (SPF/DKIM regelen). _(vraag van Mark, september 2026; M)_
+      samenvatting).
+      **De route is bewezen** (21 september 2026, contactformulier van
+      volksgebouwzeist.nl op de VPS): Quickhost als relay, met
+      `mail.<domein>:465` (SSL) en een mailbox van het domein. Onthoud van die
+      exercitie: 587/STARTTLS weigert altijd (`454 … generic failure`, dezelfde
+      melding als bij een niet-bestaande mailbox), en **niet** het kale domein
+      als host nemen — Plesk noemt dat in "Mail Client Setup", maar dat A-record
+      wijst na de verhuizing naar de VPS; `mail.<domein>` is ook de enige naam
+      met een passend certificaat. Details in [design/mail.md](design/mail.md).
+      Bouwen kan wachten tot §2 (wachtwoord vergeten) opgepakt wordt; dat is de
+      eerste functie die mail nodig heeft. _(vraag van Mark, september 2026; M)_
 - [x] ~~**Backups**~~ — gedaan in 0.11.0: `npm run backup` (hele bitemporale
       historie + users + assets, retentie 14, Node-only dus Plesk-Scheduled-
       Task-klaar); zie [backups.md](backups.md). Nog te doen: de dagelijkse

@@ -28,6 +28,12 @@ domein.
 >   certificaat (`smtp.<domein>` geeft een hostname-mismatch, en
 >   `cordelia.exsilia.net` heeft `*.exsilia.net`). Dat maakt uit nu de
 >   certificaatcontrole aanstaat.
+> - Plesk's eigen "Mail Client Setup" noemt als uitgaande server het **kale
+>   domein** (`volksgebouwzeist.nl`) met poort 465. Dat klopt zolang de site
+>   daar staat, maar **na de verhuizing wijst dat A-record naar de VPS** — dan
+>   praat je tegen Caddy in plaats van tegen de mailserver. Neem dus altijd
+>   `mail.<domein>`. Poort 465 bevestigt Plesk wél (POP3 995, IMAP 993,
+>   SMTP 465).
 > - Dezelfde `454`-melding komt ook als de **mailbox nog niet bestaat**, dus
 >   die twee zijn niet te onderscheiden. Controleer eerst of de mailbox er is:
 >   een `RCPT TO` op poort 25 antwoordt `550 … User unknown` zolang hij
