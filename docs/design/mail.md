@@ -13,8 +13,25 @@ inloggen en die het bericht aflevert.
 
 ## De keuze (19 september 2026)
 
-**Nu: de bestaande mailserver van Quickhost** (`cordelia.exsilia.net`, poort
-587, met gebruikersnaam en wachtwoord van een mailbox op het domein).
+**Nu: de bestaande mailserver van Quickhost** — host **`mail.<domein>`**,
+poort **465 (SSL)**, met gebruikersnaam en wachtwoord van een mailbox op het
+domein.
+
+> **Uitgezocht op 21 september 2026** bij het live zetten van
+> volksgebouwzeist.nl. Dit kostte een half uur, dus voor de volgende site:
+> - **Poort 587 met STARTTLS werkt niet**: die geeft `454 4.7.0 Temporary
+>   authentication failure: generic failure`, ongeacht gebruikersnaam of
+>   mechanisme. **465 met SSL werkt wél**, met exact dezelfde inloggegevens.
+>   (Zo staat het ook in de werkende PHP-site op video.msss.nl:
+>   `D:\Git\Web\Hans`, `httpdocs/includes/config.php`.)
+> - Gebruik **`mail.<domein>`** als host: dat is de enige naam met een geldig
+>   certificaat (`smtp.<domein>` geeft een hostname-mismatch, en
+>   `cordelia.exsilia.net` heeft `*.exsilia.net`). Dat maakt uit nu de
+>   certificaatcontrole aanstaat.
+> - Dezelfde `454`-melding komt ook als de **mailbox nog niet bestaat**, dus
+>   die twee zijn niet te onderscheiden. Controleer eerst of de mailbox er is:
+>   een `RCPT TO` op poort 25 antwoordt `550 … User unknown` zolang hij
+>   ontbreekt, en `250 Ok` zodra hij er is.
 
 - De MX- en SPF-records van musicbrain.nl, volksgebouwzeist.nl en
   pi-utrecht.nl wijzen daar al heen (`include:_spf.exsilia.net`). Sturen we via
@@ -75,8 +92,13 @@ de backlog) en beheerdersmeldingen.
    `noreply@volksgebouwzeist.nl`, of een bestaande die daarvoor gebruikt mag
    worden.
 2. Die gegevens in de `.env` op de VPS:
-   `SMTP_HOST=cordelia.exsilia.net`, `SMTP_PORT=587`, `SMTP_SECURE=false`
-   (STARTTLS), `SMTP_AUTH=true`, `SMTP_USER=…`, `SMTP_PASS=…`,
+   `SMTP_HOST=mail.volksgebouwzeist.nl`, `SMTP_PORT=465`, `SMTP_SECURE=true`,
+   `SMTP_AUTH=true`, `SMTP_USER=noreply@volksgebouwzeist.nl`, `SMTP_PASS=…`,
    `SMTP_FROM=noreply@volksgebouwzeist.nl`, `CONTACT_TO=<ontvanger>`.
 3. Controle: één testbericht via het formulier, en kijken of het in de inbox
    komt en niet in de spam.
+
+**Stand: gedaan op 21 september 2026.** Het formulier van volksgebouwzeist.nl
+verstuurt weer; het testbericht ging via `mail.volksgebouwzeist.nl:465` naar
+Marks eigen adres. Het ontvangstadres is voorlopig dat van Mark; nog te
+beslissen of er een eigen adres of mailbox voor het Volksgebouw komt.
