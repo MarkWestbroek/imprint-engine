@@ -479,8 +479,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       19 september op https://imprint.musicbrain.nl (tijdelijk adres, noindex).
 - [x] ~~**imprint-engine.nl aanzetten**~~ — live sinds 19 september 2026;
       `www` en `imprint.musicbrain.nl` sturen door.
-- [~] **Cron voor `backup.sh` + NAS-pull** — cron staat sinds 19 september
-      (03:15 UTC); de Rsync-pull door de NAS moet nog, samen met die van
+- [x] ~~**Cron voor `backup.sh` + NAS-pull**~~ — cron sinds 19 september
+      (03:15 UTC); sinds 21 september haalt de NAS elke dag om 06:00 op
+      (`Pool1/backup/vps1/imprint`, alleen-lezen sleutel via `rrsync`, getest).
+      Nog open op de NAS: een snapshot-taak voor de lange historie, want de VPS
+      bewaart maar 3 dagen. Eerder: de Rsync-pull door de NAS, samen met die van
       Omnium. Stappen in [deploy-vps.md](deploy-vps.md) §Backups en in het
       Bitemporal-repo `docs/plans/2026-09-20 NAS haalt de VPS-backups op`.
       `backup.sh` neemt sinds 21 september ook `volksgebouw_data` en
