@@ -483,9 +483,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       (03:15 UTC); de Rsync-pull door de NAS moet nog, samen met die van
       Omnium. Stappen in [deploy-vps.md](deploy-vps.md) §Backups en in het
       Bitemporal-repo `docs/plans/2026-09-20 NAS haalt de VPS-backups op`.
-      **Neem `volksgebouw_data` en `psycholog_data` mee** (uploads, users.json,
-      evenementen): die twee sites hebben een eigen stack en vallen buiten het
-      huidige `backup.sh`. _(XS)_
+      `backup.sh` neemt sinds 21 september ook `volksgebouw_data` en
+      `psycholog_data` mee (volume + `.env` per site; regel `EXTRA` in het
+      script), dus alle vijf de sites zitten in de nachtelijke backup. _(XS)_
 - [x] ~~**De andere twee Quickhost-sites naar de VPS**~~ — 21 september 2026:
       **volksgebouwzeist.nl** (Next 14, agenda uit Google Calendar,
       contactformulier via de Quickhost-relay; de open schrijfkant van

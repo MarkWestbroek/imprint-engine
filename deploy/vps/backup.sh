@@ -34,8 +34,25 @@ for site in $SITES; do
     alpine:3.21 tar czf "/out/$site-assets.tgz" -C /data .
 done
 
+# De twee andere sites op deze machine (volksgebouwzeist.nl,
+# psycholog.pi-utrecht.nl) hebben hun eigen stack en géén database: hun data is
+# één docker-volume (uploads, users.json, evenementen) plus hun .env. Dat staat
+# nergens anders, dus het hoort hier mee. Nieuwe site erbij = een regel in
+# EXTRA (naam van het volume, en waar zijn .env staat).
+EXTRA="${EXTRA:-volksgebouw_data:/srv/volksgebouw/deploy/vps/.env psycholog_data:/srv/psycholog/deploy/vps/.env}"
+for pair in $EXTRA; do
+  vol="${pair%%:*}"; envfile="${pair#*:}"; name="${vol%_data}"
+  if docker volume inspect "$vol" >/dev/null 2>&1; then
+    echo "[$stamp] $name: volume → $dest/$name-data.tgz"
+    docker run --rm --user "$(id -u):$(id -g)"       -v "$vol":/data:ro -v "$dest":/out       alpine:3.21 tar czf "/out/$name-data.tgz" -C /data .
+  else
+    echo "[$stamp] $name: volume $vol bestaat niet — overgeslagen"
+  fi
+  [ -f "$envfile" ] && install -m 600 "$envfile" "$dest/$name-env.txt"
+done
+
 cp .env "$dest/env.txt"   # de secrets horen bij de data; de NAS is een vertrouwde plek
-( cd "$dest" && stat -c '%n=%s' ./*.dump ./*.tgz ) > "$dest/manifest.txt"
+( cd "$dest" && stat -c '%n=%s' ./*.dump ./*.tgz 2>/dev/null ) > "$dest/manifest.txt"
 
 # Retentie: alleen de nieuwste $KEEP mappen bewaren.
 ls -1d "$BACKUP_DIR"/20* 2>/dev/null | sort | head -n -"$KEEP" | xargs -r rm -rf

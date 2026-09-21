@@ -193,7 +193,12 @@ en zijn géén bron voor deze kopie.
 
 [backup.sh](../deploy/vps/backup.sh): per site een `pg_dump -Fc` en een tar
 van het asset-volume, plus `env.txt` (de secrets, `chmod 600`) en een
-manifest, naar `/srv/imprint-backups/<datum>/`; 3 dagen bewaard. Terugzet-
+manifest, naar `/srv/imprint-backups/<datum>/`; 3 dagen bewaard. **Ook de twee
+andere sites op de machine** (volksgebouwzeist.nl, psycholog.pi-utrecht.nl):
+die hebben geen database, maar hun docker-volume (uploads, users.json,
+evenementen) en hun `.env` staan nergens anders. Dat loopt via de regel `EXTRA`
+bovenin het script — een site erbij is daar één vermelding
+(`<volume>:<pad naar .env>`). Terugzet-
 opdracht staat bovenin het script. `npm run backup` en `npm run assets:gc`
 zijn nog MariaDB-only.
 
