@@ -491,14 +491,14 @@ export function WikiStudio({
                 />
               </label>
               <label className="block">
-                <span className={labelCls}>Zichtbaarheid</span>
+                <span className={labelCls}>Toegang</span>
                 <select
                   className={`${inputCls} mt-1 w-56`}
-                  value={String(data.visibility ?? "public")}
-                  onChange={(e) => setField("visibility", e.target.value)}
+                  value={String(data.access ?? "public")}
+                  onChange={(e) => setField("access", e.target.value)}
                 >
-                  <option value="public">public — iedereen</option>
-                  <option value="members">members — alleen ingelogd</option>
+                  <option value="public">publiek — iedereen</option>
+                  <option value="restricted">beperkt — alleen wie het beleid toelaat</option>
                 </select>
               </label>
             </>

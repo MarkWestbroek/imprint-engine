@@ -127,7 +127,7 @@ merken hier niets van.
 | **Planning** | kanban-borden: kaarten die je tussen fasen sleept (zie onder) |
 | **Menus** | navigatiemenu's (het "main"-menu stuurt de header) |
 | **Themes** | kleurenschema's van de site (zie Thema's) |
-| **Wikis** | op zichzelf staande informatiebundels (Wiki → Folders → Wiki pages); een pagina verplaatsen = het folder-veld wijzigen (links breken daardoor niet). De wiki leeft op de site onder zijn eigen slug (`/help/…`) met een navigatieboom links; `visibility: members` maakt hem alleen zichtbaar voor ingelogde gebruikers |
+| **Wikis** | op zichzelf staande informatiebundels (Wiki → Folders → Wiki pages); een pagina verplaatsen = het folder-veld wijzigen (links breken daardoor niet). De wiki leeft op de site onder zijn eigen slug (`/help/…`) met een navigatieboom links; met **Toegang: beperkt** is hij alleen voor ingelogde gebruikers (zie Publiek en beperkt) |
 
 Goed om te weten over de weergave op de site: de **componentpagina** toont de
 versie die door de nieuwste release wordt gepind (stable weegt zwaarder dan
@@ -139,6 +139,23 @@ De formulieren volgen automatisch de contentregels; ongeldige invoer wordt bij
 het opslaan geweigerd met een duidelijke melding. Verwijzingen tussen content
 (bijv. een release die naar een component wijst) worden gecontroleerd — je
 kunt niet naar iets verwijzen dat niet bestaat (instelbaar onder **Relations**).
+
+## Publiek en beperkt
+
+Elk inhoudsitem (pagina, product, component, release, planningkaart, wiki,
+wikipagina) heeft een veld **access**: `public` of `restricted`. Publiek is
+de standaard en verandert niets. Beperkt betekent: bezoekers zien het item
+nergens — niet op de site, niet in lijsten, niet in de API — en wie ingelogd
+is (ook met de rol reader) ziet het wel.
+
+- Een beperkte **pagina** staat op de site onder `/members/<slug>`; de
+  gewone URL stuurt daarheen door. Zet je hem weer op publiek, dan staat hij
+  terug op zijn eigen URL.
+- Beperkte **producten, componenten en releases** verdwijnen voorlopig uit
+  de publieke site; een ledenweergave daarvan komt later.
+- Inloggen als lezer gaat nu nog via `/admin`: je komt daar niet verder
+  (readers mogen niet bewerken), maar je bent wel ingelogd en kunt daarna
+  `/members/…` bekijken. Een nette inlogpagina voor leden staat op de lijst.
 
 ## Vaste pagina's vs. content-pagina's
 
@@ -238,16 +255,18 @@ Onder **Content → Wikis** staat het wiki-overzicht; een nieuwe wiki maak je
 op titel (de slug volgt vanzelf). Een wiki open je in de **wiki-studio**:
 links de boom (folders en pagina's), rechts de eigenschappen en de tekst
 van wat je selecteert — niets geselecteerd = de wiki zelf (titel,
-beschrijving, zichtbaarheid).
+beschrijving, toegang).
 
 - **Verplaatsen**: sleep een pagina naar een andere folder, of een folder
   in een andere folder (of op de wiki-titel voor bovenin). Elke
   verplaatsing is een nieuwe versie — History vertelt het verhaal.
 - **Nieuw**: "+ folder" en "+ pagina" maken iets in de geselecteerde
   folder; alleen een titel is nodig.
-- **Zichtbaarheid**: `public` is voor iedereen; `members` alleen voor
-  ingelogde gebruikers (de pagina's komen dan ook niet in de statische
-  site-cache).
+- **Toegang**: publiek is voor iedereen; beperkt alleen voor wie mag
+  (nu: iedereen die ingelogd is). Een beperkte wiki staat op de site onder
+  `/members/<wiki>`; de oude URL stuurt daarheen door. Ook één pagina in
+  een publieke wiki kan beperkt zijn: hij staat dan niet in de boom voor
+  bezoekers.
 - **Verwijderen** kan per pagina of lege folder en is herstelbaar via
   History.
 

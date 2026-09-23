@@ -3,13 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
-import {
-  authenticate,
-  canEdit,
-  createSessionCookie,
-  destroySession,
-  getSession,
-} from "@/lib/auth";
+import { authenticate, editingSession, createSessionCookie, destroySession } from "@/lib/auth";
 import { contentTypes, writableStore } from "@/lib/content";
 
 export type ActionResult = { ok: boolean; error?: string };
@@ -19,8 +13,8 @@ export async function saveRelationsAction(
   _prev: ActionResult | null,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session)) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session) return { ok: false, error: "Not signed in" };
   if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
   try {
     const rules = JSON.parse(String(formData.get("rules") ?? "[]")) as RelationRule[];
@@ -75,8 +69,8 @@ export async function saveItemAction(
   _prev: ActionResult | null,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session)) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session) return { ok: false, error: "Not signed in" };
   if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
 
   try {
@@ -105,8 +99,8 @@ export async function saveItemAction(
 }
 
 export async function deleteItemAction(formData: FormData): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return;
+  const session = await editingSession();
+  if (!session || !writableStore) return;
   const type = parseType(formData.get("type"));
   const slug = String(formData.get("slug") ?? "");
   const lang = String(formData.get("lang") ?? "en");
@@ -116,8 +110,8 @@ export async function deleteItemAction(formData: FormData): Promise<void> {
 }
 
 export async function restoreVersionAction(formData: FormData): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return;
+  const session = await editingSession();
+  if (!session || !writableStore) return;
   const type = parseType(formData.get("type"));
   const slug = String(formData.get("slug") ?? "");
   const lang = String(formData.get("lang") ?? "en");

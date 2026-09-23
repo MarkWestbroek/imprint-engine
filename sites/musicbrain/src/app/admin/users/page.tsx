@@ -1,5 +1,5 @@
 import { RoleType } from "@imprint/content-core";
-import { canEdit, getSession, userStore } from "@/lib/auth";
+import { editingSession, userStore } from "@/lib/auth";
 import {
   NewUserForm,
   OwnPasswordForm,
@@ -12,8 +12,8 @@ import {
  * server is the way back in (README, "Wachtwoord kwijt").
  */
 export default async function AdminUsers() {
-  const session = await getSession();
-  if (!canEdit(session)) return null; // the layout renders the login form
+  const session = await editingSession();
+  if (!session) return null; // the layout renders the login form
   const isAdmin = session.role === "admin";
   const users = isAdmin && userStore ? await userStore.list() : [];
   const roles = [...RoleType.options];

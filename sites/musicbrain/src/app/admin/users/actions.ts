@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { RoleType } from "@imprint/content-core";
 import { generatePassword } from "@imprint/content-core/passwords";
-import { canEdit, getSession, userStore, type Session } from "@/lib/auth";
+import { editingSession, userStore, type Session } from "@/lib/auth";
 
 /**
  * User administration (UML: User + RoleType). A Server Action is a public POST
@@ -16,8 +16,8 @@ export type UserActionResult = { ok: boolean; error?: string; message?: string }
 
 /** Signed in and holding the admin role — the gate for managing *other* users. */
 async function requireAdmin(): Promise<Session> {
-  const session = await getSession();
-  if (!canEdit(session)) throw new Error("Not signed in");
+  const session = await editingSession();
+  if (!session) throw new Error("Not signed in");
   if (session.role !== "admin") throw new Error("Only admins can manage users");
   if (!userStore) throw new Error("User management requires DATABASE_URL");
   return session;
@@ -112,8 +112,8 @@ export async function changeOwnPasswordAction(
   formData: FormData
 ): Promise<UserActionResult> {
   try {
-    const session = await getSession();
-    if (!canEdit(session)) throw new Error("Not signed in");
+    const session = await editingSession();
+    if (!session) throw new Error("Not signed in");
     if (!userStore) throw new Error("User management requires DATABASE_URL");
 
     const current = String(formData.get("current") ?? "");

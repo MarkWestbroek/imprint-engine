@@ -2,7 +2,7 @@ import { spawn, spawnSync } from "node:child_process";
 import path from "node:path";
 import mysql from "mysql2/promise";
 
-import { DATABASE_URL, PORT, USERS } from "./env";
+import { DATABASE_URL, INGEST_TOKEN, PORT, USERS } from "./env";
 
 /**
  * What Playwright starts as its web server (playwright.config.ts): a fresh
@@ -27,6 +27,7 @@ const env: NodeJS.ProcessEnv = {
   ...process.env,
   DATABASE_URL,
   SESSION_SECRET: "e2e-session-secret-not-used-anywhere-else",
+  INGEST_TOKEN,
   SEED_ADMIN_USER: USERS.admin.name,
   SEED_ADMIN_PASSWORD: USERS.admin.password,
 };

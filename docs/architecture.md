@@ -533,44 +533,79 @@ geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
   server-concern en hoort bij een aparte chrome-variant per site — bewust
   níet in het thema gestopt (staat op de backlog).
 
-## 3d. Autorisatie: PEP met inplugbare PDP
+## 3d. Autorisatie: PEP en PDP in AuthZEN-vorm
 
-Elke lees/schrijf-beslissing hoort door één poortje: `authorize()` in
-[authorize.ts](../sites/musicbrain/src/lib/authorize.ts) — het **Policy
-Enforcement Point**. Het PEP beslist zelf niets; het bouwt een
-`DecisionRequest` (subject/action/resource/context) en vraagt een
-**PolicyDecisionPoint** om een besluit. Dat interface is het
-AuthZEN-snijvlak: we standaardiseren op het contract tussen PEP en PDP,
-niet op een policytaal, zodat de beslisser verwisselbaar is (nu
-`staticPdp` met de vaste regelset — admin alles / editor schrijft /
-reader leest / publiek alleen `visibility: "public"`; later policies als
-content, of een ODRL-gebaseerde taal). `canEdit()` in auth.ts is een dunne
-wrapper over het PEP. Ontwerp en groeipad: design/wiki.md §4.
+Ontwerp en besluiten: [design/fase-3 §4](design/fase-3-admin-toegang-tijdreizen.md).
+Het contract tussen poortje (PEP) en beslisser (PDP) is de OpenID **AuthZEN
+Authorization API 1.0**: `{ subject, action, resource, context }` in,
+`{ decision, context? }` uit, plus een batchvorm (`evaluations`). Imprint
+standaardiseert op dat contract, niet op een policytaal; de beslisser is
+daarmee verwisselbaar zonder dat een aanroep verandert. De shapes, de
+beslisser in het proces en de twee poortjes staan in
+[access.ts](../packages/content-core/src/access.ts):
+
+- **`inProcessPdp`** — de vaste regelset (admin alles; editor schrijft;
+  ingelogd leest alles; bezoeker leest alleen `access: "public"`), voor dev,
+  test en CI. De instantie kiest de PDP (`ImprintConfig.pdp`); productie
+  krijgt daar de HTTP-adapter naar de OpenFTV-sidecar (backlog).
+- **`permit()`** — het poortje aan de voorkant, asynchroon. Twee
+  invarianten: een publieke leesvraag bereikt de PDP nooit (geen
+  afhankelijkheid, mag voorgerenderd), en een PDP die niet antwoordt is een
+  "nee" voor beperkte content en voor schrijven. De site wikkelt het in
+  `authorize(session, action, resource)`
+  ([authorize.ts](../sites/musicbrain/src/lib/authorize.ts)); `canEdit()` en
+  `editingSession()` in auth.ts zijn dunne wrappers, waar elke server action
+  mee begint.
+- **`guardReads()`** — het poortje aan de achterkant: de leeskant van een
+  store zoals één subject hem mag zien. Beperkte items vallen uit elke lijst
+  en zijn `null` bij elke get, tenzij de PDP ze toestaat (batchvraag);
+  `listItems`/`getItem` van een writable store worden meegenomen, zodat ook
+  widgets die rauwe items lezen (planning, list) niets lekken. Schrijven
+  wordt niet gewikkeld. `imprint.store` is deze bewaakte kijk voor de
+  bezoeker; `imprint.storeFor(subject)` voor een ingelogde; `imprint.readStore`
+  de onbewaakte leeskant (alleen serverside, "wat bestaat er").
+
+**Publiek en beperkt.** Elk inhoudstype (page, product, component,
+board-spec, release, planning, planning-item, wiki, wiki-page) heeft
+`access: "public" | "restricted"` (`Access` in schemas.ts, default public);
+configuratietypen niet. Oude wiki's met `visibility: members` blijven
+parseren: `WikiSchema` beeldt dat bij het lezen af op `restricted`, zodat de
+historie leesbaar blijft zonder migratie. Beperkte content staat nooit in
+voorgerenderde HTML: de statische catch-all leest via de bezoekersstore en
+stuurt een bestaand-maar-beperkt slug door naar **`/members/<slug>`**, een
+`force-dynamic`-route die per verzoek de sessie leest, de PDP vraagt en
+anders 404 geeft (de URL bevestigt niet dat er iets is). Datzelfde geldt voor
+een beperkte wiki en voor een beperkte pagina in een publieke wiki. De
+`/api/content`-leeskant antwoordt met de kijk van de sessie (of van de
+bezoeker) en is met een sessie niet cachebaar. Dit loste ook de 500 op de
+members-wiki in productie op: die route las cookies in een statische render.
 
 ```mermaid
 sequenceDiagram
     autonumber
-    participant R as Route / Server Action<br/>(bijv. saveAction, wiki-route)
-    participant PEP as PEP<br/>authorize()
-    participant PDP as PDP<br/>PolicyDecisionPoint.decide()
-    participant PIP as PIP<br/>sessie (+ attrs, later)
-    participant PAP as PAP<br/>(later: policies als content)
+    participant V as bezoeker
+    participant S as statische route<br/>(site)/[...slug]
+    participant M as /members/[...slug]<br/>(force-dynamic)
+    participant PEP as permit() / guardReads()
+    participant PDP as PDP<br/>inProcessPdp | sidecar
 
-    R->>PEP: authorize(session, action, resource)
-    PEP->>PIP: subject uit sessie (rol, naam)
-    PIP-->>PEP: { role, name }
-    PEP->>PDP: decide({ subject, action, resource, context })
-    Note over PDP: nu: staticPdp (vaste regelset)<br/>later: policies-PDP of ODRL-PDP
-    PDP-->>PAP: (later) lees policies uit de bitemporale tabel
-    PAP-->>PDP: (later) regels
-    PDP-->>PEP: { allow, reason }
-    PEP-->>R: boolean
-    Note over R: allow → uitvoeren<br/>deny → 403 / login / verborgen
+    V->>S: GET /help
+    S->>PEP: store.getPage (bezoeker)
+    Note over PEP: access = restricted → géén PDP-vraag, item weg
+    S-->>V: 307 → /members/help
+    V->>M: GET /members/help (cookie)
+    M->>PEP: storeFor(subject).getPage
+    PEP->>PDP: evaluate({subject, read, resource{access}})
+    PDP-->>PEP: { decision }
+    PEP-->>M: pagina of null
+    M-->>V: 200, of 404
 ```
 
-De verwisselbaarheid zit in stap 4: `decide()` is het hele contract. Een
-andere beslisser (policies-als-content, ODRL-vertaling) vervangt alleen de
-PDP-deelnemer; route-code en PEP blijven identiek.
+Nog niet: toegang per widget op een publieke pagina (besluit: eigen stap,
+§4.3 van het ontwerp), een ledenweergave van beperkte producten, componenten
+en releases (die verdwijnen nu uit de publieke site), en een inlogpagina
+voor leden — een reader logt nu in via `/admin` en ziet daar het formulier
+opnieuw, maar heeft wel een sessie.
 
 ## 4. Opslag: bitemporal-light (§B3)
 
@@ -742,7 +777,8 @@ niet van elkaar afwijken.
 
 - **Auth:** scrypt-wachtwoordhashes in de `users`-tabel, HMAC-signed
   session-cookie ([auth.ts](../sites/musicbrain/src/lib/auth.ts)). Rollen:
-  `admin`/`editor` mogen schrijven, `reader` niet.
+  `admin`/`editor` mogen schrijven, `reader` niet; elke server action begint
+  met `editingSession()` (§3d).
 - **Formulieren uit schema's:** `contentFormSchema` zet het zod-schema om
   naar JSON Schema; `SchemaForm` rendert scalars als echte controls en
   complexe/recursieve velden als gevalideerde JSON-boxen. Een nieuw veld
@@ -901,7 +937,8 @@ verwachtingen voor die de code nu niet waarmaakt.
 | memory-store | `test/memory-store.test.ts` | exact dezelfde suites tegen de geheugen-backend; draait altijd, geen database nodig |
 | **UserStore-contract** | `test/user-store-contract.ts` | aanmaken, lijst zonder hash, dubbele/ongeldige namen en zwakke wachtwoorden geweigerd, inloggen, eigen wachtwoord wijzigen, laatste-admin-bewaking, verwijderen; draait binnen de MariaDB- en de Postgres-suite |
 | contenttypecatalogus | `test/content-types.test.ts` | default alle typen, versmallen per site, onbekend type geweigerd; legt de lijsten vast die de admin vroeger met de hand bijhield |
-| **browsertests admin** | `sites/musicbrain/e2e/*.spec.ts` (Playwright, `npm run test:e2e`) | inloggen en uitloggen per rol, lijsten en dashboard, 404 op typen buiten de catalogus, opslaan met revalidatie van de publieke pagina, validatie, historie en herstel, aanmaken en verwijderen, gebruikersbeheer, studio-rooktest; elke test faalt op een console-error. `e2e/serve.ts` maakt `imprint_e2e` leeg, migreert, seedt via de store en start `next build` + `next start` op :3200; `test:e2e:dev` doet hetzelfde tegen `next dev` in `.next-e2e`, omdat React hydration- en propfouten alleen in development meldt |
+| toegang | `test/access.test.ts` | de vaste regelset per rol, batch in volgorde; `permit()`: publiek vraagt nooit, een kapotte PDP is nee; `guardReads()` op de geheugenstore: bezoeker ziet niets beperkts (typed reads én `listItems`/`getItem`), reader alles, schrijven en historie ongemoeid; legacy `visibility` → `access` |
+| **browsertests admin** | `sites/musicbrain/e2e/*.spec.ts` (Playwright, `npm run test:e2e`) | inloggen en uitloggen per rol, lijsten en dashboard, 404 op typen buiten de catalogus, opslaan met revalidatie van de publieke pagina, validatie, historie en herstel, aanmaken en verwijderen, gebruikersbeheer, studio-rooktest; beperkte pagina: bezoeker → /members → 404 en niet in de API, reader ziet hem, editor ziet hem in de admin, weer publiek → terug op de eigen URL; elke test faalt op een console-error. `e2e/serve.ts` maakt `imprint_e2e` leeg, migreert, seedt via de store en start `next build` + `next start` op :3200; `test:e2e:dev` doet hetzelfde tegen `next dev` in `.next-e2e`, omdat React hydration- en propfouten alleen in development meldt |
 | backendkeuze | `test/db.test.ts` | `dialectOf()`: URL-schema → dialect |
 | composition root | `packages/extension-api/test/imprint.test.ts` | `defineImprint` weigert ongeldige config; `resolveImprint` levert file-/MariaDB-/Postgres-instantie met juiste write-side, users, sessie- en asset-defaults; `createImprint` is één instantie per id |
 | widget-model | `test/widgets.test.ts` | `WidgetTypeRegistry` (dubbel, onbekend, ongeldig, defaults), layoutschema's |

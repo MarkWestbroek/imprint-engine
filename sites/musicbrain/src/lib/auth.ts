@@ -85,10 +85,16 @@ export async function getSession(): Promise<Session | null> {
 /**
  * Editors and admins may write content; readers may not (RoleType).
  * Thin wrapper over the PEP (`authorize`, lib/authorize.ts) so every
- * write-check flows through the same gate — see design/wiki.md §4.
+ * write-check flows through the same gate — design/fase-3 §4.
  */
-export function canEdit(session: Session | null): session is Session {
-  return session !== null && authorize(session, "update", { type: "*" });
+export async function canEdit(session: Session | null): Promise<boolean> {
+  return session !== null && (await authorize(session, "update", { type: "*", id: "*" }));
+}
+
+/** The session, when it may edit; null otherwise. What every admin action starts with. */
+export async function editingSession(): Promise<Session | null> {
+  const session = await getSession();
+  return (await canEdit(session)) ? session : null;
 }
 
 /**

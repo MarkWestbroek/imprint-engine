@@ -249,14 +249,25 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         (AuthZEN NL Gov, FTV); opslag op termijn als gegenereerd register.
         Zie [ontwerp Fase 3](design/fase-3-admin-toegang-tijdreizen.md); open vragen staan in §11.3
         daarvan.
-      - [ ] **Spoor toegang: twee PDP's als sidecar** — voorkant vóór het
-        tonen, achterkant bij gegevenstoegang (besluit Mark); OpenFTV zoals
-        in Omnium; poortje in AuthZEN-vorm en asynchroon (29 aanroepen);
-        weigeren bij een onbereikbare PDP voor beperkte content en
-        schrijven; correlatie met het logboek. Ontwerp §4. _(M–L)_
-      - [ ] **Toegangswaarde `publiek` of `beperkt` op alle content** —
-        publiek werkt zonder PDP en blijft statisch; `members` gaat op in
-        `beperkt` (besluit Mark). Ontwerp §4.3. _(M)_
+      - [x] **Poortje in AuthZEN-vorm, asynchroon, beslisser in het proces;
+        `access: public | restricted` op alle inhoud** (september 2026,
+        Fase 3 stap 3) — `access.ts`; onbereikbare PDP = nee voor beperkt en
+        schrijven; `/members/<slug>` voor beperkte pagina's en wiki's.
+      - [ ] **Spoor toegang: twee PDP's als sidecar** — OpenFTV zoals in
+        Omnium, HTTP-adapter achter `ImprintConfig.pdp`, correlatie
+        (`trace_id` in `context`) met het logboek. Ontwerp §4. _(M)_
+      - [ ] **Inlogpagina voor leden** — een reader logt nu in via `/admin`
+        en ziet daar het formulier opnieuw (wel ingelogd). Eén `/login?to=`
+        voor iedereen, met terugkeer naar de beperkte pagina; hoort bij de
+        gedeelde admin (stap 5). _(S)_
+      - [ ] **Ledenweergave van beperkte producten, componenten en releases**
+        — die verdwijnen nu uit de publieke site; `/members/…` rendert alleen
+        pagina's en wiki's. Met de default views (Fase 4) één generieke
+        ledenroute per type. _(M)_
+      - [ ] **Studio-canvas leest als bezoeker** — `widgetContext()` kent in
+        de studio geen subject, dus een list-widget verbergt beperkte items
+        voor de redacteur op het canvas. Subject doorgeven vanuit de studio
+        (Fase 4). _(S)_
       - [ ] **Toegang per widget (deelcontent)** — een beperkte widget op
         een publieke pagina. Besluit Mark (september 2026): later, als eigen
         stap na Fase 3. Voorkeur Partial Prerendering (`cacheComponents`:
@@ -506,13 +517,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [x] ~~**MusicBrain naar de VPS**~~ — 19 september 2026: lokaal + live-
       bewerkingen samengevoegd, naar Postgres gekopieerd, DNS om; smoke groen.
       Verslag in [deploy-vps.md](deploy-vps.md).
-- [ ] **Members-wiki geeft 500 in productie** — `/help` (visibility
-      `members`) crasht met `DYNAMIC_SERVER_USAGE`: de catch-all
-      `(site)/[...slug]` is SSG (`generateStaticParams`), en `getSession()`
-      leest cookies tijdens een on-demand render. In `next dev` onzichtbaar.
-      Members-wiki's uit de statische route halen (eigen dynamische route, of
-      de sessiecheck client-side/in middleware). Hoort bij Fase 3 (publiek en
-      beperkt). _(S)_
+- [x] **Members-wiki geeft 500 in productie** (september 2026, Fase 3
+      stap 3) — beperkte wiki's en pagina's renderen onder `/members/…`
+      (`force-dynamic`); de statische catch-all leest geen cookies meer.
 - [ ] **Opruimen na de verhuizing** — de Plesk-deploywebhook op GitHub
       verwijderen (hook 655391019, naar `cordelia.exsilia.net`); het
       `MUSICBRAIN_GITHUB_WEBHOOK_SECRET` op de VPS is een testwaarde: echte

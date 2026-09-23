@@ -42,7 +42,7 @@ export default async function WikiList() {
           >
             <p className="font-semibold">{w.title}</p>
             <p className="mt-1 font-mono text-xs text-muted">
-              /{w.slug} · {w.lang} · {w.visibility}
+              /{w.slug} · {w.lang} · {w.access}
             </p>
             <p className="mt-2 text-sm text-muted">
               {folderCounts.get(w.slug) ?? 0} folders · {pageCounts.get(w.slug) ?? 0} pagina&apos;s

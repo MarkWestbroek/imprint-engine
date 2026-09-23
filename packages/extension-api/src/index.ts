@@ -1,7 +1,12 @@
 import path from "node:path";
 import {
+  ANONYMOUS,
   ContentTypeCatalog,
   FileAssetStore,
+  guardReads,
+  inProcessPdp,
+  type AuthzenSubject,
+  type PolicyDecisionPoint,
   FileContentStore,
   WidgetTypeRegistry,
   type ContentStore,
@@ -55,6 +60,12 @@ export interface ImprintConfig {
    * any of them, and each one fails or switches off where it is used.
    */
   secrets?: ImprintSecrets;
+  /**
+   * The policy decision point (design/fase-3 §4): absent = the fixed rule set
+   * in the process (`inProcessPdp`), for dev, test and CI. Production plugs in
+   * the HTTP adapter to the sidecar here.
+   */
+  pdp?: PolicyDecisionPoint;
 }
 
 export interface ImprintSecrets {
@@ -73,10 +84,20 @@ export type StoreDialect = "file" | Dialect;
 export interface ImprintInstance {
   id: string;
   dialect: StoreDialect;
-  /** Read side for public pages. */
+  /**
+   * Read side for public pages, as a visitor sees it: restricted content is
+   * filtered out by the back-end PEP (`guardReads`), so nothing restricted can
+   * reach prerendered HTML, a feed or an API answer.
+   */
   store: ContentStore;
+  /** The same read side for one subject (a signed-in member, the API with a session). */
+  storeFor(subject: AuthzenSubject): ContentStore;
+  /** The unguarded read side: what exists, regardless of who asks. Server-side only. */
+  readStore: ContentStore;
   /** Write side for the admin; null in file mode (v0 content is edited in git). */
   writableStore: WritableContentStore | null;
+  /** The decider; `permit()`/`guardReads()` from content-core are the enforcement points. */
+  pdp: PolicyDecisionPoint;
   /** Users/roles for admin login; null in file mode (no database, no users). */
   users: UserStore | null;
   widgets: WidgetTypeRegistry;
@@ -123,8 +144,9 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
   const url = cfg.store.databaseUrl || undefined;
 
   const opened = url ? openContentDatabase(url, { widgets }) : null;
-  const store: ContentStore =
+  const readStore: ContentStore =
     opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets });
+  const pdp = cfg.pdp ?? inProcessPdp;
 
   const assetRoot = cfg.assets?.root || path.join(process.cwd(), ".assets");
   const assetBase = cfg.assets?.baseUrl || "/api/assets";
@@ -132,8 +154,11 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
   return {
     id: cfg.id,
     dialect: opened?.dialect ?? "file",
-    store,
+    store: guardReads(readStore, ANONYMOUS, pdp),
+    storeFor: (subject) => guardReads(readStore, subject, pdp),
+    readStore,
     writableStore: opened?.store ?? null,
+    pdp,
     users: opened?.users ?? null,
     widgets,
     contentTypes: new ContentTypeCatalog(cfg.contentTypes),

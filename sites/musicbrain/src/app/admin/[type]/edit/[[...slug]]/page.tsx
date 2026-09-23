@@ -45,7 +45,7 @@ function emptyData(type: ContentType): Record<string, unknown> {
     case "planning-item":
       return { slug: "", lang: "en", title: "", planning: "", status: "backlog", owner: "", body: "", order: 0 };
     case "wiki":
-      return { slug: "", lang: "en", title: "", description: "", visibility: "public", order: 0 };
+      return { slug: "", lang: "en", title: "", description: "", access: "public", order: 0 };
     case "wiki-folder":
       return { slug: "", lang: "en", wiki: "", parent: "", title: "", order: 0 };
     case "wiki-page":

@@ -1,8 +1,9 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse, type NextRequest } from "next/server";
 import { computeItinerary, Locale, type ContentType } from "@imprint/content-core";
-import { contentTypes, store, writableStore } from "@/lib/content";
+import { contentTypes, imprint, store, writableStore } from "@/lib/content";
 import { canEdit, checkIngestToken, getSession } from "@/lib/auth";
+import { subjectOf } from "@/lib/authorize";
 
 /**
  * Content API over the same ContentStore the pages use (S1), so API, site and
@@ -52,9 +53,13 @@ export async function GET(
   const asOf = asOfRaw ? new Date(asOfRaw) : undefined;
   if (asOf && Number.isNaN(asOf.getTime())) return error(400, `Bad asOf "${asOfRaw}"`);
 
-  const includeDrafts = q.get("drafts") === "1" && canEdit(await getSession());
+  // With a session the answer is that user's view (restricted items included
+  // when the PDP allows); without one the visitor's, like the static pages.
+  const session = await getSession();
+  const reader = session ? imprint.storeFor(subjectOf(session)) : store;
+  const includeDrafts = q.get("drafts") === "1" && (await canEdit(session));
   const opts = { lang: lang?.data, asOf, includeDrafts };
-  const noCache = includeDrafts || asOf !== undefined;
+  const noCache = includeDrafts || asOf !== undefined || session !== null;
 
   const [type, ...slugParts] = path;
   const slug = slugParts.map(decodeURIComponent).join("/");
@@ -77,34 +82,34 @@ export async function GET(
       });
 
     case "site":
-      return json(await store.getSiteConfig(opts), !noCache);
+      return json(await reader.getSiteConfig(opts), !noCache);
 
     case "products": {
-      if (!slug) return json(await store.listProducts(opts), !noCache);
-      const product = await store.getProduct(slug, opts);
+      if (!slug) return json(await reader.listProducts(opts), !noCache);
+      const product = await reader.getProduct(slug, opts);
       return product ? json(product, !noCache) : error(404, `No product "${slug}"`);
     }
 
     case "components": {
-      if (!slug) return json(await store.listComponents(opts), !noCache);
-      const component = await store.getComponent(slug, opts);
+      if (!slug) return json(await reader.listComponents(opts), !noCache);
+      const component = await reader.getComponent(slug, opts);
       return component ? json(component, !noCache) : error(404, `No component "${slug}"`);
     }
 
     case "board-specs": {
       if (!slug) {
         return json(
-          await store.listBoardSpecs({ ...opts, component: q.get("component") ?? undefined }),
+          await reader.listBoardSpecs({ ...opts, component: q.get("component") ?? undefined }),
           !noCache
         );
       }
-      const spec = await store.getBoardSpec(slug, opts);
+      const spec = await reader.getBoardSpec(slug, opts);
       return spec ? json(spec, !noCache) : error(404, `No board-spec "${slug}"`);
     }
 
     case "releases":
       return json(
-        await store.listReleases({
+        await reader.listReleases({
           ...opts,
           project: q.get("project") ?? undefined,
           product: q.get("product") ?? undefined,
@@ -114,24 +119,24 @@ export async function GET(
 
     case "itinerary": {
       if (!slug) return error(400, "Product slug required: /api/content/itinerary/<product>");
-      const releases = await store.listReleases({ ...opts, product: slug });
+      const releases = await reader.listReleases({ ...opts, product: slug });
       return json(computeItinerary(releases), !noCache);
     }
 
     case "pages": {
       if (!slug) {
         return json(
-          await store.listPages({ ...opts, prefix: q.get("prefix") ?? undefined }),
+          await reader.listPages({ ...opts, prefix: q.get("prefix") ?? undefined }),
           !noCache
         );
       }
-      const page = await store.getPage(slug, opts);
+      const page = await reader.getPage(slug, opts);
       return page ? json(page, !noCache) : error(404, `No page "${slug}"`);
     }
 
     case "menus": {
       if (!slug) return error(400, "Menu name required: /api/content/menus/main");
-      const menu = await store.getMenu(slug, opts);
+      const menu = await reader.getMenu(slug, opts);
       return menu ? json(menu, !noCache) : error(404, `No menu "${slug}"`);
     }
 

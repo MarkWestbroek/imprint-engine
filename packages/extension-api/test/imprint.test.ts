@@ -113,7 +113,9 @@ describe("resolveImprint", () => {
       });
       assert.equal(imprint.dialect, dialect);
       assert.ok(imprint.writableStore, "write side present");
-      assert.equal(imprint.writableStore, imprint.store, "read and write side are one store");
+      assert.equal(imprint.writableStore, imprint.readStore, "read and write side are one store");
+      assert.notEqual(imprint.store, imprint.readStore, "the visitor's store is the guarded view of it");
+      assert.equal(typeof imprint.storeFor({ type: "visitor", id: "x" }).getPage, "function");
       assert.ok(imprint.users, "users live next to the content");
       await imprint.close();
     });

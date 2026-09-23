@@ -1,6 +1,6 @@
 import { cookies, draftMode } from "next/headers";
 import { redirect } from "next/navigation";
-import { canEdit, getSession } from "@/lib/auth";
+import { editingSession } from "@/lib/auth";
 import { ASOF_COOKIE } from "@/lib/preview";
 
 /**
@@ -9,7 +9,7 @@ import { ASOF_COOKIE } from "@/lib/preview";
  * drafts and the chosen moment) for this browser until /api/preview/exit.
  */
 export async function GET(req: Request) {
-  if (!canEdit(await getSession())) {
+  if (!(await editingSession())) {
     return new Response("Editors only", { status: 403 });
   }
 

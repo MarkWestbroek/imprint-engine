@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { canEdit, getSession } from "@/lib/auth";
+import { editingSession } from "@/lib/auth";
 import { writableStore } from "@/lib/content";
 import { applyOp, type DraftOp } from "@/lib/layout-ops";
 import { clearDraft, draftKey, getDraft, setDraft } from "@/lib/page-draft";
@@ -14,8 +14,8 @@ export async function draftOpAction(
   lang: string,
   op: DraftOp
 ): Promise<StudioResult> {
-  const session = await getSession();
-  if (!canEdit(session)) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session) return { ok: false, error: "Not signed in" };
   const key = draftKey(session.name, slug, lang);
   const draft = getDraft(key);
   if (!draft) return { ok: false, error: "Draft expired — reload the page" };
@@ -28,8 +28,8 @@ export async function resetDraftAction(
   slug: string | undefined,
   lang: string
 ): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session)) return;
+  const session = await editingSession();
+  if (!session) return;
   clearDraft(draftKey(session.name, slug, lang));
 }
 
@@ -39,8 +39,8 @@ export async function savePageDraftAction(
   lang: string,
   validity: { validFrom?: string; validTo?: string }
 ): Promise<StudioResult & { slug?: string }> {
-  const session = await getSession();
-  if (!canEdit(session)) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session) return { ok: false, error: "Not signed in" };
   if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
 
   const key = draftKey(session.name, slug, lang);

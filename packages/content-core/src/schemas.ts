@@ -14,6 +14,15 @@ import { PageLayoutSchema } from "./widgets";
 export const Locale = z.enum(["en", "nl"]);
 export type Locale = z.infer<typeof Locale>;
 
+/**
+ * Who may read a content item (design/fase-3 §4.3, decision: publiek/beperkt).
+ * "public" needs no policy decision at all and may be prerendered; "restricted"
+ * is only ever rendered per request, after the PDP said yes (access.ts).
+ * Configuration types (site, menu, theme, relations) have no access value.
+ */
+export const Access = z.enum(["public", "restricted"]);
+export type Access = z.infer<typeof Access>;
+
 export const ProductStatus = z.enum([
   "in-development",
   "beta",
@@ -25,6 +34,7 @@ export type ProductStatus = z.infer<typeof ProductStatus>;
 export const ProductSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   name: z.string().min(1),
   tagline: z.string().min(1),
   /** Small-caps audience line above the name on cards, e.g. "for modular synths". */
@@ -84,6 +94,7 @@ export type ComponentVersion = z.infer<typeof ComponentVersionSchema>;
 export const ComponentSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   name: z.string().min(1),
   /**
    * What sort of component this is — "board" (default), "software", … Open
@@ -114,6 +125,7 @@ export const ReleaseSchema = z.object({
   version: VersionNumber,
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   channel: z.enum(["stable", "beta", "dev"]).default("stable"),
+  access: Access.default("public"),
   /** Slug of the Product this release belongs to (UML: Product ◆ ProductRelease). */
   product: z.string().optional(),
   /**
@@ -182,6 +194,7 @@ export const BoardSpecSchema = z.object({
   /** "<component>@<version>", so it allows @ and dots. */
   slug: z.string().regex(/^[a-z0-9@.\-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   /** Back-reference to the Component this board is (a RelationRule enforces it). */
   component: z.string().min(1),
   /** Which ComponentVersion this documents. */
@@ -252,6 +265,7 @@ export const PageMetaSchema = z.object({
   // templates) are valid page slugs.
   slug: z.string().regex(/^[a-z0-9_/-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   title: z.string().min(1),
   description: z.string().default(""),
   ogImage: z.string().optional(),
@@ -283,19 +297,30 @@ export type PageDoc = z.infer<typeof PageDocSchema>;
  * is the URL prefix (`/<wiki>/…`); navigation is the folder/page tree.
  */
 
-/** Who may read a piece of content; "members" = any signed-in user. */
-export const Visibility = z.enum(["public", "members"]);
-export type Visibility = z.infer<typeof Visibility>;
+/**
+ * Pre-Fase-3 wikis carried `visibility: public | members`. Stored versions
+ * keep that shape forever (history is never rewritten), so parsing maps it
+ * onto `access` — "members" is a policy question now (design/fase-3 §4.3),
+ * and "restricted" is the content's side of it.
+ */
+export function legacyVisibilityToAccess(data: unknown): unknown {
+  if (!data || typeof data !== "object" || !("visibility" in data)) return data;
+  const { visibility, ...rest } = data as { visibility?: unknown; access?: unknown };
+  if ("access" in rest && rest.access !== undefined) return rest;
+  return { ...rest, access: visibility === "members" ? "restricted" : "public" };
+}
 
-export const WikiSchema = z.object({
+/** The fields; `WikiSchema` wraps them with the legacy mapping. Use this for forms and model exports. */
+export const WikiFieldsSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
   title: z.string().min(1),
   description: z.string().default(""),
-  visibility: Visibility.default("public"),
+  access: Access.default("public"),
   order: z.number().int().default(0),
 });
-export type Wiki = z.infer<typeof WikiSchema>;
+export const WikiSchema = z.preprocess(legacyVisibilityToAccess, WikiFieldsSchema);
+export type Wiki = z.infer<typeof WikiFieldsSchema>;
 
 /** A chapter/section in a wiki; nestable via `parent`. */
 export const WikiFolderSchema = z.object({
@@ -313,6 +338,7 @@ export type WikiFolder = z.infer<typeof WikiFolderSchema>;
 export const WikiPageSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   /** Slug of the Wiki this page belongs to. */
   wiki: z.string().min(1),
   /** Slug of the WikiFolder holding this page; moving a page = changing this field. */
@@ -378,6 +404,7 @@ const DEFAULT_PHASES: PlanningPhase[] = [
 export const PlanningSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   name: z.string().min(1),
   /** Slug of the product this board plans (UML: Project → Product). */
   product: z.string().optional(),
@@ -391,6 +418,7 @@ export type Planning = z.infer<typeof PlanningSchema>;
 export const PlanningItemSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
   lang: Locale.default("en"),
+  access: Access.default("public"),
   title: z.string().min(1),
   /** The board this card lives on. */
   planning: z.string().min(1),

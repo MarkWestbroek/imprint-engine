@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 3: het poortje in AuthZEN-vorm, en publiek/beperkt op alle
+  inhoud.** `access: public | restricted` op elk inhoudstype (oude wiki's met
+  `visibility: members` blijven parseren als beperkt, geen migratie). Het
+  poortje is asynchroon en spreekt AuthZEN (`permit()`, `inProcessPdp`,
+  `guardReads()` in `content-core/src/access.ts`); de beslisser komt uit de
+  instantie (`ImprintConfig.pdp`), nu de vaste regelset in het proces, straks
+  de sidecar. `imprint.store` is de bewaakte bezoekerskijk: beperkte items
+  vallen uit elke lijst, get, feed, API-antwoord en list-widget. Beperkte
+  pagina's en wiki's staan onder `/members/<slug>` (dynamisch, per verzoek
+  langs de PDP, anders 404); de statische route stuurt ernaartoe. Publieke
+  pagina's blijven statisch. Lost ook de 500 op de members-wiki in productie
+  op (cookies in een statische render). Vijf browsertests erbij. Wiki-editor:
+  "Zichtbaarheid" heet nu "Toegang".
 - **Ontwerp Fase 3: toegang per widget later** (besluit Mark). Stap 3
   handhaaft `publiek`/`beperkt` per pagina en item; een beperkte widget op een
   publieke pagina wordt een eigen stap daarna. De afweging (Partial

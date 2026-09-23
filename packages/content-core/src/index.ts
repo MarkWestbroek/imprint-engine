@@ -1,6 +1,7 @@
 export * from "./schemas";
 export * from "./store";
 export * from "./content-types";
+export * from "./access";
 export * from "./widgets";
 export * from "./itinerary";
 export * from "./relations";

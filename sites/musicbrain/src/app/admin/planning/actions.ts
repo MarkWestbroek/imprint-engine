@@ -7,7 +7,7 @@ import {
   PlanningSchema,
   type PlanningItem,
 } from "@imprint/content-core";
-import { canEdit, getSession } from "@/lib/auth";
+import { editingSession } from "@/lib/auth";
 import { writableStore } from "@/lib/content";
 import { computeMove } from "@/lib/planning";
 import type { ActionResult } from "../actions";
@@ -38,8 +38,8 @@ export async function createPlanningAction(
   _prev: ActionResult | null,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   const slug = String(formData.get("slug") ?? "").trim();
   const name = String(formData.get("name") ?? "").trim();
   const product = String(formData.get("product") ?? "").trim();
@@ -62,8 +62,8 @@ export async function moveCardAction(
   toPhase: string,
   toIndex: number
 ): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return;
+  const session = await editingSession();
+  if (!session || !writableStore) return;
   const board = await loadBoard(planningSlug);
   if (!board) return;
   const patches = computeMove(board.planning, board.items, movedSlug, toPhase, toIndex);
@@ -95,8 +95,8 @@ export type CardInput = {
 export async function saveCardAction(
   input: CardInput
 ): Promise<ActionResult & { slug?: string; item?: PlanningItem }> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const isNew = !input.slug;
     const slug = input.slug ?? `${input.planning}-${Date.now().toString(36)}`;
@@ -132,16 +132,16 @@ export async function deleteCardAction(
   slug: string,
   lang: string
 ): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return;
+  const session = await editingSession();
+  if (!session || !writableStore) return;
   await writableStore.deleteItem("planning-item", slug, lang || "en");
   refresh(planningSlug);
 }
 
 /** Delete a whole board (and tombstone its cards, so none dangle). */
 export async function deletePlanningAction(formData: FormData): Promise<void> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return;
+  const session = await editingSession();
+  if (!session || !writableStore) return;
   const slug = String(formData.get("slug") ?? "");
   if (!slug) return;
   const cards = (await writableStore.listItems("planning-item"))

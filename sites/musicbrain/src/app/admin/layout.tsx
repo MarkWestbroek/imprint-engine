@@ -1,4 +1,4 @@
-import { canEdit, getSession } from "@/lib/auth";
+import { editingSession } from "@/lib/auth";
 import { writableStore } from "@/lib/content";
 import { LoginForm } from "@/components/admin/login-form";
 import { AdminShell } from "@/components/admin/admin-shell";
@@ -23,8 +23,8 @@ export default async function AdminLayout({
     );
   }
 
-  const session = await getSession();
-  if (!canEdit(session)) {
+  const session = await editingSession();
+  if (!session) {
     return <main className="flex-1 px-4">{<LoginForm />}</main>;
   }
 

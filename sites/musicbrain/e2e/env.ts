@@ -23,5 +23,8 @@ export const USERS = {
 
 export type Role = keyof typeof USERS;
 
+/** Bearer token for the write API in the test server; specs use it to plant content. */
+export const INGEST_TOKEN = "e2e-ingest-token";
+
 /** Where the signed-in browser state of a role is kept between specs. */
 export const authFile = (role: Role) => `e2e/.auth/${role}.json`;

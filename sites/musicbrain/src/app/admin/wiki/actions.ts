@@ -10,7 +10,7 @@ import {
   type WikiFolder,
   type WikiPage,
 } from "@imprint/content-core";
-import { canEdit, getSession } from "@/lib/auth";
+import { editingSession } from "@/lib/auth";
 import { imprint, writableStore } from "@/lib/content";
 import { scopedSlug, slugify } from "@/lib/wiki-href";
 import type { ActionResult } from "../actions";
@@ -35,8 +35,8 @@ export async function createWikiAction(
   _prev: ActionResult | null,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   const title = String(formData.get("title") ?? "").trim();
   const lang = String(formData.get("lang") ?? "en");
   const slug = slugify(title);
@@ -54,8 +54,8 @@ export async function createWikiAction(
 }
 
 export async function saveWikiAction(wiki: Wiki): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiSchema.parse(wiki);
     await writableStore.putItem("wiki", data.slug, data, { lang: data.lang, by: session.name });
@@ -72,8 +72,8 @@ export async function createFolderAction(
   title: string,
   lang: string
 ): Promise<ActionResult & { slug?: string }> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const slug = scopedSlug(wikiSlug, title, await takenSlugs("wiki-folder"));
     const data = WikiFolderSchema.parse({ slug, lang, wiki: wikiSlug, parent, title });
@@ -91,8 +91,8 @@ export async function createPageAction(
   title: string,
   lang: string
 ): Promise<ActionResult & { slug?: string }> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const slug = scopedSlug(wikiSlug, title, await takenSlugs("wiki-page"));
     const data = WikiPageSchema.parse({ slug, lang, wiki: wikiSlug, folder, title });
@@ -105,8 +105,8 @@ export async function createPageAction(
 }
 
 export async function saveFolderAction(folder: WikiFolder): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiFolderSchema.parse(folder);
     await writableStore.putItem("wiki-folder", data.slug, data, { lang: data.lang, by: session.name });
@@ -118,8 +118,8 @@ export async function saveFolderAction(folder: WikiFolder): Promise<ActionResult
 }
 
 export async function savePageAction(page: WikiPage): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiPageSchema.parse(page);
     await writableStore.putItem("wiki-page", data.slug, data, { lang: data.lang, by: session.name });
@@ -144,8 +144,8 @@ export async function moveWikiItemAction(
   targetParent: string,
   index: number
 ): Promise<ActionResult> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const records = await writableStore.listItems(kind);
     const items = records.flatMap((r) => {
@@ -209,8 +209,8 @@ export async function moveWikiItemAction(
 export async function publishWikiAction(
   wikiSlug: string
 ): Promise<ActionResult & { published?: number }> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   const base = imprint.secrets.publish?.url?.replace(/\/+$/, "");
   const token = imprint.secrets.publish?.token;
   if (!base || !token) {
@@ -284,8 +284,8 @@ export async function deleteWikiItemAction(
   lang: string,
   wikiSlug: string
 ): Promise<ActionResult & { deleted?: number }> {
-  const session = await getSession();
-  if (!canEdit(session) || !writableStore) return { ok: false, error: "Not signed in" };
+  const session = await editingSession();
+  if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     let deleted = 0;
     if (kind === "wiki-folder") {

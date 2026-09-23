@@ -8,7 +8,7 @@ import {
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
-  WikiSchema,
+  WikiFieldsSchema,
   WikiFolderSchema,
   WikiPageSchema,
   type ContentType,
@@ -72,7 +72,7 @@ export function contentFormSchema(type: ContentType): JsonSchema {
     case "planning-item":
       return objectSchema(PlanningItemSchema);
     case "wiki":
-      return objectSchema(WikiSchema);
+      return objectSchema(WikiFieldsSchema);
     case "wiki-folder":
       return objectSchema(WikiFolderSchema);
     case "wiki-page":
