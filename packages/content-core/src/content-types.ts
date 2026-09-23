@@ -25,11 +25,13 @@ export type ContentTypeInfo = {
   ingestable: boolean;
   /** A top-level thing an editor thinks in: counted on the dashboard. */
   overview: boolean;
+  /** Has a studio-composable default view (`_view/<type>`), listed under Default views. */
+  viewable: boolean;
   /** Where the generic list sits in the admin menu; null = reachable, not listed. */
   menu: { group: "content" | "design" | "config"; section?: string } | null;
 };
 
-export type ContentTypeFlag = "listable" | "editable" | "ingestable" | "overview";
+export type ContentTypeFlag = "listable" | "editable" | "ingestable" | "overview" | "viewable";
 
 const t = (label: string, flags: ContentTypeFlag[], menu: ContentTypeInfo["menu"] = null): ContentTypeInfo => ({
   label,
@@ -38,15 +40,16 @@ const t = (label: string, flags: ContentTypeFlag[], menu: ContentTypeInfo["menu"
   editable: flags.includes("editable"),
   ingestable: flags.includes("ingestable"),
   overview: flags.includes("overview"),
+  viewable: flags.includes("viewable"),
 });
 
 /** Available types, in display order. `satisfies` keeps it in step with ContentType. */
 export const CONTENT_TYPES = {
   page: t("Pages", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Site" }),
-  product: t("Products", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Catalogus" }),
-  component: t("Components", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Catalogus" }),
-  "board-spec": t("Board specs", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Catalogus" }),
-  release: t("Releases", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Catalogus" }),
+  product: t("Products", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
+  component: t("Components", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
+  "board-spec": t("Board specs", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
+  release: t("Releases", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
   // Planning boards have their own screens; cards are saved through the generic actions.
   planning: t("Planning", ["overview"]),
   "planning-item": t("Planning items", ["listable"]),

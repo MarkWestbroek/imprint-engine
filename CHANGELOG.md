@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 5 af: de hele admin draait uit het package.** Ook
+  gebruikersbeheer, relaties, default views en het modeloverzicht zijn nu
+  schermen en actions in `@imprint/runtime-admin/admin-server`
+  (`UsersScreen`, `RelationsScreen`, `ViewsScreen`, `ModelScreen`;
+  `createUser`, `resetPassword`, `setRole`, `deleteUser`,
+  `changeOwnPassword`, `saveRelations`). De site houdt alleen nog dunne
+  routebestanden en wrappers; wat er nog in de site staat is de studio
+  (Fase 4) en planning en wiki (Fase 5). Welke typen een default view hebben
+  is een catalogusvlag (`viewable`); `viewTargetType` kent geen eigen
+  typelijst meer. Geen zichtbaar verschil; 27 browsertests groen.
 - **Fase 3, stap 5 (eerste helft): de kern van de admin draait uit het
   package.** Login, dashboard, lijst, itemeditor, historie en herstel zijn
   schermen in `@imprint/runtime-admin/admin-server` (`AdminGate`,

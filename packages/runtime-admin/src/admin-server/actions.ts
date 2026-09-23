@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import type { ContentType } from "@imprint/content-core";
-import type { ActionResult } from "../admin/types";
+import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
+import type { ActionResult, UserAction, UserActions } from "../admin/types";
 import type { AdminContext } from "../admin-context";
 
 /**
@@ -107,6 +107,23 @@ export async function restoreVersion(admin: AdminContext, formData: FormData): P
   redirect(`/admin/${type}/history/${slug}`);
 }
 
+/** Save the content-type relation rules (edited in /admin/relations). */
+export async function saveRelations(admin: AdminContext, _prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  const session = await admin.auth.editingSession();
+  if (!session) return { ok: false, error: "Not signed in" };
+  const store = admin.imprint.writableStore;
+  if (!store) return { ok: false, error: "Editing requires DATABASE_URL" };
+  try {
+    const rules = JSON.parse(String(formData.get("rules") ?? "[]")) as RelationRule[];
+    const doc = RelationsDoc.parse({ rules });
+    await store.putItem("relations", "relations", doc, { by: session.name });
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+  }
+  revalidatePath("/admin/relations");
+  return { ok: true };
+}
+
 /** The bound actions a site hands to the screens (its `"use server"` wrappers). */
 export type AdminActions = {
   login: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
@@ -114,4 +131,7 @@ export type AdminActions = {
   saveItem: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
   deleteItem: (formData: FormData) => Promise<void>;
   restoreVersion: (formData: FormData) => Promise<void>;
+  saveRelations: (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
+  users: UserActions;
+  changeOwnPassword: UserAction;
 };

@@ -807,10 +807,11 @@ niet van elkaar afwijken.
   `next/cache` meetrekt. Het menu komt uit `adminMenu(admin)`: de
   catalogus zegt per type waar zijn lijst hoort (`CONTENT_TYPES[type].menu`:
   groep en kopje), de site voegt haar eigen schermen toe via
-  `contributions`; `AdminShell` (client) tekent wat hij krijgt. Nog in de
-  site: studio (Fase 4), planning en wiki (Fase 5), en tot de tweede helft
-  van stap 5 de routes voor gebruikers, relaties, default views, model en
-  site-lijst.
+  `contributions`; `AdminShell` (client) tekent wat hij krijgt. Tweede
+  helft: `UsersScreen` (+ `users.ts`: aanmaken, reset, rol, verwijderen,
+  eigen wachtwoord), `RelationsScreen` (+ `saveRelations`), `ViewsScreen`
+  (typen met de catalogusvlag `viewable`) en `ModelScreen`. Nog in de site:
+  studio (Fase 4), planning en wiki (Fase 5).
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

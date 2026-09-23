@@ -5,7 +5,15 @@ import {
   logoutAction,
   restoreVersionAction,
   saveItemAction,
+  saveRelationsAction,
 } from "@/app/admin/actions";
+import {
+  changeOwnPasswordAction,
+  createUserAction,
+  deleteUserAction,
+  resetPasswordAction,
+  setRoleAction,
+} from "@/app/admin/users/actions";
 
 /**
  * This site's "use server" wrappers, handed to the shared screens. A module
@@ -18,4 +26,12 @@ export const adminActions: AdminActions = {
   saveItem: saveItemAction,
   deleteItem: deleteItemAction,
   restoreVersion: restoreVersionAction,
+  saveRelations: saveRelationsAction,
+  users: {
+    createUser: createUserAction,
+    setRole: setRoleAction,
+    resetPassword: resetPasswordAction,
+    deleteUser: deleteUserAction,
+  },
+  changeOwnPassword: changeOwnPasswordAction,
 };
