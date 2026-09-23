@@ -3,87 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RoleType } from "@imprint/content-core";
-import { logoutAction } from "@/app/admin/actions";
-import { DialogHost } from "@imprint/runtime-admin/admin";
+import { DialogHost } from "./dialog";
 
 /**
  * Admin chrome: a VS Code-style activity rail (grouped by what you're doing,
  * not by data type) + a secondary panel listing the active group's items +
- * the editor. Replaces the old single top bar. The active group follows the
- * current route.
+ * the editor. The groups come in as a prop: the server side builds them from
+ * the content-type catalogue and the site's contributions (admin-server/menu.ts).
  */
 
-type Item = { href: string; label: string };
-type Group = {
+export type MenuItem = { href: string; label: string };
+export type MenuGroup = {
   id: string;
   label: string;
-  icon: string; // key into ICONS
+  /** Key into the icon set below; unknown = a generic dot. */
+  icon?: string;
   adminOnly?: boolean;
-  sections: { label?: string; items: Item[] }[];
+  sections: { label?: string; items: MenuItem[] }[];
 };
-
-const GROUPS: Group[] = [
-  {
-    id: "overzicht",
-    label: "Overzicht",
-    icon: "home",
-    sections: [{ items: [{ href: "/admin", label: "Dashboard" }] }],
-  },
-  {
-    id: "content",
-    label: "Content",
-    icon: "content",
-    sections: [
-      { label: "Site", items: [{ href: "/admin/page", label: "Pages" }] },
-      {
-        label: "Catalogus",
-        items: [
-          { href: "/admin/product", label: "Products" },
-          { href: "/admin/component", label: "Components" },
-          { href: "/admin/board-spec", label: "Board specs" },
-          { href: "/admin/release", label: "Releases" },
-        ],
-      },
-      { label: "Planning", items: [{ href: "/admin/planning", label: "Planning" }] },
-      { label: "Wiki", items: [{ href: "/admin/wiki", label: "Wikis" }] },
-    ],
-  },
-  {
-    id: "vormgeving",
-    label: "Vormgeving",
-    icon: "design",
-    sections: [
-      {
-        items: [
-          { href: "/admin/menu", label: "Menus" },
-          { href: "/admin/theme", label: "Themes" },
-          { href: "/admin/views", label: "Default views" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "model",
-    label: "Model & config",
-    icon: "model",
-    sections: [
-      {
-        items: [
-          { href: "/admin/model", label: "Content model" },
-          { href: "/admin/relations", label: "Relations" },
-          { href: "/admin/site", label: "Site" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "beheer",
-    label: "Beheer",
-    icon: "access",
-    adminOnly: true,
-    sections: [{ items: [{ href: "/admin/users", label: "Users" }] }],
-  },
-];
 
 const ICONS: Record<string, React.ReactNode> = {
   home: <path d="M3 10.5 12 3l9 7.5M5 9.5V20h14V9.5M9.5 20v-6h5v6" />,
@@ -128,6 +65,7 @@ const ICONS: Record<string, React.ReactNode> = {
       <circle cx="12" cy="16.6" r="0.4" fill="currentColor" />
     </>
   ),
+  dot: <circle cx="12" cy="12" r="3" />,
 };
 
 function Icon({ name, className }: { name: string; className?: string }) {
@@ -142,7 +80,7 @@ function Icon({ name, className }: { name: string; className?: string }) {
       className={className}
       aria-hidden
     >
-      {ICONS[name]}
+      {ICONS[name] ?? ICONS.dot}
     </svg>
   );
 }
@@ -152,17 +90,25 @@ function itemActive(href: string, pathname: string): boolean {
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-const flatItems = (g: Group) => g.sections.flatMap((s) => s.items);
+const flatItems = (g: MenuGroup) => g.sections.flatMap((s) => s.items);
 
 export function AdminShell({
   session,
+  groups: allGroups,
+  logout,
+  helpHref = "/help",
   children,
 }: {
   session: { name: string; role: RoleType };
+  groups: MenuGroup[];
+  /** The sign-out server action (a plain form action, no result). */
+  logout: (formData: FormData) => Promise<void>;
+  /** Where the "Help" button points; the site's own manual, when it has one. */
+  helpHref?: string;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const groups = GROUPS.filter((g) => !g.adminOnly || session.role === "admin");
+  const groups = allGroups.filter((g) => (!g.adminOnly || session.role === "admin") && flatItems(g).length > 0);
 
   // Active group = the one whose longest matching item href fits the path.
   let activeGroup = groups[0];
@@ -190,20 +136,19 @@ export function AdminShell({
           I
         </Link>
         {groups.map((g) => {
-          const active = g.id === activeGroup.id;
+          const active = g.id === activeGroup?.id;
           return (
             <Link key={g.id} href={flatItems(g)[0].href} className={railBtn} aria-current={active ? "page" : undefined}>
               {active && (
                 <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r bg-accent" />
               )}
-              <Icon name={g.icon} className={`h-[21px] w-[21px] ${active ? "text-accent" : ""}`} />
+              <Icon name={g.icon ?? "dot"} className={`h-[21px] w-[21px] ${active ? "text-accent" : ""}`} />
               <span className={tip}>{g.label}</span>
             </Link>
           );
         })}
         <div className="flex-1" />
-        {/* De handleiding leeft als Help-wiki op de site zelf (gedogfood). */}
-        <a href="/help" target="_blank" rel="noreferrer" className={railBtn}>
+        <a href={helpHref} target="_blank" rel="noreferrer" className={railBtn}>
           <Icon name="help" className="h-[21px] w-[21px]" />
           <span className={tip}>Help ↗</span>
         </a>
@@ -217,7 +162,7 @@ export function AdminShell({
             {session.name} · {session.role}
           </span>
         </Link>
-        <form action={logoutAction}>
+        <form action={logout}>
           <button type="submit" className={railBtn}>
             <Icon name="out" className="h-[21px] w-[21px]" />
             <span className={tip}>Afmelden</span>
@@ -228,9 +173,9 @@ export function AdminShell({
       {/* secondary panel */}
       <aside className="w-56 shrink-0 overflow-y-auto border-r border-line bg-surface">
         <h2 className="px-4 pb-1.5 pt-4 text-xs font-semibold uppercase tracking-wider text-muted">
-          {activeGroup.label}
+          {activeGroup?.label}
         </h2>
-        {activeGroup.sections.map((sec, i) => (
+        {activeGroup?.sections.map((sec, i) => (
           <div key={i} className="pb-1">
             {sec.label && (
               <div className="px-4 pb-1 pt-2 text-[10.5px] font-semibold uppercase tracking-wider text-muted/80">

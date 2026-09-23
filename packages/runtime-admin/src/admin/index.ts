@@ -5,6 +5,7 @@
  * Styling is Tailwind classes on the site's design tokens (globals.css has
  * an `@source` for this package).
  */
+export { AdminShell, type MenuGroup, type MenuItem } from "./admin-shell";
 export { confirmDialog, DialogHost, promptDialog } from "./dialog";
 export { ItemEditor } from "./item-editor";
 export { LoginForm } from "./login-form";

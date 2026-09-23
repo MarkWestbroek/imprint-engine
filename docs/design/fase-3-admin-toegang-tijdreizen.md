@@ -547,7 +547,7 @@ bitemporele store vanwege de AVG.
 | 2 | admin-flows vastleggen met een browsertest (Playwright): login, lijst, opslaan, historie, herstel, gebruikers | L, klaar |
 | 3 | poortje in AuthZEN-vorm en asynchroon, beslisser in het proces; `publiek` of `beperkt` op alle content | M, klaar (`access.ts`, `/members/…`) |
 | 4 | admin-context, en de generieke clientcomponenten naar het package | M, klaar (`runtime-admin/admin`, `/forms`, `AdminContext`) |
-| 5 | routes en server actions in het package, dunne routebestanden, menu uit de catalogus | L |
+| 5 | routes en server actions in het package, dunne routebestanden, menu uit de catalogus | L; eerste helft klaar (login, dashboard, lijst, bewerken, historie, herstel, menu); tweede helft: gebruikers, relaties, views, model |
 | 6 | MusicBrain draait `/admin` uit het package; planning en wiki blijven bijdragen van de site | M |
 | 7 | Imprint-site: admin aan, eerste gebruiker, bewerken en historie op Postgres | M |
 
@@ -570,9 +570,7 @@ bitemporele store vanwege de AVG.
    hierover na.
 3. **Relaties en taal** (§3.4). Zachte verwijzingen of relaties met foreign
    keys? Taal als gegevenselement per taal, of als veld?
-4. **Opzet van Fase 3.** In één keer, of in twee helften: eerst login, lijst,
-   bewerken en historie; dan gebruikers, relaties, menu's, thema's en
-   modeloverzichten?
+4. ~~**Opzet van Fase 3.**~~ Beantwoord: twee helften (§11.4).
 5. **PAP.** Nu OpenFTV-beheer met Rego-bundels, later het Register
    Toegangsbeleid uit het bitemporele register?
 6. **Configuratie in de tijd.** Een nieuwe Fase 7, of verweven in Fase 3 tot en
@@ -592,6 +590,7 @@ bitemporele store vanwege de AVG.
 | één of twee PDP's | twee: voorkant vóór het tonen, achterkant bij gegevenstoegang | §4.2 |
 | onbereikbare PDP | met `publiek` of `beperkt` op alle content werkt publieke content zonder PDP | §4.3 |
 | toegang per widget (deelcontent) | later, als eigen stap; Fase 3 handhaaft per pagina en item | §4.3 |
+| opzet van stap 5 (vraag 4) | in twee helften: eerst login, lijst, bewerken, historie en herstel; dan gebruikers, relaties, menu's, thema's en het modeloverzicht | §11.1 |
 | bron van waarheid voor het model | het canonieke model; de eerste versies ontstaan andersom | §3.4 |
 | precisie van tijd | datum-tijd is prima; het principe vraagt alleen lineaire tijd | §3.4 |
 | het model in de tijd | groeien is geen probleem; een brekende wijziging vraagt eerst een downgrade | §8.2 |

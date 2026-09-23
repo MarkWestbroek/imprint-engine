@@ -791,6 +791,26 @@ niet van elkaar afwijken.
   site-module en geen server action: de action komt als prop (`action`,
   `actions`), getypeerd als `FormAction` (`useActionState`-vorm). Studio,
   planning en wiki blijven in de site (Fase 4 en 5).
+- **Schermen en actions in het package** (Fase 3 stap 5, eerste helft):
+  [runtime-admin/src/admin-server/](../packages/runtime-admin/src/admin-server/)
+  bevat de servercomponenten `AdminGate` (geen database / login / shell),
+  `DashboardScreen`, `ListScreen`, `ItemEditScreen` en `HistoryScreen`, en
+  de action-implementaties (`signIn`, `signOut`, `saveItem`, `deleteItem`,
+  `restoreVersion`). Alles neemt de `AdminContext` als eerste argument. De
+  site houdt dunne routebestanden (`app/admin/**/page.tsx` rendert een
+  scherm met `admin` en `adminActions`) en een `"use server"`-module met
+  één-regel-wrappers (`loginAction = (prev, fd) => signIn(admin, prev, fd)`).
+  Waarom niet gesloten over de context: een `"use server"`-bestand mag alleen
+  kale async functies exporteren, dus Next registreert alleen top-level
+  functies als action; en een proces-singleton zou onzichtbaar zijn. Aparte
+  entry `/admin-server` naast `/admin` (client), zodat een clientbundel nooit
+  `next/cache` meetrekt. Het menu komt uit `adminMenu(admin)`: de
+  catalogus zegt per type waar zijn lijst hoort (`CONTENT_TYPES[type].menu`:
+  groep en kopje), de site voegt haar eigen schermen toe via
+  `contributions`; `AdminShell` (client) tekent wat hij krijgt. Nog in de
+  site: studio (Fase 4), planning en wiki (Fase 5), en tot de tweede helft
+  van stap 5 de routes voor gebruikers, relaties, default views, model en
+  site-lijst.
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

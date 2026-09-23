@@ -242,6 +242,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] **Fase 3 stap 4: admin-context en generieke clientcomponenten
         naar `@imprint/runtime-admin`** (september 2026) — `/admin`,
         `/forms`, `AdminContext`; actions als props.
+      - [x] **Fase 3 stap 5, eerste helft: login, dashboard, lijst,
+        itemeditor, historie en herstel uit het package** (september 2026)
+        — `runtime-admin/admin-server`; menu uit de catalogus plus
+        `contributions`; dunne routes in de site.
+      - [ ] **Fase 3 stap 5, tweede helft** — gebruikers, relaties, default
+        views, modeloverzicht en de site-lijst naar het package; daarna
+        stap 6 (MusicBrain draait `/admin` volledig uit het package) en 7
+        (de Imprint-site krijgt de admin). _(M)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

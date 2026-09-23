@@ -75,8 +75,13 @@
   dus in het schema, niet als los formulierveld in de admin. De generieke
   admin-clientcomponenten (dialoog, formulier, markdown-editor, login, menu-,
   thema-, gebruikers-, relatie- en itemeditor) staan in
-  `@imprint/runtime-admin/admin` en krijgen server actions als prop; de site
-  bouwt één `AdminContext` (`src/lib/admin.ts`, `createAdminContext`).
+  `@imprint/runtime-admin/admin` en krijgen server actions als prop; de
+  schermen en action-implementaties van de admin in
+  `@imprint/runtime-admin/admin-server`, met de `AdminContext` als eerste
+  argument. De site bouwt die context één keer (`src/lib/admin.ts`), houdt
+  dunne routebestanden onder `app/admin/` en één-regel `"use server"`-wrappers
+  (`app/admin/actions.ts`); nieuwe admin-schermen van de site komen in het
+  menu via `contributions`.
 - Relaties tussen contenttypen zijn zachte slug-referenties; integriteit
   wordt bewaakt door RelationRules (`content-core/src/relations.ts`),
   opgeslagen als `type: "relations"` en bewerkbaar in `/admin/relations`.

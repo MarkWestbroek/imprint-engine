@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 5 (eerste helft): de kern van de admin draait uit het
+  package.** Login, dashboard, lijst, itemeditor, historie en herstel zijn
+  schermen in `@imprint/runtime-admin/admin-server` (`AdminGate`,
+  `DashboardScreen`, `ListScreen`, `ItemEditScreen`, `HistoryScreen`) met de
+  action-implementaties ernaast (`signIn`, `signOut`, `saveItem`,
+  `deleteItem`, `restoreVersion`); alles krijgt de `AdminContext` als
+  parameter. In de site blijven dunne routebestanden (samen 122 regels, was
+  ~500) en één-regel `"use server"`-wrappers. Het admin-menu wordt gebouwd
+  uit de contenttypecatalogus (`CONTENT_TYPES[type].menu`) plus de bijdragen
+  van de site (`contributions`: planning, wiki, default views, model,
+  relaties); de `AdminShell` zit in het package. Geen zichtbaar verschil; 27
+  browsertests groen. Tweede helft volgt: gebruikers, relaties, menu's,
+  thema's, modeloverzicht.
 - **Fase 3, stap 4: admin-context en de generieke clientcomponenten naar het
   package.** Dialoog, `SchemaForm`, markdown-editor, loginformulier, menu-,
   thema-, gebruikers-, relatie- en itemeditor (~1.400 regels) staan nu in

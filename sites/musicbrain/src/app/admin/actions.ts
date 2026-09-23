@@ -1,10 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
-import { authenticate, editingSession, createSessionCookie, destroySession } from "@/lib/auth";
-import { contentTypes, writableStore } from "@/lib/content";
+import { RelationsDoc, type RelationRule } from "@imprint/content-core";
+import * as actions from "@imprint/runtime-admin/admin-server";
+import { admin } from "@/lib/admin";
+import { editingSession } from "@/lib/auth";
+import { writableStore } from "@/lib/content";
 
 /** Same shape as the package's ActionResult (a re-export trips the "use server" scanner). */
 export type ActionResult = { ok: boolean; error?: string };
@@ -28,103 +29,27 @@ export async function saveRelationsAction(
   return { ok: true };
 }
 
-export async function loginAction(
-  _prev: ActionResult | null,
-  formData: FormData
-): Promise<ActionResult> {
-  const name = String(formData.get("name") ?? "");
-  const password = String(formData.get("password") ?? "");
-  const session = await authenticate(name, password);
-  if (!session) return { ok: false, error: "Wrong username or password" };
-  await createSessionCookie(session);
-  redirect("/admin");
+/**
+ * The shared admin's actions (@imprint/runtime-admin/admin-server), bound to
+ * this site's context. One line each: a "use server" module may only export
+ * plain async functions, so the context is passed rather than closed over.
+ */
+export async function loginAction(prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  return actions.signIn(admin, prev, formData);
 }
 
 export async function logoutAction(): Promise<void> {
-  await destroySession();
-  redirect("/admin");
+  return actions.signOut(admin);
 }
 
-function parseType(value: unknown): ContentType {
-  const type = String(value);
-  if (!contentTypes.has(type, "listable")) throw new Error(`Unknown content type "${type}"`);
-  return type;
-}
-
-/** The natural key lives inside the data, per type (UML: ContentItem /type). */
-function slugFor(type: ContentType, data: Record<string, unknown>): string {
-  switch (type) {
-    case "site":
-      return "site";
-    case "menu":
-    case "theme":
-      return String(data.name ?? "");
-    case "release":
-      return `${String(data.project ?? "")}-${String(data.version ?? "")}`;
-    default:
-      return String(data.slug ?? "");
-  }
-}
-
-export async function saveItemAction(
-  _prev: ActionResult | null,
-  formData: FormData
-): Promise<ActionResult> {
-  const session = await editingSession();
-  if (!session) return { ok: false, error: "Not signed in" };
-  if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
-
-  try {
-    const type = parseType(formData.get("type"));
-    const data = JSON.parse(String(formData.get("data") ?? "{}")) as Record<
-      string,
-      unknown
-    >;
-    const slug = slugFor(type, data);
-    if (!slug || slug === "-") return { ok: false, error: "Item needs a slug/name" };
-
-    const validFromRaw = String(formData.get("validFrom") ?? "");
-    const validToRaw = String(formData.get("validTo") ?? "");
-    await writableStore.putItem(type, slug, data, {
-      lang: typeof data.lang === "string" ? data.lang : "en",
-      by: session.name,
-      validFrom: validFromRaw ? new Date(validFromRaw) : undefined,
-      validTo: validToRaw ? new Date(validToRaw) : undefined,
-    });
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
-  }
-
-  revalidatePath("/", "layout"); // flush the public site's cache
-  return { ok: true };
+export async function saveItemAction(prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  return actions.saveItem(admin, prev, formData);
 }
 
 export async function deleteItemAction(formData: FormData): Promise<void> {
-  const session = await editingSession();
-  if (!session || !writableStore) return;
-  const type = parseType(formData.get("type"));
-  const slug = String(formData.get("slug") ?? "");
-  const lang = String(formData.get("lang") ?? "en");
-  await writableStore.deleteItem(type, slug, lang);
-  revalidatePath("/", "layout");
-  redirect(`/admin/${type}`);
+  return actions.deleteItem(admin, formData);
 }
 
 export async function restoreVersionAction(formData: FormData): Promise<void> {
-  const session = await editingSession();
-  if (!session || !writableStore) return;
-  const type = parseType(formData.get("type"));
-  const slug = String(formData.get("slug") ?? "");
-  const lang = String(formData.get("lang") ?? "en");
-  const id = Number(formData.get("id"));
-  const versions = await writableStore.listVersions(type, slug, lang);
-  const version = versions.find((v) => v.id === id);
-  if (!version) return;
-  // Restoring = asserting the old data again as a new version (S4).
-  await writableStore.putItem(type, slug, version.data, {
-    lang,
-    by: session.name,
-  });
-  revalidatePath("/", "layout");
-  redirect(`/admin/${type}/history/${slug}`);
+  return actions.restoreVersion(admin, formData);
 }
