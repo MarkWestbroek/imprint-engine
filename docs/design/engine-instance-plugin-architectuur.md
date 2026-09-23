@@ -591,6 +591,21 @@ history tegen hun eigen database.
 - SiteChrome per instantie in het canvas injecteren;
 - draftopslag namespacen per instantie en gebruiker.
 
+**Besluit chrome (Mark, september 2026).** "Chrome" is de vaste omlijsting
+van een pagina: header, menu, footer, themawisselaar — alles wat op elke
+pagina gelijk is. De studio toont de pagina in het canvas binnen die
+omlijsting, zodat de redacteur ziet wat de bezoeker ziet. Bij de extractie
+weet de studio daar **zo min mogelijk** van: de site geeft in de
+`AdminContext` één component `chrome({ children })` mee en de studio zet de
+pagina erin. Wat erin zit is de zaak van de site: MusicBrain geeft zijn
+`SiteChrome` (menu uit de store, themawisselaar) in de inert-stand mee, de
+Imprint-site zijn header en footer. Uitdrukkelijk zo gekozen dat het
+**later verder kan naar "meer"**: een rijkere afspraak waarin de studio
+menu en thema's kent en bijvoorbeeld in het canvas van thema kan wisselen.
+Dat vraagt dan een uitbreiding van het slot (optionele `themes`/`nav` op de
+context), geen andere studio; sites die die begrippen niet hebben blijven
+werken met het kale slot.
+
 **Exit:** dezelfde studio bewerkt een pagina in beide sites met hun eigen
 chrome en widgetset.
 

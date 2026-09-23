@@ -259,6 +259,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         database en poort, zodat de Imprint-admin ook in CI meeloopt. _(M)_
       - [ ] **Pagina's bewerken op de Imprint-site** — nu alleen het
         meta-formulier; de studio komt met Fase 4 naar het package. _(Fase 4)_
+      - [ ] **Studio-chrome, de rijkere variant** — na Fase 4: de studio
+        kent menu en thema's van de site (optionele `nav`/`themes` op het
+        chrome-slot), zodat de redacteur in het canvas van thema kan
+        wisselen en het menu ziet zoals de bezoeker. Besluit Mark: Fase 4
+        begint met het kale slot (één component om het canvas), en dit
+        is de bewuste vervolgstap. Zie revisievoorstel, Fase 4. _(S–M)_
       - [ ] **Vaste pagina's van de Imprint-site naar content** (na Fase 4,
         besluit Mark september 2026) — `/mogelijkheden`, `/praktijk` en de
         tekst van `/` worden content-pagina's met de acht standaardwidgets;

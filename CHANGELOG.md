@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Ontwerp Fase 4: chrome-slot in de studio** (besluit Mark). De studio
+  krijgt de omlijsting van de site als één component mee en weet er verder
+  niets van; de rijkere variant (menu en thema's in het canvas) is een
+  vervolgstap. Revisievoorstel, Fase 4; backlog.
 - **Fase 3 af — stap 6 en 7: de Imprint-site heeft de admin.** Sessie en
   as-of-preview zijn naar het package verhuisd (`createSessionAuth(imprint)`,
   `readOpts()`, `previewEnter`/`previewExit`), zodat een site alleen nog zijn
