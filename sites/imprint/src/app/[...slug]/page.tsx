@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Markdown, PageRenderer } from "@imprint/runtime-admin";
+import { Markdown, PageRenderer, readOpts } from "@imprint/runtime-admin";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { store } from "@/lib/content";
 import { widgetContext } from "@/lib/widget-context";
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ContentPage({ params }: Props) {
   const slug = (await params).slug.join("/");
-  const page = isViewTemplate(slug) ? null : await store.getPage(slug);
+  const page = isViewTemplate(slug) ? null : await store.getPage(slug, await readOpts());
   if (!page) notFound();
 
   return (
@@ -42,7 +42,7 @@ export default async function ContentPage({ params }: Props) {
             <PageRenderer
               page={{ ...page, layout: page.layout }}
               viewers={widgetComponents}
-              ctx={widgetContext()}
+              ctx={await widgetContext()}
             />
           ) : (
             <>

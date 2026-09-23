@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3 af — stap 6 en 7: de Imprint-site heeft de admin.** Sessie en
+  as-of-preview zijn naar het package verhuisd (`createSessionAuth(imprint)`,
+  `readOpts()`, `previewEnter`/`previewExit`), zodat een site alleen nog zijn
+  `AdminContext` en dunne routes hoeft te hebben. De Imprint-site
+  (Postgres) heeft daarmee `/admin`: inloggen, dashboard, lijsten, bewerken,
+  historie, herstel, gebruikers, relaties, modeloverzicht en Time travel —
+  in 13 kleine bestanden, zonder eigen admin-code. Pagina's bewerk je daar
+  voorlopig met het meta-formulier; de itemeditor laat velden die het
+  formulier niet kent (layout, body) nu ongemoeid, zodat een meta-save een
+  gecomponeerde pagina niet sloopt. MusicBrain leest sessie en preview uit
+  hetzelfde package (`lib/auth.ts` en `lib/preview.ts` zijn doorgeefluiken).
+  Eerste gebruiker: `SEED_ADMIN_USER`/`SEED_ADMIN_PASSWORD` +
+  `npm run db:seed -- --site=imprint --only=user`; `SESSION_SECRET` in
+  `sites/imprint/.env.local`.
 - **Fase 3, stap 5 af: de hele admin draait uit het package.** Ook
   gebruikersbeheer, relaties, default views en het modeloverzicht zijn nu
   schermen en actions in `@imprint/runtime-admin/admin-server`

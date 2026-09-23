@@ -248,10 +248,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         `contributions`; dunne routes in de site.
       - [x] **Fase 3 stap 5, tweede helft: gebruikers, relaties, default
         views en modeloverzicht uit het package** (september 2026).
-      - [ ] **Fase 3 stap 6 en 7** — MusicBrain draait `/admin` volledig uit
-        het package (planning en wiki als bijdragen van de site); de
-        Imprint-site krijgt de admin: eerste gebruiker, bewerken en historie
-        op Postgres. _(2 × M)_
+      - [x] **Fase 3 stap 6 en 7** (september 2026) — sessie en preview in
+        het package; de Imprint-site heeft `/admin` op Postgres (13 dunne
+        bestanden). Getoetst met een Playwright-doorloop: inloggen, lijst,
+        meta-save van een gecomponeerde pagina (layout blijft), historie,
+        herstel, gebruikers, relaties, model, uitloggen, geen console-errors.
+      - [ ] **Browsertests voor de Imprint-site** — de e2e-harnas
+        (`sites/musicbrain/e2e`) is MusicBrain-specifiek (MariaDB, :3200);
+        generaliseren naar een gedeelde `e2e/`-map met per site een
+        database en poort, zodat de Imprint-admin ook in CI meeloopt. _(M)_
+      - [ ] **Pagina's bewerken op de Imprint-site** — nu alleen het
+        meta-formulier; de studio komt met Fase 4 naar het package. _(Fase 4)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

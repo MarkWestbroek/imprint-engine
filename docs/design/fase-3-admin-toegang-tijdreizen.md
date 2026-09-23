@@ -548,8 +548,8 @@ bitemporele store vanwege de AVG.
 | 3 | poortje in AuthZEN-vorm en asynchroon, beslisser in het proces; `publiek` of `beperkt` op alle content | M, klaar (`access.ts`, `/members/…`) |
 | 4 | admin-context, en de generieke clientcomponenten naar het package | M, klaar (`runtime-admin/admin`, `/forms`, `AdminContext`) |
 | 5 | routes en server actions in het package, dunne routebestanden, menu uit de catalogus | L, klaar (`runtime-admin/admin-server`; menu uit catalogus + `contributions`) |
-| 6 | MusicBrain draait `/admin` uit het package; planning en wiki blijven bijdragen van de site | M |
-| 7 | Imprint-site: admin aan, eerste gebruiker, bewerken en historie op Postgres | M |
+| 6 | MusicBrain draait `/admin` uit het package; planning en wiki blijven bijdragen van de site | M, klaar (sessie en preview ook in het package) |
+| 7 | Imprint-site: admin aan, eerste gebruiker, bewerken en historie op Postgres | M, klaar (13 dunne bestanden; studio volgt met Fase 4) |
 
 ### 11.2 Sporen naast Fase 3
 

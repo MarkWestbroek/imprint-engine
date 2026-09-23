@@ -812,6 +812,17 @@ niet van elkaar afwijken.
   eigen wachtwoord), `RelationsScreen` (+ `saveRelations`), `ViewsScreen`
   (typen met de catalogusvlag `viewable`) en `ModelScreen`. Nog in de site:
   studio (Fase 4), planning en wiki (Fase 5).
+- **Sessie en preview in het package** (stap 6/7):
+  [session.ts](../packages/runtime-admin/src/admin-server/session.ts) —
+  `createSessionAuth(imprint)` geeft de `AdminAuth` (HMAC-cookie, naam, uren
+  en secret uit de instantie, `canEdit` via de PDP); de site zet hem in zijn
+  context en exporteert wat zijn eigen routes nodig hebben.
+  [preview.ts](../packages/runtime-admin/src/preview.ts) — `readOpts()`,
+  `getPreview()`; `previewEnter`/`previewExit` in admin-server voor de twee
+  routebestanden. **Een tweede site krijgt de admin met** `lib/admin.ts`
+  (context), `lib/admin-actions.ts`, `app/admin/actions.ts` en
+  `users/actions.ts` (wrappers), zes routebestanden en twee preview-routes —
+  zie `sites/imprint`, dat precies zo is aangesloten (Postgres).
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

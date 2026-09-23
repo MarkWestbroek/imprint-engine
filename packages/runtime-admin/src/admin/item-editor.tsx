@@ -45,10 +45,9 @@ export function ItemEditor({
       <SchemaForm
         schema={formSchema}
         value={data}
-        onChange={(next) =>
-          // keep fields the meta form doesn't know about (menu items, theme tokens)
-          setData({ ...next, items: data.items, colors: data.colors, fonts: data.fonts })
-        }
+        // Keep every field the form does not know (menu items, theme tokens, a
+        // page's body and layout): the form edits the scalars, nothing more.
+        onChange={(next) => setData({ ...data, ...next })}
       />
 
       {type === "theme" && (

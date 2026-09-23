@@ -1,11 +1,11 @@
+import { readOpts } from "@imprint/runtime-admin";
 import type { WidgetContext } from "@imprint/runtime-admin";
 import { imprint } from "@/lib/content";
 
 /**
- * The WidgetContext for this site (architecture.md §3). No as-of preview here
- * yet (that arrives with the shared admin), so every visitor reads with the
- * same, empty read options.
+ * The WidgetContext for this site (architecture.md §3): the visitor's stores
+ * plus the read options of the as-of preview (the admin's Time travel).
  */
-export function widgetContext(): WidgetContext {
-  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: {} };
+export async function widgetContext(): Promise<WidgetContext> {
+  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: await readOpts() };
 }
