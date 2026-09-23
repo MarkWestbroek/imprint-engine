@@ -259,6 +259,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         database en poort, zodat de Imprint-admin ook in CI meeloopt. _(M)_
       - [ ] **Pagina's bewerken op de Imprint-site** — nu alleen het
         meta-formulier; de studio komt met Fase 4 naar het package. _(Fase 4)_
+      - [ ] **Vaste pagina's van de Imprint-site naar content** (na Fase 4,
+        besluit Mark september 2026) — `/mogelijkheden`, `/praktijk` en de
+        tekst van `/` worden content-pagina's met de acht standaardwidgets;
+        de homepage-route blijft code (merkbeleving). Voor de stukken die de
+        huisstijl dragen komen site-eigen widgets: `capabilities`
+        (genummerde lijst met Lucide-iconen) en `studio-scene` (de
+        HTML/CSS-tekening van de studio); `/merk` blijft code of krijgt
+        een eigen widget. Meteen een proef van het widgetmodel: kan een
+        site zijn vormgeving als widgets aan de redactie aanbieden? Pas
+        zinvol zodra de studio in het package zit. _(M)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen
