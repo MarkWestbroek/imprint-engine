@@ -71,8 +71,12 @@
   blijven prerendered (SSG + revalidatie na admin-saves); alles onder
   `/admin` is per definitie dynamisch.
 - Admin-formulieren worden gegenereerd uit de zod-schema's
-  (`src/lib/admin-schemas.ts` → `SchemaForm`); een nieuw contentveld hoort
-  dus in het schema, niet als los formulierveld in de admin.
+  (`@imprint/runtime-admin/forms` → `SchemaForm`); een nieuw contentveld hoort
+  dus in het schema, niet als los formulierveld in de admin. De generieke
+  admin-clientcomponenten (dialoog, formulier, markdown-editor, login, menu-,
+  thema-, gebruikers-, relatie- en itemeditor) staan in
+  `@imprint/runtime-admin/admin` en krijgen server actions als prop; de site
+  bouwt één `AdminContext` (`src/lib/admin.ts`, `createAdminContext`).
 - Relaties tussen contenttypen zijn zachte slug-referenties; integriteit
   wordt bewaakt door RelationRules (`content-core/src/relations.ts`),
   opgeslagen als `type: "relations"` en bewerkbaar in `/admin/relations`.

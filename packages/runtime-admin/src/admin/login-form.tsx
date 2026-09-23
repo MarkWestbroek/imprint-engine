@@ -1,13 +1,11 @@
 "use client";
 
 import { useActionState } from "react";
-import { loginAction, type ActionResult } from "@/app/admin/actions";
+import type { ActionResult, FormAction } from "./types";
 
-export function LoginForm() {
-  const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(
-    loginAction,
-    null
-  );
+/** The sign-in form; `action` is the site's login action (name + password → session cookie). */
+export function LoginForm({ action }: { action: FormAction }) {
+  const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(action, null);
 
   return (
     <form

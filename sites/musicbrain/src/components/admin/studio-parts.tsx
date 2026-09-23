@@ -17,9 +17,8 @@ import {
   savePageDraftAction,
 } from "@/app/admin/studio-actions";
 import type { DraftOp, WidgetPath } from "@/lib/layout-ops";
-import type { JsonSchema } from "@/lib/admin-schemas";
-import { SchemaForm } from "./schema-form";
-import { MarkdownEditor } from "./markdown-editor";
+import type { JsonSchema } from "@imprint/runtime-admin/forms";
+import { MarkdownEditor, SchemaForm } from "@imprint/runtime-admin/admin";
 import { WidgetEditorFor } from "@/widgets/editors";
 
 /**

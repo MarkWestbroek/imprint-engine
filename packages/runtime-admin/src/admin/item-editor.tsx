@@ -2,8 +2,8 @@
 
 import { useActionState, useState } from "react";
 import type { ContentType } from "@imprint/content-core";
-import { saveItemAction, type ActionResult } from "@/app/admin/actions";
-import type { JsonSchema } from "@/lib/admin-schemas";
+import type { ActionResult, FormAction } from "./types";
+import type { JsonSchema } from "../forms";
 import { SchemaForm } from "./schema-form";
 import { MenuEditor, type MenuItemV } from "./menu-editor";
 import { ThemeEditor } from "./theme-editor";
@@ -22,6 +22,7 @@ export function ItemEditor({
   validFrom,
   validTo,
   pages,
+  action,
 }: {
   type: ContentType;
   initialData: Record<string, unknown>;
@@ -30,12 +31,11 @@ export function ItemEditor({
   validFrom?: string;
   validTo?: string;
   pages?: { slug: string; title: string }[];
+  /** Saves the item as a new version; the form posts `type`, `data` (JSON), `validFrom`, `validTo`. */
+  action: FormAction;
 }) {
   const [data, setData] = useState(initialData);
-  const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(
-    saveItemAction,
-    null
-  );
+  const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(action, null);
 
   return (
     <form action={formAction} className="space-y-6">

@@ -546,7 +546,7 @@ bitemporele store vanwege de AVG.
 | 1 | gebruikers op Postgres, secrets via de config, catalogus beschikbaar/actief | 3 × S, klaar |
 | 2 | admin-flows vastleggen met een browsertest (Playwright): login, lijst, opslaan, historie, herstel, gebruikers | L, klaar |
 | 3 | poortje in AuthZEN-vorm en asynchroon, beslisser in het proces; `publiek` of `beperkt` op alle content | M, klaar (`access.ts`, `/members/…`) |
-| 4 | admin-context, en de generieke clientcomponenten naar het package | M |
+| 4 | admin-context, en de generieke clientcomponenten naar het package | M, klaar (`runtime-admin/admin`, `/forms`, `AdminContext`) |
 | 5 | routes en server actions in het package, dunne routebestanden, menu uit de catalogus | L |
 | 6 | MusicBrain draait `/admin` uit het package; planning en wiki blijven bijdragen van de site | M |
 | 7 | Imprint-site: admin aan, eerste gebruiker, bewerken en historie op Postgres | M |

@@ -6,7 +6,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./layout": "./src/layout.ts"
+    "./layout": "./src/layout.ts",
+    "./admin": "./src/admin/index.ts",
+    "./forms": "./src/forms.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -14,8 +16,12 @@
   },
   "dependencies": {
     "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "marked": "^14.1.3",
     "react-markdown": "^10.1.0",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "turndown": "^7.2.0",
+    "zod": "^4.1.5"
   },
   "peerDependencies": {
     "react": "^19"
@@ -23,6 +29,7 @@
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/turndown": "^5.0.5",
     "typescript": "^5"
   }
 }

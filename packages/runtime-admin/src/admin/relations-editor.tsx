@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import type { RelationRule } from "@imprint/content-core";
-import { saveRelationsAction, type ActionResult } from "@/app/admin/actions";
+import type { ActionResult, FormAction } from "./types";
 
 /**
  * Beheerscherm for referential integrity: which field of which content type
@@ -10,17 +10,20 @@ import { saveRelationsAction, type ActionResult } from "@/app/admin/actions";
  * Saved as the "relations" content item; the store reads it on every put.
  */
 export function RelationsEditor({
+  action,
   initialRules,
   types,
   defaults,
 }: {
+  /** Saves the rules document; the form posts `rules` (JSON). */
+  action: FormAction;
   initialRules: RelationRule[];
   types: string[];
   defaults: RelationRule[];
 }) {
   const [rules, setRules] = useState<RelationRule[]>(initialRules);
   const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(
-    saveRelationsAction,
+    action,
     null
   );
 

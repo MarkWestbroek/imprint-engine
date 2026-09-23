@@ -2,8 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ContentType } from "@imprint/content-core";
 import { contentTypes, writableStore } from "@/lib/content";
-import { contentFormSchema } from "@/lib/admin-schemas";
-import { ItemEditor } from "@/components/admin/item-editor";
+import { ItemEditor } from "@imprint/runtime-admin/admin";
+import { admin } from "@/lib/admin";
+import { saveItemAction } from "../../../actions";
 import { PageStudio } from "@/components/admin/studio";
 
 type Props = {
@@ -102,11 +103,12 @@ export default async function AdminEdit({ params, searchParams }: Props) {
         <ItemEditor
           type={contentType}
           initialData={(item?.data as Record<string, unknown>) ?? emptyData(contentType)}
-          formSchema={contentFormSchema(contentType)}
+          formSchema={admin.forms.content(contentType)}
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}
           validTo={toLocalInput(item?.validTo)}
           pages={pages}
+          action={saveItemAction}
         />
       </div>
     </div>

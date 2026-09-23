@@ -6,6 +6,7 @@ import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/cont
 import { authenticate, editingSession, createSessionCookie, destroySession } from "@/lib/auth";
 import { contentTypes, writableStore } from "@/lib/content";
 
+/** Same shape as the package's ActionResult (a re-export trips the "use server" scanner). */
 export type ActionResult = { ok: boolean; error?: string };
 
 /** Save the content-type relation rules (edited in /admin/relations). */

@@ -55,7 +55,8 @@ test.describe("user management", () => {
     await page.goto("/admin/users");
     await row(page, NEW_USER).getByRole("combobox").selectOption("reader");
     await row(page, NEW_USER).getByRole("button", { name: "Set", exact: true }).click();
-    await expect(page.getByText(/reader/).first()).toBeVisible();
+    // The action's own feedback, not just the word "reader" (that is an <option> too).
+    await expect(page.getByText(`${NEW_USER} is now reader.`)).toBeVisible();
     await page.reload();
     await expect(row(page, NEW_USER).getByRole("combobox")).toHaveValue("reader");
   });

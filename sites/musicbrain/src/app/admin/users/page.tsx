@@ -1,10 +1,20 @@
 import { RoleType } from "@imprint/content-core";
 import { editingSession, userStore } from "@/lib/auth";
+import { NewUserForm, OwnPasswordForm, UserTable } from "@imprint/runtime-admin/admin";
 import {
-  NewUserForm,
-  OwnPasswordForm,
-  UserTable,
-} from "@/components/admin/user-manager";
+  changeOwnPasswordAction,
+  createUserAction,
+  deleteUserAction,
+  resetPasswordAction,
+  setRoleAction,
+} from "./actions";
+
+const userActions = {
+  createUser: createUserAction,
+  setRole: setRoleAction,
+  resetPassword: resetPasswordAction,
+  deleteUser: deleteUserAction,
+};
 
 /**
  * Everyone signed in can change their own password here; only admins see the
@@ -30,16 +40,16 @@ export default async function AdminUsers() {
       {isAdmin && (
         <>
           <div className="mt-6">
-            <UserTable users={users} roles={roles} currentUser={session.name} />
+            <UserTable users={users} roles={roles} currentUser={session.name} actions={userActions} />
           </div>
           <div className="mt-6">
-            <NewUserForm roles={roles} />
+            <NewUserForm roles={roles} actions={userActions} />
           </div>
         </>
       )}
 
       <div className="mt-6">
-        <OwnPasswordForm name={session.name} />
+        <OwnPasswordForm name={session.name} action={changeOwnPasswordAction} />
       </div>
 
       <p className="mt-4 text-xs text-muted">

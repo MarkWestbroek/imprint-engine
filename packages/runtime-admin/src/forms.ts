@@ -13,7 +13,6 @@ import {
   WikiPageSchema,
   type ContentType,
 } from "@imprint/content-core";
-import { widgetCatalog } from "@/widgets/registry";
 
 /**
  * Bridges zod to the admin forms: every editor form is generated from the
@@ -21,6 +20,10 @@ import { widgetCatalog } from "@/widgets/registry";
  * zod-schema"). Serializable JSON Schema goes to the client; fields whose
  * shape is too rich for a form control (nested arrays/objects, recursion)
  * get an empty schema `{}`, which the form renders as a validated JSON box.
+ *
+ * This is the form definition per content type until the Omnium-style
+ * `FormulierDefinitie` takes over (design/fase-3 §5); the admin context
+ * (`admin.forms`) is where a site or plugin would swap it.
  */
 
 export type JsonSchema = Record<string, unknown>;
@@ -35,7 +38,7 @@ function fieldSchema(field: z.ZodType): JsonSchema {
   }
 }
 
-function objectSchema(schema: z.ZodObject): JsonSchema {
+export function objectSchema(schema: z.ZodObject): JsonSchema {
   const properties: Record<string, JsonSchema> = {};
   for (const [key, field] of Object.entries(schema.shape)) {
     properties[key] = fieldSchema(field as z.ZodType);
@@ -83,6 +86,15 @@ export function contentFormSchema(type: ContentType): JsonSchema {
   }
 }
 
+/** What a widget catalogue entry must offer for its editor form. */
+export type WidgetCatalogEntry = {
+  name: string;
+  label: string;
+  version?: string;
+  help?: string;
+  configSchema: z.ZodType;
+};
+
 export type WidgetFormSchema = {
   name: string;
   label: string;
@@ -91,9 +103,9 @@ export type WidgetFormSchema = {
   schema: JsonSchema;
 };
 
-/** Widget catalogue with JSON-Schema configs (+ version/help), for the composer. */
-export function widgetFormSchemas(): WidgetFormSchema[] {
-  return widgetCatalog.map((w) => ({
+/** A site's widget catalogue with JSON-Schema configs (+ version/help), for the composer. */
+export function widgetFormSchemas(catalog: readonly WidgetCatalogEntry[]): WidgetFormSchema[] {
+  return catalog.map((w) => ({
     name: w.name,
     label: w.label,
     version: w.version,

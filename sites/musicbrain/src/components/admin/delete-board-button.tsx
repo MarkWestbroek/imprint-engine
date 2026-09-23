@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { deletePlanningAction } from "@/app/admin/planning/actions";
-import { confirmDialog } from "./dialog";
+import { confirmDialog } from "@imprint/runtime-admin/admin";
 
 /** Delete a planning board (and its cards). Confirms first — history is kept,
  * so a mistaken delete is restorable via admin History. */

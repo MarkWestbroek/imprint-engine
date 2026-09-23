@@ -239,6 +239,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] **Dev-indicator bedekt de uitlogknop** — linksonder in de
         admin-rail, alleen in `next dev`. Verplaatsen via `devIndicators.position`
         of de knop. _(S)_
+      - [x] **Fase 3 stap 4: admin-context en generieke clientcomponenten
+        naar `@imprint/runtime-admin`** (september 2026) — `/admin`,
+        `/forms`, `AdminContext`; actions als props.
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

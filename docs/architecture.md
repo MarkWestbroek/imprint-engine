@@ -22,7 +22,7 @@ lopen bewust nog uiteen.
 
 | laag | inhoud | staat nu in | mag afhangen van |
 |---|---|---|---|
-| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, `DefaultView`, `WidgetContext`, layouthelpers, `Markdown`, `WidgetFrame`); API, admin, auth/PEP, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
+| **Engine** | contentcontracten (zod-schema's, `ContentStore`/`WritableContentStore`, `ContentType`), widget-model, relatieregels, afgeleide domeinlogica, gebruikers/wachtwoordbeleid, renderer, publieke API, admin/studio ("editor-motor") | `packages/content-core` (contracten); `packages/runtime-admin` (renderer, `DefaultView`, `WidgetContext`, layouthelpers, `Markdown`, `WidgetFrame`; sinds Fase 3 stap 4 ook `/admin`: de generieke admin-clientcomponenten, `/forms`: formulierschema's, en `AdminContext`); `content-core/access.ts` (PEP/PDP); API, admin-routes en -actions, sessie, studio-ops en de widget-viewers nog in `sites/musicbrain/src` | niets in `sites/*`; geen concrete site-naam, geen concreet domein |
 | **Bibliotheek** | herbruikbare onderdelen die een site *kiest*: widgets (schema + viewer + optioneel editor), plugins (nog geen package), mogelijk basisthema's/presets | `packages/widgets-standard` (twintig standaardwidgets: schema's en viewers); MusicBrains domeinwidgets en alle editors nog in `sites/musicbrain/src/widgets/` | de engine-contracten (`WidgetTypeDef`, `ContentStore`), nooit een site |
 | **Backend** | opslagimplementaties achter het `ContentStore`-contract: file, MariaDB, Postgres, later het bitemporele register | `file-store.ts`; `db-store-base.ts` (gedeelde semantiek) + `db-store.ts`/`db-schema.ts` (MariaDB) + `db-store.pg.ts`/`db-schema.pg.ts` (Postgres) + `memory-store.ts` (in geheugen, voor tests); keuze via `db.ts` | de engine-contracten (`store.ts`, `schemas.ts`, `widgets.ts`); niemand kent een backend behalve de composition root |
 | **Site** ("imprint") | gekozen engineversie + bibliotheekkeuze + backendkeuze + eigen merk (SiteChrome, design-tokens), content, DB, assets, secrets, sessiecookie | `sites/musicbrain`, `sites/imprint`; de composition root is per site `imprint.config.ts` (`defineImprint()`), tot leven gebracht in `src/lib/content.ts` (`createImprint()`) | engine + bibliotheek + precies één backend |
@@ -779,10 +779,28 @@ niet van elkaar afwijken.
   session-cookie ([auth.ts](../sites/musicbrain/src/lib/auth.ts)). Rollen:
   `admin`/`editor` mogen schrijven, `reader` niet; elke server action begint
   met `editingSession()` (§3d).
-- **Formulieren uit schema's:** `contentFormSchema` zet het zod-schema om
+- **Formulieren uit schema's:** `contentFormSchema`
+  ([forms.ts](../packages/runtime-admin/src/forms.ts)) zet het zod-schema om
   naar JSON Schema; `SchemaForm` rendert scalars als echte controls en
   complexe/recursieve velden als gevalideerde JSON-boxen. Een nieuw veld
   hoort dus in het schema, niet als los formulierveld.
+- **Generieke clientcomponenten in het package** (Fase 3 stap 4):
+  [runtime-admin/src/admin/](../packages/runtime-admin/src/admin/) — dialoog,
+  `SchemaForm`, `MarkdownEditor`, `LoginForm`, `MenuEditor`, `ThemeEditor`,
+  gebruikersbeheer, `RelationsEditor`, `ItemEditor`. Ze importeren geen
+  site-module en geen server action: de action komt als prop (`action`,
+  `actions`), getypeerd als `FormAction` (`useActionState`-vorm). Studio,
+  planning en wiki blijven in de site (Fase 4 en 5).
+- **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
+  wat de gedeelde admin van de site krijgt, in één object — de instantie
+  (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de
+  sessie (`auth.getSession`/`editingSession`, door de site geleverd omdat die
+  het request leest), de formulieren per contenttype en per widget
+  (`forms.content`, `forms.widgets`) en de admin-bijdragen van site en
+  plugins (`contributions`, nog leeg). De site bouwt hem in
+  [lib/admin.ts](../sites/musicbrain/src/lib/admin.ts); de itemeditor en de
+  studio lezen hun formulieren er nu uit. Stap 5 verhuist de routes en
+  actions en geeft ze alleen nog dit object.
 - **Studio (pagina-editor):** WYSIWYG-achtig, Pleio/Gutenberg-stijl. Het
   canvas ís de pagina: de echte widget-viewers, met echte data, binnen de
   echte site-omlijsting (`SiteChrome`, gedeeld met de publieke layout).

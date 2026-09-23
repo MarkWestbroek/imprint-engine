@@ -12,6 +12,7 @@ import { editingSession, userStore, type Session } from "@/lib/auth";
  * never from the form.
  */
 
+/** Same shape as the package's UserActionResult (a re-export trips the "use server" scanner). */
 export type UserActionResult = { ok: boolean; error?: string; message?: string };
 
 /** Signed in and holding the admin role — the gate for managing *other* users. */

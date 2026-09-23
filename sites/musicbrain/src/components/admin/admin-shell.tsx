@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { RoleType } from "@imprint/content-core";
 import { logoutAction } from "@/app/admin/actions";
-import { DialogHost } from "./dialog";
+import { DialogHost } from "@imprint/runtime-admin/admin";
 
 /**
  * Admin chrome: a VS Code-style activity rail (grouped by what you're doing,

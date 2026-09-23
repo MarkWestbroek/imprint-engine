@@ -3,14 +3,7 @@
 import { useActionState } from "react";
 import type { RoleType } from "@imprint/content-core";
 import type { UserRecord } from "@imprint/content-core/user-store";
-import {
-  changeOwnPasswordAction,
-  createUserAction,
-  deleteUserAction,
-  resetPasswordAction,
-  setRoleAction,
-  type UserActionResult,
-} from "@/app/admin/users/actions";
+import type { UserAction, UserActionResult, UserActions } from "./types";
 
 /**
  * Beheerscherm for the /admin users (UML: User + RoleType). Small on purpose:
@@ -37,10 +30,12 @@ export function UserTable({
   users,
   roles,
   currentUser,
+  actions,
 }: {
   users: UserRecord[];
   roles: RoleType[];
   currentUser: string;
+  actions: UserActions;
 }) {
   return (
     <table className="w-full border-collapse text-sm">
@@ -58,6 +53,7 @@ export function UserTable({
             user={user}
             roles={roles}
             isSelf={user.name === currentUser}
+            actions={actions}
           />
         ))}
       </tbody>
@@ -69,14 +65,16 @@ function UserRow({
   user,
   roles,
   isSelf,
+  actions,
 }: {
   user: UserRecord;
   roles: RoleType[];
   isSelf: boolean;
+  actions: UserActions;
 }) {
-  const [roleState, roleAction, roleBusy] = useActionState(setRoleAction, null);
-  const [resetState, resetAction, resetBusy] = useActionState(resetPasswordAction, null);
-  const [deleteState, deleteAction, deleteBusy] = useActionState(deleteUserAction, null);
+  const [roleState, roleAction, roleBusy] = useActionState(actions.setRole, null);
+  const [resetState, resetAction, resetBusy] = useActionState(actions.resetPassword, null);
+  const [deleteState, deleteAction, deleteBusy] = useActionState(actions.deleteUser, null);
   const state = roleState ?? resetState ?? deleteState;
 
   return (
@@ -147,8 +145,8 @@ function UserRow({
   );
 }
 
-export function NewUserForm({ roles }: { roles: RoleType[] }) {
-  const [state, formAction, pending] = useActionState(createUserAction, null);
+export function NewUserForm({ roles, actions }: { roles: RoleType[]; actions: UserActions }) {
+  const [state, formAction, pending] = useActionState(actions.createUser, null);
 
   return (
     <form action={formAction} className="space-y-3 rounded-xl border border-line bg-surface p-5">
@@ -189,8 +187,8 @@ export function NewUserForm({ roles }: { roles: RoleType[] }) {
   );
 }
 
-export function OwnPasswordForm({ name }: { name: string }) {
-  const [state, formAction, pending] = useActionState(changeOwnPasswordAction, null);
+export function OwnPasswordForm({ name, action }: { name: string; action: UserAction }) {
+  const [state, formAction, pending] = useActionState(action, null);
 
   return (
     <form

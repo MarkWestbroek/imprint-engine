@@ -1,7 +1,7 @@
 import type { PageLayout, WidgetInstance } from "@imprint/content-core";
 import { getSession } from "@/lib/auth";
 import { store, writableStore } from "@/lib/content";
-import { contentFormSchema, widgetFormSchemas } from "@/lib/admin-schemas";
+import { admin } from "@/lib/admin";
 import { draftKey, getDraft, setDraft } from "@/lib/page-draft";
 import type { PageDraft } from "@/lib/layout-ops";
 import { layoutRows } from "@imprint/runtime-admin/layout";
@@ -91,8 +91,8 @@ export async function PageStudio({
       meta={draft.meta}
       body={draft.body}
       rows={draft.rows}
-      metaSchema={contentFormSchema("page")}
-      widgetSchemas={widgetFormSchemas()}
+      metaSchema={admin.forms.content("page")}
+      widgetSchemas={admin.forms.widgets()}
     >
       <StudioTopBar isNew={!slug} />
       {targetType && (

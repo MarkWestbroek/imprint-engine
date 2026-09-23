@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { JsonSchema } from "@/lib/admin-schemas";
-import { SchemaForm } from "@/components/admin/schema-form";
+import type { JsonSchema } from "@imprint/runtime-admin/forms";
+import { SchemaForm } from "@imprint/runtime-admin/admin";
 
 /**
  * The editor half of a widget (the viewer half lives in components.tsx):

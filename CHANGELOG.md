@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 3, stap 4: admin-context en de generieke clientcomponenten naar het
+  package.** Dialoog, `SchemaForm`, markdown-editor, loginformulier, menu-,
+  thema-, gebruikers-, relatie- en itemeditor (~1.400 regels) staan nu in
+  `@imprint/runtime-admin/admin` en krijgen hun server action als prop; de
+  formulierschema's (`contentFormSchema`, `widgetFormSchemas`) in
+  `@imprint/runtime-admin/forms`. Nieuw: `AdminContext`
+  (`createAdminContext`): instantie, sessie, formulieren en admin-bijdragen in
+  één object, door de site gebouwd in `src/lib/admin.ts`. Geen zichtbaar
+  verschil in de admin; de 27 browsertests bewijzen dat.
 - **Fase 3, stap 3: het poortje in AuthZEN-vorm, en publiek/beperkt op alle
   inhoud.** `access: public | restricted` op elk inhoudstype (oude wiki's met
   `visibility: members` blijven parseren als beperkt, geen migratie). Het

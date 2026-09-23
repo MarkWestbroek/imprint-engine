@@ -1,6 +1,7 @@
 import { editingSession } from "@/lib/auth";
 import { writableStore } from "@/lib/content";
-import { LoginForm } from "@/components/admin/login-form";
+import { LoginForm } from "@imprint/runtime-admin/admin";
+import { loginAction } from "./actions";
 import { AdminShell } from "@/components/admin/admin-shell";
 
 // Sessions live in a cookie, so everything under /admin renders per request.
@@ -25,7 +26,7 @@ export default async function AdminLayout({
 
   const session = await editingSession();
   if (!session) {
-    return <main className="flex-1 px-4">{<LoginForm />}</main>;
+    return <main className="flex-1 px-4"><LoginForm action={loginAction} /></main>;
   }
 
   return (

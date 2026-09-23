@@ -15,8 +15,7 @@ import {
   saveWikiAction,
 } from "@/app/admin/wiki/actions";
 import { wikiPageHref } from "@/lib/wiki-href";
-import { confirmDialog, promptDialog } from "./dialog";
-import { MarkdownEditor } from "./markdown-editor";
+import { confirmDialog, MarkdownEditor, promptDialog } from "@imprint/runtime-admin/admin";
 
 /**
  * De wiki-studio (design/wiki.md §4b): structuur → inhoud, links naar

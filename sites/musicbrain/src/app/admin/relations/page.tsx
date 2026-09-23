@@ -4,7 +4,8 @@ import {
   type RelationRule,
 } from "@imprint/content-core";
 import { contentTypes, writableStore } from "@/lib/content";
-import { RelationsEditor } from "@/components/admin/relations-editor";
+import { RelationsEditor } from "@imprint/runtime-admin/admin";
+import { saveRelationsAction } from "../actions";
 
 export default async function AdminRelations() {
   const item = await writableStore!.getItem("relations", "relations");
@@ -21,7 +22,7 @@ export default async function AdminRelations() {
         components that exist.
       </p>
       <div className="mt-6">
-        <RelationsEditor initialRules={rules} types={relatable} defaults={DEFAULT_RELATION_RULES} />
+        <RelationsEditor action={saveRelationsAction} initialRules={rules} types={relatable} defaults={DEFAULT_RELATION_RULES} />
       </div>
     </div>
   );

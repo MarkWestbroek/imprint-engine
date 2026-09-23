@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { JsonSchema } from "@/lib/admin-schemas";
+import type { JsonSchema } from "../forms";
 import { MarkdownEditor } from "./markdown-editor";
 
 /**
