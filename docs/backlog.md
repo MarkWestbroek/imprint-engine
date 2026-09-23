@@ -259,6 +259,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         database en poort, zodat de Imprint-admin ook in CI meeloopt. _(M)_
       - [ ] **Pagina's bewerken op de Imprint-site** — nu alleen het
         meta-formulier; de studio komt met Fase 4 naar het package. _(Fase 4)_
+      - [ ] **Studio: "Saved ✓" verdwijnt bij een nieuwe pagina** — na
+        "Create page" springt de studio naar de URL van de pagina en raakt de
+        melding kwijt; de redacteur ziet geen bevestiging. Melding via de
+        URL (`?saved=1`) of via de draft meegeven. _(S)_
+      - [ ] **Studio: een snelle klik na typen kan sidebar-invoer verliezen**
+        — meta- en widgetvelden gaan met ~350 ms debounce naar de draft;
+        een canvas-actie (rij of widget toevoegen) daarbinnen ververst het
+        canvas vóór de invoer verstuurd is. Flush de debounce vóór elke
+        dispatch. Gezien in de browsertest (`e2e/studio.spec.ts`, `synced()`). _(S)_
       - [ ] **Studio-chrome, de rijkere variant** — na Fase 4: de studio
         kent menu en thema's van de site (optionele `nav`/`themes` op het
         chrome-slot), zodat de redacteur in het canvas van thema kan

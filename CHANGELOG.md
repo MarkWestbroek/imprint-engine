@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Browsertest voor de studio** (vangnet voor Fase 4): een nieuwe pagina
+  componeren (instellingen, rij, hero-widget, aanmaken), live zien, historie,
+  tweede versie via de studio. Onderweg twee kleine UX-punten gevonden en
+  in de backlog gezet ("Saved ✓" verdwijnt bij aanmaken; snelle klik na
+  typen kan sidebar-invoer verliezen). 30 browsertests, productie en dev.
 - **Ontwerp Fase 4: chrome-slot in de studio** (besluit Mark). De studio
   krijgt de omlijsting van de site als één component mee en weet er verder
   niets van; de rijkere variant (menu en thema's in het canvas) is een
