@@ -136,7 +136,7 @@ Dockerfile (`COPY`, zoals elk workspace-package).
 | 2 | `definePlugin` in `extension-api`; `createImprint` voegt plugins samen; `AdminContext.plugins`; de drie haken in MusicBrain (schermen, actions, publieke route) | M, klaar (publieke haak volgt met de wiki) |
 | 3 | `@imprint/plugin-planning`: typen, relaties, widget (schema + viewer + editor), bordadmin, `lib/planning` met tests. MusicBrain: `plugins: [planningPlugin()]`, code weg uit de site | M, klaar |
 | 4 | `@imprint/plugin-wiki`: drie typen, wiki-studio, publieke route en ledenroute, `wiki-href` | M–L, klaar |
-| 5 | Exitproef: de Imprint-site zonder plugins kent de typen niet; MusicBrain met plugins werkt; één plugin uitzetten breekt niets behalve zijn eigen schermen. Browsertest voor planning (bord, kaart verslepen) en wiki (pagina maken, verplaatsen, publiek/beperkt) | M |
+| 5 | Exitproef: de Imprint-site zonder plugins kent de typen niet; MusicBrain met plugins werkt; één plugin uitzetten breekt niets behalve zijn eigen schermen. Browsertest voor planning (bord, kaart verslepen) en wiki (pagina maken, verplaatsen, publiek/beperkt) | M, klaar (slepen en verplaatsen nog niet in de browsertests: backlog) |
 
 Volgorde volgt het voorstel: planning eerst (duidelijk afgebakend), wiki
 daarna (publieke route en autorisatie maken hem lastiger).

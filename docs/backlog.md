@@ -293,6 +293,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         (september 2026) — drie haken in de site, planning uit de kern.
       - [x] **Fase 5 stap 4: `@imprint/plugin-wiki`** (september 2026) —
         publieke-route-haak, `AdminTypeScreen`, wiki uit de kern.
+      - [x] **Fase 5 stap 5: exitproef** (september 2026) — de Imprint-site
+        zonder plugins kent planning noch wiki; Fase 5 af.
+      - [ ] **Browsertests: slepen in planning en wiki** — kaart verslepen op
+        het planbord, pagina/folder verplaatsen in de wiki-studio; nu alleen
+        aanmaken, tonen en toegang getest. Drag & drop in Playwright vraagt
+        `dragTo` met de HTML5-dataTransfer-events. _(S)_
+      - [ ] **Widgets van plugins automatisch in de catalogus** — nu spreidt
+        de site `planningWidgets`/`planningViewers` zelf (de catalogus is
+        van de site); een `WidgetTypeRegistry.has()`-merge in `createImprint`
+        plus viewers via de context zou dat één regel minder maken. _(S)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

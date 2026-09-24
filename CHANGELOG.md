@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 5 af — stap 5, de exitproef.** De Imprint-site draait met
+  `plugins: []` en kent planning noch wiki: niet in het menu, `/admin/planning`,
+  `/admin/wiki` en `/help` zijn 404, het modeloverzicht toont de typen niet
+  (Playwright-doorloop tegen de productiebuild, zonder console-errors).
+  MusicBrain met beide plugins: 39 browsertests groen in productie en dev.
+  Daarmee is het exitcriterium van het revisievoorstel gehaald: een
+  capability is volledig plugin en is in een instantie weg te laten zonder
+  enginecode te wijzigen.
 - **Fase 5, stap 4: de wiki als plugin.** `@imprint/plugin-wiki` bevat de
   drie contenttypen met relatieregels (en de legacy-afbeelding van
   `visibility`), de boomstudio onder `/admin/wiki`, de acties (verplaatsen,
