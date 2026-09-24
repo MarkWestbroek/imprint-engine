@@ -1,6 +1,6 @@
 # Opzet Fase 5 — planning en wiki als eerste plugins
 
-Status: **opzet ter beoordeling**, 24 september 2026. Werkt Fase 5 uit het
+Status: **opzet met besluiten**, 24 september 2026 (de vier keuzes in §6 zijn door Mark beantwoord). Werkt Fase 5 uit het
 [revisievoorstel](engine-instance-plugin-architectuur.md) (§6 plugins, §8
 instantieconfiguratie, §12 Fase 5) uit tot concrete stappen. De open keuzes
 staan in §6; de rest is techniek.
@@ -146,20 +146,11 @@ daarna (publieke route en autorisatie maken hem lastiger).
   contract laat er ruimte voor, maar geen van beide plugins heeft ze nodig.
 - **Runtime installeren** van plugins: nooit (§6.3).
 
-## 6. Keuzes voor Mark
+## 6. Keuzes (beantwoord door Mark, 24 september 2026)
 
-1. **Typen van plugins in het contentmodel.** Met een open `ContentType`
-   verliest de kern de zekerheid dat elke typenaam bekend is; het register
-   bewaakt dat op runtime (schrijven van een onbekend type wordt geweigerd).
-   Akkoord dat de compiler dit niet meer afdwingt, in ruil voor plugins die
-   typen mogen toevoegen? (Alternatief: plugins mogen geen typen toevoegen —
-   dan is een plugin niet meer dan een bundel schermen, en blijven planning
-   en wiki in de kern. Dat is niet wat het voorstel wil.)
-2. **Routes via de drie haken** (§3.3) in plaats van een routebestand per
-   plugin in elke site. Voordeel: een plugin aanzetten is één regel config.
-   Nadeel: de haken zijn wat magisch, en een plugin met een écht eigen
-   endpoint heeft toch een bestand nodig.
-3. **Volgorde en omvang.** Stap 1 (het register) is de grootste en verandert
-   niets zichtbaars; wil je die apart bekijken voordat planning verhuist?
-4. **Naam van de plugin-packages**: `@imprint/plugin-planning` en
-   `@imprint/plugin-wiki`, of anders?
+| keuze | besluit |
+|---|---|
+| 1. typen van plugins | ja: `ContentType` wordt open; het register bewaakt op runtime, zoals bij widgets |
+| 2. routes | de drie haken (§3.3); een dun routebestand alleen voor een plugin met een echt eigen endpoint |
+| 3. volgorde | doorwerken tot planning een plugin is; het register (stap 1) niet apart voorleggen |
+| 4. namen | `@imprint/plugin-planning`, `@imprint/plugin-wiki` |
