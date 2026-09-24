@@ -59,16 +59,29 @@ ontbrak, op volgorde van hoe vaak het elders voorkomt:
 | M | `image-compare`, `countdown`, `share` | idee |
 | L | `search` (zoekindex), `form` (zie §3) | plugin |
 
-### 2.1 De V3-viewer
+### 2.1 De V3-viewer — bij de bron
 
-Het V3-formaat (`docs/design/v3-metamodel-spec.md`) kent `domeinen[]` met
-`kleur`, entiteiten met `domein`-label en — in de UML-editor van Omnium —
-`positie`/`layoutLocked` en `diagrammen[]`. De widget leest een V3-document
-(geplakt, of van een URL zoals `/api/meta?format=v3`) en tekent entiteiten
-als kaarten in hun domeinkleur, op `positie` als die er is en anders in een
-automatisch raster per domein, met relaties als lijnen. **Open**: de exacte
-vorm van `positie` en `diagrammen[]` in een echte Omnium-export — Mark
-levert een voorbeeld, dan wordt de viewer daarop uitgelijnd.
+Eerste versie (0.12): de widget tekent zelf (`v3-diagram.tsx`): entiteiten in
+domeinkleur, op `positie` of in een raster, relaties als pijlen.
+
+▶ **Mark: liever bij de bron houden.** Omnium kent inmiddels alle
+modelleertalen en is de plek waar layout en kleur thuishoren; Imprint moet
+niet een tweede tekenaar worden. Vraag aan Omnium: een **render-API**,
+voor alle modeltypen (V3/canoniek als eerste):
+
+```
+GET  /api/models/{id}/diagram.svg?diagram={naam}&theme=light|dark   ← model-link
+POST /api/render/svg   body: { taal: "v3", model: {…} | code: "…" }   ← model-code
+```
+
+Wensen aan de SVG: `viewBox` (schaalt mee), geen vaste `width`/`height`,
+kleuren als `currentColor`/CSS-variabelen waar het kan (dan volgt hij het
+sitethema), `<title>`/`aria-label`, en optioneel `<a href>` op entiteiten
+(klikbaar naar de bron). Imprint haalt hem **serverside** op (`readSource`
+uit §1, dus met allow-list en cache), saneert (geen `<script>`, geen
+`on*`-attributen, geen externe `<use>`) en plaatst hem **inline** — dan
+erft hij de sitekleuren en is hij doorzoekbaar. De eigen layout-code
+vervalt zodra de API er is; de widgetnaam blijft.
 
 ## 3. Plugins die overal terugkomen
 

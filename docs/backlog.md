@@ -82,10 +82,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       heen, op één plek bewerkt. _(M)_
 - [ ] **`example`-config per widget** (Gutenberg `block.json`) voor een preview
       in de catalogus-dialoog. _(S)_
-- [ ] **V3-viewer uitlijnen op een echte Omnium-export** — de vorm van
-      `positie`/`diagrammen[]`/`notities[]` is niet gespecificeerd; nu: `positie:
-      {x,y}` op de entiteit, anders raster per domein. Mark levert een export.
-      _(S)_
+- [ ] **V3-diagram bij de bron (Omnium)** — ▶ Mark: liever niet zelf
+      tekenen. Aan Omnium vragen: een render-API die SVG levert voor een
+      model-link of model-code (voor alle modelleertalen; V3 als eerste). De
+      `v3model`-widget wordt dan een dunne "diagram uit Omnium"-widget: SVG
+      serverside ophalen, saneren, inline plaatsen (site-kleuren, klikbaar);
+      de eigen layout-code in `v3-diagram.tsx` vervalt zodra die API er is.
+      Gewenst contract: plank §2.1. _(S, wacht op Omnium)_
 
 ### Widget-contract
 - [ ] **`help` als markdown** i.p.v. één regel, met een "meer info"-uitklap in de
