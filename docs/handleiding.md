@@ -202,6 +202,10 @@ zien, inclusief header en footer.
   geplaatste widget en zijn instellingen verschijnen links — wijzigingen zie
   je direct in het canvas. Verplaatsen kan met de pijltjes in de sidebar
   (↑↓ binnen het vak, ◀▶ naar het buurvak).
+- **Ruimte**: met « bovenin het instellingenpaneel klap je het in, zodat het
+  canvas de volle breedte krijgt en de pagina eruitziet zoals op de site;
+  » (of een klik op een widget) haalt het terug. **View page ↗** in de
+  bovenbalk opent de opgeslagen pagina op de site in een nieuw tabblad.
 - **Opslaan**: je werkt in een concept; pas **Save** zet het live (als nieuwe
   versie). **Undo changes** gooit het concept weg.
 - **Default views**: onder **Default views** ontwerp je hoe een producten-,

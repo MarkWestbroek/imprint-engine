@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Studio: meer ruimte voor het canvas.** Het instellingenpaneel klapt in
+  (« / ») zodat de pagina op ware breedte te zien is; een klik op een widget
+  klapt het weer uit. **View page ↗** in de bovenbalk opent de opgeslagen
+  pagina op de site in een nieuw tabblad. De specs-strook (1 · 2 · 8) volgt
+  de breedte van zijn vak in plaats van het scherm: in een smal vak stapelen
+  de cijfers netjes.
 - **Fix: de header van de Imprint-site liep in de studio over de admin heen.**
   De header is `position: absolute` (hij zweeft over de hero); de
   canvas-omlijsting van de site is nu de positionerende ouder met een eigen

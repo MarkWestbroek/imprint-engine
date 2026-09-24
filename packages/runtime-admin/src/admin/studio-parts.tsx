@@ -91,6 +91,9 @@ type StudioCtx = {
   widgetSchemas: WidgetSchemaDef[];
   sel: WidgetPath | null;
   setSel: (sel: WidgetPath | null) => void;
+  /** The settings panel can fold away so the canvas gets the width of the real page. */
+  panelOpen: boolean;
+  setPanelOpen: (open: boolean) => void;
   dispatch: (op: DraftOp, after?: () => void) => void;
   pending: boolean;
   actions: StudioActions;
@@ -130,8 +133,15 @@ export function StudioProvider({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [sel, setSel] = useState<WidgetPath | null>(null);
+  const [sel, setSelState] = useState<WidgetPath | null>(null);
+  const [panelOpen, setPanelOpen] = useState(true);
   const [isPending, startTransition] = useTransition();
+
+  // Selecting a widget in the canvas must never land in a folded panel.
+  const setSel = (next: WidgetPath | null) => {
+    setSelState(next);
+    if (next) setPanelOpen(true);
+  };
 
   const dispatch = (op: DraftOp, after?: () => void) => {
     startTransition(async () => {
@@ -153,6 +163,8 @@ export function StudioProvider({
         widgetSchemas,
         sel,
         setSel,
+        panelOpen,
+        setPanelOpen,
         dispatch,
         pending: isPending,
         actions,
@@ -203,6 +215,18 @@ export function StudioTopBar({ isNew }: { isNew: boolean }) {
       <span className="text-sm font-semibold">
         {isNew ? "New page" : `/${String(meta.slug ?? "")}`}
       </span>
+      {/* The saved page on the site, in a new tab — what visitors see now, not the draft. */}
+      {!isNew && !String(meta.slug ?? "").startsWith("_view/") && (
+        <a
+          href={`/${String(meta.slug ?? "")}`}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-muted hover:text-foreground"
+          title="Opens the saved version on the site in a new tab"
+        >
+          View page ↗
+        </a>
+      )}
       {(pending || busy) && <span className="text-xs text-muted">syncing…</span>}
       {message && (
         <span className={`text-sm ${message.ok ? "text-emerald-400" : "text-red-400"}`}>
@@ -251,11 +275,36 @@ export function StudioTopBar({ isNew }: { isNew: boolean }) {
 /* ---------- sidebar ---------- */
 
 export function StudioSidebar() {
-  const { sel, rows, widgetSchemas } = useStudio();
+  const { sel, rows, widgetSchemas, panelOpen, setPanelOpen } = useStudio();
   const widget = sel ? rows[sel.r]?.cells[sel.c]?.widgets[sel.w] : undefined;
+
+  if (!panelOpen) {
+    return (
+      <aside className="sticky top-4 shrink-0 self-start">
+        <button
+          type="button"
+          onClick={() => setPanelOpen(true)}
+          className="rounded-xl border border-line bg-surface px-2.5 py-2 text-sm text-muted hover:border-accent hover:text-foreground"
+          title="Show the settings panel"
+          aria-label="Show settings"
+        >
+          »
+        </button>
+      </aside>
+    );
+  }
 
   return (
     <aside className="sticky top-4 max-h-[calc(100vh-2rem)] w-80 shrink-0 self-start overflow-y-auto rounded-xl border border-line bg-surface p-4">
+      <button
+        type="button"
+        onClick={() => setPanelOpen(false)}
+        className="float-right -mr-1 -mt-1 px-1.5 py-0.5 text-sm text-muted hover:text-foreground"
+        title="Hide the panel so the canvas gets the full width"
+        aria-label="Hide settings"
+      >
+        «
+      </button>
       {sel && widget ? (
         <WidgetPane
           key={`${sel.r}-${sel.c}-${sel.w}-${widget.type}`}

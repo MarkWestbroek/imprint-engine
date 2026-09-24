@@ -552,19 +552,20 @@ async function DividerWidget({ config }: { config: DividerConfig }) {
 }
 
 async function SpecsWidget({ config }: { config: SpecsConfig }) {
-  const cols = Math.min(Math.max(config.items.length, 1), 4);
   return (
     <section>
       {config.title && <h2 className="eyebrow mb-3">{config.title}</h2>}
+      {/* Columns follow the width of the box the widget sits in, not the page:
+          as many as fit at ~7rem each, so a narrow cell stacks instead of overlapping. */}
       <div
-        className="grid grid-cols-2 gap-4 border border-line bg-surface px-6 py-5 font-mono sm:grid-cols-(--specs-cols)"
-        style={{ "--specs-cols": `repeat(${cols}, minmax(0, 1fr))` } as React.CSSProperties}
+        className="grid gap-4 border border-line bg-surface px-6 py-5 font-mono"
+        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(7rem, 1fr))" }}
       >
         {config.items.map((item, i) => (
-          <div key={i}>
+          <div key={i} className="min-w-0">
             <span className="block text-lg font-semibold tabular-nums">{item.value}</span>
             {item.label && (
-              <span className="mt-0.5 block text-[11px] uppercase tracking-wider text-muted">
+              <span className="mt-0.5 block break-words text-[11px] uppercase tracking-wider text-muted">
                 {item.label}
               </span>
             )}

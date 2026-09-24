@@ -31,6 +31,18 @@ test.describe("studio", () => {
     await expect(page.getByRole("heading", { name: "Page settings" })).toBeVisible();
   });
 
+  test("the settings panel folds away; picking a widget unfolds it", async ({ page }) => {
+    await page.goto("/admin/page/edit/editor");
+    await page.getByRole("button", { name: "Hide settings" }).click();
+    await expect(page.getByRole("heading", { name: "Page settings" })).toBeHidden();
+    await page.locator('[title^="Edit "]').first().click();
+    await expect(page.getByRole("button", { name: "Hide settings" })).toBeVisible();
+    await page.getByRole("button", { name: "Hide settings" }).click();
+    await page.getByRole("button", { name: "Show settings" }).click();
+    // The selection survives folding: the widget's pane is back, not the page settings.
+    await expect(page.getByRole("button", { name: "✓ Done" })).toBeVisible();
+  });
+
   test("composes a new page: settings, a row, a hero widget, save", async ({ page }) => {
     await page.goto("/admin/page/edit");
     await page.getByLabel("slug", { exact: true }).fill(SLUG);
