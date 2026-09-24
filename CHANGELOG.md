@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Opzet Fase 5** (`docs/design/fase-5-plugins.md`): contenttypedefinities
+  en een register in plaats van de zeven switches in de kern, het
+  plugincontract (`definePlugin`), drie vaste haken voor schermen, actions en
+  publieke routes, en de stappen om planning en wiki als eerste plugins te
+  verhuizen. Vier keuzes voor Mark in §6.
 - **Fase 4 af — stap 4: de standaard-widgeteditors in de bibliotheek.**
   De rijke editors voor table, gallery/carousel en map staan in
   `@imprint/widgets-standard/editors` (`standardEditors`, plus de helpers
