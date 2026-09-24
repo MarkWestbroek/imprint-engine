@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 5, stap 2 en 3: het plugincontract, en planning als eerste plugin.**
+  `ImprintPluginCore` (extension-api: contenttypen, widgetschema's, menu) en
+  `definePlugin`/`ImprintPlugin` (runtime-admin: schermen en actions);
+  `plugins: [...]` in `imprint.config.ts` voegt de typen aan het register toe
+  en de menu-items aan de admin. Drie vaste haken in de site: de
+  `[type]`-routes renderen een pluginscherm als het segment geen contenttype
+  is (`PluginScreen`, ook `[type]/[...path]`), één `pluginAction`-dispatcher
+  in `actions.ts`, en (stap 4) de publieke catch-all. `@imprint/plugin-
+  planning` bevat de twee contenttypen met relatieregels, de bordadmin onder
+  `/admin/planning`, de acties, de planning-widget en de pure bordlogica met
+  tests; MusicBrain zet hem aan met één regel en componeert alleen nog de
+  widget in zijn catalogus. De kern kent planning niet meer. Vijf
+  browsertests voor de plugin; alles groen.
 - **Fase 5, stap 1: contenttypen als definities.** `ContentTypeDefinition`
   en `ContentTypeRegistry` in `content-core` (schema, label, vlaggen,
   menuplek, domein, relatieregels, startwaarden, sleutel, formulierschema);

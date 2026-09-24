@@ -1,19 +1,19 @@
 "use client";
 
 import { useRef } from "react";
-import { deletePlanningAction } from "@/app/admin/planning/actions";
 import { confirmDialog } from "@imprint/runtime-admin/admin";
+import type { PluginCall } from "@imprint/runtime-admin";
 
 /** Delete a planning board (and its cards). Confirms first — history is kept,
  * so a mistaken delete is restorable via admin History. */
-export function DeleteBoardButton({ slug, cardCount }: { slug: string; cardCount: number }) {
+export function DeleteBoardButton({ slug, cardCount, call }: { slug: string; cardCount: number; call: PluginCall }) {
   const form = useRef<HTMLFormElement>(null);
   const confirmed = useRef(false);
 
   return (
     <form
       ref={form}
-      action={deletePlanningAction}
+      action={(formData) => void call("planning", "deletePlanning", formData)}
       className="ml-auto"
       onSubmit={(e) => {
         if (confirmed.current) {

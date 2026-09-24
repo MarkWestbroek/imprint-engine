@@ -6,8 +6,6 @@ import {
   DEFAULT_RELATION_RULES,
   MenuSchema,
   PageMetaSchema,
-  PlanningSchema,
-  PlanningItemSchema,
   ProductSchema,
   ReleaseSchema,
   RelationsDoc,

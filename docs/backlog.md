@@ -289,6 +289,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         een eigen widget. Meteen een proef van het widgetmodel: kan een
         site zijn vormgeving als widgets aan de redactie aanbieden? Pas
         zinvol zodra de studio in het package zit. _(M)_
+      - [x] **Fase 5 stap 2 en 3: plugincontract en `@imprint/plugin-planning`**
+        (september 2026) — drie haken in de site, planning uit de kern.
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen

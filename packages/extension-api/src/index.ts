@@ -5,6 +5,8 @@ import {
   ContentTypeRegistry,
   coreContentTypeDefinitions,
   type ContentTypeDefinition,
+  type RelationRule,
+  type WidgetTypeDef,
   FileAssetStore,
   guardReads,
   inProcessPdp,
@@ -32,6 +34,23 @@ import type { UserStore } from "@imprint/content-core/user-store";
  * gives them a typed slot here.
  */
 
+/**
+ * The React-free half of a plugin (design/fase-5 §3.2): what the composition
+ * root merges into the instance. The admin half (screens, actions) is typed
+ * in @imprint/runtime-admin (`ImprintPlugin`), which extends this.
+ */
+export interface ImprintPluginCore {
+  name: string;
+  version: string;
+  contentTypes?: ContentTypeDefinition[];
+  /** Widget config schemas; the site composes them into its catalogue (the React halves too). */
+  widgets?: WidgetTypeDef[];
+  /** Rules between types of different owners; a type's own rules sit on its definition. */
+  relations?: RelationRule[];
+  /** Admin menu items. */
+  menu?: { group: string; label?: string; section?: string; adminOnly?: boolean; items: { href: string; label: string }[] }[];
+}
+
 export interface ImprintConfig {
   /** Stable instance id, e.g. "musicbrain". Names the per-process singleton and later per-instance namespaces. */
   id: string;
@@ -52,6 +71,8 @@ export interface ImprintConfig {
   contentTypes?: ContentType[];
   /** Content types this site defines itself, on top of the core's (plugins bring theirs). */
   contentTypeDefinitions?: ContentTypeDefinition[];
+  /** Plugins switched on for this instance (§6.3: trusted code, composed at build time). */
+  plugins?: ImprintPluginCore[];
   /** The widget catalogue (config schemas) this instance supports; the store validates layouts against it. */
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
@@ -108,6 +129,8 @@ export interface ImprintInstance {
   widgets: WidgetTypeRegistry;
   /** The active content types (design/fase-3 §7). */
   contentTypes: ContentTypeCatalog;
+  /** The plugins, as configured; the admin reads their React half from the same objects. */
+  plugins: ImprintPluginCore[];
   /**
    * Typed as the file backend on purpose: it is the only one, and the route
    * that serves assets needs `resolve()`. An S3/MinIO backend later means a
@@ -144,7 +167,11 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
 
 /** Every content type this instance knows: the core's, then the site's own. */
 function registryOf(cfg: ImprintConfig): ContentTypeRegistry {
-  return ContentTypeRegistry.of(coreContentTypeDefinitions, cfg.contentTypeDefinitions ?? []);
+  return ContentTypeRegistry.of(
+    coreContentTypeDefinitions,
+    ...(cfg.plugins ?? []).map((p) => p.contentTypes ?? []),
+    cfg.contentTypeDefinitions ?? []
+  );
 }
 
 /** Build the live instance from a config. Uncached: every call opens its own pools. */
@@ -173,6 +200,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     users: opened?.users ?? null,
     widgets,
     contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
+    plugins: cfg.plugins ?? [],
     assets: new FileAssetStore(assetRoot, assetBase),
     session: {
       cookie: cfg.session?.cookie || `imprint_${cfg.id}_session`,

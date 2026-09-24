@@ -26,3 +26,4 @@ export {
 } from "./admin-context";
 export { contentFormSchema, widgetFormSchemas, type JsonSchema, type WidgetFormSchema } from "./forms";
 export { ASOF_COOKIE, getPreview, readOpts, type Preview } from "./preview";
+export { definePlugin, pluginOf, runPluginAction, type ImprintPlugin, type PluginAction, type PluginCall, type PluginScreenProps } from "./plugin";

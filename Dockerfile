@@ -23,6 +23,7 @@ COPY packages/content-core/package.json packages/content-core/
 COPY packages/extension-api/package.json packages/extension-api/
 COPY packages/runtime-admin/package.json packages/runtime-admin/
 COPY packages/widgets-standard/package.json packages/widgets-standard/
+COPY packages/plugin-planning/package.json packages/plugin-planning/
 COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund

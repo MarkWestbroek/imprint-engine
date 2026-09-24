@@ -71,8 +71,6 @@ export type CoreContentType =
   | "page"
   | "menu"
   | "theme"
-  | "planning"
-  | "planning-item"
   | "wiki"
   | "wiki-folder"
   | "wiki-page"

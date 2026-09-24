@@ -1,5 +1,6 @@
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
+import { planningPlugin } from "@imprint/plugin-planning";
 import { widgetRegistry } from "@/widgets/registry";
 
 /**
@@ -18,6 +19,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // Site-wide capabilities (design/fase-5): content types, admin screens and menu items come with them.
+  plugins: [planningPlugin()],
   // Keep the cookie name this site has always used, so nobody is logged out.
   session: { cookie: "imprint_session", hours: 12 },
   assets: {

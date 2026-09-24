@@ -8,8 +8,6 @@ import {
   MenuSchema,
   PageMetaSchema,
   PageRecordSchema,
-  PlanningItemSchema,
-  PlanningSchema,
   ProductSchema,
   ReleaseSchema,
   SiteConfigSchema,
@@ -23,8 +21,8 @@ import {
 /**
  * The content types the core brings (design/fase-5 §3.1): the definitions
  * that replace the switches on type names that used to live in the store,
- * the catalogue, the relation rules and the admin. Planning and wiki are
- * still here until their plugins take them over (Fase 5, steps 3 and 4).
+ * the catalogue, the relation rules and the admin. Wiki is still here until
+ * its plugin takes it over (Fase 5, step 4); planning already left.
  */
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -89,39 +87,6 @@ export const coreContentTypeDefinitions: ContentTypeDefinition[] = [
     ],
     emptyData: () => ({ project: "", version: "", date: today(), channel: "stable", highlights: [], body: "", downloads: [] }),
     slugOf: (data) => `${String(data.project ?? "")}-${String(data.version ?? "")}`,
-  },
-  {
-    // Planning boards have their own screens; cards are saved through the generic actions.
-    name: "planning",
-    schema: PlanningSchema,
-    label: "Planning",
-    flags: ["overview"],
-    domain: "planning",
-    relations: [
-      { fromType: "planning", field: "product", toType: "product", enforce: true, label: "Planning → product" },
-    ],
-    emptyData: () => ({
-      slug: "", lang: "en", name: "", product: "", description: "",
-      phases: [
-        { key: "backlog", label: "Backlog", order: 0 },
-        { key: "in-progress", label: "In progress", order: 1 },
-        { key: "beta", label: "Beta", order: 2 },
-        { key: "done", label: "Done", order: 3 },
-      ],
-      order: 0,
-    }),
-  },
-  {
-    name: "planning-item",
-    schema: PlanningItemSchema,
-    label: "Planning items",
-    flags: ["listable"],
-    domain: "planning",
-    relations: [
-      { fromType: "planning-item", field: "planning", toType: "planning", enforce: true, label: "Planning-item → planning" },
-      { fromType: "planning-item", field: "component", toType: "component", enforce: true, label: "Planning-item → component" },
-    ],
-    emptyData: () => ({ slug: "", lang: "en", title: "", planning: "", status: "backlog", owner: "", body: "", order: 0 }),
   },
   {
     // Ingestable for wiki publishing (local → live): wiki → folders → pages.

@@ -1,4 +1,4 @@
-import type { Planning, PlanningItem } from "@imprint/content-core";
+import type { Planning, PlanningItem } from "./schemas";
 
 /**
  * Pure planning-board logic (mutations kept out of components/actions, cf. the

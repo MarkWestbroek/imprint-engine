@@ -4,6 +4,7 @@ import type { ImprintInstance } from "@imprint/extension-api";
 import type { WidgetEditor } from "./admin/widget-editor";
 import { contentFormSchema, widgetFormSchemas, type JsonSchema, type WidgetCatalogEntry, type WidgetFormSchema } from "./forms";
 import type { WidgetViewers } from "./page-renderer";
+import type { ImprintPlugin } from "./plugin";
 
 /**
  * The admin context (design/fase-3 §10, steps 4 and 5): everything the shared
@@ -73,6 +74,8 @@ export interface AdminContext {
     widgets(): WidgetFormSchema[];
   };
   contributions: AdminContribution[];
+  /** The instance's plugins, with their admin halves (screens, actions). */
+  plugins: ImprintPlugin[];
 }
 
 export function createAdminContext(opts: {
@@ -93,5 +96,7 @@ export function createAdminContext(opts: {
       widgets: () => (widgets ??= widgetFormSchemas(opts.widgetCatalog)),
     },
     contributions: opts.contributions ?? [],
+    // The same objects the config holds; a plugin carries both halves.
+    plugins: opts.imprint.plugins as ImprintPlugin[],
   };
 }

@@ -22,7 +22,7 @@ describe("ContentTypeRegistry", () => {
   });
 
   it("collects the relation rules of its definitions (the seeded defaults)", () => {
-    assert.equal(DEFAULT_RELATION_RULES.length, 12);
+    assert.equal(DEFAULT_RELATION_RULES.length, 9);
     assert.ok(DEFAULT_RELATION_RULES.some((r) => r.fromType === "release" && r.toType === "product"));
   });
 
@@ -31,7 +31,7 @@ describe("ContentTypeRegistry", () => {
       { name: "recipe", schema: z.object({ slug: z.string(), title: z.string() }), label: "Recipes", flags: ["listable"], relations: [{ fromType: "recipe", field: "product", toType: "product", enforce: true }] },
     ]);
     assert.ok(registry.has("recipe"));
-    assert.equal(registry.relations().length, 13);
+    assert.equal(registry.relations().length, 10);
     assert.equal(registry.info("recipe").listable, true);
   });
 });
@@ -60,7 +60,7 @@ describe("ContentTypeCatalog", () => {
     const sorted = (types: string[]) => [...types].sort();
     assert.deepEqual(
       sorted(catalog.types("listable")),
-      sorted(["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "planning-item", "wiki", "wiki-folder", "wiki-page"])
+      sorted(["site", "product", "component", "board-spec", "release", "page", "menu", "theme", "wiki", "wiki-folder", "wiki-page"])
     );
     assert.deepEqual(
       sorted(catalog.types("editable")),
@@ -70,7 +70,7 @@ describe("ContentTypeCatalog", () => {
       sorted(catalog.types("ingestable")),
       sorted(["product", "component", "board-spec", "release", "page", "wiki", "wiki-folder", "wiki-page"])
     );
-    assert.deepEqual(catalog.types("overview"), ["page", "product", "component", "board-spec", "release", "planning", "wiki", "menu", "theme"]);
+    assert.deepEqual(catalog.types("overview"), ["page", "product", "component", "board-spec", "release", "wiki", "menu", "theme"]);
     assert.deepEqual(catalog.types("viewable"), ["product", "component", "board-spec", "release"]);
   });
 });

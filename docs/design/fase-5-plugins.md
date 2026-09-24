@@ -95,7 +95,13 @@ export function definePlugin(plugin: {
 
 Alles wat React bevat (viewers, editors, schermen) zit in de plugin, maar de
 kern van de plugin (typen, schema's, regels) is React-vrij, net als bij
-widgets. De instantie (`createImprint`) voegt samen: contenttyperegister,
+widgets. **Zoals gebouwd:** `ImprintPluginCore` (extension-api) is de
+React-vrije helft die `createImprint` samenvoegt; `ImprintPlugin`
+(runtime-admin) breidt hem uit met `screen` en `actions`. Eén object draagt
+beide. De React-helften van een widget (viewer, editor) componeert de site
+zelf in zijn catalogus (`...planningWidgets`, `...planningViewers`), omdat de
+catalogus van de site is; Node-scripts (seed, tests) importeren de React-vrije
+entries (`/content-types`, `/schemas`). De instantie (`createImprint`) voegt samen: contenttyperegister,
 widgetcatalogus, relatieregels; de `AdminContext` krijgt `plugins` en
 bouwt menu en schermen ermee.
 
@@ -127,8 +133,8 @@ Dockerfile (`COPY`, zoals elk workspace-package).
 | stap | wat | maat |
 |---|---|---|
 | 1 | `ContentTypeDefinition` + `ContentTypeRegistry` in de kern; de zeven switches worden opzoekingen; de kerntypen als definities; store en catalogus lezen uit het register. Geen gedragsverandering: contractsuites en browsertests bewijzen dat | L, klaar |
-| 2 | `definePlugin` in `extension-api`; `createImprint` voegt plugins samen; `AdminContext.plugins`; de drie haken in MusicBrain (schermen, actions, publieke route) | M |
-| 3 | `@imprint/plugin-planning`: typen, relaties, widget (schema + viewer + editor), bordadmin, `lib/planning` met tests. MusicBrain: `plugins: [planningPlugin()]`, code weg uit de site | M |
+| 2 | `definePlugin` in `extension-api`; `createImprint` voegt plugins samen; `AdminContext.plugins`; de drie haken in MusicBrain (schermen, actions, publieke route) | M, klaar (publieke haak volgt met de wiki) |
+| 3 | `@imprint/plugin-planning`: typen, relaties, widget (schema + viewer + editor), bordadmin, `lib/planning` met tests. MusicBrain: `plugins: [planningPlugin()]`, code weg uit de site | M, klaar |
 | 4 | `@imprint/plugin-wiki`: drie typen, wiki-studio, publieke route en ledenroute, `wiki-href` | M–L |
 | 5 | Exitproef: de Imprint-site zonder plugins kent de typen niet; MusicBrain met plugins werkt; één plugin uitzetten breekt niets behalve zijn eigen schermen. Browsertest voor planning (bord, kaart verslepen) en wiki (pagina maken, verplaatsen, publiek/beperkt) | M |
 

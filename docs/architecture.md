@@ -830,6 +830,21 @@ niet van elkaar afwijken.
   (context), `lib/admin-actions.ts`, `app/admin/actions.ts` en
   `users/actions.ts` (wrappers), zes routebestanden en twee preview-routes —
   zie `sites/imprint`, dat precies zo is aangesloten (Postgres).
+- **Plugins** (ontwerp Fase 5): een sitebrede capability, aangezet met
+  `plugins: [planningPlugin()]` in `imprint.config.ts`. De React-vrije helft
+  (`ImprintPluginCore` in extension-api: contenttypedefinities,
+  widgetschema's, relatieregels, menu-items) voegt `createImprint` samen —
+  de typen in het register, de menu-items in het admin-menu. De React-helft
+  (`ImprintPlugin` in runtime-admin: `screen`, `actions`) leest de admin uit
+  dezelfde objecten (`AdminContext.plugins`). Drie vaste haken per site:
+  `app/admin/[type]/page.tsx` en `[type]/[...path]/page.tsx` renderen
+  `PluginScreen` als het segment geen contenttype is (URL's blijven
+  `/admin/planning/<slug>`); één `pluginAction(plugin, action, ...args)` in
+  `actions.ts` roept `runPluginAction`; de publieke catch-all vraagt eerst de
+  plugins (met de wiki). Clientonderdelen van een plugin krijgen de
+  dispatcher als `call`-prop. Eerste plugin: [plugin-planning](../packages/plugin-planning/src/index.ts)
+  (twee typen met regels, bordadmin, acties, widget, pure bordlogica met
+  tests); de site componeert de widget in zijn catalogus en viewers.
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

@@ -1,15 +1,15 @@
 "use client";
 
 import { useActionState } from "react";
-import { createPlanningAction } from "@/app/admin/planning/actions";
-import type { ActionResult } from "@/app/admin/actions";
+import type { PluginCall } from "@imprint/runtime-admin";
+import type { ActionResult } from "./actions";
 
 const input =
   "w-full rounded-md border border-line bg-background px-2 py-1 text-sm focus:border-accent focus:outline-none";
 
-export function NewPlanningForm({ products }: { products: string[] }) {
+export function NewPlanningForm({ products, call }: { products: string[]; call: PluginCall }) {
   const [state, action, pending] = useActionState<ActionResult | null, FormData>(
-    createPlanningAction,
+    (prev, formData) => call("planning", "createPlanning", prev, formData) as Promise<ActionResult>,
     null
   );
   return (

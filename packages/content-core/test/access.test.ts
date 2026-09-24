@@ -76,8 +76,8 @@ describe("guardReads: the store as one subject sees it", () => {
     await raw.putItem("product", "secret", {
       slug: "secret", name: "Secret", tagline: "hush", status: "beta", access: "restricted",
     });
-    await raw.putItem("planning-item", "card", {
-      slug: "card", title: "Card", planning: "x", access: "restricted",
+    await raw.putItem("wiki-page", "card", {
+      slug: "card", title: "Card", wiki: "w", folder: "f", access: "restricted",
     });
   });
 
@@ -87,7 +87,7 @@ describe("guardReads: the store as one subject sees it", () => {
     assert.equal(await store.getPage("members"), null);
     assert.equal((await store.listProducts()).some((p) => p.slug === "secret"), false);
     assert.equal(await store.getProduct("secret"), null);
-    assert.equal((await store.listItems("planning-item")).length, 0);
+    assert.equal((await store.listItems("wiki-page")).length, 0);
     assert.equal(await store.getItem("page", "members"), null);
     assert.ok(await store.getPage("about"), "public content is untouched");
     assert.ok((await store.listItems("page")).some((r) => r.slug === "about"));
@@ -96,7 +96,7 @@ describe("guardReads: the store as one subject sees it", () => {
   it("a reader sees it all; the wrapper leaves writes and history alone", async () => {
     const store = guardReads(raw, userSubject("ria", "reader"), inProcessPdp);
     assert.equal((await store.getPage("members"))?.title, "Members only");
-    assert.equal((await store.listItems("planning-item")).length, 1);
+    assert.equal((await store.listItems("wiki-page")).length, 1);
     assert.equal((await store.listVersions("page", "members")).length, 1);
     assert.equal(typeof store.putItem, "function");
   });

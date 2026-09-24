@@ -42,7 +42,8 @@ export function adminMenu(admin: AdminContext): MenuGroup[] {
     section(info.menu.group, info.menu.section).items.push({ href: `/admin/${type}`, label: info.label });
   }
 
-  for (const c of admin.contributions) {
+  const contributions = [...admin.plugins.flatMap((p) => p.menu ?? []), ...admin.contributions];
+  for (const c of contributions) {
     const sec = section(c.group, c.section, c.label ? { label: c.label } : undefined);
     if (c.adminOnly) groups.get(c.group)!.adminOnly = true;
     sec.items.push(...c.items);

@@ -12,6 +12,8 @@ export { ListScreen } from "./list";
 export { ItemEditScreen } from "./item-edit";
 export { HistoryScreen } from "./history";
 export { adminMenu } from "./menu";
+export { PluginScreen } from "./plugin-screen";
+export { definePlugin, pluginOf, runPluginAction, type ImprintPlugin, type PluginAction, type PluginCall, type PluginScreenProps } from "../plugin";
 export { clearDraft, draftKey, getDraft, setDraft } from "./drafts";
 export { PageStudioScreen } from "./studio-screen";
 export { draftOp, resetDraft, savePageDraft } from "./studio-actions";

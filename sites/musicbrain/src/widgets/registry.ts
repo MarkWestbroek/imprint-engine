@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
+import { planningWidgets } from "@imprint/plugin-planning";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
 
 /**
@@ -30,38 +31,6 @@ export const ProductsConfig = z.object({
 });
 export type ProductsConfig = z.infer<typeof ProductsConfig>;
 
-/**
- * A configurable board view (Mark's model): a main item groups sub-items into
- * phases (columns), each sub-item carrying a phase field and optionally an
- * owner. Two ways to point it at data:
- *
- *  - **Board mode** — set `planning` to a planning slug. Sub-items are its
- *    planning-items (phase = `status`, owner = `owner`); phases come from the
- *    planning. This is the default (planbord / kaart / gebruiker), editable
- *    with drag & drop in the admin.
- *  - **Generic mode** — set `itemType` to any content type (e.g. "component").
- *    A read-only view: items are grouped by `phaseField` into the `phases`
- *    you configure here. Moving items happens via their own admin/API (e.g.
- *    the project sets `component.phase`).
- */
-export const PlanningConfig = z.object({
-  title: z.string().optional(),
-  // Board mode
-  planning: z.string().default(""),
-  // Generic mode
-  itemType: z.string().optional(),
-  titleField: z.string().default("title"),
-  phaseField: z.string().default("status"),
-  ownerField: z.string().default("owner"),
-  /** Field holding a component slug to show as a chip (e.g. "slug" for components). */
-  componentField: z.string().optional(),
-  /** Columns for generic mode (board mode takes phases from the planning). */
-  phases: z.array(z.object({ key: z.string(), label: z.string().min(1) })).default([]),
-  /** Optional filter: only items whose `filterField` equals `filterValue`. */
-  filterField: z.string().optional(),
-  filterValue: z.string().optional(),
-});
-export type PlanningConfig = z.infer<typeof PlanningConfig>;
 
 export const DownloadsConfig = z.object({
   title: z.string().optional(),
@@ -170,7 +139,7 @@ export const widgetCatalog = [
   standardWidgets.album,
   standardWidgets.map,
   standardWidgets.kanban,
-  { name: "planning", label: "Planning board", version: "1.0.0", help: "A live board backed by planning-items: phases as columns, cards with owner, rich text and component links. Edit it in the admin (drag & drop).", configSchema: PlanningConfig },
+  ...planningWidgets,
   standardWidgets.hero,
   standardWidgets.specs,
   { name: "subjectheader", label: "Subject header", version: "1.0.0", help: "Header of the item this view is about: eyebrow, name + status, tagline, description.", configSchema: SubjectHeaderConfig },

@@ -2,14 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import type { Planning, PlanningItem } from "@imprint/content-core";
-import { groupIntoColumns, computeMove } from "@/lib/planning";
-import {
-  deleteCardAction,
-  moveCardAction,
-  saveCardAction,
-  type CardInput,
-} from "@/app/admin/planning/actions";
+import type { PluginCall } from "@imprint/runtime-admin";
+import { computeMove, groupIntoColumns } from "../planning";
+import type { Planning, PlanningItem } from "../schemas";
+import type { CardInput, SaveCardResult } from "./actions";
 
 type ComponentRef = { slug: string; name: string };
 
@@ -32,12 +28,15 @@ export function PlanningBoard({
   users,
   components,
   currentUser,
+  call,
 }: {
   planning: Planning;
   items: PlanningItem[];
   users: string[];
   components: ComponentRef[];
   currentUser: string;
+  /** The site's plugin-action dispatcher. */
+  call: PluginCall;
 }) {
   const router = useRouter();
   const [items, setItems] = useState(initialItems);
@@ -64,7 +63,7 @@ export function PlanningBoard({
       })
     );
     startTransition(async () => {
-      await moveCardAction(planning.slug, moved, toPhase, toIndex);
+      await call("planning", "moveCard", planning.slug, moved, toPhase, toIndex);
       router.refresh();
     });
   }
@@ -99,11 +98,11 @@ export function PlanningBoard({
     if (!draft) return;
     const wasNew = !draft.slug;
     startTransition(async () => {
-      const res = await saveCardAction({
+      const res = (await call("planning", "saveCard", {
         ...draft,
         component: draft.component || undefined,
         componentVersion: draft.componentVersion || undefined,
-      });
+      })) as SaveCardResult;
       if (!res.ok || !res.item) {
         alert(res.error ?? "Save failed");
         return;
@@ -124,7 +123,7 @@ export function PlanningBoard({
     if (!confirm("Delete this card? (History is kept — restorable via admin.)")) return;
     const slug = draft.slug;
     startTransition(async () => {
-      await deleteCardAction(planning.slug, slug, draft.lang ?? "en");
+      await call("planning", "deleteCard", planning.slug, slug, draft.lang ?? "en");
       setItems((prev) => prev.filter((it) => it.slug !== slug));
       setDraft(null);
       router.refresh();

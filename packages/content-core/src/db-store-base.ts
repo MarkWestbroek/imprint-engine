@@ -4,8 +4,6 @@ import {
   MenuSchema,
   PageMetaSchema,
   PageRecordSchema,
-  PlanningSchema,
-  PlanningItemSchema,
   WikiSchema,
   WikiFolderSchema,
   WikiPageSchema,

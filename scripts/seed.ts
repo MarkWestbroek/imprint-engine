@@ -14,6 +14,8 @@ import {
   ThemeSchema,
 } from "@imprint/content-core";
 import { openContentDatabase } from "@imprint/content-core/db";
+import { ContentTypeRegistry, coreContentTypeDefinitions } from "@imprint/content-core";
+import { planningContentTypes } from "@imprint/plugin-planning/content-types"; // React-free entry: this runs under tsx, not Next
 
 /**
  * One-time (idempotent) import: the v0 content files → database, plus the
@@ -56,7 +58,10 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set (create .env from .env.example)");
   // Backend by URL scheme (mysql:// or postgres://) — architecture.md §0.
-  const opened = openContentDatabase(url);
+  // The demo content includes a planning board, so the store must know the plugin's types.
+  const opened = openContentDatabase(url, {
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, planningContentTypes),
+  });
   const store = opened.store;
   const by = "seed";
 
