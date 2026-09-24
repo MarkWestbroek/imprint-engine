@@ -1,3 +1,5 @@
+import type { DraftOp } from "../studio/layout-ops";
+
 /**
  * What the generic admin components expect from a server action. The site
  * (later: the shared admin) owns the actions; the components only render and
@@ -17,4 +19,17 @@ export type UserActions = {
   setRole: UserAction;
   resetPassword: UserAction;
   deleteUser: UserAction;
+};
+
+export type StudioResult = { ok: boolean; error?: string };
+
+/** The studio's server actions as the client parts call them (a site's "use server" wrappers). */
+export type StudioActions = {
+  draftOp(slug: string | undefined, lang: string, op: DraftOp): Promise<StudioResult>;
+  resetDraft(slug: string | undefined, lang: string): Promise<void>;
+  savePageDraft(
+    slug: string | undefined,
+    lang: string,
+    validity: { validFrom?: string; validTo?: string }
+  ): Promise<StudioResult & { slug?: string }>;
 };

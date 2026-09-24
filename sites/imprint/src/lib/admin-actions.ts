@@ -14,6 +14,7 @@ import {
   resetPasswordAction,
   setRoleAction,
 } from "@/app/admin/users/actions";
+import { draftOpAction, resetDraftAction, savePageDraftAction } from "@/app/admin/studio-actions";
 
 /** This site's "use server" wrappers, handed to the shared screens (a module of its own: no import cycle). */
 export const adminActions: AdminActions = {
@@ -30,4 +31,5 @@ export const adminActions: AdminActions = {
     deleteUser: deleteUserAction,
   },
   changeOwnPassword: changeOwnPasswordAction,
+  studio: { draftOp: draftOpAction, resetDraft: resetDraftAction, savePageDraft: savePageDraftAction },
 };

@@ -833,6 +833,21 @@ niet van elkaar afwijken.
   [lib/admin.ts](../sites/musicbrain/src/lib/admin.ts); de itemeditor en de
   studio lezen hun formulieren er nu uit. Stap 5 verhuist de routes en
   actions en geeft ze alleen nog dit object.
+- **Studio in het package** (Fase 4): `PageStudioScreen`
+  ([studio-screen.tsx](../packages/runtime-admin/src/admin-server/studio-screen.tsx))
+  met de actions in `studio-actions.ts` en de draftopslag in `drafts.ts`
+  (sleutel per instantie, gebruiker en pagina); de clientonderdelen in
+  [admin/studio-parts.tsx](../packages/runtime-admin/src/admin/studio-parts.tsx),
+  de pure layoutoperaties in `@imprint/runtime-admin/studio`. Wat een site
+  levert (`AdminContext.studio`): `viewers` (zijn widgetcomponenten),
+  `chrome` (één component om het canvas — MusicBrain zijn `SiteChrome` in de
+  inert-stand, de Imprint-site header en footer; besluit in het
+  revisievoorstel, Fase 4) en optioneel `editor` (zijn widget-editorkeuze,
+  default de schemaform). Het package bouwt de `WidgetContext` voor het
+  canvas zelf, als de ingelogde redacteur: `storeFor(subject)`,
+  `guardReads(writableStore)` en de leesopties van de preview plus drafts.
+  De studio-actions komen als props binnen (`AdminActions.studio`), net als
+  de andere actions.
 - **Studio (pagina-editor):** WYSIWYG-achtig, Pleio/Gutenberg-stijl. Het
   canvas ís de pagina: de echte widget-viewers, met echte data, binnen de
   echte site-omlijsting (`SiteChrome`, gedeeld met de publieke layout).

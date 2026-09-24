@@ -1,6 +1,8 @@
 import { createAdminContext, createSessionAuth } from "@imprint/runtime-admin/admin-server";
 import { imprint } from "@/lib/content";
 import { widgetCatalog } from "@/widgets/registry";
+import { widgetComponents } from "@/widgets/components";
+import { StudioChrome } from "@/components/studio-chrome";
 
 /**
  * The admin context of the Imprint site (design/fase-3 §10, step 7): the
@@ -15,6 +17,8 @@ export const admin = createAdminContext({
   imprint,
   auth,
   widgetCatalog,
+  // The page studio with this site's eight viewers and its header/footer around the canvas.
+  studio: { viewers: widgetComponents, chrome: StudioChrome },
   contributions: [
     { group: "config", items: [{ href: "/admin/model", label: "Content model" }, { href: "/admin/relations", label: "Relations" }] },
   ],

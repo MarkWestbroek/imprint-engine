@@ -1,20 +1,19 @@
-import { ItemEditScreen } from "@imprint/runtime-admin/admin-server";
+import { ItemEditScreen, PageStudioScreen } from "@imprint/runtime-admin/admin-server";
 import { admin } from "@/lib/admin";
 import { adminActions } from "@/lib/admin-actions";
 
 type Props = {
   params: Promise<{ type: string; slug?: string[] }>;
-  searchParams: Promise<{ lang?: string }>;
+  searchParams: Promise<{ lang?: string; previewAs?: string }>;
 };
 
-/**
- * Every type through the generic form, pages included: the form edits a
- * page's meta and keeps its layout as it is. The visual studio comes with
- * Fase 4 of the engine revision.
- */
+/** Pages get the visual studio (the shared one, with this site's widgets and chrome); the rest the generic form. */
 export default async function AdminEdit({ params, searchParams }: Props) {
   const { type, slug: slugParts } = await params;
-  const { lang } = await searchParams;
+  const { lang, previewAs } = await searchParams;
   const slug = slugParts?.map(decodeURIComponent).join("/");
+  if (type === "page") {
+    return <PageStudioScreen admin={admin} actions={adminActions} slug={slug} lang={lang ?? "en"} previewAs={previewAs} />;
+  }
   return <ItemEditScreen admin={admin} type={type} slug={slug} lang={lang ?? "en"} actions={adminActions} />;
 }

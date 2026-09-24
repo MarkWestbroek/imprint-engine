@@ -2,7 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { JsonSchema } from "@imprint/runtime-admin/forms";
-import { SchemaForm } from "@imprint/runtime-admin/admin";
+import { DefaultWidgetEditor, SchemaForm, type WidgetEditorProps } from "@imprint/runtime-admin/admin";
 
 /**
  * The editor half of a widget (the viewer half lives in components.tsx):
@@ -17,12 +17,7 @@ import { SchemaForm } from "@imprint/runtime-admin/admin";
  * a map/point picker for an annotated-image widget).
  */
 
-export type WidgetEditorProps = {
-  config: Record<string, unknown>;
-  onChange: (config: Record<string, unknown>) => void;
-  /** JSON Schema generated from the widget's zod config schema. */
-  schema: JsonSchema;
-};
+export type { WidgetEditorProps };
 export type WidgetEditor = (props: WidgetEditorProps) => React.ReactNode;
 
 const inputCls =
@@ -688,8 +683,8 @@ export const widgetEditors: Record<string, WidgetEditor> = {
   kanban: KanbanEditor,
 };
 
-export function WidgetEditorFor({ type, ...props }: WidgetEditorProps & { type: string }) {
-  const Custom = widgetEditors[type];
-  if (Custom) return <Custom {...props} />;
-  return <SchemaForm schema={props.schema} value={props.config} onChange={props.onChange} />;
+/** This site's widget editor for the studio (AdminContext.studio.editor). */
+export function WidgetEditorFor(props: WidgetEditorProps) {
+  const Custom = widgetEditors[props.type];
+  return Custom ? <Custom {...props} /> : <DefaultWidgetEditor {...props} />;
 }

@@ -22,6 +22,7 @@ export {
   type AdminContext,
   type AdminContribution,
   type AdminSession,
+  type StudioSlot,
 } from "./admin-context";
 export { contentFormSchema, widgetFormSchemas, type JsonSchema, type WidgetFormSchema } from "./forms";
 export { ASOF_COOKIE, getPreview, readOpts, type Preview } from "./preview";

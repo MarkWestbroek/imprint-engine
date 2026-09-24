@@ -11,15 +11,12 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { LayoutRow } from "@imprint/content-core";
-import {
-  draftOpAction,
-  resetDraftAction,
-  savePageDraftAction,
-} from "@/app/admin/studio-actions";
-import type { DraftOp, WidgetPath } from "@imprint/runtime-admin/studio";
-import type { JsonSchema } from "@imprint/runtime-admin/forms";
-import { MarkdownEditor, SchemaForm } from "@imprint/runtime-admin/admin";
-import { WidgetEditorFor } from "@/widgets/editors";
+import type { DraftOp, WidgetPath } from "../studio/layout-ops";
+import type { JsonSchema } from "../forms";
+import { MarkdownEditor } from "./markdown-editor";
+import { SchemaForm } from "./schema-form";
+import type { StudioActions } from "./types";
+import { DefaultWidgetEditor, type WidgetEditor } from "./widget-editor";
 
 /**
  * When editing a default-view template (_view/<type>), pick a sample item to
@@ -96,6 +93,9 @@ type StudioCtx = {
   setSel: (sel: WidgetPath | null) => void;
   dispatch: (op: DraftOp, after?: () => void) => void;
   pending: boolean;
+  actions: StudioActions;
+  /** The site's widget editor (falls back to the schema form). */
+  editor: WidgetEditor;
 };
 
 const Ctx = createContext<StudioCtx | null>(null);
@@ -113,6 +113,8 @@ export function StudioProvider({
   rows,
   metaSchema,
   widgetSchemas,
+  actions,
+  editor = DefaultWidgetEditor,
   children,
 }: {
   slug?: string;
@@ -122,6 +124,9 @@ export function StudioProvider({
   rows: LayoutRow[];
   metaSchema: JsonSchema;
   widgetSchemas: WidgetSchemaDef[];
+  /** The site's "use server" wrappers of the studio actions. */
+  actions: StudioActions;
+  editor?: WidgetEditor;
   children: React.ReactNode;
 }) {
   const router = useRouter();
@@ -130,7 +135,7 @@ export function StudioProvider({
 
   const dispatch = (op: DraftOp, after?: () => void) => {
     startTransition(async () => {
-      await draftOpAction(slug, lang, op);
+      await actions.draftOp(slug, lang, op);
       after?.();
       router.refresh();
     });
@@ -150,6 +155,8 @@ export function StudioProvider({
         setSel,
         dispatch,
         pending: isPending,
+        actions,
+        editor,
       }}
     >
       {children}
@@ -160,7 +167,7 @@ export function StudioProvider({
 /* ---------- top bar ---------- */
 
 export function StudioTopBar({ isNew }: { isNew: boolean }) {
-  const { slug, lang, meta, pending } = useStudio();
+  const { slug, lang, meta, pending, actions } = useStudio();
   const router = useRouter();
   const [validFrom, setValidFrom] = useState("");
   const [validTo, setValidTo] = useState("");
@@ -169,7 +176,7 @@ export function StudioTopBar({ isNew }: { isNew: boolean }) {
 
   const save = () =>
     startTransition(async () => {
-      const result = await savePageDraftAction(slug, lang, { validFrom, validTo });
+      const result = await actions.savePageDraft(slug, lang, { validFrom, validTo });
       if (result.ok && result.slug) {
         setMessage({ ok: true, text: "Saved ✓" });
         if (result.slug !== slug) {
@@ -183,7 +190,7 @@ export function StudioTopBar({ isNew }: { isNew: boolean }) {
 
   const reset = () =>
     startTransition(async () => {
-      await resetDraftAction(slug, lang);
+      await actions.resetDraft(slug, lang);
       setMessage(null);
       router.refresh();
     });
@@ -276,7 +283,7 @@ function WidgetPane({
   config: Record<string, unknown>;
   def?: WidgetSchemaDef;
 }) {
-  const { dispatch, setSel } = useStudio();
+  const { dispatch, setSel, editor: Editor } = useStudio();
   const [local, setLocal] = useState(config);
   useDebouncedOp(local, config, (value) => ({
     kind: "widget-config",
@@ -313,7 +320,7 @@ function WidgetPane({
       </div>
       {def?.help && <p className="mb-3 text-xs text-muted">{def.help}</p>}
       {def && (
-        <WidgetEditorFor
+        <Editor
           type={type}
           schema={def.schema}
           config={local}

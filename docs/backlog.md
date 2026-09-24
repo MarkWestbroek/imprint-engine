@@ -257,8 +257,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         (`sites/musicbrain/e2e`) is MusicBrain-specifiek (MariaDB, :3200);
         generaliseren naar een gedeelde `e2e/`-map met per site een
         database en poort, zodat de Imprint-admin ook in CI meeloopt. _(M)_
-      - [ ] **Pagina's bewerken op de Imprint-site** — nu alleen het
-        meta-formulier; de studio komt met Fase 4 naar het package. _(Fase 4)_
+      - [x] **Pagina's bewerken op de Imprint-site** (september 2026, Fase 4
+        stap 2/3) — de gedeelde studio, met Imprints acht widgets en zijn
+        header/footer als chrome.
+      - [ ] **Fase 4 stap 4: standaard-widgeteditors naar `widgets-standard`**
+        — `sites/musicbrain/src/widgets/editors.tsx` (695 regels) bevat
+        editors voor table, gallery/carousel, map (standaardwidgets) en board,
+        kanban (MusicBrain). De standaard-editors verhuizen naar
+        `@imprint/widgets-standard/editors`, zodat de Imprint-site ze ook
+        krijgt; de site-editors blijven. _(M)_
       - [ ] **Studio: "Saved ✓" verdwijnt bij een nieuwe pagina** — na
         "Create page" springt de studio naar de URL van de pagina en raakt de
         melding kwijt; de redacteur ziet geen bevestiging. Melding via de

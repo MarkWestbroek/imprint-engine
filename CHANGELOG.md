@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 4, stap 2 en 3: de studio zit in het package en werkt op beide
+  sites.** `PageStudioScreen` en de studio-actions (`draftOp`, `resetDraft`,
+  `savePageDraft`) in `@imprint/runtime-admin/admin-server`, de
+  clientonderdelen (`StudioProvider`, sidebar, toolbars) in `/admin`. Een
+  site levert via `AdminContext.studio` zijn viewers, één chrome-component
+  om het canvas en optioneel zijn widget-editor; het package bouwt de
+  `WidgetContext` voor het canvas zelf (als de redacteur: beperkte items en
+  drafts inbegrepen). De Imprint-site bewerkt pagina's nu visueel binnen zijn
+  eigen header en footer, met zijn acht widgets; MusicBrain onveranderd (30
+  browsertests groen). Exitcriterium van Fase 4 gehaald; wat rest is stap 4,
+  de standaard-widgeteditors naar `widgets-standard`.
 - **Fase 4, stap 1: draftlogica van de studio naar het package.** De pure
   layoutoperaties (`applyOp`, `PageDraft`, `DraftOp`) staan in
   `@imprint/runtime-admin/studio` (client-safe), de serverside draftopslag in

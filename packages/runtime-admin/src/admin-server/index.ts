@@ -13,6 +13,8 @@ export { ItemEditScreen, emptyData } from "./item-edit";
 export { HistoryScreen } from "./history";
 export { adminMenu } from "./menu";
 export { clearDraft, draftKey, getDraft, setDraft } from "./drafts";
+export { PageStudioScreen } from "./studio-screen";
+export { draftOp, resetDraft, savePageDraft } from "./studio-actions";
 export { createSessionAuth, type SessionAuth } from "./session";
 export { previewEnter, previewExit } from "./preview-routes";
 export { UsersScreen } from "./users-screen";
@@ -37,4 +39,5 @@ export {
   type AdminContext,
   type AdminContribution,
   type AdminSession,
+  type StudioSlot,
 } from "../admin-context";

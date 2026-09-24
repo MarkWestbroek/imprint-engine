@@ -2,6 +2,9 @@ import { createAdminContext } from "@imprint/runtime-admin/admin-server";
 import { auth } from "@/lib/auth";
 import { imprint } from "@/lib/content";
 import { widgetCatalog } from "@/widgets/registry";
+import { widgetComponents } from "@/widgets/components";
+import { WidgetEditorFor } from "@/widgets/editors";
+import { StudioChrome } from "@/components/admin/studio-chrome";
 
 /**
  * The admin context of this site (design/fase-3 §10): the instance, the
@@ -13,6 +16,8 @@ export const admin = createAdminContext({
   imprint,
   auth,
   widgetCatalog,
+  // The page studio: this site's viewers, its widget editors and its chrome around the canvas.
+  studio: { viewers: widgetComponents, editor: WidgetEditorFor, chrome: StudioChrome },
   // This site's own screens; the content types themselves come from the catalogue.
   contributions: [
     { group: "content", section: "Planning", items: [{ href: "/admin/planning", label: "Planning" }] },

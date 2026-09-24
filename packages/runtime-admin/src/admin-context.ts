@@ -1,6 +1,9 @@
+import type { ReactNode } from "react";
 import type { ContentType, RoleType } from "@imprint/content-core";
 import type { ImprintInstance } from "@imprint/extension-api";
+import type { WidgetEditor } from "./admin/widget-editor";
 import { contentFormSchema, widgetFormSchemas, type JsonSchema, type WidgetCatalogEntry, type WidgetFormSchema } from "./forms";
+import type { WidgetViewers } from "./page-renderer";
 
 /**
  * The admin context (design/fase-3 §10, steps 4 and 5): everything the shared
@@ -46,9 +49,24 @@ export interface AdminContribution {
   items: { href: string; label: string }[];
 }
 
+/**
+ * What the page studio needs from a site (Fase 4). `chrome` is one component
+ * around the canvas — the site's header, menu, footer, in whatever form it
+ * has them (design decision: the studio knows nothing more; a richer
+ * contract with menu and themes is a later step). `editor` is the site's
+ * widget-editor picker; absent = the schema form for every widget.
+ */
+export interface StudioSlot {
+  viewers: WidgetViewers;
+  chrome: (props: { children: ReactNode }) => ReactNode | Promise<ReactNode>;
+  editor?: WidgetEditor;
+}
+
 export interface AdminContext {
   imprint: ImprintInstance;
   auth: AdminAuth;
+  /** Absent = no page studio; pages then only have the meta form. */
+  studio?: StudioSlot;
   /** The form definition per content type, and the widget forms for the studio. */
   forms: {
     content(type: ContentType): JsonSchema;
@@ -62,11 +80,13 @@ export function createAdminContext(opts: {
   auth: AdminAuth;
   widgetCatalog: readonly WidgetCatalogEntry[];
   contributions?: AdminContribution[];
+  studio?: StudioSlot;
 }): AdminContext {
   let widgets: WidgetFormSchema[] | undefined;
   return {
     imprint: opts.imprint,
     auth: opts.auth,
+    studio: opts.studio,
     forms: {
       content: contentFormSchema,
       // The catalogue is fixed for the life of the process (it is code): compute once.

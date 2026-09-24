@@ -39,8 +39,8 @@ en behandelt daarna pagina's, contenttypen, planning, wiki's en vormgeving.
 De admin is dezelfde voor elke Imprint-site: wat hieronder staat geldt voor
 MusicBrain én voor de Imprint-site (imprint-engine.nl). Verschillen per site
 zitten in de menu-inhoud (welke contenttypen actief zijn) en in de schermen
-die een site zelf toevoegt (MusicBrain: planning en wiki; de studio voor
-pagina's komt later ook naar de Imprint-site).
+die een site zelf toevoegt (MusicBrain: planning en wiki) en in de widgets
+die de studio aanbiedt (elke site kiest zijn eigen set).
 
 - **/admin** — log in met je gebruikersnaam en wachtwoord.
 - Je wachtwoord wijzig je onder **Users** (of via je naam rechtsboven).
