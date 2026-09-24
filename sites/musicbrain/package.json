@@ -17,6 +17,7 @@
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
     "@imprint/plugin-planning": "*",
+    "@imprint/plugin-wiki": "*",
     "@imprint/runtime-admin": "*",
     "@imprint/widgets-standard": "*",
     "next": "16.2.10",

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import type { Wiki, WikiFolder, WikiPage } from "@imprint/content-core";
+import type { Wiki, WikiFolder, WikiPage } from "./schemas";
 import { Markdown } from "@imprint/runtime-admin";
-import { wikiPageHref } from "@/lib/wiki";
+import { wikiPageHref } from "./href";
 
 /**
  * Wiki-chrome (design/wiki.md §3): navigatieboom links, content rechts —

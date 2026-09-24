@@ -71,9 +71,6 @@ export type CoreContentType =
   | "page"
   | "menu"
   | "theme"
-  | "wiki"
-  | "wiki-folder"
-  | "wiki-page"
   | "relations";
 
 /**

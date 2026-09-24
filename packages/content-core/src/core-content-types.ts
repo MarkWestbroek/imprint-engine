@@ -12,17 +12,13 @@ import {
   ReleaseSchema,
   SiteConfigSchema,
   ThemeSchema,
-  WikiFieldsSchema,
-  WikiFolderSchema,
-  WikiPageSchema,
-  WikiSchema,
 } from "./schemas";
 
 /**
  * The content types the core brings (design/fase-5 §3.1): the definitions
  * that replace the switches on type names that used to live in the store,
- * the catalogue, the relation rules and the admin. Wiki is still here until
- * its plugin takes it over (Fase 5, step 4); planning already left.
+ * the catalogue, the relation rules and the admin. Planning and wiki live
+ * in their plugins (Fase 5).
  */
 
 const today = () => new Date().toISOString().slice(0, 10);
@@ -87,40 +83,6 @@ export const coreContentTypeDefinitions: ContentTypeDefinition[] = [
     ],
     emptyData: () => ({ project: "", version: "", date: today(), channel: "stable", highlights: [], body: "", downloads: [] }),
     slugOf: (data) => `${String(data.project ?? "")}-${String(data.version ?? "")}`,
-  },
-  {
-    // Ingestable for wiki publishing (local → live): wiki → folders → pages.
-    name: "wiki",
-    schema: WikiSchema,
-    formSchema: WikiFieldsSchema,
-    label: "Wikis",
-    flags: ["listable", "editable", "ingestable", "overview"],
-    domain: "wiki",
-    emptyData: () => ({ slug: "", lang: "en", title: "", description: "", access: "public", order: 0 }),
-  },
-  {
-    name: "wiki-folder",
-    schema: WikiFolderSchema,
-    label: "Wiki folders",
-    flags: ["listable", "editable", "ingestable"],
-    domain: "wiki",
-    relations: [
-      { fromType: "wiki-folder", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-folder → wiki" },
-      { fromType: "wiki-folder", field: "parent", toType: "wiki-folder", enforce: true, label: "Wiki-folder → parent" },
-    ],
-    emptyData: () => ({ slug: "", lang: "en", wiki: "", parent: "", title: "", order: 0 }),
-  },
-  {
-    name: "wiki-page",
-    schema: WikiPageSchema,
-    label: "Wiki pages",
-    flags: ["listable", "editable", "ingestable"],
-    domain: "wiki",
-    relations: [
-      { fromType: "wiki-page", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-page → wiki" },
-      { fromType: "wiki-page", field: "folder", toType: "wiki-folder", enforce: true, label: "Wiki-page → folder" },
-    ],
-    emptyData: () => ({ slug: "", lang: "en", wiki: "", folder: "", title: "", body: "", order: 0 }),
   },
   {
     name: "menu",

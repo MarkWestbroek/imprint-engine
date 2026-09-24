@@ -2,6 +2,7 @@ import type { ContentType } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import { ContentTypeRegistry, coreContentTypeDefinitions } from "@imprint/content-core";
 import { planningContentTypes } from "@imprint/plugin-planning/content-types";
+import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
 import { widgetRegistry } from "../../src/widgets/registry";
 import type { CannedResponse } from "./harness";
 
@@ -31,7 +32,7 @@ const COLORS = {
 export async function buildStore(): Promise<MemoryContentStore> {
   // The site's own registry: layouts are validated on put, as in production.
   // The registry the site runs with: the core's types plus the planning plugin's (imprint.config.ts).
-  const contentTypes = ContentTypeRegistry.of(coreContentTypeDefinitions, planningContentTypes);
+  const contentTypes = ContentTypeRegistry.of(coreContentTypeDefinitions, planningContentTypes, wikiContentTypes);
   const store = new MemoryContentStore(createMemoryDb(), { widgets: widgetRegistry, contentTypes });
   const validFrom = new Date("2020-01-01T00:00:00Z");
   const put = (type: ContentType, slug: string, data: unknown) =>

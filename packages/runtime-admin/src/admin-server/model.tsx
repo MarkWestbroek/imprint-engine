@@ -11,9 +11,6 @@ import {
   RelationsDoc,
   SiteConfigSchema,
   ThemeSchema,
-  WikiFieldsSchema,
-  WikiFolderSchema,
-  WikiPageSchema,
   type RelationRule,
 } from "@imprint/content-core";
 import type { AdminContext } from "../admin-context";

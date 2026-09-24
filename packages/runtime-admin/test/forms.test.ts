@@ -25,7 +25,7 @@ describe("form schemas", () => {
   });
 
   it("leave a field the form cannot render as an empty schema (a JSON box)", () => {
-    const menu = contentFormSchema(coreContentTypes.get("wiki-page"));
+    const menu = contentFormSchema(coreContentTypes.get("release"));
     assert.equal(typeof menu.properties, "object");
     const page = contentFormSchema(coreContentTypes.get("page"));
     assert.ok("access" in (page.properties as object), "the access field reaches the form");

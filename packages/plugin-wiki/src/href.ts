@@ -1,8 +1,8 @@
-import type { WikiFolder, WikiPage } from "@imprint/content-core";
+import type { WikiFolder, WikiPage } from "./schemas";
 
 /**
  * Pure wiki-helpers (geen store-imports, dus bruikbaar in client én server —
- * de studio draait client-side). De lezende kant staat in lib/wiki.ts.
+ * de studio draait client-side). De lezende kant staat in wiki.ts.
  */
 
 /**

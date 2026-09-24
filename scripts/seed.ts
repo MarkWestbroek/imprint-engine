@@ -4,7 +4,6 @@ import path from "node:path";
 import matter from "gray-matter";
 
 import {
-  DEFAULT_RELATION_RULES,
   MenuSchema,
   PageMetaSchema,
   PageDocSchema,
@@ -15,7 +14,8 @@ import {
 } from "@imprint/content-core";
 import { openContentDatabase } from "@imprint/content-core/db";
 import { ContentTypeRegistry, coreContentTypeDefinitions } from "@imprint/content-core";
-import { planningContentTypes } from "@imprint/plugin-planning/content-types"; // React-free entry: this runs under tsx, not Next
+import { planningContentTypes } from "@imprint/plugin-planning/content-types"; // React-free entries: this runs under tsx, not Next
+import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
 
 /**
  * One-time (idempotent) import: the v0 content files → database, plus the
@@ -58,10 +58,10 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL is not set (create .env from .env.example)");
   // Backend by URL scheme (mysql:// or postgres://) — architecture.md §0.
-  // The demo content includes a planning board, so the store must know the plugin's types.
-  const opened = openContentDatabase(url, {
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, planningContentTypes),
-  });
+  // MusicBrain's plugins: the demo content has a planning board, and the default
+  // relation rules must include the plugins' (they are seeded as the relations document).
+  const contentTypes = ContentTypeRegistry.of(coreContentTypeDefinitions, planningContentTypes, wikiContentTypes);
+  const opened = openContentDatabase(url, { contentTypes });
   const store = opened.store;
   const by = "seed";
 
@@ -137,8 +137,9 @@ async function main() {
 
   // relation rules (referential integrity between content types)
   if (want("relations")) {
-    await store.putItem("relations", "relations", { rules: DEFAULT_RELATION_RULES }, { by });
-    console.log(`relations ✓ ${DEFAULT_RELATION_RULES.length} default rules`);
+    const rules = contentTypes.relations();
+    await store.putItem("relations", "relations", { rules }, { by });
+    console.log(`relations ✓ ${rules.length} default rules`);
   }
 
   // demo planning board (dynamic content; a starting example of the feature)

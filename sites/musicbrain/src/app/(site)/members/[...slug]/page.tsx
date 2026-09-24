@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { permitted } from "@imprint/content-core";
 import { imprint } from "@/lib/content";
 import { getSession } from "@/lib/auth";
-import { authorize, subjectOf } from "@/lib/authorize";
+import { pluginPublicRoute } from "@imprint/runtime-admin";
+import { subjectOf } from "@/lib/authorize";
 import { readOpts } from "@/lib/preview";
-import { getWiki, getWikiTree } from "@/lib/wiki";
 import { PageBody } from "@/components/page-body";
-import { WikiView } from "@/components/wiki-view";
 
 /**
  * Restricted content lives here (design/fase-3 §4.3, decision: own path).
@@ -39,15 +37,11 @@ export default async function MembersPage({ params }: Props) {
   const subject = subjectOf(session);
   const opts = await readOpts();
 
-  const wiki = await getWiki(slug[0]);
-  if (wiki) {
-    if (!(await authorize(session, "read", { type: "wiki", id: wiki.slug, data: wiki }))) notFound();
-    const tree = await getWikiTree(wiki.slug);
-    const pages = await permitted(imprint.pdp, subject, "wiki-page", tree.pages, (p) => p.slug);
-    const wikiPage =
-      slug.length > 1 ? (pages.find((p) => p.slug === slug[slug.length - 1]) ?? null) : null;
-    if (slug.length > 1 && !wikiPage) notFound();
-    return <WikiView wiki={wiki} folders={tree.folders} pages={pages} current={wikiPage} />;
+  // A plugin may claim the URL (the wiki does); it decides with the PDP for this session.
+  const hit = await pluginPublicRoute({ imprint, slug, members: true, session });
+  if (hit) {
+    if ("redirect" in hit) notFound();
+    return hit.render;
   }
 
   const page = await imprint.storeFor(subject).getPage(joined, opts);

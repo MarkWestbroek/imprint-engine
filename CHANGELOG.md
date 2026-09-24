@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 5, stap 4: de wiki als plugin.** `@imprint/plugin-wiki` bevat de
+  drie contenttypen met relatieregels (en de legacy-afbeelding van
+  `visibility`), de boomstudio onder `/admin/wiki`, de acties (verplaatsen,
+  verwijderen, publiceren naar live) en de publieke route: de derde haak.
+  De publieke catch-all en `/members/…` vragen nu eerst de plugins
+  (`pluginPublicRoute`): in de statische route antwoordt de wiki met een
+  redirect voor beperkte inhoud, onder `/members` beslist hij met de PDP.
+  `AdminTypeScreen` in het package kiest per `/admin/<segment>`: een plugin
+  die het segment claimt wint (de wiki-studio boven de platte lijst), anders
+  de generieke lijst; beide sites hebben dezelfde dunne route, en de
+  Imprint-site heeft nu ook de plugin-haken. De kern kent wiki noch
+  planning meer: `CoreContentType` telt nog negen typen. Vier browsertests
+  voor de wiki (aanmaken, eigen URL, beperkt via /members, 404).
 - **Fase 5, stap 2 en 3: het plugincontract, en planning als eerste plugin.**
   `ImprintPluginCore` (extension-api: contenttypen, widgetschema's, menu) en
   `definePlugin`/`ImprintPlugin` (runtime-admin: schermen en actions);

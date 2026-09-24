@@ -1,13 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
-import { createWikiAction } from "@/app/admin/wiki/actions";
-import type { ActionResult } from "@/app/admin/actions";
+import type { PluginCall } from "@imprint/runtime-admin";
+import type { ActionResult } from "./actions";
 
 /** Mini-formulier op het wiki-overzicht; de slug volgt uit de titel. */
-export function NewWikiForm() {
+export function NewWikiForm({ call }: { call: PluginCall }) {
   const [state, formAction, pending] = useActionState<ActionResult | null, FormData>(
-    createWikiAction,
+    (prev, formData) => call("wiki", "createWiki", prev, formData) as Promise<ActionResult>,
     null
   );
   return (

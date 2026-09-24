@@ -113,7 +113,7 @@ drie vaste haken, één keer per site:
 
 | haak | bestand in de site | doet |
 |---|---|---|
-| admin-schermen | `app/admin/[type]/page.tsx` en `app/admin/[type]/[...path]/page.tsx` | is `type` een contenttype → de generieke lijst; is het een pluginnaam → `plugin.admin.screens(admin, path)`. URL's blijven `/admin/planning`, `/admin/planning/<slug>`, `/admin/wiki/<slug>` |
+| admin-schermen | `app/admin/[type]/page.tsx` en `app/admin/[type]/[...path]/page.tsx` | `AdminTypeScreen`: claimt een plugin het segment, dan zijn scherm (de wiki-studio wint van de platte lijst van het type `wiki`); anders de generieke lijst van het contenttype. URL's blijven `/admin/planning`, `/admin/planning/<slug>`, `/admin/wiki/<slug>` |
 | plugin-actions | `app/admin/actions.ts` | één extra wrapper: `pluginAction(plugin, action, ...args)` die naar `plugin.admin.actions[action](admin, ...args)` gaat; elke action controleert zelf de sessie, zoals nu |
 | publieke route | de catch-all `(site)/[...slug]` en `/members/[...slug]` | vragen eerst de plugins (`publicRoute`), dan pas de pagina's — de wiki-logica die daar nu 31 regels inneemt gaat naar de wiki-plugin |
 
@@ -135,7 +135,7 @@ Dockerfile (`COPY`, zoals elk workspace-package).
 | 1 | `ContentTypeDefinition` + `ContentTypeRegistry` in de kern; de zeven switches worden opzoekingen; de kerntypen als definities; store en catalogus lezen uit het register. Geen gedragsverandering: contractsuites en browsertests bewijzen dat | L, klaar |
 | 2 | `definePlugin` in `extension-api`; `createImprint` voegt plugins samen; `AdminContext.plugins`; de drie haken in MusicBrain (schermen, actions, publieke route) | M, klaar (publieke haak volgt met de wiki) |
 | 3 | `@imprint/plugin-planning`: typen, relaties, widget (schema + viewer + editor), bordadmin, `lib/planning` met tests. MusicBrain: `plugins: [planningPlugin()]`, code weg uit de site | M, klaar |
-| 4 | `@imprint/plugin-wiki`: drie typen, wiki-studio, publieke route en ledenroute, `wiki-href` | M–L |
+| 4 | `@imprint/plugin-wiki`: drie typen, wiki-studio, publieke route en ledenroute, `wiki-href` | M–L, klaar |
 | 5 | Exitproef: de Imprint-site zonder plugins kent de typen niet; MusicBrain met plugins werkt; één plugin uitzetten breekt niets behalve zijn eigen schermen. Browsertest voor planning (bord, kaart verslepen) en wiki (pagina maken, verplaatsen, publiek/beperkt) | M |
 
 Volgorde volgt het voorstel: planning eerst (duidelijk afgebakend), wiki

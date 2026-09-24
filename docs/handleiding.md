@@ -257,6 +257,9 @@ Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 
 ## Wiki's bewerken
 
+Wiki's en planning zijn plugins: een site die ze niet aanzet, heeft ze niet
+in het menu en kent de contenttypen niet.
+
 Onder **Content → Wikis** staat het wiki-overzicht; een nieuwe wiki maak je
 op titel (de slug volgt vanzelf). Een wiki open je in de **wiki-studio**:
 links de boom (folders en pagina's), rechts de eigenschappen en de tekst

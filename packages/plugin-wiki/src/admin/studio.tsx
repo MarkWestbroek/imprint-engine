@@ -3,19 +3,11 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import type { Wiki, WikiFolder, WikiPage } from "@imprint/content-core";
-import {
-  createFolderAction,
-  createPageAction,
-  deleteWikiItemAction,
-  moveWikiItemAction,
-  publishWikiAction,
-  saveFolderAction,
-  savePageAction,
-  saveWikiAction,
-} from "@/app/admin/wiki/actions";
-import { wikiPageHref } from "@/lib/wiki-href";
+import type { PluginCall } from "@imprint/runtime-admin";
 import { confirmDialog, MarkdownEditor, promptDialog } from "@imprint/runtime-admin/admin";
+import { wikiPageHref } from "../href";
+import type { Wiki, WikiFolder, WikiPage } from "../schemas";
+import type { ActionResult } from "./actions";
 
 /**
  * De wiki-studio (design/wiki.md §4b): structuur → inhoud, links naar
@@ -36,14 +28,31 @@ export function WikiStudio({
   folders,
   pages,
   publishTarget,
+  call,
 }: {
   wiki: Wiki;
   folders: WikiFolder[];
   pages: WikiPage[];
   /** Host van het publicatiedoel; null = publiceren niet ingericht (bijv. op live). */
   publishTarget: string | null;
+  /** De plugin-action-dispatcher van de site. */
+  call: PluginCall;
 }) {
   const router = useRouter();
+  // De acties van de plugin, via de dispatcher (zie admin/actions.ts).
+  const wikiCall = (action: string, ...args: unknown[]) => call("wiki", action, ...args);
+  const saveWikiAction = (w: Wiki) => wikiCall("saveWiki", w) as Promise<ActionResult>;
+  const saveFolderAction = (f: WikiFolder) => wikiCall("saveFolder", f) as Promise<ActionResult>;
+  const savePageAction = (p: WikiPage) => wikiCall("savePage", p) as Promise<ActionResult>;
+  const createFolderAction = (wikiSlug: string, parent: string, title: string, lang: string) =>
+    wikiCall("createFolder", wikiSlug, parent, title, lang) as Promise<ActionResult & { slug?: string }>;
+  const createPageAction = (wikiSlug: string, folder: string, title: string, lang: string) =>
+    wikiCall("createPage", wikiSlug, folder, title, lang) as Promise<ActionResult & { slug?: string }>;
+  const moveWikiItemAction = (kind: "wiki-page" | "wiki-folder", slug: string, wikiSlug: string, targetParent: string, index: number) =>
+    wikiCall("moveWikiItem", kind, slug, wikiSlug, targetParent, index) as Promise<ActionResult>;
+  const publishWikiAction = (wikiSlug: string) => wikiCall("publishWiki", wikiSlug) as Promise<ActionResult & { published?: number }>;
+  const deleteWikiItemAction = (kind: "wiki-folder" | "wiki-page", slug: string, lang: string, wikiSlug: string) =>
+    wikiCall("deleteWikiItem", kind, slug, lang, wikiSlug) as Promise<ActionResult & { deleted?: number }>;
   const [pending, startTransition] = useTransition();
   const [selected, setSelected] = useState<Selection>(null);
   // Concept-wijzigingen van de selectie (of van de wiki zelf); pas "Save"

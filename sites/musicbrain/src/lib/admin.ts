@@ -20,7 +20,6 @@ export const admin = createAdminContext({
   studio: { viewers: widgetComponents, editor: WidgetEditorFor, chrome: StudioChrome },
   // This site's own screens; the content types themselves come from the catalogue.
   contributions: [
-    { group: "content", section: "Wiki", items: [{ href: "/admin/wiki", label: "Wikis" }] },
     { group: "design", items: [{ href: "/admin/views", label: "Default views" }] },
     { group: "config", items: [{ href: "/admin/model", label: "Content model" }, { href: "/admin/relations", label: "Relations" }] },
   ],

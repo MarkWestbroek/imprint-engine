@@ -31,6 +31,11 @@ export async function restoreVersionAction(formData: FormData): Promise<void> {
   return actions.restoreVersion(admin, formData);
 }
 
+/** The plugin hook (design/fase-5 §3.3): one dispatcher for every plugin's actions. */
+export async function pluginAction(plugin: string, action: string, ...args: unknown[]): Promise<unknown> {
+  return actions.runPluginAction(admin, plugin, action, args);
+}
+
 export async function saveRelationsAction(prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   return actions.saveRelations(admin, prev, formData);
 }

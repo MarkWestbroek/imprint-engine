@@ -11,7 +11,6 @@ import {
   type PolicyDecisionPoint,
 } from "../src/access";
 import { createMemoryDb, MemoryContentStore } from "../src/memory-store";
-import { legacyVisibilityToAccess, WikiSchema } from "../src/schemas";
 import { seedFixtures } from "./db-test-helpers";
 
 const page = (id: string) => ({ type: "page", id, properties: { access: "public" } });
@@ -76,9 +75,7 @@ describe("guardReads: the store as one subject sees it", () => {
     await raw.putItem("product", "secret", {
       slug: "secret", name: "Secret", tagline: "hush", status: "beta", access: "restricted",
     });
-    await raw.putItem("wiki-page", "card", {
-      slug: "card", title: "Card", wiki: "w", folder: "f", access: "restricted",
-    });
+    await raw.putItem("component", "card", { slug: "card", name: "Card", access: "restricted" });
   });
 
   it("a visitor sees no restricted item in any list or get, nor through listItems/getItem", async () => {
@@ -87,7 +84,7 @@ describe("guardReads: the store as one subject sees it", () => {
     assert.equal(await store.getPage("members"), null);
     assert.equal((await store.listProducts()).some((p) => p.slug === "secret"), false);
     assert.equal(await store.getProduct("secret"), null);
-    assert.equal((await store.listItems("wiki-page")).length, 0);
+    assert.equal((await store.listItems("component")).length, 0);
     assert.equal(await store.getItem("page", "members"), null);
     assert.ok(await store.getPage("about"), "public content is untouched");
     assert.ok((await store.listItems("page")).some((r) => r.slug === "about"));
@@ -96,18 +93,8 @@ describe("guardReads: the store as one subject sees it", () => {
   it("a reader sees it all; the wrapper leaves writes and history alone", async () => {
     const store = guardReads(raw, userSubject("ria", "reader"), inProcessPdp);
     assert.equal((await store.getPage("members"))?.title, "Members only");
-    assert.equal((await store.listItems("wiki-page")).length, 1);
+    assert.equal((await store.listItems("component")).length, 1);
     assert.equal((await store.listVersions("page", "members")).length, 1);
     assert.equal(typeof store.putItem, "function");
-  });
-});
-
-describe("legacy wiki visibility", () => {
-  it("maps members to restricted and public to public, and leaves access alone when present", () => {
-    assert.deepEqual(legacyVisibilityToAccess({ visibility: "members", title: "t" }), { title: "t", access: "restricted" });
-    assert.deepEqual(legacyVisibilityToAccess({ visibility: "public" }), { access: "public" });
-    assert.deepEqual(legacyVisibilityToAccess({ visibility: "members", access: "public" }), { access: "public" });
-    assert.equal(WikiSchema.parse({ slug: "help", title: "Help", visibility: "members" }).access, "restricted");
-    assert.equal(WikiSchema.parse({ slug: "help", title: "Help" }).access, "public");
   });
 });

@@ -840,11 +840,17 @@ niet van elkaar afwijken.
   `app/admin/[type]/page.tsx` en `[type]/[...path]/page.tsx` renderen
   `PluginScreen` als het segment geen contenttype is (URL's blijven
   `/admin/planning/<slug>`); één `pluginAction(plugin, action, ...args)` in
-  `actions.ts` roept `runPluginAction`; de publieke catch-all vraagt eerst de
-  plugins (met de wiki). Clientonderdelen van een plugin krijgen de
-  dispatcher als `call`-prop. Eerste plugin: [plugin-planning](../packages/plugin-planning/src/index.ts)
+  `actions.ts` roept `runPluginAction`; de publieke catch-all en `/members`
+  vragen eerst de plugins (`pluginPublicRoute`: in de statische route een
+  redirect voor beperkte inhoud, onder /members een PDP-besluit voor de
+  sessie). `AdminTypeScreen` laat een plugin die het segment claimt winnen
+  van de generieke lijst. Clientonderdelen van een plugin krijgen de
+  dispatcher als `call`-prop. Plugins: [plugin-planning](../packages/plugin-planning/src/index.ts)
   (twee typen met regels, bordadmin, acties, widget, pure bordlogica met
-  tests); de site componeert de widget in zijn catalogus en viewers.
+  tests; de site componeert de widget in zijn catalogus en viewers) en
+  [plugin-wiki](../packages/plugin-wiki/src/index.ts) (drie typen, boomstudio,
+  acties incl. publiceren, publieke route, `WikiView`). Node-scripts
+  gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

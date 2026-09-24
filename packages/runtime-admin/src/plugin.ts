@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import type { ImprintPluginCore } from "@imprint/extension-api";
-import type { AdminContext } from "./admin-context";
+import type { ImprintInstance, ImprintPluginCore } from "@imprint/extension-api";
+import type { AdminContext, AdminSession } from "./admin-context";
 
 /**
  * Plugins (design/fase-5 §3.2): a site-wide capability a site switches on in
@@ -31,11 +31,31 @@ export type PluginScreenProps = {
 /** `never[]` so any concrete signature fits (parameters are contravariant); the dispatcher passes what the client sent. */
 export type PluginAction = (admin: AdminContext, ...args: never[]) => Promise<unknown>;
 
+/**
+ * What a plugin's public route gets. `members` is false in the prerendered
+ * catch-all — no cookies were read, so `session` is null and restricted
+ * content must be answered with a redirect to `/members/<slug>` — and true
+ * under /members, where the session is at hand and the plugin decides with
+ * the PDP.
+ */
+export type PublicRouteContext = {
+  imprint: ImprintInstance;
+  slug: string[];
+  members: boolean;
+  session: AdminSession | null;
+};
+
+export type PublicRouteResult =
+  | { redirect: string }
+  | { render: ReactNode; metadata?: { title?: string; description?: string } };
+
 export interface ImprintPlugin extends ImprintPluginCore {
   /** Renders `/admin/<name>/<path>`; null = not found. */
   screen?: (props: PluginScreenProps) => ReactNode | Promise<ReactNode | null> | null;
   /** Server-side actions, by name; each checks the session itself. */
   actions?: Record<string, PluginAction>;
+  /** Claims a public URL (the wiki lives at /<wiki>/…); null = not mine. */
+  publicRoute?: (ctx: PublicRouteContext) => Promise<PublicRouteResult | null>;
 }
 
 const NAME_RE = /^[a-z][a-z0-9-]*$/;
@@ -59,4 +79,14 @@ export async function runPluginAction(admin: AdminContext, plugin: string, actio
     throw new Error(`Unknown plugin action "${plugin}.${action}"`);
   }
   return fn(admin, ...(args as never[]));
+}
+
+/** The public-route hook: the first plugin that claims the slug answers; null = a page, or nothing. */
+export async function pluginPublicRoute(ctx: PublicRouteContext): Promise<PublicRouteResult | null> {
+  for (const plugin of ctx.imprint.plugins as ImprintPlugin[]) {
+    if (!plugin.publicRoute) continue;
+    const result = await plugin.publicRoute(ctx);
+    if (result) return result;
+  }
+  return null;
 }

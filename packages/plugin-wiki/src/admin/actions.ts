@@ -1,22 +1,21 @@
-"use server";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import type { AdminContext } from "@imprint/runtime-admin";
+import { scopedSlug, slugify } from "../href";
 import {
-  WikiSchema,
   WikiFolderSchema,
   WikiPageSchema,
+  WikiSchema,
   type Wiki,
   type WikiFolder,
   type WikiPage,
-} from "@imprint/content-core";
-import { editingSession } from "@/lib/auth";
-import { imprint, writableStore } from "@/lib/content";
-import { scopedSlug, slugify } from "@/lib/wiki-href";
-import type { ActionResult } from "../actions";
+} from "../schemas";
+
+export type ActionResult = { ok: boolean; error?: string };
 
 /**
- * Server actions voor de wiki-studio. Elke mutatie is een bitemporele put —
+ * De acties van de wiki-studio, via de dispatcher van de site
+ * (`pluginAction("wiki", …)`); elke actie controleert zelf de sessie. Elke mutatie is een bitemporele put —
  * een pagina verplaatsen is alleen een folder-veldwijziging, dus History
  * blijft het verhaal van de structuur vertellen. Slugs worden per wiki
  * gescopet (wiki-prefix + nummering) zodat de redacteur alleen titels ziet.
@@ -27,22 +26,23 @@ function refresh(wikiSlug: string) {
   revalidatePath(`/admin/wiki/${wikiSlug}`);
 }
 
-async function takenSlugs(type: "wiki" | "wiki-folder" | "wiki-page"): Promise<Set<string>> {
-  return new Set((await writableStore!.listItems(type)).map((i) => i.slug));
+async function takenSlugs(admin: AdminContext, type: "wiki" | "wiki-folder" | "wiki-page"): Promise<Set<string>> {
+  return new Set((await admin.imprint.writableStore!.listItems(type)).map((i) => i.slug));
 }
 
-export async function createWikiAction(
+export async function createWikiAction(admin: AdminContext, 
   _prev: ActionResult | null,
   formData: FormData
 ): Promise<ActionResult> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   const title = String(formData.get("title") ?? "").trim();
   const lang = String(formData.get("lang") ?? "en");
   const slug = slugify(title);
   if (!slug) return { ok: false, error: "Titel is verplicht" };
   try {
-    if ((await takenSlugs("wiki")).has(slug)) {
+    if ((await takenSlugs(admin, "wiki")).has(slug)) {
       return { ok: false, error: `Wiki "${slug}" bestaat al` };
     }
     const data = WikiSchema.parse({ slug, lang, title });
@@ -53,8 +53,9 @@ export async function createWikiAction(
   redirect(`/admin/wiki/${slug}`);
 }
 
-export async function saveWikiAction(wiki: Wiki): Promise<ActionResult> {
-  const session = await editingSession();
+export async function saveWikiAction(admin: AdminContext, wiki: Wiki): Promise<ActionResult> {
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiSchema.parse(wiki);
@@ -66,16 +67,17 @@ export async function saveWikiAction(wiki: Wiki): Promise<ActionResult> {
   }
 }
 
-export async function createFolderAction(
+export async function createFolderAction(admin: AdminContext, 
   wikiSlug: string,
   parent: string,
   title: string,
   lang: string
 ): Promise<ActionResult & { slug?: string }> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
-    const slug = scopedSlug(wikiSlug, title, await takenSlugs("wiki-folder"));
+    const slug = scopedSlug(wikiSlug, title, await takenSlugs(admin, "wiki-folder"));
     const data = WikiFolderSchema.parse({ slug, lang, wiki: wikiSlug, parent, title });
     await writableStore.putItem("wiki-folder", slug, data, { lang, by: session.name });
     refresh(wikiSlug);
@@ -85,16 +87,17 @@ export async function createFolderAction(
   }
 }
 
-export async function createPageAction(
+export async function createPageAction(admin: AdminContext, 
   wikiSlug: string,
   folder: string,
   title: string,
   lang: string
 ): Promise<ActionResult & { slug?: string }> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
-    const slug = scopedSlug(wikiSlug, title, await takenSlugs("wiki-page"));
+    const slug = scopedSlug(wikiSlug, title, await takenSlugs(admin, "wiki-page"));
     const data = WikiPageSchema.parse({ slug, lang, wiki: wikiSlug, folder, title });
     await writableStore.putItem("wiki-page", slug, data, { lang, by: session.name });
     refresh(wikiSlug);
@@ -104,8 +107,9 @@ export async function createPageAction(
   }
 }
 
-export async function saveFolderAction(folder: WikiFolder): Promise<ActionResult> {
-  const session = await editingSession();
+export async function saveFolderAction(admin: AdminContext, folder: WikiFolder): Promise<ActionResult> {
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiFolderSchema.parse(folder);
@@ -117,8 +121,9 @@ export async function saveFolderAction(folder: WikiFolder): Promise<ActionResult
   }
 }
 
-export async function savePageAction(page: WikiPage): Promise<ActionResult> {
-  const session = await editingSession();
+export async function savePageAction(admin: AdminContext, page: WikiPage): Promise<ActionResult> {
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const data = WikiPageSchema.parse(page);
@@ -137,14 +142,15 @@ export async function savePageAction(page: WikiPage): Promise<ActionResult> {
  * `targetParent` is de folderslug (pagina's) of de parent-folderslug —
  * "" = bovenin de wiki (alleen folders).
  */
-export async function moveWikiItemAction(
+export async function moveWikiItemAction(admin: AdminContext, 
   kind: "wiki-page" | "wiki-folder",
   slug: string,
   wikiSlug: string,
   targetParent: string,
   index: number
 ): Promise<ActionResult> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     const records = await writableStore.listItems(kind);
@@ -206,15 +212,16 @@ export async function moveWikiItemAction(
  * Vereist in .env.local: PUBLISH_URL (bijv. https://musicbrain.nl) en
  * PUBLISH_TOKEN (het INGEST_TOKEN van het doel).
  */
-export async function publishWikiAction(
+export async function publishWikiAction(admin: AdminContext, 
   wikiSlug: string
 ): Promise<ActionResult & { published?: number }> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
-  const base = imprint.secrets.publish?.url?.replace(/\/+$/, "");
-  const token = imprint.secrets.publish?.token;
+  const base = admin.imprint.secrets.publish?.url?.replace(/\/+$/, "");
+  const token = admin.imprint.secrets.publish?.token;
   if (!base || !token) {
-    return { ok: false, error: "Zet PUBLISH_URL en PUBLISH_TOKEN in sites/musicbrain/.env.local" };
+    return { ok: false, error: "Zet PUBLISH_URL en PUBLISH_TOKEN in .env.local van deze site" };
   }
 
   try {
@@ -278,13 +285,14 @@ export async function publishWikiAction(
  * verwijderen neemt zijn subfolders en pagina's mee — geen wees-pagina's.
  * De studio waarschuwt vooraf met de aantallen; hier voeren we alleen uit.
  */
-export async function deleteWikiItemAction(
+export async function deleteWikiItemAction(admin: AdminContext, 
   kind: "wiki-folder" | "wiki-page",
   slug: string,
   lang: string,
   wikiSlug: string
 ): Promise<ActionResult & { deleted?: number }> {
-  const session = await editingSession();
+  const session = await admin.auth.editingSession();
+  const writableStore = admin.imprint.writableStore;
   if (!session || !writableStore) return { ok: false, error: "Not signed in" };
   try {
     let deleted = 0;
@@ -331,3 +339,16 @@ export async function deleteWikiItemAction(
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
+
+/** What the dispatcher may call, by name. */
+export const wikiActions = {
+  createWiki: createWikiAction,
+  saveWiki: saveWikiAction,
+  createFolder: createFolderAction,
+  createPage: createPageAction,
+  saveFolder: saveFolderAction,
+  savePage: savePageAction,
+  moveWikiItem: moveWikiItemAction,
+  publishWiki: publishWikiAction,
+  deleteWikiItem: deleteWikiItemAction,
+};

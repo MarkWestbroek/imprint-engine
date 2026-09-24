@@ -7,7 +7,7 @@
   backends), `extension-api` (composition root: `defineImprint`),
   `runtime-admin` (renderer, `WidgetContext`, de gedeelde admin en studio),
   `widgets-standard` (bibliotheek: standaardwidgets) en plugins
-  (`plugin-planning`; een site zet ze aan met `plugins:` in
+  (`plugin-planning`, `plugin-wiki`; een site zet ze aan met `plugins:` in
   `imprint.config.ts`, contenttypen/menu/schermen/actions komen mee via de
   drie haken, de widget-viewers componeert de site zelf). Sites:
   `sites/musicbrain` (Next.js 16, App Router, Tailwind v4, MariaDB) en

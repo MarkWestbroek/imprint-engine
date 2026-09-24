@@ -1,0 +1,32 @@
+{
+  "name": "@imprint/plugin-wiki",
+  "version": "0.10.2",
+  "private": true,
+  "description": "Plugin: wikis — self-contained documentation bundles (wiki → folders → pages) with a tree studio in the admin, a public route per wiki and publish-to-live; content types with relation rules.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas.ts",
+    "./content-types": "./src/content-types.ts",
+    "./href": "./src/href.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "@imprint/runtime-admin": "*",
+    "zod": "^4.1.5"
+  },
+  "peerDependencies": {
+    "next": "^16",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
