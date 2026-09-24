@@ -1,12 +1,14 @@
-import type { PageDraft } from "./layout-ops";
+import type { PageDraft } from "../studio/layout-ops";
 
 /**
  * Server-side working copies for the page studio: while editing, every
  * change lands in a draft here; the canvas re-renders from it on
  * router.refresh(). Only "Save" turns the draft into a real version in the
- * content store. Keyed by user + page, kept in process memory — fine for a
- * single Node process (Plesk/Passenger, next start); an unsaved draft does
- * not survive a server restart.
+ * content store. Kept in process memory — fine for one Node process per
+ * site; an unsaved draft does not survive a restart (backlog: drafts in a
+ * table). Keyed per instance as well as per user and page, so two sites in
+ * one process (rule 5 of the architecture contract) never see each other's
+ * drafts.
  */
 
 const globalForDrafts = globalThis as unknown as {
@@ -14,8 +16,8 @@ const globalForDrafts = globalThis as unknown as {
 };
 const drafts = (globalForDrafts.__imprintDrafts ??= new Map<string, PageDraft>());
 
-export function draftKey(user: string, slug: string | undefined, lang: string): string {
-  return `${user}:${slug ?? "__new"}:${lang}`;
+export function draftKey(instance: string, user: string, slug: string | undefined, lang: string): string {
+  return `${instance}:${user}:${slug ?? "__new"}:${lang}`;
 }
 
 export function getDraft(key: string): PageDraft | undefined {

@@ -1,9 +1,9 @@
 import type { PageLayout, WidgetInstance } from "@imprint/content-core";
 import { getSession } from "@/lib/auth";
-import { store, writableStore } from "@/lib/content";
+import { imprint, store, writableStore } from "@/lib/content";
 import { admin } from "@/lib/admin";
-import { draftKey, getDraft, setDraft } from "@/lib/page-draft";
-import type { PageDraft } from "@/lib/layout-ops";
+import { draftKey, getDraft, setDraft } from "@imprint/runtime-admin/admin-server";
+import type { PageDraft } from "@imprint/runtime-admin/studio";
 import { layoutRows } from "@imprint/runtime-admin/layout";
 import { widgetRegistry, widgetCatalog } from "@/widgets/registry";
 import { Widget } from "@/components/page-renderer";
@@ -40,7 +40,7 @@ export async function PageStudio({
   previewAs?: string;
 }) {
   const session = (await getSession())!; // admin layout guarantees a session
-  const key = draftKey(session.name, slug, lang);
+  const key = draftKey(imprint.id, session.name, slug, lang);
 
   // A page at slug "_view/<type>" is that content type's default view; while
   // editing it we bind a sample item as the subject so the preview fills in.

@@ -2,9 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { editingSession } from "@/lib/auth";
-import { writableStore } from "@/lib/content";
-import { applyOp, type DraftOp } from "@/lib/layout-ops";
-import { clearDraft, draftKey, getDraft, setDraft } from "@/lib/page-draft";
+import { imprint, writableStore } from "@/lib/content";
+import { applyOp, type DraftOp } from "@imprint/runtime-admin/studio";
+import { clearDraft, draftKey, getDraft, setDraft } from "@imprint/runtime-admin/admin-server";
 
 export type StudioResult = { ok: boolean; error?: string };
 
@@ -16,7 +16,7 @@ export async function draftOpAction(
 ): Promise<StudioResult> {
   const session = await editingSession();
   if (!session) return { ok: false, error: "Not signed in" };
-  const key = draftKey(session.name, slug, lang);
+  const key = draftKey(imprint.id, session.name, slug, lang);
   const draft = getDraft(key);
   if (!draft) return { ok: false, error: "Draft expired — reload the page" };
   setDraft(key, applyOp(draft, op));
@@ -30,7 +30,7 @@ export async function resetDraftAction(
 ): Promise<void> {
   const session = await editingSession();
   if (!session) return;
-  clearDraft(draftKey(session.name, slug, lang));
+  clearDraft(draftKey(imprint.id, session.name, slug, lang));
 }
 
 /** Save = assert the draft as a new version of the page (bitemporal put). */
@@ -43,7 +43,7 @@ export async function savePageDraftAction(
   if (!session) return { ok: false, error: "Not signed in" };
   if (!writableStore) return { ok: false, error: "Editing requires DATABASE_URL" };
 
-  const key = draftKey(session.name, slug, lang);
+  const key = draftKey(imprint.id, session.name, slug, lang);
   const draft = getDraft(key);
   if (!draft) return { ok: false, error: "Draft expired — reload the page" };
 

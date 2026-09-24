@@ -12,6 +12,7 @@ export { ListScreen } from "./list";
 export { ItemEditScreen, emptyData } from "./item-edit";
 export { HistoryScreen } from "./history";
 export { adminMenu } from "./menu";
+export { clearDraft, draftKey, getDraft, setDraft } from "./drafts";
 export { createSessionAuth, type SessionAuth } from "./session";
 export { previewEnter, previewExit } from "./preview-routes";
 export { UsersScreen } from "./users-screen";

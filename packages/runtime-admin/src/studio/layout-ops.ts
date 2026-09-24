@@ -3,6 +3,7 @@ import type { LayoutRow } from "@imprint/content-core";
 /**
  * Pure mutations on a page draft (meta + body + rows), used by the studio's
  * server actions. Kept free of React so it's easy to reason about and test.
+ * Client-safe (no Next, no store): `@imprint/runtime-admin/studio`.
  */
 
 export type PageDraft = {

@@ -9,7 +9,8 @@
     "./layout": "./src/layout.ts",
     "./admin": "./src/admin/index.ts",
     "./forms": "./src/forms.ts",
-    "./admin-server": "./src/admin-server/index.ts"
+    "./admin-server": "./src/admin-server/index.ts",
+    "./studio": "./src/studio/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

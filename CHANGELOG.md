@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 4, stap 1: draftlogica van de studio naar het package.** De pure
+  layoutoperaties (`applyOp`, `PageDraft`, `DraftOp`) staan in
+  `@imprint/runtime-admin/studio` (client-safe), de serverside draftopslag in
+  `admin-server` (`draftKey`, `getDraft`, …). De draftsleutel bevat nu ook de
+  instantie, zodat twee sites in één proces elkaars drafts nooit zien. Test
+  verhuist mee.
 - **Browsertest voor de studio** (vangnet voor Fase 4): een nieuwe pagina
   componeren (instellingen, rij, hero-widget, aanmaken), live zien, historie,
   tweede versie via de studio. Onderweg twee kleine UX-punten gevonden en

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { applyOp, MAX_CELLS, MAX_SPAN, type PageDraft } from "../src/lib/layout-ops";
+import { applyOp, MAX_CELLS, MAX_SPAN, type PageDraft } from "../src/studio/layout-ops";
 
 /** Characterisation of the studio's pure draft mutations (architecture.md §5). */
 const W = (name: string) => ({ type: name, config: { name } });
