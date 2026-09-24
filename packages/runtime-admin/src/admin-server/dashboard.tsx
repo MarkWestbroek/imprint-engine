@@ -32,6 +32,43 @@ export async function DashboardScreen({ admin }: { admin: AdminContext }) {
         ))}
       </div>
 
+      {/* Diagnostics (Fase 6): what this instance runs with — plugins, their versions and what they bring. */}
+      <section className="mt-10 max-w-3xl rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-semibold">Extensions</h2>
+        <p className="mt-1 text-sm text-muted">
+          Plugins switched on in <code>imprint.config.ts</code>, and the content types they bring.
+          Widgets: {admin.imprint.widgets.names().length} in the catalogue.
+        </p>
+        {admin.plugins.length === 0 ? (
+          <p className="mt-3 text-sm text-muted">No plugins — the core types only.</p>
+        ) : (
+          <table className="mt-3 w-full text-sm">
+            <thead>
+              <tr className="border-b border-line text-left text-xs uppercase tracking-wide text-muted">
+                <th className="py-1.5 pr-4">Plugin</th>
+                <th className="py-1.5 pr-4">Version</th>
+                <th className="py-1.5 pr-4">Content types</th>
+                <th className="py-1.5">Provides</th>
+              </tr>
+            </thead>
+            <tbody>
+              {admin.plugins.map((p) => (
+                <tr key={p.name} className="border-b border-line">
+                  <td className="py-1.5 pr-4 font-mono">{p.name}</td>
+                  <td className="py-1.5 pr-4 text-muted">{p.version}</td>
+                  <td className="py-1.5 pr-4 text-muted">{(p.contentTypes ?? []).map((t) => t.name).join(", ") || "—"}</td>
+                  <td className="py-1.5 text-muted">
+                    {[p.screen && "screens", p.actions && "actions", p.publicRoute && "public route", (p.widgets ?? []).length > 0 && "widgets"]
+                      .filter(Boolean)
+                      .join(", ") || "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+
       {/* As-of preview (S6): browse the public site as it was/will be at a moment. */}
       <section className="mt-10 max-w-xl rounded-xl border border-line bg-surface p-5">
         <h2 className="font-semibold">Time travel</h2>

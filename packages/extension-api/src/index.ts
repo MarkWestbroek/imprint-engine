@@ -158,6 +158,7 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
   if (!(config.widgets instanceof WidgetTypeRegistry)) {
     throw new Error(`imprint.config (${config.id}): widgets must be a WidgetTypeRegistry`);
   }
+  checkPlugins(config.plugins ?? []);
   new ContentTypeCatalog(registryOf(config), config.contentTypes); // fail early on an unknown type
   if (config.session?.hours !== undefined && !(config.session.hours > 0)) {
     throw new Error(`imprint.config (${config.id}): session.hours must be positive`);
@@ -165,13 +166,40 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
   return config;
 }
 
-/** Every content type this instance knows: the core's, then the site's own. */
+const PLUGIN_NAME_RE = /^[a-z][a-z0-9-]*$/;
+
+/** Plugins are trusted code, but a configuration mistake should say so at startup, not at the first request. */
+function checkPlugins(plugins: ImprintPluginCore[]): void {
+  const seen = new Set<string>();
+  for (const p of plugins) {
+    if (!PLUGIN_NAME_RE.test(p.name)) throw new Error(`plugin name "${p.name}" must be lowercase letters, digits and dashes`);
+    if (!p.version) throw new Error(`plugin "${p.name}" needs a version`);
+    if (seen.has(p.name)) throw new Error(`plugin "${p.name}" is configured twice`);
+    seen.add(p.name);
+  }
+}
+
+/**
+ * Every content type this instance knows: the core's, each plugin's, then the
+ * site's own — built up plugin by plugin, so a clash names its owner.
+ */
 function registryOf(cfg: ImprintConfig): ContentTypeRegistry {
-  return ContentTypeRegistry.of(
-    coreContentTypeDefinitions,
-    ...(cfg.plugins ?? []).map((p) => p.contentTypes ?? []),
-    cfg.contentTypeDefinitions ?? []
-  );
+  const groups: ContentTypeDefinition[][] = [coreContentTypeDefinitions];
+  for (const p of cfg.plugins ?? []) {
+    const defs = p.contentTypes ?? [];
+    for (const def of defs) {
+      if (groups.flat().some((d) => d.name === def.name)) {
+        throw new Error(`plugin "${p.name}" defines content type "${def.name}", which already exists`);
+      }
+    }
+    groups.push(defs);
+  }
+  for (const def of cfg.contentTypeDefinitions ?? []) {
+    if (groups.flat().some((d) => d.name === def.name)) {
+      throw new Error(`site content type "${def.name}" already exists (core or a plugin)`);
+    }
+  }
+  return ContentTypeRegistry.of(...groups, cfg.contentTypeDefinitions ?? []);
 }
 
 /** Build the live instance from a config. Uncached: every call opens its own pools. */

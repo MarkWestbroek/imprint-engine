@@ -18,7 +18,7 @@
     "start": "npm run start --workspace=musicbrain",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
+    "test": "node scripts/check-boundaries.mjs && npm run test --workspaces --if-present",
     "test:db": "node scripts/test-db.mjs",
     "test:e2e": "npm run test:e2e --workspace=musicbrain --",
     "test:e2e:dev": "npm run test:e2e:dev --workspace=musicbrain --",

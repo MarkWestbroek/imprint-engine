@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 6, eerste slice (hardening).** Een verkeerd geconfigureerde plugin
+  faalt bij het opstarten met een bruikbare fout: ongeldige naam, ontbrekende
+  versie, twee keer geconfigureerd, of een contenttype dat al bestaat (de
+  fout noemt de plugin). `npm test` begint met een grenscontrole
+  (`scripts/check-boundaries.mjs`): geen package importeert uit een site, en
+  `content-core`/`extension-api` blijven vrij van React en Next. Het
+  admin-dashboard toont onder **Extensions** de actieve plugins met versie,
+  contenttypen en wat ze leveren.
 - **Fase 5 af — stap 5, de exitproef.** De Imprint-site draait met
   `plugins: []` en kent planning noch wiki: niet in het menu, `/admin/planning`,
   `/admin/wiki` en `/help` zijn 404, het modeloverzicht toont de typen niet

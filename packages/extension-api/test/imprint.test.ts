@@ -131,3 +131,32 @@ describe("createImprint", () => {
     assert.notEqual(createImprint({ ...cfg, id: "other" }), a);
   });
 });
+
+describe("plugins in the config", () => {
+  const plugin = (name: string, types: string[] = []) => ({
+    name,
+    version: "0.1.0",
+    contentTypes: types.map((t) => ({ name: t, schema: z.object({ slug: z.string() }), label: t, flags: ["listable" as const] })),
+  });
+
+  it("registers a plugin's content types next to the core's, and exposes the plugins", async () => {
+    const imprint = resolveImprint({
+      id: "plugged",
+      store: { contentDir: await contentDir() },
+      widgets: registry(),
+      plugins: [plugin("recipes", ["recipe"])],
+    });
+    assert.ok(imprint.contentTypes.has("recipe", "listable"));
+    assert.ok(imprint.contentTypes.has("page"));
+    assert.deepEqual(imprint.plugins.map((p) => p.name), ["recipes"]);
+  });
+
+  it("refuses a bad name, a missing version, a plugin configured twice, and a type that already exists", async () => {
+    const base = { id: "plugged-2", store: { contentDir: await contentDir() }, widgets: registry() };
+    assert.throws(() => defineImprint({ ...base, plugins: [{ ...plugin("Bad Name") }] }), /must be lowercase/);
+    assert.throws(() => defineImprint({ ...base, plugins: [{ name: "x", version: "" }] }), /needs a version/);
+    assert.throws(() => defineImprint({ ...base, plugins: [plugin("a"), plugin("a")] }), /configured twice/);
+    assert.throws(() => defineImprint({ ...base, plugins: [plugin("pages-again", ["page"])] }), /plugin "pages-again" defines content type "page", which already exists/);
+    assert.throws(() => defineImprint({ ...base, plugins: [plugin("a", ["thing"]), plugin("b", ["thing"])] }), /plugin "b" defines content type "thing"/);
+  });
+});

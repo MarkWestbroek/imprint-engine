@@ -88,7 +88,7 @@ Praktischer nog: bewaar het in een wachtwoordmanager, dan hoeft dit nooit.
 Links staat een **activiteitenbalk** (zoals in VS Code): vijf werkgebieden,
 elk met een eigen icoon. Klik een icoon en het paneel ernaast toont de items:
 
-- **Overzicht** — het dashboard (tellingen + Time travel).
+- **Overzicht** — het dashboard (tellingen, Extensions: de actieve plugins, Time travel).
 - **Content** — je dagelijkse werk: Pages, de catalogus (Products, Components,
   Board specs, Releases) en Planning.
 - **Vormgeving** — Menus, Themes, Default views.

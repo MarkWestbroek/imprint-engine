@@ -303,6 +303,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
         de site `planningWidgets`/`planningViewers` zelf (de catalogus is
         van de site); een `WidgetTypeRegistry.has()`-merge in `createImprint`
         plus viewers via de context zou dat één regel minder maken. _(S)_
+      - [x] **Fase 6, eerste slice** (september 2026) — pluginchecks bij
+        opstarten, grenscontrole in `npm test`, Extensions op het dashboard.
+      - [ ] **Fase 6, rest (vragen aan Mark)** — (a) een
+        engine-compatibiliteitsveld per plugin (`engine: "^0.10"`) dat
+        `createImprint` controleert; (b) een healthcheck-endpoint
+        (`/api/health`: database, plugins, migratiestand) voor de VPS;
+        (c) wat een pagina doet met een widget die niet meer geregistreerd
+        is — nu een harde fout bij lezen (open vraag 8 van Fase 3: melding
+        in de preview?); (d) pluginmigraties in het drizzle-journal zodra een
+        plugin een eigen tabel nodig heeft. _(M)_
       - [ ] **Sessies intrekbaar** — besloten in het ontwerp Fase 3 (§1),
         maar nog zonder stap in het plan: een sessietabel of een
         versieteller per gebruiker, zodat een wachtwoordreset of uitloggen
