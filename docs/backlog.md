@@ -62,9 +62,30 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [x] ~~**`divider` / spacer**~~ — gedaan in 0.9.0.
 - [x] ~~**`video`**~~ — gedaan in 0.9.0 (YouTube/Vimeo privacy-embed of bestand;
       rest van W3).
-- [ ] **`search`** — zoeken in content (vergt eerst een zoekindex). _(idee; L)_
+- [x] ~~**quote, code, mermaid, v3model, tabs, cards, buttons, logos, toc,
+      breadcrumb, audio, pdf, file, timeline, mediatext, people, testimonial,
+      pricing**~~ — gedaan in 0.12.0 (plank §2).
+- [ ] **`search`** — zoeken in content; plugin met `SearchAdapter`, eerst
+      Postgres FTS, dan Meilisearch (plank §4.2). _(L)_
 - [ ] **Lijst-varianten** — de `list`-widget kan alleen links; Pleio doet ook
       *feed* en *slider* als weergavevorm. _(idee; M)_
+- [ ] **Bronnen-laag** — `source` (URL, secret bij naam, TTL, mapping) +
+      `readSource()` in de engine + viewwidgets (`table`/`cards`/`chart`/`stat`
+      op een bron); `list` krijgt een bron-modus; `rss` als XML-bron. Plank §1.
+      _(M/L)_
+- [ ] **Host-allow-list voor serverside fetch** — `api`, `album`, `v3model`
+      (url) en straks `source` halen door redacteuren ingevulde URL's op de
+      server op: SSRF. Allow-list in `imprint.config.ts`, default alleen https
+      naar publieke hosts. _(S; vóór de bronnen-laag)_
+- [ ] **`chart`** (Chart.js, MIT) — mét de bronnen-laag. _(M)_
+- [ ] **Snippets** (Wagtail): herbruikbare widget-instanties over pagina's
+      heen, op één plek bewerkt. _(M)_
+- [ ] **`example`-config per widget** (Gutenberg `block.json`) voor een preview
+      in de catalogus-dialoog. _(S)_
+- [ ] **V3-viewer uitlijnen op een echte Omnium-export** — de vorm van
+      `positie`/`diagrammen[]`/`notities[]` is niet gespecificeerd; nu: `positie:
+      {x,y}` op de entiteit, anders raster per domein. Mark levert een export.
+      _(S)_
 
 ### Widget-contract
 - [ ] **`help` als markdown** i.p.v. één regel, met een "meer info"-uitklap in de

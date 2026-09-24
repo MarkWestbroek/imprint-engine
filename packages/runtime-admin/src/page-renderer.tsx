@@ -36,6 +36,8 @@ export type WidgetContext = {
   writableStore: WritableContentStore | null;
   /** Per request: {} for visitors, asOf + drafts in the as-of preview. Spread into store reads. */
   readOptions: ReadOptions;
+  /** The page being rendered (set by the renderer/studio); breadcrumb-like widgets read it. */
+  page?: { slug: string; title: string };
 };
 
 /** What a widget viewer receives. */
@@ -85,6 +87,7 @@ export function PageRenderer({
   ctx: WidgetContext;
 }) {
   const rows = layoutRows(page.layout);
+  ctx = { ...ctx, page: { slug: page.slug, title: page.title } };
   return (
     <div>
       {/* Empty title = the layout owns its own header (e.g. a subjectheader widget). */}

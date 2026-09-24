@@ -259,6 +259,18 @@ annotations**, **List** (links die de contentstructuur volgen), **Template**
 **API content**, **Embed**, **Kanban board** (statische kaarten),
 **Planning board** (levend bord uit Planning-content; zie boven).
 
+Sinds 0.12: **Quote** (citaat met bron; "pull" maakt hem groot), **Code**
+(syntax-highlighting, licht/donker volgt de site), **Mermaid diagram**
+(diagram uit tekst — flowchart, sequence, class, gantt — getekend in de
+browser), **V3 model diagram** (een V3-metamodel als schema: entiteiten in
+hun domeinkleur, op positie of in een raster, met relaties; plak de JSON of
+geef een URL), **Tabs**, **Cards / features** (raster van kaartjes met icoon,
+kop, tekst, link), **Buttons**, **Logo cloud**, **Table of contents** (links
+naar de koppen op de pagina, uit welke widget ze ook komen), **Breadcrumb**
+(Home › sectie › pagina, uit de slug), **Audio**, **PDF**, **File download**,
+**Timeline**, **Media & text** (beeld naast tekst), **People / team**,
+**Testimonials** en **Pricing**.
+
 Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 
 ## Wiki's bewerken

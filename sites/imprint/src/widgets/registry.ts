@@ -17,6 +17,23 @@ export const widgetCatalog = [
   standardWidgets.image,
   standardWidgets.album,
   standardWidgets.divider,
+  standardWidgets.quote,
+  standardWidgets.code,
+  standardWidgets.mermaid,
+  standardWidgets.v3model,
+  standardWidgets.tabs,
+  standardWidgets.cards,
+  standardWidgets.buttons,
+  standardWidgets.logos,
+  standardWidgets.toc,
+  standardWidgets.breadcrumb,
+  standardWidgets.file,
+  standardWidgets.pdf,
+  standardWidgets.timeline,
+  standardWidgets.mediatext,
+  standardWidgets.people,
+  standardWidgets.testimonial,
+  standardWidgets.pricing,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

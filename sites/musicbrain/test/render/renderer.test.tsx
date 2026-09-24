@@ -30,7 +30,8 @@ let ctx: WidgetContext;
 
 before(async () => {
   store = await buildStore();
-  ctx = { store, writableStore: store, readOptions: {} };
+  // `page` is what the renderer sets on a real page; the breadcrumb widget reads it.
+  ctx = { store, writableStore: store, readOptions: {}, page: { slug: "about/team", title: "Team" } };
   installFetchMock(CANNED_RESPONSES);
 });
 

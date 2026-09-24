@@ -96,6 +96,7 @@ export async function PageStudioScreen({
     store: admin.imprint.storeFor(who),
     writableStore: guardReads(store, who, admin.imprint.pdp),
     readOptions: { ...(await readOpts()), includeDrafts: true },
+    page: { slug: slug ?? String(draft.meta.slug ?? ""), title: String(draft.meta.title ?? "") },
   };
   const widgetSchemas = admin.forms.widgets();
   const widgetLabel = (type: string) => widgetSchemas.find((w) => w.name === type)?.label ?? type;

@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Achttien nieuwe standaardwidgets** (design/plank-widgets-en-plugins.md
+  §2): `quote`, `code` (shiki, server-side, licht/donker via `light-dark()`),
+  `mermaid` (client-island, lazy), `v3model` (het V3-metamodel als SVG-schema:
+  domeinkleur, `positie` of raster, relaties/overerving), `tabs`, `cards`,
+  `buttons`, `logos`, `toc` (leest de koppen van de pagina; markdown-koppen
+  krijgen nu een `id`), `breadcrumb` (de `WidgetContext` kent nu `page`),
+  `audio`, `pdf`, `file`, `timeline`, `mediatext`, `people`, `testimonial`,
+  `pricing`. Beide sites hebben ze in de catalogus; goldens per widget.
+- **Plank**: `docs/design/plank-widgets-en-plugins.md` — de brainstorm over
+  widgets/plugins elders, de bronnen-laag (views op andere data, SSRF-
+  allow-list), agenda-standaarden (iCalendar/CalDAV), zoekopties, AI, backup
+  en de beeldbibliotheek als kernfunctie.
 - **Studio: meer ruimte voor het canvas.** Het instellingenpaneel klapt in
   (« / ») zodat de pagina op ware breedte te zien is; een klik op een widget
   klapt het weer uit. Ook het itemspaneel van de admin zelf klapt in («, of

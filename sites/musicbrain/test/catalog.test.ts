@@ -13,10 +13,12 @@ import { layoutRows } from "@imprint/runtime-admin/layout";
  * from the site's point of view.
  */
 const CATALOG = [
-  "accordion", "album", "api", "board", "boardspec", "callout", "carousel", "components",
-  "divider", "downloads", "embed", "gallery", "hero", "image", "itinerary",
-  "kanban", "list", "map", "planning", "posts", "products", "releases",
-  "specs", "spectable", "subjectheader", "table", "template", "text", "treeview", "video",
+  "accordion", "album", "api", "audio", "board", "boardspec", "breadcrumb", "buttons", "callout",
+  "cards", "carousel", "code", "components", "divider", "downloads", "embed", "file", "gallery",
+  "hero", "image", "itinerary", "kanban", "list", "logos", "map", "mediatext", "mermaid",
+  "pdf", "people", "planning", "posts", "pricing", "products", "quote", "releases",
+  "specs", "spectable", "subjectheader", "table", "tabs", "template", "testimonial", "text",
+  "timeline", "toc", "treeview", "v3model", "video",
 ];
 
 /**
@@ -53,6 +55,24 @@ const STUDIO_CATALOG: [name: string, label: string, version: string, help: strin
   ["embed", "Embed (iframe)", "1.0.0", "Embed an external page in a sandboxed iframe."],
   ["treeview", "Treeview", "1.0.0", "A nested link tree; can auto-build from page slugs."],
   ["api", "API content", "1.0.0", "Fetch a JSON endpoint and show selected fields."],
+  ["quote", "Quote", "1.0.0", 'A quotation with its source; "pull" makes it big.'],
+  ["code", "Code", "1.0.0", "A code block with syntax highlighting (light/dark follow the site)."],
+  ["mermaid", "Mermaid diagram", "1.0.0", "A diagram from mermaid text (flowchart, sequence, class, gantt, …), drawn in the browser."],
+  ["v3model", "V3 model diagram", "1.0.0", "A V3 metamodel as a diagram: entities in their domain colour, on their position or in a grid, with relations."],
+  ["tabs", "Tabs", "1.0.0", "Tabbed panels of markdown; the first is open by default."],
+  ["cards", "Cards / features", "1.0.0", "A grid of cards: icon, title, text, optional link."],
+  ["buttons", "Buttons", "1.0.0", "A row of buttons (primary, secondary or ghost)."],
+  ["logos", "Logo cloud", "1.0.0", "A row of logos, grey until hovered, each optionally linked."],
+  ["toc", "Table of contents", "1.0.0", "Links to the headings on this page, whichever widget they come from."],
+  ["breadcrumb", "Breadcrumb", "1.0.0", "Home › section › page, from the page's slug; parents that exist as pages get their title."],
+  ["audio", "Audio", "1.0.0", "An audio player for a file (mp3, ogg, wav, …)."],
+  ["pdf", "PDF", "1.0.0", "A PDF shown inline, with a download link."],
+  ["file", "File download", "1.0.0", "One download link with a label and a note."],
+  ["timeline", "Timeline", "1.0.0", "Dated steps on a vertical line."],
+  ["mediatext", "Media & text", "1.0.0", "An image beside text, as one block."],
+  ["people", "People / team", "1.0.0", "Cards with photo, name, role, bio and links."],
+  ["testimonial", "Testimonials", "1.0.0", "Quotes with the name and role of who said them."],
+  ["pricing", "Pricing", "1.0.0", "Plans side by side with features and a button; one can be highlighted."],
   ["releases", "Releases", "1.0.0", "The latest releases from the content store."],
   ["products", "Products", "1.0.0", "A grid of products with their status."],
 ];

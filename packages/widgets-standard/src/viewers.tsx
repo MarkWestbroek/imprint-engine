@@ -4,10 +4,33 @@ import type { ContentType, Page } from "@imprint/content-core";
 import { Markdown, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
 import { Carousel, Gallery } from "./media-islands";
 import { MapIsland } from "./map-island";
+import { Tabs } from "./tabs-island";
+import { MermaidDiagram } from "./mermaid-island";
+import { TocList } from "./toc-island";
+import { highlightCode } from "./code-highlight";
+import { V3Diagram, type V3Model } from "./v3-diagram";
 import type {
   AccordionConfig,
   AlbumConfig,
   ApiConfig,
+  AudioConfig,
+  BreadcrumbConfig,
+  ButtonsConfig,
+  CardsConfig,
+  CodeConfig,
+  FileConfig,
+  LogosConfig,
+  MediaTextConfig,
+  MermaidConfig,
+  PdfConfig,
+  PeopleConfig,
+  PricingConfig,
+  QuoteConfig,
+  TabsConfig,
+  TestimonialConfig,
+  TimelineConfig,
+  TocConfig,
+  V3ModelConfig,
   CalloutConfig,
   CarouselConfig,
   DividerConfig,
@@ -772,6 +795,444 @@ async function ApiWidget({ config }: { config: ApiConfig }) {
   );
 }
 
+/* ---------- the 2026-09 batch (design/plank-widgets-en-plugins.md §2) ---------- */
+
+/** Grid columns that cap at `columns` and stack when the box gets narrow. */
+const gridCols = (columns: number, min = "12rem") => ({
+  gridTemplateColumns: `repeat(auto-fit, minmax(max(${min}, calc(${(100 / columns).toFixed(2)}% - 1rem)), 1fr))`,
+});
+
+/* eslint-disable @next/next/no-img-element -- arbitrary content/asset URLs */
+
+async function QuoteWidget({ config }: { config: QuoteConfig }) {
+  const source = config.source && (
+    <footer className="mt-3 text-sm text-muted">
+      —{" "}
+      {config.sourceUrl ? (
+        <a href={config.sourceUrl} className="hover:text-accent" rel="noreferrer">
+          {config.source}
+        </a>
+      ) : (
+        config.source
+      )}
+    </footer>
+  );
+  if (config.variant === "pull") {
+    return (
+      <blockquote className="my-2 border-l-4 border-accent py-2 pl-6">
+        <p className="font-serif text-2xl leading-snug tracking-tight text-foreground sm:text-3xl">{config.text}</p>
+        {source}
+      </blockquote>
+    );
+  }
+  return (
+    <blockquote className="rounded-xl border border-line bg-surface px-6 py-5">
+      <p className="text-lg leading-relaxed text-foreground">“{config.text}”</p>
+      {source}
+    </blockquote>
+  );
+}
+
+async function CodeWidget({ config }: { config: CodeConfig }) {
+  const html = await highlightCode(config.code, config.language);
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="overflow-hidden rounded-lg border border-line text-sm">
+        {config.filename && (
+          <div className="border-b border-line bg-surface px-3 py-1.5 font-mono text-xs text-muted">{config.filename}</div>
+        )}
+        <div
+          className={`overflow-x-auto [&_pre]:p-4 [&_pre]:leading-relaxed ${config.wrap ? "[&_pre]:whitespace-pre-wrap" : ""}`}
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function MermaidWidget({ config }: { config: MermaidConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <figure>
+        <MermaidDiagram code={config.code} theme={config.theme} />
+        {config.caption && <figcaption className="mt-2 text-center text-sm text-muted">{config.caption}</figcaption>}
+      </figure>
+    </WidgetFrame>
+  );
+}
+
+async function loadV3Model(config: V3ModelConfig): Promise<V3Model | string> {
+  try {
+    if (config.json?.trim()) return JSON.parse(config.json) as V3Model;
+    if (config.url) {
+      const res = await fetch(config.url, { next: { revalidate: 600 } });
+      if (!res.ok) return `Model not available (${res.status})`;
+      return (await res.json()) as V3Model;
+    }
+    return "Paste a V3 model or give a URL.";
+  } catch (e) {
+    return e instanceof Error ? e.message : String(e);
+  }
+}
+
+async function V3ModelWidget({ config }: { config: V3ModelConfig }) {
+  const model = await loadV3Model(config);
+  return (
+    <WidgetFrame title={config.title}>
+      {typeof model === "string" ? (
+        <p className="text-sm text-muted">{model}</p>
+      ) : (
+        <figure className="overflow-x-auto">
+          <V3Diagram model={model} showFields={config.showFields} maxWidth={config.maxWidth} />
+          {config.caption && <figcaption className="mt-2 text-center text-sm text-muted">{config.caption}</figcaption>}
+        </figure>
+      )}
+    </WidgetFrame>
+  );
+}
+
+async function TabsWidget({ config }: { config: TabsConfig }) {
+  if (config.tabs.length === 0) return null;
+  return (
+    <WidgetFrame title={config.title}>
+      <Tabs labels={config.tabs.map((t) => t.label)}>
+        {config.tabs.map((t, i) => (
+          <Markdown key={i}>{t.markdown}</Markdown>
+        ))}
+      </Tabs>
+    </WidgetFrame>
+  );
+}
+
+async function CardsWidget({ config }: { config: CardsConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="grid gap-4" style={gridCols(config.columns)}>
+        {config.items.map((item, i) => {
+          const body = (
+            <>
+              {item.icon && <div className="mb-2 text-2xl leading-none">{item.icon}</div>}
+              <h3 className="font-semibold">{item.title}</h3>
+              {item.markdown && (
+                <div className="mt-1 text-sm text-muted">
+                  <Markdown>{item.markdown}</Markdown>
+                </div>
+              )}
+            </>
+          );
+          const cls = "block rounded-xl border border-line bg-surface p-5";
+          return item.href ? (
+            <Link key={i} href={item.href} className={`${cls} hover:border-accent`}>
+              {body}
+            </Link>
+          ) : (
+            <div key={i} className={cls}>
+              {body}
+            </div>
+          );
+        })}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+const BUTTON_STYLES: Record<ButtonsConfig["items"][number]["style"], string> = {
+  primary: "bg-accent text-background hover:bg-accent-strong",
+  secondary: "border border-line text-foreground hover:border-accent",
+  ghost: "text-accent underline-offset-4 hover:underline",
+};
+const ALIGN: Record<ButtonsConfig["align"], string> = { left: "justify-start", center: "justify-center", right: "justify-end" };
+
+async function ButtonsWidget({ config }: { config: ButtonsConfig }) {
+  return (
+    <div className={`flex flex-wrap items-center gap-3 ${ALIGN[config.align]}`}>
+      {config.items.map((b, i) => (
+        <a
+          key={i}
+          href={b.href}
+          target={b.newTab ? "_blank" : undefined}
+          rel={b.newTab ? "noreferrer" : undefined}
+          className={`inline-flex items-center rounded-lg px-4 py-2 text-sm font-semibold ${BUTTON_STYLES[b.style]}`}
+        >
+          {b.label}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+async function LogosWidget({ config }: { config: LogosConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="grid items-center gap-6" style={gridCols(config.columns, "6rem")}>
+        {config.items.map((logo, i) => {
+          const img = (
+            <img
+              src={logo.src}
+              alt={logo.alt}
+              loading="lazy"
+              className={`mx-auto max-h-12 w-auto ${config.grayscale ? "opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" : ""}`}
+            />
+          );
+          return logo.href ? (
+            <a key={i} href={logo.href} rel="noreferrer" title={logo.alt}>
+              {img}
+            </a>
+          ) : (
+            <div key={i}>{img}</div>
+          );
+        })}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function TocWidget({ config }: { config: TocConfig }) {
+  return (
+    <nav data-toc aria-label={config.title} className="rounded-xl border border-line bg-surface px-5 py-4">
+      {config.title && <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">{config.title}</p>}
+      <TocList depth={Number(config.depth)} />
+    </nav>
+  );
+}
+
+const humanise = (segment: string) => segment.replace(/[-_]+/g, " ").replace(/^\w/, (c) => c.toUpperCase());
+
+async function BreadcrumbWidget({ config, ctx }: { config: BreadcrumbConfig; ctx: WidgetContext }) {
+  if (!ctx.page) return null;
+  const segments = ctx.page.slug.split("/").filter(Boolean);
+  const parents = await Promise.all(
+    segments.slice(0, -1).map(async (seg, i) => {
+      const slug = segments.slice(0, i + 1).join("/");
+      const page = await ctx.store.getPage(slug, ctx.readOptions);
+      return { href: `/${slug}`, label: page?.title || humanise(seg) };
+    })
+  );
+  const sep = <span className="text-muted/60">›</span>;
+  return (
+    <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted">
+      <Link href="/" className="hover:text-accent">
+        {config.homeLabel}
+      </Link>
+      {parents.map((p) => (
+        <span key={p.href} className="flex items-center gap-2">
+          {sep}
+          <Link href={p.href} className="hover:text-accent">
+            {p.label}
+          </Link>
+        </span>
+      ))}
+      {config.showCurrent && segments.length > 0 && (
+        <span className="flex items-center gap-2">
+          {sep}
+          <span aria-current="page" className="text-foreground">
+            {ctx.page.title || humanise(segments[segments.length - 1])}
+          </span>
+        </span>
+      )}
+    </nav>
+  );
+}
+
+async function AudioWidget({ config }: { config: AudioConfig }) {
+  return (
+    <figure className="rounded-xl border border-line bg-surface px-5 py-4">
+      {config.title && <p className="mb-2 font-semibold">{config.title}</p>}
+      <audio controls preload="metadata" loop={config.loop} src={config.src} className="w-full">
+        <a href={config.src}>{config.title ?? "Download audio"}</a>
+      </audio>
+      {config.caption && <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>}
+    </figure>
+  );
+}
+
+async function PdfWidget({ config }: { config: PdfConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <object data={config.src} type="application/pdf" className="w-full rounded-lg border border-line" style={{ height: config.height }}>
+        <p className="p-4 text-sm text-muted">
+          Your browser cannot show the PDF here.{" "}
+          <a href={config.src} className="text-accent underline">
+            Download it
+          </a>
+          .
+        </p>
+      </object>
+      <p className="mt-2 text-right text-xs">
+        <a href={config.src} download className="text-muted hover:text-accent">
+          Download PDF ↓
+        </a>
+      </p>
+    </WidgetFrame>
+  );
+}
+
+async function FileWidget({ config }: { config: FileConfig }) {
+  return (
+    <a
+      href={config.src}
+      download
+      className="flex items-center gap-4 rounded-xl border border-line bg-surface px-5 py-4 hover:border-accent"
+    >
+      <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-accent/15 font-mono text-sm font-bold text-accent">
+        ↓
+      </span>
+      <span className="min-w-0">
+        <span className="block font-semibold">{config.label}</span>
+        {(config.meta || config.note) && (
+          <span className="block text-sm text-muted">{[config.meta, config.note].filter(Boolean).join(" · ")}</span>
+        )}
+      </span>
+    </a>
+  );
+}
+
+const TIMELINE_TONES: Record<TimelineConfig["items"][number]["tone"], string> = {
+  accent: "bg-accent",
+  muted: "bg-muted",
+  info: "bg-sky-400",
+  warning: "bg-amber-400",
+};
+
+async function TimelineWidget({ config }: { config: TimelineConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <ol className="relative ml-2 border-l border-line pl-6">
+        {config.items.map((item, i) => (
+          <li key={i} className="relative pb-6 last:pb-0">
+            <span className={`absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full ${TIMELINE_TONES[item.tone]}`} />
+            {item.date && <time className="block font-mono text-xs uppercase tracking-wider text-muted">{item.date}</time>}
+            <h3 className="font-semibold">{item.title}</h3>
+            {item.markdown && (
+              <div className="mt-1 text-sm text-muted">
+                <Markdown>{item.markdown}</Markdown>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </WidgetFrame>
+  );
+}
+
+async function MediaTextWidget({ config }: { config: MediaTextConfig }) {
+  const image = (
+    <img src={config.src} alt={config.alt} loading="lazy" className="h-auto w-full rounded-xl border border-line" />
+  );
+  const cols = config.imageWidth === "third" ? "1fr 2fr" : "1fr 1fr";
+  return (
+    <WidgetFrame title={config.title}>
+      <div
+        className="grid items-center gap-6 sm:[grid-template-columns:var(--mt-cols)]"
+        style={{ ["--mt-cols" as string]: config.imageSide === "left" ? cols : cols.split(" ").reverse().join(" ") }}
+      >
+        {config.imageSide === "left" && image}
+        <div>
+          <Markdown>{config.markdown}</Markdown>
+          {config.buttonLabel && config.buttonUrl && (
+            <a
+              href={config.buttonUrl}
+              className="mt-3 inline-flex items-center rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-background hover:bg-accent-strong"
+            >
+              {config.buttonLabel}
+            </a>
+          )}
+        </div>
+        {config.imageSide === "right" && image}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function PeopleWidget({ config }: { config: PeopleConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="grid gap-4" style={gridCols(config.columns)}>
+        {config.items.map((p, i) => (
+          <div key={i} className="rounded-xl border border-line bg-surface p-5">
+            {p.photo && <img src={p.photo} alt={p.name} loading="lazy" className="mb-3 h-20 w-20 rounded-full border border-line object-cover" />}
+            <h3 className="font-semibold">{p.name}</h3>
+            {p.role && <p className="text-sm text-accent">{p.role}</p>}
+            {p.bio && <p className="mt-2 text-sm text-muted">{p.bio}</p>}
+            {p.links.length > 0 && (
+              <p className="mt-3 flex flex-wrap gap-3 text-sm">
+                {p.links.map((l, j) => (
+                  <a key={j} href={l.href} rel="noreferrer" className="text-muted hover:text-accent">
+                    {l.label} ↗
+                  </a>
+                ))}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function TestimonialWidget({ config }: { config: TestimonialConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="grid gap-4" style={gridCols(Math.min(3, Math.max(1, config.items.length)), "16rem")}>
+        {config.items.map((t, i) => (
+          <figure key={i} className="flex flex-col rounded-xl border border-line bg-surface p-5">
+            <blockquote className="flex-1 text-foreground">“{t.quote}”</blockquote>
+            <figcaption className="mt-4 flex items-center gap-3 text-sm">
+              {t.photo && <img src={t.photo} alt="" loading="lazy" className="h-9 w-9 rounded-full border border-line object-cover" />}
+              <span>
+                <span className="block font-semibold">{t.name}</span>
+                {t.role && <span className="block text-muted">{t.role}</span>}
+              </span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </WidgetFrame>
+  );
+}
+
+async function PricingWidget({ config }: { config: PricingConfig }) {
+  return (
+    <WidgetFrame title={config.title}>
+      <div className="grid items-stretch gap-4" style={gridCols(Math.min(4, Math.max(1, config.plans.length)), "14rem")}>
+        {config.plans.map((plan, i) => (
+          <div
+            key={i}
+            className={`flex flex-col rounded-xl border bg-surface p-5 ${plan.highlighted ? "border-accent ring-1 ring-accent" : "border-line"}`}
+          >
+            <h3 className="font-semibold">{plan.name}</h3>
+            <p className="mt-2">
+              <span className="text-3xl font-semibold tabular-nums">{plan.price}</span>
+              {plan.period && <span className="ml-1 text-sm text-muted">{plan.period}</span>}
+            </p>
+            {plan.description && <p className="mt-2 text-sm text-muted">{plan.description}</p>}
+            {plan.features.length > 0 && (
+              <ul className="mt-4 flex-1 space-y-1.5 text-sm">
+                {plan.features.map((f, j) => (
+                  <li key={j} className="flex gap-2">
+                    <span className="text-accent">✓</span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {plan.buttonLabel && plan.buttonUrl && (
+              <a
+                href={plan.buttonUrl}
+                className={`mt-5 inline-flex justify-center rounded-lg px-4 py-2 text-sm font-semibold ${
+                  plan.highlighted ? BUTTON_STYLES.primary : BUTTON_STYLES.secondary
+                }`}
+              >
+                {plan.buttonLabel}
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+    </WidgetFrame>
+  );
+}
+
 /** Widget type name → viewer, for the standard widgets. A site picks from it. */
 export const standardViewers = {
   text: TextWidget as WidgetViewer,
@@ -794,4 +1255,22 @@ export const standardViewers = {
   embed: EmbedWidget as WidgetViewer,
   treeview: TreeviewWidget as WidgetViewer,
   api: ApiWidget as WidgetViewer,
+  quote: QuoteWidget as WidgetViewer,
+  code: CodeWidget as WidgetViewer,
+  mermaid: MermaidWidget as WidgetViewer,
+  v3model: V3ModelWidget as WidgetViewer,
+  tabs: TabsWidget as WidgetViewer,
+  cards: CardsWidget as WidgetViewer,
+  buttons: ButtonsWidget as WidgetViewer,
+  logos: LogosWidget as WidgetViewer,
+  toc: TocWidget as WidgetViewer,
+  breadcrumb: BreadcrumbWidget as WidgetViewer,
+  audio: AudioWidget as WidgetViewer,
+  pdf: PdfWidget as WidgetViewer,
+  file: FileWidget as WidgetViewer,
+  timeline: TimelineWidget as WidgetViewer,
+  mediatext: MediaTextWidget as WidgetViewer,
+  people: PeopleWidget as WidgetViewer,
+  testimonial: TestimonialWidget as WidgetViewer,
+  pricing: PricingWidget as WidgetViewer,
 } satisfies Record<string, WidgetViewer>;

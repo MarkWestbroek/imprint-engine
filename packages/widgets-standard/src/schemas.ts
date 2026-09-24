@@ -298,6 +298,219 @@ export const ListConfig = z.object({
 });
 export type ListConfig = z.infer<typeof ListConfig>;
 
+/* ---------- the 2026-09 batch (design/plank-widgets-en-plugins.md §2) ---------- */
+
+export const QuoteConfig = z.object({
+  text: z.string().min(1),
+  source: z.string().optional(),
+  sourceUrl: z.string().optional(),
+  /** block = quiet, in a box; pull = large, for a highlight mid-page. */
+  variant: z.enum(["block", "pull"]).default("block"),
+});
+export type QuoteConfig = z.infer<typeof QuoteConfig>;
+
+/** Grammars bundled by the code widget (code-highlight.ts); "text" = no highlighting. */
+export const CODE_LANGUAGES = [
+  "text", "typescript", "tsx", "javascript", "json", "bash", "css", "html", "sql",
+  "python", "go", "rust", "c", "yaml", "markdown", "diff", "mermaid",
+] as const;
+export type CodeLanguage = (typeof CODE_LANGUAGES)[number];
+
+export const CodeConfig = z.object({
+  title: z.string().optional(),
+  language: z.enum(CODE_LANGUAGES).default("text"),
+  code: z.string(),
+  /** Shown above the block, like an editor tab. */
+  filename: z.string().optional(),
+  wrap: z.boolean().default(false),
+});
+export type CodeConfig = z.infer<typeof CodeConfig>;
+
+export const MermaidConfig = z.object({
+  title: z.string().optional(),
+  /** Mermaid source: flowchart, sequence, class, er, gantt, … */
+  code: z.string(),
+  theme: z.enum(["default", "dark", "neutral", "forest"]).default("default"),
+  caption: z.string().optional(),
+});
+export type MermaidConfig = z.infer<typeof MermaidConfig>;
+
+export const V3ModelConfig = z.object({
+  title: z.string().optional(),
+  /** A V3 model document, pasted. Wins over `url`. */
+  json: z.string().optional(),
+  /** Or fetched from here (absolute URL, e.g. https://site/api/meta?format=v3). */
+  url: z.string().optional(),
+  showFields: z.boolean().default(true),
+  /** Cap the drawing's width in pixels; it scales down on narrow screens. */
+  maxWidth: z.number().int().positive().optional(),
+  caption: z.string().optional(),
+});
+export type V3ModelConfig = z.infer<typeof V3ModelConfig>;
+
+export const TabsConfig = z.object({
+  title: z.string().optional(),
+  tabs: z.array(z.object({ label: z.string().min(1), markdown: z.string().default("") })).default([]),
+});
+export type TabsConfig = z.infer<typeof TabsConfig>;
+
+export const CardsConfig = z.object({
+  title: z.string().optional(),
+  columns: z.number().int().min(1).max(4).default(3),
+  items: z
+    .array(
+      z.object({
+        /** An emoji or short glyph shown above the title. */
+        icon: z.string().optional(),
+        title: z.string().min(1),
+        markdown: z.string().default(""),
+        href: z.string().optional(),
+      })
+    )
+    .default([]),
+});
+export type CardsConfig = z.infer<typeof CardsConfig>;
+
+export const ButtonsConfig = z.object({
+  items: z
+    .array(
+      z.object({
+        label: z.string().min(1),
+        href: z.string().min(1),
+        style: z.enum(["primary", "secondary", "ghost"]).default("primary"),
+        newTab: z.boolean().default(false),
+      })
+    )
+    .default([]),
+  align: z.enum(["left", "center", "right"]).default("left"),
+});
+export type ButtonsConfig = z.infer<typeof ButtonsConfig>;
+
+export const LogosConfig = z.object({
+  title: z.string().optional(),
+  items: z.array(z.object({ src: z.string().min(1), alt: z.string().default(""), href: z.string().optional() })).default([]),
+  columns: z.number().int().min(2).max(8).default(5),
+  /** Grey until hovered. */
+  grayscale: z.boolean().default(true),
+});
+export type LogosConfig = z.infer<typeof LogosConfig>;
+
+export const TocConfig = z.object({
+  title: z.string().default("On this page"),
+  /** Deepest heading level to list. */
+  depth: z.enum(["2", "3"]).default("3"),
+});
+export type TocConfig = z.infer<typeof TocConfig>;
+
+export const BreadcrumbConfig = z.object({
+  homeLabel: z.string().default("Home"),
+  showCurrent: z.boolean().default(true),
+});
+export type BreadcrumbConfig = z.infer<typeof BreadcrumbConfig>;
+
+export const AudioConfig = z.object({
+  src: z.string().min(1),
+  title: z.string().optional(),
+  caption: z.string().optional(),
+  loop: z.boolean().default(false),
+});
+export type AudioConfig = z.infer<typeof AudioConfig>;
+
+export const PdfConfig = z.object({
+  src: z.string().min(1),
+  title: z.string().optional(),
+  height: z.number().int().positive().default(600),
+});
+export type PdfConfig = z.infer<typeof PdfConfig>;
+
+export const FileConfig = z.object({
+  src: z.string().min(1),
+  label: z.string().min(1),
+  /** Free text, e.g. "PDF · 1.2 MB". */
+  meta: z.string().optional(),
+  note: z.string().optional(),
+});
+export type FileConfig = z.infer<typeof FileConfig>;
+
+export const TimelineConfig = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        date: z.string().default(""),
+        title: z.string().min(1),
+        markdown: z.string().default(""),
+        tone: z.enum(["accent", "muted", "info", "warning"]).default("accent"),
+      })
+    )
+    .default([]),
+});
+export type TimelineConfig = z.infer<typeof TimelineConfig>;
+
+export const MediaTextConfig = z.object({
+  title: z.string().optional(),
+  src: z.string().min(1),
+  alt: z.string().default(""),
+  markdown: z.string().default(""),
+  imageSide: z.enum(["left", "right"]).default("left"),
+  imageWidth: z.enum(["third", "half"]).default("half"),
+  buttonLabel: z.string().optional(),
+  buttonUrl: z.string().optional(),
+});
+export type MediaTextConfig = z.infer<typeof MediaTextConfig>;
+
+export const PeopleConfig = z.object({
+  title: z.string().optional(),
+  columns: z.number().int().min(1).max(4).default(3),
+  items: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        role: z.string().optional(),
+        photo: z.string().optional(),
+        bio: z.string().optional(),
+        links: z.array(z.object({ label: z.string().min(1), href: z.string().min(1) })).default([]),
+      })
+    )
+    .default([]),
+});
+export type PeopleConfig = z.infer<typeof PeopleConfig>;
+
+export const TestimonialConfig = z.object({
+  title: z.string().optional(),
+  items: z
+    .array(
+      z.object({
+        quote: z.string().min(1),
+        name: z.string().min(1),
+        role: z.string().optional(),
+        photo: z.string().optional(),
+      })
+    )
+    .default([]),
+});
+export type TestimonialConfig = z.infer<typeof TestimonialConfig>;
+
+export const PricingConfig = z.object({
+  title: z.string().optional(),
+  plans: z
+    .array(
+      z.object({
+        name: z.string().min(1),
+        price: z.string().min(1),
+        /** e.g. "/ month"; empty for one-off. */
+        period: z.string().optional(),
+        description: z.string().optional(),
+        features: z.array(z.string()).default([]),
+        buttonLabel: z.string().optional(),
+        buttonUrl: z.string().optional(),
+        highlighted: z.boolean().default(false),
+      })
+    )
+    .default([]),
+});
+export type PricingConfig = z.infer<typeof PricingConfig>;
+
 /**
  * The standard widgets, each with its own `version` (a widget is a component
  * of Imprint) and `help` (a one-line manual shown in the studio sidebar).
@@ -323,4 +536,22 @@ export const standardWidgets = {
   embed: { name: "embed", label: "Embed (iframe)", version: "1.0.0", help: "Embed an external page in a sandboxed iframe.", configSchema: EmbedConfig },
   treeview: { name: "treeview", label: "Treeview", version: "1.0.0", help: "A nested link tree; can auto-build from page slugs.", configSchema: TreeviewConfig },
   api: { name: "api", label: "API content", version: "1.0.0", help: "Fetch a JSON endpoint and show selected fields.", configSchema: ApiConfig },
+  quote: { name: "quote", label: "Quote", version: "1.0.0", help: "A quotation with its source; \"pull\" makes it big.", configSchema: QuoteConfig },
+  code: { name: "code", label: "Code", version: "1.0.0", help: "A code block with syntax highlighting (light/dark follow the site).", configSchema: CodeConfig },
+  mermaid: { name: "mermaid", label: "Mermaid diagram", version: "1.0.0", help: "A diagram from mermaid text (flowchart, sequence, class, gantt, …), drawn in the browser.", configSchema: MermaidConfig },
+  v3model: { name: "v3model", label: "V3 model diagram", version: "1.0.0", help: "A V3 metamodel as a diagram: entities in their domain colour, on their position or in a grid, with relations.", configSchema: V3ModelConfig },
+  tabs: { name: "tabs", label: "Tabs", version: "1.0.0", help: "Tabbed panels of markdown; the first is open by default.", configSchema: TabsConfig },
+  cards: { name: "cards", label: "Cards / features", version: "1.0.0", help: "A grid of cards: icon, title, text, optional link.", configSchema: CardsConfig },
+  buttons: { name: "buttons", label: "Buttons", version: "1.0.0", help: "A row of buttons (primary, secondary or ghost).", configSchema: ButtonsConfig },
+  logos: { name: "logos", label: "Logo cloud", version: "1.0.0", help: "A row of logos, grey until hovered, each optionally linked.", configSchema: LogosConfig },
+  toc: { name: "toc", label: "Table of contents", version: "1.0.0", help: "Links to the headings on this page, whichever widget they come from.", configSchema: TocConfig },
+  breadcrumb: { name: "breadcrumb", label: "Breadcrumb", version: "1.0.0", help: "Home › section › page, from the page's slug; parents that exist as pages get their title.", configSchema: BreadcrumbConfig },
+  audio: { name: "audio", label: "Audio", version: "1.0.0", help: "An audio player for a file (mp3, ogg, wav, …).", configSchema: AudioConfig },
+  pdf: { name: "pdf", label: "PDF", version: "1.0.0", help: "A PDF shown inline, with a download link.", configSchema: PdfConfig },
+  file: { name: "file", label: "File download", version: "1.0.0", help: "One download link with a label and a note.", configSchema: FileConfig },
+  timeline: { name: "timeline", label: "Timeline", version: "1.0.0", help: "Dated steps on a vertical line.", configSchema: TimelineConfig },
+  mediatext: { name: "mediatext", label: "Media & text", version: "1.0.0", help: "An image beside text, as one block.", configSchema: MediaTextConfig },
+  people: { name: "people", label: "People / team", version: "1.0.0", help: "Cards with photo, name, role, bio and links.", configSchema: PeopleConfig },
+  testimonial: { name: "testimonial", label: "Testimonials", version: "1.0.0", help: "Quotes with the name and role of who said them.", configSchema: TestimonialConfig },
+  pricing: { name: "pricing", label: "Pricing", version: "1.0.0", help: "Plans side by side with features and a button; one can be highlighted.", configSchema: PricingConfig },
 } as const;

@@ -429,6 +429,60 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "product-without-components", config: {}, subject: "product:relay" },
     { name: "no-subject", config: {} },
   ],
+  quote: [
+    { name: "block-with-source", config: { text: "Analog is a feeling.", source: "Mark", sourceUrl: "https://example.test/mark" } },
+    { name: "pull", config: { text: "Less patching, more playing.", variant: "pull" } },
+  ],
+  code: [
+    { name: "typescript", config: { title: "Example", language: "typescript", filename: "store.ts", code: "export const x: number = 1;\n// comment" } },
+    { name: "plain-wrapped", config: { code: "no highlighting here", wrap: true } },
+  ],
+  mermaid: [
+    { name: "flowchart", config: { title: "Flow", code: "flowchart LR\n  A --> B", caption: "Two boxes" } },
+  ],
+  v3model: [
+    { name: "auto-layout", config: { title: "Model", json: "{\"naam\":\"Demo\",\"domeinen\":[{\"naam\":\"redactie\",\"kleur\":\"#6366f1\"},{\"naam\":\"site\",\"kleur\":\"#34d399\"}],\"entiteiten\":[{\"typenaam\":\"Artikel\",\"domein\":\"redactie\",\"gegevenselementen\":[{\"naam\":\"Kop\",\"momentvoorkomen\":\"enkelvoudig\",\"velden\":[{\"naam\":\"titel\",\"type\":\"string\",\"verplicht\":true},{\"naam\":\"slug\",\"type\":\"string\"}]},{\"naam\":\"Body\",\"momentvoorkomen\":\"meervoudig\",\"velden\":[{\"naam\":\"tekst\",\"type\":\"string\"}]}],\"relaties\":[{\"naam\":\"auteur\",\"doelEntiteit\":\"Auteur\",\"doelKardinaliteit\":\"1\"}]},{\"typenaam\":\"Auteur\",\"domein\":\"redactie\",\"gegevenselementen\":[{\"naam\":\"Profiel\",\"velden\":[{\"naam\":\"naam\",\"type\":\"string\",\"verplicht\":true},{\"naam\":\"email\",\"type\":\"string\",\"format\":\"email\"}]}]},{\"typenaam\":\"Pagina\",\"domein\":\"site\",\"gegevenselementen\":[{\"naam\":\"Meta\",\"velden\":[{\"naam\":\"slug\",\"type\":\"string\"},{\"naam\":\"titel\",\"type\":\"string\"}]}]}]}" } },
+    { name: "positioned-no-fields", config: { json: "{\"naam\":\"Positioned\",\"domeinen\":[{\"naam\":\"a\",\"kleur\":\"#f5a623\"}],\"entiteiten\":[{\"typenaam\":\"Links\",\"domein\":\"a\",\"positie\":{\"x\":10,\"y\":10},\"gegevenselementen\":[{\"naam\":\"G\",\"velden\":[{\"naam\":\"x\",\"type\":\"number\"}]}],\"relaties\":[{\"doelEntiteit\":\"Rechts\",\"doelKardinaliteit\":\"0..*\"}]},{\"typenaam\":\"Rechts\",\"domein\":\"a\",\"positie\":{\"x\":400,\"y\":120},\"erft\":\"Links\"}]}", showFields: false, maxWidth: 600 } },
+    { name: "invalid-json", config: { json: "{not json" } },
+    { name: "nothing", config: {} },
+  ],
+  tabs: [
+    { name: "two", config: { title: "Docs", tabs: [{ label: "Install", markdown: "Run **npm i**." }, { label: "Use", markdown: "Then play." }] } },
+    { name: "empty", config: {} },
+  ],
+  cards: [
+    { name: "linked", config: { title: "Why", columns: 2, items: [{ icon: "⚡", title: "Fast", markdown: "Sub-5 ms.", href: "/specs" }, { title: "Open", markdown: "MIT licensed." }] } },
+  ],
+  buttons: [
+    { name: "three-styles", config: { align: "center", items: [{ label: "Buy", href: "/buy" }, { label: "Docs", href: "/docs", style: "secondary" }, { label: "Source", href: "https://github.test", style: "ghost", newTab: true }] } },
+  ],
+  logos: [
+    { name: "linked-and-plain", config: { title: "Used by", columns: 3, items: [{ src: "/logos/a.svg", alt: "A", href: "https://a.test" }, { src: "/logos/b.svg", alt: "B" }] } },
+  ],
+  toc: [{ name: "default", config: {} }],
+  breadcrumb: [
+    { name: "with-parent", config: {} },
+    { name: "home-only-label", config: { homeLabel: "Start", showCurrent: false } },
+  ],
+  audio: [{ name: "with-caption", config: { src: "/audio/demo.mp3", title: "Demo", caption: "Recorded live" } }],
+  pdf: [{ name: "default", config: { src: "/docs/manual.pdf", title: "Manual", height: 300 } }],
+  file: [{ name: "with-meta", config: { src: "/dl/fw.bin", label: "Firmware v0.2", meta: "BIN · 120 kB", note: "sha256 in release notes" } }],
+  timeline: [
+    { name: "three", config: { title: "Roadmap", items: [{ date: "2026-01", title: "Proto", markdown: "First **board**." }, { date: "2026-06", title: "Beta", tone: "info" }, { title: "Launch", tone: "warning" }] } },
+  ],
+  mediatext: [
+    { name: "image-left-half", config: { src: "/img/board.jpg", alt: "Board", markdown: "The **board**.", buttonLabel: "More", buttonUrl: "/more" } },
+    { name: "image-right-third", config: { title: "Side", src: "/img/board.jpg", markdown: "Text.", imageSide: "right", imageWidth: "third" } },
+  ],
+  people: [
+    { name: "two", config: { title: "Team", columns: 2, items: [{ name: "Mark", role: "Founder", photo: "/p/mark.jpg", bio: "Builds brains.", links: [{ label: "GitHub", href: "https://github.test/mark" }] }, { name: "Ada" }] } },
+  ],
+  testimonial: [
+    { name: "two", config: { items: [{ quote: "Changed my rig.", name: "Sam", role: "Producer", photo: "/p/sam.jpg" }, { quote: "Solid.", name: "Kim" }] } },
+  ],
+  pricing: [
+    { name: "three-plans", config: { title: "Plans", plans: [{ name: "Kit", price: "€ 99", description: "DIY", features: ["PCB", "Panel"], buttonLabel: "Order", buttonUrl: "/kit" }, { name: "Built", price: "€ 199", period: "one-off", features: ["Assembled", "Tested"], buttonLabel: "Order", buttonUrl: "/built", highlighted: true }, { name: "Support", price: "€ 5", period: "/ month" }] } },
+  ],
 };
 
 /** Whole pages through PageRenderer (layout parsed by the registry, as the store does). */

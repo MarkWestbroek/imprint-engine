@@ -1,0 +1,111 @@
+<!-- case: auto-layout -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<h2 class="eyebrow mb-3">Model</h2>
+<figure class="overflow-x-auto">
+<svg viewBox="0 0 520 307" width="100%" style="height:auto" class="text-foreground" role="img" aria-label="Demo" font-family="ui-sans-serif, system-ui, sans-serif">
+<defs>
+<marker id="v3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+<path d="M0 0L10 5L0 10z" fill="currentColor">
+</path>
+</marker>
+<marker id="v3-inherit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+<path d="M0 0L10 5L0 10z" fill="var(--color-surface, #fff)" stroke="currentColor">
+</path>
+</marker>
+</defs>
+<text x="20" y="36" font-size="12" font-weight="600" fill="#6366f1" letter-spacing="0.08em">REDACTIE</text>
+<text x="20" y="187" font-size="12" font-weight="600" fill="#34d399" letter-spacing="0.08em">SITE</text>
+<g stroke="currentColor" stroke-opacity="0.55">
+<line x1="240" y1="86.32692307692308" x2="280" y2="85.17307692307692" marker-end="url(#v3-arrow)">
+</line>
+<text x="274" y="81.34615384615384" font-size="10" fill="currentColor" stroke="none" opacity="0.8" text-anchor="middle">1</text>
+</g>
+<g transform="translate(20 48)">
+<rect width="220" height="83" rx="6" fill="var(--color-surface, #fff)" stroke="#6366f1" stroke-width="1.5">
+</rect>
+<rect width="220" height="30" rx="6" fill="#6366f1" fill-opacity="0.18">
+</rect>
+<rect y="24" width="220" height="6" fill="#6366f1" fill-opacity="0.18">
+</rect>
+<text x="110" y="19" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Artikel</text>
+<text x="10" y="42" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">Kop.titel*: string</text>
+<text x="10" y="57" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">Kop.slug: string</text>
+<text x="10" y="72" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">Body.tekst[]: string</text>
+</g>
+<g transform="translate(280 48)">
+<rect width="220" height="68" rx="6" fill="var(--color-surface, #fff)" stroke="#6366f1" stroke-width="1.5">
+</rect>
+<rect width="220" height="30" rx="6" fill="#6366f1" fill-opacity="0.18">
+</rect>
+<rect y="24" width="220" height="6" fill="#6366f1" fill-opacity="0.18">
+</rect>
+<text x="110" y="19" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Auteur</text>
+<text x="10" y="42" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">naam*: string</text>
+<text x="10" y="57" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">email: email</text>
+</g>
+<g transform="translate(20 199)">
+<rect width="220" height="68" rx="6" fill="var(--color-surface, #fff)" stroke="#34d399" stroke-width="1.5">
+</rect>
+<rect width="220" height="30" rx="6" fill="#34d399" fill-opacity="0.18">
+</rect>
+<rect y="24" width="220" height="6" fill="#34d399" fill-opacity="0.18">
+</rect>
+<text x="110" y="19" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Pagina</text>
+<text x="10" y="42" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">slug: string</text>
+<text x="10" y="57" font-size="10.5" fill="currentColor" opacity="0.85" font-family="ui-monospace, monospace">titel: string</text>
+</g>
+</svg>
+</figure>
+</section>
+<!-- case: positioned-no-fields -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<figure class="overflow-x-auto">
+<svg viewBox="0 0 640 170" width="100%" style="max-width:600px;height:auto" class="text-foreground" role="img" aria-label="Positioned" font-family="ui-sans-serif, system-ui, sans-serif">
+<defs>
+<marker id="v3-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+<path d="M0 0L10 5L0 10z" fill="currentColor">
+</path>
+</marker>
+<marker id="v3-inherit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+<path d="M0 0L10 5L0 10z" fill="var(--color-surface, #fff)" stroke="currentColor">
+</path>
+</marker>
+</defs>
+<g stroke="currentColor" stroke-opacity="0.55">
+<line x1="173.1818181818182" y1="40" x2="456.8181818181818" y2="120" marker-end="url(#v3-arrow)">
+</line>
+<text x="414.27272727272725" y="104" font-size="10" fill="currentColor" stroke="none" opacity="0.8" text-anchor="middle">0..*</text>
+</g>
+<g stroke="currentColor" stroke-opacity="0.55">
+<line x1="456.8181818181818" y1="120" x2="173.1818181818182" y2="40" marker-end="url(#v3-inherit)" stroke-dasharray="4 3">
+</line>
+</g>
+<g transform="translate(10 10)">
+<rect width="220" height="30" rx="6" fill="var(--color-surface, #fff)" stroke="#f5a623" stroke-width="1.5">
+</rect>
+<rect width="220" height="30" rx="6" fill="#f5a623" fill-opacity="0.18">
+</rect>
+<rect y="24" width="220" height="6" fill="#f5a623" fill-opacity="0.18">
+</rect>
+<text x="110" y="19" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Links</text>
+</g>
+<g transform="translate(400 120)">
+<rect width="220" height="30" rx="6" fill="var(--color-surface, #fff)" stroke="#f5a623" stroke-width="1.5">
+</rect>
+<rect width="220" height="30" rx="6" fill="#f5a623" fill-opacity="0.18">
+</rect>
+<rect y="24" width="220" height="6" fill="#f5a623" fill-opacity="0.18">
+</rect>
+<text x="110" y="19" font-size="13" font-weight="600" text-anchor="middle" fill="currentColor">Rechts</text>
+</g>
+</svg>
+</figure>
+</section>
+<!-- case: invalid-json -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">Expected property name or &#x27;}&#x27; in JSON at position 1 (line 1 column 2)</p>
+</section>
+<!-- case: nothing -->
+<section class="rounded-xl border border-line bg-surface p-5">
+<p class="text-sm text-muted">Paste a V3 model or give a URL.</p>
+</section>
