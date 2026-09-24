@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix: de header van de Imprint-site liep in de studio over de admin heen.**
+  De header is `position: absolute` (hij zweeft over de hero); de
+  canvas-omlijsting van de site is nu de positionerende ouder met een eigen
+  stapelcontext, zodat hij bovenin het canvas blijft.
 - **Fase 6, eerste slice (hardening).** Een verkeerd geconfigureerde plugin
   faalt bij het opstarten met een bruikbare fout: ongeldige naam, ontbrekende
   versie, twee keer geconfigureerd, of een contenttype dat al bestaat (de
