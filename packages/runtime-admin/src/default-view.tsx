@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { isContentType, type ContentType } from "@imprint/content-core";
+import type { ContentType } from "@imprint/content-core";
 import { layoutRows } from "./layout";
 import { PageRenderer, type WidgetContext, type WidgetViewers } from "./page-renderer";
 
@@ -12,11 +12,10 @@ import { PageRenderer, type WidgetContext, type WidgetViewers } from "./page-ren
 
 const VIEW_PREFIX = "_view/";
 
-/** "_view/component" → "component" (a content type the model knows), else undefined. */
+/** "_view/component" → "component"; the caller checks it against its catalogue. */
 export function viewTargetType(slug: string | undefined): ContentType | undefined {
   if (!slug?.startsWith(VIEW_PREFIX)) return undefined;
-  const type = slug.slice(VIEW_PREFIX.length);
-  return isContentType(type) ? type : undefined;
+  return slug.slice(VIEW_PREFIX.length) || undefined;
 }
 
 export function viewSlugFor(type: ContentType): string {

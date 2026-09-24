@@ -33,22 +33,6 @@ export const RelationsDoc = z.object({
 });
 export type RelationsDoc = z.infer<typeof RelationsDoc>;
 
-/** Sensible starting rules for the product/component/release model. */
-export const DEFAULT_RELATION_RULES: RelationRule[] = [
-  { fromType: "product", field: "components[]", toType: "component", enforce: true, label: "Product → components" },
-  { fromType: "component", field: "children[]", toType: "component", enforce: true, label: "Component → sub-components" },
-  { fromType: "release", field: "product", toType: "product", enforce: true, label: "Release → product" },
-  { fromType: "release", field: "components[].component", toType: "component", enforce: true, label: "Release → components" },
-  { fromType: "board-spec", field: "component", toType: "component", enforce: true, label: "Board-spec → component" },
-  { fromType: "planning", field: "product", toType: "product", enforce: true, label: "Planning → product" },
-  { fromType: "planning-item", field: "planning", toType: "planning", enforce: true, label: "Planning-item → planning" },
-  { fromType: "planning-item", field: "component", toType: "component", enforce: true, label: "Planning-item → component" },
-  { fromType: "wiki-folder", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-folder → wiki" },
-  { fromType: "wiki-folder", field: "parent", toType: "wiki-folder", enforce: true, label: "Wiki-folder → parent" },
-  { fromType: "wiki-page", field: "wiki", toType: "wiki", enforce: true, label: "Wiki-page → wiki" },
-  { fromType: "wiki-page", field: "folder", toType: "wiki-folder", enforce: true, label: "Wiki-page → folder" },
-];
-
 /** Collect the slugs a path points at, walking arrays (`[]`) as it goes. */
 export function extractRefs(field: string, data: unknown): string[] {
   const out: string[] = [];

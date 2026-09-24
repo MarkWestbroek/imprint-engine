@@ -1,104 +1,163 @@
+import type { z } from "zod";
+import type { RelationRule } from "./relations";
 import type { ContentType } from "./store";
 
 /**
- * The content-type catalogue (design/fase-3 §7), in two halves:
+ * Content types as definitions (design/fase-5 §3.1), the way widgets already
+ * work: the core knows no fixed list; core, plugins and site register their
+ * types with schema and rules, and everything that used to switch on a type
+ * name looks the definition up instead. Two layers:
  *
- *  - **available** — what the model knows: `CONTENT_TYPES` below, one entry
- *    per `ContentType`, with what the generic admin and the write API may do
- *    with it. Today this is derived from the zod schemas by hand; with the
- *    register it comes from the canonical model.
- *  - **active** — which of those a site uses: `imprint.config.ts`
- *    (`contentTypes`), handed round as a `ContentTypeCatalog`. Configuration,
- *    so it belongs in the timeline eventually (§8); for now it is code.
- *
- * Admin routes, server actions and /api/content ask the catalogue instead of
- * each keeping their own list of type names.
+ *  - `ContentTypeRegistry` — **available**: every definition this instance
+ *    knows (core + plugins + site). The store validates writes with it; an
+ *    unregistered type cannot be written, but existing rows stay readable.
+ *  - `ContentTypeCatalog` — **active**: which of those a site uses
+ *    (`imprint.config.ts`). Drives the admin menu, lists and the write API.
  */
-export type ContentTypeInfo = {
-  /** Plural, as shown in menus and on the dashboard. */
-  label: string;
-  /** Generic list at /admin/<type>, and the generic save/delete actions. */
-  listable: boolean;
-  /** Generic item editor and history. False = the type has screens of its own. */
-  editable: boolean;
-  /** May be pushed through POST /api/content (Bearer INGEST_TOKEN). */
-  ingestable: boolean;
-  /** A top-level thing an editor thinks in: counted on the dashboard. */
-  overview: boolean;
-  /** Has a studio-composable default view (`_view/<type>`), listed under Default views. */
-  viewable: boolean;
-  /** Where the generic list sits in the admin menu; null = reachable, not listed. */
-  menu: { group: "content" | "design" | "config"; section?: string } | null;
-};
 
 export type ContentTypeFlag = "listable" | "editable" | "ingestable" | "overview" | "viewable";
 
-const t = (label: string, flags: ContentTypeFlag[], menu: ContentTypeInfo["menu"] = null): ContentTypeInfo => ({
-  label,
-  menu,
-  listable: flags.includes("listable"),
-  editable: flags.includes("editable"),
-  ingestable: flags.includes("ingestable"),
-  overview: flags.includes("overview"),
-  viewable: flags.includes("viewable"),
-});
+/** Where a type's generic list sits in the admin menu; null = reachable, not listed. */
+export type ContentTypeMenu = { group: "content" | "design" | "config"; section?: string };
 
-/** Available types, in display order. `satisfies` keeps it in step with ContentType. */
-export const CONTENT_TYPES = {
-  page: t("Pages", ["listable", "editable", "ingestable", "overview"], { group: "content", section: "Site" }),
-  product: t("Products", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
-  component: t("Components", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
-  "board-spec": t("Board specs", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
-  release: t("Releases", ["listable", "editable", "ingestable", "overview", "viewable"], { group: "content", section: "Catalogus" }),
-  // Planning boards have their own screens; cards are saved through the generic actions.
-  planning: t("Planning", ["overview"]),
-  "planning-item": t("Planning items", ["listable"]),
-  // Ingestable for wiki publishing (local → live): wiki → folders → pages.
-  wiki: t("Wikis", ["listable", "editable", "ingestable", "overview"]),
-  "wiki-folder": t("Wiki folders", ["listable", "editable", "ingestable"]),
-  "wiki-page": t("Wiki pages", ["listable", "editable", "ingestable"]),
-  menu: t("Menus", ["listable", "editable", "overview"], { group: "design" }),
-  theme: t("Themes", ["listable", "editable", "overview"], { group: "design" }),
-  site: t("Site", ["listable", "editable"], { group: "config" }),
-  // Edited as one document in /admin/relations.
-  relations: t("Relations", []),
-} satisfies Record<ContentType, ContentTypeInfo>;
-
-const AVAILABLE = Object.keys(CONTENT_TYPES) as ContentType[];
-
-export function isContentType(value: string): value is ContentType {
-  return Object.hasOwn(CONTENT_TYPES, value);
+export interface ContentTypeDefinition {
+  /** The type name as stored: "page", "planning-item". */
+  name: string;
+  /** Validates the whole payload on write (and on typed reads). */
+  schema: z.ZodType;
+  /** Plural, as shown in menus and on the dashboard. */
+  label: string;
+  /** listable: generic list and save/delete; editable: generic form and history; ingestable: POST /api/content; overview: dashboard tile; viewable: has a default view. */
+  flags?: ContentTypeFlag[];
+  menu?: ContentTypeMenu | null;
+  /** Grouping for model overviews and the V3 export ("catalogus", "site", …). */
+  domain?: string;
+  /** Relation rules in which this type holds the reference. */
+  relations?: RelationRule[];
+  /** Starting data for a new item, so required fields are visible in the form. */
+  emptyData?: () => Record<string, unknown>;
+  /** The natural key inside the data; default `data.slug`. */
+  slugOf?: (data: Record<string, unknown>) => string;
+  /** The fields the generic form edits, when that is not the whole schema. */
+  formSchema?: z.ZodObject;
 }
 
-/** The types one site has switched on. Default: everything available. */
+/** What the admin asks about a type without touching zod: label, capabilities, menu place. */
+export type ContentTypeInfo = {
+  label: string;
+  listable: boolean;
+  editable: boolean;
+  ingestable: boolean;
+  overview: boolean;
+  viewable: boolean;
+  menu: ContentTypeMenu | null;
+};
+
+function infoOf(def: ContentTypeDefinition): ContentTypeInfo {
+  const flags = def.flags ?? [];
+  return {
+    label: def.label,
+    listable: flags.includes("listable"),
+    editable: flags.includes("editable"),
+    ingestable: flags.includes("ingestable"),
+    overview: flags.includes("overview"),
+    viewable: flags.includes("viewable"),
+    menu: def.menu ?? null,
+  };
+}
+
+/** Every content type an instance knows, in registration order. */
+export class ContentTypeRegistry {
+  private readonly defs = new Map<string, ContentTypeDefinition>();
+
+  constructor(definitions: readonly ContentTypeDefinition[] = []) {
+    for (const def of definitions) {
+      if (this.defs.has(def.name)) throw new Error(`Content type "${def.name}" is defined twice`);
+      this.defs.set(def.name, def);
+    }
+  }
+
+  /** Core, then plugins, then site: one registry. */
+  static of(...groups: readonly (readonly ContentTypeDefinition[])[]): ContentTypeRegistry {
+    return new ContentTypeRegistry(groups.flat());
+  }
+
+  names(): ContentType[] {
+    return [...this.defs.keys()];
+  }
+
+  definitions(): ContentTypeDefinition[] {
+    return [...this.defs.values()];
+  }
+
+  has(name: string): name is ContentType {
+    return this.defs.has(name);
+  }
+
+  find(name: string): ContentTypeDefinition | undefined {
+    return this.defs.get(name);
+  }
+
+  get(name: string): ContentTypeDefinition {
+    const def = this.defs.get(name);
+    if (!def) throw new Error(`Unknown content type "${name}" (known: ${this.names().join(", ")})`);
+    return def;
+  }
+
+  info(name: string): ContentTypeInfo {
+    return infoOf(this.get(name));
+  }
+
+  /** Parse a payload with the type's schema; an unknown type is an error (nothing unregistered gets written). */
+  validate(name: string, data: unknown): unknown {
+    return this.get(name).schema.parse(data);
+  }
+
+  /** The natural key of an item of this type. */
+  slugOf(name: string, data: Record<string, unknown>): string {
+    const def = this.get(name);
+    return def.slugOf ? def.slugOf(data) : String(data.slug ?? "");
+  }
+
+  /** Every relation rule the registered types declare — the default rules document. */
+  relations(): RelationRule[] {
+    return this.definitions().flatMap((def) => def.relations ?? []);
+  }
+}
+
+/** The types one site has switched on, out of a registry. Default: everything registered. */
 export class ContentTypeCatalog {
   private readonly activeTypes: ContentType[];
 
-  constructor(active?: readonly string[]) {
-    for (const type of active ?? []) {
-      if (!isContentType(type)) {
-        throw new Error(`Unknown content type "${type}" (available: ${AVAILABLE.join(", ")})`);
-      }
-    }
-    // Catalogue order, whatever order the site listed them in.
-    this.activeTypes = active ? AVAILABLE.filter((type) => active.includes(type)) : AVAILABLE;
+  constructor(
+    readonly registry: ContentTypeRegistry,
+    active?: readonly string[]
+  ) {
+    for (const type of active ?? []) registry.get(type); // fail early on an unknown type
+    // Registry order, whatever order the site listed them in.
+    const all = registry.names();
+    this.activeTypes = active ? all.filter((type) => active.includes(type)) : all;
   }
 
   /** Active types, optionally only those with a capability. */
   types(flag?: ContentTypeFlag): ContentType[] {
-    return flag ? this.activeTypes.filter((type) => CONTENT_TYPES[type][flag]) : [...this.activeTypes];
+    return flag ? this.activeTypes.filter((type) => this.registry.info(type)[flag]) : [...this.activeTypes];
   }
 
   /** Is this (untrusted, e.g. from a URL) name an active type — with this capability? */
   has(type: string, flag?: ContentTypeFlag): type is ContentType {
     return (
-      isContentType(type) &&
+      this.registry.has(type) &&
       this.activeTypes.includes(type) &&
-      (flag === undefined || CONTENT_TYPES[type][flag])
+      (flag === undefined || this.registry.info(type)[flag])
     );
   }
 
-  info(type: ContentType): ContentTypeInfo {
-    return CONTENT_TYPES[type];
+  info(type: string): ContentTypeInfo {
+    return this.registry.info(type);
+  }
+
+  definition(type: string): ContentTypeDefinition {
+    return this.registry.get(type);
   }
 }

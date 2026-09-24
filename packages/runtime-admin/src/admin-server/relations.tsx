@@ -1,4 +1,4 @@
-import { DEFAULT_RELATION_RULES, RelationsDoc, type RelationRule } from "@imprint/content-core";
+import { RelationsDoc, type RelationRule } from "@imprint/content-core";
 import { RelationsEditor } from "../admin/relations-editor";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
@@ -28,7 +28,7 @@ export async function RelationsScreen({
           action={actions.saveRelations}
           initialRules={rules}
           types={relatable}
-          defaults={DEFAULT_RELATION_RULES}
+          defaults={admin.imprint.contentTypes.registry.relations()}
         />
       </div>
     </div>

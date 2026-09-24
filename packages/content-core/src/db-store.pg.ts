@@ -3,7 +3,7 @@ import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 import pg from "pg";
 
 import { contentItems, users } from "./db-schema.pg";
-import { DbContentStoreBase, type ContentRow, type NewContentRow } from "./db-store-base";
+import { DbContentStoreBase, type ContentRow, type NewContentRow, type StoreOptions } from "./db-store-base";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentType } from "./store";
 
@@ -27,7 +27,7 @@ export { contentItems, users };
 export class PgContentStore extends DbContentStoreBase {
   constructor(
     private readonly db: PgDb,
-    opts: { widgets?: WidgetTypeRegistry } = {}
+    opts: StoreOptions = {}
   ) {
     super(opts);
   }

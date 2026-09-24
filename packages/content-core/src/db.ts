@@ -3,7 +3,7 @@ import { createPgDb, PgContentStore } from "./db-store.pg";
 import { DbUserStore, type UserStore } from "./user-store";
 import { PgUserStore } from "./user-store.pg";
 import type { WritableContentStore } from "./store";
-import type { WidgetTypeRegistry } from "./widgets";
+import type { StoreOptions } from "./db-store-base";
 
 /**
  * Backend selection by connection URL — the one place that knows more than
@@ -33,7 +33,7 @@ export type OpenedContentDatabase = {
 
 export function openContentDatabase(
   url: string,
-  opts: { widgets?: WidgetTypeRegistry } = {}
+  opts: StoreOptions = {}
 ): OpenedContentDatabase {
   const dialect = dialectOf(url);
   if (dialect === "postgres") {

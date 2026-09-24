@@ -61,8 +61,8 @@ export interface ContentStore {
   listThemes(opts?: ReadOptions): Promise<Theme[]>;
 }
 
-/** Content types a store can hold; `data`'s shape per type lives in schemas.ts. */
-export type ContentType =
+/** The types the core brings; the typed read methods above are theirs. */
+export type CoreContentType =
   | "site"
   | "product"
   | "component"
@@ -77,6 +77,14 @@ export type ContentType =
   | "wiki-folder"
   | "wiki-page"
   | "relations";
+
+/**
+ * A content type name. Open on purpose (design/fase-5, decision 1): plugins
+ * register their own types, so the compiler cannot know the full list; the
+ * `ContentTypeRegistry` guards it at runtime — nothing unregistered is ever
+ * written. The core names stay literal for editor completion.
+ */
+export type ContentType = CoreContentType | (string & {});
 
 /** One stored assertion of a content item (a row, in bitemporal terms). */
 export interface ContentRecord {

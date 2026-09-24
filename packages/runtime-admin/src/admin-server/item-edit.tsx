@@ -1,53 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { ContentType } from "@imprint/content-core";
 import { ItemEditor } from "../admin/item-editor";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
-
-/** Sensible starting data for a new item, so required fields are visible. */
-export function emptyData(type: ContentType): Record<string, unknown> {
-  const today = new Date().toISOString().slice(0, 10);
-  switch (type) {
-    case "site":
-      return { name: "", tagline: "", baseUrl: "https://", defaultLocale: "en", links: {} };
-    case "product":
-      return { slug: "", lang: "en", name: "", tagline: "", status: "in-development", description: "", specs: [], media: [], components: [], order: 0 };
-    case "component":
-      return { slug: "", lang: "en", name: "", description: "", children: [], versions: [] };
-    case "board-spec":
-      return { slug: "", lang: "en", component: "", version: "", connectors: [], assets: { pinouts: {} }, sections: [], related: [] };
-    case "release":
-      return { project: "", version: "", date: today, channel: "stable", highlights: [], body: "", downloads: [] };
-    case "menu":
-      return { name: "", items: [] };
-    case "theme":
-      return {
-        name: "", label: "", order: 0,
-        colors: { background: "#0b0d10", surface: "#14181d", border: "#262c33", foreground: "#e8ebee", muted: "#9aa4ae", accent: "#4fd1c5", accentStrong: "#2ab5a8" },
-        fonts: { sans: "", mono: "" },
-      };
-    case "page":
-      return {};
-    case "planning":
-      return { slug: "", lang: "en", name: "", product: "", description: "", phases: [
-        { key: "backlog", label: "Backlog", order: 0 },
-        { key: "in-progress", label: "In progress", order: 1 },
-        { key: "beta", label: "Beta", order: 2 },
-        { key: "done", label: "Done", order: 3 },
-      ], order: 0 };
-    case "planning-item":
-      return { slug: "", lang: "en", title: "", planning: "", status: "backlog", owner: "", body: "", order: 0 };
-    case "wiki":
-      return { slug: "", lang: "en", title: "", description: "", access: "public", order: 0 };
-    case "wiki-folder":
-      return { slug: "", lang: "en", wiki: "", parent: "", title: "", order: 0 };
-    case "wiki-page":
-      return { slug: "", lang: "en", wiki: "", folder: "", title: "", body: "", order: 0 };
-    case "relations":
-      return { rules: [] };
-  }
-}
 
 /** Date → value for <input type="datetime-local"> (minute precision). */
 function toLocalInput(date: Date | null | undefined): string | undefined {
@@ -75,7 +30,8 @@ export async function ItemEditScreen({
   actions: Pick<AdminActions, "saveItem">;
 }) {
   if (!admin.imprint.contentTypes.has(type, "editable")) notFound();
-  const contentType: ContentType = type;
+  const contentType = type;
+  const def = admin.imprint.contentTypes.definition(type);
   const store = admin.imprint.writableStore!;
 
   const item = slug ? await store.getItem(contentType, slug, lang) : null;
@@ -103,7 +59,7 @@ export async function ItemEditScreen({
       <div className="mt-6">
         <ItemEditor
           type={contentType}
-          initialData={(item?.data as Record<string, unknown>) ?? emptyData(contentType)}
+          initialData={(item?.data as Record<string, unknown>) ?? def.emptyData?.() ?? {}}
           formSchema={admin.forms.content(contentType)}
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}

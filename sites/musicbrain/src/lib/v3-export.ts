@@ -1,18 +1,6 @@
 import { z } from "zod";
-import {
-  BoardSpecSchema,
-  ComponentSchema,
-  MenuSchema,
-  PageMetaSchema,
-  ProductSchema,
-  ReleaseSchema,
-  SiteConfigSchema,
-  ThemeSchema,
-  WikiFieldsSchema,
-  WikiFolderSchema,
-  WikiPageSchema,
-  type RelationRule,
-} from "@imprint/content-core";
+import type { RelationRule } from "@imprint/content-core";
+import { imprint } from "@/lib/content";
 
 /**
  * Exporteert het Imprint-contentmodel als **V3Model** — het geneste
@@ -76,19 +64,12 @@ type V3Entiteit = {
   relaties: V3Relatie[];
 };
 
-const TYPES: { type: string; typenaam: string; meervoud: string; domein: string; schema: z.ZodType }[] = [
-  { type: "product", typenaam: "Product", meervoud: "products", domein: "catalogus", schema: ProductSchema },
-  { type: "component", typenaam: "Component", meervoud: "components", domein: "catalogus", schema: ComponentSchema },
-  { type: "board-spec", typenaam: "BoardSpec", meervoud: "board-specs", domein: "catalogus", schema: BoardSpecSchema },
-  { type: "release", typenaam: "Release", meervoud: "releases", domein: "catalogus", schema: ReleaseSchema },
-  { type: "wiki", typenaam: "Wiki", meervoud: "wikis", domein: "wiki", schema: WikiFieldsSchema },
-  { type: "wiki-folder", typenaam: "WikiFolder", meervoud: "wiki-folders", domein: "wiki", schema: WikiFolderSchema },
-  { type: "wiki-page", typenaam: "WikiPage", meervoud: "wiki-pages", domein: "wiki", schema: WikiPageSchema },
-  { type: "page", typenaam: "Page", meervoud: "pages", domein: "site", schema: PageMetaSchema },
-  { type: "menu", typenaam: "Menu", meervoud: "menus", domein: "site", schema: MenuSchema },
-  { type: "theme", typenaam: "Theme", meervoud: "themes", domein: "site", schema: ThemeSchema },
-  { type: "site", typenaam: "Site", meervoud: "sites", domein: "site", schema: SiteConfigSchema },
-];
+const pascal = (name: string) => name.split("-").map((p) => p[0].toUpperCase() + p.slice(1)).join("");
+/** Every registered content type except the rules document itself; names and plurals derived from the type name. */
+const TYPES = imprint.contentTypes.registry
+  .definitions()
+  .filter((d) => d.name !== "relations")
+  .map((d) => ({ type: d.name, typenaam: pascal(d.name), meervoud: `${d.name}s`, domein: d.domain ?? "site", schema: (d.formSchema ?? d.schema) as z.ZodType }));
 
 const TYPENAAM: Record<string, string> = Object.fromEntries(TYPES.map((t) => [t.type, t.typenaam]));
 

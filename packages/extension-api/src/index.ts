@@ -2,6 +2,9 @@ import path from "node:path";
 import {
   ANONYMOUS,
   ContentTypeCatalog,
+  ContentTypeRegistry,
+  coreContentTypeDefinitions,
+  type ContentTypeDefinition,
   FileAssetStore,
   guardReads,
   inProcessPdp,
@@ -47,6 +50,8 @@ export interface ImprintConfig {
    * API; the store itself holds whatever type it is given.
    */
   contentTypes?: ContentType[];
+  /** Content types this site defines itself, on top of the core's (plugins bring theirs). */
+  contentTypeDefinitions?: ContentTypeDefinition[];
   /** The widget catalogue (config schemas) this instance supports; the store validates layouts against it. */
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
@@ -130,11 +135,16 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
   if (!(config.widgets instanceof WidgetTypeRegistry)) {
     throw new Error(`imprint.config (${config.id}): widgets must be a WidgetTypeRegistry`);
   }
-  new ContentTypeCatalog(config.contentTypes); // fail early on an unknown type
+  new ContentTypeCatalog(registryOf(config), config.contentTypes); // fail early on an unknown type
   if (config.session?.hours !== undefined && !(config.session.hours > 0)) {
     throw new Error(`imprint.config (${config.id}): session.hours must be positive`);
   }
   return config;
+}
+
+/** Every content type this instance knows: the core's, then the site's own. */
+function registryOf(cfg: ImprintConfig): ContentTypeRegistry {
+  return ContentTypeRegistry.of(coreContentTypeDefinitions, cfg.contentTypeDefinitions ?? []);
 }
 
 /** Build the live instance from a config. Uncached: every call opens its own pools. */
@@ -143,7 +153,8 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
   const widgets = cfg.widgets;
   const url = cfg.store.databaseUrl || undefined;
 
-  const opened = url ? openContentDatabase(url, { widgets }) : null;
+  const registry = registryOf(cfg);
+  const opened = url ? openContentDatabase(url, { widgets, contentTypes: registry }) : null;
   const readStore: ContentStore =
     opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets });
   const pdp = cfg.pdp ?? inProcessPdp;
@@ -161,7 +172,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     pdp,
     users: opened?.users ?? null,
     widgets,
-    contentTypes: new ContentTypeCatalog(cfg.contentTypes),
+    contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
     assets: new FileAssetStore(assetRoot, assetBase),
     session: {
       cookie: cfg.session?.cookie || `imprint_${cfg.id}_session`,

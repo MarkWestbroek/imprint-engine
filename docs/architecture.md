@@ -162,13 +162,20 @@ een kale checkout moet bouwen, en een ontbrekend secret faalt of schakelt uit
 op de plek waar het nodig is (geen sessiesecret = niemand logt in; geen
 ingest-token = de schrijf-API staat uit).
 
-**Contenttypecatalogus** (ontwerp Fase 3 §7), in twee helften.
-*Beschikbaar*: `CONTENT_TYPES` in
-[content-types.ts](../packages/content-core/src/content-types.ts), één regel
-per `ContentType` met label en wat de generieke admin en de schrijf-API ermee
-mogen (`listable`, `editable`, `ingestable`, `overview`). *Actief*:
-`contentTypes` in `imprint.config.ts`, als `ContentTypeCatalog` op de
-instantie. Admin-routes, server actions, dashboard, relatie-editor en
+**Contenttypen als definities** (ontwerp Fase 5 §3.1). Eén
+`ContentTypeDefinition` per type in
+[content-types.ts](../packages/content-core/src/content-types.ts): schema,
+label, vlaggen (`listable`, `editable`, `ingestable`, `overview`,
+`viewable`), menuplek, domein, relatieregels, startwaarden, sleutel en
+optioneel het formulierschema. De kern levert zijn typen in
+[core-content-types.ts](../packages/content-core/src/core-content-types.ts);
+plugins en site voegen de hunne toe. *Beschikbaar* is het
+`ContentTypeRegistry` (kern + plugins + site) — de store valideert
+schrijfacties ermee, een niet-geregistreerd type wordt geweigerd, bestaande
+rijen blijven leesbaar. *Actief*: `contentTypes` in `imprint.config.ts`, als
+`ContentTypeCatalog` over dat register op de instantie. `ContentType` is een
+open string (besluit Mark, Fase 5): de compiler kent de lijst niet meer, het
+register bewaakt op runtime, zoals bij widgets. Admin-routes, server actions, dashboard, relatie-editor en
 `/api/content` vragen `contentTypes.has(type, "editable")` in plaats van elk
 een eigen lijst te houden. De store zelf filtert niet: die bewaart elk type.
 "Actief" is configuratie en hoort op termijn in de tijdlijn (§8 van het

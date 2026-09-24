@@ -276,6 +276,12 @@ export const PageMetaSchema = z.object({
 });
 export type PageMeta = z.infer<typeof PageMetaSchema>;
 
+/** Page payload as stored: meta + markdown body and/or a widget layout (validated against the site's widgets by the store). */
+export const PageRecordSchema = PageMetaSchema.extend({
+  body: z.string().default(""),
+  layout: PageLayoutSchema.optional(),
+});
+
 /**
  * A page is either free-form (markdown body) or composed (a PageLayout with
  * widgets) — or both, when a layout page also wants a markdown intro.

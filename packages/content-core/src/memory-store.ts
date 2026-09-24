@@ -1,4 +1,4 @@
-import { DbContentStoreBase, type ContentRow, type NewContentRow } from "./db-store-base";
+import { DbContentStoreBase, type ContentRow, type NewContentRow, type StoreOptions } from "./db-store-base";
 import type { ContentType } from "./store";
 import type { WidgetTypeRegistry } from "./widgets";
 
@@ -31,7 +31,7 @@ const sameItem = (row: ContentRow, type: string, slug: string, lang: string) =>
 export class MemoryContentStore extends DbContentStoreBase {
   constructor(
     private readonly db: MemoryDb,
-    opts: { widgets?: WidgetTypeRegistry } = {}
+    opts: StoreOptions = {}
   ) {
     super(opts);
   }

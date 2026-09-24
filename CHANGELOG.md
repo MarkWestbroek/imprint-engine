@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 5, stap 1: contenttypen als definities.** `ContentTypeDefinition`
+  en `ContentTypeRegistry` in `content-core` (schema, label, vlaggen,
+  menuplek, domein, relatieregels, startwaarden, sleutel, formulierschema);
+  de kern levert zijn veertien typen als definities (`core-content-types.ts`,
+  `DEFAULT_RELATION_RULES` is nu afgeleid). De zeven switches op typenaam in
+  store, catalogus, formulieren, itemeditor, actions, modeloverzicht en
+  V3-export zijn opzoekingen geworden; `ContentType` is een open string
+  (besluit Mark), bewaakt door het register: een niet-geregistreerd type
+  wordt nooit geschreven. Geen zichtbaar verschil; alle suites groen.
 - **Opzet Fase 5** (`docs/design/fase-5-plugins.md`): contenttypedefinities
   en een register in plaats van de zeven switches in de kern, het
   plugincontract (`definePlugin`), drie vaste haken voor schermen, actions en

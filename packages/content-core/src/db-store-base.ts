@@ -1,10 +1,9 @@
-import { z } from "zod";
-
 import {
   BoardSpecSchema,
   ComponentSchema,
   MenuSchema,
   PageMetaSchema,
+  PageRecordSchema,
   PlanningSchema,
   PlanningItemSchema,
   WikiSchema,
@@ -23,7 +22,9 @@ import {
   type SiteConfig,
   type Theme,
 } from "./schemas";
-import { PageLayoutSchema, type WidgetTypeRegistry } from "./widgets";
+import type { WidgetTypeRegistry } from "./widgets";
+import type { ContentTypeRegistry } from "./content-types";
+import { coreContentTypes } from "./core-content-types";
 import {
   RelationsDoc,
   validateReferences,
@@ -37,11 +38,9 @@ import type {
   WritableContentStore,
 } from "./store";
 
-/** Page payload as stored: meta + markdown body and/or a widget layout. */
-const PageRecordSchema = PageMetaSchema.extend({
-  body: z.string().default(""),
-  layout: PageLayoutSchema.optional(),
-});
+
+/** What every database backend takes: the site's widget registry (page layouts) and content-type registry (payloads). */
+export type StoreOptions = { widgets?: WidgetTypeRegistry; contentTypes?: ContentTypeRegistry };
 
 /** One `content_items` row, dialect-neutral (what every backend hands up). */
 export type ContentRow = {
@@ -70,7 +69,12 @@ export type NewContentRow = Omit<ContentRow, "id">;
  * contract-equal by construction (architecture.md §0 rule 3, §8).
  */
 export abstract class DbContentStoreBase implements WritableContentStore {
-  constructor(protected readonly opts: { widgets?: WidgetTypeRegistry } = {}) {}
+  constructor(protected readonly opts: StoreOptions = {}) {}
+
+  /** What this store validates writes with: the instance's registry, else the core's. */
+  protected get contentTypes(): ContentTypeRegistry {
+    return this.opts.contentTypes ?? coreContentTypes;
+  }
 
   // ---------- dialect-specific row operations ----------
 
@@ -261,45 +265,20 @@ export abstract class DbContentStoreBase implements WritableContentStore {
     return page;
   }
 
+  /**
+   * Validate a payload with the type's registered schema (design/fase-5):
+   * an unregistered type is refused, so nothing unknown is ever written. A
+   * page's layout is checked against the widget registry as well.
+   */
   private validate(type: ContentType, data: unknown): unknown {
-    switch (type) {
-      case "site":
-        return SiteConfigSchema.parse(data);
-      case "product":
-        return ProductSchema.parse(data);
-      case "component":
-        return ComponentSchema.parse(data);
-      case "board-spec":
-        return BoardSpecSchema.parse(data);
-      case "release":
-        return ReleaseSchema.parse(data);
-      case "menu":
-        return MenuSchema.parse(data);
-      case "theme":
-        return ThemeSchema.parse(data);
-      case "planning":
-        return PlanningSchema.parse(data);
-      case "planning-item":
-        return PlanningItemSchema.parse(data);
-      case "wiki":
-        return WikiSchema.parse(data);
-      case "wiki-folder":
-        return WikiFolderSchema.parse(data);
-      case "wiki-page":
-        return WikiPageSchema.parse(data);
-      case "relations":
-        return RelationsDoc.parse(data);
-      case "page": {
-        const page = PageRecordSchema.parse(data);
-        if (page.layout && this.opts.widgets) this.opts.widgets.parseLayout(page.layout);
-        return page;
-      }
-      default:
-        throw new Error(`Unknown content type "${String(type satisfies never)}"`);
+    const parsed = this.contentTypes.validate(type, data);
+    if (type === "page" && this.opts.widgets) {
+      const page = parsed as { layout?: unknown };
+      if (page.layout) this.opts.widgets.parseLayout(page.layout);
     }
+    return parsed;
   }
 
-  /** The configurable relation rules (content type "relations", slug "relations"). */
   private async loadRelationRules(): Promise<RelationRule[]> {
     const item = await this.getItem("relations", "relations");
     return item ? RelationsDoc.parse(item.data).rules : [];

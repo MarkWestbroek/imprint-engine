@@ -1,10 +1,9 @@
-import { CONTENT_TYPES } from "@imprint/content-core";
 import type { MenuGroup } from "../admin/admin-shell";
 import type { AdminContext } from "../admin-context";
 
 /**
  * The admin menu, built rather than written (design/fase-3 §7): the content
- * types come from the catalogue (`CONTENT_TYPES[type].menu` says where a type
+ * types come from the catalogue (a definition's `menu` says where a type
  * belongs; only active, listable types appear), the rest from the site's
  * contributions. The standard groups keep the order and icons the admin has
  * always had; a contribution may add a group of its own.
@@ -38,9 +37,9 @@ export function adminMenu(admin: AdminContext): MenuGroup[] {
 
   const catalog = admin.imprint.contentTypes;
   for (const type of catalog.types("listable")) {
-    const place = CONTENT_TYPES[type].menu;
-    if (!place) continue;
-    section(place.group, place.section).items.push({ href: `/admin/${type}`, label: CONTENT_TYPES[type].label });
+    const info = catalog.info(type);
+    if (!info.menu) continue;
+    section(info.menu.group, info.menu.section).items.push({ href: `/admin/${type}`, label: info.label });
   }
 
   for (const c of admin.contributions) {

@@ -1,18 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  BoardSpecSchema,
-  ComponentSchema,
-  DEFAULT_RELATION_RULES,
-  MenuSchema,
-  PageMetaSchema,
-  ProductSchema,
-  ReleaseSchema,
-  RelationsDoc,
-  SiteConfigSchema,
-  ThemeSchema,
-} from "@imprint/content-core";
-import { store, writableStore } from "@/lib/content";
+import { RelationsDoc } from "@imprint/content-core";
+import { imprint, store, writableStore } from "@/lib/content";
 import { buildV3Model } from "@/lib/v3-export";
 
 /**
@@ -26,16 +15,9 @@ import { buildV3Model } from "@/lib/v3-export";
  * onder ?format=v3 zodra dat formaat is aangeleverd.
  */
 
-const TYPE_SCHEMAS: Record<string, z.ZodType> = {
-  site: SiteConfigSchema,
-  product: ProductSchema,
-  component: ComponentSchema,
-  "board-spec": BoardSpecSchema,
-  release: ReleaseSchema,
-  page: PageMetaSchema,
-  menu: MenuSchema,
-  theme: ThemeSchema,
-};
+const TYPE_SCHEMAS: Record<string, z.ZodType> = Object.fromEntries(
+  imprint.contentTypes.registry.definitions().map((d) => [d.name, d.formSchema ?? d.schema])
+);
 
 function toSchema(schema: z.ZodType): Record<string, unknown> {
   try {
@@ -48,7 +30,7 @@ function toSchema(schema: z.ZodType): Record<string, unknown> {
 
 export async function GET(req: Request) {
   // Actieve relatieregels (beheerd in /admin/relations); zonder DB de defaults.
-  let rules = DEFAULT_RELATION_RULES;
+  let rules = imprint.contentTypes.registry.relations();
   if (writableStore) {
     const item = await writableStore.getItem("relations", "relations");
     if (item) {

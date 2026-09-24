@@ -126,7 +126,7 @@ Dockerfile (`COPY`, zoals elk workspace-package).
 
 | stap | wat | maat |
 |---|---|---|
-| 1 | `ContentTypeDefinition` + `ContentTypeRegistry` in de kern; de zeven switches worden opzoekingen; de kerntypen als definities; store en catalogus lezen uit het register. Geen gedragsverandering: contractsuites en browsertests bewijzen dat | L |
+| 1 | `ContentTypeDefinition` + `ContentTypeRegistry` in de kern; de zeven switches worden opzoekingen; de kerntypen als definities; store en catalogus lezen uit het register. Geen gedragsverandering: contractsuites en browsertests bewijzen dat | L, klaar |
 | 2 | `definePlugin` in `extension-api`; `createImprint` voegt plugins samen; `AdminContext.plugins`; de drie haken in MusicBrain (schermen, actions, publieke route) | M |
 | 3 | `@imprint/plugin-planning`: typen, relaties, widget (schema + viewer + editor), bordadmin, `lib/planning` met tests. MusicBrain: `plugins: [planningPlugin()]`, code weg uit de site | M |
 | 4 | `@imprint/plugin-wiki`: drie typen, wiki-studio, publieke route en ledenroute, `wiki-href` | M–L |

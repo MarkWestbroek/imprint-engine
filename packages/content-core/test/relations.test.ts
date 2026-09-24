@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import { DEFAULT_RELATION_RULES, extractRefs, validateReferences } from "../src/relations";
+import { DEFAULT_RELATION_RULES } from "../src/core-content-types";
+import { extractRefs, validateReferences } from "../src/relations";
 
 /** Characterisation of the soft-reference integrity rules (architecture.md §3b). */
 describe("extractRefs", () => {

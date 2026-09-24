@@ -35,21 +35,6 @@ export function parseType(admin: AdminContext, value: unknown): ContentType {
   return type;
 }
 
-/** The natural key lives inside the data, per type (UML: ContentItem /type). */
-export function slugFor(type: ContentType, data: Record<string, unknown>): string {
-  switch (type) {
-    case "site":
-      return "site";
-    case "menu":
-    case "theme":
-      return String(data.name ?? "");
-    case "release":
-      return `${String(data.project ?? "")}-${String(data.version ?? "")}`;
-    default:
-      return String(data.slug ?? "");
-  }
-}
-
 export async function saveItem(admin: AdminContext, _prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   const session = await admin.auth.editingSession();
   if (!session) return { ok: false, error: "Not signed in" };
@@ -59,7 +44,7 @@ export async function saveItem(admin: AdminContext, _prev: ActionResult | null, 
   try {
     const type = parseType(admin, formData.get("type"));
     const data = JSON.parse(String(formData.get("data") ?? "{}")) as Record<string, unknown>;
-    const slug = slugFor(type, data);
+    const slug = admin.imprint.contentTypes.registry.slugOf(type, data);
     if (!slug || slug === "-") return { ok: false, error: "Item needs a slug/name" };
 
     const validFromRaw = String(formData.get("validFrom") ?? "");

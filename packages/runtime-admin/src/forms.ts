@@ -1,18 +1,5 @@
 import { z } from "zod";
-import {
-  BoardSpecSchema,
-  ComponentSchema,
-  PageMetaSchema,
-  PlanningSchema,
-  PlanningItemSchema,
-  ProductSchema,
-  ReleaseSchema,
-  SiteConfigSchema,
-  WikiFieldsSchema,
-  WikiFolderSchema,
-  WikiPageSchema,
-  type ContentType,
-} from "@imprint/content-core";
+import type { ContentTypeDefinition } from "@imprint/content-core";
 
 /**
  * Bridges zod to the admin forms: every editor form is generated from the
@@ -46,44 +33,14 @@ export function objectSchema(schema: z.ZodObject): JsonSchema {
   return { type: "object", properties };
 }
 
-/** Form schema per content type; pages use meta only (body/layout are special-cased). */
-export function contentFormSchema(type: ContentType): JsonSchema {
-  switch (type) {
-    case "site":
-      return objectSchema(SiteConfigSchema);
-    case "product":
-      return objectSchema(ProductSchema);
-    case "component":
-      return objectSchema(ComponentSchema);
-    case "board-spec":
-      return objectSchema(BoardSpecSchema);
-    case "release":
-      return objectSchema(ReleaseSchema);
-    case "menu":
-      // Only the name; the items get the dedicated MenuEditor, not a form.
-      return { type: "object", properties: { name: { type: "string" } } };
-    case "page":
-      return objectSchema(PageMetaSchema);
-    case "theme":
-      // name/label/order via the form; colours get the dedicated ThemeEditor.
-      return {
-        type: "object",
-        properties: { name: { type: "string" }, label: { type: "string" }, order: { type: "integer" } },
-      };
-    case "planning":
-      return objectSchema(PlanningSchema);
-    case "planning-item":
-      return objectSchema(PlanningItemSchema);
-    case "wiki":
-      return objectSchema(WikiFieldsSchema);
-    case "wiki-folder":
-      return objectSchema(WikiFolderSchema);
-    case "wiki-page":
-      return objectSchema(WikiPageSchema);
-    case "relations":
-      // Config type with its own screen (/admin/relations), not a generic form.
-      return { type: "object", properties: {} };
-  }
+/**
+ * Form schema for one content type: its `formSchema` when the form edits a
+ * subset (page meta, a menu's name), else the whole schema; a type whose
+ * schema is not an object (a wrapped one) gets no generated fields.
+ */
+export function contentFormSchema(def: ContentTypeDefinition): JsonSchema {
+  const schema = def.formSchema ?? def.schema;
+  return schema instanceof z.ZodObject ? objectSchema(schema) : { type: "object", properties: {} };
 }
 
 /** What a widget catalogue entry must offer for its editor form. */

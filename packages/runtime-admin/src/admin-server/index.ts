@@ -9,7 +9,7 @@
 export { AdminGate } from "./gate";
 export { DashboardScreen } from "./dashboard";
 export { ListScreen } from "./list";
-export { ItemEditScreen, emptyData } from "./item-edit";
+export { ItemEditScreen } from "./item-edit";
 export { HistoryScreen } from "./history";
 export { adminMenu } from "./menu";
 export { clearDraft, draftKey, getDraft, setDraft } from "./drafts";
@@ -30,7 +30,6 @@ export {
   saveRelations,
   signIn,
   signOut,
-  slugFor,
   type AdminActions,
 } from "./actions";
 export {

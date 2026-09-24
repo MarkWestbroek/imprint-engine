@@ -3,7 +3,7 @@ import { drizzle, type MySql2Database } from "drizzle-orm/mysql2";
 import mysql from "mysql2/promise";
 
 import { contentItems, users } from "./db-schema";
-import { DbContentStoreBase, type ContentRow, type NewContentRow } from "./db-store-base";
+import { DbContentStoreBase, type ContentRow, type NewContentRow, type StoreOptions } from "./db-store-base";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentType } from "./store";
 
@@ -25,7 +25,7 @@ export { contentItems, users };
 export class DbContentStore extends DbContentStoreBase {
   constructor(
     private readonly db: Db,
-    opts: { widgets?: WidgetTypeRegistry } = {}
+    opts: StoreOptions = {}
   ) {
     super(opts);
   }

@@ -37,7 +37,7 @@ export interface AdminAuth {
  * Menu items a site or plugin adds to the admin (design/fase-3 §10). `group`
  * names one of the standard groups (`overview`, `content`, `design`,
  * `config`, `manage`) or a new one, which then needs a `label`. Items of the
- * content types themselves come from the catalogue (`CONTENT_TYPES[type].menu`).
+ * content types themselves come from the catalogue (a definition's `menu`).
  */
 export interface AdminContribution {
   group: string;
@@ -88,7 +88,7 @@ export function createAdminContext(opts: {
     auth: opts.auth,
     studio: opts.studio,
     forms: {
-      content: contentFormSchema,
+      content: (type) => contentFormSchema(opts.imprint.contentTypes.definition(type)),
       // The catalogue is fixed for the life of the process (it is code): compute once.
       widgets: () => (widgets ??= widgetFormSchemas(opts.widgetCatalog)),
     },

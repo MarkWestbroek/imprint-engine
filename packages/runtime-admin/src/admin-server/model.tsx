@@ -26,21 +26,6 @@ import type { AdminContext } from "../admin-context";
  * fields and the relation rules without reading source.
  */
 
-const TYPES: { type: string; domain: string; schema: z.ZodType }[] = [
-  { type: "product", domain: "catalogus", schema: ProductSchema },
-  { type: "component", domain: "catalogus", schema: ComponentSchema },
-  { type: "board-spec", domain: "catalogus", schema: BoardSpecSchema },
-  { type: "release", domain: "catalogus", schema: ReleaseSchema },
-  { type: "planning", domain: "planning", schema: PlanningSchema },
-  { type: "planning-item", domain: "planning", schema: PlanningItemSchema },
-  { type: "wiki", domain: "wiki", schema: WikiFieldsSchema },
-  { type: "wiki-folder", domain: "wiki", schema: WikiFolderSchema },
-  { type: "wiki-page", domain: "wiki", schema: WikiPageSchema },
-  { type: "page", domain: "site", schema: PageMetaSchema },
-  { type: "menu", domain: "site", schema: MenuSchema },
-  { type: "theme", domain: "site", schema: ThemeSchema },
-  { type: "site", domain: "site", schema: SiteConfigSchema },
-];
 
 type JS = {
   type?: string | string[];
@@ -93,7 +78,9 @@ function fieldsOf(schema: z.ZodType): { name: string; type: string; req: boolean
 }
 
 export async function ModelScreen({ admin }: { admin: AdminContext }) {
-  let rules: RelationRule[] = DEFAULT_RELATION_RULES;
+  const registry = admin.imprint.contentTypes.registry;
+  const TYPES = registry.definitions().map((d) => ({ type: d.name, domain: d.domain ?? "", schema: d.formSchema ?? d.schema }));
+  let rules: RelationRule[] = registry.relations();
   if (admin.imprint.writableStore) {
     const item = await admin.imprint.writableStore.getItem("relations", "relations");
     if (item) {
