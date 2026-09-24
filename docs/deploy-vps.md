@@ -237,6 +237,14 @@ for u in musicbrain.nl imprint-engine.nl editor.musicbrain.nl volksgebouwzeist.n
 ssh vps1 'df -h / | tail -1; free -h | sed -n 2p; docker system df'
 ```
 
+**De build-cache van Docker is de grootverbruiker.** Elke deploy laat lagen
+achter; op 24 september 2026 stond hij op 15 GB (schijf 61% vol) na een week
+met veel builds op de VPS. `ssh vps1 'docker builder prune -f'` gaf 11,5 GB
+terug en bracht de schijf naar 32%; de cache die nog actief in gebruik is,
+blijft staan, dus de volgende deploy is niet merkbaar langzamer. Loopt de
+schijf boven ~70%, dan is dit het eerste dat je doet. Dangling images ruimt
+`deploy.sh` zelf al op (`docker image prune -f`).
+
 Op de NAS: in **Data Protection** moeten de twee Rsync-taken op SUCCESS staan en
 de snapshot-taak (`Pool1/backup/vps1`, 07:00, 2 weken) moet snapshots maken.
 
