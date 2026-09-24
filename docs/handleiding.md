@@ -96,7 +96,9 @@ elk met een eigen icoon. Klik een icoon en het paneel ernaast toont de items:
 - **Beheer** — Users (alleen voor admins).
 
 Onderin de balk: de site bekijken, je account (naam · rol → wachtwoord) en
-afmelden.
+afmelden. Het paneel met items klapt in met « (of een klik op het actieve
+icoon in de balk) en komt terug met een klik op dat icoon — handig in de
+studio, die dan de volle breedte krijgt. De browser onthoudt je keuze.
 
 ## Het belangrijkste principe: niets is ooit weg
 

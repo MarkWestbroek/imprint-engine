@@ -8,7 +8,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 ## [Unreleased]
 - **Studio: meer ruimte voor het canvas.** Het instellingenpaneel klapt in
   (« / ») zodat de pagina op ware breedte te zien is; een klik op een widget
-  klapt het weer uit. **View page ↗** in de bovenbalk opent de opgeslagen
+  klapt het weer uit. Ook het itemspaneel van de admin zelf klapt in («, of
+  het actieve icoon in de activiteitenbalk; de browser onthoudt het), en de
+  studio valt buiten de leesbreedte-kap van de admin — samen krijgt het
+  canvas zo bijna het hele scherm. **View page ↗** in de bovenbalk opent de opgeslagen
   pagina op de site in een nieuw tabblad. De specs-strook (1 · 2 · 8) volgt
   de breedte van zijn vak in plaats van het scherm: in een smal vak stapelen
   de cijfers netjes.

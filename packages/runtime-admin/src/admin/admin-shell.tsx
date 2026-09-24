@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import type { RoleType } from "@imprint/content-core";
 import { DialogHost } from "./dialog";
 
@@ -10,7 +11,12 @@ import { DialogHost } from "./dialog";
  * not by data type) + a secondary panel listing the active group's items +
  * the editor. The groups come in as a prop: the server side builds them from
  * the content-type catalogue and the site's contributions (admin-server/menu.ts).
+ * The secondary panel folds away (« in its header, or the active rail icon
+ * toggles it, as in VS Code) so wide screens — the studio — get the room;
+ * the choice is remembered per browser.
  */
+
+const PANEL_KEY = "imprint-admin-panel";
 
 export type MenuItem = { href: string; label: string };
 export type MenuGroup = {
@@ -108,6 +114,19 @@ export function AdminShell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [panelOpen, setPanelOpen] = useState(true);
+  // localStorage is a per-viewer convenience: read after mount so server and client agree.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(PANEL_KEY) === "closed") setPanelOpen(false);
+    } catch {}
+  }, []);
+  const togglePanel = (open: boolean) => {
+    setPanelOpen(open);
+    try {
+      localStorage.setItem(PANEL_KEY, open ? "open" : "closed");
+    } catch {}
+  };
   const groups = allGroups.filter((g) => (!g.adminOnly || session.role === "admin") && flatItems(g).length > 0);
 
   // Active group = the one whose longest matching item href fits the path.
@@ -138,7 +157,21 @@ export function AdminShell({
         {groups.map((g) => {
           const active = g.id === activeGroup?.id;
           return (
-            <Link key={g.id} href={flatItems(g)[0].href} className={railBtn} aria-current={active ? "page" : undefined}>
+            <Link
+              key={g.id}
+              href={flatItems(g)[0].href}
+              className={railBtn}
+              aria-current={active ? "page" : undefined}
+              onClick={(e) => {
+                // The active icon toggles the panel; another icon navigates and shows it.
+                if (active) {
+                  e.preventDefault();
+                  togglePanel(!panelOpen);
+                } else if (!panelOpen) {
+                  togglePanel(true);
+                }
+              }}
+            >
               {active && (
                 <span className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r bg-accent" />
               )}
@@ -171,9 +204,19 @@ export function AdminShell({
       </nav>
 
       {/* secondary panel */}
+      {panelOpen && (
       <aside className="w-56 shrink-0 overflow-y-auto border-r border-line bg-surface">
-        <h2 className="px-4 pb-1.5 pt-4 text-xs font-semibold uppercase tracking-wider text-muted">
+        <h2 className="flex items-center justify-between px-4 pb-1.5 pt-4 text-xs font-semibold uppercase tracking-wider text-muted">
           {activeGroup?.label}
+          <button
+            type="button"
+            onClick={() => togglePanel(false)}
+            className="-mr-1 px-1 text-sm text-muted hover:text-foreground"
+            title="Hide this panel (the active icon in the rail brings it back)"
+            aria-label="Hide panel"
+          >
+            «
+          </button>
         </h2>
         {activeGroup?.sections.map((sec, i) => (
           <div key={i} className="pb-1">
@@ -202,10 +245,11 @@ export function AdminShell({
           </div>
         ))}
       </aside>
+      )}
 
-      {/* editor */}
+      {/* editor; a screen that marks itself data-wide (the studio) escapes the reading-width cap */}
       <main className="min-w-0 flex-1 overflow-y-auto px-6 py-8">
-        <div className="mx-auto w-full max-w-6xl">{children}</div>
+        <div className="mx-auto w-full max-w-6xl has-[[data-wide]]:max-w-none">{children}</div>
       </main>
     </div>
   );

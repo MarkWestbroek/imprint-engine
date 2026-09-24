@@ -130,6 +130,8 @@ export async function PageStudioScreen({
       actions={actions.studio}
       editor={studio.editor}
     >
+      {/* data-wide: the admin shell lifts its reading-width cap for the studio */}
+      <div data-wide="">
       <StudioTopBar isNew={!slug} />
       {targetType && <PreviewAsPicker lang={lang} current={previewAs} samples={samples} />}
       <div className="flex items-start gap-4">
@@ -175,6 +177,7 @@ export async function PageStudioScreen({
             </Chrome>
           </div>
         </div>
+      </div>
       </div>
     </StudioProvider>
   );

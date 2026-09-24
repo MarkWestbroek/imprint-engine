@@ -43,6 +43,20 @@ test.describe("studio", () => {
     await expect(page.getByRole("button", { name: "✓ Done" })).toBeVisible();
   });
 
+  test("the admin's own panel folds too, and stays folded across a reload", async ({ page }) => {
+    await page.goto("/admin/page/edit/editor");
+    const panel = page.locator("aside").filter({ hasText: "Pages" });
+    await expect(panel).toBeVisible();
+    await page.getByRole("button", { name: "Hide panel" }).click();
+    await expect(panel).toBeHidden();
+    await page.reload();
+    await expect(page.getByRole("button", { name: "Save new version" })).toBeVisible();
+    await expect(panel).toBeHidden();
+    // The active rail icon brings it back (VS Code behaviour).
+    await page.locator("nav a[aria-current=page]").click();
+    await expect(panel).toBeVisible();
+  });
+
   test("composes a new page: settings, a row, a hero widget, save", async ({ page }) => {
     await page.goto("/admin/page/edit");
     await page.getByLabel("slug", { exact: true }).fill(SLUG);
