@@ -260,12 +260,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] **Pagina's bewerken op de Imprint-site** (september 2026, Fase 4
         stap 2/3) — de gedeelde studio, met Imprints acht widgets en zijn
         header/footer als chrome.
-      - [ ] **Fase 4 stap 4: standaard-widgeteditors naar `widgets-standard`**
-        — `sites/musicbrain/src/widgets/editors.tsx` (695 regels) bevat
-        editors voor table, gallery/carousel, map (standaardwidgets) en board,
-        kanban (MusicBrain). De standaard-editors verhuizen naar
-        `@imprint/widgets-standard/editors`, zodat de Imprint-site ze ook
-        krijgt; de site-editors blijven. _(M)_
+      - [x] **Fase 4 stap 4: standaard-widgeteditors naar `widgets-standard`**
+        (september 2026) — `standardEditors` voor table, gallery/carousel en
+        map; MusicBrain houdt board en kanban; de Imprint-site heeft de
+        editors en het externe album erbij.
       - [ ] **Studio: "Saved ✓" verdwijnt bij een nieuwe pagina** — na
         "Create page" springt de studio naar de URL van de pagina en raakt de
         melding kwijt; de redacteur ziet geen bevestiging. Melding via de

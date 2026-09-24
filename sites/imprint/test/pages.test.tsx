@@ -25,8 +25,8 @@ async function renderHtml(element: ReactElement): Promise<string> {
 }
 
 describe("Imprint site: pages through the shared renderer", () => {
-  it("picks its own eight standard widgets and knows none of MusicBrain's domain widgets", () => {
-    assert.deepEqual(widgetRegistry.names(), ["hero", "text", "specs", "table", "accordion", "callout", "image", "divider"]);
+  it("picks its own nine standard widgets and knows none of MusicBrain's domain widgets", () => {
+    assert.deepEqual(widgetRegistry.names(), ["hero", "text", "specs", "table", "accordion", "callout", "image", "album", "divider"]);
     assert.deepEqual(Object.keys(widgetComponents).sort(), [...widgetRegistry.names()].sort());
     assert.throws(() => widgetRegistry.parse({ type: "planning", config: {} }), /Unknown widget type "planning"/);
   });

@@ -847,7 +847,11 @@ niet van elkaar afwijken.
   canvas zelf, als de ingelogde redacteur: `storeFor(subject)`,
   `guardReads(writableStore)` en de leesopties van de preview plus drafts.
   De studio-actions komen als props binnen (`AdminActions.studio`), net als
-  de andere actions.
+  de andere actions. De rijke editors van de standaardwidgets (table,
+  gallery/carousel, map) staan in
+  [widgets-standard/src/editors.tsx](../packages/widgets-standard/src/editors.tsx)
+  (`standardEditors`); een site spreidt ze in zijn eigen editor-map
+  (MusicBrain: plus board en kanban) en geeft die als `WidgetEditorFor` mee.
 - **Studio (pagina-editor):** WYSIWYG-achtig, Pleio/Gutenberg-stijl. Het
   canvas ís de pagina: de echte widget-viewers, met echte data, binnen de
   echte site-omlijsting (`SiteChrome`, gedeeld met de publieke layout).

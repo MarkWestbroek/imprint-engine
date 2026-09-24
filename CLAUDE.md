@@ -37,7 +37,11 @@
   Viewers lezen content alleen via de aangereikte `WidgetContext` (lint).
   Optioneel `src/widgets/editors.tsx` (custom editor; default is het
   formulier uit het schema). Nieuwe widget = één schema + één viewer:
-  generiek in `widgets-standard`, domeingebonden in de site. Een nieuw
+  generiek in `widgets-standard`, domeingebonden in de site; een rijke
+  editor hoort bij zijn widget (`widgets-standard/src/editors.tsx` voor
+  standaardwidgets, `src/widgets/editors.tsx` in de site voor eigen widgets).
+  De studio zelf staat in `@imprint/runtime-admin` en krijgt per site
+  viewers, chrome en editor via `AdminContext.studio`. Een nieuw
   engine-package met markup vraagt een `@source`-regel in `globals.css`.
 - Pagina's bewerk je in de studio (`/admin/page/edit/...`): canvas met
   echte viewers in de echte SiteChrome, sidebar per widget, wijzigingen in

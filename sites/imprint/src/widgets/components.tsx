@@ -10,5 +10,6 @@ export const widgetComponents: WidgetViewers = {
   accordion: standardViewers.accordion,
   callout: standardViewers.callout,
   image: standardViewers.image,
+  album: standardViewers.album,
   divider: standardViewers.divider,
 };

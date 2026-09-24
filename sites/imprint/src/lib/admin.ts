@@ -2,6 +2,7 @@ import { createAdminContext, createSessionAuth } from "@imprint/runtime-admin/ad
 import { imprint } from "@/lib/content";
 import { widgetCatalog } from "@/widgets/registry";
 import { widgetComponents } from "@/widgets/components";
+import { WidgetEditorFor } from "@/widgets/editors";
 import { StudioChrome } from "@/components/studio-chrome";
 
 /**
@@ -18,7 +19,7 @@ export const admin = createAdminContext({
   auth,
   widgetCatalog,
   // The page studio with this site's eight viewers and its header/footer around the canvas.
-  studio: { viewers: widgetComponents, chrome: StudioChrome },
+  studio: { viewers: widgetComponents, editor: WidgetEditorFor, chrome: StudioChrome },
   contributions: [
     { group: "config", items: [{ href: "/admin/model", label: "Content model" }, { href: "/admin/relations", label: "Relations" }] },
   ],

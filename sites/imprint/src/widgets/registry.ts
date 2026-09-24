@@ -15,6 +15,7 @@ export const widgetCatalog = [
   standardWidgets.accordion,
   standardWidgets.callout,
   standardWidgets.image,
+  standardWidgets.album,
   standardWidgets.divider,
 ] as const;
 

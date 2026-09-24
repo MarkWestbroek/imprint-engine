@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fase 4 af — stap 4: de standaard-widgeteditors in de bibliotheek.**
+  De rijke editors voor table, gallery/carousel en map staan in
+  `@imprint/widgets-standard/editors` (`standardEditors`, plus de helpers
+  `omitProps`, `Mini2`, `NumInput`, `editorInputCls` voor site-eigen
+  editors). MusicBrain houdt alleen nog board en kanban (366 regels, was
+  695) en spreidt de standaardset erbij; de Imprint-site krijgt dezelfde
+  editors en heeft het **externe album** in zijn widgetset (besluit Mark).
 - **Fase 4, stap 2 en 3: de studio zit in het package en werkt op beide
   sites.** `PageStudioScreen` en de studio-actions (`draftOp`, `resetDraft`,
   `savePageDraft`) in `@imprint/runtime-admin/admin-server`, de
