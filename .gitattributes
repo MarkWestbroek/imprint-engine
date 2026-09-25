@@ -3,3 +3,7 @@
 *.sh text eol=lf
 Dockerfile text eol=lf
 deploy/vps/Caddyfile.snippet text eol=lf
+
+# Golden HTML van de renderertests wordt door de test zelf met LF geschreven;
+# zonder deze regel meldt git ze op Windows (core.autocrlf) als gewijzigd.
+sites/musicbrain/test/render/__golden__/** text eol=lf
