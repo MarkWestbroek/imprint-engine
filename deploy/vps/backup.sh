@@ -51,6 +51,15 @@ for pair in $EXTRA; do
   [ -f "$envfile" ] && install -m 600 "$envfile" "$dest/$name-env.txt"
 done
 
+# De eigen MinIO (sinds 29-09-2026 staan de assets van de sites in hun bucket,
+# niet meer op de asset-volumes hierboven): het hele datavolume mee. MinIO
+# schrijft objecten als gewone bestanden; tar van het volume is een bruikbare
+# kopie zolang er niet tegelijk geüpload wordt (03:15).
+if docker volume inspect imprint_minio_data >/dev/null 2>&1; then
+  echo "[$stamp] minio: volume → $dest/minio-data.tgz"
+  docker run --rm --user "$(id -u):$(id -g)" -v imprint_minio_data:/data:ro -v "$dest":/out     alpine:3.21 tar czf /out/minio-data.tgz -C /data .
+fi
+
 cp .env "$dest/env.txt"   # de secrets horen bij de data; de NAS is een vertrouwde plek
 ( cd "$dest" && stat -c '%n=%s' ./*.dump ./*.tgz 2>/dev/null ) > "$dest/manifest.txt"
 
