@@ -16,7 +16,7 @@ export default defineImprint({
   },
   widgets: widgetRegistry,
   // A product site: pages and their chrome, no catalogue, planning or wiki.
-  contentTypes: ["page", "menu", "theme", "site", "relations"],
+  contentTypes: ["page", "menu", "theme", "site", "relations", "asset"],
   // Unset locally (engine default: .assets/); the container points these at a volume.
   assets: {
     root: process.env.ASSET_ROOT,

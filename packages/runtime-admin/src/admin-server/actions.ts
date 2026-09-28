@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
-import type { ActionResult, StudioActions, UserAction, UserActions } from "../admin/types";
+import type { ActionResult, MediaActions, StudioActions, UserAction, UserActions } from "../admin/types";
 import type { AdminContext } from "../admin-context";
 
 /**
@@ -120,4 +120,5 @@ export type AdminActions = {
   users: UserActions;
   changeOwnPassword: UserAction;
   studio: StudioActions;
+  media: MediaActions;
 };

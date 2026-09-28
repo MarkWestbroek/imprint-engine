@@ -23,6 +23,90 @@ export type Locale = z.infer<typeof Locale>;
 export const Access = z.enum(["public", "restricted"]);
 export type Access = z.infer<typeof Access>;
 
+/* ---------- the media library (design/beeldbibliotheek.md) ---------- */
+
+/** What happens to EXIF in the web variants; the original always keeps its own. */
+export const ExifPolicy = z.enum(["all", "no-location", "none"]);
+export type ExifPolicy = z.infer<typeof ExifPolicy>;
+
+/** A scaled web copy of an image (WebP), made at upload. */
+export const AssetVariant = z.object({
+  width: z.number().int().positive(),
+  height: z.number().int().positive(),
+  url: z.string(),
+});
+export type AssetVariant = z.infer<typeof AssetVariant>;
+
+/** Camera data read from EXIF at upload (shown and filtered on, e.g. in a portfolio). */
+export const AssetPhoto = z.object({
+  taken: z.string().optional(),
+  camera: z.string().optional(),
+  lens: z.string().optional(),
+  fNumber: z.number().optional(),
+  /** Seconds, e.g. 0.004 for 1/250. */
+  exposure: z.number().optional(),
+  iso: z.number().optional(),
+  focalLength: z.number().optional(),
+});
+export type AssetPhoto = z.infer<typeof AssetPhoto>;
+
+/**
+ * One item in the media library (design/beeldbibliotheek.md §2). The file
+ * part is written at upload and never by a form; the rest is what an editor
+ * describes and orders. Access holds per format (§7): with `access: public`
+ * variants up to `publicMaxWidth` are public (all of them when absent); larger
+ * variants and the original are not — the original never is.
+ */
+export const AssetRecordSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  access: Access.default("public"),
+  publicMaxWidth: z.number().int().positive().optional(),
+  title: z.string().default(""),
+  alt: z.string().default(""),
+  caption: z.string().optional(),
+  credit: z.string().optional(),
+  licence: z.string().optional(),
+  source: z.string().optional(),
+  /** One place, like a file system: "schetsen/2026"; "" = the root. */
+  folder: z.string().regex(/^[a-z0-9_/ -]*$/i).default(""),
+  tags: z.array(z.string()).default([]),
+  /** Focal point for cropping, 0..1 from top-left. */
+  focus: z.object({ x: z.number().min(0).max(1), y: z.number().min(0).max(1) }).optional(),
+  file: z.object({
+    filename: z.string(),
+    kind: z.enum(["image", "svg", "document"]),
+    mime: z.string(),
+    size: z.number().int().nonnegative(),
+    width: z.number().int().positive().optional(),
+    height: z.number().int().positive().optional(),
+    /** The uploaded bytes, untouched (EXIF included). Never public. */
+    original: z.string(),
+    variants: z.array(AssetVariant).default([]),
+    exif: ExifPolicy,
+  }),
+  photo: AssetPhoto.optional(),
+  /** Only kept with EXIF policy "all": the location is shown on purpose. */
+  gps: z.object({ lat: z.number(), lon: z.number() }).optional(),
+});
+export type AssetRecord = z.infer<typeof AssetRecordSchema>;
+
+/** The part of an asset a person edits (the library's detail pane). */
+export const AssetMetaSchema = AssetRecordSchema.pick({
+  title: true,
+  alt: true,
+  caption: true,
+  credit: true,
+  licence: true,
+  source: true,
+  folder: true,
+  tags: true,
+  access: true,
+  publicMaxWidth: true,
+  focus: true,
+});
+export type AssetMeta = z.infer<typeof AssetMetaSchema>;
+
 export const ProductStatus = z.enum([
   "in-development",
   "beta",

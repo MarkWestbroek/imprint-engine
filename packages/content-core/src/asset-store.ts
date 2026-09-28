@@ -48,7 +48,7 @@ export function fingerprintPath(rel: string, hash: string): string {
 export class FileAssetStore implements AssetStore {
   constructor(
     private readonly root: string,
-    private readonly urlBase: string
+    readonly urlBase: string
   ) {}
 
   async put(assetPath: string, bytes: Uint8Array): Promise<string> {

@@ -60,17 +60,17 @@ describe("ContentTypeCatalog", () => {
     const sorted = (types: string[]) => [...types].sort();
     assert.deepEqual(
       sorted(catalog.types("listable")),
-      sorted(["site", "product", "component", "board-spec", "release", "page", "menu", "theme"])
+      sorted(["site", "product", "component", "board-spec", "release", "page", "asset", "menu", "theme"])
     );
     assert.deepEqual(
       sorted(catalog.types("editable")),
-      sorted(["site", "product", "component", "board-spec", "release", "page", "menu", "theme"])
+      sorted(["site", "product", "component", "board-spec", "release", "page", "asset", "menu", "theme"])
     );
     assert.deepEqual(
       sorted(catalog.types("ingestable")),
       sorted(["product", "component", "board-spec", "release", "page"])
     );
-    assert.deepEqual(catalog.types("overview"), ["page", "product", "component", "board-spec", "release", "menu", "theme"]);
+    assert.deepEqual(catalog.types("overview"), ["page", "product", "component", "board-spec", "release", "asset", "menu", "theme"]);
     assert.deepEqual(catalog.types("viewable"), ["product", "component", "board-spec", "release"]);
   });
 });

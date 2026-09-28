@@ -24,6 +24,8 @@ export { UsersScreen } from "./users-screen";
 export { RelationsScreen } from "./relations";
 export { ViewsScreen } from "./views";
 export { ModelScreen } from "./model";
+export { MediaLibraryScreen } from "./media-screen";
+export { deleteAsset, normalizeFolder, saveAsset, serveAsset, uploadAssets } from "./media";
 export { changeOwnPassword, createUser, deleteUser, resetPassword, setRole } from "./users";
 export {
   deleteItem,

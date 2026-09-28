@@ -1,9 +1,11 @@
 import type { AdminActions } from "@imprint/runtime-admin/admin-server";
 import {
+  deleteAssetAction,
   deleteItemAction,
   loginAction,
   logoutAction,
   restoreVersionAction,
+  saveAssetAction,
   saveItemAction,
   saveRelationsAction,
 } from "@/app/admin/actions";
@@ -32,4 +34,5 @@ export const adminActions: AdminActions = {
   },
   changeOwnPassword: changeOwnPasswordAction,
   studio: { draftOp: draftOpAction, resetDraft: resetDraftAction, savePageDraft: savePageDraftAction },
+  media: { saveAsset: saveAssetAction, deleteAsset: deleteAssetAction },
 };

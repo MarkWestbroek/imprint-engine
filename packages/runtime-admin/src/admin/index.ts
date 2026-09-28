@@ -16,4 +16,4 @@ export { JsonField, SchemaForm } from "./schema-form";
 export { ThemeEditor } from "./theme-editor";
 export { NewUserForm, OwnPasswordForm, UserTable } from "./user-manager";
 export { DefaultWidgetEditor, type WidgetEditor, type WidgetEditorProps } from "./widget-editor";
-export type { ActionResult, FormAction, StudioActions, StudioResult, UserAction, UserActionResult, UserActions } from "./types";
+export type { ActionResult, FormAction, MediaActions, StudioActions, StudioResult, UserAction, UserActionResult, UserActions } from "./types";

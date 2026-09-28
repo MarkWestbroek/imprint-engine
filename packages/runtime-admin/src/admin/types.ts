@@ -33,3 +33,11 @@ export type StudioActions = {
     validity: { validFrom?: string; validTo?: string }
   ): Promise<StudioResult & { slug?: string }>;
 };
+
+/** The media library's server actions (design/beeldbibliotheek.md), as the client calls them. */
+export type MediaActions = {
+  /** Merge the editable fields (AssetMeta) into the asset; the file part is untouched. */
+  saveAsset(slug: string, meta: Record<string, unknown>): Promise<ActionResult>;
+  /** A tombstone like any delete: the files stay for History and time travel. */
+  deleteAsset(slug: string): Promise<ActionResult>;
+};

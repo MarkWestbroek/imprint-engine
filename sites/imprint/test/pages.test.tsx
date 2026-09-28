@@ -25,8 +25,13 @@ async function renderHtml(element: ReactElement): Promise<string> {
 }
 
 describe("Imprint site: pages through the shared renderer", () => {
-  it("picks its own nine standard widgets and knows none of MusicBrain's domain widgets", () => {
-    assert.deepEqual(widgetRegistry.names(), ["hero", "text", "specs", "table", "accordion", "callout", "image", "album", "divider"]);
+  it("picks its own standard widgets and knows none of MusicBrain's domain widgets", () => {
+    assert.deepEqual(widgetRegistry.names(), [
+      "hero", "text", "specs", "table", "accordion", "callout", "image", "album", "divider",
+      // the 0.12 batch (design/plank-widgets-en-plugins.md §2), minus audio
+      "quote", "code", "mermaid", "v3model", "tabs", "cards", "buttons", "logos", "toc", "breadcrumb",
+      "file", "pdf", "timeline", "mediatext", "people", "testimonial", "pricing",
+    ]);
     assert.deepEqual(Object.keys(widgetComponents).sort(), [...widgetRegistry.names()].sort());
     assert.throws(() => widgetRegistry.parse({ type: "planning", config: {} }), /Unknown widget type "planning"/);
   });

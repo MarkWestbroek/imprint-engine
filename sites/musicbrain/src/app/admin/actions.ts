@@ -36,6 +36,15 @@ export async function pluginAction(plugin: string, action: string, ...args: unkn
   return actions.runPluginAction(admin, plugin, action, args);
 }
 
+/** The media library (design/beeldbibliotheek.md). */
+export async function saveAssetAction(slug: string, meta: Record<string, unknown>): Promise<ActionResult> {
+  return actions.saveAsset(admin, slug, meta);
+}
+
+export async function deleteAssetAction(slug: string): Promise<ActionResult> {
+  return actions.deleteAsset(admin, slug);
+}
+
 export async function saveRelationsAction(prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   return actions.saveRelations(admin, prev, formData);
 }

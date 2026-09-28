@@ -204,6 +204,13 @@ Voorstel:
 5. TipTap met afbeeldingknop.
 6. Beperkte assets via de poort; S3-backend (MinIO/Garage) als configwissel.
 
+## 10b. Stand
+
+- **Stap 1 klaar** (28 september 2026): `asset`, upload, scherm met mappen,
+  toegang per formaat. Afwijking: het persoonlijke EXIF-beleid wordt nu per
+  browser onthouden (localStorage), nog niet per gebruiker in de database.
+  Opslag nog op de file-backend; MinIO is stap 6.
+
 ## 11. Besluiten (28 september 2026)
 
 - Varianten bij upload, zonder verdubbeling van de opslag (§5).

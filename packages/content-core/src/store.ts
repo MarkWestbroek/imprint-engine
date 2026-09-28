@@ -71,7 +71,8 @@ export type CoreContentType =
   | "page"
   | "menu"
   | "theme"
-  | "relations";
+  | "relations"
+  | "asset";
 
 /**
  * A content type name. Open on purpose (design/fase-5, decision 1): plugins

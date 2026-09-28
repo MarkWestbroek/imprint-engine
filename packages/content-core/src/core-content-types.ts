@@ -3,6 +3,8 @@ import type { ContentTypeDefinition } from "./content-types";
 import { ContentTypeRegistry } from "./content-types";
 import { RelationsDoc, type RelationRule } from "./relations";
 import {
+  AssetMetaSchema,
+  AssetRecordSchema,
   BoardSpecSchema,
   ComponentSchema,
   MenuSchema,
@@ -83,6 +85,18 @@ export const coreContentTypeDefinitions: ContentTypeDefinition[] = [
     ],
     emptyData: () => ({ project: "", version: "", date: today(), channel: "stable", highlights: [], body: "", downloads: [] }),
     slugOf: (data) => `${String(data.project ?? "")}-${String(data.version ?? "")}`,
+  },
+  {
+    // The media library (design/beeldbibliotheek.md): its own screen at
+    // /admin/asset; the file part is written by the upload, never by a form.
+    name: "asset",
+    schema: AssetRecordSchema,
+    formSchema: AssetMetaSchema,
+    label: "Media",
+    flags: ["listable", "editable", "overview"],
+    menu: { group: "content", section: "Media" },
+    domain: "site",
+    emptyData: () => ({}),
   },
   {
     name: "menu",

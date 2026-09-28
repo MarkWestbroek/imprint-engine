@@ -159,6 +159,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       bestandssysteem + taglijsten (kern); varianten bij upload; EXIF-beleid
       per gebruiker; toegang per formaat (origineel nooit publiek, betaalmuur);
       MinIO in eigen bucket. _(S8; L)_
+      - [x] ~~Stap 1: `asset`-type, upload (sniffen, EXIF, varianten), scherm met
+            mappen, toegang per formaat in de serveerroute~~ — gedaan.
+      - [ ] Stap 2: taglijsten (kern) + tags uit lijsten in de bibliotheek;
+            filteren op lens/camera/locatie.
+      - [ ] Stap 3: `AssetRef` + picker in `SchemaForm`; beeldwidgets erop;
+            migratie van `/api/assets/…`-URL's; "gebruikt in".
+      - [ ] Stap 4: `srcset` in de viewers; focuspunt bij bijsnijden.
+      - [ ] Stap 5: TipTap met afbeeldingknop.
+      - [ ] Stap 6: MinIO-backend (eigen bucket) + ondertekende downloads.
+      - [ ] EXIF-beleid als echte persoonlijke instelling (nu per browser).
+      - [ ] Rookproef op de Imprint-site (Postgres) met Marks eigen login.
 - [ ] **Foto-verkoop (plugin)** — winkel/betaling bovenop de bibliotheek:
       aankoop = permissie op het origineel, levering via ondertekende URL.
       Vraag van een collega-fotograaf. _(L; na de bibliotheek)_

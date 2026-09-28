@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Beeldbibliotheek, stap 1** (design/beeldbibliotheek.md). Nieuw
+  kern-contenttype `asset` en het scherm **Content → Media**: uploaden met
+  knop of slepen, mappen als een bestandssysteem, detailpaneel met alt-tekst,
+  credit, licentie, bron, tags en toegang. Bij upload: type herkend aan de
+  bytes (niet de extensie), EXIF uitgelezen (camera, lens, belichting,
+  datum, fotograaf; locatie alleen op verzoek), WebP-webversies van 400–2400 px
+  (nooit groter dan het origineel), met een EXIF-beleid per upload (alles /
+  zonder locatie / niets); het origineel blijft onaangeroerd. **Toegang per
+  formaat**: publiek tot een in te stellen breedte, grotere versies en het
+  origineel alleen voor redacteuren — afgedwongen in de serveerroute via de
+  PDP. Beide sites hebben de bibliotheek (`/admin/upload`, `/api/assets/…`
+  via de engine). Browsertest van upload tot toegangscontrole over HTTP.
+- Fix: de karakteriseringstest van de Imprint-site pinde nog de oude negen
+  widgets.
 - **Achttien nieuwe standaardwidgets** (design/plank-widgets-en-plugins.md
   §2): `quote`, `code` (shiki, server-side, licht/donker via `light-dark()`),
   `mermaid` (client-island, lazy), `v3model` (het V3-metamodel als SVG-schema:

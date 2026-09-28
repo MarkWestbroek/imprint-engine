@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ItemEditor } from "../admin/item-editor";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
@@ -30,6 +30,8 @@ export async function ItemEditScreen({
   actions: Pick<AdminActions, "saveItem">;
 }) {
   if (!admin.imprint.contentTypes.has(type, "editable")) notFound();
+  // An asset's file part is the upload's, not a form's: it is edited in the library.
+  if (type === "asset") redirect(slug ? `/admin/asset?open=${encodeURIComponent(slug)}` : "/admin/asset");
   const contentType = type;
   const def = admin.imprint.contentTypes.definition(type);
   const store = admin.imprint.writableStore!;

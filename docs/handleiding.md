@@ -89,8 +89,8 @@ Links staat een **activiteitenbalk** (zoals in VS Code): vijf werkgebieden,
 elk met een eigen icoon. Klik een icoon en het paneel ernaast toont de items:
 
 - **Overzicht** — het dashboard (tellingen, Extensions: de actieve plugins, Time travel).
-- **Content** — je dagelijkse werk: Pages, de catalogus (Products, Components,
-  Board specs, Releases) en Planning.
+- **Content** — je dagelijkse werk: Pages, Media (de beeldbibliotheek), de
+  catalogus (Products, Components, Board specs, Releases) en Planning.
 - **Vormgeving** — Menus, Themes, Default views.
 - **Model & config** — Content model (read-only), Relations, Site.
 - **Beheer** — Users (alleen voor admins).
@@ -272,6 +272,39 @@ naar de koppen op de pagina, uit welke widget ze ook komen), **Breadcrumb**
 **Testimonials** en **Pricing**.
 
 Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
+
+## De beeldbibliotheek (Media)
+
+Onder **Content → Media** staan alle beelden en documenten van de site op één
+plek.
+
+- **Uploaden**: klik **Upload** of sleep bestanden op het raster. Ze komen in
+  de map die open staat. Foto's (JPEG, PNG, WebP, GIF, AVIF, TIFF), SVG en
+  PDF; maximaal 50 MB per bestand.
+- **Webversies**: van elke foto worden meteen kleinere versies gemaakt (400,
+  800, 1600 en 2400 px breed, nooit groter dan het origineel). De site toont
+  die; het **origineel blijft onaangeroerd** bewaard.
+- **EXIF**: de keuzelijst naast Upload bepaalt wat de webversies van de
+  EXIF-gegevens houden: *alles* (ook de locatie), *cameragegevens zonder
+  locatie* (standaard) of *niets*. Het origineel houdt altijd alles. Je keuze
+  wordt in je browser onthouden. Camera, lens, belichting, opnamedatum en
+  fotograaf worden bij het uploaden uitgelezen en staan in het detailpaneel;
+  de locatie alleen als je *alles* koos.
+- **Mappen**: een beeld staat in precies één map, zoals een bestand op je
+  computer. **＋ Folder** maakt een nieuwe; verplaatsen doe je met het veld
+  *Folder* in het detailpaneel. Pagina's merken niets van verplaatsen.
+- **Beschrijven**: titel, **alt-tekst** (wat er te zien is, voor wie het niet
+  kan zien), bijschrift, credit, licentie, bron en tags. Taglijsten met vaste
+  tags volgen in een volgende stap; nu zijn tags nog vrije tekst.
+- **Toegang per formaat**: *public* of *restricted* voor het hele beeld, en
+  **Public up to**: tot welke breedte een bezoeker het mag zien. Grotere
+  versies zijn dan alleen voor redacteuren. Het **origineel is nooit
+  openbaar**. Onder *Formats* zie je per versie wie hem mag zien.
+- **Verwijderen** kan met Delete; het beeld blijft in History en in oude
+  versies van pagina's gewoon bestaan.
+
+Beelden in widgets kiezen uit de bibliotheek komt in de volgende stap; tot die
+tijd kopieer je de link van een versie (onder *Formats*) naar het widgetveld.
 
 ## Wiki's bewerken
 

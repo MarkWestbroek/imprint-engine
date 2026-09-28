@@ -458,6 +458,36 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
   `POST /api/ingest/board-spec` (D5/D6): de backend slaat de bestanden op,
   herschrijft asset-namen in de doc naar URL's en doet `putItem`. Serveren via
   `GET /api/assets/...`.
+- **Beeldbibliotheek** (ontwerp: `docs/design/beeldbibliotheek.md`): kern-
+  contenttype `asset` (`AssetRecordSchema`; bewerkbaar deel `AssetMetaSchema`),
+  scherm `MediaLibraryScreen` op `/admin/asset` (`AdminTypeScreen` routeert
+  erheen). Bestanden staan onder `library/<slug>/` in de AssetStore.
+
+  ```mermaid
+  flowchart LR
+    U[browser: Upload] -->|multipart| R["/admin/upload<br/>uploadAssets()"]
+    R --> P["processUpload()<br/>sniff · EXIF · sharp → WebP"]
+    P -->|original + varianten| AS[(AssetStore<br/>library/slug/…)]
+    R -->|putItem asset| DB[(content store)]
+    V[bezoeker / redacteur] -->|GET /api/assets/…| S["serveAsset()"]
+    S -->|record| DB
+    S -->|"fileAccess(): public · reader · editor"| PDP{PDP}
+    S --> AS
+  ```
+
+  - `processUpload` (`runtime-admin/src/media/process.ts`) herkent het type aan
+    de bytes, leest EXIF (`exifr`) en maakt WebP-varianten (400/800/1600/2400,
+    nooit ≥ origineel) met het EXIF-beleid: `keepExif()`, een herbouwde EXIF
+    zonder GPS-blok, of niets. Het origineel blijft byte-gelijk.
+  - `fileAccess` (`media/access.ts`) beslist per bestand: variant ≤
+    `publicMaxWidth` van een publiek asset = `public` (immutable cache);
+    van een beperkt asset = `reader` (PDP `read`); grotere varianten en het
+    origineel = `editor` (PDP `update`; straks ook een aankoop). SVG krijgt
+    een sandbox-CSP.
+  - Sites: `app/admin/upload/route.ts` en `app/api/assets/[...path]/route.ts`
+    zijn één regel; `saveAsset`/`deleteAsset` als `"use server"`-wrappers
+    (`AdminActions.media`). `assets:gc` vindt library-bestanden via de URL's
+    in de asset-records, dus historie houdt ze vast.
 - **Weergave** met lage auteurlast: `BoardSpecView` (D9) rendert een board-spec
   (interactief board of overzicht + connectors-tabel + pinouts + secties). De
   `boardspec`-widget zet dat op elke pagina met alleen een spec-slug. De
