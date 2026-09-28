@@ -216,9 +216,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             nu via de Markdown-tab.
       - [x] ~~Stap 7: MinIO-backend (eigen bucket per site)~~ — gedaan; lokaal
             verhuisd.
-      - [ ] **VPS naar MinIO** — ▶ eigen `minio`-container in de Imprint-compose
-            (klaar: compose, `deploy.sh s3-setup`/`s3-move`); uitvoeren volgens
-            `docs/deploy-vps.md` ("Assets naar MinIO").
+      - [x] ~~**VPS naar MinIO**~~ — gedaan 29-09-2026: eigen MinIO, beide sites
+            op hun bucket, backup neemt het MinIO-volume mee.
+      - [ ] Oude asset-volumes op de VPS opruimen (`imprint_musicbrain_assets`,
+            `imprint_imprint_assets`) als de sites een tijd goed op MinIO draaien.
       - [ ] `npm run backup` en `npm run assets:gc` voor de bucket (nu alleen
             schijf, en gc alleen MariaDB).
       - [ ] Ondertekende, tijdelijke download-URL's (presigned) voor

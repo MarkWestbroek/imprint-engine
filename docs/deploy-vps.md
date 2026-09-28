@@ -202,6 +202,12 @@ veranderen niet (`/api/assets/…`): de site serveert ze nog steeds zelf, met
 dezelfde toegangsregels. Zolang `<SITE>_S3_*` in `.env` leeg is, blijft alles
 op het volume.
 
+**Stand (29 september 2026): uitgevoerd.** Beide sites lezen hun bestanden
+uit hun bucket in de eigen MinIO (`imprint-minio-1`); MusicBrain 389
+bestanden (78 MB) verhuisd, de Imprint-site had nog niets. De asset-volumes
+staan er nog (terugvaloptie) en krijgen niets nieuws meer. `backup.sh` neemt
+het MinIO-datavolume mee (`minio-data.tgz`).
+
 ▶ **Besluit (Mark): een eigen MinIO-container** in deze compose (dienst
 `minio`, volume `minio_data`, alleen in `imprint_net`; console via een
 SSH-tunnel naar `127.0.0.1:9011`). Los van de MinIO's van bitemporal en

@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Live: bestanden in MinIO** (29 september). Deploy van alles sinds
+  `8bc9a95` naar musicbrain.nl en imprint-engine.nl; daarna een eigen MinIO
+  op de VPS, buckets per site, MusicBrain's 389 bestanden verhuisd en beide
+  sites omgezet (gecontroleerd: MinIO ziet de leesverzoeken, Range werkt).
+  De nachtelijke backup neemt het MinIO-volume mee.
 - **VPS: eigen MinIO voor Imprint** (besluit Mark). Dienst `minio` in de
   compose (alleen `imprint_net`, console via tunnel op 127.0.0.1:9011, start
   alleen als een site een S3-endpoint heeft); `deploy.sh s3-setup <site>`
