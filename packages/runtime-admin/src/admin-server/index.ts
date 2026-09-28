@@ -32,6 +32,7 @@ export {
   deleteTaglist,
   editTag,
   ingestFiles,
+  libraryIndex,
   IngestRefused,
   normalizeFolder,
   normalizeGroup,
@@ -44,6 +45,7 @@ export {
   type IngestFile,
   type IngestOptions,
   type IngestResult,
+  type LibraryIndexEntry,
 } from "./media";
 export { changeOwnPassword, createUser, deleteUser, resetPassword, setRole } from "./users";
 export {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { DefaultWidgetEditor, SchemaForm, type WidgetEditorProps } from "@imprint/runtime-admin/admin";
+import { AssetField, DefaultWidgetEditor, SchemaForm, useAssetPreview, type WidgetEditorProps } from "@imprint/runtime-admin/admin";
 import { editorInputCls as inputCls, Mini2, omitProps, standardEditors } from "@imprint/widgets-standard/editors";
 
 /**
@@ -44,6 +44,8 @@ function asPoints(value: unknown): BoardPoint[] {
 function BoardEditor({ config, onChange }: WidgetEditorProps) {
   const title = typeof config.title === "string" ? config.title : "";
   const image = typeof config.image === "string" ? config.image : "";
+  // An `asset:` reference is shown through the library's URL; a plain URL as is.
+  const preview = useAssetPreview(image).url;
   const alt = typeof config.alt === "string" ? config.alt : "";
   const mode = config.mode === "expanded" ? "expanded" : "hover";
   const points = asPoints(config.points);
@@ -101,17 +103,7 @@ function BoardEditor({ config, onChange }: WidgetEditorProps) {
         />
       </label>
       <div className="grid grid-cols-[1fr_1fr_auto] gap-2">
-        <label className="block">
-          <span className="block text-xs font-medium uppercase tracking-wide text-muted">
-            image (URL or /public path)
-          </span>
-          <input
-            className={`mt-1 w-full ${inputCls}`}
-            value={image}
-            placeholder="/boards/busboard-v2.png"
-            onChange={(e) => patch({ image: e.target.value })}
-          />
-        </label>
+        <AssetField label="image" value={image} onChange={(v) => patch({ image: v ?? "" })} />
         <label className="block">
           <span className="block text-xs font-medium uppercase tracking-wide text-muted">
             alt
@@ -157,7 +149,7 @@ function BoardEditor({ config, onChange }: WidgetEditorProps) {
           onMouseLeave={() => (drag.current = null)}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- editor preview */}
-          <img src={image} alt="" className="block h-auto max-w-full rounded-lg" draggable={false} />
+          <img src={preview} alt="" className="block h-auto max-w-full rounded-lg" draggable={false} />
           {points.map((p, i) => (
             <span
               key={i}

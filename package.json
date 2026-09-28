@@ -35,7 +35,8 @@
     "smoke": "node scripts/smoke.mjs",
     "testcase:bitemporal": "node scripts/testcase-bitemporal.mjs",
     "backup": "node scripts/backup.mjs",
-    "assets:gc": "node scripts/assets-gc.mjs"
+    "assets:gc": "node scripts/assets-gc.mjs",
+    "media:refs": "tsx scripts/media-refs.ts"
   },
   "devDependencies": {
     "dotenv": "^17.2.0",

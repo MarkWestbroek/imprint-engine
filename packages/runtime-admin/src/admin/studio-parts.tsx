@@ -313,6 +313,12 @@ export function StudioSidebar() {
           config={(widget.config ?? {}) as Record<string, unknown>}
           def={widgetSchemas.find((d) => d.name === widget.type)}
         />
+      ) : sel ? (
+        // Selected but not in the rows yet: a new widget whose refresh is still on its way.
+        // Showing the page settings here would put the next click in the wrong form.
+        <p className="text-sm text-muted" role="status">
+          Loading widget…
+        </p>
       ) : (
         <PageSettingsPane />
       )}

@@ -44,9 +44,13 @@ Gevolgen:
 - migratie gaat geleidelijk: bestaande URL's blijven werken; een script kan
   URL's die naar `/api/assets/…` wijzen omzetten naar asset-verwijzingen.
 
-Technisch: een zod-datatype `AssetRef` (`string` óf `{ asset }`) in
-content-core, met een weergave-hint zodat `SchemaForm` er de picker van maakt.
-In V3 heet dit al `AssetUrl` met widget `media`.
+Technisch (zo gebouwd in stap 3): de verwijzing is een **string**
+`asset:<slug>` in hetzelfde veld dat een URL kan bevatten — geen object. Zo
+blijven alle bestaande velden en opgeslagen content geldig zonder migratie,
+en kan elk veld beide. `assetSrc(kinds)` in content-core markeert het veld
+(de soorten die het accepteert gaan als `x-imprint.asset` mee in de JSON
+Schema), zodat `SchemaForm` er de kiezer van maakt; viewers zetten de waarde
+om met `resolveMedia()`. In V3 heet dit al `AssetUrl` met widget `media`.
 
 ## 4. Ordening: mappen grof, tags fijn
 
@@ -236,6 +240,9 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
   Toevoeging: de admin kan bij uploaden kiezen voor "as one group" (bv. RAW
   + JPEG); de groepsnaam is dan de eerste bestandsnaam + een tijdstempel.
   Taglijsten worden nu alleen vanuit de bibliotheek gebruikt; pagina's volgen.
+- **Stap 3 klaar** (28 september 2026): kiezer, verwijzing als string
+  `asset:<slug>`, viewers, "Used in", `media:refs`. Nog zonder kiezer: beeld-
+  velden binnen lijsten van objecten (logo's, personen, testimonials).
 - **Stap 4 klaar** (28 september 2026), vóór stap 3 omdat de patch-editor
   erop wachtte: API-tokens (tabel `api_tokens`, SHA-256, scopes, vervaldatum,
   intrekken; beheer onder het account), `/api/media` met CORS-allowlist,

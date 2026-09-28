@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
+import { assetSrc, WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
 import { planningWidgets } from "@imprint/plugin-planning";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
 
@@ -94,8 +94,8 @@ export type BoardSpecConfig = z.infer<typeof BoardSpecConfig>;
  */
 export const BoardConfig = z.object({
   title: z.string().optional(),
-  /** URL or a path under the site's public/ dir. */
-  image: z.string().min(1),
+  /** A library asset (`asset:<slug>`), a URL, or a path under the site's public/ dir. */
+  image: assetSrc(),
   alt: z.string().default(""),
   /**
    * "hover": hotspots reveal their detail on mouseover (compact).

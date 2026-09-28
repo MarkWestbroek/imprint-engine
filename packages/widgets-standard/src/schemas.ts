@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { assetSrc } from "@imprint/content-core";
 
 /**
  * The standard widgets' config schemas (library layer, architecture.md §0):
@@ -65,8 +66,8 @@ export const TableConfig = z.object({
 export type TableConfig = z.infer<typeof TableConfig>;
 
 export const ImageConfig = z.object({
-  /** URL or a path under the site's public/ dir. */
-  src: z.string().min(1),
+  /** A library asset (`asset:<slug>`), a URL, or a path under the site's public/ dir. */
+  src: assetSrc(),
   alt: z.string().default(""),
   caption: z.string().optional(),
   /** Cap the rendered width in pixels; empty = full column width. */
@@ -94,8 +95,8 @@ export type EmbedConfig = z.infer<typeof EmbedConfig>;
 
 /** One image in a gallery/carousel/album. */
 export const ImageItem = z.object({
-  /** URL or a path under public/ or /api/assets. */
-  src: z.string().min(1),
+  /** A library asset (`asset:<slug>`), a URL, or a path under public/. */
+  src: assetSrc(),
   alt: z.string().default(""),
   caption: z.string().optional(),
 });
@@ -185,8 +186,8 @@ export const HeroConfig = z.object({
   /** Wrap one word in *asterisks* to give it the accent colour. */
   title: z.string().min(1),
   subtitle: z.string().default(""),
-  /** Background/side image (URL or public/ path). */
-  image: z.string().optional(),
+  /** Background/side image: a library asset, a URL or a public/ path. */
+  image: assetSrc().optional(),
   buttonLabel: z.string().optional(),
   buttonUrl: z.string().optional(),
   align: z.enum(["left", "center"]).default("left"),
@@ -388,7 +389,7 @@ export type ButtonsConfig = z.infer<typeof ButtonsConfig>;
 
 export const LogosConfig = z.object({
   title: z.string().optional(),
-  items: z.array(z.object({ src: z.string().min(1), alt: z.string().default(""), href: z.string().optional() })).default([]),
+  items: z.array(z.object({ src: assetSrc(), alt: z.string().default(""), href: z.string().optional() })).default([]),
   columns: z.number().int().min(2).max(8).default(5),
   /** Grey until hovered. */
   grayscale: z.boolean().default(true),
@@ -409,7 +410,7 @@ export const BreadcrumbConfig = z.object({
 export type BreadcrumbConfig = z.infer<typeof BreadcrumbConfig>;
 
 export const AudioConfig = z.object({
-  src: z.string().min(1),
+  src: assetSrc(["audio"]),
   title: z.string().optional(),
   caption: z.string().optional(),
   loop: z.boolean().default(false),
@@ -417,14 +418,14 @@ export const AudioConfig = z.object({
 export type AudioConfig = z.infer<typeof AudioConfig>;
 
 export const PdfConfig = z.object({
-  src: z.string().min(1),
+  src: assetSrc(["document"]),
   title: z.string().optional(),
   height: z.number().int().positive().default(600),
 });
 export type PdfConfig = z.infer<typeof PdfConfig>;
 
 export const FileConfig = z.object({
-  src: z.string().min(1),
+  src: assetSrc(["image", "svg", "document", "audio", "data"]),
   label: z.string().min(1),
   /** Free text, e.g. "PDF · 1.2 MB". */
   meta: z.string().optional(),
@@ -449,7 +450,7 @@ export type TimelineConfig = z.infer<typeof TimelineConfig>;
 
 export const MediaTextConfig = z.object({
   title: z.string().optional(),
-  src: z.string().min(1),
+  src: assetSrc(),
   alt: z.string().default(""),
   markdown: z.string().default(""),
   imageSide: z.enum(["left", "right"]).default("left"),
@@ -467,7 +468,7 @@ export const PeopleConfig = z.object({
       z.object({
         name: z.string().min(1),
         role: z.string().optional(),
-        photo: z.string().optional(),
+        photo: assetSrc().optional(),
         bio: z.string().optional(),
         links: z.array(z.object({ label: z.string().min(1), href: z.string().min(1) })).default([]),
       })
@@ -484,7 +485,7 @@ export const TestimonialConfig = z.object({
         quote: z.string().min(1),
         name: z.string().min(1),
         role: z.string().optional(),
-        photo: z.string().optional(),
+        photo: assetSrc().optional(),
       })
     )
     .default([]),

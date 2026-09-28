@@ -4,11 +4,12 @@ import os from "node:os";
 import path from "node:path";
 import { after, before, describe, it } from "node:test";
 import sharp from "sharp";
-import { AssetRecordSchema, FileAssetStore, inProcessPdp, userSubject, ANONYMOUS } from "@imprint/content-core";
+import { AssetRecordSchema, FileAssetStore, guardReads, inProcessPdp, userSubject, ANONYMOUS } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import type { AdminContext, AdminSession } from "../src/admin-context";
 import { deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, saveTaglist, serveAsset } from "../src/admin-server/media";
 import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
+import { resolveMedia } from "../src/media/resolve";
 
 /**
  * The upload core and serving of the media library (design/beeldbibliotheek.md
@@ -191,6 +192,27 @@ describe("ingestFiles + serveAsset", () => {
     assert.equal((await deleteTaglist(admin, "onderwerp")).affected, 4);
     assert.deepEqual(await tagsOf("a"), []);
     assert.equal(await store.getItem("taglist", "onderwerp"), null);
+  });
+
+  it("resolveMedia: a reference becomes the public version; restricted is invisible to a visitor; a URL stays a URL", async () => {
+    const store = admin.imprint.writableStore!;
+    const photo = await sharp({ create: { width: 2000, height: 1000, channels: 3, background: "#123" } }).jpeg().toBuffer();
+    const [r] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "duin.jpg", bytes: photo }]);
+    const record = AssetRecordSchema.parse((await store.getItem("asset", r.slug!))!.data);
+    await store.putItem("asset", r.slug!, { ...record, alt: "Dunes" }, { by: "mark" });
+
+    const ctx = (s: typeof store | null) => ({ store: s!, writableStore: s, readOptions: {} }) as never;
+    const m = await resolveMedia(ctx(store), `asset:${r.slug}`);
+    assert.equal(m?.src, "/api/assets/library/duin/w1600." + m!.src.split(".").slice(-2).join("."));
+    assert.equal(m?.alt, "Dunes");
+    assert.match(m?.srcSet ?? "", /w400\..+ 400w, .+w800\..+ 800w, .+w1600\..+ 1600w/);
+    assert.deepEqual(await resolveMedia(ctx(store), "/boards/cortex.png"), { src: "/boards/cortex.png" });
+    assert.equal(await resolveMedia(ctx(store), "asset:nonesuch"), null);
+    assert.equal(await resolveMedia(ctx(null), `asset:${r.slug}`), null, "file mode has no library");
+
+    await store.putItem("asset", r.slug!, { ...record, access: "restricted" }, { by: "mark" });
+    assert.equal(await resolveMedia(ctx(guardReads(store, ANONYMOUS, inProcessPdp)), `asset:${r.slug}`), null);
+    assert.ok(await resolveMedia(ctx(guardReads(store, userSubject("rita", "reader"), inProcessPdp)), `asset:${r.slug}`));
   });
 
   it("tags are normalised to list/tag or a free word", () => {

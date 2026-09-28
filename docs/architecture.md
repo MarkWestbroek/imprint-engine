@@ -505,6 +505,17 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     origineel = `editor` (PDP `update`; straks ook een aankoop). SVG krijgt
     een sandbox-CSP. Serveren gaat gestreamd met **HTTP Range** (206 /
     416), zodat een speler kan spoelen; de sites geven de `Range`-header door.
+  - **Verwijzen** (§3): een beeld- of bestandsveld blijft een string: een
+    URL of `asset:<slug>` (`ASSET_REF_PREFIX`, `assetRefSlug`). `assetSrc(kinds)`
+    in content-core markeert zo'n veld (`x-imprint.asset` in de JSON Schema);
+    `SchemaForm` maakt er de kiezer van (`AssetField`, lijsten
+    `AssetListField`), gevoed door `GET /admin/upload` (`libraryIndex`).
+    Viewers zetten de waarde om met `resolveMedia(ctx, value)` (runtime-admin):
+    grootste publieke versie, alt/bijschrift/afmetingen/`srcSet` uit de
+    bibliotheek; een verdwenen of voor deze lezer onzichtbaar asset geeft
+    `null` (de store in `ctx` is de bewaakte). "Used in" is een scan van alle
+    actuele items op `asset:<slug>` en `…/library/<slug>/`;
+    `scripts/media-refs.ts` zet hele veldwaarden die bibliotheek-URL's zijn om.
   - **Externe API** (§12.4): `mediaApi` op `/api/media` — `POST` (multipart
     `file[]`, `folder`, `tags[]`, `group`, `exif` → 201 `{ assets }`) en `GET`
     (`?folder=&tag=&group=`). Authenticatie met een persoonlijke token

@@ -25,6 +25,28 @@ export type Access = z.infer<typeof Access>;
 
 /* ---------- the media library (design/beeldbibliotheek.md) ---------- */
 
+/**
+ * A reference to a library asset inside a string field: `asset:<slug>`
+ * (design/beeldbibliotheek.md §3). Every image or file field stays a string,
+ * so a plain URL keeps working (the "uitweg") and no stored content has to
+ * change; viewers resolve the reference when they render.
+ */
+export const ASSET_REF_PREFIX = "asset:";
+
+/** The asset slug a field value refers to, or null for a plain URL/path. */
+export function assetRefSlug(value: unknown): string | null {
+  return typeof value === "string" && value.startsWith(ASSET_REF_PREFIX) ? value.slice(ASSET_REF_PREFIX.length) || null : null;
+}
+
+/**
+ * A string field that holds an image or file: an `asset:<slug>` reference or
+ * a URL. The marker (`x-imprint.asset` = the kinds it accepts) reaches the
+ * JSON Schema, and the admin form turns the field into a library picker.
+ */
+export function assetSrc(kinds: string[] = ["image", "svg"]) {
+  return z.string().min(1).meta({ "x-imprint": { asset: kinds } });
+}
+
 /** What happens to EXIF in the web variants; the original always keeps its own. */
 export const ExifPolicy = z.enum(["all", "no-location", "none"]);
 export type ExifPolicy = z.infer<typeof ExifPolicy>;
@@ -195,8 +217,8 @@ export const ProductSchema = z.object({
   description: z.string().default(""),
   /** Ordered key/value spec list, rendered as the specs table (W3). */
   specs: z.array(z.object({ label: z.string(), value: z.string() })).default([]),
-  /** Paths relative to the site's public/ dir, or absolute URLs. */
-  media: z.array(z.string()).default([]),
+  /** Library assets (`asset:<slug>`), paths relative to public/, or absolute URLs. */
+  media: z.array(assetSrc()).default([]),
   /**
    * Slugs of the components this product is built from (UML: Product ◆ Component).
    * Components are their own content type because they're reusable across
@@ -420,7 +442,7 @@ export const PageMetaSchema = z.object({
   access: Access.default("public"),
   title: z.string().min(1),
   description: z.string().default(""),
-  ogImage: z.string().optional(),
+  ogImage: assetSrc().optional(),
   /** Draft pages are ignored by production builds (S5, file-backed version). */
   draft: z.boolean().default(false),
   /** Publish date; pages with a future date are hidden (S6, file-backed version). */

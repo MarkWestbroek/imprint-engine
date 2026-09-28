@@ -8,6 +8,7 @@ import {
   type WidgetContext,
   type WidgetViewer,
   type WidgetViewers,
+  resolveMedia,
 } from "@imprint/runtime-admin";
 import { planningViewers } from "@imprint/plugin-planning";
 import { standardViewers } from "@imprint/widgets-standard/viewers";
@@ -41,13 +42,15 @@ import type {
  * ./registry.ts by the store.
  */
 
-async function BoardWidget({ config }: { config: BoardConfig }) {
+async function BoardWidget({ config, ctx }: { config: BoardConfig; ctx: WidgetContext }) {
   // Thin server shell: the hover interaction lives in the client island.
+  const image = await resolveMedia(ctx, config.image);
+  if (!image) return null;
   return (
     <WidgetFrame title={config.title}>
       <BoardCanvas
-        image={config.image}
-        alt={config.alt}
+        image={image.src}
+        alt={config.alt || image.alt || ""}
         points={config.points}
         mode={config.mode}
       />

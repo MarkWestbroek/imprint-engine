@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { JsonSchema } from "@imprint/runtime-admin/forms";
-import { SchemaForm, type WidgetEditor, type WidgetEditorProps } from "@imprint/runtime-admin/admin";
+import { AssetField, SchemaForm, type WidgetEditor, type WidgetEditorProps } from "@imprint/runtime-admin/admin";
 
 /**
  * Editors for the standard widgets that deserve more than the generated form
@@ -193,12 +193,7 @@ export function ImagesEditor({ config, onChange, schema }: WidgetEditorProps) {
         <div className="mt-1 space-y-2">
           {images.map((img, i) => (
             <div key={i} className="rounded-lg border border-line p-2">
-              <input
-                className={`${inputCls} w-full`}
-                placeholder="/boards/foo.png of https://…"
-                value={img.src}
-                onChange={(e) => update(i, { src: e.target.value })}
-              />
+              <AssetField label={`photo ${i + 1}`} value={img.src} onChange={(src) => update(i, { src: src ?? "" })} />
               <div className="mt-1.5 flex gap-1.5">
                 <input
                   className={`${inputCls} flex-1`}

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Mustache from "mustache";
 import type { ContentType, Page } from "@imprint/content-core";
-import { Markdown, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
+import { Markdown, resolveMedia, resolveMediaAll, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
 import { Carousel, Gallery } from "./media-islands";
 import { MapIsland } from "./map-island";
 import { Tabs } from "./tabs-island";
@@ -108,20 +108,22 @@ async function TableWidget({ config }: { config: TableConfig }) {
   );
 }
 
-async function ImageWidget({ config }: { config: ImageConfig }) {
+async function ImageWidget({ config, ctx }: { config: ImageConfig; ctx: WidgetContext }) {
+  // A library asset brings its own alt text and caption; the widget's own win.
+  const media = await resolveMedia(ctx, config.src);
+  if (!media) return null;
+  const caption = config.caption ?? media.caption;
   return (
     <WidgetFrame>
       <figure>
         {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary external/public src, no loader config */}
         <img
-          src={config.src}
-          alt={config.alt}
+          src={media.src}
+          alt={config.alt || media.alt || ""}
           style={config.maxWidth ? { maxWidth: config.maxWidth } : undefined}
           className="h-auto max-w-full rounded-lg"
         />
-        {config.caption && (
-          <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>
-        )}
+        {caption && <figcaption className="mt-2 text-sm text-muted">{caption}</figcaption>}
       </figure>
     </WidgetFrame>
   );
@@ -227,10 +229,11 @@ async function ListWidget({
 }
 
 /** Config images + (optionally) the subject's media[] strings, as one list. */
-function collectImages(
+async function collectImages(
   config: { images: ImageItem[]; useSubjectMedia: boolean },
+  ctx: WidgetContext,
   subject?: unknown
-): ImageItem[] {
+): Promise<ImageItem[]> {
   const images = [...config.images];
   const media = (subject as { media?: unknown } | undefined)?.media;
   if (config.useSubjectMedia && Array.isArray(media)) {
@@ -238,17 +241,24 @@ function collectImages(
       if (typeof m === "string" && m) images.push({ src: m, alt: "" });
     }
   }
-  return images;
+  // Library assets become their public URL, with the library's alt text and caption.
+  const resolved = await resolveMediaAll(ctx, images.map((img) => img.src));
+  return images.flatMap((img, i) => {
+    const m = resolved[i];
+    return m ? [{ src: m.src, alt: img.alt || m.alt || "", caption: img.caption ?? m.caption }] : [];
+  });
 }
 
 async function GalleryWidget({
   config,
   subject,
+  ctx,
 }: {
   config: GalleryConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
-  const images = collectImages(config, subject);
+  const images = await collectImages(config, ctx, subject);
   // Subject-driven and empty = the section simply isn't there (parity with
   // the hand-coded page); the hint only helps for hand-filled galleries.
   if (images.length === 0 && config.useSubjectMedia) return null;
@@ -266,11 +276,13 @@ async function GalleryWidget({
 async function CarouselWidget({
   config,
   subject,
+  ctx,
 }: {
   config: CarouselConfig;
   subject?: unknown;
+  ctx: WidgetContext;
 }) {
-  const images = collectImages(config, subject);
+  const images = await collectImages(config, ctx, subject);
   return (
     <WidgetFrame title={config.title}>
       {images.length > 0 ? (
@@ -453,7 +465,8 @@ function accentTitle(title: string): React.ReactNode {
   );
 }
 
-async function HeroWidget({ config }: { config: HeroConfig }) {
+async function HeroWidget({ config, ctx }: { config: HeroConfig; ctx: WidgetContext }) {
+  const image = await resolveMedia(ctx, config.image);
   const center = config.align === "center";
   const panel = config.variant === "panel";
   return (
@@ -462,10 +475,10 @@ async function HeroWidget({ config }: { config: HeroConfig }) {
         panel ? "rounded-xl border border-line bg-surface p-8 sm:p-12" : "py-6 sm:py-10"
       } ${center ? "text-center" : ""}`}
     >
-      {config.image && (
+      {image && (
         // eslint-disable-next-line @next/next/no-img-element -- content image
         <img
-          src={config.image}
+          src={image.src}
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover opacity-25"
@@ -961,15 +974,18 @@ async function ButtonsWidget({ config }: { config: ButtonsConfig }) {
   );
 }
 
-async function LogosWidget({ config }: { config: LogosConfig }) {
+async function LogosWidget({ config, ctx }: { config: LogosConfig; ctx: WidgetContext }) {
+  const resolved = await resolveMediaAll(ctx, config.items.map((l) => l.src));
   return (
     <WidgetFrame title={config.title}>
       <div className="grid items-center gap-6" style={gridCols(config.columns, "6rem")}>
         {config.items.map((logo, i) => {
+          const media = resolved[i];
+          if (!media) return null;
           const img = (
             <img
-              src={logo.src}
-              alt={logo.alt}
+              src={media.src}
+              alt={logo.alt || media.alt || ""}
               loading="lazy"
               className={`mx-auto max-h-12 w-auto ${config.grayscale ? "opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" : ""}`}
             />
@@ -1034,32 +1050,36 @@ async function BreadcrumbWidget({ config, ctx }: { config: BreadcrumbConfig; ctx
   );
 }
 
-async function AudioWidget({ config }: { config: AudioConfig }) {
+async function AudioWidget({ config, ctx }: { config: AudioConfig; ctx: WidgetContext }) {
+  const media = await resolveMedia(ctx, config.src);
+  if (!media) return null;
   return (
     <figure className="rounded-xl border border-line bg-surface px-5 py-4">
       {config.title && <p className="mb-2 font-semibold">{config.title}</p>}
-      <audio controls preload="metadata" loop={config.loop} src={config.src} className="w-full">
-        <a href={config.src}>{config.title ?? "Download audio"}</a>
+      <audio controls preload="metadata" loop={config.loop} src={media.src} className="w-full">
+        <a href={media.src}>{config.title ?? "Download audio"}</a>
       </audio>
       {config.caption && <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>}
     </figure>
   );
 }
 
-async function PdfWidget({ config }: { config: PdfConfig }) {
+async function PdfWidget({ config, ctx }: { config: PdfConfig; ctx: WidgetContext }) {
+  const media = await resolveMedia(ctx, config.src);
+  if (!media) return null;
   return (
     <WidgetFrame title={config.title}>
-      <object data={config.src} type="application/pdf" className="w-full rounded-lg border border-line" style={{ height: config.height }}>
+      <object data={media.src} type="application/pdf" className="w-full rounded-lg border border-line" style={{ height: config.height }}>
         <p className="p-4 text-sm text-muted">
           Your browser cannot show the PDF here.{" "}
-          <a href={config.src} className="text-accent underline">
+          <a href={media.src} className="text-accent underline">
             Download it
           </a>
           .
         </p>
       </object>
       <p className="mt-2 text-right text-xs">
-        <a href={config.src} download className="text-muted hover:text-accent">
+        <a href={media.src} download className="text-muted hover:text-accent">
           Download PDF ↓
         </a>
       </p>
@@ -1067,10 +1087,12 @@ async function PdfWidget({ config }: { config: PdfConfig }) {
   );
 }
 
-async function FileWidget({ config }: { config: FileConfig }) {
+async function FileWidget({ config, ctx }: { config: FileConfig; ctx: WidgetContext }) {
+  const media = await resolveMedia(ctx, config.src);
+  if (!media) return null;
   return (
     <a
-      href={config.src}
+      href={media.src}
       download
       className="flex items-center gap-4 rounded-xl border border-line bg-surface px-5 py-4 hover:border-accent"
     >
@@ -1115,9 +1137,10 @@ async function TimelineWidget({ config }: { config: TimelineConfig }) {
   );
 }
 
-async function MediaTextWidget({ config }: { config: MediaTextConfig }) {
-  const image = (
-    <img src={config.src} alt={config.alt} loading="lazy" className="h-auto w-full rounded-xl border border-line" />
+async function MediaTextWidget({ config, ctx }: { config: MediaTextConfig; ctx: WidgetContext }) {
+  const media = await resolveMedia(ctx, config.src);
+  const image = media && (
+    <img src={media.src} alt={config.alt || media.alt || ""} loading="lazy" className="h-auto w-full rounded-xl border border-line" />
   );
   const cols = config.imageWidth === "third" ? "1fr 2fr" : "1fr 1fr";
   return (
@@ -1144,13 +1167,14 @@ async function MediaTextWidget({ config }: { config: MediaTextConfig }) {
   );
 }
 
-async function PeopleWidget({ config }: { config: PeopleConfig }) {
+async function PeopleWidget({ config, ctx }: { config: PeopleConfig; ctx: WidgetContext }) {
+  const photos = await resolveMediaAll(ctx, config.items.map((p) => p.photo));
   return (
     <WidgetFrame title={config.title}>
       <div className="grid gap-4" style={gridCols(config.columns)}>
         {config.items.map((p, i) => (
           <div key={i} className="rounded-xl border border-line bg-surface p-5">
-            {p.photo && <img src={p.photo} alt={p.name} loading="lazy" className="mb-3 h-20 w-20 rounded-full border border-line object-cover" />}
+            {photos[i] && <img src={photos[i]!.src} alt={p.name} loading="lazy" className="mb-3 h-20 w-20 rounded-full border border-line object-cover" />}
             <h3 className="font-semibold">{p.name}</h3>
             {p.role && <p className="text-sm text-accent">{p.role}</p>}
             {p.bio && <p className="mt-2 text-sm text-muted">{p.bio}</p>}
@@ -1170,7 +1194,8 @@ async function PeopleWidget({ config }: { config: PeopleConfig }) {
   );
 }
 
-async function TestimonialWidget({ config }: { config: TestimonialConfig }) {
+async function TestimonialWidget({ config, ctx }: { config: TestimonialConfig; ctx: WidgetContext }) {
+  const photos = await resolveMediaAll(ctx, config.items.map((t) => t.photo));
   return (
     <WidgetFrame title={config.title}>
       <div className="grid gap-4" style={gridCols(Math.min(3, Math.max(1, config.items.length)), "16rem")}>
@@ -1178,7 +1203,7 @@ async function TestimonialWidget({ config }: { config: TestimonialConfig }) {
           <figure key={i} className="flex flex-col rounded-xl border border-line bg-surface p-5">
             <blockquote className="flex-1 text-foreground">“{t.quote}”</blockquote>
             <figcaption className="mt-4 flex items-center gap-3 text-sm">
-              {t.photo && <img src={t.photo} alt="" loading="lazy" className="h-9 w-9 rounded-full border border-line object-cover" />}
+              {photos[i] && <img src={photos[i]!.src} alt="" loading="lazy" className="h-9 w-9 rounded-full border border-line object-cover" />}
               <span>
                 <span className="block font-semibold">{t.name}</span>
                 {t.role && <span className="block text-muted">{t.role}</span>}

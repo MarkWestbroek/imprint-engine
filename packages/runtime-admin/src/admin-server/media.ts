@@ -14,7 +14,7 @@ import {
 } from "@imprint/content-core";
 import type { AdminContext } from "../admin-context";
 import type { ActionResult } from "../admin/types";
-import { fileAccess } from "../media/access";
+import { displayUrl, fileAccess, thumbUrl } from "../media/access";
 import { processUpload, slugFromFilename, uniqueSlug, UploadError } from "../media/process";
 
 /**
@@ -479,4 +479,51 @@ export async function deleteTaglist(admin: AdminContext, list: string): Promise<
   await store.deleteItem("taglist", list, current.lang);
   revalidateSite();
   return { ok: true, affected };
+}
+
+/** One entry of the library index the admin's pickers load. */
+export type LibraryIndexEntry = {
+  slug: string;
+  title: string;
+  alt: string;
+  kind: string;
+  folder: string;
+  tags: string[];
+  filename: string;
+  /** Small version, for thumbnails. */
+  thumb: string;
+  /** What a page shows (the widest public version, or the original). */
+  display: string;
+};
+
+/**
+ * GET handler for the admin's asset pickers (§3): the whole library, lean.
+ * Session-based like the upload next to it; the external API is /api/media.
+ */
+export async function libraryIndex(admin: AdminContext): Promise<Response> {
+  const session = await admin.auth.editingSession();
+  if (!session) return Response.json({ error: "Not signed in" }, { status: 401 });
+  const store = admin.imprint.writableStore;
+  if (!store) return Response.json({ assets: [] });
+  const assets: LibraryIndexEntry[] = (await store.listItems("asset"))
+    .sort((a, b) => b.txFrom.getTime() - a.txFrom.getTime())
+    .flatMap((r) => {
+      const parsed = AssetRecordSchema.safeParse(r.data);
+      if (!parsed.success) return [];
+      const a = parsed.data;
+      return [
+        {
+          slug: a.slug,
+          title: a.title,
+          alt: a.alt,
+          kind: a.file.kind,
+          folder: a.folder,
+          tags: a.tags,
+          filename: a.file.filename,
+          thumb: thumbUrl(a),
+          display: a.file.kind === "image" ? displayUrl(a) : a.file.original,
+        },
+      ];
+    });
+  return Response.json({ assets }, { headers: { "Cache-Control": "no-store" } });
 }

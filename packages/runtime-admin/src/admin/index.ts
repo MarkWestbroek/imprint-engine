@@ -6,6 +6,7 @@
  * an `@source` for this package).
  */
 export { AdminShell, type MenuGroup, type MenuItem } from "./admin-shell";
+export { AssetField, AssetListField, useAssetPreview, useLibrary, type LibraryEntry } from "./asset-field";
 export { confirmDialog, DialogHost, promptDialog } from "./dialog";
 export { ItemEditor } from "./item-editor";
 export { LoginForm } from "./login-form";

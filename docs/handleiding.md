@@ -343,8 +343,30 @@ site op één plek.
 - **Verwijderen** kan met Delete; het beeld blijft in History en in oude
   versies van pagina's gewoon bestaan.
 
-Beelden in widgets kiezen uit de bibliotheek komt in de volgende stap; tot die
-tijd kopieer je de link van een versie (onder *Formats*) naar het widgetveld.
+**Kiezen uit de bibliotheek.** Elk beeld- of bestandsveld (Image, Hero,
+Media & text, Audio, PDF, File download, de foto's van Gallery en Carousel,
+productfoto's, het OG-beeld van een pagina) heeft een kiezer: een voorbeeldje,
+**Choose from library** (zoeken, per map, en **Upload new** zonder de editor
+te verlaten) en **Clear**. Er wordt dan een verwijzing opgeslagen
+(`asset:naam`), geen vaste link:
+
+- de site toont altijd de **grootste publieke versie** (rekening houdend met
+  *Public up to*);
+- de **alt-tekst en het bijschrift** komen uit de bibliotheek — vul je ze in de
+  widget zelf in, dan gaan die voor;
+- verbeter je de alt-tekst of vervang je iets in de bibliotheek, dan klopt het
+  overal meteen.
+
+Een gewone URL (een extern beeld) plakken kan nog steeds in hetzelfde veld.
+In het detailpaneel van de bibliotheek zie je onder **Used in** op welke
+pagina's en items een bestand staat (met links naar de editor), en de
+verwijzing om te kopiëren (`asset:naam`) voor velden zonder kiezer (bv. de
+logo's of personen, die nog als JSON bewerkt worden). Verwijder je een bestand
+dat ergens gebruikt wordt, dan waarschuwt de bibliotheek eerst.
+
+Staan er in oude content nog links naar bibliotheekbestanden (uit *Formats*
+gekopieerd), dan zet `npm run media:refs` ze om naar verwijzingen (eerst
+zonder `-- --apply` om te zien wat er verandert).
 
 ## Wiki's bewerken
 

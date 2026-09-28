@@ -175,6 +175,38 @@ test.describe("media library", () => {
     await expect(card).toHaveCount(0);
   });
 
+  test("pick it in a widget: the page shows the public size with the library's alt; the library knows where it is used", async ({ page }) => {
+    await page.goto("/admin/page/edit");
+    await page.getByLabel("slug", { exact: true }).fill("e2e-picked");
+    await page.getByLabel("title", { exact: true }).fill("E2E Picked");
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "＋ Add row" }).click();
+    await page.getByRole("button", { name: "＋ Add widget" }).click();
+    await page.getByRole("button", { name: "Image", exact: true }).click();
+    // The new widget's editor is in the sidebar (not the page settings, which have an image field too).
+    await expect(page.getByRole("heading", { name: /^Image/ })).toBeVisible();
+
+    await page.getByRole("button", { name: "Choose from library" }).click();
+    const picker = page.getByRole("dialog", { name: "Choose from the media library" });
+    await picker.getByRole("button", { name: /e2e strand/ }).click();
+    await expect(picker).toHaveCount(0);
+    await expect(page.getByRole("group", { name: "src" })).toContainText("e2e strand");
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "Create page" }).click();
+    await expect(page).toHaveURL(/\/admin\/page\/edit\/e2e-picked/);
+
+    const res = await page.goto("/e2e-picked");
+    expect(res?.status()).toBe(200);
+    const img = page.getByRole("img", { name: "Een strand bij laag water" });
+    await expect(img).toHaveAttribute("src", /\/library\/e2e-strand\/w800\./);
+
+    await page.goto("/admin/asset");
+    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await expect(page.getByRole("list", { name: "Used in" })).toContainText("E2E Picked");
+  });
+
   test("delete: gone from the library, kept in History", async ({ page }) => {
     await page.goto("/admin/asset");
     await page.getByRole("button", { name: /e2e strand/ }).click();

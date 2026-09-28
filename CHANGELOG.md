@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Kiezen uit de bibliotheek** (beeldbibliotheek stap 3). Elk beeld- en
+  bestandsveld heeft een kiezer (voorbeeld, *Choose from library* met zoeken,
+  mappen en uploaden, *Clear*), in gegenereerde formulieren én de galerij-,
+  carrousel- en bordeditor; productfoto's worden een lijst kiezers. Opgeslagen
+  wordt `asset:<naam>` (een gewone URL blijft werken); de site toont de
+  grootste publieke versie met alt-tekst en bijschrift uit de bibliotheek (die
+  van de widget gaan voor). **Used in** in de bibliotheek, met een
+  waarschuwing bij verwijderen. `npm run media:refs` zet oude links naar
+  bibliotheekbestanden om. Velden: `assetSrc()` in content-core; viewers via
+  `resolveMedia()`.
+- Fix (studio): direct na *Add widget* toonde de zijbalk even de
+  pagina-instellingen, tot de nieuwe widget van de server binnen was — een
+  snelle klik kwam dan in het verkeerde formulier. Nu: "Loading widget…".
+- Fix: een typefout in de browsertest van de media-API (Buffer als BlobPart).
 - **Media-API voor programma's buiten de admin** (beeldbibliotheek stap 4,
   design §12.4). `POST /api/media` (multipart: `file[]`, `folder`, `tags[]`,
   `group`, `exif`) en `GET /api/media?folder=&tag=&group=`, met een

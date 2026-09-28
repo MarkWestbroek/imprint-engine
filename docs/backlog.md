@@ -188,8 +188,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             mechanisme is kern; de pickers ontbreken nog).
       - [x] ~~Tag hernoemen of verwijderen in een lijst~~ — gedaan
             (hernoemen met samenvoegen, verwijderen, lijst hernoemen/verwijderen).
-      - [ ] Stap 3: `AssetRef` + picker in `SchemaForm`; beeldwidgets erop;
-            migratie van `/api/assets/…`-URL's; "gebruikt in".
+      - [x] ~~Stap 3: verwijzing + kiezer in `SchemaForm` en editors;
+            beeldwidgets erop; `media:refs`; "Used in"~~ — gedaan (als string
+            `asset:<slug>`, zie ontwerp §3).
+      - [ ] Kiezer ook voor beeldvelden in lijsten van objecten (logo's,
+            personen, testimonials): nu een JSON-box, `asset:naam` plakken werkt.
+      - [ ] `ogImage` van pagina's echt in de metadata gebruiken (het veld heeft
+            nu een kiezer, maar de site leest het nog niet).
+      - [ ] `media:refs` ook voor andere bestanden onder `/api/assets` (board-
+            renders): eerst importeren in de bibliotheek.
       - [x] ~~Stap 4: externe clients — API-tokens met scopes, `/api/media`
             (upload + lijst), CORS-allowlist in de config~~ — gedaan; de
             patch-editor kan testen.

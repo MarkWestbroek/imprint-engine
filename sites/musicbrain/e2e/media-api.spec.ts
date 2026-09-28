@@ -38,8 +38,8 @@ function wav(seconds: number): Buffer {
 
 function recording(): FormData {
   const fd = new FormData();
-  fd.append("file[]", new Blob([wav(1)], { type: "audio/wav" }), `${GROUP}.wav`);
-  fd.append("file[]", new Blob([Buffer.from("4d546864000000060001000301e0", "hex")], { type: "audio/midi" }), `${GROUP}.mid`);
+  fd.append("file[]", new Blob([new Uint8Array(wav(1))], { type: "audio/wav" }), `${GROUP}.wav`);
+  fd.append("file[]", new Blob([new Uint8Array(Buffer.from("4d546864000000060001000301e0", "hex"))], { type: "audio/midi" }), `${GROUP}.mid`);
   fd.append("file[]", new Blob([JSON.stringify({ type: "mmb-patch", modules: [{ id: "vco1" }] })], { type: "application/json" }), `${GROUP}.patch.json`);
   fd.append("folder", "opnames/sim");
   fd.append("tags[]", "sim-opname");
@@ -105,8 +105,8 @@ test.describe("media API", () => {
   test("all or nothing: one bad file refuses the whole upload (415), nothing is stored", async ({ playwright, baseURL }) => {
     const api = await playwright.request.newContext({ baseURL });
     const fd = new FormData();
-    fd.append("file[]", new Blob([wav(1)]), "e2e-half.wav");
-    fd.append("file[]", new Blob([Buffer.from("MZ not a file we know")]), "e2e-half.exe");
+    fd.append("file[]", new Blob([new Uint8Array(wav(1))]), "e2e-half.wav");
+    fd.append("file[]", new Blob([new Uint8Array(Buffer.from("MZ not a file we know"))]), "e2e-half.exe");
     fd.append("group", "e2e-half");
     const res = await api.post("/api/media", { headers: { Authorization: `Bearer ${token}` }, multipart: fd });
     expect(res.status()).toBe(415);

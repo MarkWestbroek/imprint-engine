@@ -9,6 +9,7 @@ import {
   ProductReleases,
   ProductSpecs,
 } from "@/components/product-sections";
+import { resolveMediaAll } from "@imprint/runtime-admin";
 import { Gallery } from "@imprint/widgets-standard/media";
 
 /**
@@ -44,7 +45,10 @@ export default async function ProductPage({ params }: Props) {
       {product.media.length > 0 && (
         <section className="max-w-3xl">
           {/* W3: product photos/video — media[] rendered as a gallery. */}
-          <Gallery images={product.media.map((src) => ({ src, alt: product.name }))} columns={3} />
+          <Gallery
+            images={(await resolveMediaAll(ctx, product.media)).flatMap((m) => (m ? [{ src: m.src, alt: m.alt || product.name }] : []))}
+            columns={3}
+          />
         </section>
       )}
 

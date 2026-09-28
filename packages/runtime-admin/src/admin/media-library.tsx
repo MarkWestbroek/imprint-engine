@@ -17,6 +17,9 @@ import type { MediaActions } from "./types";
 
 export type LibraryAsset = { slug: string; lang: string; data: AssetRecord; changed: string };
 
+/** A content item that refers to an asset (§3 "gebruikt in"). */
+export type AssetUsage = { type: string; slug: string; label: string; href: string };
+
 const EXIF_KEY = "imprint-exif-policy";
 const EXIF_LABELS: Record<ExifPolicy, string> = {
   all: "Keep all EXIF (incl. location)",
@@ -68,11 +71,13 @@ type Card = { key: string; group?: string; members: LibraryAsset[] };
 export function MediaLibrary({
   assets,
   taglists,
+  usage = {},
   uploadUrl,
   actions,
 }: {
   assets: LibraryAsset[];
   taglists: Taglist[];
+  usage?: Record<string, AssetUsage[]>;
   uploadUrl: string;
   actions: MediaActions;
 }) {
@@ -548,6 +553,7 @@ export function MediaLibrary({
             key={current.slug}
             asset={current}
             group={groupOf(current)}
+            usedIn={usage[current.slug] ?? []}
             folders={folders}
             taglists={taglists}
             actions={actions}
@@ -586,6 +592,7 @@ function Preview({ d }: { d: AssetRecord }) {
 function AssetDetails({
   asset,
   group,
+  usedIn,
   folders,
   taglists,
   actions,
@@ -594,6 +601,7 @@ function AssetDetails({
 }: {
   asset: LibraryAsset;
   group: LibraryAsset[];
+  usedIn: AssetUsage[];
   folders: string[];
   taglists: Taglist[];
   actions: MediaActions;
@@ -642,7 +650,8 @@ function AssetDetails({
 
   const remove = async (whole: boolean) => {
     const what = whole ? `the whole group "${d.group}" (${group.length} files)` : `"${d.title || d.file.filename}"`;
-    if (!(await confirmDialog(`Delete ${what}? It stays in History.`, { danger: true, confirmLabel: "Delete" }))) return;
+    const warn = usedIn.length > 0 ? ` It is used in ${usedIn.length} place${usedIn.length === 1 ? "" : "s"}; those will show nothing.` : "";
+    if (!(await confirmDialog(`Delete ${what}?${warn} It stays in History.`, { danger: true, confirmLabel: "Delete" }))) return;
     startTransition(async () => {
       const result = await actions.deleteAsset(asset.slug, { group: whole });
       if (result.ok) {
@@ -848,6 +857,27 @@ function AssetDetails({
             </select>
           </label>
         )}
+      </div>
+
+      <div>
+        <span className={labelCls}>Used in</span>
+        {usedIn.length === 0 ? (
+          <p className="mt-1 text-xs text-muted">Not used on the site yet. Pick it in a widget or form, or copy its reference:</p>
+        ) : (
+          <ul className="mt-1 space-y-0.5 text-sm" aria-label="Used in">
+            {usedIn.map((u) => (
+              <li key={`${u.type}/${u.slug}`}>
+                <a href={u.href} className="text-accent hover:underline">
+                  {u.label}
+                </a>{" "}
+                <span className="text-xs text-muted">({u.type})</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <code className="mt-1 block select-all break-all rounded bg-background px-1.5 py-0.5 font-mono text-[11px] text-muted" title="Paste this into any image or file field">
+          asset:{asset.slug}
+        </code>
       </div>
 
       {d.file.variants.length > 0 ? (

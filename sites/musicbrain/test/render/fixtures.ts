@@ -57,6 +57,26 @@ export async function buildStore(): Promise<MemoryContentStore> {
   await put("theme", "amber", { name: "amber", label: "Amber", colors: COLORS, order: 0 });
   await put("theme", "light", { name: "light", label: "Light", colors: { ...COLORS, background: "#ffffff" }, order: 1 });
 
+  // A media-library asset (design/beeldbibliotheek.md): widgets refer to it as `asset:strand`.
+  await put("asset", "strand", {
+    slug: "strand",
+    title: "Strand",
+    alt: "A beach at low tide",
+    caption: "Low tide, September",
+    publicMaxWidth: 800,
+    file: {
+      filename: "strand.jpg",
+      kind: "image",
+      mime: "image/jpeg",
+      size: 1000,
+      width: 3000,
+      height: 2000,
+      original: "/api/assets/library/strand/original.aa.jpg",
+      variants: [400, 800, 1600].map((w) => ({ width: w, height: Math.round((w * 2) / 3), url: `/api/assets/library/strand/w${w}.aa.webp` })),
+      exif: "none",
+    },
+  });
+
   await put("component", "adc8", {
     slug: "adc8",
     name: "ADC8",
@@ -292,7 +312,10 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "striped", config: { title: "Pins", headers: ["Pin", "Net"], rows: [["1", "+12V"], ["2", "GND"], ["3", "CV1"]] } },
     { name: "no-headers-unstriped", config: { rows: [["a", "b"]], striped: false } },
   ],
-  image: [{ name: "caption-maxwidth", config: { src: "/boards/cortex.png", alt: "Cortex", caption: "Top view", maxWidth: 480 } }],
+  image: [
+    { name: "asset-ref-uses-library-alt-and-public-size", config: { src: "asset:strand" } },
+    { name: "asset-ref-own-alt-wins", config: { src: "asset:strand", alt: "Own alt", caption: "Own caption" } },
+    { name: "asset-ref-missing-renders-nothing", config: { src: "asset:gone" } },{ name: "caption-maxwidth", config: { src: "/boards/cortex.png", alt: "Cortex", caption: "Top view", maxWidth: 480 } }],
   gallery: [
     { name: "images", config: { title: "Workshop", images: [{ src: "/a.jpg", alt: "A", caption: "First" }, { src: "/b.jpg" }], columns: 2 } },
     { name: "subject-media", config: { useSubjectMedia: true }, subject: "product:cortex" },

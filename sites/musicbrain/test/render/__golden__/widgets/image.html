@@ -1,3 +1,21 @@
+<!-- case: asset-ref-uses-library-alt-and-public-size -->
+<link rel="preload" as="image" href="/api/assets/library/strand/w800.aa.webp"/>
+<section class="rounded-xl border border-line bg-surface p-5">
+<figure>
+<img src="/api/assets/library/strand/w800.aa.webp" alt="A beach at low tide" class="h-auto max-w-full rounded-lg"/>
+<figcaption class="mt-2 text-sm text-muted">Low tide, September</figcaption>
+</figure>
+</section>
+<!-- case: asset-ref-own-alt-wins -->
+<link rel="preload" as="image" href="/api/assets/library/strand/w800.aa.webp"/>
+<section class="rounded-xl border border-line bg-surface p-5">
+<figure>
+<img src="/api/assets/library/strand/w800.aa.webp" alt="Own alt" class="h-auto max-w-full rounded-lg"/>
+<figcaption class="mt-2 text-sm text-muted">Own caption</figcaption>
+</figure>
+</section>
+<!-- case: asset-ref-missing-renders-nothing -->
+
 <!-- case: caption-maxwidth -->
 <link rel="preload" as="image" href="/boards/cortex.png"/>
 <section class="rounded-xl border border-line bg-surface p-5">

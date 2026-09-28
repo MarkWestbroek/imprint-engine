@@ -2,7 +2,20 @@
 
 import { useState } from "react";
 import type { JsonSchema } from "../forms";
+import { AssetField, AssetListField } from "./asset-field";
 import { MarkdownEditor } from "./markdown-editor";
+
+/** The kinds an asset field accepts (`assetSrc()` in content-core puts them in the JSON Schema), or null. */
+function assetKinds(prop: JsonSchema | undefined): string[] | null {
+  if (!prop) return null;
+  const own = (prop["x-imprint"] as { asset?: string[] } | undefined)?.asset;
+  if (own) return own;
+  for (const alt of (prop.anyOf as JsonSchema[] | undefined) ?? []) {
+    const k = assetKinds(alt);
+    if (k) return k;
+  }
+  return null;
+}
 
 /**
  * Generic form over a JSON Schema that came from a zod schema (§C: forms
@@ -72,6 +85,22 @@ function Field({
   onChange: (v: unknown) => void;
 }) {
   const type = prop.type as string | undefined;
+
+  // Image and file fields: the library picker (a pasted URL still works).
+  const kinds = assetKinds(prop);
+  if (kinds) return <AssetField label={name} value={typeof value === "string" ? value : ""} onChange={onChange} kinds={kinds} />;
+  const itemKinds = type === "array" ? assetKinds(prop.items as JsonSchema | undefined) : null;
+  if (itemKinds) {
+    return (
+      <AssetListField
+        label={name}
+        value={Array.isArray(value) ? value.map(String) : []}
+        onChange={(list) => onChange(list.filter(Boolean))}
+        kinds={itemKinds}
+      />
+    );
+  }
+
   const options = (prop.enum ?? (prop.anyOf as JsonSchema[] | undefined)?.flatMap(
     (o) => (o.enum as string[] | undefined) ?? []
   )) as string[] | undefined;
