@@ -7,6 +7,27 @@ uit te kiezen.
 
 Maat: **S** ≈ een uurtje · **M** ≈ een dagdeel · **L** ≈ groter/meerdaags.
 
+## Review 28 september 2026
+
+De [architectuur- en productreview](review-2026-09-28.md) bevat onderbouwing,
+verificatiegrenzen en voorgestelde prioriteiten, geen vastgestelde planning.
+Nieuwe concrete vervolgpunten naast de bestaande SSRF-, sessie- en draftitems:
+
+- [ ] **Geplande vervanging houdt huidige publicatie live** (R1): gereproduceerd
+      dat een toekomstige versie de huidige pagina onmiddellijk onzichtbaar
+      maakt; tests voor vervanging, annuleren en verlopen toevoegen.
+- [ ] **Gelijktijdige writes en redacteurconflicten** (R3): DB-invarianten,
+      serialisatie per sleutel en optimistic locking; echte Postgres-proef.
+- [ ] **Generieke tijd-/taalbewuste pluginreads en publicatiecache** (R5):
+      ook wiki/planning; publicatiemoment testen met warme cache.
+- [ ] **Gerichte detailqueries en foutisolatie** (R6): niet alle pagina's
+      laden en valideren voor een enkele slug; schema-/widgetmigraties meenemen.
+- [ ] **Toegankelijke tabs, lightbox en autoplay** (R8): focusbeheer,
+      toetsenbordbediening en pauze; WCAG-controles naast rendergoldens.
+- [ ] **Kwaliteitsgates herstellen/verbreden** (R9): achtergebleven
+      Imprint-catalogustest bijwerken, Postgres-contracttests verplicht in CI,
+      packages onder lint brengen.
+
 ---
 
 ## 1. Widgets
@@ -134,9 +155,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             fallbacks zijn rijker: gepinde versie/kanaalweging resp.
             component-lijst). _(M)_
 - [ ] **Media-bibliotheek** — ontwerp in `docs/design/beeldbibliotheek.md`.
-      Besloten: verwijzen per asset met URL als uitweg; mappen grof, tags fijn
-      uit gestructureerde taglijsten (kern, ook voor andere content). Open:
-      varianten, EXIF-beleid, beperkte assets, opslag (§11 daar). _(S8; L)_
+      Alles besloten (§11 daar): asset-verwijzing met URL-uitweg; mappen als
+      bestandssysteem + taglijsten (kern); varianten bij upload; EXIF-beleid
+      per gebruiker; toegang per formaat (origineel nooit publiek, betaalmuur);
+      MinIO in eigen bucket. _(S8; L)_
+- [ ] **Foto-verkoop (plugin)** — winkel/betaling bovenop de bibliotheek:
+      aankoop = permissie op het origineel, levering via ondertekende URL.
+      Vraag van een collega-fotograaf. _(L; na de bibliotheek)_
 - [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,
       header/footer-variant) parameteriseren per site, als server-side laag
       naast de client-side thema-tokens (zie architecture.md §3c). _(M)_
