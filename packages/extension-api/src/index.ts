@@ -1,4 +1,6 @@
+import { createHash } from "node:crypto";
 import path from "node:path";
+import { toJSONSchema, type ZodType } from "zod";
 import {
   ANONYMOUS,
   ContentTypeCatalog,
@@ -253,18 +255,61 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
   };
 }
 
+function schemaPrint(schema: unknown): string {
+  try {
+    return JSON.stringify(toJSONSchema(schema as ZodType, { unrepresentable: "any" }));
+  } catch {
+    return "?";
+  }
+}
+
 /**
- * The instance for this process, one per config id. Next.js dev re-evaluates
- * modules on hot reload; caching on globalThis keeps a single connection pool
- * alive across those reloads (the same trick the sites used before).
+ * What the instance is built from, as a short hash: the content types (names,
+ * flags and schemas), which are active, the plugins and the widgets. Session
+ * settings, secrets and URLs are left out: they do not change what the
+ * registry and the stores validate against.
+ */
+export function fingerprintOf(config: ImprintConfig): string {
+  const cfg = defineImprint(config);
+  const shape = {
+    types: registryOf(cfg)
+      .definitions()
+      .map((d) => [d.name, (d.flags ?? []).join(","), schemaPrint(d.schema)]),
+    active: cfg.contentTypes ?? null,
+    plugins: (cfg.plugins ?? []).map((p) => `${p.name}@${p.version}`),
+    widgets: cfg.widgets.definitions().map((w) => [w.name, w.version ?? "", schemaPrint(w.configSchema)]),
+  };
+  return createHash("sha1").update(JSON.stringify(shape)).digest("hex").slice(0, 16);
+}
+
+/** How long a replaced instance stays open for requests that already hold it. */
+const RETIRE_AFTER_MS = 60_000;
+
+/**
+ * The instance for this process, per config id and fingerprint. Next.js dev
+ * re-evaluates modules on hot reload; caching on globalThis keeps a single
+ * connection pool alive across those reloads. The key includes the
+ * fingerprint, not the config object: Next may evaluate the config once per
+ * layer (pages, route handlers), and those copies must share one instance.
+ * When the fingerprint changes (a schema or content type was edited in dev),
+ * a fresh instance is built and the old one is closed a minute later —
+ * otherwise the running server would keep validating against the old model
+ * until it is restarted.
  */
 export function createImprint(config: ImprintConfig): ImprintInstance {
   const g = globalThis as unknown as { __imprintInstances?: Map<string, ImprintInstance> };
   const cache = (g.__imprintInstances ??= new Map());
-  let instance = cache.get(config.id);
+  const key = `${config.id}#${fingerprintOf(config)}`;
+  let instance = cache.get(key);
   if (!instance) {
     instance = resolveImprint(config);
-    cache.set(config.id, instance);
+    for (const [other, old] of cache) {
+      if (other.startsWith(`${config.id}#`)) {
+        cache.delete(other);
+        setTimeout(() => void old.close().catch(() => {}), RETIRE_AFTER_MS).unref?.();
+      }
+    }
+    cache.set(key, instance);
   }
   return instance;
 }

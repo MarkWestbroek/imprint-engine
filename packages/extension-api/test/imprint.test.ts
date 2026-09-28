@@ -130,6 +130,15 @@ describe("createImprint", () => {
     assert.equal(a, b, "second config with the same id is ignored: the instance already exists");
     assert.notEqual(createImprint({ ...cfg, id: "other" }), a);
   });
+
+  it("builds a fresh instance when the model changes (hot reload after a schema edit)", async () => {
+    const cfg: ImprintConfig = { id: "reloaded", store: { contentDir: await contentDir() }, widgets: registry() };
+    const a = createImprint(cfg);
+    assert.equal(createImprint({ ...cfg }), a, "an equal config (another evaluation of the module) shares the instance");
+    const b = createImprint({ ...cfg, contentTypes: ["page", "site", "menu", "theme", "relations"] });
+    assert.notEqual(b, a, "a different set of content types is a different model");
+    assert.equal(createImprint({ ...cfg, contentTypes: ["page", "site", "menu", "theme", "relations"] }), b);
+  });
 });
 
 describe("plugins in the config", () => {

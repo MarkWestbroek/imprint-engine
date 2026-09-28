@@ -94,6 +94,10 @@ export class WidgetTypeRegistry {
     return [...this.types.keys()];
   }
 
+  definitions(): WidgetTypeDef[] {
+    return [...this.types.values()];
+  }
+
   /** Validate a widget instance; returns it with a parsed, type-checked config. */
   parse<T extends WidgetInstance>(widget: T): T {
     const def = this.types.get(widget.type);

@@ -12,7 +12,8 @@
     "test": "node --import tsx --test \"test/**/*.test.ts\""
   },
   "dependencies": {
-    "@imprint/content-core": "*"
+    "@imprint/content-core": "*",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^20",
