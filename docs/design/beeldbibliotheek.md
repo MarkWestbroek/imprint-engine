@@ -376,6 +376,11 @@ een API is.
     wij herkennen aan de bytes, het meegestuurde type is alleen een hint.
 - Na stap 4 meldt deze sessie het aan de editorsessie, die dan met een echt
   token test.
+- **Lezen** (28 september): `/api/assets` heeft dezelfde CORS-allowlist
+  (alleen GET), zodat de editor takes met `fetch()` inleest.
+- ▶ **Privé-takes: uitgesteld** tot OpenFTV overal staat, mét policies. Idee
+  van Mark: de editor krijgt echte logins; gebruiker of usergroup gaat mee
+  met de take en is de sleutel bij opvragen. Tot dan zijn API-uploads publiek.
 
 ### 12.5 MinIO en grote bestanden (stap 7)
 

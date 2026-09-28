@@ -86,8 +86,14 @@ test.describe("media API", () => {
     expect(body.assets.map((a) => a.kind)).toEqual(["audio", "data", "data"]);
     expect(body.assets.every((a) => a.group === GROUP)).toBe(true);
     expect(body.assets[0].url).toMatch(/^http:\/\/.+\/api\/assets\/library\/.+\.wav$/);
-    // The files are there, for anyone (the assets are public).
+    // The files are there, for anyone (the assets are public) — and the editor may fetch() them.
     expect((await api.get(body.assets[0].url)).status()).toBe(200);
+    const patch = await api.get(body.assets[2].url, { headers: { Origin: ORIGIN } });
+    expect(patch.headers()["access-control-allow-origin"]).toBe(ORIGIN);
+    expect(((await patch.json()) as { type: string }).type).toBe("mmb-patch");
+    const part = await api.get(body.assets[0].url, { headers: { Origin: ORIGIN, Range: "bytes=0-11" } });
+    expect(part.status()).toBe(206);
+    expect(part.headers()["access-control-expose-headers"]).toContain("Content-Range");
 
     const list = await api.get(`/api/media?group=${GROUP}`, { headers: { Authorization: `Bearer ${readOnly}` } });
     expect(list.status()).toBe(200);

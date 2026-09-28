@@ -527,3 +527,32 @@ export async function libraryIndex(admin: AdminContext): Promise<Response> {
     });
   return Response.json({ assets }, { headers: { "Cache-Control": "no-store" } });
 }
+
+/**
+ * The route handler for `/api/assets/<path>` (GET and the CORS preflight):
+ * `serveAsset`, plus CORS for the origins in `media.cors` — the same list as
+ * the media API, so a client there (the patch editor) can `fetch()` a file it
+ * found through /api/media. Reading only, never with credentials: what a
+ * visitor may not see stays 403 for another origin too.
+ */
+export async function assetsRoute(admin: AdminContext, req: Request, parts: string[]): Promise<Response> {
+  const origin = req.headers.get("origin");
+  const allowed = origin !== null && admin.imprint.media.cors.includes(origin);
+  const cors: Record<string, string> = allowed
+    ? {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Range",
+        "Access-Control-Expose-Headers": "Content-Length, Content-Range, Accept-Ranges",
+        "Access-Control-Max-Age": "600",
+      }
+    : {};
+  // The answer differs per origin once there is a list: caches must keep them apart.
+  if (admin.imprint.media.cors.length > 0) cors.Vary = "Origin";
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
+
+  const res = await serveAsset(admin, parts, req.headers.get("range"));
+  const headers = new Headers(res.headers);
+  for (const [k, v] of Object.entries(cors)) headers.set(k, v);
+  return new Response(res.body, { status: res.status, headers });
+}

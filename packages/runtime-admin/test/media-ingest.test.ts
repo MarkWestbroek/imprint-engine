@@ -7,7 +7,7 @@ import sharp from "sharp";
 import { AssetRecordSchema, FileAssetStore, guardReads, inProcessPdp, userSubject, ANONYMOUS } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import type { AdminContext, AdminSession } from "../src/admin-context";
-import { deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, saveTaglist, serveAsset } from "../src/admin-server/media";
+import { assetsRoute, deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, saveTaglist, serveAsset } from "../src/admin-server/media";
 import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
 import { resolveMedia } from "../src/media/resolve";
 
@@ -98,7 +98,7 @@ describe("ingestFiles + serveAsset", () => {
         writableStore: store,
         pdp: inProcessPdp,
         assets: new FileAssetStore(dir, "/api/assets"),
-        media: { maxBytes: {} },
+        media: { maxBytes: {}, cors: [] },
       },
       auth: { getSession: async () => session, editingSession: async () => session },
     } as unknown as AdminContext;
@@ -213,6 +213,37 @@ describe("ingestFiles + serveAsset", () => {
     await store.putItem("asset", r.slug!, { ...record, access: "restricted" }, { by: "mark" });
     assert.equal(await resolveMedia(ctx(guardReads(store, ANONYMOUS, inProcessPdp)), `asset:${r.slug}`), null);
     assert.ok(await resolveMedia(ctx(guardReads(store, userSubject("rita", "reader"), inProcessPdp)), `asset:${r.slug}`));
+  });
+
+  it("assetsRoute: CORS for the listed origins only, reading only, and a 403 stays a 403", async () => {
+    const cors = admin.imprint.media as { cors?: string[] };
+    cors.cors = ["http://editor.test"];
+    session = null;
+    const [r] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "take.json", bytes: patch() }]);
+    const rel = (AssetRecordSchema.parse((await admin.imprint.writableStore!.getItem("asset", r.slug!))!.data).file.original)
+      .replace("/api/assets/", "")
+      .split("/");
+    const get = (origin?: string, method = "GET") =>
+      assetsRoute(admin, new Request("http://site.test/x", { method, headers: origin ? { Origin: origin } : {} }), rel);
+
+    const ok = await get("http://editor.test");
+    assert.equal(ok.status, 200);
+    assert.equal(ok.headers.get("access-control-allow-origin"), "http://editor.test");
+    assert.equal(ok.headers.get("vary"), "Origin");
+    assert.deepEqual(JSON.parse(await ok.text()).type, "mmb-patch");
+    assert.equal((await get("https://evil.example")).headers.get("access-control-allow-origin"), null);
+
+    const pre = await get("http://editor.test", "OPTIONS");
+    assert.equal(pre.status, 204);
+    assert.match(pre.headers.get("access-control-allow-headers") ?? "", /Range/);
+    assert.doesNotMatch(pre.headers.get("access-control-allow-methods") ?? "", /POST/);
+
+    await admin.imprint.writableStore!.putItem("asset", r.slug!, { ...(await admin.imprint.writableStore!.getItem("asset", r.slug!))!.data as object, access: "restricted" }, { by: "mark" });
+    const denied = await get("http://editor.test");
+    assert.equal(denied.status, 403, "CORS lets the editor read the answer, not the file");
+    assert.equal(denied.headers.get("access-control-allow-origin"), "http://editor.test");
+    cors.cors = [];
+    session = { name: "mark", role: "editor" };
   });
 
   it("tags are normalised to list/tag or a free word", () => {

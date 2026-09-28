@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Bestanden lezen vanaf toegestane origins**: `/api/assets/…` krijgt dezelfde
+  CORS-allowlist als `/api/media` (alleen lezen, zonder cookies, Range
+  toegestaan), zodat de patch-editor een take (.mid, .patch.json) met
+  `fetch()` kan inlezen. Wat een bezoeker niet mag zien blijft 403.
 - **Kiezen uit de bibliotheek** (beeldbibliotheek stap 3). Elk beeld- en
   bestandsveld heeft een kiezer (voorbeeld, *Choose from library* met zoeken,
   mappen en uploaden, *Clear*), in gegenereerde formulieren én de galerij-,

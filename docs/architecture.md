@@ -523,7 +523,11 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     bovenop de rechten van de gebruiker (PDP). Alles-of-niets: `checkUpload`
     toetst eerst elk bestand (413/415/400), pas dan `ingestFiles`. CORS alleen
     voor de origins in `media.cors` (`imprint.config.ts`), zonder credentials:
-    de sessiecookie komt nooit cross-origin in het spel.
+    de sessiecookie komt nooit cross-origin in het spel. Dezelfde lijst geldt
+    voor het lezen van de bestanden: `assetsRoute` (de route
+    `/api/assets/…`) zet CORS op `serveAsset` (GET en preflight, `Range`
+    toegestaan, `Content-Range` zichtbaar, `Vary: Origin`); wat een bezoeker
+    niet mag zien blijft 403.
   - **Tokens**: tabel `api_tokens` naast `users` (migratie `0001` in
     `drizzle/` en `drizzle-pg/`): gebruiker, naam, prefix, **SHA-256** van de
     token (lang en willekeurig, dus geen trage hash nodig), scopes, aangemaakt,

@@ -200,9 +200,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Stap 4: externe clients — API-tokens met scopes, `/api/media`
             (upload + lijst), CORS-allowlist in de config~~ — gedaan; de
             patch-editor kan testen.
-      - [ ] CORS ook op `/api/assets` voor de toegestane origins (nodig als
-            een client de bestanden met `fetch` wil lezen; `<audio>`/`<img>`
-            werken zonder).
+      - [x] ~~CORS ook op `/api/assets` voor de toegestane origins~~ — gedaan
+            (alleen lezen, zonder credentials; Range en Content-Range mogen mee).
+      - [ ] **Privé-takes / eigenaarschap** — ▶ Mark: uitstellen tot OpenFTV
+            overal staat, mét policies. Richting: de editor krijgt echte logins
+            (niet alleen een API-token); bij opslaan gaan gebruiker of
+            usergroup mee met de take, en dat is de sleutel voor de
+            toegangscontrole bij opvragen. Nu: uploads via de API zijn
+            publiek; `restricted` betekent "elke ingelogde lezer", en
+            redacteuren/admins zien en wijzigen alles in de bibliotheek.
       - [ ] Rate limiting op `/api/media` (nu alleen token + scopes).
       - [ ] Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden.
       - [ ] Stap 6: TipTap met afbeeldingknop.

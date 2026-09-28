@@ -28,6 +28,7 @@ export { MediaLibraryScreen } from "./media-screen";
 export { mediaApi } from "./media-api";
 export { createToken, revokeToken } from "./tokens";
 export {
+  assetsRoute,
   deleteAsset,
   deleteTaglist,
   editTag,
