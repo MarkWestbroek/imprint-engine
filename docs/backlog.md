@@ -210,7 +210,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             publiek; `restricted` betekent "elke ingelogde lezer", en
             redacteuren/admins zien en wijzigen alles in de bibliotheek.
       - [ ] Rate limiting op `/api/media` (nu alleen token + scopes).
-      - [ ] Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden.
+      - [x] ~~Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden~~ — gedaan.
       - [ ] Stap 6: TipTap met afbeeldingknop.
       - [ ] Stap 7: MinIO-backend (eigen bucket) + ondertekende downloads.
       - [ ] EXIF-beleid als echte persoonlijke instelling (nu per browser).

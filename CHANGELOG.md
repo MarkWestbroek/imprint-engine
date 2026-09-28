@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Beeldbibliotheek stap 5: snel laden en focuspunt.** Bibliotheekbeelden
+  krijgen `srcset`/`sizes` (alleen publieke versies), `width`/`height` (geen
+  verspringende pagina) in Image, Hero, Media & text, Gallery, Carousel,
+  lightbox, logo's en personen. Een **focuspunt** klik je op de foto in de
+  bibliotheek; waar een beeld wordt bijgesneden (hero-achtergrond,
+  galerijtegels, avatars) blijft dat punt in beeld. Beelden met een gewone
+  URL veranderen niet.
 - **Bestanden lezen vanaf toegestane origins**: `/api/assets/…` krijgt dezelfde
   CORS-allowlist als `/api/media` (alleen lezen, zonder cookies, Range
   toegestaan), zodat de patch-editor een take (.mid, .patch.json) met

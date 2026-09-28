@@ -568,8 +568,37 @@ export function MediaLibrary({
   );
 }
 
-function Preview({ d }: { d: AssetRecord }) {
+type Focus = { x: number; y: number };
+
+function Preview({ d, focus, onFocus }: { d: AssetRecord; focus?: Focus; onFocus?: (f: Focus) => void }) {
   const k = d.file.kind;
+  if (k === "image" && onFocus) {
+    // Click where the picture must stay in view when a place crops it (hero, square tiles, avatars).
+    return (
+      <div className="relative mx-auto w-fit">
+        {/* eslint-disable-next-line @next/next/no-img-element -- library files, any size */}
+        <img
+          src={displayUrl(d)}
+          alt={d.alt}
+          className="block max-h-64 w-auto max-w-full cursor-crosshair"
+          title="Click to set the focal point"
+          data-testid="focus-image"
+          onClick={(e) => {
+            const r = e.currentTarget.getBoundingClientRect();
+            const round = (v: number) => Math.round(Math.min(1, Math.max(0, v)) * 100) / 100;
+            onFocus({ x: round((e.clientX - r.left) / r.width), y: round((e.clientY - r.top) / r.height) });
+          }}
+        />
+        {focus && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_2px_rgba(0,0,0,.5)]"
+            style={{ left: `${focus.x * 100}%`, top: `${focus.y * 100}%` }}
+          />
+        )}
+      </div>
+    );
+  }
   if (k === "image" || k === "svg") {
     // eslint-disable-next-line @next/next/no-img-element -- library files, any size
     return <img src={displayUrl(d)} alt={d.alt} className="max-h-64 w-full object-contain" />;
@@ -623,11 +652,13 @@ function AssetDetails({
   });
   const [meta, setMeta] = useState(() => fields(d));
   const [tags, setTags] = useState<string[]>(d.tags);
+  const [focus, setFocus] = useState<Focus | undefined>(d.focus);
   // The record changed on the server (a save, a renamed tag, a moved group):
   // start again from it, or a later Save would write the old values back.
   useEffect(() => {
     setMeta(fields(asset.data));
     setTags(asset.data.tags);
+    setFocus(asset.data.focus);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- `changed` is the record's version
   }, [asset.changed]);
   const [freeTag, setFreeTag] = useState("");
@@ -642,7 +673,7 @@ function AssetDetails({
         ...meta,
         tags,
         publicMaxWidth: meta.publicMaxWidth ? Number(meta.publicMaxWidth) : "",
-        focus: d.focus,
+        focus,
       });
       setStatus(result.ok ? { ok: true, text: "Saved ✓" } : { ok: false, text: result.error ?? "Save failed" });
       if (result.ok) router.refresh();
@@ -710,8 +741,22 @@ function AssetDetails({
       )}
 
       <div className="overflow-hidden rounded-lg border border-line bg-background">
-        <Preview d={d} />
+        <Preview d={d} focus={focus} onFocus={setFocus} />
       </div>
+      {d.file.kind === "image" && (
+        <p className="text-[11px] text-muted" data-testid="focal-point">
+          {focus ? (
+            <>
+              Focal point {Math.round(focus.x * 100)}% · {Math.round(focus.y * 100)}% — kept in view where the picture is cropped.{" "}
+              <button type="button" onClick={() => setFocus(undefined)} className="text-accent hover:underline">
+                Clear
+              </button>
+            </>
+          ) : (
+            "Click the picture to set a focal point (the part that stays in view when it is cropped)."
+          )}
+        </p>
+      )}
 
       <p className="break-all text-xs text-muted">
         {d.file.filename} · {d.file.width && d.file.height ? `${d.file.width}×${d.file.height} · ` : ""}

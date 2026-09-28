@@ -64,6 +64,7 @@ export async function buildStore(): Promise<MemoryContentStore> {
     alt: "A beach at low tide",
     caption: "Low tide, September",
     publicMaxWidth: 800,
+    focus: { x: 0.3, y: 0.2 },
     file: {
       filename: "strand.jpg",
       kind: "image",
@@ -317,6 +318,7 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "asset-ref-own-alt-wins", config: { src: "asset:strand", alt: "Own alt", caption: "Own caption" } },
     { name: "asset-ref-missing-renders-nothing", config: { src: "asset:gone" } },{ name: "caption-maxwidth", config: { src: "/boards/cortex.png", alt: "Cortex", caption: "Top view", maxWidth: 480 } }],
   gallery: [
+    { name: "library-images", config: { images: [{ src: "asset:strand" }, { src: "/c.jpg", alt: "C" }], columns: 2 } },
     { name: "images", config: { title: "Workshop", images: [{ src: "/a.jpg", alt: "A", caption: "First" }, { src: "/b.jpg" }], columns: 2 } },
     { name: "subject-media", config: { useSubjectMedia: true }, subject: "product:cortex" },
     { name: "subject-media-empty", config: { useSubjectMedia: true }, subject: "product:relay" },
@@ -366,6 +368,7 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "no-product", config: {} },
   ],
   hero: [
+    { name: "library-image-with-focus", config: { title: "Beach *day*", image: "asset:strand" } },
     { name: "panel-image-button", config: { title: "Patch it in your *browser*.", subtitle: "No hardware needed.", image: "/hero.jpg", buttonLabel: "Open editor", buttonUrl: "https://editor.example.test" } },
     { name: "open-centered", config: { title: "Plain title", variant: "open", align: "center" } },
   ],

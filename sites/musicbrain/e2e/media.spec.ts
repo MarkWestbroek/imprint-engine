@@ -63,6 +63,20 @@ test.describe("media library", () => {
     formats = { w400: await href("400×267 WebP"), w1600: await href("1600×1067 WebP"), original: await href(/^original/) };
   });
 
+  test("a focal point: click the picture, save, and it stays", async ({ page }) => {
+    await page.goto("/admin/asset");
+    await page.getByRole("button", { name: /e2e strand/ }).click();
+    const img = page.getByTestId("focus-image");
+    const box = (await img.boundingBox())!;
+    await img.click({ position: { x: box.width * 0.25, y: box.height * 0.5 } });
+    await expect(page.getByTestId("focal-point")).toContainText("Focal point 25% · 50%");
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText("Saved ✓")).toBeVisible();
+    await page.reload();
+    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await expect(page.getByTestId("focal-point")).toContainText("Focal point 25% · 50%");
+  });
+
   test("a visitor gets the small public versions only — without the location", async ({ browser }) => {
     const visitor = await browser.newContext(ANON);
     const small = await visitor.request.get(formats.w400);
@@ -201,6 +215,9 @@ test.describe("media library", () => {
     expect(res?.status()).toBe(200);
     const img = page.getByRole("img", { name: "Een strand bij laag water" });
     await expect(img).toHaveAttribute("src", /\/library\/e2e-strand\/w800\./);
+    // The browser may pick a smaller version; never one above "public up to" (800).
+    await expect(img).toHaveAttribute("srcset", /w400\..+ 400w, .+w800\..+ 800w$/);
+    await expect(img).toHaveAttribute("width", "800");
 
     await page.goto("/admin/asset");
     await page.getByRole("button", { name: /e2e strand/ }).click();

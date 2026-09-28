@@ -20,7 +20,27 @@ export type ResolvedMedia = {
   kind?: string;
   /** Set when the value was an `asset:` reference. */
   asset?: string;
+  /** The asset's focal point, as CSS `object-position` ("30% 20%"), for cropped places. */
+  objectPosition?: string;
 };
+
+/**
+ * The `<img>` attributes for a resolved image in a place `sizes` wide
+ * (design/beeldbibliotheek.md §5, step 5): `srcSet` + `sizes` let the browser
+ * pick the smallest version that is sharp enough; `width`/`height` reserve the
+ * space so the page does not jump while it loads. A plain URL gets just `src`.
+ */
+export function imgProps(m: ResolvedMedia, sizes: string): {
+  src: string;
+  srcSet?: string;
+  sizes?: string;
+  width?: number;
+  height?: number;
+} {
+  return m.srcSet
+    ? { src: m.src, srcSet: m.srcSet, sizes, width: m.width, height: m.height }
+    : { src: m.src, width: m.width, height: m.height };
+}
 
 function fromAsset(slug: string, a: AssetRecord): ResolvedMedia {
   const src = a.file.kind === "image" ? displayUrl(a) : a.file.original;
@@ -36,6 +56,7 @@ function fromAsset(slug: string, a: AssetRecord): ResolvedMedia {
     srcSet: publicVariants.length > 1 ? publicVariants.map((v) => `${v.url} ${v.width}w`).join(", ") : undefined,
     kind: a.file.kind,
     asset: slug,
+    objectPosition: a.focus ? `${Math.round(a.focus.x * 100)}% ${Math.round(a.focus.y * 100)}%` : undefined,
   };
 }
 

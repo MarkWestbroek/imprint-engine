@@ -340,6 +340,14 @@ site op één plek.
   **Public up to**: tot welke breedte een bezoeker het mag zien. Grotere
   versies zijn dan alleen voor redacteuren. Het **origineel is nooit
   openbaar**. Onder *Formats* zie je per versie wie hem mag zien.
+- **Focuspunt**: klik in het detailpaneel op de foto, op het deel dat in beeld
+  moet blijven (een gezicht, het onderwerp). Waar de site een beeld bijsnijdt —
+  de achtergrond van een hero, de vierkante tegels van een galerij, de
+  rondjes bij personen — blijft dat punt zichtbaar. *Clear* haalt het weg;
+  **Save** bewaart het.
+- **Snel laden**: de site geeft de browser alle publieke versies van een
+  bibliotheekbeeld; die kiest zelf de kleinste die scherp genoeg is (een
+  telefoon haalt geen foto van 2400 px op). Dat gaat vanzelf.
 - **Verwijderen** kan met Delete; het beeld blijft in History en in oude
   versies van pagina's gewoon bestaan.
 

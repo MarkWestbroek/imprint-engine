@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Mustache from "mustache";
 import type { ContentType, Page } from "@imprint/content-core";
-import { Markdown, resolveMedia, resolveMediaAll, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
-import { Carousel, Gallery } from "./media-islands";
+import { imgProps, Markdown, resolveMedia, resolveMediaAll, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
+import { Carousel, Gallery, type ShownImage } from "./media-islands";
 import { MapIsland } from "./map-island";
 import { Tabs } from "./tabs-island";
 import { MermaidDiagram } from "./mermaid-island";
@@ -118,7 +118,7 @@ async function ImageWidget({ config, ctx }: { config: ImageConfig; ctx: WidgetCo
       <figure>
         {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary external/public src, no loader config */}
         <img
-          src={media.src}
+          {...imgProps(media, config.maxWidth ? `min(${config.maxWidth}px, 100vw)` : "(min-width: 1024px) 66vw, 100vw")}
           alt={config.alt || media.alt || ""}
           style={config.maxWidth ? { maxWidth: config.maxWidth } : undefined}
           className="h-auto max-w-full rounded-lg"
@@ -233,7 +233,7 @@ async function collectImages(
   config: { images: ImageItem[]; useSubjectMedia: boolean },
   ctx: WidgetContext,
   subject?: unknown
-): Promise<ImageItem[]> {
+): Promise<ShownImage[]> {
   const images = [...config.images];
   const media = (subject as { media?: unknown } | undefined)?.media;
   if (config.useSubjectMedia && Array.isArray(media)) {
@@ -245,7 +245,9 @@ async function collectImages(
   const resolved = await resolveMediaAll(ctx, images.map((img) => img.src));
   return images.flatMap((img, i) => {
     const m = resolved[i];
-    return m ? [{ src: m.src, alt: img.alt || m.alt || "", caption: img.caption ?? m.caption }] : [];
+    return m
+      ? [{ src: m.src, alt: img.alt || m.alt || "", caption: img.caption ?? m.caption, srcSet: m.srcSet, objectPosition: m.objectPosition }]
+      : [];
   });
 }
 
@@ -478,7 +480,8 @@ async function HeroWidget({ config, ctx }: { config: HeroConfig; ctx: WidgetCont
       {image && (
         // eslint-disable-next-line @next/next/no-img-element -- content image
         <img
-          src={image.src}
+          {...imgProps(image, "100vw")}
+          style={image.objectPosition ? { objectPosition: image.objectPosition } : undefined}
           alt=""
           aria-hidden
           className="absolute inset-0 h-full w-full object-cover opacity-25"
@@ -984,7 +987,7 @@ async function LogosWidget({ config, ctx }: { config: LogosConfig; ctx: WidgetCo
           if (!media) return null;
           const img = (
             <img
-              src={media.src}
+              {...imgProps(media, "12rem")}
               alt={logo.alt || media.alt || ""}
               loading="lazy"
               className={`mx-auto max-h-12 w-auto ${config.grayscale ? "opacity-70 grayscale transition hover:opacity-100 hover:grayscale-0" : ""}`}
@@ -1140,7 +1143,7 @@ async function TimelineWidget({ config }: { config: TimelineConfig }) {
 async function MediaTextWidget({ config, ctx }: { config: MediaTextConfig; ctx: WidgetContext }) {
   const media = await resolveMedia(ctx, config.src);
   const image = media && (
-    <img src={media.src} alt={config.alt || media.alt || ""} loading="lazy" className="h-auto w-full rounded-xl border border-line" />
+    <img {...imgProps(media, config.imageWidth === "third" ? "(min-width: 640px) 33vw, 100vw" : "(min-width: 640px) 50vw, 100vw")} alt={config.alt || media.alt || ""} loading="lazy" className="h-auto w-full rounded-xl border border-line" />
   );
   const cols = config.imageWidth === "third" ? "1fr 2fr" : "1fr 1fr";
   return (
@@ -1174,7 +1177,7 @@ async function PeopleWidget({ config, ctx }: { config: PeopleConfig; ctx: Widget
       <div className="grid gap-4" style={gridCols(config.columns)}>
         {config.items.map((p, i) => (
           <div key={i} className="rounded-xl border border-line bg-surface p-5">
-            {photos[i] && <img src={photos[i]!.src} alt={p.name} loading="lazy" className="mb-3 h-20 w-20 rounded-full border border-line object-cover" />}
+            {photos[i] && <img {...imgProps(photos[i]!, "80px")} style={{ objectPosition: photos[i]!.objectPosition }} alt={p.name} loading="lazy" className="mb-3 h-20 w-20 rounded-full border border-line object-cover" />}
             <h3 className="font-semibold">{p.name}</h3>
             {p.role && <p className="text-sm text-accent">{p.role}</p>}
             {p.bio && <p className="mt-2 text-sm text-muted">{p.bio}</p>}
@@ -1203,7 +1206,7 @@ async function TestimonialWidget({ config, ctx }: { config: TestimonialConfig; c
           <figure key={i} className="flex flex-col rounded-xl border border-line bg-surface p-5">
             <blockquote className="flex-1 text-foreground">“{t.quote}”</blockquote>
             <figcaption className="mt-4 flex items-center gap-3 text-sm">
-              {photos[i] && <img src={photos[i]!.src} alt="" loading="lazy" className="h-9 w-9 rounded-full border border-line object-cover" />}
+              {photos[i] && <img {...imgProps(photos[i]!, "36px")} style={{ objectPosition: photos[i]!.objectPosition }} alt="" loading="lazy" className="h-9 w-9 rounded-full border border-line object-cover" />}
               <span>
                 <span className="block font-semibold">{t.name}</span>
                 {t.role && <span className="block text-muted">{t.role}</span>}

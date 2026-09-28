@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import type { ImageItem } from "./schemas";
 
+/** An image as the islands get it: the config item, plus what the library adds (step 5). */
+export type ShownImage = ImageItem & { srcSet?: string; objectPosition?: string; width?: number; height?: number };
+
 /**
  * Client islands for the photo widgets: a gallery grid with a lightbox, and
  * a carousel. The server shells in components.tsx assemble the image lists
@@ -15,7 +18,7 @@ export function Gallery({
   images,
   columns = 3,
 }: {
-  images: ImageItem[];
+  images: ShownImage[];
   columns?: number;
 }) {
   const [open, setOpen] = useState<number | null>(null);
@@ -36,6 +39,9 @@ export function Gallery({
           >
             <img
               src={img.src}
+              srcSet={img.srcSet}
+              sizes={img.srcSet ? `(min-width: 1024px) ${Math.round(66 / columns)}vw, ${Math.round(100 / columns)}vw` : undefined}
+              style={img.objectPosition ? { objectPosition: img.objectPosition } : undefined}
               alt={img.alt}
               loading="lazy"
               className="aspect-square h-full w-full object-cover transition group-hover:scale-105"
@@ -55,7 +61,7 @@ function Lightbox({
   index,
   onIndex,
 }: {
-  images: ImageItem[];
+  images: ShownImage[];
   index: number;
   onIndex: (i: number | null) => void;
 }) {
@@ -84,6 +90,8 @@ function Lightbox({
     >
       <img
         src={img.src}
+        srcSet={img.srcSet}
+        sizes={img.srcSet ? "100vw" : undefined}
         alt={img.alt}
         className="max-h-[80vh] max-w-full rounded-lg object-contain"
         onClick={(e) => e.stopPropagation()}
@@ -125,7 +133,7 @@ export function Carousel({
   images,
   interval = 0,
 }: {
-  images: ImageItem[];
+  images: ShownImage[];
   interval?: number;
 }) {
   const [index, setIndex] = useState(0);
@@ -150,6 +158,8 @@ export function Carousel({
       {/* object-contain: show the whole photo (letterboxed), never crop it. */}
       <img
         src={img.src}
+        srcSet={img.srcSet}
+        sizes={img.srcSet ? "100vw" : undefined}
         alt={img.alt}
         className="aspect-video w-full bg-black/40 object-contain"
       />

@@ -513,7 +513,11 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     Viewers zetten de waarde om met `resolveMedia(ctx, value)` (runtime-admin):
     grootste publieke versie, alt/bijschrift/afmetingen/`srcSet` uit de
     bibliotheek; een verdwenen of voor deze lezer onzichtbaar asset geeft
-    `null` (de store in `ctx` is de bewaakte). "Used in" is een scan van alle
+    `null` (de store in `ctx` is de bewaakte). `imgProps(media, sizes)` geeft
+    de `<img>`-attributen: `srcSet` (publieke varianten, dus nooit boven
+    *public up to*), `sizes` naar de plek, `width`/`height` tegen verspringen;
+    `objectPosition` komt uit het focuspunt (`focus` {x,y} 0..1) en wordt
+    gebruikt waar `object-cover` bijsnijdt (hero, galerijtegels, avatars). "Used in" is een scan van alle
     actuele items op `asset:<slug>` en `…/library/<slug>/`;
     `scripts/media-refs.ts` zet hele veldwaarden die bibliotheek-URL's zijn om.
   - **Externe API** (§12.4): `mediaApi` op `/api/media` — `POST` (multipart

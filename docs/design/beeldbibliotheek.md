@@ -240,6 +240,9 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
   Toevoeging: de admin kan bij uploaden kiezen voor "as one group" (bv. RAW
   + JPEG); de groepsnaam is dan de eerste bestandsnaam + een tijdstempel.
   Taglijsten worden nu alleen vanuit de bibliotheek gebruikt; pagina's volgen.
+- **Stap 5 klaar** (28 september 2026): `imgProps` (srcset/sizes/width/height)
+  in de viewers en de galerij-islands; focuspunt klikken in de bibliotheek,
+  als `object-position` waar bijgesneden wordt.
 - **Stap 3 klaar** (28 september 2026): kiezer, verwijzing als string
   `asset:<slug>`, viewers, "Used in", `media:refs`. Nog zonder kiezer: beeld-
   velden binnen lijsten van objecten (logo's, personen, testimonials).
