@@ -546,7 +546,15 @@ export async function assetsRoute(admin: AdminContext, req: Request, parts: stri
   if (admin.imprint.media.cors.length > 0) cors.Vary = "Origin";
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-  const res = parts[0] === "_ref" && parts.length === 2 ? await assetRedirect(admin, req, parts[1]) : await serveAsset(admin, parts, req.headers.get("range"));
+  let res: Response;
+  try {
+    res = parts[0] === "_ref" && parts.length === 2 ? await assetRedirect(admin, req, parts[1]) : await serveAsset(admin, parts, req.headers.get("range"));
+  } catch (err) {
+    // Unexpected (storage unreachable, …): logged here, and still an answer the
+    // client may read — without CORS a browser only reports "Failed to fetch".
+    console.error(`[assets] ${parts.join("/")}:`, err);
+    res = Response.json({ error: "Could not read the file" }, { status: 500 });
+  }
   const headers = new Headers(res.headers);
   for (const [k, v] of Object.entries(cors)) headers.set(k, v);
   return new Response(res.body, { status: res.status, headers });

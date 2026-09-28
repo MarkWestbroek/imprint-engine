@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
-import path from "node:path";
+import { readdirSync, statSync } from "node:fs";
+import path, { dirname, join } from "node:path";
 import { toJSONSchema, type ZodType } from "zod";
 import {
   ANONYMOUS,
@@ -295,8 +296,56 @@ export function fingerprintOf(config: ImprintConfig): string {
     active: cfg.contentTypes ?? null,
     plugins: (cfg.plugins ?? []).map((p) => `${p.name}@${p.version}`),
     widgets: cfg.widgets.definitions().map((w) => [w.name, w.version ?? "", schemaPrint(w.configSchema)]),
+    // Where the files live (not the secret key): switching disk ↔ bucket is a different instance.
+    assets: [cfg.assets?.root ?? "", cfg.assets?.baseUrl ?? "", cfg.assets?.s3?.endpoint ?? "", cfg.assets?.s3?.bucket ?? ""],
+    media: cfg.media ?? null,
   };
   return createHash("sha1").update(JSON.stringify(shape)).digest("hex").slice(0, 16);
+}
+
+/**
+ * Development only: the newest modification time under the engine packages'
+ * sources. The instance holds objects made by engine code (stores, the asset
+ * store); after that code changes, a hot reload would otherwise keep using the
+ * old objects — with methods the new code no longer finds. Found by walking up
+ * from the working directory to the monorepo's `packages/`; empty in
+ * production and when there is no such folder (a container).
+ */
+function devSourceStamp(): string {
+  if (process.env.NODE_ENV === "production") return "";
+  // A plain loop: Turbopack mis-compiles an imported function in a for-loop's update clause.
+  let dir = process.cwd();
+  for (let up = 0; up < 4; up++) {
+    const packages = join(dir, "packages");
+    if (isDir(join(packages, "content-core"))) return `@${Math.round(newestSource(packages))}`;
+    dir = dirname(dir);
+  }
+  return "";
+}
+
+function isDir(p: string): boolean {
+  try {
+    return statSync(p).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/** The newest mtime of a .ts/.tsx file under packages/<name>/src. */
+function newestSource(packages: string): number {
+  let newest = 0;
+  const walk = (d: string): void => {
+    for (const e of readdirSync(d, { withFileTypes: true })) {
+      const p = join(d, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (/\.(ts|tsx)$/.test(e.name)) newest = Math.max(newest, statSync(p).mtimeMs);
+    }
+  };
+  for (const pkg of readdirSync(packages)) {
+    const src = join(packages, pkg, "src");
+    if (isDir(src)) walk(src);
+  }
+  return newest;
 }
 
 /** How long a replaced instance stays open for requests that already hold it. */
@@ -316,7 +365,7 @@ const RETIRE_AFTER_MS = 60_000;
 export function createImprint(config: ImprintConfig): ImprintInstance {
   const g = globalThis as unknown as { __imprintInstances?: Map<string, ImprintInstance> };
   const cache = (g.__imprintInstances ??= new Map());
-  const key = `${config.id}#${fingerprintOf(config)}`;
+  const key = `${config.id}#${fingerprintOf(config)}${devSourceStamp()}`;
   let instance = cache.get(key);
   if (!instance) {
     instance = resolveImprint(config);

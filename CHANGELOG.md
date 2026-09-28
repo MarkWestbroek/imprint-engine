@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix: 500 op audio- en databestanden in een lopende dev-server** na de
+  overstap op de nieuwe opslag. De bewaarde instantie hield het oude
+  opslagobject (zonder `stat`/`read`). In dev krijgt de instantie nu een
+  stempel van de nieuwste engine-broncode, en de vingerafdruk telt ook waar de
+  bestanden staan (schijf/bucket) — na een engine-wijziging is er vanzelf een
+  verse instantie, zonder herstart. Een onverwachte fout in `/api/assets`
+  geeft nu een 500 mét CORS-header (de editor kan de status lezen) en wordt
+  gelogd. Slugs uit bestandsnamen mogen 100 tekens lang zijn (de tijdstempel
+  van een take-id blijft heel).
 - **Bestanden in MinIO** (beeldbibliotheek stap 7). Nieuwe `S3AssetStore`
   naast de schijf-store; een site gebruikt zijn eigen bucket zodra
   `ASSET_S3_ENDPOINT/_BUCKET/_ACCESS_KEY/_SECRET_KEY` gezet zijn, anders
