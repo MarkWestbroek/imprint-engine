@@ -346,6 +346,21 @@ een API is.
   tokens"): aanmaken (token één keer tonen), scopes, vervaldatum, intrekken,
   laatst gebruikt.
 
+- **De editorkant staat klaar** (MusicBrain commit `4693dc7`, 28 september):
+  één `POST https://musicbrain.nl/api/media` per opname met `file[]` (wav,
+  mid, patch.json), `folder` (standaard `opnames/sim`), `tags[]` (standaard
+  `sim-opname`), `group` (de take-id) en `exif=none`; `Bearer`-token zonder
+  credentials. De editor verwacht aparte statussen: **401/403** (token),
+  **413** (te groot), en vangt netwerk- en CORS-fouten af. Eisen voor ons:
+  - te grote bestanden geven **413**, niet 400 of 500;
+  - de soort `data` moet JSON van **enkele MB** aankunnen (de patch is een
+    projectsnapshot, honderden kB tot een paar MB): standaardlimiet voor
+    `data` bv. 20 MB;
+  - de browser stuurt `audio/wav`, `audio/midi` en `application/json` mee;
+    wij herkennen aan de bytes, het meegestuurde type is alleen een hint.
+- Na stap 4 meldt deze sessie het aan de editorsessie, die dan met een echt
+  token test.
+
 ### 12.5 MinIO en grote bestanden (stap 7)
 
 Voor de client verandert het contract niet: de site neemt de upload aan en
