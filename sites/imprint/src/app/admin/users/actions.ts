@@ -23,6 +23,17 @@ export async function deleteUserAction(prev: UserActionResult | null, formData: 
   return users.deleteUser(admin, prev, formData);
 }
 
+/** Personal API tokens (the media API). */
+export type TokenActionResult = { ok: boolean; error?: string; token?: string };
+
+export async function createTokenAction(prev: TokenActionResult | null, formData: FormData): Promise<TokenActionResult> {
+  return users.createToken(admin, prev, formData);
+}
+
+export async function revokeTokenAction(prev: TokenActionResult | null, formData: FormData): Promise<TokenActionResult> {
+  return users.revokeToken(admin, prev, formData);
+}
+
 export async function changeOwnPasswordAction(prev: UserActionResult | null, formData: FormData): Promise<UserActionResult> {
   return users.changeOwnPassword(admin, prev, formData);
 }

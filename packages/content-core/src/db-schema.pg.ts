@@ -54,3 +54,21 @@ export const users = pgTable("users", {
   /** "admin" | "editor" | "reader" (RoleType). */
   role: varchar("role", { length: 16 }).notNull().default("reader"),
 });
+
+/** Personal API tokens — see db-schema.ts. */
+export const apiTokens = pgTable(
+  "api_tokens",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    name: varchar("name", { length: 64 }).notNull(),
+    prefix: varchar("prefix", { length: 16 }).notNull(),
+    hash: varchar("hash", { length: 64 }).notNull().unique(),
+    scopes: varchar("scopes", { length: 255 }).notNull(),
+    createdAt: ts("created_at").notNull(),
+    expiresAt: ts("expires_at"),
+    lastUsedAt: ts("last_used_at"),
+    revokedAt: ts("revoked_at"),
+  },
+  (t) => [index("idx_tokens_user").on(t.userName)]
+);

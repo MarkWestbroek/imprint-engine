@@ -293,6 +293,8 @@ export function MediaLibrary({
               className={folderBtn(folder === f)}
               style={{ paddingLeft: `${0.5 + (f.split("/").length - 1) * 0.9}rem` }}
               onClick={() => setFolder(f)}
+              aria-label={`Folder ${f}, ${countIn(f)}`}
+              title={f}
             >
               <span className="truncate">📁 {f.split("/").at(-1)}</span>
               <span className="text-xs">{countIn(f)}</span>

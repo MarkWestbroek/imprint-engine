@@ -52,3 +52,28 @@ export const users = mysqlTable("users", {
   /** "admin" | "editor" | "reader" (RoleType). */
   role: varchar("role", { length: 16 }).notNull().default("reader"),
 });
+
+/**
+ * Personal API tokens (design/beeldbibliotheek.md §12.4): a client outside the
+ * admin (the patch editor) acts as its user, limited to the token's scopes.
+ * Only a SHA-256 of the token is stored (tokens are long and random, so no
+ * slow hash is needed); `prefix` is the first characters, to recognise it.
+ * Like users: not content, no history.
+ */
+export const apiTokens = mysqlTable(
+  "api_tokens",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    name: varchar("name", { length: 64 }).notNull(),
+    prefix: varchar("prefix", { length: 16 }).notNull(),
+    hash: varchar("hash", { length: 64 }).notNull().unique(),
+    /** Comma-separated, e.g. "media:upload,media:read". */
+    scopes: varchar("scopes", { length: 255 }).notNull(),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    expiresAt: datetime("expires_at", { fsp: 3 }),
+    lastUsedAt: datetime("last_used_at", { fsp: 3 }),
+    revokedAt: datetime("revoked_at", { fsp: 3 }),
+  },
+  (t) => [index("idx_tokens_user").on(t.userName)]
+);

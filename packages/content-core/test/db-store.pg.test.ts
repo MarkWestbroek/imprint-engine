@@ -25,6 +25,7 @@ describe("PgContentStore (Postgres)", { skip: url ? false : "TEST_PG_DATABASE_UR
     db = createPgDb(url!);
     await db.execute(sql`DROP TABLE IF EXISTS content_items`);
     await db.execute(sql`DROP TABLE IF EXISTS users`);
+    await db.execute(sql`DROP TABLE IF EXISTS api_tokens`);
     for (const statement of await migrationStatements("drizzle-pg")) await db.execute(sql.raw(statement));
     await seedFixtures(new PgContentStore(db));
   });

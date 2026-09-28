@@ -190,10 +190,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             (hernoemen met samenvoegen, verwijderen, lijst hernoemen/verwijderen).
       - [ ] Stap 3: `AssetRef` + picker in `SchemaForm`; beeldwidgets erop;
             migratie van `/api/assets/…`-URL's; "gebruikt in".
-      - [ ] Stap 4: **externe clients** — API-tokens met scopes, `/api/media`
-            (upload + lijst), CORS-allowlist in de config; eerste gebruiker de
-            patch-editor (opname = wav + mid + patch.json als één `group`).
-            Ontwerp §12.4.
+      - [x] ~~Stap 4: externe clients — API-tokens met scopes, `/api/media`
+            (upload + lijst), CORS-allowlist in de config~~ — gedaan; de
+            patch-editor kan testen.
+      - [ ] CORS ook op `/api/assets` voor de toegestane origins (nodig als
+            een client de bestanden met `fetch` wil lezen; `<audio>`/`<img>`
+            werken zonder).
+      - [ ] Rate limiting op `/api/media` (nu alleen token + scopes).
       - [ ] Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden.
       - [ ] Stap 6: TipTap met afbeeldingknop.
       - [ ] Stap 7: MinIO-backend (eigen bucket) + ondertekende downloads.

@@ -286,6 +286,31 @@ export const coreKindHandlers: KindHandler[] = [
 ];
 
 /**
+ * Check a file without processing it: is it a kind we know, and within its
+ * limit? Throws the same UploadError (413, 415, 400) processUpload would —
+ * for all-or-nothing uploads, which check every file before storing any.
+ */
+export function checkUpload(bytes: Uint8Array, maxBytes: Record<string, number> = {}, handlers: KindHandler[] = coreKindHandlers): string {
+  if (bytes.byteLength === 0) throw new UploadError("Empty file", 400);
+  const handler = handlers.find((h) => h.sniff(bytes));
+  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI and JSON)", 415);
+  const limits: Record<string, number> = { ...DEFAULT_MEDIA_MAX_BYTES, ...maxBytes };
+  const limit = limits[handler.kind] ?? DEFAULT_MEDIA_MAX_BYTES.image;
+  if (bytes.byteLength > limit) {
+    throw new UploadError(`File is larger than ${Math.round(limit / 1024 / 1024)} MB (the limit for ${handler.kind})`, 413);
+  }
+  const json = jsonText(bytes);
+  if (json !== null && handler.kind === "data") {
+    try {
+      JSON.parse(json);
+    } catch {
+      throw new UploadError("Not valid JSON", 400);
+    }
+  }
+  return handler.kind;
+}
+
+/**
  * Recognise and process one upload. `maxBytes` holds the limit per kind (the
  * site config); a file above its kind's limit is refused with status 413.
  */

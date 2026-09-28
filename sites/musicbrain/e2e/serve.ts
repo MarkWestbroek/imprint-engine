@@ -30,6 +30,8 @@ const env: NodeJS.ProcessEnv = {
   INGEST_TOKEN,
   SEED_ADMIN_USER: USERS.admin.name,
   SEED_ADMIN_PASSWORD: USERS.admin.password,
+  // The media API's browser test calls it "from" another origin.
+  MEDIA_CORS_ORIGINS: "http://editor.e2e.test",
 };
 
 function run(cwd: string, command: string, args: string[]): void {
@@ -40,7 +42,7 @@ function run(cwd: string, command: string, args: string[]): void {
 
 async function resetDatabase(): Promise<void> {
   const db = await mysql.createConnection(DATABASE_URL);
-  for (const table of ["content_items", "users", "__drizzle_migrations"]) {
+  for (const table of ["content_items", "users", "api_tokens", "__drizzle_migrations"]) {
     await db.query(`DROP TABLE IF EXISTS \`${table}\``);
   }
   await db.end();

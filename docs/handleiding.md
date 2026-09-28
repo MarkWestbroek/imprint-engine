@@ -67,6 +67,21 @@ server vervangen en de app herstarten. Dat verloopt in één klap alle sessies
 van iedereen (jij moet dus ook opnieuw inloggen) — zie
 [README](../README.md#wachtwoord-kwijt).
 
+### API-tokens (voor programma's buiten de admin)
+
+Een programma zoals de patch-editor van MusicBrain zet bestanden in de
+beeldbibliotheek met een **API-token**. Je maakt er een onder je account
+(het poppetje onderin de balk → *API tokens*):
+
+- geef hem een naam (bv. *patch editor*), vink aan wat hij mag (**upload
+  media**, **list media**) en kies hoe lang hij geldig is;
+- de token verschijnt **één keer** — kopieer hem meteen en plak hem in het
+  programma; daarna zie je alleen nog het begin ervan;
+- een token werkt als jij (met je huidige rol), maar alleen voor wat je
+  aanvinkte. Behandel hem als een wachtwoord;
+- **Revoke** zet hem direct buiten werking; *Last used* laat zien of en
+  wanneer hij gebruikt wordt.
+
 ### Wachtwoord kwijt
 
 Er is bewust **geen "wachtwoord vergeten"-mail**: de site verstuurt geen mail,

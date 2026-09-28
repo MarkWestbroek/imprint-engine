@@ -82,8 +82,12 @@ export interface ImprintConfig {
   session?: { cookie?: string; hours?: number };
   /** Uploaded assets (board renders, pinouts): where they live and where they're served. */
   assets?: { root?: string; baseUrl?: string };
-  /** The media library (design/beeldbibliotheek.md): upload limits per file kind, in bytes. */
-  media?: { maxBytes?: Partial<Record<string, number>> };
+  /**
+   * The media library (design/beeldbibliotheek.md): upload limits per file
+   * kind, in bytes, and the origins that may call the media API (`/api/media`)
+   * from a browser — e.g. `["https://editor.musicbrain.nl"]`.
+   */
+  media?: { maxBytes?: Partial<Record<string, number>>; cors?: string[] };
   /**
    * Secrets and outbound targets. The config file is the only place that reads
    * `process.env` for them, so shared code (the admin, Fase 3) never does.
@@ -142,8 +146,8 @@ export interface ImprintInstance {
    * config switch here plus a backend-specific serving route.
    */
   assets: FileAssetStore;
-  /** Upload limits per file kind (defaults from content-core, overridden by the config). */
-  media: { maxBytes: Record<string, number> };
+  /** Upload limits per file kind (defaults from content-core, overridden by the config), and the API's allowed origins. */
+  media: { maxBytes: Record<string, number>; cors: string[] };
   session: { cookie: string; hours: number };
   /** As configured; empty strings count as absent. */
   secrets: ImprintSecrets;
@@ -237,7 +241,11 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
     plugins: cfg.plugins ?? [],
     assets: new FileAssetStore(assetRoot, assetBase),
-    media: { maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) } },
+    media: {
+      maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) },
+      // An origin is scheme + host (+ port), without a trailing slash: that is what the browser sends.
+      cors: (cfg.media?.cors ?? []).map((o) => o.trim().replace(/\/+$/, "")).filter(Boolean),
+    },
     session: {
       cookie: cfg.session?.cookie || `imprint_${cfg.id}_session`,
       hours: cfg.session?.hours ?? 12,

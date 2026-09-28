@@ -180,7 +180,10 @@ en zijn géén bron voor deze kopie.
    # op de VPS:
    docker run --rm -v imprint_musicbrain_assets:/data -v /srv/imprint:/in alpine      sh -c 'tar xzf /in/assets.tgz -C /data && chown -R 1000:1000 /data'
    ```
-5. `MUSICBRAIN_SESSION_SECRET`, `_INGEST_TOKEN` en `_GITHUB_WEBHOOK_SECRET`
+5. (De tabel `api_tokens` voor de media-API komt met de migraties mee die
+   `deploy.sh` bij elke uitrol draait; de toegestane origin
+   `https://editor.musicbrain.nl` staat in `imprint.config.ts`.)
+   `MUSICBRAIN_SESSION_SECRET`, `_INGEST_TOKEN` en `_GITHUB_WEBHOOK_SECRET`
    uit de Plesk-omgeving (of je lokale `sites/musicbrain/.env.local`)
    overnemen in `.env`; `SITES=musicbrain imprint`.
 6. `SITES=musicbrain ./deploy.sh` en controleren vóór de DNS om gaat:

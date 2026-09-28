@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Media-API voor programma's buiten de admin** (beeldbibliotheek stap 4,
+  design §12.4). `POST /api/media` (multipart: `file[]`, `folder`, `tags[]`,
+  `group`, `exif`) en `GET /api/media?folder=&tag=&group=`, met een
+  **persoonlijke API-token** (`Authorization: Bearer`), scopes
+  `media:upload`/`media:read` bovenop de rechten van de gebruiker, en een
+  **CORS-allowlist** per site (`media.cors` in `imprint.config.ts`;
+  MusicBrain: `https://editor.musicbrain.nl`, extra via `MEDIA_CORS_ORIGINS`).
+  Uploads zijn alles-of-niets (413 te groot, 415 onbekend type). Tokens maak,
+  bekijk en trek je in onder je account; alleen een SHA-256 wordt bewaard
+  (nieuwe tabel `api_tokens`, migratie voor MariaDB én Postgres). Eerste
+  gebruiker: de patch-editor (opname = wav + mid + patch als één groep).
+- Mappen in de bibliotheek heten voor schermlezers naar hun volledige pad
+  (twee mappen `opnames` op verschillende plekken zijn nu te onderscheiden).
 - **Taglijsten bewerken**: tag hernoemen (typfout; bestanden gaan mee, naar
   een bestaande tag = samenvoegen), tag of hele lijst verwijderen (ook van de
   bestanden), lijst hernoemen — via ✎ in de bibliotheek.

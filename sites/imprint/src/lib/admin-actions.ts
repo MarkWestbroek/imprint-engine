@@ -14,6 +14,8 @@ import {
 } from "@/app/admin/actions";
 import {
   changeOwnPasswordAction,
+  createTokenAction,
+  revokeTokenAction,
   createUserAction,
   deleteUserAction,
   resetPasswordAction,
@@ -36,6 +38,7 @@ export const adminActions: AdminActions = {
     deleteUser: deleteUserAction,
   },
   changeOwnPassword: changeOwnPasswordAction,
+  tokens: { create: createTokenAction, revoke: revokeTokenAction },
   studio: { draftOp: draftOpAction, resetDraft: resetDraftAction, savePageDraft: savePageDraftAction },
   media: { saveAsset: saveAssetAction, deleteAsset: deleteAssetAction, saveTaglist: saveTaglistAction, editTag: editTagAction, deleteTaglist: deleteTaglistAction },
 };

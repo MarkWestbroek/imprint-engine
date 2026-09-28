@@ -236,6 +236,10 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
   Toevoeging: de admin kan bij uploaden kiezen voor "as one group" (bv. RAW
   + JPEG); de groepsnaam is dan de eerste bestandsnaam + een tijdstempel.
   Taglijsten worden nu alleen vanuit de bibliotheek gebruikt; pagina's volgen.
+- **Stap 4 klaar** (28 september 2026), vóór stap 3 omdat de patch-editor
+  erop wachtte: API-tokens (tabel `api_tokens`, SHA-256, scopes, vervaldatum,
+  intrekken; beheer onder het account), `/api/media` met CORS-allowlist,
+  alles-of-niets-upload. Contract zoals in §12.4.
 
 ## 11. Besluiten (28 september 2026)
 

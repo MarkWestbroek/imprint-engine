@@ -1,4 +1,6 @@
 import { RoleType } from "@imprint/content-core";
+import { TOKEN_SCOPES } from "@imprint/content-core/user-store";
+import { TokenManager, type TokenRow } from "../admin/token-manager";
 import { NewUserForm, OwnPasswordForm, UserTable } from "../admin/user-manager";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
@@ -13,13 +15,25 @@ export async function UsersScreen({
   actions,
 }: {
   admin: AdminContext;
-  actions: Pick<AdminActions, "users" | "changeOwnPassword">;
+  actions: Pick<AdminActions, "users" | "changeOwnPassword" | "tokens">;
 }) {
   const session = await admin.auth.editingSession();
   if (!session) return null; // the gate renders the login form
   const isAdmin = session.role === "admin";
   const users = isAdmin && admin.imprint.users ? await admin.imprint.users.list() : [];
   const roles = [...RoleType.options];
+  const tokens: TokenRow[] = admin.imprint.users
+    ? (await admin.imprint.users.tokens(session.name)).map((t) => ({
+        id: t.id,
+        name: t.name,
+        prefix: t.prefix,
+        scopes: t.scopes,
+        createdAt: t.createdAt.toISOString(),
+        expiresAt: t.expiresAt?.toISOString() ?? null,
+        lastUsedAt: t.lastUsedAt?.toISOString() ?? null,
+        active: t.active,
+      }))
+    : [];
 
   return (
     <div className="max-w-4xl">
@@ -44,6 +58,12 @@ export async function UsersScreen({
       <div className="mt-6">
         <OwnPasswordForm name={session.name} action={actions.changeOwnPassword} />
       </div>
+
+      {admin.imprint.users && (
+        <div className="mt-6">
+          <TokenManager tokens={tokens} scopes={TOKEN_SCOPES} create={actions.tokens.create} revoke={actions.tokens.revoke} />
+        </div>
+      )}
 
       <p className="mt-4 text-xs text-muted">
         Signing out doesn&apos;t reach other browsers: a session cookie stays

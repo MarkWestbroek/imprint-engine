@@ -54,7 +54,7 @@ test.describe("media library", () => {
     await expect(page.getByText("Saved ✓")).toBeVisible();
 
     // The folder tree has the new folders; opening one shows the photo.
-    await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /fotos/ }).click();
+    await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /^Folder e2e\/fotos,/ }).click();
     await expect(page.getByRole("button", { name: /e2e strand/ })).toBeVisible();
     await page.getByRole("button", { name: /e2e strand/ }).click();
     await expect(page.getByText("editors only")).toHaveCount(3); // 1600, 2400 and the original
@@ -168,7 +168,7 @@ test.describe("media library", () => {
     await page.getByLabel("Folder", { exact: true }).fill("e2e/opnames");
     await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByText("Saved ✓")).toBeVisible();
-    await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /opnames/ }).click();
+    await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /^Folder e2e\/opnames,/ }).click();
     await expect(card).toContainText("3 files");
     await page.getByRole("button", { name: "Delete group" }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Delete" }).click();

@@ -28,6 +28,11 @@ export default defineImprint({
     root: process.env.ASSET_ROOT,
     baseUrl: process.env.ASSET_BASE_URL,
   },
+  // The patch editor puts recordings in the library through /api/media (design/beeldbibliotheek.md §12.4).
+  // MEDIA_CORS_ORIGINS adds origins, comma-separated (e.g. the editor's dev server).
+  media: {
+    cors: ["https://editor.musicbrain.nl", ...(process.env.MEDIA_CORS_ORIGINS ?? "").split(",")],
+  },
   secrets: {
     session: process.env.SESSION_SECRET,
     ingestToken: process.env.INGEST_TOKEN,

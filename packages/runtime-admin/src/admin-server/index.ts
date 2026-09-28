@@ -25,6 +25,8 @@ export { RelationsScreen } from "./relations";
 export { ViewsScreen } from "./views";
 export { ModelScreen } from "./model";
 export { MediaLibraryScreen } from "./media-screen";
+export { mediaApi } from "./media-api";
+export { createToken, revokeToken } from "./tokens";
 export {
   deleteAsset,
   deleteTaglist,

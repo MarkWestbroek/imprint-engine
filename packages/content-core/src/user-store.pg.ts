@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
-import { users } from "./db-schema.pg";
-import { UserStore, type UserRow } from "./user-store-base";
+import { apiTokens, users } from "./db-schema.pg";
+import { UserStore, type TokenRow, type UserRow } from "./user-store-base";
 import type { PgDb } from "./db-store.pg";
 
 /** Postgres users — the row operations behind UserStore (user-store-base.ts). */
@@ -32,5 +32,26 @@ export class PgUserStore extends UserStore {
 
   protected async deleteByName(name: string): Promise<void> {
     await this.db.delete(users).where(eq(users.name, name));
+  }
+
+  protected async selectTokens(userName: string): Promise<TokenRow[]> {
+    return this.db.select().from(apiTokens).where(eq(apiTokens.userName, userName));
+  }
+
+  protected async selectTokenByHash(hash: string): Promise<TokenRow | null> {
+    const rows = await this.db.select().from(apiTokens).where(eq(apiTokens.hash, hash)).limit(1);
+    return rows[0] ?? null;
+  }
+
+  protected async insertToken(row: Omit<TokenRow, "id">): Promise<void> {
+    await this.db.insert(apiTokens).values(row);
+  }
+
+  protected async updateToken(id: number, patch: Partial<Pick<TokenRow, "lastUsedAt" | "revokedAt">>): Promise<void> {
+    await this.db.update(apiTokens).set(patch).where(eq(apiTokens.id, id));
+  }
+
+  protected async deleteTokensOf(userName: string): Promise<void> {
+    await this.db.delete(apiTokens).where(eq(apiTokens.userName, userName));
   }
 }

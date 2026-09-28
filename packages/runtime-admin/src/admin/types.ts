@@ -34,6 +34,11 @@ export type StudioActions = {
   ): Promise<StudioResult & { slug?: string }>;
 };
 
+/** Answer of the token actions; `token` only right after creating one (shown once). */
+export type TokenActionResult = { ok: boolean; error?: string; token?: string };
+export type TokenAction = FormAction<TokenActionResult>;
+export type TokenActions = { create: TokenAction; revoke: TokenAction };
+
 /** The media library's server actions (design/beeldbibliotheek.md), as the client calls them. */
 export type MediaActions = {
   /** Merge the editable fields (AssetMeta) into the asset; the file part is untouched. */

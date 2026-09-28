@@ -505,8 +505,23 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     origineel = `editor` (PDP `update`; straks ook een aankoop). SVG krijgt
     een sandbox-CSP. Serveren gaat gestreamd met **HTTP Range** (206 /
     416), zodat een speler kan spoelen; de sites geven de `Range`-header door.
-  - Sites: `app/admin/upload/route.ts` en `app/api/assets/[...path]/route.ts`
-    zijn één regel; `saveAsset`/`deleteAsset` als `"use server"`-wrappers
+  - **Externe API** (§12.4): `mediaApi` op `/api/media` — `POST` (multipart
+    `file[]`, `folder`, `tags[]`, `group`, `exif` → 201 `{ assets }`) en `GET`
+    (`?folder=&tag=&group=`). Authenticatie met een persoonlijke token
+    (`Authorization: Bearer imp_…`); scopes `media:upload` / `media:read`
+    bovenop de rechten van de gebruiker (PDP). Alles-of-niets: `checkUpload`
+    toetst eerst elk bestand (413/415/400), pas dan `ingestFiles`. CORS alleen
+    voor de origins in `media.cors` (`imprint.config.ts`), zonder credentials:
+    de sessiecookie komt nooit cross-origin in het spel.
+  - **Tokens**: tabel `api_tokens` naast `users` (migratie `0001` in
+    `drizzle/` en `drizzle-pg/`): gebruiker, naam, prefix, **SHA-256** van de
+    token (lang en willekeurig, dus geen trage hash nodig), scopes, aangemaakt,
+    verloopt, laatst gebruikt, ingetrokken. Logica in `UserStore`
+    (`createToken`, `tokens`, `authenticate`, `revokeToken`), rij-operaties per
+    dialect; een token handelt met de rol die de gebruiker *nu* heeft en
+    verdwijnt met de gebruiker. Beheer op het accountscherm (`TokenManager`).
+  - Sites: `app/admin/upload/route.ts`, `app/api/assets/[...path]/route.ts` en
+    `app/api/media/route.ts` zijn één regel; `saveAsset`/`deleteAsset` als `"use server"`-wrappers
     (`AdminActions.media`). `assets:gc` vindt library-bestanden via de URL's
     in de asset-records, dus historie houdt ze vast.
 - **Weergave** met lage auteurlast: `BoardSpecView` (D9) rendert een board-spec
