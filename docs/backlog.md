@@ -195,8 +195,20 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             personen, testimonials): nu een JSON-box, `asset:naam` plakken werkt.
       - [ ] `ogImage` van pagina's echt in de metadata gebruiken (het veld heeft
             nu een kiezer, maar de site leest het nog niet).
-      - [ ] `media:refs` ook voor andere bestanden onder `/api/assets` (board-
-            renders): eerst importeren in de bibliotheek.
+      - [ ] **Bestaande beelden in Media** (Mark, 29-09: "in Media zie ik geen
+            bestanden, ze staan wel op alle pagina's"). Media toont alleen
+            bibliotheekitems; de beelden op de pagina's komen van vóór de
+            bibliotheek: (1) bord-renders/pinouts van de board-spec-ingest
+            (`/api/assets/<component>/<versie>/…`, nu in MinIO, geen item) en
+            (2) beelden uit `public/` van de site (in code/image). Opties, nog te
+            kiezen door Mark:
+            - importscript voor (1): een item per bestand in map
+              `boards/<component>/<versie>`, met varianten, alt uit de
+              board-spec en "gebruikt in"; het bestand blijft staan. Dan ook de
+              ingest voortaan items laten aanmaken, anders loopt het uiteen;
+            - (2) uploaden in de bibliotheek + verwijzingen naar `asset:naam`
+              omzetten (`media:refs` uitbreiden) — deels hard in de code;
+            - of zo laten: alleen nieuwe uploads in Media.
       - [x] ~~Stap 4: externe clients — API-tokens met scopes, `/api/media`
             (upload + lijst), CORS-allowlist in de config~~ — gedaan; de
             patch-editor kan testen.
