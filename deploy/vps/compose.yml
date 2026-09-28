@@ -56,6 +56,11 @@ services:
       SESSION_SECRET: ${MUSICBRAIN_SESSION_SECRET:?MUSICBRAIN_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${MUSICBRAIN_INGEST_TOKEN:-}
       GITHUB_WEBHOOK_SECRET: ${MUSICBRAIN_GITHUB_WEBHOOK_SECRET:-}
+      # Eigen MinIO-bucket (design/beeldbibliotheek.md §8); leeg = assets op het volume hieronder.
+      ASSET_S3_ENDPOINT: ${MUSICBRAIN_S3_ENDPOINT:-}
+      ASSET_S3_BUCKET: ${MUSICBRAIN_S3_BUCKET:-}
+      ASSET_S3_ACCESS_KEY: ${MUSICBRAIN_S3_ACCESS_KEY:-}
+      ASSET_S3_SECRET_KEY: ${MUSICBRAIN_S3_SECRET_KEY:-}
     ports:
       - "127.0.0.1:${MUSICBRAIN_PORT:-3000}:3000"
     volumes:
@@ -73,6 +78,11 @@ services:
       DATABASE_URL: postgres://imprint:${IMPRINT_DB_PASSWORD}@postgres:5432/imprint
       SESSION_SECRET: ${IMPRINT_SESSION_SECRET:?IMPRINT_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${IMPRINT_INGEST_TOKEN:-}
+      # Eigen MinIO-bucket (design/beeldbibliotheek.md §8); leeg = assets op het volume hieronder.
+      ASSET_S3_ENDPOINT: ${IMPRINT_S3_ENDPOINT:-}
+      ASSET_S3_BUCKET: ${IMPRINT_S3_BUCKET:-}
+      ASSET_S3_ACCESS_KEY: ${IMPRINT_S3_ACCESS_KEY:-}
+      ASSET_S3_SECRET_KEY: ${IMPRINT_S3_SECRET_KEY:-}
     ports:
       - "127.0.0.1:${IMPRINT_PORT:-3100}:3000"
     volumes:

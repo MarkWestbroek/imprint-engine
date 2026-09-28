@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Bestanden in MinIO** (beeldbibliotheek stap 7). Nieuwe `S3AssetStore`
+  naast de schijf-store; een site gebruikt zijn eigen bucket zodra
+  `ASSET_S3_ENDPOINT/_BUCKET/_ACCESS_KEY/_SECRET_KEY` gezet zijn, anders
+  schijf. URL's in content veranderen niet; serveren, toegang per formaat,
+  Range en CORS werken hetzelfde (hele browsersuite groen op een bucket).
+  `npm run assets:to-s3` verhuist bestaande bestanden (droog, dan
+  `-- --apply`). Lokaal: buckets `imprint-musicbrain` en `imprint-imprint`
+  in de bestaande MinIO, elk met een gebruiker die alleen zijn bucket mag;
+  alle bestanden verhuisd. VPS: compose en `.env.example` voorbereid, runbook
+  in `docs/deploy-vps.md`; welke MinIO daar is nog een beslissing.
 - **Nieuwe teksteditor (TipTap)** — beeldbibliotheek stap 6. Overal waar je
   opgemaakte tekst schrijft: vet, cursief, koppen, lijsten, citaat, code,
   link, scheidingslijn, ongedaan maken, sneltoetsen en markdown-achtig typen,

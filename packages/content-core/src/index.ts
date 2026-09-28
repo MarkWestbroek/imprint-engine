@@ -9,4 +9,4 @@ export * from "./relations";
 export * from "./board";
 export { FileContentStore } from "./file-store";
 export type { AssetStore } from "./asset-store";
-export { FileAssetStore, safeAssetPath } from "./asset-store";
+export { assetKey, FileAssetStore, safeAssetPath } from "./asset-store";

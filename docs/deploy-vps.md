@@ -193,6 +193,55 @@ en zijn géén bron voor deze kopie.
    Quickhost, dat is statisch en werkt nog), `npm run smoke` tegen de
    live-URL. Daarna de Plesk-webhook op GitHub verwijderen.
 
+## Assets naar MinIO
+
+Sinds beeldbibliotheek stap 7 kan een site zijn bestanden in een eigen
+MinIO-bucket bewaren in plaats van op het Docker-volume (ontwerp:
+[beeldbibliotheek.md](design/beeldbibliotheek.md) §8). De URL's in de content
+veranderen niet (`/api/assets/…`): de site serveert ze nog steeds zelf, met
+dezelfde toegangsregels. Zolang `<SITE>_S3_*` in `.env` leeg is, blijft alles
+op het volume.
+
+**Open punt (beslissing Mark): welke MinIO.** De sitecontainers zitten in
+`imprint_net`; `bitemp-minio` en `pf-minio` elk in hun eigen netwerk, poort
+9000 niet gepubliceerd. Twee wegen:
+
+- *Gedeeld* (`bitemp-minio`): het netwerk van die stack als `external`
+  netwerk aan de sitediensten hangen; endpoint `http://bitemp-minio:9000`.
+  Nadeel: de levenscyclus (upgrade, herstart) van bitemporal raakt de sites.
+- *Eigen* container `minio` in deze compose (`imprint_net`, eigen volume);
+  endpoint `http://minio:9000`. Geen koppeling met bitemporal.
+
+Daarna, per site (hier MusicBrain):
+
+1. Bucket en gebruiker maken, alleen voor die bucket (zoals lokaal: policy
+   met `s3:ListBucket` op de bucket en Get/Put/DeleteObject op `bucket/*`):
+   ```bash
+   docker exec <minio> mc alias set loc http://127.0.0.1:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
+   docker exec <minio> mc mb --ignore-existing loc/imprint-musicbrain
+   # policy-bestand in de container zetten, dan:
+   docker exec <minio> mc admin policy create loc imprint-musicbrain-rw /tmp/policy.json
+   docker exec <minio> mc admin user add loc imprint-musicbrain '<geheim>'
+   docker exec <minio> mc admin policy attach loc imprint-musicbrain-rw --user imprint-musicbrain
+   ```
+2. `MUSICBRAIN_S3_*` in `deploy/vps/.env` invullen (zie `.env.example`), nog
+   níet deployen.
+3. De bestanden van het volume naar de bucket kopiëren (droog, dan echt; het
+   script slaat over wat er al staat en laat het volume ongemoeid):
+   ```bash
+   docker compose run --rm -v imprint_musicbrain_assets:/data/assets \
+     -e ASSET_ROOT=/data/assets -e ASSET_S3_ENDPOINT=… -e ASSET_S3_BUCKET=imprint-musicbrain \
+     -e ASSET_S3_ACCESS_KEY=imprint-musicbrain -e ASSET_S3_SECRET_KEY=… \
+     tools npm run assets:to-s3            # daarna met -- --apply
+   ```
+4. `SITES=musicbrain ./deploy.sh`; een paar pagina's en `/admin/asset`
+   controleren. Nog eens stap 3 draaien vangt uploads op die tussen kopiëren
+   en deployen op het volume landden.
+5. Het volume pas opruimen als de site een tijd goed op de bucket draait.
+
+Let op: `npm run backup` en `npm run assets:gc` kennen de bucket nog niet
+(backlog); een bucket back-up je met `mc mirror` of restic op de MinIO-data.
+
 ## Backups
 
 [backup.sh](../deploy/vps/backup.sh): per site een `pg_dump -Fc` en een tar

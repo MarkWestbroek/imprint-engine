@@ -15,6 +15,7 @@
     "./db-schema.pg": "./src/db-schema.pg.ts",
     "./db": "./src/db.ts",
     "./memory-store": "./src/memory-store.ts",
+    "./asset-store.s3": "./src/asset-store.s3.ts",
     "./passwords": "./src/passwords.ts",
     "./user-store": "./src/user-store.ts",
     "./user-store.pg": "./src/user-store.pg.ts"
@@ -24,6 +25,7 @@
     "test": "node --import tsx --test \"test/**/*.test.ts\""
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1142.0",
     "drizzle-orm": "^0.44.2",
     "gray-matter": "^4.0.3",
     "mysql2": "^3.14.1",

@@ -1,3 +1,4 @@
+import "dotenv/config"; // TEST_S3_* for the asset-store contract against the local MinIO (root .env)
 import { spawnSync } from "node:child_process";
 
 /**

@@ -1,12 +1,15 @@
 import { createHash } from "node:crypto";
-import { promises as fs } from "node:fs";
+import { createReadStream, promises as fs } from "node:fs";
 import path from "node:path";
+import { Readable } from "node:stream";
 
 /**
- * AssetStore (D7): the binary side of content — renders, pinout SVGs, fab zips.
- * Mirrors the ContentStore file-vs-db split: today a FileAssetStore writes to
- * disk and hands back a URL; swapping to MinIO/S3 later is a config change, not
- * a rewrite, because callers only ever see `put(path) -> url`.
+ * AssetStore (D7): the binary side of content — renders, pinout SVGs, fab zips,
+ * the media library. Mirrors the ContentStore file-vs-db split: a
+ * FileAssetStore writes to disk, an S3AssetStore (asset-store.s3.ts) to a
+ * bucket (MinIO, Garage, S3); callers see the same interface, and the site's
+ * serving route (/api/assets) reads through it, so access control and URLs
+ * do not depend on where the bytes live.
  *
  * `put` content-hashes the filename (render-top.<sha8>.png), so re-publishing
  * with new bytes yields a *new* URL. That keeps the long `immutable` cache
@@ -14,9 +17,19 @@ import path from "node:path";
  * URL = cache miss = fresh (the standard fingerprinting pattern).
  */
 export interface AssetStore {
+  /** Where the serving route answers (e.g. "/api/assets"); stored URLs start with it. */
+  readonly urlBase: string;
   /** Store bytes; returns a public, content-addressed URL to reach them. */
   put(assetPath: string, bytes: Uint8Array): Promise<string>;
   delete(assetPath: string): Promise<void>;
+  /** Size of a stored file, or null when it does not exist. */
+  stat(assetPath: string): Promise<{ size: number } | null>;
+  /** The bytes of a stored file, `start`..`end` inclusive (the whole file without a range). */
+  read(assetPath: string, range?: { start: number; end: number }): Promise<ReadableStream<Uint8Array> | null>;
+  /** Every stored path (for moving between backends, and clean-up). */
+  list(): AsyncIterable<string>;
+  /** Store bytes at exactly this path — no fingerprint (moving files between backends). */
+  putExact(assetPath: string, bytes: Uint8Array): Promise<void>;
 }
 
 /** Turn a logical path into safe relative segments (no traversal, no absolute). */
@@ -40,10 +53,17 @@ export function fingerprintPath(rel: string, hash: string): string {
     : `${dir}${name}.${hash}`;
 }
 
+/** The fingerprinted key for `assetPath` with these bytes (shared by every backend). */
+export function assetKey(assetPath: string, bytes: Uint8Array): string {
+  const rel = safeAssetPath(assetPath);
+  if (!rel) throw new Error(`Invalid asset path "${assetPath}"`);
+  return fingerprintPath(rel, createHash("sha256").update(bytes).digest("hex").slice(0, 8));
+}
+
 /**
  * Assets on disk under `root`, reachable at `urlBase/<path>`. In this app
  * `urlBase` is the serving route (/api/assets), so it works identically in dev
- * and on Plesk without assuming anything about the public/ dir.
+ * and in the container without assuming anything about the public/ dir.
  */
 export class FileAssetStore implements AssetStore {
   constructor(
@@ -52,21 +72,53 @@ export class FileAssetStore implements AssetStore {
   ) {}
 
   async put(assetPath: string, bytes: Uint8Array): Promise<string> {
-    const rel = safeAssetPath(assetPath);
-    if (!rel) throw new Error(`Invalid asset path "${assetPath}"`);
-    const hash = createHash("sha256").update(bytes).digest("hex").slice(0, 8);
-    const hashed = fingerprintPath(rel, hash);
-    const full = path.join(this.root, hashed);
+    const key = assetKey(assetPath, bytes);
+    await this.putExact(key, bytes);
+    return `${this.urlBase.replace(/\/$/, "")}/${key}`;
+  }
+
+  async putExact(assetPath: string, bytes: Uint8Array): Promise<void> {
+    const full = this.resolve(assetPath);
     await fs.mkdir(path.dirname(full), { recursive: true });
     await fs.writeFile(full, bytes);
-    return `${this.urlBase.replace(/\/$/, "")}/${hashed}`;
   }
 
   async delete(assetPath: string): Promise<void> {
-    await fs.rm(path.join(this.root, safeAssetPath(assetPath)), { force: true });
+    await fs.rm(this.resolve(assetPath), { force: true });
   }
 
-  /** Filesystem path for a stored asset, kept inside `root` (for serving). */
+  async stat(assetPath: string): Promise<{ size: number } | null> {
+    try {
+      const s = await fs.stat(this.resolve(assetPath));
+      return s.isFile() ? { size: s.size } : null;
+    } catch {
+      return null;
+    }
+  }
+
+  async read(assetPath: string, range?: { start: number; end: number }): Promise<ReadableStream<Uint8Array> | null> {
+    if (!(await this.stat(assetPath))) return null;
+    return Readable.toWeb(createReadStream(this.resolve(assetPath), range)) as ReadableStream<Uint8Array>;
+  }
+
+  async *list(): AsyncIterable<string> {
+    const walk = async function* (dir: string, prefix: string): AsyncIterable<string> {
+      let entries: import("node:fs").Dirent[];
+      try {
+        entries = await fs.readdir(dir, { withFileTypes: true });
+      } catch {
+        return;
+      }
+      for (const e of entries) {
+        const rel = prefix ? `${prefix}/${e.name}` : e.name;
+        if (e.isDirectory()) yield* walk(path.join(dir, e.name), rel);
+        else if (e.isFile()) yield rel;
+      }
+    };
+    yield* walk(this.root, "");
+  }
+
+  /** Filesystem path for a stored asset, kept inside `root`. */
   resolve(assetPath: string): string {
     return path.join(this.root, safeAssetPath(assetPath));
   }

@@ -1,5 +1,3 @@
-import { createReadStream, promises as fs } from "node:fs";
-import { Readable } from "node:stream";
 import { revalidatePath } from "next/cache";
 import {
   AssetMetaSchema,
@@ -236,15 +234,10 @@ const CONTENT_TYPES: Record<string, string> = {
  * asking for byte ranges) — also the shape an S3 backend will answer in.
  */
 async function fileResponse(admin: AdminContext, rel: string, cache: string, range: string | null): Promise<Response> {
-  const file = admin.imprint.assets.resolve(rel);
-  let size: number;
-  try {
-    const stat = await fs.stat(file);
-    if (!stat.isFile()) throw new Error("not a file");
-    size = stat.size;
-  } catch {
-    return new Response("Not found", { status: 404 });
-  }
+  const assets = admin.imprint.assets;
+  const stat = await assets.stat(rel);
+  if (!stat) return new Response("Not found", { status: 404 });
+  const size = stat.size;
   const ext = rel.split(".").pop()?.toLowerCase() ?? "";
   const headers: Record<string, string> = {
     "Content-Type": CONTENT_TYPES[ext] ?? "application/octet-stream",
@@ -273,7 +266,9 @@ async function fileResponse(admin: AdminContext, rel: string, cache: string, ran
   }
   headers["Content-Length"] = String(size === 0 ? 0 : end - start + 1);
   if (size === 0) return new Response(new Uint8Array(0), { status, headers });
-  const stream = Readable.toWeb(createReadStream(file, { start, end })) as ReadableStream<Uint8Array>;
+  // Disk or bucket: the store streams the requested bytes (an S3 range request for a bucket).
+  const stream = await assets.read(rel, status === 206 ? { start, end } : undefined);
+  if (!stream) return new Response("Not found", { status: 404 });
   return new Response(stream, { status, headers });
 }
 

@@ -11,6 +11,7 @@ import {
   type RelationRule,
   type WidgetTypeDef,
   FileAssetStore,
+  type AssetStore,
   guardReads,
   inProcessPdp,
   type AuthzenSubject,
@@ -22,6 +23,7 @@ import {
   type WritableContentStore,
 } from "@imprint/content-core";
 import { dialectOf, openContentDatabase, type Dialect } from "@imprint/content-core/db";
+import { S3AssetStore, type S3AssetConfig } from "@imprint/content-core/asset-store.s3";
 import type { UserStore } from "@imprint/content-core/user-store";
 
 /**
@@ -80,8 +82,13 @@ export interface ImprintConfig {
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
   session?: { cookie?: string; hours?: number };
-  /** Uploaded assets (board renders, pinouts): where they live and where they're served. */
-  assets?: { root?: string; baseUrl?: string };
+  /**
+   * Uploaded assets (board renders, the media library): where they live and
+   * where they're served. With `s3` (all four fields set) they live in a
+   * bucket — one per site (design/beeldbibliotheek.md §8) — else on disk
+   * under `root`.
+   */
+  assets?: { root?: string; baseUrl?: string; s3?: Partial<S3AssetConfig> };
   /**
    * The media library (design/beeldbibliotheek.md): upload limits per file
    * kind, in bytes, and the origins that may call the media API (`/api/media`)
@@ -140,12 +147,8 @@ export interface ImprintInstance {
   contentTypes: ContentTypeCatalog;
   /** The plugins, as configured; the admin reads their React half from the same objects. */
   plugins: ImprintPluginCore[];
-  /**
-   * Typed as the file backend on purpose: it is the only one, and the route
-   * that serves assets needs `resolve()`. An S3/MinIO backend later means a
-   * config switch here plus a backend-specific serving route.
-   */
-  assets: FileAssetStore;
+  /** Disk or bucket (`assets.s3` in the config); the serving route reads through it either way. */
+  assets: AssetStore;
   /** Upload limits per file kind (defaults from content-core, overridden by the config), and the API's allowed origins. */
   media: { maxBytes: Record<string, number>; cors: string[] };
   session: { cookie: string; hours: number };
@@ -213,6 +216,12 @@ function registryOf(cfg: ImprintConfig): ContentTypeRegistry {
   return ContentTypeRegistry.of(...groups, cfg.contentTypeDefinitions ?? []);
 }
 
+/** The bucket settings when all four are there (empty strings count as absent), else null: disk. */
+function s3Config(s3: Partial<S3AssetConfig> | undefined): S3AssetConfig | null {
+  if (!s3?.endpoint || !s3.bucket || !s3.accessKey || !s3.secretKey) return null;
+  return { endpoint: s3.endpoint, bucket: s3.bucket, accessKey: s3.accessKey, secretKey: s3.secretKey, region: s3.region || undefined };
+}
+
 /** Build the live instance from a config. Uncached: every call opens its own pools. */
 export function resolveImprint(config: ImprintConfig): ImprintInstance {
   const cfg = defineImprint(config);
@@ -240,7 +249,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     widgets,
     contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
     plugins: cfg.plugins ?? [],
-    assets: new FileAssetStore(assetRoot, assetBase),
+    assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
     media: {
       maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) },
       // An origin is scheme + host (+ port), without a trailing slash: that is what the browser sends.

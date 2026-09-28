@@ -27,6 +27,14 @@ export default defineImprint({
   assets: {
     root: process.env.ASSET_ROOT,
     baseUrl: process.env.ASSET_BASE_URL,
+    // A bucket of its own (design/beeldbibliotheek.md §8) when ASSET_S3_* is set; else on disk.
+    s3: {
+      endpoint: process.env.ASSET_S3_ENDPOINT,
+      bucket: process.env.ASSET_S3_BUCKET,
+      accessKey: process.env.ASSET_S3_ACCESS_KEY,
+      secretKey: process.env.ASSET_S3_SECRET_KEY,
+      region: process.env.ASSET_S3_REGION,
+    },
   },
   // The patch editor puts recordings in the library through /api/media (design/beeldbibliotheek.md §12.4).
   // MEDIA_CORS_ORIGINS adds origins, comma-separated (e.g. the editor's dev server).

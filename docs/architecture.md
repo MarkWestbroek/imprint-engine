@@ -458,6 +458,17 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
   `POST /api/ingest/board-spec` (D5/D6): de backend slaat de bestanden op,
   herschrijft asset-namen in de doc naar URL's en doet `putItem`. Serveren via
   `GET /api/assets/...`.
+- **Opslag van bestanden** (stap 7): `AssetStore` (`put`, `putExact`, `stat`,
+  `read` met bereik, `list`, `delete`) heeft twee backends: `FileAssetStore`
+  (schijf) en `S3AssetStore` (`content-core/asset-store.s3`, MinIO/Garage/S3,
+  path-style). `createImprint` kiest de bucket als `assets.s3` compleet is
+  (`ASSET_S3_*`), anders schijf. Sleutels zijn in beide gelijk
+  (`<pad>.<sha8>.<ext>`), dus content-URL's (`/api/assets/<sleutel>`) blijven
+  geldig; de route leest via `stat`/`read`, ook voor Range. Eén bucket per
+  site, met een gebruiker die alleen die bucket mag. `scripts/assets-to-s3.ts`
+  verhuist schijf → bucket (idempotent). Contract voor beide backends in
+  `content-core/test/asset-store.test.ts` (bucket via `TEST_S3_*`,
+  `npm run test:db`).
 - **Beeldbibliotheek** (ontwerp: `docs/design/beeldbibliotheek.md`): kern-
   contenttype `asset` (`AssetRecordSchema`; bewerkbaar deel `AssetMetaSchema`),
   scherm `MediaLibraryScreen` op `/admin/asset` (`AdminTypeScreen` routeert

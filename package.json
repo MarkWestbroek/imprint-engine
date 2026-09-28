@@ -36,7 +36,8 @@
     "testcase:bitemporal": "node scripts/testcase-bitemporal.mjs",
     "backup": "node scripts/backup.mjs",
     "assets:gc": "node scripts/assets-gc.mjs",
-    "media:refs": "tsx scripts/media-refs.ts"
+    "media:refs": "tsx scripts/media-refs.ts",
+    "assets:to-s3": "tsx scripts/assets-to-s3.ts"
   },
   "devDependencies": {
     "dotenv": "^17.2.0",

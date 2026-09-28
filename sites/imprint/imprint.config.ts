@@ -21,6 +21,14 @@ export default defineImprint({
   assets: {
     root: process.env.ASSET_ROOT,
     baseUrl: process.env.ASSET_BASE_URL,
+    // A bucket of its own (design/beeldbibliotheek.md §8) when ASSET_S3_* is set; else on disk.
+    s3: {
+      endpoint: process.env.ASSET_S3_ENDPOINT,
+      bucket: process.env.ASSET_S3_BUCKET,
+      accessKey: process.env.ASSET_S3_ACCESS_KEY,
+      secretKey: process.env.ASSET_S3_SECRET_KEY,
+      region: process.env.ASSET_S3_REGION,
+    },
   },
   secrets: {
     session: process.env.SESSION_SECRET,

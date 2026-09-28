@@ -240,6 +240,10 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
   Toevoeging: de admin kan bij uploaden kiezen voor "as one group" (bv. RAW
   + JPEG); de groepsnaam is dan de eerste bestandsnaam + een tijdstempel.
   Taglijsten worden nu alleen vanuit de bibliotheek gebruikt; pagina's volgen.
+- **Stap 7 klaar, lokaal** (28 september 2026): `S3AssetStore`, één bucket
+  per site met een eigen gebruiker (policy alleen op die bucket, bewezen:
+  AccessDenied op de bucket van de ander), `assets:to-s3`, lokaal alles
+  verhuisd (413 + 14 bestanden). Op de VPS nog de keuze welke MinIO (§8).
 - **Stap 6 klaar** (28 september 2026): TipTap als teksteditor met een
   afbeeldingknop op de bibliotheekkiezer; markdown blijft de opslag
   (`asset:<slug>` in beeld- en linkadressen), getoond via de ref-route

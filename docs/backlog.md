@@ -214,7 +214,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Stap 6: TipTap met afbeeldingknop~~ — gedaan; opslag blijft markdown.
       - [ ] Tabellen in de visuele editor (TipTap-extensie + turndown-gfm);
             nu via de Markdown-tab.
-      - [ ] Stap 7: MinIO-backend (eigen bucket) + ondertekende downloads.
+      - [x] ~~Stap 7: MinIO-backend (eigen bucket per site)~~ — gedaan; lokaal
+            verhuisd.
+      - [ ] **VPS naar MinIO** — keuze: gedeelde `bitemp-minio` (extern netwerk)
+            of een eigen `minio`-container in de Imprint-compose; dan het
+            runbook in `docs/deploy-vps.md` ("Assets naar MinIO").
+      - [ ] `npm run backup` en `npm run assets:gc` voor de bucket (nu alleen
+            schijf, en gc alleen MariaDB).
+      - [ ] Ondertekende, tijdelijke download-URL's (presigned) voor
+            originelen — nodig voor de betaalmuur/verkoop.
       - [ ] EXIF-beleid als echte persoonlijke instelling (nu per browser).
       - [ ] Rookproef op de Imprint-site (Postgres) met Marks eigen login.
 - [ ] **Foto-verkoop (plugin)** — winkel/betaling bovenop de bibliotheek:
@@ -565,8 +573,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       (dry-run default, `--delete` om echt op te ruimen). Verwijdert alleen
       bestanden waar geen énkele historische rij naar wijst — History en
       time travel behouden hun assets.
-- [ ] **MinIO/S3 AssetStore** — de interface is er, alleen de implementatie +
-      config-wissel ontbreekt. _(D7; M)_
+- [x] ~~**MinIO/S3 AssetStore**~~ — gedaan (bibliotheek stap 7), zie hieronder.
 - [ ] **Migratie naar het bitemporal-register** (bitemporal2026) achter de
       `ContentStore`. _(README/§B3; L)_
 - [x] ~~**RSS-feed**~~ — gedaan in 0.11.0: `/feed.xml` (W6-rest), met
