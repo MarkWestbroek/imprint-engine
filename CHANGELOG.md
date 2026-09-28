@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Nieuwe teksteditor (TipTap)** — beeldbibliotheek stap 6. Overal waar je
+  opgemaakte tekst schrijft: vet, cursief, koppen, lijsten, citaat, code,
+  link, scheidingslijn, ongedaan maken, sneltoetsen en markdown-achtig typen,
+  plus een **afbeeldingknop** die de bibliotheekkiezer opent (alt-tekst uit de
+  bibliotheek). Opslag blijft markdown; een bibliotheekbeeld wordt
+  `![alt](asset:<naam>)`, en de site toont het via een korte doorverwijzing
+  (`/api/assets/_ref/<naam>`) naar de publieke versie — in álle markdown
+  (tekst, paginatekst, wiki, planning). De tab *Markdown* blijft.
+- Onderhoud: regexen met diakrieten gebruiken weer `\u0300-\u036f`-escapes in
+  plaats van onzichtbare tekens (ook in de wiki-plugin).
 - **Beeldbibliotheek stap 5: snel laden en focuspunt.** Bibliotheekbeelden
   krijgen `srcset`/`sizes` (alleen publieke versies), `width`/`height` (geen
   verspringende pagina) in Image, Hero, Media & text, Gallery, Carousel,

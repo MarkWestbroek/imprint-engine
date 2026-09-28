@@ -224,6 +224,43 @@ test.describe("media library", () => {
     await expect(page.getByRole("list", { name: "Used in" })).toContainText("E2E Picked");
   });
 
+  test("the text editor: type, insert a library image, and the page shows it", async ({ page }) => {
+    await page.goto("/admin/page/edit");
+    await page.getByLabel("slug", { exact: true }).fill("e2e-richtext");
+    await page.getByLabel("title", { exact: true }).fill("E2E Rich text");
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "＋ Add row" }).click();
+    await page.getByRole("button", { name: "＋ Add widget" }).click();
+    await page.getByRole("button", { name: "Text (markdown)", exact: true }).click();
+    await expect(page.getByRole("heading", { name: /^Text/ })).toBeVisible();
+
+    const text = page.locator("aside").getByLabel("Text", { exact: true });
+    await text.click();
+    await page.getByRole("button", { name: "Bold" }).click();
+    await page.keyboard.type("Aan zee");
+    await page.getByRole("button", { name: "Bold" }).click();
+    await page.keyboard.press("Enter");
+    await page.getByRole("button", { name: "Image from the library" }).click();
+    await page.getByRole("dialog", { name: "Choose from the media library" }).getByRole("button", { name: /e2e strand/ }).click();
+    await expect(text.locator("img")).toHaveAttribute("data-asset", "e2e-strand");
+
+    // Stored as markdown, with the reference — not the URL the editor showed it with.
+    await page.getByRole("button", { name: "Markdown", exact: true }).click();
+    await expect(page.getByLabel("Markdown source")).toHaveValue(/\*\*Aan zee\*\*\s+!\[Een strand bij laag water\]\(asset:e2e-strand\)/);
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "Create page" }).click();
+    await expect(page).toHaveURL(/\/admin\/page\/edit\/e2e-richtext/);
+
+    await page.goto("/e2e-richtext");
+    await expect(page.getByText("Aan zee")).toBeVisible();
+    const img = page.getByRole("img", { name: "Een strand bij laag water" });
+    await expect(img).toHaveAttribute("src", "/api/assets/_ref/e2e-strand");
+    // It really loads: the ref route redirected to the public version.
+    await expect.poll(() => img.evaluate((el: HTMLImageElement) => el.complete && el.naturalWidth)).toBeGreaterThan(0);
+  });
+
   test("delete: gone from the library, kept in History", async ({ page }) => {
     await page.goto("/admin/asset");
     await page.getByRole("button", { name: /e2e strand/ }).click();

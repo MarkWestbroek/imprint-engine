@@ -47,7 +47,7 @@ function revalidateSite(): void {
 export function normalizeFolder(value: string): string {
   return value
     .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .split("/")
     .map((s) => s.replace(/[^a-z0-9_ -]/g, "").replace(/\s+/g, " ").trim())
@@ -59,7 +59,7 @@ export function normalizeFolder(value: string): string {
 export function normalizeTag(value: string): string {
   const parts = value
     .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .split("/")
     .map((s) => s.replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""))
@@ -71,7 +71,7 @@ export function normalizeTag(value: string): string {
 export function normalizeGroup(value: string): string {
   return value
     .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
@@ -551,8 +551,33 @@ export async function assetsRoute(admin: AdminContext, req: Request, parts: stri
   if (admin.imprint.media.cors.length > 0) cors.Vary = "Origin";
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
-  const res = await serveAsset(admin, parts, req.headers.get("range"));
+  const res = parts[0] === "_ref" && parts.length === 2 ? await assetRedirect(admin, req, parts[1]) : await serveAsset(admin, parts, req.headers.get("range"));
   const headers = new Headers(res.headers);
   for (const [k, v] of Object.entries(cors)) headers.set(k, v);
   return new Response(res.body, { status: res.status, headers });
+}
+
+/**
+ * `/api/assets/_ref/<slug>`: where an `asset:<slug>` inside markdown leads
+ * (step 6). A redirect to what a page would show — the widest public version
+ * of an image, the original of other files — so markdown, rendered
+ * synchronously, still follows the library. Not found or not visible: 404,
+ * like the file itself would be. Short cache: the target changes when the
+ * asset does. `_ref` cannot clash with a stored path (slugs have no `_`).
+ */
+async function assetRedirect(admin: AdminContext, req: Request, slug: string): Promise<Response> {
+  const record = admin.imprint.writableStore ? await admin.imprint.writableStore.getItem("asset", slug) : null;
+  const parsed = record ? AssetRecordSchema.safeParse(record.data) : null;
+  if (!parsed?.success) return new Response("Not found", { status: 404 });
+  const asset = parsed.data;
+  if (asset.access === "restricted") {
+    const session = await admin.auth.getSession();
+    const ok = session && (await permit(admin.imprint.pdp, userSubject(session.name, session.role), "read", contentResource("asset", slug, asset)));
+    if (!ok) return new Response("Not found", { status: 404 });
+  }
+  const target = asset.file.kind === "image" ? displayUrl(asset) : asset.file.original;
+  return new Response(null, {
+    status: 302,
+    headers: { Location: new URL(target, req.url).toString(), "Cache-Control": asset.access === "public" ? "public, max-age=300" : "private, no-store" },
+  });
 }

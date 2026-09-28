@@ -520,6 +520,15 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     gebruikt waar `object-cover` bijsnijdt (hero, galerijtegels, avatars). "Used in" is een scan van alle
     actuele items op `asset:<slug>` en `…/library/<slug>/`;
     `scripts/media-refs.ts` zet hele veldwaarden die bibliotheek-URL's zijn om.
+  - **Markdown** (stap 6): `![alt](asset:<slug>)` en `[tekst](asset:<slug>)`
+    in markdown. Markdown wordt synchroon gerenderd, dus `Markdown` zet de
+    verwijzing met `urlTransform` om naar de ref-route
+    `/api/assets/_ref/<slug>` (`media/ref.ts`); `assetsRoute` verwijst daar door
+    (302) naar de grootste publieke versie, met dezelfde toegangsregels (404
+    als het niet zichtbaar is). De editor (`MarkdownEditor`) is TipTap
+    (StarterKit + een Image-extensie met `data-asset`); markdown blijft de
+    opslag: in via marked, uit via turndown, met een regel die een
+    `data-asset`-beeld terugschrijft als `asset:<slug>`.
   - **Externe API** (§12.4): `mediaApi` op `/api/media` — `POST` (multipart
     `file[]`, `folder`, `tags[]`, `group`, `exif` → 201 `{ assets }`) en `GET`
     (`?folder=&tag=&group=`). Authenticatie met een persoonlijke token

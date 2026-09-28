@@ -252,6 +252,22 @@ Op een pagina toon je een bord met de **Planning board**-widget. Die kan ook
 een ánder contenttype als bord tonen (bijv. componenten gegroepeerd op een
 fase-veld) — dan is het een read-only weergave.
 
+## Tekst opmaken
+
+Overal waar je opgemaakte tekst schrijft (de Text-widget, de paginatekst,
+callouts, tabs, wiki-pagina's, planningkaarten) staat dezelfde editor met twee
+tabs: **Visueel** (je ziet de opmaak meteen) en **Markdown** (de brontekst,
+voor wat de knoppen niet kunnen). De knoppen: vet, cursief, kop (H2/H3),
+gewone alinea, code, opsomming, genummerde lijst, citaat, link (leeg laten
+haalt de link weg), **afbeelding uit de bibliotheek** (🖼, met de alt-tekst
+uit de bibliotheek alvast ingevuld), scheidingslijn, ongedaan maken en
+opnieuw. Ook de gewone sneltoetsen werken (Ctrl+B, Ctrl+I, Ctrl+Z, …) en
+markdown-achtig typen (`## ` aan het begin van een regel wordt een kop, `- `
+een lijst).
+
+Een afbeelding uit de bibliotheek wordt als verwijzing opgeslagen: vervang of
+verbeter je hem in de bibliotheek, dan klopt het in de tekst meteen mee.
+
 ## De widget-catalogus
 
 Tekst & structuur: **Text** (opgemaakte tekst; Visueel- en Markdown-tab),

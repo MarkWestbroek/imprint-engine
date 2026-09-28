@@ -307,6 +307,7 @@ export const CANNED_RESPONSES: Record<string, CannedResponse> = {
 /** At least one case per registered widget type (enforced by the suite). */
 export const WIDGET_CASES: Record<string, WidgetCase[]> = {
   text: [
+    { name: "library-image-in-markdown", config: { markdown: "Before\n\n![A beach](asset:strand)\n\n[the photo](asset:strand)" } },
     { name: "markdown-with-gfm", config: { title: "Intro", markdown: "Hello **world**\n\n- one\n- two\n\n| a | b |\n|---|---|\n| 1 | 2 |" } },
   ],
   table: [

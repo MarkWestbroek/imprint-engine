@@ -211,7 +211,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             redacteuren/admins zien en wijzigen alles in de bibliotheek.
       - [ ] Rate limiting op `/api/media` (nu alleen token + scopes).
       - [x] ~~Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden~~ — gedaan.
-      - [ ] Stap 6: TipTap met afbeeldingknop.
+      - [x] ~~Stap 6: TipTap met afbeeldingknop~~ — gedaan; opslag blijft markdown.
+      - [ ] Tabellen in de visuele editor (TipTap-extensie + turndown-gfm);
+            nu via de Markdown-tab.
       - [ ] Stap 7: MinIO-backend (eigen bucket) + ondertekende downloads.
       - [ ] EXIF-beleid als echte persoonlijke instelling (nu per browser).
       - [ ] Rookproef op de Imprint-site (Postgres) met Marks eigen login.
@@ -768,9 +770,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **`image` en `board` samenvoegen?** Beide zijn "afbeelding + punten"; je wilde
       ze voorlopig apart houden omdat de board-kant zich apart kan ontwikkelen
       (pinouts zijn SVG's op de render → beeld-op-beeld).
-- [ ] **Echte WYSIWYG-markdown?** Nu contentEditable + marked/turndown met een
-      Markdown-tab. Een zwaardere editor (Milkdown/TipTap) kan op dezelfde plek
-      inpluggen als je meer wilt.
+- [x] ~~**Echte WYSIWYG-markdown?**~~ — gedaan: TipTap (bibliotheek stap 6),
+      markdown blijft de opslag, de Markdown-tab blijft.
 - [ ] **Postgres of MariaDB?** S11 noemt PostgreSQL; we koersen bewust op MariaDB
       (Plesk). Prima keuze, maar het staat nog als afwijking in de requirements.
 - [x] ~~**Relations aanzetten**~~ — gedaan: de default-regels staan aan in de

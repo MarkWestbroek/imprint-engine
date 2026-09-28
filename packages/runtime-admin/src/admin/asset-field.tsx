@@ -177,7 +177,15 @@ export function AssetListField({
 }
 
 /** The modal: search, folder, a grid of what fits `kinds`, and upload. */
-function AssetPicker({ kinds, onPick, onClose }: { kinds: string[]; onPick: (slug: string) => void; onClose: () => void }) {
+export function AssetPicker({
+  kinds,
+  onPick,
+  onClose,
+}: {
+  kinds: string[];
+  onPick: (slug: string, entry?: LibraryEntry) => void;
+  onClose: () => void;
+}) {
   const { entries: all, refresh } = useLibrary();
   const [query, setQuery] = useState("");
   const [folder, setFolder] = useState<string | null>(null);
@@ -215,7 +223,7 @@ function AssetPicker({ kinds, onPick, onClose }: { kinds: string[]; onPick: (slu
       const failed = body.results?.find((r) => !r.ok);
       if (!res.ok || failed) setError(body.error ?? `${failed?.name}: ${failed?.error}`);
       await refresh();
-      if (first && !failed) onPick(first);
+      if (first && !failed) onPick(first, entries?.find((e) => e.slug === first));
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
@@ -277,7 +285,7 @@ function AssetPicker({ kinds, onPick, onClose }: { kinds: string[]; onPick: (slu
                 <li key={e.slug}>
                   <button
                     type="button"
-                    onClick={() => onPick(e.slug)}
+                    onClick={() => onPick(e.slug, e)}
                     className="block w-full overflow-hidden rounded-lg border border-line text-left hover:border-accent"
                     title={e.filename}
                   >

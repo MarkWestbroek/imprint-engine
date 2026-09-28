@@ -246,6 +246,23 @@ describe("ingestFiles + serveAsset", () => {
     session = { name: "mark", role: "editor" };
   });
 
+  it("the ref route (markdown's asset:<slug>): a redirect to the public version; 404 when not visible", async () => {
+    session = null;
+    const photo = await sharp({ create: { width: 1000, height: 500, channels: 3, background: "#456" } }).jpeg().toBuffer();
+    const [r] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "golf.jpg", bytes: photo }]);
+    const go = () => assetsRoute(admin, new Request("http://site.test/api/assets/_ref/golf"), ["_ref", r.slug!]);
+    const res = await go();
+    assert.equal(res.status, 302);
+    assert.match(res.headers.get("location") ?? "", /^http:\/\/site\.test\/api\/assets\/library\/golf\/w800\./);
+    assert.equal((await assetsRoute(admin, new Request("http://site.test/x"), ["_ref", "nonesuch"])).status, 404);
+
+    const store = admin.imprint.writableStore!;
+    await store.putItem("asset", r.slug!, { ...(await store.getItem("asset", r.slug!))!.data as object, access: "restricted" }, { by: "mark" });
+    assert.equal((await go()).status, 404, "a visitor gets nothing for a restricted asset");
+    session = { name: "mark", role: "editor" };
+    assert.equal((await go()).status, 302, "a signed-in reader does");
+  });
+
   it("tags are normalised to list/tag or a free word", () => {
     assert.equal(normalizeTag(" Onderwerp/Portret "), "onderwerp/portret");
     assert.equal(normalizeTag("Sim Opname"), "sim-opname");
