@@ -42,4 +42,8 @@ export type MediaActions = {
   deleteAsset(slug: string, opts?: { group?: boolean }): Promise<ActionResult>;
   /** Create (slug null) or update a tag list; tags as `{ label }`, their slugs follow from the label. */
   saveTaglist(slug: string | null, list: Record<string, unknown>): Promise<ActionResult & { slug?: string }>;
+  /** Rename (label; the slug follows, files are updated, onto an existing tag = merge) or remove a tag. */
+  editTag(list: string, tag: string, change: { label?: string; remove?: boolean }): Promise<ActionResult & { affected?: number }>;
+  /** Remove a tag list and its tags from every file. */
+  deleteTaglist(list: string): Promise<ActionResult & { affected?: number }>;
 };

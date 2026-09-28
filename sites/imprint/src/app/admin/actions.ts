@@ -45,6 +45,14 @@ export async function deleteAssetAction(slug: string, opts?: { group?: boolean }
   return actions.deleteAsset(admin, slug, opts);
 }
 
+export async function editTagAction(list: string, tag: string, change: { label?: string; remove?: boolean }): Promise<ActionResult & { affected?: number }> {
+  return actions.editTag(admin, list, tag, change);
+}
+
+export async function deleteTaglistAction(list: string): Promise<ActionResult & { affected?: number }> {
+  return actions.deleteTaglist(admin, list);
+}
+
 export async function saveTaglistAction(slug: string | null, list: Record<string, unknown>): Promise<ActionResult & { slug?: string }> {
   return actions.saveTaglist(admin, slug, list);
 }

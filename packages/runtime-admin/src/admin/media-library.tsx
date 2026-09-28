@@ -87,11 +87,13 @@ export function MediaLibrary({
   const [lens, setLens] = useState("");
   const [located, setLocated] = useState(false);
   const [asGroup, setAsGroup] = useState(false);
+  const [editingList, setEditingList] = useState<string | null>(null);
   const [selected, setSelected] = useState<string | null>(params.get("open"));
   const [policy, setPolicy] = useState<ExifPolicy>("no-location");
   const [dragging, setDragging] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [messages, setMessages] = useState<string[]>([]);
+  const [notice, setNotice] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -223,6 +225,45 @@ export function MediaLibrary({
     });
   }
 
+  const usedBy = (tag: string) => assets.filter((a) => a.data.tags.includes(tag)).length;
+  const files = (n: number) => (n === 1 ? "1 file" : `${n} files`);
+
+  /** Run a tag-list change and show what it did (or why not). */
+  const change = (run: () => Promise<{ ok: boolean; error?: string; affected?: number }>, done?: (affected: number) => string) =>
+    startTransition(async () => {
+      const r = await run();
+      setMessages(r.ok ? [] : [r.error ?? "The change failed"]);
+      if (r.ok && done) setNotice(done(r.affected ?? 0));
+      router.refresh();
+    });
+
+  async function renameTag(list: Taglist, tag: { slug: string; label: string }) {
+    const label = await promptDialog(`Rename tag "${tag.label}" (renaming onto an existing tag merges them)`, { initial: tag.label, confirmLabel: "Rename" });
+    if (!label?.trim() || label.trim() === tag.label) return;
+    change(() => actions.editTag(list.slug, tag.slug, { label: label.trim() }), (n) => `Tag renamed; ${files(n)} updated.`);
+  }
+
+  async function removeTag(list: Taglist, tag: { slug: string; label: string }) {
+    const n = usedBy(`${list.slug}/${tag.slug}`);
+    if (!(await confirmDialog(`Remove tag "${tag.label}"?${n ? ` It is taken off ${files(n)}.` : ""}`, { danger: true, confirmLabel: "Remove" }))) return;
+    setTagFilter((f) => f.filter((x) => x !== `${list.slug}/${tag.slug}`));
+    change(() => actions.editTag(list.slug, tag.slug, { remove: true }), (m) => `Tag removed; ${files(m)} updated.`);
+  }
+
+  async function renameList(list: Taglist) {
+    const name = await promptDialog(`Rename tag list "${list.name}"`, { initial: list.name, confirmLabel: "Rename" });
+    if (!name?.trim() || name.trim() === list.name) return;
+    change(() => actions.saveTaglist(list.slug, { name: name.trim() }));
+  }
+
+  async function removeList(list: Taglist) {
+    const n = assets.filter((a) => a.data.tags.some((t) => t.startsWith(`${list.slug}/`))).length;
+    if (!(await confirmDialog(`Delete tag list "${list.name}" and its ${list.tags.length} tags?${n ? ` They are taken off ${files(n)}.` : ""}`, { danger: true, confirmLabel: "Delete" }))) return;
+    setTagFilter((f) => f.filter((x) => !x.startsWith(`${list.slug}/`)));
+    setEditingList(null);
+    change(() => actions.deleteTaglist(list.slug), (m) => `Tag list deleted; ${files(m)} updated.`);
+  }
+
   const toggleTag = (t: string) => setTagFilter((f) => (f.includes(t) ? f.filter((x) => x !== t) : [...f, t]));
 
   const folderBtn = (active: boolean) =>
@@ -266,10 +307,44 @@ export function MediaLibrary({
           <p className={sectionCls}>Tags</p>
           {taglists.map((l) => (
             <div key={l.slug} className="px-2 pb-2">
-              <p className="mb-1 text-xs font-medium">{l.name}</p>
+              <div className="mb-1 flex items-center gap-1">
+                <p className="mr-auto text-xs font-medium">{l.name}</p>
+                {editingList === l.slug && (
+                  <>
+                    <button type="button" onClick={() => renameList(l)} className="text-[11px] text-muted hover:text-accent">
+                      rename
+                    </button>
+                    <button type="button" onClick={() => removeList(l)} className="text-[11px] text-red-400 hover:underline">
+                      delete
+                    </button>
+                  </>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setEditingList((e) => (e === l.slug ? null : l.slug))}
+                  className={`px-1 text-xs ${editingList === l.slug ? "text-accent" : "text-muted hover:text-accent"}`}
+                  aria-label={editingList === l.slug ? `Done editing ${l.name}` : `Edit ${l.name}`}
+                  aria-pressed={editingList === l.slug}
+                  title={editingList === l.slug ? "Done" : "Rename or remove tags"}
+                >
+                  {editingList === l.slug ? "✓" : "✎"}
+                </button>
+              </div>
               <div className="flex flex-wrap gap-1">
                 {l.tags.map((t) => {
                   const tag = `${l.slug}/${t.slug}`;
+                  if (editingList === l.slug) {
+                    return (
+                      <span key={tag} className="inline-flex items-center gap-1 rounded-full border border-dashed border-line px-2 py-0.5 text-xs">
+                        <button type="button" onClick={() => renameTag(l, t)} aria-label={`Rename tag ${t.label}`} className="hover:text-accent">
+                          {t.label}
+                        </button>
+                        <button type="button" onClick={() => removeTag(l, t)} aria-label={`Remove tag ${t.label}`} className="text-muted hover:text-red-400">
+                          ×
+                        </button>
+                      </span>
+                    );
+                  }
                   return (
                     <button key={tag} type="button" className={chip(tagFilter.includes(tag))} onClick={() => toggleTag(tag)} aria-pressed={tagFilter.includes(tag)}>
                       {t.label}
@@ -401,6 +476,14 @@ export function MediaLibrary({
           />
         </div>
 
+        {notice && (
+          <p role="status" className="mb-3 flex justify-between rounded-md border border-line p-2 text-sm text-emerald-400">
+            {notice}
+            <button type="button" onClick={() => setNotice(null)} className="text-muted hover:text-foreground" aria-label="Dismiss">
+              ×
+            </button>
+          </p>
+        )}
         {messages.length > 0 && (
           <ul className="mb-3 space-y-1 rounded-md border border-red-400/50 p-2 text-sm text-red-400">
             {messages.map((m, i) => (
@@ -517,18 +600,26 @@ function AssetDetails({
 }) {
   const router = useRouter();
   const d = asset.data;
-  const [meta, setMeta] = useState({
-    title: d.title,
-    alt: d.alt,
-    caption: d.caption ?? "",
-    credit: d.credit ?? "",
-    licence: d.licence ?? "",
-    source: d.source ?? "",
-    folder: d.folder,
-    access: d.access,
-    publicMaxWidth: d.publicMaxWidth ? String(d.publicMaxWidth) : "",
+  const fields = (r: AssetRecord) => ({
+    title: r.title,
+    alt: r.alt,
+    caption: r.caption ?? "",
+    credit: r.credit ?? "",
+    licence: r.licence ?? "",
+    source: r.source ?? "",
+    folder: r.folder,
+    access: r.access,
+    publicMaxWidth: r.publicMaxWidth ? String(r.publicMaxWidth) : "",
   });
+  const [meta, setMeta] = useState(() => fields(d));
   const [tags, setTags] = useState<string[]>(d.tags);
+  // The record changed on the server (a save, a renamed tag, a moved group):
+  // start again from it, or a later Save would write the old values back.
+  useEffect(() => {
+    setMeta(fields(asset.data));
+    setTags(asset.data.tags);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `changed` is the record's version
+  }, [asset.changed]);
   const [freeTag, setFreeTag] = useState("");
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
   const [busy, startTransition] = useTransition();

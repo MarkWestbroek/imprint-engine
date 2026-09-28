@@ -311,6 +311,12 @@ site op één plek.
   detailpaneel kies je per lijst een tag (*＋ Onderwerp…*), of typ je een
   **vrije tag** + Enter; vrije tags staan links onder *Other*. De inhoud van
   de lijsten is per site anders.
+- **Taglijst bewerken**: klik ✎ naast de naam van een lijst. Klik dan op een
+  tag om hem te **hernoemen** (typfout verbeteren): alle bestanden met die tag
+  gaan mee, als nieuwe versie in History. Hernoem je hem naar een tag die al
+  bestaat, dan worden de twee **samengevoegd**. Met × **verwijder** je een tag
+  (hij gaat ook van de bestanden af; je ziet vooraf hoeveel). *rename* en
+  *delete* bovenin doen hetzelfde voor de hele lijst. ✓ sluit de bewerkmodus.
 - **Filteren**: klik tags aan (alle aangeklikte tags moeten kloppen), kies een
   soort (foto, audio, data…), camera of lens, of alleen beelden **met
   locatie**. Zoeken werkt op titel, alt-tekst, bestandsnaam, credit, lens en

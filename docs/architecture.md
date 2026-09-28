@@ -495,7 +495,10 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     geheel; `saveAsset` verplaatst bij een mapwijziging de hele groep,
     `deleteAsset(…, { group })` verwijdert hem. Tags zijn `lijst/tag` uit een
     kern-contenttype `taglist` (`TaglistSchema`, beheerd vanuit de
-    bibliotheek via `saveTaglist`) of een vrij woord.
+    bibliotheek via `saveTaglist`) of een vrij woord. `editTag` hernoemt
+    (de slug volgt het label; bestaat hij al, dan samenvoegen) of verwijdert
+    een tag, `deleteTaglist` een lijst; beide schrijven de tags van de
+    betrokken assets bij (nieuwe versies, dus in History).
   - `fileAccess` (`media/access.ts`) beslist per bestand: variant ≤
     `publicMaxWidth` van een publiek asset = `public` (immutable cache);
     van een beperkt asset = `reader` (PDP `read`); grotere varianten en het

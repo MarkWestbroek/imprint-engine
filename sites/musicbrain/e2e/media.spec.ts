@@ -109,6 +109,17 @@ test.describe("media library", () => {
     await chip.click();
     await expect(page.getByRole("button", { name: /e2e strand/ })).toBeVisible();
     await expect(chip).toHaveAttribute("aria-pressed", "true");
+    await chip.click(); // filter off again
+
+    // A typo is fixed in the list; the tagged photo follows.
+    await page.getByRole("button", { name: "Edit E2E Onderwerp" }).click();
+    await page.getByRole("button", { name: "Rename tag Strand" }).click();
+    await page.getByRole("dialog").getByRole("textbox").fill("Strand en zee");
+    await page.getByRole("dialog").getByRole("button", { name: "Rename" }).click();
+    await expect(page.getByRole("status")).toContainText("Tag renamed; 1 file updated.");
+    await page.getByRole("button", { name: "Done editing E2E Onderwerp" }).click();
+    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await expect(page.getByLabel("Tags of this file")).toContainText("Strand en zee");
   });
 
   test("a recording as one group: wav + mid + patch → one card; audio seeks by Range", async ({ page, browser }) => {

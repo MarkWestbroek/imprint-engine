@@ -4,10 +4,10 @@ import os from "node:os";
 import path from "node:path";
 import { after, before, describe, it } from "node:test";
 import sharp from "sharp";
-import { AssetRecordSchema, FileAssetStore, inProcessPdp, userSubject, ANONYMOUS, type AdminSession } from "@imprint/content-core";
+import { AssetRecordSchema, FileAssetStore, inProcessPdp, userSubject, ANONYMOUS } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
-import type { AdminContext } from "../src/admin-context";
-import { IngestRefused, ingestFiles, normalizeTag, serveAsset } from "../src/admin-server/media";
+import type { AdminContext, AdminSession } from "../src/admin-context";
+import { deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, saveTaglist, serveAsset } from "../src/admin-server/media";
 import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
 
 /**
@@ -160,6 +160,37 @@ describe("ingestFiles + serveAsset", () => {
     assert.equal(tail.headers.get("content-range"), `bytes ${size - 10}-${size - 1}/${size}`);
     assert.equal((await serveAsset(admin, rel, `bytes=${size + 5}-`)).status, 416);
     session = { name: "mark", role: "editor" };
+  });
+
+  it("tag lists: a typo is fixed by renaming — the files follow; onto an existing tag it merges", async () => {
+    const store = admin.imprint.writableStore!;
+    assert.equal((await saveTaglist(admin, null, { name: "Onderwerp", tags: [{ label: "Aftertuch" }, { label: "Aftertouch" }, { label: "Strand" }] })).slug, "onderwerp");
+    await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "a.json", bytes: patch() }], { tags: ["onderwerp/aftertuch", "onderwerp/strand"] });
+    const tagsOf = async (slug: string) => AssetRecordSchema.parse((await store.getItem("asset", slug))!.data).tags;
+
+    const fixed = await editTag(admin, "onderwerp", "strand", { label: "Strand & zee" });
+    assert.deepEqual([fixed.ok, fixed.affected], [true, 1]);
+    assert.deepEqual(await tagsOf("a"), ["onderwerp/aftertuch", "onderwerp/strand-zee"]);
+
+    const merged = await editTag(admin, "onderwerp", "aftertuch", { label: "Aftertouch" });
+    assert.deepEqual([merged.ok, merged.affected], [true, 1]);
+    assert.deepEqual(await tagsOf("a"), ["onderwerp/aftertouch", "onderwerp/strand-zee"]);
+    const list = (await store.getItem("taglist", "onderwerp"))!.data as { tags: { slug: string }[] };
+    assert.deepEqual(list.tags.map((t) => t.slug), ["aftertouch", "strand-zee"], "the misspelt tag is gone from the list");
+
+    // A rename that only changes capitals keeps the slug: no file needs a new version.
+    assert.equal((await editTag(admin, "onderwerp", "aftertouch", { label: "AfterTouch" })).affected, 0);
+  });
+
+  it("removing a tag or a whole list takes it off the files too", async () => {
+    const store = admin.imprint.writableStore!;
+    const tagsOf = async (slug: string) => AssetRecordSchema.parse((await store.getItem("asset", slug))!.data).tags;
+    assert.equal((await editTag(admin, "onderwerp", "strand-zee", { remove: true })).affected, 1);
+    assert.deepEqual(await tagsOf("a"), ["onderwerp/aftertouch"]);
+    // "a" plus the recording from the first test, which was tagged onderwerp/aftertouch.
+    assert.equal((await deleteTaglist(admin, "onderwerp")).affected, 4);
+    assert.deepEqual(await tagsOf("a"), []);
+    assert.equal(await store.getItem("taglist", "onderwerp"), null);
   });
 
   it("tags are normalised to list/tag or a free word", () => {

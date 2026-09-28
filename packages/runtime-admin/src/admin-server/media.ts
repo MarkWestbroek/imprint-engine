@@ -34,6 +34,15 @@ import { processUpload, slugFromFilename, uniqueSlug, UploadError } from "../med
 
 const LIBRARY = "library/";
 
+/** Flush the public site's cache after a change; outside a Next request (scripts, tests) there is none. */
+function revalidateSite(): void {
+  try {
+    revalidatePath("/", "layout");
+  } catch {
+    // no Next.js request context
+  }
+}
+
 /** "Externe  Afbeeldingen//2026/" → "externe afbeeldingen/2026". */
 export function normalizeFolder(value: string): string {
   return value
@@ -354,7 +363,7 @@ export async function saveAsset(admin: AdminContext, slug: string, meta: Record<
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }
-  revalidatePath("/", "layout");
+  revalidateSite();
   return { ok: true };
 }
 
@@ -366,7 +375,7 @@ export async function deleteAsset(admin: AdminContext, slug: string, opts: { gro
   const found = await withGroup(admin, slug);
   if (!found) return { ok: false, error: `No asset "${slug}"` };
   for (const m of opts.group ? found.members : [found.current]) await store.deleteItem("asset", m.slug, m.lang);
-  revalidatePath("/", "layout");
+  revalidateSite();
   return { ok: true };
 }
 
@@ -403,4 +412,71 @@ export async function saveTaglist(admin: AdminContext, slug: string | null, list
   if (!parsed.success) return { ok: false, error: parsed.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`).join("; ") };
   await store.putItem("taglist", target, parsed.data, { lang: parsed.data.lang, by: session.name });
   return { ok: true, slug: target };
+}
+
+/** Rewrite the tags of every asset that has `from`: to `to`, or drop it when `to` is null. Returns how many changed. */
+async function retagAssets(admin: AdminContext, by: string, from: (tag: string) => boolean, to: (tag: string) => string | null): Promise<number> {
+  const store = admin.imprint.writableStore!;
+  let changed = 0;
+  for (const r of await store.listItems("asset")) {
+    const data = r.data as Record<string, unknown> & { tags?: string[] };
+    const tags = data.tags ?? [];
+    if (!tags.some(from)) continue;
+    const next = [...new Set(tags.flatMap((t) => (from(t) ? (to(t) === null ? [] : [to(t)!]) : [t])))];
+    await store.putItem("asset", r.slug, { ...data, tags: next }, { lang: r.lang, by });
+    changed++;
+  }
+  return changed;
+}
+
+/**
+ * Fix a tag in a list (§4): rename it (its slug follows the label, and every
+ * file that has it is updated — a new version, so History shows it; renaming
+ * onto an existing tag merges the two) or remove it (also from the files).
+ */
+export async function editTag(
+  admin: AdminContext,
+  list: string,
+  tag: string,
+  change: { label?: string; remove?: boolean }
+): Promise<ActionResult & { affected?: number }> {
+  const session = await admin.auth.editingSession();
+  const store = admin.imprint.writableStore;
+  if (!session || !store) return { ok: false, error: "Not signed in" };
+  const current = await store.getItem("taglist", list);
+  if (!current) return { ok: false, error: `No tag list "${list}"` };
+  const data = TaglistSchema.parse(current.data);
+  const old = data.tags.find((t) => t.slug === tag);
+  if (!old) return { ok: false, error: `No tag "${tag}" in "${data.name}"` };
+  const oldKey = `${list}/${tag}`;
+
+  let tags = data.tags;
+  let to: string | null = null;
+  if (change.remove) {
+    tags = tags.filter((t) => t.slug !== tag);
+  } else {
+    const label = String(change.label ?? "").trim();
+    const slug = normalizeGroup(label);
+    if (!label || !slug) return { ok: false, error: "A tag needs a name" };
+    const merged = slug !== tag && tags.some((t) => t.slug === slug);
+    tags = merged ? tags.filter((t) => t.slug !== tag) : tags.map((t) => (t.slug === tag ? { slug, label } : t));
+    to = `${list}/${slug}`;
+  }
+  await store.putItem("taglist", list, { ...data, tags }, { lang: current.lang, by: session.name });
+  const affected = to === oldKey ? 0 : await retagAssets(admin, session.name, (t) => t === oldKey, () => to);
+  revalidateSite();
+  return { ok: true, affected };
+}
+
+/** Remove a tag list; its tags are removed from every file that has them. */
+export async function deleteTaglist(admin: AdminContext, list: string): Promise<ActionResult & { affected?: number }> {
+  const session = await admin.auth.editingSession();
+  const store = admin.imprint.writableStore;
+  if (!session || !store) return { ok: false, error: "Not signed in" };
+  const current = await store.getItem("taglist", list);
+  if (!current) return { ok: false, error: `No tag list "${list}"` };
+  const affected = await retagAssets(admin, session.name, (t) => t.startsWith(`${list}/`), () => null);
+  await store.deleteItem("taglist", list, current.lang);
+  revalidateSite();
+  return { ok: true, affected };
 }

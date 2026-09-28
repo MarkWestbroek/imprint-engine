@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taglijsten bewerken**: tag hernoemen (typfout; bestanden gaan mee, naar
+  een bestaande tag = samenvoegen), tag of hele lijst verwijderen (ook van de
+  bestanden), lijst hernoemen — via ✎ in de bibliotheek.
+- Fix: het detailpaneel van de bibliotheek hield na een wijziging elders (tag
+  hernoemd, groep verplaatst) de oude waarden vast, en Save zou die
+  terugschrijven. Het leest nu opnieuw in zodra het record verandert.
 - **Fix: een draaiende dev-server bleef na een schemawijziging het oude
   contentmodel gebruiken** ("Unknown content type \"taglist\""). De instantie
   wordt per id bewaard (één databasepool over hot reloads heen); de sleutel

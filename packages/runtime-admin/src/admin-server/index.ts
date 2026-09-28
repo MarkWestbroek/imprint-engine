@@ -27,6 +27,8 @@ export { ModelScreen } from "./model";
 export { MediaLibraryScreen } from "./media-screen";
 export {
   deleteAsset,
+  deleteTaglist,
+  editTag,
   ingestFiles,
   IngestRefused,
   normalizeFolder,

@@ -186,8 +186,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             bij upload; streams + Range~~ — gedaan.
       - [ ] Taglijsten ook voor pagina's en andere contenttypen (het
             mechanisme is kern; de pickers ontbreken nog).
-      - [ ] Tag hernoemen of verwijderen in een lijst (nu alleen toevoegen;
-            via het generieke formulier onder Model & config kan het wel).
+      - [x] ~~Tag hernoemen of verwijderen in een lijst~~ — gedaan
+            (hernoemen met samenvoegen, verwijderen, lijst hernoemen/verwijderen).
       - [ ] Stap 3: `AssetRef` + picker in `SchemaForm`; beeldwidgets erop;
             migratie van `/api/assets/…`-URL's; "gebruikt in".
       - [ ] Stap 4: **externe clients** — API-tokens met scopes, `/api/media`
