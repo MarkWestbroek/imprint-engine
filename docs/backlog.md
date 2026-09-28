@@ -133,8 +133,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] zelfde behandeling voor **component** en **release** (hun
             fallbacks zijn rijker: gepinde versie/kanaalweging resp.
             component-lijst). _(M)_
-- [ ] **Media-bibliotheek** met automatische varianten (thumbnail/OG/hero). De
-      AssetStore is er; upload-UI en varianten niet. _(S8; L)_
+- [ ] **Media-bibliotheek** — ontwerp in `docs/design/beeldbibliotheek.md`.
+      Besloten: verwijzen per asset met URL als uitweg; mappen grof, tags fijn
+      uit gestructureerde taglijsten (kern, ook voor andere content). Open:
+      varianten, EXIF-beleid, beperkte assets, opslag (§11 daar). _(S8; L)_
 - [ ] **Chrome-varianten** — de grove pagina-indeling (logo-positie,
       header/footer-variant) parameteriseren per site, als server-side laag
       naast de client-side thema-tokens (zie architecture.md §3c). _(M)_
