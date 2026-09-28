@@ -195,21 +195,42 @@ Voorstel:
 
 ## 10. Volgorde
 
-1. `asset` + upload-endpoint (type-sniffing, maximale grootte, SVG saneren,
-   EXIF uitlezen, varianten maken) + bibliotheekscherm met mappen.
-2. Taglijsten (kern) + tags in de bibliotheek.
+Herzien 28 september 2026, na de vraag van de patch-editor (§12). Wat de
+architectuur vastlegt, schuift naar voren, zodat een externe client er
+later als dunne laag bovenop komt in plaats van als verbouwing.
+
+1. ✅ `asset` + upload (sniffen, EXIF, varianten) + bibliotheekscherm met
+   mappen + toegang per formaat.
+2. **Taglijsten én een algemene upload-kern.**
+   - Taglijsten (kern) + tags in de bibliotheek; filteren op
+     lens/camera/locatie.
+   - Tags en `group` al bij upload meegeven (§12.3).
+   - De upload-logica losmaken van de admin-route: één functie
+     `ingestFiles(ctx, subject, files, { folder, tags, group, exif })` die
+     door de admin-route, straks de API en scripts gebruikt wordt (§12.1).
+   - **Bestandssoorten als handlers**: `image`, `svg`, `document`, en
+     nieuw `audio` (wav) en `data` (midi, json). Elke soort heeft een eigen
+     herkenning (aan de bytes), metadata en eventuele varianten (§12.2).
+   - Maximale grootte per soort, in te stellen in `imprint.config.ts`.
+   - `serveAsset` met streams en HTTP Range-requests (spoelen in audio).
 3. `AssetRef` + picker in `SchemaForm`; beeldwidgets erop, URL's blijven werken;
-   migratiescript voor `/api/assets/…`-URL's.
-4. `srcset` in de viewers; focus-punt bij bijsnijden.
-5. TipTap met afbeeldingknop.
-6. Beperkte assets via de poort; S3-backend (MinIO/Garage) als configwissel.
+   migratie van `/api/assets/…`-URL's; "gebruikt in". Een `audio`-asset
+   voedt ook de `audio`-widget.
+4. **Externe clients** (§12.4): persoonlijke API-tokens met scopes, de route
+   `/api/media` (upload + lijst) als dunne laag op `ingestFiles`, en een
+   CORS-allowlist per site. Eerste gebruiker: de patch-editor van MusicBrain.
+5. `srcset` in de viewers; focuspunt bij bijsnijden.
+6. TipTap met afbeeldingknop.
+7. MinIO-backend (eigen bucket) + ondertekende downloads; voor grote
+   bestanden eventueel direct naar de bucket (presigned PUT) als extra
+   uploadvorm naast multipart (§12.5).
 
 ## 10b. Stand
 
 - **Stap 1 klaar** (28 september 2026): `asset`, upload, scherm met mappen,
   toegang per formaat. Afwijking: het persoonlijke EXIF-beleid wordt nu per
   browser onthouden (localStorage), nog niet per gebruiker in de database.
-  Opslag nog op de file-backend; MinIO is stap 6.
+  Opslag nog op de file-backend; MinIO is stap 7.
 
 ## 11. Besluiten (28 september 2026)
 
@@ -219,3 +240,126 @@ Voorstel:
 - `access` nu, per formaat; origineel nooit publiek; betaalmuur via de poort +
   ondertekende downloads, verkoop zelf als plugin (§7).
 - MinIO in een eigen bucket (§8).
+
+## 12. Externe clients en andere bestandssoorten (de patch-editor)
+
+**Aanleiding** (28 september 2026): de patch-editor van MusicBrain
+(editor.musicbrain.nl, een statische Vite-app zonder login) maakt per opname
+een koppel van drie bestanden met dezelfde naam: `take-xxx.wav` (audio),
+`take-xxx.mid` (MIDI) en `take-xxx.patch.json` (de patch, zodat de opname
+opnieuw te laten klinken is). Versie 2 van de editor moet zo'n koppel met één
+klik in de bibliotheek zetten, in een map en met tags.
+
+▶ **Mark: eerst volgens plan door, maar de architectuur moet dit nu al
+dragen**, zodat het straks een dunne laag is en geen verbouwing.
+
+Wat er in stap 1 niet is: geen API voor een externe client (alleen
+`POST /admin/upload` met de sessiecookie van de admin), geen CORS, geen lijst,
+geen tags bij upload, alleen afbeeldingen/SVG/PDF, maximaal 50 MB (ongeveer
+drie minuten wav 24-bit stereo), en geen koppels.
+
+### 12.1 Eén upload-kern, meerdere ingangen
+
+De verwerking hangt nu aan de admin-route (`uploadAssets`). In stap 2 wordt
+dat één functie die niets van HTTP weet:
+
+```
+ingestFiles(ctx, subject, files[], { folder, tags[], group?, exif })
+  → [{ slug, kind, url, ok, error? }]
+```
+
+Drie ingangen roepen dezelfde functie aan:
+
+- de admin-route (`/admin/upload`, sessiecookie);
+- de API (`/api/media`, token, stap 4);
+- scripts en ingest (bv. een import van WordPress-media of Lightroom).
+
+Autorisatie gaat via de `subject` en de PDP (`create` op `asset`), niet via
+de manier van inloggen.
+
+### 12.2 Bestandssoorten als handlers
+
+`file.kind` wordt een uitbreidbare lijst van handlers, elk met:
+
+| Soort | Herkenning (bytes) | Metadata | Varianten |
+|---|---|---|---|
+| `image` | sharp | breedte, hoogte, EXIF | WebP 400–2400 |
+| `svg` | `<svg` | — | — (sandbox-CSP bij serveren) |
+| `document` | `%PDF-` | — | — |
+| `audio` (nieuw) | `RIFF….WAVE` (later FLAC/MP3/OGG) | duur, samplerate, kanalen, bitdiepte | voorlopig geen (later een MP3/Opus-previewversie) |
+| `data` (nieuw) | MIDI `MThd`; JSON die parst (met maximale grootte) | MIDI: sporen, duur; JSON: optioneel een `$schema`/`type` | — |
+
+Het record krijgt per soort een optioneel metadatablok (`photo` bestaat al;
+`audio` en `data` komen erbij). Een plugin kan later een soort toevoegen (bv.
+3D-modellen, `.glb`), op dezelfde manier als plugins nu contenttypen
+toevoegen. De **maximale grootte** wordt per soort instelbaar in
+`imprint.config.ts` (bv. `media: { maxBytes: { audio: 500_000_000 } }`).
+
+Serveren: audio en video hebben **HTTP Range-requests** nodig (spoelen in de
+speler). `serveAsset` leest nu het hele bestand in één keer; dat gaat in stap
+2 over op streams en `Range`, ook met het oog op MinIO.
+
+### 12.3 Koppels: `group`
+
+▶ **Besluit (Mark): een echt koppel**, geen gedeelde tag.
+
+- Een optioneel veld **`group`** (een slug, bv. `take-2026-09-28-1412`) op
+  het asset. Alle bestanden van één opname dragen dezelfde `group`.
+- De bibliotheek toont een groep als één kaart met de losse bestanden erin;
+  verwijderen en verplaatsen gelden voor de hele groep.
+- Een widget kan een groep als geheel tonen (speler + MIDI-download +
+  "open in editor" via de patch).
+- Tags blijven voor terugvinden; `group` is voor samenhang.
+- Heeft een groep later eigen metadata nodig (titel, beschrijving, datum van
+  de sessie), dan komt er een contenttype `asset-group` met dezelfde slug;
+  de assets hoeven dan niet te veranderen.
+
+Het veld komt in stap 2 in het schema en bij upload, zodat stap 4 alleen nog
+een API is.
+
+### 12.4 De externe API (stap 4)
+
+- **Authenticatie**: persoonlijke **API-tokens**, per gebruiker aan te maken
+  in de admin, met een **scope** (bv. `media:upload`, `media:read`) en een
+  vervaldatum; opgeslagen als hash (zoals wachtwoorden), intrekbaar. De
+  client stuurt `Authorization: Bearer …`. De token levert een `subject`
+  (de gebruiker) plus de scopes; de PDP beslist zoals altijd. Geen
+  sessiecookie over domeinen heen: die is `SameSite=Lax` en host-only, en
+  CORS met credentials zou de admin-sessie aanvalbaar maken vanaf een andere
+  origin.
+- **Contract** (door de editor bevestigd als passend):
+
+  ```
+  POST /api/media        multipart: file[], folder, tags[], group?, exif?
+                         → { assets: [{ slug, kind, url, group? }] }
+  GET  /api/media?folder=&tag=&group=
+                         → { assets: [{ slug, kind, url, title, tags, group, … }] }
+  ```
+
+- ▶ **Besluit (Mark): toegang voor andere origins via een CORS-allowlist**
+  per site in `imprint.config.ts` (bv. `https://editor.musicbrain.nl`), alleen
+  op `/api/media`, zonder credentials (het token is de credential). Reden:
+  het zit in de configuratie van de instantie, dus het gaat mee als je een
+  site op een andere server of instantie zet; een Caddy-route zou per server
+  opnieuw moeten.
+- **Tokenbeheer** in de admin (Beheer → Users of een eigen scherm "API
+  tokens"): aanmaken (token één keer tonen), scopes, vervaldatum, intrekken,
+  laatst gebruikt.
+
+### 12.5 MinIO en grote bestanden (stap 7)
+
+Voor de client verandert het contract niet: de site neemt de upload aan en
+schrijft zelf naar MinIO. Pas als bestanden te groot worden om via de site te
+lopen (lange opnames, RAW-series), komt er een tweede uploadvorm bij:
+"vraag een upload-URL → PUT direct naar de bucket → bevestig". Die bouwen we
+alleen als het nodig blijkt; de rest van de API blijft gelijk.
+
+### 12.6 Wat dit nu al vastlegt (om later niet te hoeven verbouwen)
+
+1. Upload-kern los van transport (§12.1) — stap 2.
+2. Bestandssoorten als handlers, met metadata en maximale grootte per soort
+   (§12.2) — stap 2.
+3. `group` en `tags` in het schema en bij upload (§12.3) — stap 2.
+4. Streaming en Range bij serveren (§12.2) — stap 2.
+5. Autorisatie via `subject` + PDP, onafhankelijk van cookie of token
+   (§12.1, §12.4) — stap 2 voorbereid, stap 4 af.
