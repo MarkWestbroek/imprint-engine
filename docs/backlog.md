@@ -28,6 +28,25 @@ Nieuwe concrete vervolgpunten naast de bestaande SSRF-, sessie- en draftitems:
       Imprint-catalogustest bijwerken, Postgres-contracttests verplicht in CI,
       packages onder lint brengen.
 
+### Aanvulling: eigen websites, portfolio en Go-backend
+
+Zie de [bijgestelde review](review-2026-09-28.md#10-bijstelling-na-toelichting-van-mark)
+en [ontwerpopdracht](design/opdracht-review-doorontwikkeling.md). Dit zijn
+voorstellen voor vervolgwerk, geen reeds opgeleverde mogelijkheden.
+
+- [ ] **Open-source-/dependencybeleid toetsen**: benodigde functies,
+      licenties, containerdistributie, self-hosting en volledige data-export;
+      ook de bestaande Go-library en gekozen objectopslag meenemen.
+- [ ] **Go-backendcontract en adapterproef**: echte library inspecteren,
+      generieke tijd-/taalbewuste reads, conflicten, historie-import,
+      service-authenticatie, site-isolatie en cachegedrag aantonen.
+- [ ] **Eerste WordPress-migratie voorbereiden**: site-/plugininventaris,
+      herhaalbare dry-run-import, media, URL-mapping, vergelijking en rollback.
+- [ ] **Portfolio naast Adobe beproeven**: voortbouwen op de besloten
+      [beeldbibliotheek](design/beeldbibliotheek.md); gecureerde series,
+      beeldkwaliteit, mobiel laden, privacy/toegang en beheer toetsen voordat
+      het publieke domein verhuist. Geen aanname van WordPress-export bij Adobe.
+
 ---
 
 ## 1. Widgets

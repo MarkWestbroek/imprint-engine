@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Architectuur- en productreview** (28 september 2026): codeonderbouwde
+  beoordeling van kwaliteit, robuustheid, performance, webstandaarden en
+  positionering in `docs/review-2026-09-28.md`, met verificatieresultaten en
+  vervolgpunten in de backlog. Aangevuld met de letterlijke chatreview en
+  bredere positionering: open source, React/TS, eigen WordPress-sites en
+  fotografieportfolio's. `docs/design/opdracht-review-doorontwikkeling.md`
+  geeft een architect/bouw-agent concrete onderzoeksopdrachten en
+  acceptatiecriteria voor de Go-backend, migraties en mediapresentatie,
+  aansluitend op de bestaande mediabesluiten. Geen wijzigingen aan
+  applicatiegedrag.
 - **Beeldbibliotheek, stap 1** (design/beeldbibliotheek.md). Nieuw
   kern-contenttype `asset` en het scherm **Content → Media**: uploaden met
   knop of slepen, mappen als een bestandssysteem, detailpaneel met alt-tekst,
