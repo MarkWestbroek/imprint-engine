@@ -11,6 +11,11 @@
 #                                    (de Imprint-site heeft geen catalogus/planning:
 #                                    altijd met --only, zie sites/imprint/README.md)
 #   ./deploy.sh user imprint <args>  npm run user (gebruikersbeheer) voor die site
+#   ./deploy.sh s3-setup musicbrain  bucket + gebruiker in de eigen MinIO (eenmalig;
+#                                    <SITE>_S3_SECRET_KEY en MINIO_ROOT_PASSWORD eerst in .env)
+#   ./deploy.sh s3-move musicbrain [--apply]
+#                                    bestanden van het volume naar de bucket
+#                                    (droog tenzij --apply; herhaalbaar)
 #
 # Volgorde per deploy: postgres up → tools-image → per site: migreren, bouwen
 # (SSG leest de database), herstarten. Sites na elkaar, nooit tegelijk: twee
@@ -52,6 +57,38 @@ case "${1:-}" in
     site="${2:?gebruik: deploy.sh user <site> <args>}"; shift 2
     tools "$site" npm run user -- "$@"
     exit 0 ;;
+  s3-setup)
+    site="${2:?gebruik: deploy.sh s3-setup <site>}"
+    SITE="$(echo "$site" | tr '[:lower:]' '[:upper:]')"
+    bucket_var="${SITE}_S3_BUCKET"; key_var="${SITE}_S3_ACCESS_KEY"; secret_var="${SITE}_S3_SECRET_KEY"
+    bucket="${!bucket_var:-imprint-$site}"; key="${!key_var:-imprint-$site}"
+    secret="${!secret_var:?$secret_var ontbreekt in .env (bv. openssl rand -base64 24)}"
+    : "${MINIO_ROOT_PASSWORD:?MINIO_ROOT_PASSWORD ontbreekt in .env}"
+    dc up -d --wait minio
+    policy='{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Action":["s3:GetBucketLocation","s3:ListBucket"],"Resource":["arn:aws:s3:::'"$bucket"'"]},{"Effect":"Allow","Action":["s3:GetObject","s3:PutObject","s3:DeleteObject"],"Resource":["arn:aws:s3:::'"$bucket"'/*"]}]}'
+    # Het geheim gaat via de omgeving de container in, niet via de opdrachtregel.
+    dc exec -T -e BUCKET="$bucket" -e KEY="$key" -e SECRET="$secret" -e POLICY="$policy" minio sh -c '
+      set -e
+      mc alias set loc http://127.0.0.1:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD" >/dev/null
+      mc mb --ignore-existing "loc/$BUCKET" >/dev/null
+      printf "%s" "$POLICY" > /tmp/policy.json
+      mc admin policy create loc "$BUCKET-rw" /tmp/policy.json >/dev/null
+      rm -f /tmp/policy.json
+      mc admin user add loc "$KEY" "$SECRET" >/dev/null
+      mc admin policy attach loc "$BUCKET-rw" --user "$KEY" >/dev/null 2>&1 || true
+      echo "bucket $BUCKET: gebruiker $KEY, policy $BUCKET-rw"'
+    exit 0 ;;
+  s3-move)
+    site="${2:?gebruik: deploy.sh s3-move <site> [--apply]}"; shift 2
+    SITE="$(echo "$site" | tr '[:lower:]' '[:upper:]')"
+    bucket_var="${SITE}_S3_BUCKET"; key_var="${SITE}_S3_ACCESS_KEY"; secret_var="${SITE}_S3_SECRET_KEY"
+    dc up -d --wait minio
+    dc run --rm -v "imprint_${site}_assets:/data/assets:ro" \
+      -e ASSET_ROOT=/data/assets -e ASSET_S3_ENDPOINT=http://minio:9000 \
+      -e ASSET_S3_BUCKET="${!bucket_var:-imprint-$site}" -e ASSET_S3_ACCESS_KEY="${!key_var:-imprint-$site}" \
+      -e ASSET_S3_SECRET_KEY="${!secret_var:?$secret_var ontbreekt in .env}" \
+      tools npm run assets:to-s3 -- "$@"
+    exit 0 ;;
 esac
 
 ref="${1:-}"
@@ -60,6 +97,8 @@ if [ -n "$ref" ]; then git checkout --detach "$ref"; else git pull --ff-only; fi
 echo "── bron: $(git describe --tags --always)"
 
 dc up -d --wait postgres
+# De eigen MinIO alleen als een site er zijn bestanden in heeft.
+if [ -n "${MUSICBRAIN_S3_ENDPOINT:-}${IMPRINT_S3_ENDPOINT:-}" ]; then dc up -d --wait minio; fi
 dc build tools
 
 for site in $SITES; do

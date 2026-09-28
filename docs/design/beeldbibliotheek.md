@@ -243,7 +243,8 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
 - **Stap 7 klaar, lokaal** (28 september 2026): `S3AssetStore`, één bucket
   per site met een eigen gebruiker (policy alleen op die bucket, bewezen:
   AccessDenied op de bucket van de ander), `assets:to-s3`, lokaal alles
-  verhuisd (413 + 14 bestanden). Op de VPS nog de keuze welke MinIO (§8).
+  verhuisd (413 + 14 bestanden). ▶ VPS: een eigen MinIO-container in de
+  Imprint-compose (besluit Mark, 29 september); klaar om uit te voeren.
 - **Stap 6 klaar** (28 september 2026): TipTap als teksteditor met een
   afbeeldingknop op de bibliotheekkiezer; markdown blijft de opslag
   (`asset:<slug>` in beeld- en linkadressen), getoond via de ref-route

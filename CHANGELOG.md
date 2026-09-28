@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **VPS: eigen MinIO voor Imprint** (besluit Mark). Dienst `minio` in de
+  compose (alleen `imprint_net`, console via tunnel op 127.0.0.1:9011, start
+  alleen als een site een S3-endpoint heeft); `deploy.sh s3-setup <site>`
+  (bucket + gebruiker die alleen die bucket mag) en `deploy.sh s3-move <site>
+  [--apply]` (volume → bucket). Draaiboek in `docs/deploy-vps.md`.
 - **Fix: 500 op audio- en databestanden in een lopende dev-server** na de
   overstap op de nieuwe opslag. De bewaarde instantie hield het oude
   opslagobject (zonder `stat`/`read`). In dev krijgt de instantie nu een

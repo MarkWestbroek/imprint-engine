@@ -7,6 +7,7 @@
 #
 #   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
 #   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
+#   minio      → alleen imprint_net (API :9000); console 127.0.0.1:9011
 #
 # Eén Postgres, per imprint een eigen database + rol (pg-init.sh). Eén image
 # per site uit dezelfde Dockerfile (build-arg SITE). De build leest de database
@@ -38,6 +39,30 @@ services:
       - ./pg-init.sh:/docker-entrypoint-initdb.d/10-imprint-databases.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [imprint_net]
+
+  # Eigen MinIO voor de bestanden van de sites (design/beeldbibliotheek.md §8):
+  # per site een bucket met een gebruiker die alleen die bucket mag
+  # (deploy.sh s3-setup). Los van de MinIO's van bitemporal/Omnium, zodat hun
+  # upgrades de sites niet raken. De API is alleen in imprint_net bereikbaar
+  # (http://minio:9000); de console via een SSH-tunnel naar 127.0.0.1:9011.
+  # Start alleen als een site een S3-endpoint heeft (deploy.sh).
+  minio:
+    image: ${MINIO_IMAGE:-minio/minio:latest}
+    restart: unless-stopped
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-imprint-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9011}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -110,6 +135,7 @@ secrets:
     environment: BUILD_DATABASE_URL
 
 volumes:
+  minio_data:
   pg_data:
   musicbrain_assets:
   imprint_assets:

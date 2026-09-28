@@ -202,42 +202,30 @@ veranderen niet (`/api/assets/…`): de site serveert ze nog steeds zelf, met
 dezelfde toegangsregels. Zolang `<SITE>_S3_*` in `.env` leeg is, blijft alles
 op het volume.
 
-**Open punt (beslissing Mark): welke MinIO.** De sitecontainers zitten in
-`imprint_net`; `bitemp-minio` en `pf-minio` elk in hun eigen netwerk, poort
-9000 niet gepubliceerd. Twee wegen:
+▶ **Besluit (Mark): een eigen MinIO-container** in deze compose (dienst
+`minio`, volume `minio_data`, alleen in `imprint_net`; console via een
+SSH-tunnel naar `127.0.0.1:9011`). Los van de MinIO's van bitemporal en
+Omnium, zodat hun upgrades de sites niet raken. De dienst start alleen als een
+site een `<SITE>_S3_ENDPOINT` heeft.
 
-- *Gedeeld* (`bitemp-minio`): het netwerk van die stack als `external`
-  netwerk aan de sitediensten hangen; endpoint `http://bitemp-minio:9000`.
-  Nadeel: de levenscyclus (upgrade, herstart) van bitemporal raakt de sites.
-- *Eigen* container `minio` in deze compose (`imprint_net`, eigen volume);
-  endpoint `http://minio:9000`. Geen koppeling met bitemporal.
+Per site (hier MusicBrain; alles vanuit `/srv/imprint/deploy/vps`):
 
-Daarna, per site (hier MusicBrain):
-
-1. Bucket en gebruiker maken, alleen voor die bucket (zoals lokaal: policy
-   met `s3:ListBucket` op de bucket en Get/Put/DeleteObject op `bucket/*`):
-   ```bash
-   docker exec <minio> mc alias set loc http://127.0.0.1:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD"
-   docker exec <minio> mc mb --ignore-existing loc/imprint-musicbrain
-   # policy-bestand in de container zetten, dan:
-   docker exec <minio> mc admin policy create loc imprint-musicbrain-rw /tmp/policy.json
-   docker exec <minio> mc admin user add loc imprint-musicbrain '<geheim>'
-   docker exec <minio> mc admin policy attach loc imprint-musicbrain-rw --user imprint-musicbrain
-   ```
-2. `MUSICBRAIN_S3_*` in `deploy/vps/.env` invullen (zie `.env.example`), nog
-   níet deployen.
-3. De bestanden van het volume naar de bucket kopiëren (droog, dan echt; het
-   script slaat over wat er al staat en laat het volume ongemoeid):
-   ```bash
-   docker compose run --rm -v imprint_musicbrain_assets:/data/assets \
-     -e ASSET_ROOT=/data/assets -e ASSET_S3_ENDPOINT=… -e ASSET_S3_BUCKET=imprint-musicbrain \
-     -e ASSET_S3_ACCESS_KEY=imprint-musicbrain -e ASSET_S3_SECRET_KEY=… \
-     tools npm run assets:to-s3            # daarna met -- --apply
-   ```
-4. `SITES=musicbrain ./deploy.sh`; een paar pagina's en `/admin/asset`
-   controleren. Nog eens stap 3 draaien vangt uploads op die tussen kopiëren
-   en deployen op het volume landden.
-5. Het volume pas opruimen als de site een tijd goed op de bucket draait.
+1. In `.env`: `MINIO_ROOT_PASSWORD` (eenmalig) en `MUSICBRAIN_S3_SECRET_KEY`
+   invullen (`openssl rand -base64 24`); `MUSICBRAIN_S3_ENDPOINT` nog leeg.
+2. Eerst de nieuwe code en het tools-image: `SITES=musicbrain ./deploy.sh`
+   (de site blijft dan nog op het volume).
+3. `./deploy.sh s3-setup musicbrain` — bucket `imprint-musicbrain` en een
+   gebruiker die alleen die bucket mag.
+4. `./deploy.sh s3-move musicbrain`, dan met `--apply` — kopieert het volume
+   (`imprint_musicbrain_assets`, alleen-lezen gemount) naar de bucket; slaat
+   over wat er al staat.
+5. `MUSICBRAIN_S3_ENDPOINT=http://minio:9000` in `.env`, dan
+   `SITES=musicbrain ./deploy.sh`. Een paar pagina's en `/admin/asset`
+   controleren; nog eens `s3-move … --apply` vangt uploads op die tussen
+   stap 4 en 5 op het volume landden.
+6. Terug kan altijd: `MUSICBRAIN_S3_ENDPOINT` leegmaken en deployen — het
+   volume staat er nog. Pas opruimen als de site een tijd goed op de bucket
+   draait.
 
 Let op: `npm run backup` en `npm run assets:gc` kennen de bucket nog niet
 (backlog); een bucket back-up je met `mc mirror` of restic op de MinIO-data.
