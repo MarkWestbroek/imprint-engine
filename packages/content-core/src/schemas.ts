@@ -50,6 +50,64 @@ export const AssetPhoto = z.object({
 });
 export type AssetPhoto = z.infer<typeof AssetPhoto>;
 
+/** Read from a WAV header at upload. */
+export const AssetAudio = z.object({
+  /** Seconds. */
+  duration: z.number().nonnegative().optional(),
+  sampleRate: z.number().int().positive().optional(),
+  channels: z.number().int().positive().optional(),
+  bitDepth: z.number().int().positive().optional(),
+});
+export type AssetAudio = z.infer<typeof AssetAudio>;
+
+/** What a data file is: a MIDI file's header, or a JSON document's declared type. */
+export const AssetData = z.object({
+  format: z.enum(["midi", "json"]),
+  /** MIDI: 0, 1 or 2. */
+  midiFormat: z.number().int().optional(),
+  tracks: z.number().int().optional(),
+  /** MIDI: ticks per quarter note. */
+  ppq: z.number().int().optional(),
+  /** JSON: `$schema`, `type` or `kind` of the top-level object, when it names one. */
+  type: z.string().optional(),
+});
+export type AssetData = z.infer<typeof AssetData>;
+
+/**
+ * The file kinds the core handles (design/beeldbibliotheek.md §12.2). The
+ * record accepts any kind name, so a plugin can add one (e.g. 3D models)
+ * without a schema change; these are the ones with a handler in the engine.
+ */
+export const CORE_ASSET_KINDS = ["image", "svg", "document", "audio", "data"] as const;
+export type CoreAssetKind = (typeof CORE_ASSET_KINDS)[number];
+
+/** Default upload limits per kind, in bytes; a site overrides them in `imprint.config.ts` (`media.maxBytes`). */
+export const DEFAULT_MEDIA_MAX_BYTES: Record<CoreAssetKind, number> = {
+  image: 50 * 1024 * 1024,
+  svg: 5 * 1024 * 1024,
+  document: 50 * 1024 * 1024,
+  audio: 200 * 1024 * 1024,
+  data: 20 * 1024 * 1024,
+};
+
+/**
+ * A tag list (design/beeldbibliotheek.md §4): a small, named vocabulary such
+ * as "Onderwerp" or "Project". A tag on content is written `list/tag`
+ * (`onderwerp/portret`); a tag without a list is a free tag. Core, and not
+ * only for media — pages and other types can use the same lists later.
+ */
+export const TaglistSchema = z.object({
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  lang: Locale.default("en"),
+  name: z.string().min(1),
+  description: z.string().optional(),
+  /** Open: editors may add tags while tagging. Closed: only pick. */
+  open: z.boolean().default(true),
+  tags: z.array(z.object({ slug: z.string().regex(/^[a-z0-9-]+$/), label: z.string().min(1) })).default([]),
+  order: z.number().int().default(0),
+});
+export type Taglist = z.infer<typeof TaglistSchema>;
+
 /**
  * One item in the media library (design/beeldbibliotheek.md §2). The file
  * part is written at upload and never by a form; the rest is what an editor
@@ -70,12 +128,20 @@ export const AssetRecordSchema = z.object({
   source: z.string().optional(),
   /** One place, like a file system: "schetsen/2026"; "" = the root. */
   folder: z.string().regex(/^[a-z0-9_/ -]*$/i).default(""),
+  /** `list/tag` for a tag from a tag list, a bare word for a free tag. */
   tags: z.array(z.string()).default([]),
+  /**
+   * Files that belong together as one (§12.3): e.g. a recording's wav, mid and
+   * patch.json. The library shows a group as one card; moving and deleting
+   * apply to the whole group.
+   */
+  group: z.string().regex(/^[a-z0-9][a-z0-9-]*$/).optional(),
   /** Focal point for cropping, 0..1 from top-left. */
   focus: z.object({ x: z.number().min(0).max(1), y: z.number().min(0).max(1) }).optional(),
   file: z.object({
     filename: z.string(),
-    kind: z.enum(["image", "svg", "document"]),
+    /** One of CORE_ASSET_KINDS, or a plugin's kind. */
+    kind: z.string().min(1),
     mime: z.string(),
     size: z.number().int().nonnegative(),
     width: z.number().int().positive().optional(),
@@ -86,6 +152,8 @@ export const AssetRecordSchema = z.object({
     exif: ExifPolicy,
   }),
   photo: AssetPhoto.optional(),
+  audio: AssetAudio.optional(),
+  data: AssetData.optional(),
   /** Only kept with EXIF policy "all": the location is shown on purpose. */
   gps: z.object({ lat: z.number(), lon: z.number() }).optional(),
 });

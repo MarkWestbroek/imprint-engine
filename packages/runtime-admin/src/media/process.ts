@@ -1,19 +1,20 @@
 import exifr from "exifr";
 import sharp from "sharp";
-import type { AssetPhoto, ExifPolicy } from "@imprint/content-core";
+import { DEFAULT_MEDIA_MAX_BYTES, type AssetAudio, type AssetData, type AssetPhoto, type ExifPolicy } from "@imprint/content-core";
 
 /**
  * What happens to an upload before it lands in the media library
- * (design/beeldbibliotheek.md §5–6): sniff the real type from the bytes (the
- * extension is not trusted), read the camera data, and make the web variants
- * — WebP at a fixed set of widths, never wider than the original. The
- * original's bytes are kept untouched; the EXIF policy applies to the
- * variants only.
+ * (design/beeldbibliotheek.md §5–6, §12.2). Each file kind has a handler:
+ * it recognises its files by their bytes (the extension and the browser's
+ * content type are not trusted), reads its metadata and makes variants where
+ * that makes sense. Images get WebP web versions at a fixed set of widths,
+ * never wider than the original; the original's bytes are always kept
+ * untouched and the EXIF policy applies to the variants only. Every kind has
+ * its own size limit (`media.maxBytes` in the site config).
  */
 
 /** Variant widths in pixels; one is skipped when the original isn't wider. */
 export const VARIANT_WIDTHS = [400, 800, 1600, 2400] as const;
-export const MAX_UPLOAD_BYTES = 50 * 1024 * 1024;
 
 const RASTER = new Set(["jpeg", "png", "webp", "gif", "avif", "tiff"]);
 const MIME: Record<string, string> = {
@@ -29,7 +30,7 @@ const EXT: Record<string, string> = { jpeg: "jpg", png: "png", webp: "webp", gif
 export type ProcessedVariant = { width: number; height: number; bytes: Buffer };
 
 export type ProcessedUpload = {
-  kind: "image" | "svg" | "document";
+  kind: string;
   mime: string;
   /** Extension for the stored original, from the sniffed type. */
   ext: string;
@@ -40,9 +41,28 @@ export type ProcessedUpload = {
   gps?: { lat: number; lon: number };
   /** From EXIF Artist/Copyright, as a starting value for the credit field. */
   credit?: string;
+  audio?: AssetAudio;
+  data?: AssetData;
 };
 
-export class UploadError extends Error {}
+/** A refused upload; `status` is the HTTP answer an API gives for it (413, 415, 400). */
+export class UploadError extends Error {
+  constructor(
+    message: string,
+    readonly status: 400 | 413 | 415 = 415
+  ) {
+    super(message);
+  }
+}
+
+/** One file kind: how to recognise it, and how to process it. Checked in order; the first that recognises the bytes wins. */
+export type KindHandler = {
+  kind: string;
+  sniff(bytes: Uint8Array): boolean;
+  process(bytes: Uint8Array, policy: ExifPolicy): Promise<ProcessedUpload>;
+};
+
+const ascii = (bytes: Uint8Array, from: number, to: number) => Buffer.from(bytes.subarray(from, to)).toString("latin1");
 
 function looksLikeSvg(bytes: Uint8Array): boolean {
   const head = Buffer.from(bytes.subarray(0, 1024)).toString("utf8").trimStart().toLowerCase();
@@ -121,19 +141,12 @@ function photoOf(exif: RawExif | null): AssetPhoto | undefined {
   return Object.values(photo).some((v) => v !== undefined) ? photo : undefined;
 }
 
-export async function processUpload(bytes: Uint8Array, policy: ExifPolicy): Promise<ProcessedUpload> {
-  if (bytes.byteLength === 0) throw new UploadError("Empty file");
-  if (bytes.byteLength > MAX_UPLOAD_BYTES) {
-    throw new UploadError(`File is larger than ${MAX_UPLOAD_BYTES / 1024 / 1024} MB`);
-  }
-  if (looksLikeSvg(bytes)) return { kind: "svg", mime: "image/svg+xml", ext: "svg", variants: [] };
-  if (looksLikePdf(bytes)) return { kind: "document", mime: "application/pdf", ext: "pdf", variants: [] };
-
+async function processImage(bytes: Uint8Array, policy: ExifPolicy): Promise<ProcessedUpload> {
   let meta: sharp.Metadata;
   try {
     meta = await sharp(bytes).metadata();
   } catch {
-    throw new UploadError("Unsupported file type (images, SVG and PDF only)");
+    throw new UploadError("Unreadable image");
   }
   const format = meta.format ?? "";
   if (!RASTER.has(format) || !meta.width || !meta.height) {
@@ -174,6 +187,122 @@ export async function processUpload(bytes: Uint8Array, policy: ExifPolicy): Prom
     gps: policy === "all" && lat !== undefined && lon !== undefined ? { lat, lon } : undefined,
     credit,
   };
+}
+
+/** JPEG, PNG, GIF, WebP, AVIF/HEIF, TIFF by their magic numbers; sharp decides the rest. */
+function looksLikeRaster(b: Uint8Array): boolean {
+  if (b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return true; // JPEG
+  if (ascii(b, 1, 4) === "PNG") return true;
+  if (ascii(b, 0, 4) === "GIF8") return true;
+  if (ascii(b, 0, 4) === "RIFF" && ascii(b, 8, 12) === "WEBP") return true;
+  if (ascii(b, 4, 8) === "ftyp") return true; // AVIF / HEIF
+  const tiff = ascii(b, 0, 4);
+  return tiff === "II*\0" || tiff === "MM\0*";
+}
+
+/** The fmt and data chunks of a RIFF/WAVE file: enough for duration, rate, channels, depth. */
+export function readWav(b: Uint8Array): AssetAudio {
+  const view = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  let pos = 12;
+  let byteRate = 0;
+  const audio: AssetAudio = {};
+  while (pos + 8 <= b.byteLength) {
+    const id = ascii(b, pos, pos + 4);
+    const size = view.getUint32(pos + 4, true);
+    const body = pos + 8;
+    if (id === "fmt " && body + 16 <= b.byteLength) {
+      audio.channels = view.getUint16(body + 2, true);
+      audio.sampleRate = view.getUint32(body + 4, true);
+      byteRate = view.getUint32(body + 8, true);
+      audio.bitDepth = view.getUint16(body + 14, true);
+    } else if (id === "data") {
+      // A recorder that cannot seek back writes 0 or 0xFFFFFFFF: use what is there.
+      const dataBytes = size === 0 || size === 0xffffffff ? b.byteLength - body : Math.min(size, b.byteLength - body);
+      if (byteRate > 0) audio.duration = Math.round((dataBytes / byteRate) * 1000) / 1000;
+      break;
+    }
+    pos = body + size + (size % 2); // chunks are word-aligned
+  }
+  return audio;
+}
+
+/** The MThd header: format, number of tracks, ticks per quarter note. */
+export function readMidi(b: Uint8Array): AssetData {
+  const view = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  const division = b.byteLength >= 14 ? view.getUint16(12, false) : 0;
+  return {
+    format: "midi",
+    midiFormat: b.byteLength >= 10 ? view.getUint16(8, false) : undefined,
+    tracks: b.byteLength >= 12 ? view.getUint16(10, false) : undefined,
+    // The high bit set means SMPTE timing, not ticks per quarter.
+    ppq: division && !(division & 0x8000) ? division : undefined,
+  };
+}
+
+function jsonText(b: Uint8Array): string | null {
+  const text = Buffer.from(b).toString("utf8").replace(/^﻿/, "");
+  const first = text.trimStart()[0];
+  return first === "{" || first === "[" ? text : null;
+}
+
+/** The core's kinds, in the order they are tried (cheap magic numbers first, sharp last). */
+export const coreKindHandlers: KindHandler[] = [
+  {
+    kind: "svg",
+    sniff: looksLikeSvg,
+    process: async () => ({ kind: "svg", mime: "image/svg+xml", ext: "svg", variants: [] }),
+  },
+  {
+    kind: "document",
+    sniff: looksLikePdf,
+    process: async () => ({ kind: "document", mime: "application/pdf", ext: "pdf", variants: [] }),
+  },
+  {
+    kind: "audio",
+    sniff: (b) => ascii(b, 0, 4) === "RIFF" && ascii(b, 8, 12) === "WAVE",
+    process: async (b) => ({ kind: "audio", mime: "audio/wav", ext: "wav", variants: [], audio: readWav(b) }),
+  },
+  {
+    kind: "data",
+    sniff: (b) => ascii(b, 0, 4) === "MThd",
+    process: async (b) => ({ kind: "data", mime: "audio/midi", ext: "mid", variants: [], data: readMidi(b) }),
+  },
+  {
+    kind: "data",
+    sniff: (b) => jsonText(b) !== null,
+    process: async (b) => {
+      let doc: unknown;
+      try {
+        doc = JSON.parse(jsonText(b)!);
+      } catch {
+        throw new UploadError("Not valid JSON");
+      }
+      const top = doc && typeof doc === "object" && !Array.isArray(doc) ? (doc as Record<string, unknown>) : {};
+      const type = [top.$schema, top.type, top.kind].find((v): v is string => typeof v === "string" && v.length < 200);
+      return { kind: "data", mime: "application/json", ext: "json", variants: [], data: { format: "json", type } };
+    },
+  },
+  { kind: "image", sniff: looksLikeRaster, process: processImage },
+];
+
+/**
+ * Recognise and process one upload. `maxBytes` holds the limit per kind (the
+ * site config); a file above its kind's limit is refused with status 413.
+ */
+export async function processUpload(
+  bytes: Uint8Array,
+  policy: ExifPolicy,
+  opts: { maxBytes?: Record<string, number>; handlers?: KindHandler[] } = {}
+): Promise<ProcessedUpload> {
+  if (bytes.byteLength === 0) throw new UploadError("Empty file", 400);
+  const limits: Record<string, number> = { ...DEFAULT_MEDIA_MAX_BYTES, ...opts.maxBytes };
+  const handler = (opts.handlers ?? coreKindHandlers).find((h) => h.sniff(bytes));
+  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI and JSON)", 415);
+  const limit = limits[handler.kind] ?? DEFAULT_MEDIA_MAX_BYTES.image;
+  if (bytes.byteLength > limit) {
+    throw new UploadError(`File is larger than ${Math.round(limit / 1024 / 1024)} MB (the limit for ${handler.kind})`, 413);
+  }
+  return handler.process(bytes, policy);
 }
 
 /** "Mijn Foto (2).JPG" → "mijn-foto-2"; empty → "asset". */

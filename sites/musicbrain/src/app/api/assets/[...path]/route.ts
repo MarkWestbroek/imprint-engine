@@ -6,7 +6,7 @@ import { admin } from "@/lib/admin";
  * a library file is served according to its asset (access per format, the
  * original never public — design/beeldbibliotheek.md §7).
  */
-export async function GET(_req: Request, ctx: { params: Promise<{ path: string[] }> }): Promise<Response> {
+export async function GET(req: Request, ctx: { params: Promise<{ path: string[] }> }): Promise<Response> {
   const { path } = await ctx.params;
-  return serveAsset(admin, path);
+  return serveAsset(admin, path, req.headers.get("range"));
 }

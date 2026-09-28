@@ -41,8 +41,12 @@ export async function saveAssetAction(slug: string, meta: Record<string, unknown
   return actions.saveAsset(admin, slug, meta);
 }
 
-export async function deleteAssetAction(slug: string): Promise<ActionResult> {
-  return actions.deleteAsset(admin, slug);
+export async function deleteAssetAction(slug: string, opts?: { group?: boolean }): Promise<ActionResult> {
+  return actions.deleteAsset(admin, slug, opts);
+}
+
+export async function saveTaglistAction(slug: string | null, list: Record<string, unknown>): Promise<ActionResult & { slug?: string }> {
+  return actions.saveTaglist(admin, slug, list);
 }
 
 export async function saveRelationsAction(prev: ActionResult | null, formData: FormData): Promise<ActionResult> {

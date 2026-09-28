@@ -8,6 +8,7 @@ import {
   saveAssetAction,
   saveItemAction,
   saveRelationsAction,
+  saveTaglistAction,
 } from "@/app/admin/actions";
 import {
   changeOwnPasswordAction,
@@ -38,5 +39,5 @@ export const adminActions: AdminActions = {
   },
   changeOwnPassword: changeOwnPasswordAction,
   studio: { draftOp: draftOpAction, resetDraft: resetDraftAction, savePageDraft: savePageDraftAction },
-  media: { saveAsset: saveAssetAction, deleteAsset: deleteAssetAction },
+  media: { saveAsset: saveAssetAction, deleteAsset: deleteAssetAction, saveTaglist: saveTaglistAction },
 };

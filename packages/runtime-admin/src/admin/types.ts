@@ -38,6 +38,8 @@ export type StudioActions = {
 export type MediaActions = {
   /** Merge the editable fields (AssetMeta) into the asset; the file part is untouched. */
   saveAsset(slug: string, meta: Record<string, unknown>): Promise<ActionResult>;
-  /** A tombstone like any delete: the files stay for History and time travel. */
-  deleteAsset(slug: string): Promise<ActionResult>;
+  /** A tombstone like any delete: the files stay for History and time travel. With `group`, the whole group. */
+  deleteAsset(slug: string, opts?: { group?: boolean }): Promise<ActionResult>;
+  /** Create (slug null) or update a tag list; tags as `{ label }`, their slugs follow from the label. */
+  saveTaglist(slug: string | null, list: Record<string, unknown>): Promise<ActionResult & { slug?: string }>;
 };

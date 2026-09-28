@@ -231,6 +231,11 @@ later als dunne laag bovenop komt in plaats van als verbouwing.
   toegang per formaat. Afwijking: het persoonlijke EXIF-beleid wordt nu per
   browser onthouden (localStorage), nog niet per gebruiker in de database.
   Opslag nog op de file-backend; MinIO is stap 7.
+- **Stap 2 klaar** (28 september 2026): taglijsten, filters, `ingestFiles`,
+  soorten als handlers (audio, data), limiet per soort, groepen, Range.
+  Toevoeging: de admin kan bij uploaden kiezen voor "as one group" (bv. RAW
+  + JPEG); de groepsnaam is dan de eerste bestandsnaam + een tijdstempel.
+  Taglijsten worden nu alleen vanuit de bibliotheek gebruikt; pagina's volgen.
 
 ## 11. Besluiten (28 september 2026)
 

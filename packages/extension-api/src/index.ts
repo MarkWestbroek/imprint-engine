@@ -4,6 +4,7 @@ import {
   ContentTypeCatalog,
   ContentTypeRegistry,
   coreContentTypeDefinitions,
+  DEFAULT_MEDIA_MAX_BYTES,
   type ContentTypeDefinition,
   type RelationRule,
   type WidgetTypeDef,
@@ -79,6 +80,8 @@ export interface ImprintConfig {
   session?: { cookie?: string; hours?: number };
   /** Uploaded assets (board renders, pinouts): where they live and where they're served. */
   assets?: { root?: string; baseUrl?: string };
+  /** The media library (design/beeldbibliotheek.md): upload limits per file kind, in bytes. */
+  media?: { maxBytes?: Partial<Record<string, number>> };
   /**
    * Secrets and outbound targets. The config file is the only place that reads
    * `process.env` for them, so shared code (the admin, Fase 3) never does.
@@ -137,6 +140,8 @@ export interface ImprintInstance {
    * config switch here plus a backend-specific serving route.
    */
   assets: FileAssetStore;
+  /** Upload limits per file kind (defaults from content-core, overridden by the config). */
+  media: { maxBytes: Record<string, number> };
   session: { cookie: string; hours: number };
   /** As configured; empty strings count as absent. */
   secrets: ImprintSecrets;
@@ -230,6 +235,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
     plugins: cfg.plugins ?? [],
     assets: new FileAssetStore(assetRoot, assetBase),
+    media: { maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) } },
     session: {
       cookie: cfg.session?.cookie || `imprint_${cfg.id}_session`,
       hours: cfg.session?.hours ?? 12,

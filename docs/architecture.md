@@ -475,15 +475,33 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     S --> AS
   ```
 
-  - `processUpload` (`runtime-admin/src/media/process.ts`) herkent het type aan
-    de bytes, leest EXIF (`exifr`) en maakt WebP-varianten (400/800/1600/2400,
-    nooit ≥ origineel) met het EXIF-beleid: `keepExif()`, een herbouwde EXIF
-    zonder GPS-blok, of niets. Het origineel blijft byte-gelijk.
+  - **Eén upload-kern** (ontwerp §12.1): `ingestFiles(admin, subject, files,
+    { folder, tags, group, exif })` kent geen HTTP en geen inlogmanier; de PDP
+    beslist (`create` op `asset`). `uploadAssets` (admin, sessiecookie) is er
+    een dunne laag op; de externe API (stap 4) en scripts worden dat ook.
+    Per bestand een eigen resultaat met status (413 te groot, 415 onbekend
+    type), zodat één slecht bestand de rest niet tegenhoudt.
+  - **Soorten als handlers** (§12.2): `processUpload` loopt `coreKindHandlers`
+    af (`svg`, `document`, `audio` = RIFF/WAVE, `data` = MIDI `MThd` of JSON,
+    `image` via sharp); de eerste die de bytes herkent wint. Elke soort heeft
+    een limiet (`DEFAULT_MEDIA_MAX_BYTES`, per site `media.maxBytes` in
+    `imprint.config.ts` → `imprint.media`). Beelden: EXIF (`exifr`) en
+    WebP-varianten (400/800/1600/2400, nooit ≥ origineel) met het EXIF-beleid
+    `keepExif()`, een herbouwde EXIF zonder GPS-blok, of niets. Audio: duur,
+    samplerate, kanalen, bitdiepte uit de wav-header. Het origineel blijft
+    byte-gelijk. `file.kind` is een open string, zodat een plugin een soort
+    kan toevoegen.
+  - **Groepen en tags** (§4, §12.3): `group` (slug) bindt bestanden tot één
+    geheel; `saveAsset` verplaatst bij een mapwijziging de hele groep,
+    `deleteAsset(…, { group })` verwijdert hem. Tags zijn `lijst/tag` uit een
+    kern-contenttype `taglist` (`TaglistSchema`, beheerd vanuit de
+    bibliotheek via `saveTaglist`) of een vrij woord.
   - `fileAccess` (`media/access.ts`) beslist per bestand: variant ≤
     `publicMaxWidth` van een publiek asset = `public` (immutable cache);
     van een beperkt asset = `reader` (PDP `read`); grotere varianten en het
     origineel = `editor` (PDP `update`; straks ook een aankoop). SVG krijgt
-    een sandbox-CSP.
+    een sandbox-CSP. Serveren gaat gestreamd met **HTTP Range** (206 /
+    416), zodat een speler kan spoelen; de sites geven de `Range`-header door.
   - Sites: `app/admin/upload/route.ts` en `app/api/assets/[...path]/route.ts`
     zijn één regel; `saveAsset`/`deleteAsset` als `"use server"`-wrappers
     (`AdminActions.media`). `assets:gc` vindt library-bestanden via de URL's

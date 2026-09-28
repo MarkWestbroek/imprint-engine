@@ -1,4 +1,4 @@
-import { AssetRecordSchema } from "@imprint/content-core";
+import { AssetRecordSchema, TaglistSchema, type Taglist } from "@imprint/content-core";
 import type { AdminContext } from "../admin-context";
 import { MediaLibrary, type LibraryAsset } from "../admin/media-library";
 import type { MediaActions } from "../admin/types";
@@ -6,7 +6,7 @@ import type { MediaActions } from "../admin/types";
 /**
  * `/admin/asset`: the media library (design/beeldbibliotheek.md). The core's
  * own screen for its `asset` type, the way a plugin brings a screen for its
- * types; `AdminTypeScreen` routes here.
+ * types; `AdminTypeScreen` routes here. Tag lists (§4) are managed from it.
  */
 export async function MediaLibraryScreen({
   admin,
@@ -29,6 +29,22 @@ export async function MediaLibraryScreen({
     })
     .sort((a, b) => b.changed.localeCompare(a.changed));
 
+  const taglists: Taglist[] = admin.imprint.contentTypes.has("taglist")
+    ? (await store.listItems("taglist"))
+        .flatMap((r) => {
+          const parsed = TaglistSchema.safeParse(r.data);
+          return parsed.success ? [parsed.data] : [];
+        })
+        .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name))
+    : [];
+
   // Plain JSON across the client boundary (no Dates, no zod internals).
-  return <MediaLibrary assets={JSON.parse(JSON.stringify(assets))} uploadUrl={uploadUrl} actions={actions} />;
+  return (
+    <MediaLibrary
+      assets={JSON.parse(JSON.stringify(assets))}
+      taglists={JSON.parse(JSON.stringify(taglists))}
+      uploadUrl={uploadUrl}
+      actions={actions}
+    />
+  );
 }

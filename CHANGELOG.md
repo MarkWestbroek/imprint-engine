@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Beeldbibliotheek, stap 2** (design/beeldbibliotheek.md §10, §12).
+  **Taglijsten** als kern-contenttype, beheerd vanuit de bibliotheek (lijst
+  maken, tag toevoegen, taggen per lijst of vrij), met filteren op tags,
+  soort, camera, lens en locatie. **Nieuwe bestandssoorten** audio (WAV: duur,
+  samplerate, bitdiepte, kanalen, afspelen in het paneel) en data (MIDI,
+  JSON), herkend aan de inhoud, met een **limiet per soort** in
+  `imprint.config.ts` (`media.maxBytes`; te groot = 413). **Groepen**: bestanden
+  die bij elkaar horen (een opname: wav + mid + patch) worden één kaart;
+  verplaatsen en verwijderen gelden voor de hele groep ("as one group" bij
+  uploaden). Onder de motorkap: één upload-kern `ingestFiles` los van HTTP
+  (voorbereiding op de externe API voor de patch-editor) en serveren met
+  streams en HTTP Range. 10 nieuwe unit-tests, browsertests voor taglijsten
+  en een opname als groep.
 - **Architectuur- en productreview** (28 september 2026): codeonderbouwde
   beoordeling van kwaliteit, robuustheid, performance, webstandaarden en
   positionering in `docs/review-2026-09-28.md`, met verificatieresultaten en

@@ -180,11 +180,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       MinIO in eigen bucket. _(S8; L)_
       - [x] ~~Stap 1: `asset`-type, upload (sniffen, EXIF, varianten), scherm met
             mappen, toegang per formaat in de serveerroute~~ — gedaan.
-      - [ ] Stap 2: taglijsten (kern) + tags uit lijsten in de bibliotheek;
-            filteren op lens/camera/locatie; **upload-kern los van transport**
-            (`ingestFiles`), **bestandssoorten als handlers** (+ `audio`,
-            `data`), grootte per soort in de config, `tags`/`group` bij
-            upload, streams + Range bij serveren (ontwerp §12).
+      - [x] ~~Stap 2: taglijsten (kern) + tags uit lijsten; filteren op
+            tag/soort/camera/lens/locatie; upload-kern `ingestFiles`; soorten
+            als handlers (+ audio, data); limiet per soort; `tags`/`group`
+            bij upload; streams + Range~~ — gedaan.
+      - [ ] Taglijsten ook voor pagina's en andere contenttypen (het
+            mechanisme is kern; de pickers ontbreken nog).
+      - [ ] Tag hernoemen of verwijderen in een lijst (nu alleen toevoegen;
+            via het generieke formulier onder Model & config kan het wel).
       - [ ] Stap 3: `AssetRef` + picker in `SchemaForm`; beeldwidgets erop;
             migratie van `/api/assets/…`-URL's; "gebruikt in".
       - [ ] Stap 4: **externe clients** — API-tokens met scopes, `/api/media`

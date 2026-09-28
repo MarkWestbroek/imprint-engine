@@ -3,6 +3,7 @@ import type { ContentTypeDefinition } from "./content-types";
 import { ContentTypeRegistry } from "./content-types";
 import { RelationsDoc, type RelationRule } from "./relations";
 import {
+  TaglistSchema,
   AssetMetaSchema,
   AssetRecordSchema,
   BoardSpecSchema,
@@ -97,6 +98,17 @@ export const coreContentTypeDefinitions: ContentTypeDefinition[] = [
     menu: { group: "content", section: "Media" },
     domain: "site",
     emptyData: () => ({}),
+  },
+  {
+    // Tag lists (design/beeldbibliotheek.md §4): managed from the media
+    // library; the generic form is the fallback.
+    name: "taglist",
+    schema: TaglistSchema,
+    label: "Tag lists",
+    flags: ["listable", "editable"],
+    menu: { group: "config" },
+    domain: "site",
+    emptyData: () => ({ slug: "", lang: "en", name: "", open: true, tags: [], order: 0 }),
   },
   {
     name: "menu",

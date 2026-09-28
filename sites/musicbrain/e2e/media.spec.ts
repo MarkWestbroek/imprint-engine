@@ -88,6 +88,82 @@ test.describe("media library", () => {
     expect(Math.abs(exif.latitude - 52.0833)).toBeLessThan(0.001);
   });
 
+  test("tag lists: make one, add a tag, tag the photo, filter on it", async ({ page }) => {
+    await page.goto("/admin/asset");
+    await page.getByRole("button", { name: "＋ Tag list" }).click();
+    await page.getByRole("dialog").getByRole("textbox").fill("E2E Onderwerp");
+    await page.getByRole("dialog").getByRole("button", { name: "Create" }).click();
+    await expect(page.getByText("E2E Onderwerp", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Add a tag to E2E Onderwerp" }).click();
+    await page.getByRole("dialog").getByRole("textbox").fill("Strand");
+    await page.getByRole("dialog").getByRole("button", { name: "Add" }).click();
+    const chip = page.getByRole("region", { name: "Tags" }).getByRole("button", { name: "Strand", exact: true });
+    await expect(chip).toBeVisible();
+
+    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await page.getByLabel("Add from E2E Onderwerp").selectOption({ label: "Strand" });
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText("Saved ✓")).toBeVisible();
+
+    // Filtering on the tag keeps the photo; a tag nobody has would empty the grid.
+    await chip.click();
+    await expect(page.getByRole("button", { name: /e2e strand/ })).toBeVisible();
+    await expect(chip).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("a recording as one group: wav + mid + patch → one card; audio seeks by Range", async ({ page, browser }) => {
+    const wav = Buffer.alloc(44 + 48000 * 6);
+    wav.write("RIFF", 0, "latin1");
+    wav.writeUInt32LE(wav.length - 8, 4);
+    wav.write("WAVEfmt ", 8, "latin1");
+    wav.writeUInt32LE(16, 16);
+    wav.writeUInt16LE(1, 20);
+    wav.writeUInt16LE(2, 22);
+    wav.writeUInt32LE(48000, 24);
+    wav.writeUInt32LE(48000 * 6, 28);
+    wav.writeUInt16LE(6, 32);
+    wav.writeUInt16LE(24, 34);
+    wav.write("data", 36, "latin1");
+    wav.writeUInt32LE(48000 * 6, 40);
+    const mid = Buffer.from("4d546864000000060001000301e0", "hex");
+    const json = Buffer.from(JSON.stringify({ type: "mmb-patch", modules: [] }));
+
+    await page.goto("/admin/asset");
+    await page.getByLabel("as one group").check();
+    await page.getByTestId("media-upload").setInputFiles([
+      { name: "e2e-take.wav", mimeType: "audio/wav", buffer: wav },
+      { name: "e2e-take.mid", mimeType: "audio/midi", buffer: mid },
+      { name: "e2e-take.patch.json", mimeType: "application/json", buffer: json },
+    ]);
+    const card = page.getByRole("button", { name: /e2e-take-[a-z0-9]+$/ });
+    await expect(card).toBeVisible();
+    await expect(card).toContainText("3 files");
+    await expect(page.getByText("0:01 · 48 kHz · 24-bit · stereo")).toBeVisible();
+    await page.getByRole("button", { name: "e2e-take.mid" }).click();
+    await expect(page.getByText("MIDI · format 1 · 3 tracks · 480 ppq")).toBeVisible();
+
+    // A visitor's player asks for byte ranges.
+    const src = (await page.getByRole("link", { name: /^Download \(audio\/midi\)/ }).getAttribute("href"))!;
+    await page.getByRole("button", { name: "e2e-take.wav" }).click();
+    const wavUrl = (await page.getByRole("link", { name: /^Download \(audio\/wav\)/ }).getAttribute("href"))!;
+    const visitor = await browser.newContext(ANON);
+    const ranged = await visitor.request.get(wavUrl, { headers: { Range: "bytes=0-43" } });
+    expect(ranged.status()).toBe(206);
+    expect(ranged.headers()["content-range"]).toBe(`bytes 0-43/${wav.length}`);
+    expect((await visitor.request.get(src)).status()).toBe(200);
+    await visitor.close();
+
+    // Moving one file moves the group; deleting the group removes the card.
+    await page.getByLabel("Folder", { exact: true }).fill("e2e/opnames");
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    await expect(page.getByText("Saved ✓")).toBeVisible();
+    await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /opnames/ }).click();
+    await expect(card).toContainText("3 files");
+    await page.getByRole("button", { name: "Delete group" }).click();
+    await page.getByRole("dialog").getByRole("button", { name: "Delete" }).click();
+    await expect(card).toHaveCount(0);
+  });
+
   test("delete: gone from the library, kept in History", async ({ page }) => {
     await page.goto("/admin/asset");
     await page.getByRole("button", { name: /e2e strand/ }).click();

@@ -275,12 +275,20 @@ Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 
 ## De beeldbibliotheek (Media)
 
-Onder **Content → Media** staan alle beelden en documenten van de site op één
-plek.
+Onder **Content → Media** staan alle beelden, geluiden en documenten van de
+site op één plek.
 
 - **Uploaden**: klik **Upload** of sleep bestanden op het raster. Ze komen in
-  de map die open staat. Foto's (JPEG, PNG, WebP, GIF, AVIF, TIFF), SVG en
-  PDF; maximaal 50 MB per bestand.
+  de map die open staat (en krijgen de tags waarop je op dat moment filtert).
+  Toegestaan: foto's (JPEG, PNG, WebP, GIF, AVIF, TIFF), SVG, PDF, **audio**
+  (WAV) en **data** (MIDI en JSON). Het type wordt aan de inhoud herkend, niet
+  aan de bestandsnaam. Standaardlimieten: foto en PDF 50 MB, SVG 5 MB, audio
+  200 MB, data 20 MB (per site in te stellen).
+- **Groepen**: bestanden die bij elkaar horen (een opname: wav + mid + patch;
+  of RAW + JPEG) upload je samen met het vinkje **as one group**. Ze staan dan
+  als één kaart in het raster ("3 files"); in het detailpaneel zie je de
+  bestanden van de groep. Verplaatsen naar een andere map verplaatst de hele
+  groep; **Delete group** verwijdert ze samen.
 - **Webversies**: van elke foto worden meteen kleinere versies gemaakt (400,
   800, 1600 en 2400 px breed, nooit groter dan het origineel). De site toont
   die; het **origineel blijft onaangeroerd** bewaard.
@@ -294,8 +302,19 @@ plek.
   computer. **＋ Folder** maakt een nieuwe; verplaatsen doe je met het veld
   *Folder* in het detailpaneel. Pagina's merken niets van verplaatsen.
 - **Beschrijven**: titel, **alt-tekst** (wat er te zien is, voor wie het niet
-  kan zien), bijschrift, credit, licentie, bron en tags. Taglijsten met vaste
-  tags volgen in een volgende stap; nu zijn tags nog vrije tekst.
+  kan zien), bijschrift, credit, licentie en bron. Bij audio zie je duur,
+  samplerate, bitdiepte en kanalen en kun je het meteen afspelen; bij MIDI het
+  formaat, aantal sporen en de resolutie.
+- **Taglijsten en tags**: links onder *Tags* staan de **taglijsten** (bv.
+  *Onderwerp*, *Project*, *Gebruik*), elk met hun tags. **＋ Tag list** maakt
+  een nieuwe lijst, **＋** naast een lijst voegt een tag toe. In het
+  detailpaneel kies je per lijst een tag (*＋ Onderwerp…*), of typ je een
+  **vrije tag** + Enter; vrije tags staan links onder *Other*. De inhoud van
+  de lijsten is per site anders.
+- **Filteren**: klik tags aan (alle aangeklikte tags moeten kloppen), kies een
+  soort (foto, audio, data…), camera of lens, of alleen beelden **met
+  locatie**. Zoeken werkt op titel, alt-tekst, bestandsnaam, credit, lens en
+  tags.
 - **Toegang per formaat**: *public* of *restricted* voor het hele beeld, en
   **Public up to**: tot welke breedte een bezoeker het mag zien. Grotere
   versies zijn dan alleen voor redacteuren. Het **origineel is nooit
