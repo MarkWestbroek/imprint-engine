@@ -173,6 +173,51 @@ op een verse machine dus níet. Opties: opnieuw aanmaken in de studio, of de
 inhoud uit live halen via de lees-API (`https://musicbrain.nl/api/content/...`)
 en er lokaal items van maken. Een echte "pull van live" bestaat nog niet.
 
+### 2.1 Na een `git pull` van werk op een andere machine
+
+Haal je werk binnen dat op de desktop (of elders) is gedaan, dan lopen
+`node_modules` en de lokale databases achter. Symptoom: een runtime-fout als
+`Table 'musicbrain.api_tokens' doesn't exist` (MariaDB) of
+`relation "api_tokens" does not exist` (Postgres). Altijd dit rijtje:
+
+```bash
+npm install                                    # versies uit de gecommitte lockfile
+npm run db:migrate                             # MusicBrain (MariaDB, root-.env)
+DATABASE_URL=$(grep ^DATABASE_URL sites/imprint/.env.local | cut -d= -f2-) \
+  npm run db:migrate:pg                        # Imprint-productsite (Postgres)
+```
+
+Geen themakeuze rechtsboven op de lokale site? Dan staan er geen thema's in de
+lokale DB (de switcher verschijnt pas vanaf twee): `npm run db:seed --
+--only=themes` zet de vier uit `content/themes/` erin, zonder andere content
+aan te raken.
+
+`npm audit` meldt daarna nog ~9 kwetsbaarheden in esbuild (via drizzle-kit)
+en lodash-es (via mermaid): dev-tooling en eigen content, bewust laten staan.
+Nooit `npm audit fix --force` — dat downgradet drizzle-kit en mermaid.
+
+### 2.2 De Imprint-productsite lokaal (`sites/imprint`)
+
+Eigen database (Postgres in docker), dus **eigen gebruikers** en een eigen
+`sites/imprint/.env.local` (niet in git) met `DATABASE_URL` én een echte
+`SESSION_SECRET` — zonder die laatste weigert de admin elke login
+(`Set a real SESSION_SECRET for instance "imprint"`). Genereer er een met
+`openssl rand -hex 32`.
+
+De `npm run user`-CLI leest de root-`.env` (= MusicBrain). Voor Imprint geef
+je de URL mee:
+
+```bash
+IMPRINT_DB=$(grep ^DATABASE_URL sites/imprint/.env.local | cut -d= -f2-)
+DATABASE_URL=$IMPRINT_DB npm run user -- list
+DATABASE_URL=$IMPRINT_DB npm run user -- add mark admin   # verse DB: eerste admin
+DATABASE_URL=$IMPRINT_DB npm run user -- passwd mark      # wachtwoord kwijt
+```
+
+Het wachtwoord wordt één keer getoond — meteen opslaan. Let op in zsh:
+`<naam>` uit de voorbeelden is een plaatshouder, niet letterlijk overtypen
+(`<` en `>` zijn omleidingen → `parse error near '\n'`).
+
 De **editor** is een apart repo (`MarkWestbroek/MusicBrain`, map `editor/`)
 — alleen nodig als je aan de editor zelf werkt. Deploy-doc daar:
 `doc/editor-deploy.md`; huisstijl: `doc/styleguide.md`.

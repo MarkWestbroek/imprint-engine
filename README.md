@@ -187,7 +187,9 @@ npm run user -- passwd <naam>     # print een nieuw wachtwoord; op Plesk via SSH
 ```
 
 Daarna inloggen op `/admin` en bij **Users → Change my password** zelf iets
-kiezen. De laatste admin kan zichzelf niet degraderen of verwijderen, dus het
+kiezen. Voor de Imprint-productsite (eigen database, eigen gebruikers) zie
+[overdracht §2.2](docs/overdracht.md#22-de-imprint-productsite-lokaal-sitesimprint);
+na een `git pull` eerst migreren, zie §2.1 daar. De laatste admin kan zichzelf niet degraderen of verwijderen, dus het
 scherm kan je er niet uit sluiten.
 
 **Alle sessies direct verlopen** (bijv. een account is gecompromitteerd): een
