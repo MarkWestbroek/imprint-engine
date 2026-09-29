@@ -61,7 +61,7 @@ ontbrak, op volgorde van hoe vaak het elders voorkomt:
 
 ### 2.1 De V3-viewer — bij de bron
 
-Eerste versie (0.12): de widget tekent zelf (`v3-diagram.tsx`): entiteiten in
+Eerste versie (0.11): de widget tekent zelf (`v3-diagram.tsx`): entiteiten in
 domeinkleur, op `positie` of in een raster, relaties als pijlen.
 
 ▶ **Mark: liever bij de bron houden.** Omnium kent inmiddels alle

@@ -104,7 +104,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       rest van W3).
 - [x] ~~**quote, code, mermaid, v3model, tabs, cards, buttons, logos, toc,
       breadcrumb, audio, pdf, file, timeline, mediatext, people, testimonial,
-      pricing**~~ — gedaan in 0.12.0 (plank §2).
+      pricing**~~ — gedaan in 0.11.0 (plank §2).
 - [ ] **`search`** — zoeken in content; plugin met `SearchAdapter`, eerst
       Postgres FTS, dan Meilisearch (plank §4.2). _(L)_
 - [ ] **Lijst-varianten** — de `list`-widget kan alleen links; Pleio doet ook
@@ -165,7 +165,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 - [ ] **Rollen per content-item** (`ContentUser`: creator/owner/contributor) staan
       in het schema maar worden niet gehandhaafd; S3 vraagt ook een
       *product-editor*-rol. _(S3; M)_
-- [x] ~~**Default views uitbreiden (product)**~~ — gedaan in 0.12.0: vier
+- [x] ~~**Default views uitbreiden (product)**~~ — gedaan in 0.11.0: vier
       subject-widgets (subjectheader, spectable, components, releases in
       product-modus) delen de secties met de ingebouwde pagina
       (`product-sections.tsx`), en `_view/product` wordt meegeseed als

@@ -294,7 +294,7 @@ de .mid van dezelfde opname verschijnt als pianorol waarmee je afspeelt,
 springt en een lus zet; spatie speelt af als de rol focus heeft; eronder de
 duur en downloadlinks).
 
-Sinds 0.12: **Quote** (citaat met bron; "pull" maakt hem groot), **Code**
+Sinds 0.11: **Quote** (citaat met bron; "pull" maakt hem groot), **Code**
 (syntax-highlighting, licht/donker volgt de site), **Mermaid diagram**
 (diagram uit tekst — flowchart, sequence, class, gantt — getekend in de
 browser), **V3 model diagram** (een V3-metamodel als schema: entiteiten in
