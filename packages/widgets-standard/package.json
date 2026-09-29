@@ -1,6 +1,6 @@
 {
   "name": "@imprint/widgets-standard",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "private": true,
   "description": "Library: the standard Imprint widgets (text, table, image, gallery, map, hero, list, template, api, …) — config schemas (React-free) and server viewers. A site picks the ones it wants.",
   "type": "module",

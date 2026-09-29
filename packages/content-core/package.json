@@ -1,6 +1,6 @@
 {
   "name": "@imprint/content-core",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "private": true,
   "description": "Content schemas (zod) and the ContentStore interface. Storage-agnostic: file-backed, MariaDB or Postgres (bitemporal-light).",
   "type": "module",

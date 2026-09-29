@@ -1,8 +1,8 @@
 {
   "name": "imprint",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "private": true,
-  "description": "Imprint \u2014 one publishing engine, many brand sites (imprints). Reusable content core + per-site front-ends. First imprint: MusicBrain.",
+  "description": "Imprint — one publishing engine, many brand sites (imprints). Reusable content core + per-site front-ends. First imprint: MusicBrain.",
   "workspaces": [
     "packages/*",
     "sites/*"

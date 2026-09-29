@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.11.0] - 2026-09-29
 - **SysEx (.syx) in de bibliotheek**: soort `data`, mime `application/x-sysex`,
   herkend aan de bytes (berichten F0 … F7 achter elkaar, databytes < 0x80);
   het detailpaneel toont het aantal berichten en het fabrikant-ID. Een take
