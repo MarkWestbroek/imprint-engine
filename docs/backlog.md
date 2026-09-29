@@ -226,6 +226,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Take-player: de vitest-tests staan alleen in de editor-repo; bij
             een nieuwe kopie de commit in de README bijwerken (nu `867f859`,
             byte-gelijk).
+      - [ ] Take-player opnieuw kopiëren (upstream t/m `4bc4bbb`, 29-09): de hele
+            map, inclusief het nieuwe `noteEdit.ts` (MidiRoll importeert het).
+            Optioneel daarna: golfvorm achter de noten in de widget (`peaks`,
+            min/max-paren, bv. 1600 kolommen, server- of client-side uit de wav).
       - [x] ~~Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden~~ — gedaan.
       - [x] ~~Stap 6: TipTap met afbeeldingknop~~ — gedaan; opslag blijft markdown.
       - [ ] Tabellen in de visuele editor (TipTap-extensie + turndown-gfm);
