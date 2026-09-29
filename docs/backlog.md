@@ -224,8 +224,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Rate limiting op `/api/media` (nu alleen token + scopes).
       - [x] ~~Take-widget + `PUT /api/media/<slug>`~~ — gedaan 29-09-2026.
       - [ ] Take-player: de vitest-tests staan alleen in de editor-repo; bij
-            een nieuwe kopie de README-commit bijwerken en `JSX.Element` →
-            `ReactElement` upstream laten doen.
+            een nieuwe kopie de commit in de README bijwerken (nu `867f859`,
+            byte-gelijk).
       - [x] ~~Stap 5: `srcset` in de viewers; focuspunt bij bijsnijden~~ — gedaan.
       - [x] ~~Stap 6: TipTap met afbeeldingknop~~ — gedaan; opslag blijft markdown.
       - [ ] Tabellen in de visuele editor (TipTap-extensie + turndown-gfm);

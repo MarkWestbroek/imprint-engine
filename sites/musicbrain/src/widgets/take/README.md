@@ -1,10 +1,9 @@
 # take-player
 
 > **Kopie in Imprint** van `MusicBrain/editor/src/take-player/` op commit
-> `44f2562` (29-09-2026), zonder `takePlayer.test.tsx` (vitest; Imprint test de
-> widget met een golden en een browsertest). Eén aanpassing: `JSX.Element` →
-> `ReactElement` (React 19-types kennen de globale `JSX` niet meer) — ook
-> upstream doorgeven. Niet hier ontwikkelen: wijzig de bron en kopieer opnieuw.
+> `867f859` (29-09-2026), byte-gelijk, zonder `takePlayer.test.tsx` (vitest;
+> Imprint test de widget met een golden en een browsertest). Niet hier
+> ontwikkelen: wijzig de bron en kopieer opnieuw (en werk deze commit bij).
 
 Pianorol en spelers voor MIDI-takes uit de MusicBrain-editor. De sim van de
 editor gebruikt deze map, en de take-widget van Imprint neemt hem over.
