@@ -1,5 +1,5 @@
 import exifr from "exifr";
-import sharp from "sharp";
+import sharp, { type Exif, type Metadata } from "sharp";
 import { DEFAULT_MEDIA_MAX_BYTES, type AssetAudio, type AssetData, type AssetPhoto, type ExifPolicy } from "@imprint/content-core";
 
 /**
@@ -88,7 +88,7 @@ const num = (v: unknown) => (typeof v === "number" && Number.isFinite(v) ? v : u
  * authorship survive, the location does not. Built anew from a whitelist —
  * sharp cannot drop one block from kept EXIF.
  */
-function exifWithoutLocation(raw: RawExif): sharp.Exif {
+function exifWithoutLocation(raw: RawExif): Exif {
   const ifd0: Record<string, string> = {};
   for (const key of ["Make", "Model", "Artist", "Copyright", "Software"]) {
     const v = str(raw[key]);
@@ -142,7 +142,7 @@ function photoOf(exif: RawExif | null): AssetPhoto | undefined {
 }
 
 async function processImage(bytes: Uint8Array, policy: ExifPolicy): Promise<ProcessedUpload> {
-  let meta: sharp.Metadata;
+  let meta: Metadata;
   try {
     meta = await sharp(bytes).metadata();
   } catch {

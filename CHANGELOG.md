@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Security-updates** (`npm audit`: 19 kwetsbaarheden, 1 kritiek → 9, alleen
+  dev-tooling en eigen content). `next` 16.2.10 → 16.3.7 in beide sites (RCE in
+  de Image Optimization API, server-action-DoS/SSRF, cache confusion),
+  `sharp` 0.34 → 0.35.5 (libvips/libheif; de types zijn nu benoemde exports —
+  `Exif`/`Metadata`), `drizzle-orm` 0.44 → 0.45.3 (SQL-injectie via
+  identifiers), `eslint-config-next` mee, daarna `npm audit fix` (zonder
+  `--force`: mysql2, postcss, js-yaml, nanoid, browserslist).
 - **Fix (live): verkeerde adressen achter Caddy.** De ref-doorverwijzing voor
   bibliotheekbeelden in markdown en de absolute URL's uit `/api/media` wezen
   naar `http(s)://0.0.0.0:3000/…` (het eigen luisteradres van de server). De

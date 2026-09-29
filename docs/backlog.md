@@ -689,6 +689,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 6. Deploy & beheer
 
+- [ ] **Resterende `npm audit`-meldingen** (29-09-2026, na de security-updates):
+      `esbuild` ≤0.24 via `@esbuild-kit` onder `drizzle-kit` (alleen dev/migraties;
+      `--force` zou drizzle-kit naar 0.18 downgraden) en `lodash-es` via `mermaid`
+      (draait in de browser op diagrammen die redacteuren zelf schrijven). Opnieuw
+      bekijken bij een nieuwe drizzle-kit of mermaid.
+
 - [x] ~~**Deploy naar Plesk**~~ — live op https://musicbrain.nl sinds juli 2026;
       update-flow bewezen bij 0.9.0 (pull → gericht bijseeden → rebuild →
       `npm run smoke`). Servercommando's zonder SSH via Scheduled Tasks

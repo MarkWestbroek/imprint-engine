@@ -20,7 +20,7 @@
     "@imprint/plugin-wiki": "*",
     "@imprint/runtime-admin": "*",
     "@imprint/widgets-standard": "*",
-    "next": "16.2.10",
+    "next": "16.3.7",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "^10.1.0",
@@ -34,7 +34,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.10",
+    "eslint-config-next": "16.3.7",
     "postcss": "^8.5.16",
     "tailwindcss": "^4",
     "typescript": "^5"
