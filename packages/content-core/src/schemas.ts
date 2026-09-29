@@ -158,6 +158,8 @@ export const AssetRecordSchema = z.object({
    * apply to the whole group.
    */
   group: z.string().regex(/^[a-z0-9][a-z0-9-]*$/).optional(),
+  /** When the asset was first added (ISO); a later version keeps it. Older assets lack it. */
+  created: z.string().optional(),
   /** Focal point for cropping, 0..1 from top-left. */
   focus: z.object({ x: z.number().min(0).max(1), y: z.number().min(0).max(1) }).optional(),
   file: z.object({

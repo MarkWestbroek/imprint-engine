@@ -39,7 +39,7 @@ function wav(seconds: number): Buffer {
 function recording(): FormData {
   const fd = new FormData();
   fd.append("file[]", new Blob([new Uint8Array(wav(1))], { type: "audio/wav" }), `${GROUP}.wav`);
-  fd.append("file[]", new Blob([new Uint8Array(Buffer.from("4d546864000000060001000301e0", "hex"))], { type: "audio/midi" }), `${GROUP}.mid`);
+  fd.append("file[]", new Blob([new Uint8Array(Buffer.from("4d546864000000060000000101e0" + "4d54726b0000000d" + "00903c64" + "8360803c40" + "00ff2f00", "hex"))], { type: "audio/midi" }), `${GROUP}.mid`);
   fd.append("file[]", new Blob([JSON.stringify({ type: "mmb-patch", modules: [{ id: "vco1" }] })], { type: "application/json" }), `${GROUP}.patch.json`);
   fd.append("folder", "opnames/sim");
   fd.append("tags[]", "sim-opname");
@@ -106,6 +106,73 @@ test.describe("media API", () => {
     await page.goto("/admin/asset");
     await page.getByRole("navigation", { name: "Folders" }).getByRole("button", { name: /^Folder opnames\/sim,/ }).click();
     await expect(page.getByRole("button", { name: new RegExp(`${GROUP}$`) })).toContainText("3 files");
+  });
+
+  test("the take widget: pick the wav in the studio, the page plays it with the piano roll of its .mid", async ({ page }) => {
+    await page.goto("/admin/page/edit");
+    await page.getByLabel("slug", { exact: true }).fill("e2e-take");
+    await page.getByLabel("title", { exact: true }).fill("E2E Take");
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "＋ Add row" }).click();
+    await page.getByRole("button", { name: "＋ Add widget" }).click();
+    await page.getByRole("button", { name: "Take (audio + piano roll)", exact: true }).click();
+    await expect(page.getByRole("heading", { name: /^Take/ })).toBeVisible();
+    await page.getByRole("button", { name: "Choose from library" }).click();
+    // Only audio fits this field: the picker shows the wav, not the .mid or the patch.
+    const picker = page.getByRole("dialog", { name: "Choose from the media library" });
+    const take = picker.getByRole("button", { name: /e2e api take 1/ });
+    await expect(take).toHaveCount(1);
+    await take.click();
+    await page.waitForTimeout(600);
+    await expect(page.getByText("syncing…")).toHaveCount(0);
+    await page.getByRole("button", { name: "Create page" }).click();
+    await expect(page).toHaveURL(/\/admin\/page\/edit\/e2e-take/);
+
+    await page.goto("/e2e-take");
+    // The .mid of the same group was found and parsed: the roll is there, and it drives the audio.
+    const roll = page.getByRole("group", { name: /^Take: .+spatie/ });
+    await expect(roll).toBeVisible();
+    await expect(roll.getByRole("img")).toHaveAttribute("aria-label", /1 no/);
+    await expect(page.getByRole("link", { name: "Download .mid" })).toBeVisible();
+    await roll.focus();
+    await page.keyboard.press("Space");
+    await expect(roll.getByRole("button", { name: "Afspelen" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  test("PUT replaces a take's .mid: new URL, same group; another kind is 415; created/updated in GET", async ({ playwright, baseURL }) => {
+    const api = await playwright.request.newContext({ baseURL });
+    const auth = { Authorization: `Bearer ${token}`, Origin: ORIGIN };
+    const list = async () =>
+      ((await (await api.get(`/api/media?group=${GROUP}`, { headers: { Authorization: `Bearer ${readOnly}` } })).json()) as {
+        assets: { slug: string; kind: string; mime: string; url: string; created: string; updated: string }[];
+      }).assets;
+    const mid = (await list()).find((a) => a.mime === "audio/midi")!;
+    expect(mid.created).toBeTruthy();
+
+    const fd = new FormData();
+    // The same note, one octave up: other bytes.
+    const edited = "4d546864000000060000000101e0" + "4d54726b0000000d" + "00904864" + "8360804840" + "00ff2f00";
+    fd.append("file", new Blob([new Uint8Array(Buffer.from(edited, "hex"))], { type: "audio/midi" }), `${GROUP}.mid`);
+    const res = await api.put(`/api/media/${mid.slug}`, { headers: auth, multipart: fd });
+    expect(res.status()).toBe(200);
+    expect(res.headers()["access-control-allow-origin"]).toBe(ORIGIN);
+    const body = (await res.json()) as { slug: string; url: string; group: string };
+    expect(body).toMatchObject({ slug: mid.slug, group: GROUP });
+    expect(body.url).not.toBe(mid.url);
+    const after = (await list()).find((a) => a.slug === mid.slug)!;
+    expect(after.url).toBe(body.url);
+    expect(after.created).toBe(mid.created);
+    expect(after.updated > mid.updated).toBe(true);
+
+    const json = new FormData();
+    json.append("file", new Blob([JSON.stringify({ type: "mmb-patch" })], { type: "application/json" }), "x.json");
+    expect((await api.put(`/api/media/${mid.slug}`, { headers: auth, multipart: json })).status()).toBe(415);
+    expect((await api.put(`/api/media/nonesuch`, { headers: auth, multipart: fd })).status()).toBe(404);
+    expect((await api.put(`/api/media/${mid.slug}`, { headers: { Authorization: `Bearer ${readOnly}` }, multipart: fd })).status()).toBe(403);
+    const pre = await api.fetch(`/api/media/${mid.slug}`, { method: "OPTIONS", headers: { Origin: ORIGIN, "Access-Control-Request-Method": "PUT" } });
+    expect(pre.headers()["access-control-allow-methods"]).toContain("PUT");
+    await api.dispose();
   });
 
   test("all or nothing: one bad file refuses the whole upload (415), nothing is stored", async ({ playwright, baseURL }) => {

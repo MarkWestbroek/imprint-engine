@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Take-widget** (MusicBrain), samen met de patch-editor gebouwd: kies in de
+  studio de wav van een opname; de .mid van dezelfde opname wordt een
+  pianorol die de audio bedient (afspelen, springen, lusvenster, toetsen bij
+  focus), in de kleuren van het thema, met duur en downloadlinks eronder. De
+  rol is gekopieerd uit de editor (commit `44f2562`, zie de README).
+- **`PUT /api/media/<slug>`**: de editor zet een aangepaste .mid terug in de
+  bibliotheek — nieuwe versie van hetzelfde asset (historie blijft), zelfde
+  soort vereist (415 anders). `GET /api/media` geeft `created` en `updated`.
 - **Live: bestanden in MinIO** (29 september). Deploy van alles sinds
   `8bc9a95` naar musicbrain.nl en imprint-engine.nl; daarna een eigen MinIO
   op de VPS, buckets per site, MusicBrain's 389 bestanden verhuisd en beide

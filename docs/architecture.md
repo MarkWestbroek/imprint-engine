@@ -552,6 +552,18 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     `/api/assets/…`) zet CORS op `serveAsset` (GET en preflight, `Range`
     toegestaan, `Content-Range` zichtbaar, `Vary: Origin`); wat een bezoeker
     niet mag zien blijft 403.
+  - **Vervangen** (`PUT /api/media/<slug>`, `replaceAssetFile`): één bestand
+    vervangt dat van een bestaand asset — nieuwe sleutel (cache blijft
+    juist), nieuwe versie van het record (historie), groep/tags/`created`
+    blijven. Zelfde soort én mime (MIDI alleen door MIDI), anders 415;
+    404/403 zoals verwacht. `GET` geeft `created` (bij ingest gezet) en
+    `updated` (de versie).
+  - **Take-widget** (MusicBrain, `sites/musicbrain/src/widgets/take/` —
+    gekopieerd uit `MusicBrain/editor/src/take-player/`, zie de README daar):
+    config `src: assetSrc(["audio"])`; de viewer zoekt de .mid in dezelfde
+    `group` via de bewaakte store en geeft alleen URL's aan `TakePlayer`
+    (client); die haalt de .mid zelf op en tekent de pianorol, die de audio
+    bedient. Kleuren uit de design-tokens.
   - **Tokens**: tabel `api_tokens` naast `users` (migratie `0001` in
     `drizzle/` en `drizzle-pg/`): gebruiker, naam, prefix, **SHA-256** van de
     token (lang en willekeurig, dus geen trage hash nodig), scopes, aangemaakt,

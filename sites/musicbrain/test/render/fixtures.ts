@@ -57,6 +57,20 @@ export async function buildStore(): Promise<MemoryContentStore> {
   await put("theme", "amber", { name: "amber", label: "Amber", colors: COLORS, order: 0 });
   await put("theme", "light", { name: "light", label: "Light", colors: { ...COLORS, background: "#ffffff" }, order: 1 });
 
+  // A take from the patch editor: wav + mid in one group.
+  for (const [slug, kind, mime, ext, extra] of [
+    ["take-1", "audio", "audio/wav", "wav", { audio: { duration: 12.5, sampleRate: 48000, channels: 2, bitDepth: 24 } }],
+    ["take-1-mid", "data", "audio/midi", "mid", { data: { format: "midi", midiFormat: 0, tracks: 1, ppq: 480 } }],
+  ] as const) {
+    await put("asset", slug, {
+      slug,
+      title: "CS-80 koper",
+      group: "take-1",
+      file: { filename: `take-1.${ext}`, kind, mime, size: 100, original: `/api/assets/library/${slug}/original.aa.${ext}`, variants: [], exif: "none" },
+      ...extra,
+    });
+  }
+
   // A media-library asset (design/beeldbibliotheek.md): widgets refer to it as `asset:strand`.
   await put("asset", "strand", {
     slug: "strand",
@@ -449,6 +463,11 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "product", config: { title: "Technical" }, subject: "product:cortex" },
     { name: "product-without-specs", config: {}, subject: "product:relay" },
     { name: "no-subject", config: {} },
+  ],
+  take: [
+    { name: "library-take-with-midi", config: { src: "asset:take-1", height: 120 } },
+    { name: "plain-url-audio-only", config: { src: "/audio/demo.wav", title: "Demo" } },
+    { name: "missing-asset-renders-nothing", config: { src: "asset:gone" } },
   ],
   components: [
     { name: "with-boards", config: {}, subject: "product:cortex" },

@@ -7,7 +7,7 @@ import sharp from "sharp";
 import { AssetRecordSchema, FileAssetStore, guardReads, inProcessPdp, userSubject, ANONYMOUS } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import type { AdminContext, AdminSession } from "../src/admin-context";
-import { assetsRoute, deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, saveTaglist, serveAsset } from "../src/admin-server/media";
+import { assetsRoute, deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, replaceAssetFile, saveTaglist, serveAsset } from "../src/admin-server/media";
 import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
 import { resolveMedia } from "../src/media/resolve";
 
@@ -261,6 +261,31 @@ describe("ingestFiles + serveAsset", () => {
     assert.equal((await go()).status, 404, "a visitor gets nothing for a restricted asset");
     session = { name: "mark", role: "editor" };
     assert.equal((await go()).status, 302, "a signed-in reader does");
+  });
+
+  it("replaceAssetFile: an edited .mid replaces the old one — new URL, new version, same group and tags", async () => {
+    session = { name: "mark", role: "editor" };
+    const store = admin.imprint.writableStore!;
+    const [mid] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "edit-me.mid", bytes: midi() }], { group: "take-edit", tags: ["sim-opname"] });
+    const before = AssetRecordSchema.parse((await store.getItem("asset", mid.slug!))!.data);
+    assert.ok(before.created, "ingest stamps created");
+
+    const edited = midi();
+    edited[12] = 0x00;
+    edited[13] = 0x60; // 96 ppq: other bytes, another file
+    const r = await replaceAssetFile(admin, userSubject("mark", "editor"), mid.slug!, { name: "edit-me.mid", bytes: edited });
+    assert.equal(r.ok, true);
+    assert.notEqual(r.url, before.file.original, "a new key, so no cache serves the old bytes");
+    const after = AssetRecordSchema.parse((await store.getItem("asset", mid.slug!))!.data);
+    assert.equal(after.file.original, r.url);
+    assert.equal(after.data?.ppq, 96);
+    assert.deepEqual([after.group, after.tags, after.created], [before.group, before.tags, before.created]);
+
+    const wrongKind = await replaceAssetFile(admin, userSubject("mark", "editor"), mid.slug!, { name: "x.json", bytes: patch() });
+    assert.deepEqual([wrongKind.ok, wrongKind.status], [false, 415], "JSON may not replace MIDI, even though both are data");
+    const missing = await replaceAssetFile(admin, userSubject("mark", "editor"), "nonesuch", { name: "x.mid", bytes: midi() });
+    assert.equal(missing.status, 404);
+    await assert.rejects(replaceAssetFile(admin, userSubject("rita", "reader"), mid.slug!, { name: "x.mid", bytes: midi() }), (e: unknown) => e instanceof IngestRefused && e.status === 403);
   });
 
   it("tags are normalised to list/tag or a free word", () => {

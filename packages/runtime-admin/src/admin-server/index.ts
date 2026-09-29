@@ -25,7 +25,7 @@ export { RelationsScreen } from "./relations";
 export { ViewsScreen } from "./views";
 export { ModelScreen } from "./model";
 export { MediaLibraryScreen } from "./media-screen";
-export { mediaApi } from "./media-api";
+export { mediaApi, mediaApiItem } from "./media-api";
 export { createToken, revokeToken } from "./tokens";
 export {
   assetsRoute,
@@ -39,6 +39,7 @@ export {
   normalizeGroup,
   normalizeTag,
   readUploadForm,
+  replaceAssetFile,
   saveAsset,
   saveTaglist,
   serveAsset,

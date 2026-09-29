@@ -87,6 +87,22 @@ export const BoardSpecConfig = z.object({
 export type BoardSpecConfig = z.infer<typeof BoardSpecConfig>;
 
 /**
+ * A recorded take from the patch editor (design/beeldbibliotheek.md §12): the
+ * editor chooses the take's wav from the library; the viewer finds the .mid of
+ * the same group and shows the piano roll under the audio.
+ */
+export const TakeConfig = z.object({
+  /** The take's audio (a library asset, `asset:<slug>`, or a URL). */
+  src: assetSrc(["audio"]),
+  title: z.string().optional(),
+  /** Height of the piano roll in px (fixed, so the page does not jump). */
+  height: z.number().int().min(80).max(600).default(160),
+  /** Show the controller lane (mod wheel, aftertouch, bend, CC). */
+  controllers: z.boolean().default(true),
+});
+export type TakeConfig = z.infer<typeof TakeConfig>;
+
+/**
  * Annotated board image: a (3D PCB) render with hotspots that reveal detail
  * on hover. Coordinates are relative (0..1) so the annotation stays put at
  * any column width. The hardware toolkit can emit a ready-made config from a
@@ -152,6 +168,7 @@ export const widgetCatalog = [
   standardWidgets.posts,
   { name: "itinerary", label: "Component itinerary", version: "1.0.0", help: "The journey of each component through a product's releases.", configSchema: ItineraryConfig },
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
+  { name: "take", label: "Take (audio + piano roll)", version: "1.0.0", help: "A take from the patch editor: pick its wav; the .mid of the same take shows as a piano roll you can play, seek and loop.", configSchema: TakeConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
   standardWidgets.template,
   standardWidgets.list,

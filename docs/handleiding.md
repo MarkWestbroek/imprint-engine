@@ -288,7 +288,11 @@ Data-gedreven (vullen zichzelf): **Products**, **Releases**, **Downloads**,
 annotations**, **List** (links die de contentstructuur volgen), **Template**
 (tekst met invulvelden zoals `{{name}}` uit een content-item), **Treeview**,
 **API content**, **Embed**, **Kanban board** (statische kaarten),
-**Planning board** (levend bord uit Planning-content; zie boven).
+**Planning board** (levend bord uit Planning-content; zie boven), **Take**
+(MusicBrain: een opname uit de patch-editor — kies de wav uit de bibliotheek;
+de .mid van dezelfde opname verschijnt als pianorol waarmee je afspeelt,
+springt en een lus zet; spatie speelt af als de rol focus heeft; eronder de
+duur en downloadlinks).
 
 Sinds 0.12: **Quote** (citaat met bron; "pull" maakt hem groot), **Code**
 (syntax-highlighting, licht/donker volgt de site), **Mermaid diagram**

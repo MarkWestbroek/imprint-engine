@@ -3,7 +3,7 @@ import type { TokenGrant, TokenScope } from "@imprint/content-core/user-store";
 import type { AdminContext } from "../admin-context";
 import { displayUrl } from "../media/access";
 import { checkUpload, UploadError } from "../media/process";
-import { IngestRefused, ingestFiles, normalizeFolder, normalizeGroup, normalizeTag, readUploadForm } from "./media";
+import { IngestRefused, ingestFiles, normalizeFolder, normalizeGroup, normalizeTag, readUploadForm, replaceAssetFile } from "./media";
 
 /**
  * The external media API (design/beeldbibliotheek.md §12.4): `/api/media` for
@@ -17,7 +17,9 @@ import { IngestRefused, ingestFiles, normalizeFolder, normalizeGroup, normalizeT
  *   POST /api/media   multipart: file[], folder, tags[], group?, exif?
  *                     → 201 { assets: [{ slug, kind, url, group? }] }
  *   GET  /api/media?folder=&tag=&group=
- *                     → 200 { assets: [{ slug, kind, url, title, folder, tags, group, mime, size }] }
+ *                     → 200 { assets: [{ slug, kind, url, title, folder, tags, group, mime, size, created, updated }] }
+ *   PUT  /api/media/<slug>   multipart: file (one) — replaces that asset's file
+ *                     → 200 { slug, kind, url, group }   (a new version; the old one stays in History)
  *
  * Errors: 401 no/invalid token, 403 token lacks the scope or its user the
  * right, 413 a file too large, 415 an unsupported file, 400 a bad request.
@@ -30,7 +32,7 @@ function corsHeaders(admin: AdminContext, req: Request): Record<string, string> 
   if (!origin || !admin.imprint.media.cors.includes(origin)) return {};
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
     "Access-Control-Max-Age": "600",
     Vary: "Origin",
@@ -98,13 +100,13 @@ async function get(admin: AdminContext, req: Request): Promise<Response> {
 
   const all = (await store.listItems("asset")).flatMap((r) => {
     const parsed = AssetRecordSchema.safeParse(r.data);
-    return parsed.success ? [parsed.data] : [];
+    return parsed.success ? [{ ...parsed.data, updated: r.txFrom.toISOString() }] : [];
   });
   const matching = all.filter(
     (a) => (folder === null || a.folder === folder) && (!tag || a.tags.includes(tag)) && (!group || a.group === group)
   );
   const subject = userSubject(grant.user.name, grant.user.role);
-  const visible = await permitted<AssetRecord>(admin.imprint.pdp, subject, "asset", matching, (a) => a.slug);
+  const visible = await permitted<AssetRecord & { updated: string }>(admin.imprint.pdp, subject, "asset", matching, (a) => a.slug);
   return json(admin, req, {
     assets: visible.map((a) => ({
       slug: a.slug,
@@ -116,8 +118,34 @@ async function get(admin: AdminContext, req: Request): Promise<Response> {
       group: a.group,
       mime: a.file.mime,
       size: a.file.size,
+      // Older assets carry no `created`: their current version's time stands in.
+      created: a.created ?? a.updated,
+      updated: a.updated,
     })),
   });
+}
+
+async function put(admin: AdminContext, req: Request, slug: string): Promise<Response> {
+  const grant = await grantFor(admin, req, "media:upload");
+  if (grant instanceof Response) return grant;
+  const upload = await readUploadForm(req);
+  if (!upload || upload.files.length !== 1) return json(admin, req, { error: "Expected one file (field file)" }, 400);
+  const { user } = grant;
+  try {
+    const r = await replaceAssetFile(admin, userSubject(user.name, user.role), slug, upload.files[0], { by: user.name });
+    if (!r.ok) return json(admin, req, { error: r.error }, r.status ?? 400);
+    return json(admin, req, { slug: r.slug, kind: r.kind, url: absolute(req, r.url!), group: r.group });
+  } catch (err) {
+    if (err instanceof IngestRefused) return json(admin, req, { error: err.message }, err.status);
+    throw err;
+  }
+}
+
+/** The route handler for `/api/media/<slug>` (PUT and the CORS preflight). */
+export async function mediaApiItem(admin: AdminContext, req: Request, slug: string): Promise<Response> {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(admin, req) });
+  if (req.method === "PUT") return put(admin, req, slug);
+  return json(admin, req, { error: "Method not allowed" }, 405);
 }
 
 /** The route handler for `/api/media` (GET, POST and the CORS preflight). */

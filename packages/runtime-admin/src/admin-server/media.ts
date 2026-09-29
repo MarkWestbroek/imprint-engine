@@ -145,6 +145,7 @@ export async function ingestFiles(
         folder,
         tags,
         group,
+        created: new Date().toISOString(),
         file: {
           filename: file.name,
           kind: processed.kind,
@@ -583,4 +584,72 @@ async function assetRedirect(admin: AdminContext, req: Request, slug: string): P
     status: 302,
     headers: { Location: new URL(target, req.url).toString(), "Cache-Control": asset.access === "public" ? "public, max-age=300" : "private, no-store" },
   });
+}
+
+/**
+ * Replace the file of an existing asset (design/beeldbibliotheek.md §12.4:
+ * the patch editor puts back an edited .mid). The new bytes get a new key
+ * (so caches stay right) and the record a new version — the old file and its
+ * description stay in History, and everything that refers to `asset:<slug>`
+ * or to the group follows. The kind must stay the same (a .mid only by a
+ * .mid), and so must the format within a kind (MIDI by MIDI, not JSON).
+ */
+export async function replaceAssetFile(
+  admin: AdminContext,
+  subject: AuthzenSubject,
+  slug: string,
+  file: IngestFile,
+  opts: { by?: string; exif?: ExifPolicy } = {}
+): Promise<IngestResult> {
+  const store = admin.imprint.writableStore;
+  if (!store) throw new IngestRefused("The media library requires DATABASE_URL", 409);
+  const current = await store.getItem("asset", slug);
+  const parsed = current ? AssetRecordSchema.safeParse(current.data) : null;
+  if (!current || !parsed?.success) return { name: file.name, ok: false, status: 404, error: `No asset "${slug}"` };
+  const asset = parsed.data;
+  if (!(await permit(admin.imprint.pdp, subject, "update", contentResource("asset", slug, asset)))) {
+    throw new IngestRefused("Not allowed to change this asset", 403);
+  }
+
+  let processed;
+  try {
+    processed = await processUpload(file.bytes, opts.exif ?? asset.file.exif, { maxBytes: admin.imprint.media.maxBytes });
+  } catch (err) {
+    return { name: file.name, ok: false, status: err instanceof UploadError ? err.status : 500, error: err instanceof Error ? err.message : String(err) };
+  }
+  if (processed.kind !== asset.file.kind || processed.mime !== asset.file.mime) {
+    return {
+      name: file.name,
+      ok: false,
+      status: 415,
+      error: `This asset is ${asset.file.mime}; the new file is ${processed.mime}`,
+    };
+  }
+
+  const assets = admin.imprint.assets;
+  const original = await assets.put(`${LIBRARY}${slug}/original.${processed.ext}`, file.bytes);
+  const variants = [];
+  for (const v of processed.variants) {
+    variants.push({ width: v.width, height: v.height, url: await assets.put(`${LIBRARY}${slug}/w${v.width}.webp`, v.bytes) });
+  }
+  const next: AssetRecord = AssetRecordSchema.parse({
+    ...asset,
+    file: {
+      ...asset.file,
+      filename: file.name,
+      size: file.bytes.byteLength,
+      width: processed.width,
+      height: processed.height,
+      original,
+      variants,
+      exif: opts.exif ?? asset.file.exif,
+    },
+    photo: processed.photo ?? asset.photo,
+    gps: processed.gps,
+    audio: processed.audio,
+    data: processed.data,
+  });
+  await store.putItem("asset", slug, next, { lang: current.lang, by: opts.by ?? subject.id });
+  revalidateSite();
+  return { name: file.name, ok: true, slug, kind: processed.kind, url: original, group: asset.group };
 }

@@ -17,7 +17,7 @@ const CATALOG = [
   "cards", "carousel", "code", "components", "divider", "downloads", "embed", "file", "gallery",
   "hero", "image", "itinerary", "kanban", "list", "logos", "map", "mediatext", "mermaid",
   "pdf", "people", "planning", "posts", "pricing", "products", "quote", "releases",
-  "specs", "spectable", "subjectheader", "table", "tabs", "template", "testimonial", "text",
+  "specs", "spectable", "subjectheader", "table", "tabs", "take", "template", "testimonial", "text",
   "timeline", "toc", "treeview", "v3model", "video",
 ];
 
@@ -48,6 +48,7 @@ const STUDIO_CATALOG: [name: string, label: string, version: string, help: strin
   ["posts", "Posts / news feed", "1.0.0", "Latest devlog posts as linked cards (W6)."],
   ["itinerary", "Component itinerary", "1.0.0", "The journey of each component through a product's releases."],
   ["board", "Board annotations", "1.0.0", "A PCB render with hover/expanded hotspots per point."],
+  ["take", "Take (audio + piano roll)", "1.0.0", "A take from the patch editor: pick its wav; the .mid of the same take shows as a piano roll you can play, seek and loop."],
   ["boardspec", "Board spec", "1.0.0", "Render a board-spec: render, connectors, pinouts and notes."],
   ["template", "Template (merge fields)", "1.0.0", "Markdown with {{fields}} merged from a content item."],
   ["list", "List (links)", "1.0.0", "A list of links following the content graph (e.g. a product's releases)."],

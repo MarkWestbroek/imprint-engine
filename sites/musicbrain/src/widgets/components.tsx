@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {
+  AssetRecordSchema,
+  assetRefSlug,
   computeItinerary,
   type Product,
 } from "@imprint/content-core";
@@ -32,7 +34,10 @@ import type {
   ReleasesConfig,
   SpecTableConfig,
   SubjectHeaderConfig,
+  TakeConfig,
 } from "./registry";
+// The client island only (index.ts would pull the roll's hooks into the server graph).
+import { TakePlayer } from "./take/TakePlayer";
 
 /**
  * MusicBrain's widget viewers: the domain widgets below, plus the standard
@@ -41,6 +46,71 @@ import type {
  * receive (lint-enforced). Configs have already been validated against
  * ./registry.ts by the store.
  */
+
+function durationLabel(s?: number): string | undefined {
+  if (s === undefined) return undefined;
+  const m = Math.floor(s / 60);
+  return `${m}:${String(Math.round(s - m * 60)).padStart(2, "0")}`;
+}
+
+/**
+ * A take (design/beeldbibliotheek.md §12): the audio, and — from the same
+ * group — the .mid as a piano roll (./take, vendored from the MusicBrain
+ * editor). Only URLs go to the client; it fetches the .mid itself (same
+ * origin). Below it a text alternative with download links.
+ */
+async function TakeWidget({ config, ctx }: { config: TakeConfig; ctx: WidgetContext }) {
+  const slug = assetRefSlug(config.src);
+  if (!slug) {
+    // A plain URL: audio only, there is no group to find a .mid in.
+    return (
+      <WidgetFrame title={config.title}>
+        <TakePlayer audioUrl={config.src} title={config.title} height={config.height} controllers={config.controllers} />
+      </WidgetFrame>
+    );
+  }
+  const store = ctx.writableStore;
+  const record = store ? await store.getItem("asset", slug) : null;
+  const parsed = record ? AssetRecordSchema.safeParse(record.data) : null;
+  if (!store || !parsed?.success) return null;
+  const audio = parsed.data;
+  // The .mid of the same take (the guarded store: what this reader may see).
+  const siblings = audio.group
+    ? (await store.listItems("asset")).flatMap((r) => {
+        const p = AssetRecordSchema.safeParse(r.data);
+        return p.success && p.data.group === audio.group ? [p.data] : [];
+      })
+    : [];
+  const midi = siblings.find((a) => a.data?.format === "midi");
+  const title = config.title ?? audio.title;
+  const facts = [durationLabel(audio.audio?.duration), audio.audio?.sampleRate && `${audio.audio.sampleRate / 1000} kHz`].filter(Boolean).join(" · ");
+
+  return (
+    <WidgetFrame title={config.title}>
+      <TakePlayer
+        audioUrl={audio.file.original}
+        midiUrl={midi?.file.original ?? null}
+        title={title}
+        height={config.height}
+        controllers={config.controllers}
+      />
+      <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+        <span>
+          {title}
+          {facts && ` · ${facts}`}
+        </span>
+        <a href={audio.file.original} download className="hover:text-accent">
+          Download .wav
+        </a>
+        {midi && (
+          <a href={midi.file.original} download className="hover:text-accent">
+            Download .mid
+          </a>
+        )}
+      </p>
+    </WidgetFrame>
+  );
+}
 
 async function BoardWidget({ config, ctx }: { config: BoardConfig; ctx: WidgetContext }) {
   // Thin server shell: the hover interaction lives in the client island.
@@ -343,6 +413,7 @@ export const widgetComponents: WidgetViewers = {
   specs: standardViewers.specs,
   downloads: DownloadsWidget as WidgetViewer,
   posts: standardViewers.posts,
+  take: TakeWidget as WidgetViewer,
   board: BoardWidget as WidgetViewer,
   boardspec: BoardSpecWidget as WidgetViewer,
   template: standardViewers.template,
