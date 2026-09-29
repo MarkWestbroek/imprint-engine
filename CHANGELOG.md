@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix (live): verkeerde adressen achter Caddy.** De ref-doorverwijzing voor
+  bibliotheekbeelden in markdown en de absolute URL's uit `/api/media` wezen
+  naar `http(s)://0.0.0.0:3000/…` (het eigen luisteradres van de server). De
+  doorverwijzing is nu relatief; de API-URL's komen uit `X-Forwarded-Host`/
+  `-Proto` of `Host` (`publicOrigin`).
 - **Take-widget** (MusicBrain), samen met de patch-editor gebouwd: kies in de
   studio de wav van een opname; de .mid van dezelfde opname wordt een
   pianorol die de audio bedient (afspelen, springen, lusvenster, toetsen bij

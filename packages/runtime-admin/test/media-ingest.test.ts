@@ -8,6 +8,7 @@ import { AssetRecordSchema, FileAssetStore, guardReads, inProcessPdp, userSubjec
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import type { AdminContext, AdminSession } from "../src/admin-context";
 import { assetsRoute, deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, replaceAssetFile, saveTaglist, serveAsset } from "../src/admin-server/media";
+import { publicOrigin } from "../src/admin-server/media-api";
 import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
 import { resolveMedia } from "../src/media/resolve";
 
@@ -253,7 +254,8 @@ describe("ingestFiles + serveAsset", () => {
     const go = () => assetsRoute(admin, new Request("http://site.test/api/assets/_ref/golf"), ["_ref", r.slug!]);
     const res = await go();
     assert.equal(res.status, 302);
-    assert.match(res.headers.get("location") ?? "", /^http:\/\/site\.test\/api\/assets\/library\/golf\/w800\./);
+    // Relative: behind a proxy the server's own URL is not the visitor's.
+    assert.match(res.headers.get("location") ?? "", /^\/api\/assets\/library\/golf\/w800\./);
     assert.equal((await assetsRoute(admin, new Request("http://site.test/x"), ["_ref", "nonesuch"])).status, 404);
 
     const store = admin.imprint.writableStore!;
@@ -286,6 +288,13 @@ describe("ingestFiles + serveAsset", () => {
     const missing = await replaceAssetFile(admin, userSubject("mark", "editor"), "nonesuch", { name: "x.mid", bytes: midi() });
     assert.equal(missing.status, 404);
     await assert.rejects(replaceAssetFile(admin, userSubject("rita", "reader"), mid.slug!, { name: "x.mid", bytes: midi() }), (e: unknown) => e instanceof IngestRefused && e.status === 403);
+  });
+
+  it("publicOrigin: the forwarded host wins over the server's own listen address", () => {
+    const req = (headers: Record<string, string>) => new Request("http://0.0.0.0:3000/api/media", { headers });
+    assert.equal(publicOrigin(req({ "x-forwarded-host": "musicbrain.nl", "x-forwarded-proto": "https", host: "0.0.0.0:3000" })), "https://musicbrain.nl");
+    assert.equal(publicOrigin(req({ host: "localhost:3000" })), "http://localhost:3000");
+    assert.equal(publicOrigin(req({})), "http://0.0.0.0:3000");
   });
 
   it("tags are normalised to list/tag or a free word", () => {

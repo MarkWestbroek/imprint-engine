@@ -52,8 +52,21 @@ async function grantFor(admin: AdminContext, req: Request, scope: TokenScope): P
   return grant;
 }
 
+/**
+ * The origin the client used. Behind a proxy (Caddy on the VPS) `req.url`
+ * carries the server's own listen address (http://0.0.0.0:3000), so the
+ * forwarded headers come first, then Host, then `req.url`.
+ */
+export function publicOrigin(req: Request): string {
+  const first = (h: string | null) => h?.split(",")[0]?.trim() || null;
+  const host = first(req.headers.get("x-forwarded-host")) ?? first(req.headers.get("host"));
+  const own = new URL(req.url);
+  const proto = first(req.headers.get("x-forwarded-proto")) ?? own.protocol.replace(":", "");
+  return host ? `${proto}://${host}` : own.origin;
+}
+
 /** Absolute, so a client on another origin can use it as is. */
-const absolute = (req: Request, url: string) => new URL(url, req.url).toString();
+const absolute = (req: Request, url: string) => new URL(url, publicOrigin(req)).toString();
 
 async function post(admin: AdminContext, req: Request): Promise<Response> {
   const grant = await grantFor(admin, req, "media:upload");

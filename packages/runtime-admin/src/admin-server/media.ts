@@ -582,7 +582,8 @@ async function assetRedirect(admin: AdminContext, req: Request, slug: string): P
   const target = asset.file.kind === "image" ? displayUrl(asset) : asset.file.original;
   return new Response(null, {
     status: 302,
-    headers: { Location: new URL(target, req.url).toString(), "Cache-Control": asset.access === "public" ? "public, max-age=300" : "private, no-store" },
+    // Relative on purpose: behind a proxy req.url is the server's own listen address.
+    headers: { Location: target, "Cache-Control": asset.access === "public" ? "public, max-age=300" : "private, no-store" },
   });
 }
 
