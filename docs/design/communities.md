@@ -19,6 +19,21 @@ moet eerst staan, en dat valt samen met het FTV-werk uit
 Wat Pleio niet heeft en wij bijna vanzelf wel: **annotaties in de kantlijn
 die aan een versie vastzitten** (§4.6).
 
+### Kaders van Mark (29 september 2026) ▶
+
+- **Leden registreren zelf**, of komen op uitnodiging. Je kunt gewoon naar
+  de site gaan en een account aanmaken, ook via **LinkedIn of Google**.
+  **Deelname aan een groep is gemodereerd**: de groepsbeheerder keurt goed.
+- **Schaal**: 30–50 communities. Een paar zijn actief (ze plaatsen posts);
+  de meeste zijn stil: een of een paar infopagina's en verder niets. Er zijn
+  dagen zonder één bezoeker.
+- **Hosting**: als dit voor Common Ground wordt, hosten we **niet op Marks
+  kosten**, en liefst **dubbel, met fallback bij falen**, ook al als POC.
+- **Vindbaarheid** is bij Pleio slecht. Google vindt de meeste pagina's
+  niet, en archive.org heeft van veel pagina's alleen "Pleio start op"
+  bewaard. Dat moet hier structureel beter (§9).
+- Mark probeert de bezoekcijfers te vinden of op te vragen (§11).
+
 ## 2. Vergelijking
 
 | Pleio | Imprint nu | Afstand |
@@ -68,9 +83,11 @@ flowchart LR
 Nu maakt een admin de accounts aan, met een rol per site
 (`admin`/`editor`/`reader`). Voor een community moet dat anders:
 
-- **Zelf registreren**, of een uitnodiging accepteren. Dit is een
-  principiële stap: iedereen kan dan een account aanmaken, dus ook spam,
-  e-mailverificatie en AVG-rechten (inzage, export, verwijderen).
+- **Zelf registreren** ▶, of een uitnodiging accepteren, ook met
+  LinkedIn of Google (§5). Dit is een principiële stap: iedereen kan dan een
+  account aanmaken, dus ook spam, e-mailverificatie en AVG-rechten (inzage,
+  export, verwijderen). Omdat lid worden van een site alleen lezen voor
+  leden oplevert en groepen gemodereerd zijn, blijft de spamschade beperkt.
 - **Persoon en lidmaatschap scheiden.** De persoon leeft in de IdP (§5); de
   site kent een *lidmaatschap* met een rol. Pleio doet het ook zo: één
   account, lid worden per site.
@@ -84,8 +101,10 @@ discussies, blogs, een interne wiki en bestanden. Standaard blijft dat
 binnen de groep, maar het kan **gepromoveerd** worden naar *alle leden van de
 site* of naar *openbaar*.
 
-- **Groep als contenttype** (`group`): naam, beschrijving, open of op
-  aanvraag, beheerders. Het lidmaatschap is een relatie persoon ↔ groep met
+- **Groep als contenttype** (`group`): naam, beschrijving, beheerders.
+  Toetreden is **op aanvraag** ▶: de beheerder keurt goed en krijgt een
+  melding (§4.4). Een beheerder kan ook uitnodigen; een uitnodiging telt als
+  goedkeuring. Het lidmaatschap is een relatie persoon ↔ groep met
   een rol (`lid`/`beheerder`) en staat in de DB, niet in content, omdat het
   persoonsgegevens zijn.
 - **Zichtbaarheid per item**: `groep` · `leden` · `openbaar`. Dit breidt
@@ -208,6 +227,13 @@ plek inlogt en dat op meerdere plekken gebruikt. Wat er is:
 | **DigiD / eHerkenning** | overheidsdiensten | nee, niet bedoeld voor communities |
 | **EU Login** | diensten van de Europese Commissie | nee |
 
+Mark wil ▶ **ook met LinkedIn en Google** kunnen inloggen, zodat
+aanmelden laagdrempelig is. Dat past in dezelfde opzet: Zitadel en Keycloak
+koppelen die als *externe identiteitsleveranciers*. De site praat alleen
+met de eigen IdP, en wie geen Google of LinkedIn wil, gebruikt e-mail met
+een passkey. Zo is het een keuze van de gebruiker en geen afhankelijkheid
+van de site.
+
 Een neutrale Europese "log in met …" voor iedereen bestaat niet echt. De
 route is daarom: eerst de eigen IdP, en Yivi en later de EUDI-wallet als
 koppelingen daarachter. De sites merken daar niets van.
@@ -229,7 +255,82 @@ moeten we het bewust anders doen dan Pleio:
 - **Geen koude start.** De containers draaien altijd; alleen een deploy
   herstart ze.
 
-## 7. Volgorde als het serieus wordt
+## 7. Schaal: één installatie, veel communities
+
+Bij 30–50 communities, waarvan de meeste stil zijn, is **één Imprint-site
+met communities erin** beter dan 50 losse sites (een container per site,
+zoals nu). Dan heb je:
+
+- één image, één database, één IdP-cliënt, één deploy en één backup;
+- elke community als een **groep met een eigen publieke ruimte**: een pad
+  (`/c/<community>/…`), met eigen startpagina, menu en eventueel eigen
+  thema;
+- een **eigen domein per community** als optie: host → community, via
+  Next.js-middleware. Caddy regelt de certificaten al automatisch.
+
+Het huidige model (één site = één container) blijft voor echte losse sites
+zoals MusicBrain. Het nieuwe stuk is **"communities binnen een site"**: de
+contentstore scopet op community zoals nu op site. Dat is de grootste
+architectuurkeuze in dit document, en die moet vóór §4.2 vallen.
+
+**Stille communities kosten bijna niets.** Hun infopagina's zijn statisch
+gerenderd HTML. Een community zonder bezoekers gebruikt geen CPU, en de
+eerste bezoeker op maandagochtend krijgt direct een pagina.
+
+## 8. Hosting met fallback
+
+Niet op Marks kosten, dus bij een partij rond Common Ground. De vormen:
+
+- **Haven**, de Common Ground-standaard voor Kubernetes (VNG). Een
+  Haven-cluster bij een gemeente, VNG Realisatie of een leverancier is de
+  natuurlijke plek. Imprint is al één container-image per site; daarbij
+  hoort dan een **Helm-chart** (site-image, Postgres, IdP, S3-opslag).
+- **Europese cloud** met een eigen VPS-opzet zoals nu: Hetzner (DE),
+  Scaleway of OVH (FR), Cyso of Previder (NL). Zo'n opzet is `deploy/vps/`
+  bijna één-op-één.
+
+**Fallback bij falen**, in twee lagen die heel verschillend duur zijn:
+
+1. **Publiek deel: goedkoop en robuust.** Publieke pagina's zijn statisch.
+   Bij elke publicatie gaat een **statische export** ook naar een tweede
+   plek: een andere provider, object-opslag of CDN (bijvoorbeeld bunny.net,
+   uit Slovenië). Bij uitval schakelt DNS om met een health-check, en de
+   bezoeker ziet alle openbare pagina's gewoon. Voor stille communities is
+   dat vrijwel alles.
+2. **Ingelogd deel: duurder.** Om ook groepen, reacties en aanmelden te
+   laten doorwerken zijn nodig: een **Postgres-replica** bij de tweede
+   provider (streaming replication), S3-replicatie (MinIO kan dat) en een
+   tweede IdP-instantie. Bij uitval promoveer je de replica. Dat is goed te
+   doen, maar het is echt beheerwerk.
+
+**Voor de POC** is laag 1 met een nachtelijke backup naar de tweede plek
+genoeg: bij uitval blijft de publieke kant online en is het ingelogde deel
+tijdelijk alleen-lezen of weg. Laag 2 komt als het in productie gaat.
+
+## 9. Vindbaarheid
+
+Waarom Pleio slecht vindbaar is: de pagina wordt in de browser opgebouwd
+(een JavaScript-app die content ophaalt), en de server start traag. Een
+crawler of archive.org ziet dan een laadscherm: "Pleio start op". Bij
+Imprint staat de inhoud al in de HTML (SSG), en dat is de grootste winst.
+
+Wat nog ontbreekt; het staat grotendeels al in de backlog (W13):
+
+- **`sitemap.xml` en `robots.txt`** per site of community, uit de store
+  gegenereerd, met alleen `openbaar`. Ook nodig voor MusicBrain.
+- **Metadata**: titel, beschrijving, canonical URL en OpenGraph-beelden
+  (voor delen op LinkedIn). `generateMetadata` is er al per pagina.
+- **Gestructureerde data** (schema.org JSON-LD): `Organization` per
+  community, `Event` voor evenementen (die verschijnen dan in Google's
+  agenda-resultaten), `Article` voor blogs, `DefinedTerm` voor termenlijsten.
+- **Actief melden bij publiceren**: IndexNow (Bing, Yandex, onder andere)
+  en de *Save Page Now*-API van archive.org. Een nieuwe openbare versie komt
+  dan meteen in het archief, en niet het laadscherm. Dat past bij het
+  bitemporele idee: elke versie is ook extern terug te vinden.
+- **Niet-openbare items** krijgen `noindex` en komen niet in de sitemap.
+  Dat doet MusicBrain al voor `members/`.
+
+## 10. Volgorde als het serieus wordt
 
 1. **FTV-toegang afmaken**, met groepslidmaatschap als attribuut. Dit is het
    fundament.
@@ -241,15 +342,25 @@ moeten we het bewust anders doen dan Pleio:
 6. **Annotaties**.
 7. **Term-herkenning** (onafhankelijk, kan ook eerder als plugin).
 
+De architectuurkeuze uit §7 (communities binnen een site) hoort vóór stap 2.
+Los van deze volgorde, en ook meteen nuttig voor de bestaande sites:
+**vindbaarheid** (§9, sitemap en metadata) en **term-herkenning** (§4.7).
+
 Stap 1 en 2 zijn samen het grootste stuk. Daarna is het vooral vlijt: elk
 onderdeel is een contenttype of plugin op hetzelfde fundament.
 
-## 8. Open vragen voor Mark
+## 11. Open vragen voor Mark
 
-- Voor wie is dit bedoeld: Common Ground als één community-site, of
-  meerdere sites met gedeelde leden (dan is §5 meteen nodig)?
-- Leden zelf laten registreren, of alleen op uitnodiging? Dit bepaalt de
-  zwaarte van spam, verificatie en moderatie.
+- ~~Voor wie is dit bedoeld?~~ **Beantwoord**: 30–50 communities, meest
+  stil, dus één installatie met communities (§7).
+- ~~Zelf registreren of op uitnodiging?~~ **Beantwoord**: beide, met
+  LinkedIn en Google; toetreden tot een groep is gemodereerd.
+- **Cijfers uit Pleio** (Mark vraagt ze op): bezoekers per community per
+  maand, aantal leden en pagina's, en welke communities posten. Dat
+  bepaalt de omvang van de POC en de keuze voor laag 2 in §8.
+- **Wie host?** Een Haven-cluster via VNG of een gemeente, of een
+  Europese cloud met een betaler. Dit bepaalt Helm-chart of VPS-opzet.
+- Eigen domein per community, of alles onder één domein met paden?
 - Zitadel of Keycloak? (Zitadel is lichter en Europees; Keycloak is de
   bekende standaard.)
 - Moeten bestaande Pleio-groepen en -content over kunnen komen? Dan is een
