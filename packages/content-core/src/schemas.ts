@@ -84,7 +84,11 @@ export type AssetAudio = z.infer<typeof AssetAudio>;
 
 /** What a data file is: a MIDI file's header, or a JSON document's declared type. */
 export const AssetData = z.object({
-  format: z.enum(["midi", "json"]),
+  format: z.enum(["midi", "json", "sysex"]),
+  /** SysEx: the number of messages (F0 … F7) in the file. */
+  messages: z.number().int().optional(),
+  /** SysEx: the manufacturer ID of the first message, hex ("7D" = non-commercial / MusicBrain). */
+  manufacturer: z.string().optional(),
   /** MIDI: 0, 1 or 2. */
   midiFormat: z.number().int().optional(),
   tracks: z.number().int().optional(),

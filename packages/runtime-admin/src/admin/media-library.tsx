@@ -62,7 +62,7 @@ function tagLabel(tag: string, lists: Taglist[]): string {
 /** A short glyph for files without a picture. */
 function KindGlyph({ asset }: { asset: AssetRecord }) {
   const k = asset.file.kind;
-  const text = k === "audio" ? "♪ WAV" : k === "data" ? (asset.data?.format === "midi" ? "MIDI" : "JSON") : k === "document" ? "PDF" : k.toUpperCase();
+  const text = k === "audio" ? "♪ WAV" : k === "data" ? (asset.data?.format === "midi" ? "MIDI" : asset.data?.format === "sysex" ? "SYX" : "JSON") : k === "document" ? "PDF" : k.toUpperCase();
   return <span className="font-mono text-sm text-muted">{text}</span>;
 }
 
@@ -473,7 +473,7 @@ export function MediaLibrary({
             ref={fileInput}
             type="file"
             multiple
-            accept="image/*,.svg,.pdf,.wav,.mid,.midi,.json"
+            accept="image/*,.svg,.pdf,.wav,.mid,.midi,.syx,.json"
             className="hidden"
             data-testid="media-upload"
             onChange={(e) => {
@@ -713,7 +713,11 @@ function AssetDetails({
       ? ["MIDI", d.data.midiFormat !== undefined && `format ${d.data.midiFormat}`, d.data.tracks !== undefined && `${d.data.tracks} tracks`, d.data.ppq && `${d.data.ppq} ppq`]
           .filter(Boolean)
           .join(" · ")
-      : ["JSON", d.data.type].filter(Boolean).join(" · ")
+      : d.data.format === "sysex"
+        ? ["SysEx", d.data.messages !== undefined && `${d.data.messages} message${d.data.messages === 1 ? "" : "s"}`, d.data.manufacturer && `ID ${d.data.manufacturer}`]
+            .filter(Boolean)
+            .join(" · ")
+        : ["JSON", d.data.type].filter(Boolean).join(" · ")
     : "";
   const widths = [...new Set([...d.file.variants.map((v) => v.width), ...(d.publicMaxWidth ? [d.publicMaxWidth] : [])])].sort((a, b) => a - b);
 

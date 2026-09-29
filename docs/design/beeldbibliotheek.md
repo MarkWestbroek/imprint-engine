@@ -315,7 +315,7 @@ de manier van inloggen.
 | `svg` | `<svg` | — | — (sandbox-CSP bij serveren) |
 | `document` | `%PDF-` | — | — |
 | `audio` (nieuw) | `RIFF….WAVE` (later FLAC/MP3/OGG) | duur, samplerate, kanalen, bitdiepte | voorlopig geen (later een MP3/Opus-previewversie) |
-| `data` (nieuw) | MIDI `MThd`; JSON die parst (met maximale grootte) | MIDI: sporen, duur; JSON: optioneel een `$schema`/`type` | — |
+| `data` (nieuw) | MIDI `MThd`; SysEx (F0 … F7-berichten, databytes < 0x80); JSON die parst (met maximale grootte) | MIDI: sporen, ppq; SysEx: aantal berichten, fabrikant-ID; JSON: optioneel een `$schema`/`type` | — |
 
 Het record krijgt per soort een optioneel metadatablok (`photo` bestaat al;
 `audio` en `data` komen erbij). Een plugin kan later een soort toevoegen (bv.

@@ -226,6 +226,32 @@ export function readWav(b: Uint8Array): AssetAudio {
   return audio;
 }
 
+/**
+ * A SysEx file (.syx): one or more messages back to back, each F0, data bytes
+ * < 0x80, F7 — the usual exchange format for synth patches. Null when the
+ * bytes are not exactly that (so other files are never taken for SysEx).
+ */
+export function readSysex(b: Uint8Array): AssetData | null {
+  if (b.byteLength < 2 || b[0] !== 0xf0 || b[b.byteLength - 1] !== 0xf7) return null;
+  let messages = 0;
+  let i = 0;
+  while (i < b.byteLength) {
+    if (b[i] !== 0xf0) return null;
+    i++;
+    while (i < b.byteLength && b[i] !== 0xf7) {
+      if (b[i] >= 0x80) return null;
+      i++;
+    }
+    if (i >= b.byteLength) return null; // no closing F7
+    i++;
+    messages++;
+  }
+  // The manufacturer ID: one byte, or 00 + two bytes for the extended IDs.
+  const id = b[1] === 0x00 && b.byteLength > 3 ? [b[1], b[2], b[3]] : [b[1]];
+  const hex = id.map((x) => x.toString(16).toUpperCase().padStart(2, "0")).join(" ");
+  return { format: "sysex", messages, manufacturer: messages > 0 && b[1] !== 0xf7 ? hex : undefined };
+}
+
 /** The MThd header: format, number of tracks, ticks per quarter note. */
 export function readMidi(b: Uint8Array): AssetData {
   const view = new DataView(b.buffer, b.byteOffset, b.byteLength);
@@ -264,6 +290,11 @@ export const coreKindHandlers: KindHandler[] = [
   },
   {
     kind: "data",
+    sniff: (b) => readSysex(b) !== null,
+    process: async (b) => ({ kind: "data", mime: "application/x-sysex", ext: "syx", variants: [], data: readSysex(b)! }),
+  },
+  {
+    kind: "data",
     sniff: (b) => ascii(b, 0, 4) === "MThd",
     process: async (b) => ({ kind: "data", mime: "audio/midi", ext: "mid", variants: [], data: readMidi(b) }),
   },
@@ -293,7 +324,7 @@ export const coreKindHandlers: KindHandler[] = [
 export function checkUpload(bytes: Uint8Array, maxBytes: Record<string, number> = {}, handlers: KindHandler[] = coreKindHandlers): string {
   if (bytes.byteLength === 0) throw new UploadError("Empty file", 400);
   const handler = handlers.find((h) => h.sniff(bytes));
-  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI and JSON)", 415);
+  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI, SysEx and JSON)", 415);
   const limits: Record<string, number> = { ...DEFAULT_MEDIA_MAX_BYTES, ...maxBytes };
   const limit = limits[handler.kind] ?? DEFAULT_MEDIA_MAX_BYTES.image;
   if (bytes.byteLength > limit) {
@@ -322,7 +353,7 @@ export async function processUpload(
   if (bytes.byteLength === 0) throw new UploadError("Empty file", 400);
   const limits: Record<string, number> = { ...DEFAULT_MEDIA_MAX_BYTES, ...opts.maxBytes };
   const handler = (opts.handlers ?? coreKindHandlers).find((h) => h.sniff(bytes));
-  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI and JSON)", 415);
+  if (!handler) throw new UploadError("Unsupported file type (images, SVG, PDF, WAV, MIDI, SysEx and JSON)", 415);
   const limit = limits[handler.kind] ?? DEFAULT_MEDIA_MAX_BYTES.image;
   if (bytes.byteLength > limit) {
     throw new UploadError(`File is larger than ${Math.round(limit / 1024 / 1024)} MB (the limit for ${handler.kind})`, 413);

@@ -9,7 +9,7 @@ import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory
 import type { AdminContext, AdminSession } from "../src/admin-context";
 import { assetsRoute, deleteTaglist, editTag, IngestRefused, ingestFiles, normalizeTag, replaceAssetFile, saveTaglist, serveAsset } from "../src/admin-server/media";
 import { publicOrigin } from "../src/admin-server/media-api";
-import { processUpload, readMidi, readWav, UploadError } from "../src/media/process";
+import { processUpload, readMidi, readSysex, readWav, UploadError } from "../src/media/process";
 import { resolveMedia } from "../src/media/resolve";
 
 /**
@@ -71,6 +71,21 @@ describe("file kinds", () => {
     assert.equal(out.kind, "data");
     assert.deepEqual(out.data, { format: "json", type: "mmb-patch" });
     await assert.rejects(processUpload(new TextEncoder().encode('{"a": '), "none"), /Not valid JSON/);
+  });
+
+  it("SysEx (.syx): messages F0 … F7 back to back; the manufacturer ID of the first", async () => {
+    const one = new Uint8Array([0xf0, 0x7d, 0x4d, 0x42, 0x01, 0x02, 0xf7]);
+    assert.deepEqual(readSysex(one), { format: "sysex", messages: 1, manufacturer: "7D" });
+    const two = new Uint8Array([...one, 0xf0, 0x00, 0x20, 0x33, 0x10, 0xf7]);
+    assert.equal(readSysex(two)?.messages, 2);
+    assert.equal(readSysex(new Uint8Array([0xf0, 0x00, 0x20, 0x33, 0x10, 0xf7]))?.manufacturer, "00 20 33", "extended ID");
+    // Not SysEx: a data byte ≥ 0x80, no closing F7, bytes between messages.
+    assert.equal(readSysex(new Uint8Array([0xf0, 0x7d, 0x90, 0xf7])), null);
+    assert.equal(readSysex(new Uint8Array([0xf0, 0x7d, 0x01])), null);
+    assert.equal(readSysex(new Uint8Array([0xf0, 0x7d, 0xf7, 0x12, 0xf0, 0x7d, 0xf7])), null);
+
+    const out = await processUpload(two, "none");
+    assert.deepEqual([out.kind, out.mime, out.ext], ["data", "application/x-sysex", "syx"]);
   });
 
   it("a WebP is an image, not audio (both are RIFF)", async () => {
@@ -282,6 +297,12 @@ describe("ingestFiles + serveAsset", () => {
     assert.equal(after.file.original, r.url);
     assert.equal(after.data?.ppq, 96);
     assert.deepEqual([after.group, after.tags, after.created], [before.group, before.tags, before.created]);
+
+    const syx = new Uint8Array([0xf0, 0x7d, 0x4d, 0x42, 0x01, 0xf7]);
+    const [patchSyx] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "take.syx", bytes: syx }], { group: "take-edit" });
+    assert.equal(patchSyx.kind, "data");
+    assert.equal((await replaceAssetFile(admin, userSubject("mark", "editor"), patchSyx.slug!, { name: "take.syx", bytes: new Uint8Array([0xf0, 0x7d, 0x02, 0xf7]) })).ok, true);
+    assert.equal((await replaceAssetFile(admin, userSubject("mark", "editor"), patchSyx.slug!, { name: "x.mid", bytes: midi() })).status, 415, "a .syx only by a .syx");
 
     const wrongKind = await replaceAssetFile(admin, userSubject("mark", "editor"), mid.slug!, { name: "x.json", bytes: patch() });
     assert.deepEqual([wrongKind.ok, wrongKind.status], [false, 415], "JSON may not replace MIDI, even though both are data");

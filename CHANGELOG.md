@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **SysEx (.syx) in de bibliotheek**: soort `data`, mime `application/x-sysex`,
+  herkend aan de bytes (berichten F0 … F7 achter elkaar, databytes < 0x80);
+  het detailpaneel toont het aantal berichten en het fabrikant-ID. Een take
+  krijgt zo ook zijn patch als .syx in dezelfde groep (patch-editor).
 - **Security-updates** (`npm audit`: 19 kwetsbaarheden, 1 kritiek → 9, alleen
   dev-tooling en eigen content). `next` 16.2.10 → 16.3.7 in beide sites (RCE in
   de Image Optimization API, server-action-DoS/SSRF, cache confusion),

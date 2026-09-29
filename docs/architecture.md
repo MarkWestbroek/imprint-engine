@@ -493,7 +493,7 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     Per bestand een eigen resultaat met status (413 te groot, 415 onbekend
     type), zodat één slecht bestand de rest niet tegenhoudt.
   - **Soorten als handlers** (§12.2): `processUpload` loopt `coreKindHandlers`
-    af (`svg`, `document`, `audio` = RIFF/WAVE, `data` = MIDI `MThd` of JSON,
+    af (`svg`, `document`, `audio` = RIFF/WAVE, `data` = SysEx (F0 … F7), MIDI `MThd` of JSON,
     `image` via sharp); de eerste die de bytes herkent wint. Elke soort heeft
     een limiet (`DEFAULT_MEDIA_MAX_BYTES`, per site `media.maxBytes` in
     `imprint.config.ts` → `imprint.media`). Beelden: EXIF (`exifr`) en

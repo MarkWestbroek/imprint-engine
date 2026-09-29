@@ -40,6 +40,7 @@ const CONTENT_TYPES: Record<string, string> = {
   glb: "model/gltf-binary",
   wav: "audio/wav",
   mid: "audio/midi",
+  syx: "application/x-sysex",
 };
 
 const isNotFound = (err: unknown) => {

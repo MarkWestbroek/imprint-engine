@@ -316,7 +316,7 @@ site op één plek.
 - **Uploaden**: klik **Upload** of sleep bestanden op het raster. Ze komen in
   de map die open staat (en krijgen de tags waarop je op dat moment filtert).
   Toegestaan: foto's (JPEG, PNG, WebP, GIF, AVIF, TIFF), SVG, PDF, **audio**
-  (WAV) en **data** (MIDI en JSON). Het type wordt aan de inhoud herkend, niet
+  (WAV) en **data** (MIDI, SysEx/.syx en JSON). Het type wordt aan de inhoud herkend, niet
   aan de bestandsnaam. Standaardlimieten: foto en PDF 50 MB, SVG 5 MB, audio
   200 MB, data 20 MB (per site in te stellen).
 - **Groepen**: bestanden die bij elkaar horen (een opname: wav + mid + patch;
