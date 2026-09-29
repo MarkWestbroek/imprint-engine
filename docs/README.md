@@ -40,6 +40,7 @@ Plesk staan voorlopig bij elkaar in de [hoofd-README](../README.md).
 	- gewenste scheiding tussen motor en sites, gedeelde admin, configureerbare
 	widgets, pluginmodel en gefaseerd migratieplan.
 - [Ontwerp Fase 3: admin, toegang, register en tijdreizen](design/fase-3-admin-toegang-tijdreizen.md)
+- [Verkenning communities (Imprint als alternatief voor Pleio)](design/communities.md)
 	- gedeelde admin, rechten via PEP en twee sidecar-PDP's (AuthZEN, FTV),
 	formulieren en lijsten volgens Omnium, opslag als gegenereerd register,
 	en de hele site door de tijd.

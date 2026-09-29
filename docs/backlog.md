@@ -801,6 +801,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 7. Open beslissingen (vragen aan Mark)
 
+- [ ] **Communities, Imprint als alternatief voor Pleio?** Verkenning in
+      [design/communities.md](design/communities.md): leden, groepen met drie
+      zichtbaarheidsniveaus, discussies, mail, evenementen, bitemporele
+      annotaties, term-herkenning en één login (eigen OIDC-IdP). Open vragen
+      staan daar in §8.
 - [ ] **`image` en `board` samenvoegen?** Beide zijn "afbeelding + punten"; je wilde
       ze voorlopig apart houden omdat de board-kant zich apart kan ontwikkelen
       (pinouts zijn SVG's op de render → beeld-op-beeld).
