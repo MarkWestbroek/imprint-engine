@@ -364,6 +364,29 @@ flowchart LR
     `boardspec`, `releases`, `products`, `subjectheader`, `spectable`,
     `components`. Ze kennen producten, componenten, releases, board-specs of
     planning, en worden in Fase 5 plugins.
+- **Diagrammen uit Omnium** (`v3model`): de viewer tekent niet zelf maar
+  vraagt Omnium om een SVG
+  ([opdracht](design/opdracht-omnium-render-api.md), contract in de
+  bitemporal-repo `docs/RENDER_API.md`). Met `OMNIUM_URL` (server-env) gaat
+  een model-link als `GET /api/models/{naam}/diagram.svg?versie=&asOf=&…` en
+  modelcode als `POST /api/render/svg`; `omnium.ts` bouwt het verzoek en leest
+  de problem+json-fouten, `svg-sanitize.ts` laat alleen tekenelementen en
+  lokale referenties door (allow-list, faalt dicht) en de SVG gaat **inline**.
+  Kleuren komen als `var(--diagram-*, <licht>)`; bij `kleuren: site` koppelt
+  de wrapper die aan de widget-tokens (`--theme(--color-surface)` enz.).
+  Zonder `OMNIUM_URL` blijft de tijdelijke tekenaar `v3-diagram.tsx` voor
+  modelcode; die vervalt zodra Omnium in productie draait.
+
+  ```mermaid
+  flowchart LR
+      CFG["v3model-config<br/>model+versie+asOf | json | url<br/>diagram | domein"] --> V["V3ModelWidget<br/>(server)"]
+      V -->|"OMNIUM_URL gezet"| O["omnium.ts<br/>GET diagram.svg / POST render/svg"]
+      O --> OM["Omnium<br/>Go-API → render-svc"]
+      OM -->|"SVG of problem+json"| O
+      O --> S["svg-sanitize.ts<br/>allow-list"]
+      S -->|inline| HTML["pagina"]
+      V -->|"geen OMNIUM_URL"| T["v3-diagram.tsx<br/>(tijdelijk)"]
+  ```
 - **Wat een site levert voor de standaardwidgets**: de design-tokens
   `background`, `surface`, `line`, `foreground`, `muted`, `accent`,
   `accent-strong` en `accent-2` als Tailwind-kleuren (`@theme`), de classes

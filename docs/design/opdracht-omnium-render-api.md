@@ -122,3 +122,25 @@ serverside bij — hij komt nooit in de browser.
 2. Dezelfde aanroep twee keer → byte-gelijke SVG.
 3. Een ongeldig model → `422` met een melding die zegt wélk element fout is.
 4. Twee diagrammen op één pagina botsen niet (id's).
+
+## 8. Stand (30 september 2026)
+
+Omnium heeft de API gebouwd (branch `feat/render-api-svg` in de
+bitemporal-repo; contract `bitemp_register_v06/docs/RENDER_API.md`). Afspraken
+die van deze opdracht afwijken of hem aanvullen:
+
+- **Adres van een model-link**: naam + versie + tijdstip —
+  `GET /api/models/{naam}/diagram.svg?versie=&asOf=`; een hernoemd model geeft
+  onder de oude naam 404, dus Imprint zet `versie` liefst vast.
+  `GET /api/models/{naam}/views.json` geeft de diagrammen en domeinen.
+- **Weergave**: `diagram` (eerste keus) óf `domein` (autoLayout). Zonder keuze
+  alleen bij één domein en geen diagrammen; anders 400 met `diagrammen` en
+  `domeinen`. Verder `entiteiten`, `richting` (TB|LR), `afhankelijkheden`.
+- **Kleuren**: `var(--diagram-surface|border|text|muted|accent, <licht>)`,
+  geen `light-dark()`. Zonder variabelen blijft het diagram licht (als
+  figuur); Imprint koppelt ze bij "kleuren: site" aan zijn tokens. Tekst óp
+  een element kiest Omnium op contrast met de elementkleur.
+- **Fouten**: `application/problem+json` (`detail`, `element`, `pad`, bij JSON
+  ook `regel`/`kolom`).
+- **Acceptatie 1** loopt via de POST met `domein=catalogus`: het
+  MusicBrain-model heeft twee domeinen en geen diagrammen.

@@ -59,7 +59,7 @@ const STUDIO_CATALOG: [name: string, label: string, version: string, help: strin
   ["quote", "Quote", "1.0.0", 'A quotation with its source; "pull" makes it big.'],
   ["code", "Code", "1.0.0", "A code block with syntax highlighting (light/dark follow the site)."],
   ["mermaid", "Mermaid diagram", "1.0.0", "A diagram from mermaid text (flowchart, sequence, class, gantt, …), drawn in the browser."],
-  ["v3model", "V3 model diagram", "1.0.0", "A V3 metamodel as a diagram: entities in their domain colour, on their position or in a grid, with relations."],
+  ["v3model", "V3 model diagram", "1.0.0", "A V3 model as a diagram, drawn by Omnium: a model in Omnium (name, version) or pasted/fetched model code, as a saved diagram or one domain."],
   ["tabs", "Tabs", "1.0.0", "Tabbed panels of markdown; the first is open by default."],
   ["cards", "Cards / features", "1.0.0", "A grid of cards: icon, title, text, optional link."],
   ["buttons", "Buttons", "1.0.0", "A row of buttons (primary, secondary or ghost)."],

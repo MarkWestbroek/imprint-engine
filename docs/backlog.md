@@ -122,13 +122,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       heen, op één plek bewerkt. _(M)_
 - [ ] **`example`-config per widget** (Gutenberg `block.json`) voor een preview
       in de catalogus-dialoog. _(S)_
-- [ ] **V3-diagram bij de bron (Omnium)** — ▶ Mark: liever niet zelf
-      tekenen. Aan Omnium vragen: een render-API die SVG levert voor een
-      model-link of model-code (voor alle modelleertalen; V3 als eerste). De
-      `v3model`-widget wordt dan een dunne "diagram uit Omnium"-widget: SVG
-      serverside ophalen, saneren, inline plaatsen (site-kleuren, klikbaar);
-      de eigen layout-code in `v3-diagram.tsx` vervalt zodra die API er is.
-      Gewenst contract: plank §2.1. _(S, wacht op Omnium)_
+- [x] ~~**V3-diagram bij de bron (Omnium)**~~ — de `v3model`-widget haalt de
+      SVG bij Omnium (`OMNIUM_URL`; GET op naam+versie+asOf, POST met
+      modelcode), saneert en plaatst hem inline. Opdracht:
+      design/opdracht-omnium-render-api.md.
+- [ ] **Omnium-diagram: rest** — (a) keuzelijst diagram/domein in de studio
+      uit `GET /api/models/{naam}/views.json` (nu toont de widget de keuzes
+      als melding); (b) `OMNIUM_URL` in `deploy/vps` (build + runtime) zodra
+      Omnium de render-API in productie heeft; (c) daarna `v3-diagram.tsx`
+      schrappen; (d) klikbare entiteiten via `linkPattern`. _(S)_
 
 ### Widget-contract
 - [ ] **`help` als markdown** i.p.v. één regel, met een "meer info"-uitklap in de

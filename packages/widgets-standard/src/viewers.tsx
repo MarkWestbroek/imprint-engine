@@ -9,6 +9,7 @@ import { MermaidDiagram } from "./mermaid-island";
 import { TocList } from "./toc-island";
 import { highlightCode } from "./code-highlight";
 import { V3Diagram, type V3Model } from "./v3-diagram";
+import { omniumBaseUrl, renderOmniumSvg, type OmniumProblem, type OmniumSource } from "./omnium";
 import type {
   AccordionConfig,
   AlbumConfig,
@@ -891,7 +892,91 @@ async function loadV3Model(config: V3ModelConfig): Promise<V3Model | string> {
   }
 }
 
+/**
+ * "Kleuren: site" maps Omnium's diagram variables onto the widget token
+ * contract; without them the SVG uses its own light fallbacks.
+ */
+const DIAGRAM_SITE_COLOURS =
+  "[--diagram-surface:--theme(--color-surface)] [--diagram-border:--theme(--color-line)] " +
+  "[--diagram-text:--theme(--color-foreground)] [--diagram-muted:--theme(--color-muted)] " +
+  "[--diagram-accent:--theme(--color-accent)]";
+
+function OmniumProblemNote({ problem, source }: { problem: OmniumProblem; source: string }) {
+  const where = [problem.element, problem.pad, problem.regel != null ? `line ${problem.regel}:${problem.kolom ?? 0}` : undefined]
+    .filter(Boolean)
+    .join(" · ");
+  return (
+    <div className="rounded-lg border border-line p-3 text-sm text-muted">
+      <p>{problem.detail}</p>
+      {where && <p className="mt-1 font-mono text-xs">{where}</p>}
+      {problem.diagrammen && problem.diagrammen.length > 0 && <p className="mt-1">Diagrams: {problem.diagrammen.join(", ")}</p>}
+      {problem.domeinen && problem.domeinen.length > 0 && <p className="mt-1">Domains: {problem.domeinen.join(", ")}</p>}
+      <p className="mt-1 text-xs">Source: {source}</p>
+    </div>
+  );
+}
+
+async function omniumSource(config: V3ModelConfig): Promise<{ source: OmniumSource; label: string } | string> {
+  if (config.model?.trim()) {
+    const naam = config.model.trim();
+    const label = `Omnium model “${naam}”${config.versie ? ` ${config.versie}` : ""}${config.asOf ? ` as of ${config.asOf}` : ""}`;
+    return { source: { kind: "link", naam, versie: config.versie || undefined, asOf: config.asOf || undefined }, label };
+  }
+  if (config.json?.trim()) return { source: { kind: "code", code: config.json }, label: "pasted model code" };
+  if (config.url) {
+    try {
+      const res = await fetch(config.url, { next: { revalidate: 600 } });
+      if (!res.ok) return `Model not available (${res.status}) at ${config.url}`;
+      return { source: { kind: "model", model: await res.json() }, label: config.url };
+    } catch (e) {
+      return e instanceof Error ? e.message : String(e);
+    }
+  }
+  return "Name a model in Omnium, paste a V3 model or give a URL.";
+}
+
+async function OmniumDiagram({ base, config }: { base: string; config: V3ModelConfig }) {
+  const found = await omniumSource(config);
+  if (typeof found === "string") return <p className="text-sm text-muted">{found}</p>;
+  const result = await renderOmniumSvg(base, found.source, {
+    diagram: config.diagram,
+    domein: config.domein,
+    entiteiten: config.entiteiten,
+    richting: config.richting,
+    velden: config.showFields,
+    afhankelijkheden: config.afhankelijkheden,
+  });
+  if ("problem" in result) return <OmniumProblemNote problem={result.problem} source={found.label} />;
+  return (
+    <div
+      className={`mx-auto [&>svg]:block [&>svg]:h-auto [&>svg]:w-full ${config.kleuren === "site" ? DIAGRAM_SITE_COLOURS : ""}`}
+      style={config.maxWidth ? { maxWidth: config.maxWidth } : undefined}
+      // Sanitised in renderOmniumSvg (svg-sanitize.ts); inline so it inherits the page and is searchable.
+      dangerouslySetInnerHTML={{ __html: result.svg }}
+    />
+  );
+}
+
 async function V3ModelWidget({ config }: { config: V3ModelConfig }) {
+  const base = omniumBaseUrl();
+  if (base) {
+    return (
+      <WidgetFrame title={config.title}>
+        <figure className="overflow-x-auto">
+          <OmniumDiagram base={base} config={config} />
+          {config.caption && <figcaption className="mt-2 text-center text-sm text-muted">{config.caption}</figcaption>}
+        </figure>
+      </WidgetFrame>
+    );
+  }
+  if (config.model?.trim()) {
+    return (
+      <WidgetFrame title={config.title}>
+        <p className="text-sm text-muted">This site has no Omnium connection (OMNIUM_URL), so the model “{config.model.trim()}” cannot be drawn.</p>
+      </WidgetFrame>
+    );
+  }
+  // Interim: no Omnium configured, draw it ourselves.
   const model = await loadV3Model(config);
   return (
     <WidgetFrame title={config.title}>

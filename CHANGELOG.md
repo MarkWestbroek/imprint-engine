@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **V3 model diagram getekend door Omnium**: met `OMNIUM_URL` haalt de
+  `v3model`-widget de SVG bij Omnium (render-API): een model in Omnium op naam
+  + versie + `asOf`, of geplakte/opgehaalde modelcode; weergave als opgeslagen
+  diagram of één domein, plus `entiteiten`, `richting`, `afhankelijkheden` en
+  `kleuren` (licht als figuur, of het sitethema). De SVG gaat gesaneerd
+  (allow-list, `svg-sanitize.ts`) inline in de pagina; Omniums foutmelding
+  (met het foute element, of de beschikbare diagrammen/domeinen) staat in de
+  widget. Zonder `OMNIUM_URL` blijft de tijdelijke eigen tekenaar.
 
 ## [0.11.0] - 2026-09-29
 - **SysEx (.syx) in de bibliotheek**: soort `data`, mime `application/x-sysex`,

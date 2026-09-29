@@ -297,14 +297,37 @@ duur en downloadlinks).
 Sinds 0.11: **Quote** (citaat met bron; "pull" maakt hem groot), **Code**
 (syntax-highlighting, licht/donker volgt de site), **Mermaid diagram**
 (diagram uit tekst — flowchart, sequence, class, gantt — getekend in de
-browser), **V3 model diagram** (een V3-metamodel als schema: entiteiten in
-hun domeinkleur, op positie of in een raster, met relaties; plak de JSON of
-geef een URL), **Tabs**, **Cards / features** (raster van kaartjes met icoon,
+browser), **V3 model diagram** (een V3-model als schema, getekend door
+Omnium — zie hieronder), **Tabs**, **Cards / features** (raster van kaartjes met icoon,
 kop, tekst, link), **Buttons**, **Logo cloud**, **Table of contents** (links
 naar de koppen op de pagina, uit welke widget ze ook komen), **Breadcrumb**
 (Home › sectie › pagina, uit de slug), **Audio**, **PDF**, **File download**,
 **Timeline**, **Media & text** (beeld naast tekst), **People / team**,
 **Testimonials** en **Pricing**.
+
+**V3 model diagram.** Imprint tekent het model niet zelf: Omnium doet dat
+(layout, kleuren, notatie horen bij het model). Je geeft op *welk model*:
+- een **model in Omnium**: vul `model` in (de naam zoals in Omnium) en liefst
+  een vaste `versie` — zonder versie krijg je steeds de nieuwste, en als het
+  model in Omnium een nieuwe naam krijgt, vindt de pagina het niet meer.
+  Met `asOf` toon je het model zoals het op dat moment was;
+- of **modelcode**: plak de V3-JSON in `json`, of geef een `url` waar hij
+  staat (bv. `https://musicbrain.nl/api/meta?format=v3`).
+
+En *welk deel*: een opgeslagen **diagram** uit het model (eerste keus), of
+alle entiteiten van één **domein**. Een heel model in één plaat wordt een
+chaos; alleen een model met één domein en zonder diagrammen tekent Omnium
+zonder keuze. Kies je niets, dan toont de widget welke diagrammen en domeinen
+er zijn. Verder: `entiteiten` (alleen deze, komma-gescheiden), `richting`
+(boven→onder of links→rechts), `afhankelijkheden` (datatypes en «use»-lijnen)
+en `kleuren`: **licht** (standaard, als een figuur, ook op een donker thema)
+of **site** (de kleuren van het sitethema; de elementen houden hun eigen
+kleur). Gaat er iets mis, dan staat Omniums melding in de widget, met het
+foute element — de rest van de pagina werkt gewoon.
+
+Heeft de site nog geen Omnium-koppeling, dan tekent Imprint geplakte of
+opgehaalde modelcode tijdelijk zelf (eenvoudiger); een model in Omnium kan
+dan niet.
 
 Bij elke widget staat in de sidebar een korte uitleg (ⓘ) en zijn versienummer.
 

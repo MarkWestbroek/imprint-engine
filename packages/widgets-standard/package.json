@@ -11,7 +11,8 @@
     "./editors": "./src/editors.tsx"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
   },
   "dependencies": {
     "@imprint/content-core": "*",

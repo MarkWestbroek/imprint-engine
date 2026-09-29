@@ -336,12 +336,35 @@ export const MermaidConfig = z.object({
 });
 export type MermaidConfig = z.infer<typeof MermaidConfig>;
 
+/**
+ * Drawn by Omnium when the site has `OMNIUM_URL` (render API,
+ * design/opdracht-omnium-render-api.md); without it the widget still uses the
+ * interim drawer in v3-diagram.tsx (pasted/fetched model only).
+ */
 export const V3ModelConfig = z.object({
   title: z.string().optional(),
+  /** Model-link: the model's name in Omnium (`model_naam`). Wins over `json` and `url`. */
+  model: z.string().optional(),
+  /** Model version in Omnium; empty = the newest. Pin it to keep a page stable. */
+  versie: z.string().optional(),
+  /** The model as it was at this moment (ISO 8601 / RFC 3339). */
+  asOf: z.string().optional(),
   /** A V3 model document, pasted. Wins over `url`. */
   json: z.string().optional(),
   /** Or fetched from here (absolute URL, e.g. https://site/api/meta?format=v3). */
   url: z.string().optional(),
+  /** Which view Omnium draws: a saved diagram of the model … */
+  diagram: z.string().optional(),
+  /** … or all entities of one domain (auto layout). Needed unless the model has one domain and no diagrams. */
+  domein: z.string().optional(),
+  /** Only these entities (comma-separated), within the diagram or domain. */
+  entiteiten: z.string().optional(),
+  /** Auto-layout direction: top-bottom or left-right. */
+  richting: z.enum(["TB", "LR"]).optional(),
+  /** Data-type cards and «use» lines. */
+  afhankelijkheden: z.boolean().default(false),
+  /** Light like a figure (default), or in the site's colours. */
+  kleuren: z.enum(["licht", "site"]).default("licht"),
   showFields: z.boolean().default(true),
   /** Cap the drawing's width in pixels; it scales down on narrow screens. */
   maxWidth: z.number().int().positive().optional(),
@@ -540,7 +563,7 @@ export const standardWidgets = {
   quote: { name: "quote", label: "Quote", version: "1.0.0", help: "A quotation with its source; \"pull\" makes it big.", configSchema: QuoteConfig },
   code: { name: "code", label: "Code", version: "1.0.0", help: "A code block with syntax highlighting (light/dark follow the site).", configSchema: CodeConfig },
   mermaid: { name: "mermaid", label: "Mermaid diagram", version: "1.0.0", help: "A diagram from mermaid text (flowchart, sequence, class, gantt, …), drawn in the browser.", configSchema: MermaidConfig },
-  v3model: { name: "v3model", label: "V3 model diagram", version: "1.0.0", help: "A V3 metamodel as a diagram: entities in their domain colour, on their position or in a grid, with relations.", configSchema: V3ModelConfig },
+  v3model: { name: "v3model", label: "V3 model diagram", version: "1.0.0", help: "A V3 model as a diagram, drawn by Omnium: a model in Omnium (name, version) or pasted/fetched model code, as a saved diagram or one domain.", configSchema: V3ModelConfig },
   tabs: { name: "tabs", label: "Tabs", version: "1.0.0", help: "Tabbed panels of markdown; the first is open by default.", configSchema: TabsConfig },
   cards: { name: "cards", label: "Cards / features", version: "1.0.0", help: "A grid of cards: icon, title, text, optional link.", configSchema: CardsConfig },
   buttons: { name: "buttons", label: "Buttons", version: "1.0.0", help: "A row of buttons (primary, secondary or ghost).", configSchema: ButtonsConfig },
