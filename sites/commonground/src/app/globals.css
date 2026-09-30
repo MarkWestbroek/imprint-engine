@@ -5,6 +5,8 @@
  */
 @source "../../../../packages/runtime-admin/src";
 @source "../../../../packages/widgets-standard/src";
+@source "../../../../packages/plugin-wiki/src";
+@source "../../../../packages/plugin-glossary/src";
 
 /*
  * Common Ground-huisstijl, naar commonground.nl: wit, navy tekst en knoppen,
@@ -152,3 +154,10 @@
 .cg-footer [data-widget="callout"] > section > h2 { color: var(--cg-navy); font-size: 20px; }
 .cg-footer [data-widget="callout"] > section > a:last-child { display: block; text-align: center; padding-top: 10px; padding-bottom: 10px; font-size: 16px; }
 [data-widget="image"] > section, [data-widget="image"] > figure { border: 0; background: none; padding: 0; }
+/* Footerkaarten even hoog, de knop onderaan — zoals op commonground.nl. */
+.cg-footer .grid { align-items: stretch; }
+.cg-footer .grid > div > [data-widget="callout"]:only-child,
+.cg-footer .grid > div > [data-widget="callout"]:only-child > section { height: 100%; }
+.cg-footer [data-widget="callout"] > section { display: flex; flex-direction: column; }
+.cg-footer [data-widget="callout"] > section > a:last-child { margin-top: auto; }
+.cg-footer [data-widget="callout"] > section > :nth-last-child(2) { margin-bottom: 16px; }

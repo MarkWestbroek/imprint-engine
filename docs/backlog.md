@@ -820,6 +820,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             nu Source Sans 3. Navragen wat Common Ground mag.
       - [ ] Redirects van Pleio-URL's (`/page/view/<guid>/<slug>`) naar de slug.
       - [ ] Echte avatarfoto (ledenprofiel) en mededelingen (communities §4.4).
+      - [x] ~~Wiki en termen~~ — geïmporteerd (30-09): wiki via plugin-wiki,
+            termen via de nieuwe plugin-glossary; crosslinks omgezet.
+      - [ ] Wiki-boom: map + gelijknamige eerste pagina staan nu dubbel in de
+            navigatie (Pleio-knoop met kinderen = map + pagina); de map zou de
+            pagina kunnen zíjn. Plus kortere slugs (nu `wiki-<titel>` per
+            niveau).
+      - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
+      - [ ] Portfolio als widget i.p.v. het iframe: tabel + detail uit een
+            databron met een tabeldefinitie (de "Weergave" van Omnium als
+            widget); zie het antwoord aan Mark van 30-09.
 - [ ] **Communities, Imprint als alternatief voor Pleio?** Verkenning in
       [design/communities.md](design/communities.md): leden, groepen met drie
       zichtbaarheidsniveaus, discussies, mail, evenementen, bitemporele

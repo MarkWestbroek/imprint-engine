@@ -994,7 +994,11 @@ niet van elkaar afwijken.
   (twee typen met regels, bordadmin, acties, widget, pure bordlogica met
   tests; de site componeert de widget in zijn catalogus en viewers) en
   [plugin-wiki](../packages/plugin-wiki/src/index.ts) (drie typen, boomstudio,
-  acties incl. publiceren, publieke route, `WikiView`). Node-scripts
+  acties incl. publiceren, publieke route, `WikiView`) en
+  [plugin-glossary](../packages/plugin-glossary/src/index.ts) (type `term`
+  met samenvatting, tekst en tags; de widget `glossary` — kaarten met een
+  zoekveld dat in de browser filtert, optioneel één tag — die de site in zijn
+  catalogus componeert; publieke route `/term/<slug>`). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie

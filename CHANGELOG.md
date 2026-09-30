@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **plugin-glossary**: termen als contenttype (`term`: titel, samenvatting,
+  tekst, tags), de widget `glossary` (kaarten met zoekveld, optioneel één
+  tag) en een pagina per term op `/term/<slug>`.
+- **Common Ground-showcase: wiki en termen**: `import:pleio` neemt ook de
+  wiki van de groep "Common Ground publicatiesite" (39 pagina's, via
+  plugin-wiki) en de 124 termen (plugin-glossary) over; links tussen
+  pagina's, wiki en termen wijzen naar de Imprint-paden. Footerkaarten even
+  hoog met de knop onderaan.
 - **Showcase: Common Ground op Imprint** (`sites/commonground`, poort 3300):
   de vormgeving van commonground.nl (logo, menu met uitklapmenu's, zoeken,
   mededelingen, avatar van de ingelogde gebruiker, lichtblauwe footer met

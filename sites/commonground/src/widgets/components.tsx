@@ -1,5 +1,6 @@
 import type { WidgetViewer, WidgetViewers } from "@imprint/runtime-admin";
 import { standardViewers } from "@imprint/widgets-standard/viewers";
+import { glossaryViewers } from "@imprint/plugin-glossary";
 
 /**
  * Widget type name → viewer, for every widget in ./registry.ts. Each viewer
@@ -35,6 +36,7 @@ const viewers: WidgetViewers = {
   pricing: standardViewers.pricing,
   embed: standardViewers.embed,
   video: standardViewers.video,
+  ...glossaryViewers,
 };
 
 function tagged(type: string, Viewer: WidgetViewer): WidgetViewer {

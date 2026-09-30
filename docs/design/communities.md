@@ -8,8 +8,9 @@
 
 > **Showcase (30 september 2026):** `sites/commonground` draait Common
 > Ground op Imprint (https://commonground.imprint-engine.nl), met de vormgeving van commonground.nl en de publieke
-> pagina's, het menu en de footer uit Pleio (GraphQL-import). Nieuws, agenda,
-> groepen en termen komen nog niet mee; zie de backlog.
+> pagina's, het menu, de footer, de wiki van de groep "Common Ground
+> publicatiesite" en de termen uit Pleio (GraphQL-import; termen via de nieuwe
+> plugin-glossary). Nieuws, agenda en groepen komen nog niet mee; zie de backlog.
 
 ## 1. Samenvatting
 

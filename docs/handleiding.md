@@ -484,6 +484,16 @@ andere sites, met een paar dingen van commonground.nl:
 - Blokken met **"komt uit Pleio"** zijn overzichten (nieuws, agenda,
   communities) waarvan de inhoud nog niet is overgenomen; de knop gaat naar
   commonground.nl.
+- **De wiki** (onder `/wiki`) is de wiki van de groep "Common Ground
+  publicatiesite"; bewerken gaat onder **Wikis** in de admin, zoals bij
+  MusicBrain. Een Pleio-wikipagina met onderliggende pagina's is hier een
+  map met die pagina als eerste pagina erin.
+- **Termen**: onder **Terms** in de admin staat elke term met een titel, een
+  **samenvatting** (de tekst op de kaart; leeg = het begin van de tekst), de
+  **tekst** en **tags** (bijvoorbeeld `afkorting`). Elke term heeft een eigen
+  pagina op `/term/<slug>`; verwijs ernaar met een gewone link. Het overzicht
+  is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
+  tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 
 ## Voor gevorderden
 

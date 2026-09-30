@@ -43,7 +43,13 @@ andere Pleio-site).
   Pleio-inhoud (nieuws, agenda, groepen, activiteit, zoeken) worden een
   callout met een knop naar het origineel, tot die inhoud meekomt.
 - Rich text (TipTap-JSON) → Markdown.
-- Links naar geïmporteerde pagina's worden Imprint-paden; al het andere
+- De wiki van de groep "Common Ground publicatiesite" (`--wiki=<root-guid>,…`)
+  → één Imprint-wiki `wiki` (plugin-wiki): een knoop met kinderen wordt een
+  map met de eigen tekst als eerste pagina, een blad een pagina.
+- Termen (Pleio's `custom_term`) → `term` (plugin-glossary), met de
+  samenvatting (excerpt) voor de kaart en de tag-categorie als tags; de
+  overzichten erop (`objects`-widgets over `custom_term`) → de widget `glossary`.
+- Links naar geïmporteerde pagina's, wikipagina's en termen worden Imprint-paden; al het andere
   (nieuws, agenda, groepen, bestanden, afbeeldingen) wijst naar commonground.nl.
 
 ## Bestanden

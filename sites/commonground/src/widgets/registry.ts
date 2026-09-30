@@ -1,5 +1,6 @@
 import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
+import { glossaryWidgets } from "@imprint/plugin-glossary";
 
 /**
  * The widgets this site offers (architecture.md §3): a selection from the
@@ -37,6 +38,8 @@ export const widgetCatalog = [
   // Pleio pages embed iframes (html widget) and YouTube videos.
   standardWidgets.embed,
   standardWidgets.video,
+  // The terms overview (plugin-glossary): Pleio's "Termen" and "Afkortingen" pages.
+  ...glossaryWidgets,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

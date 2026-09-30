@@ -1,8 +1,15 @@
 import "./load-env";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { createImprint } from "@imprint/extension-api";
-import config from "../imprint.config";
+import { ContentTypeRegistry, coreContentTypeDefinitions } from "@imprint/content-core";
+import { openContentDatabase } from "@imprint/content-core/db";
+// React-free entries of the wiki plugin: this runs under tsx, not Next (as scripts/seed.ts does).
+import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
+import { scopedSlug, wikiPageHref } from "@imprint/plugin-wiki/href";
+import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
+import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
+import { termHref, termSlug } from "@imprint/plugin-glossary/href";
+import { widgetRegistry } from "../src/widgets/registry";
 
 /**
  * Import the public pages of a Pleio site into this Imprint instance — the
@@ -26,13 +33,16 @@ import config from "../imprint.config";
  *   search) become a callout pointing at the original until that content
  *   comes along;
  * - rich text is TipTap JSON → Markdown;
- * - the main menu → menu `main`, the footer rows → page `_footer`.
+ * - the main menu → menu `main`, the footer rows → page `_footer`;
+ * - Pleio wikis (--wiki=<root guid>,…) → one Imprint wiki `wiki`: a node with
+ *   children becomes a folder plus a page with its own text, a leaf a page;
+ * - terms (the custom type `custom_term`) → `term` (plugin-glossary), their
+ *   overviews (objects widgets over custom_term) → the `glossary` widget.
  * Links to imported pages become Imprint paths; everything else (news,
  * events, groups, files, images) points at the Pleio site itself.
  * Unchanged pages are skipped, so running it again only adds real changes.
  */
 
-// imprint.config reads DATABASE_URL when imported; the env is loaded before the import below runs.
 
 const ORIGIN = (process.argv.find((a) => a.startsWith("--origin="))?.slice(9) ?? "https://commonground.nl").replace(/\/$/, "");
 const CACHE = process.argv.find((a) => a.startsWith("--cache="))?.slice(8);
@@ -40,6 +50,16 @@ const DRY = process.argv.includes("--dry-run");
 /** The public address of this Imprint site (site.baseUrl); kept when not given. */
 const BASE_URL = process.argv.find((a) => a.startsWith("--base-url="))?.slice(11);
 const BY = "import-pleio";
+/**
+ * The Pleio wikis to import (root guids): by default the wiki of the group
+ * "Common Ground publicatiesite". They become one Imprint wiki, `/wiki/…`.
+ */
+const WIKI_ROOTS = (
+  process.argv.find((a) => a.startsWith("--wiki="))?.slice(7) ?? "92b5d296-dbbb-4625-b8fb-1b7ced3d3526"
+)
+  .split(",")
+  .filter(Boolean);
+const WIKI = "wiki";
 
 // ── Pleio GraphQL ────────────────────────────────────────────────────────
 
@@ -54,6 +74,17 @@ const SITE_QUERY = `query Site { site { name subtitle startpage
 const PAGES_QUERY = `query Pages($offset: Int, $limit: Int) { entities(subtype: "page", offset: $offset, limit: $limit) {
   total edges { guid ... on Page { pageType statusPublished accessId title url description richDescription
   timeCreated timeUpdated group { guid } rows { ${ROW} } } } } }`;
+
+/** A Pleio wiki is a tree: every node has its own text and may have children. */
+const WIKI_FIELDS = "guid title url accessId statusPublished richDescription";
+const wikiNest = (depth: number): string =>
+  depth === 0 ? WIKI_FIELDS : `${WIKI_FIELDS} children { ${wikiNest(depth - 1)} }`;
+const WIKI_QUERY = `query Wiki($guid: String!) { entity(guid: $guid) { guid ... on Wiki { ${wikiNest(8)} } } }`;
+
+/** Terms: Pleio's custom content type `custom_term` (a GenericArticle). */
+const TERMS_QUERY = `query Terms($offset: Int, $limit: Int) { entities(subtype: "custom_term", offset: $offset, limit: $limit) {
+  total edges { guid ... on GenericArticle { title url excerpt richDescription statusPublished accessId tags
+  tagCategories { name values } group { guid } } } } }`;
 
 async function gql<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
   const res = await fetch(`${ORIGIN}/graphql`, {
@@ -104,14 +135,39 @@ type PPage = {
   group: { guid: string } | null;
   rows: PRow[] | null;
 };
+type PWiki = {
+  guid: string;
+  title: string;
+  url: string;
+  accessId: number;
+  statusPublished: string;
+  richDescription: string | null;
+  children?: PWiki[] | null;
+};
+type PTerm = {
+  guid: string;
+  title: string;
+  url: string;
+  excerpt: string | null;
+  richDescription: string | null;
+  statusPublished: string;
+  accessId: number | string;
+  tags: string[] | null;
+  tagCategories: { name: string; values: string[] }[] | null;
+  group: { guid: string } | null;
+};
 type PMenuItem = { label: string; link: string | null; children?: PMenuItem[] | null };
 type PSite = { name: string; subtitle: string; startpage: string | null; menu: PMenuItem[]; footerRows: PRow[] };
 
 // ── Links ────────────────────────────────────────────────────────────────
 
-const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/;
-/** Pleio guid → Imprint slug, for every imported page. */
-const slugOf = new Map<string, string>();
+const GUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+/**
+ * Pleio guid → path on this Imprint site, for everything imported (pages,
+ * wiki pages). Filled before any content is converted, so crosslinks between
+ * all of them resolve.
+ */
+const hrefOf = new Map<string, string>();
 
 /** A Pleio href as it should be on the Imprint site. */
 function href(raw: string | null | undefined): string {
@@ -119,11 +175,10 @@ function href(raw: string | null | undefined): string {
   let url = raw.trim();
   if (url.startsWith(ORIGIN)) url = url.slice(ORIGIN.length) || "/";
   if (/^(mailto:|tel:|#)/.test(url) || /^[a-z]+:\/\//i.test(url)) return url;
-  const page = url.match(new RegExp(`^/page/view/(${GUID.source})`)) ?? url.match(new RegExp(`^(${GUID.source})`));
-  if (page && slugOf.has(page[1]!)) {
-    const slug = slugOf.get(page[1]!)!;
-    return slug === "home" ? "/" : `/${slug}`;
-  }
+  // The item's own guid comes last (/groups/view/<group>/…/wiki/view/<guid>/<slug>).
+  const guids = [...url.matchAll(GUID)].map((m) => m[0]).reverse();
+  const known = guids.find((g) => hrefOf.has(g));
+  if (known) return hrefOf.get(known)!;
   // Everything that did not come along (news, events, groups, files) stays on Pleio.
   return `${ORIGIN}${url.startsWith("/") ? "" : "/"}${url}`;
 }
@@ -439,8 +494,16 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
     case "events":
     case "groups":
     case "activity":
-    case "search":
+    case "search": {
+      // Lists of terms are the glossary widget now (which searches itself); the rest points at Pleio.
+      if ((val(s, "subtypes") + val(s, "typeFilter")).includes("custom_term")) {
+        if (w.type === "search") return [];
+        const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
+        const tag = categories.flatMap((c) => c.values ?? [])[0] ?? "";
+        return [{ type: "glossary", config: { tag, showSearch: true } }];
+      }
       return [listPlaceholder(w, s, page)];
+    }
     case "create":
       return []; // "new item" buttons for signed-in members; nothing to show publicly
     default:
@@ -501,15 +564,63 @@ async function main() {
     gql(PAGES_QUERY, { offset: 0, limit: 1000 })
   ).then((d) => d.entities.edges);
 
+  const wikiRoots = await Promise.all(
+    WIKI_ROOTS.map((guid) =>
+      cached<{ entity: PWiki }>(`wiki-${guid}.json`, () => gql(WIKI_QUERY, { guid })).then((d) => d.entity)
+    )
+  );
+
   // Public, published, site-level pages only; groups come with the community work.
   const wanted = pages.filter((p) => !p.group && p.statusPublished === "published" && p.accessId === 2);
-  const taken = new Set<string>(["zoeken", "admin", "api"]);
+  const slugOf = new Map<string, string>();
+  const taken = new Set<string>(["zoeken", "admin", "api", WIKI]);
   for (const p of wanted) {
     let slug = p.guid === site.startpage ? "home" : slugFromUrl(p.url);
     for (let n = 2; taken.has(slug); n++) slug = `${slugFromUrl(p.url)}-${n}`;
     taken.add(slug);
     slugOf.set(p.guid, slug);
+    hrefOf.set(p.guid, slug === "home" ? "/" : `/${slug}`);
   }
+
+  // Terms (plugin-glossary): site-level, public ones; each gets its /term/<slug>, so the crosslinks between them resolve.
+  const allTerms = await cached<{ entities: { edges: PTerm[] } }>("terms.json", () =>
+    gql(TERMS_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.entities.edges);
+  const terms = allTerms.filter((t) => !t.group && t.statusPublished === "published" && Number(t.accessId) === 2);
+  const termSlugOf = new Map<string, string>();
+  const takenTerms = new Set<string>();
+  for (const t of terms) {
+    let slug = termSlug(t.title);
+    for (let n = 2; takenTerms.has(slug); n++) slug = `${termSlug(t.title)}-${n}`;
+    takenTerms.add(slug);
+    termSlugOf.set(t.guid, slug);
+    hrefOf.set(t.guid, termHref(slug));
+  }
+
+  // The wiki tree: plan folders and pages first, so every page's URL is known before any text is converted.
+  const folders: WikiFolder[] = [];
+  const wikiPages: { node: PWiki; page: Omit<WikiPage, "body"> }[] = [];
+  const takenFolders = new Set<string>();
+  const takenPages = new Set<string>();
+  const isPublic = (w: PWiki) => w.accessId === 2 && w.statusPublished === "published";
+  const plan = (node: PWiki, parent: string, order: number) => {
+    const kids = (node.children ?? []).filter(isPublic);
+    const pageSlug = scopedSlug(WIKI, node.title, takenPages);
+    takenPages.add(pageSlug);
+    const base = { lang: "en" as const, access: "public" as const, wiki: WIKI, title: node.title };
+    if (kids.length || !parent) {
+      // A node with children: a folder, with the node's own text as its first page.
+      const folder = scopedSlug(WIKI, node.title, takenFolders);
+      takenFolders.add(folder);
+      folders.push({ slug: folder, lang: "en", wiki: WIKI, parent, title: node.title, order });
+      wikiPages.push({ node, page: { ...base, slug: pageSlug, folder, order: 0 } });
+      kids.forEach((kid, i) => plan(kid, folder, i + 1));
+    } else {
+      wikiPages.push({ node, page: { ...base, slug: pageSlug, folder: parent, order } });
+    }
+  };
+  wikiRoots.filter(isPublic).forEach((root, i) => plan(root, "", i));
+  for (const { node, page } of wikiPages) hrefOf.set(node.guid, wikiPageHref({ ...page, body: "" }, folders));
 
   const docs: { slug: string; data: Record<string, unknown> }[] = [];
   for (const p of wanted) {
@@ -536,15 +647,38 @@ async function main() {
   }
   const mainMenu = { name: "main", items: menu(site.menu ?? []) };
 
-  console.log(`${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items`);
+  const wikiDoc = wikiRoots[0]
+    ? { slug: WIKI, lang: "en", title: wikiRoots[0].title, description: "", access: "public", order: 0 }
+    : null;
+  const wikiPageDocs = wikiPages.map(({ node, page }) => ({ ...page, body: markdown(node.richDescription) }));
+  const termDocs = terms.map((t) => ({
+    slug: termSlugOf.get(t.guid)!,
+    lang: "en",
+    access: "public",
+    title: t.title,
+    summary: (t.excerpt ?? "").replace(/\s+/g, " ").trim(),
+    body: markdown(t.richDescription),
+    tags: [...new Set([...(t.tagCategories ?? []).flatMap((c) => c.values), ...(t.tags ?? [])])],
+  }));
+
+  console.log(
+    `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
+      `wiki ${folders.length} folders + ${wikiPageDocs.length} pages, ${termDocs.length} terms`
+  );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
+    for (const p of wikiPageDocs) console.log(`  ${hrefOf.get(wikiPages.find((w) => w.page.slug === p.slug)!.node.guid)}`);
     console.log(JSON.stringify(mainMenu, null, 1));
     return;
   }
 
-  const store = createImprint(config).writableStore;
-  if (!store) throw new Error("Writing needs DATABASE_URL (see .env.example)");
+  const url = process.env.DATABASE_URL;
+  if (!url) throw new Error("Writing needs DATABASE_URL (see .env.example)");
+  // The store with this site's widgets and content types, so it validates as the admin does.
+  const store = openContentDatabase(url, {
+    widgets: widgetRegistry,
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes),
+  }).store;
 
   let written = 0;
   const put = async (type: string, slug: string, data: unknown) => {
@@ -569,8 +703,14 @@ async function main() {
   await put("site", "site", siteData);
   for (const d of docs) await put("page", d.slug, d.data);
   await put("menu", "main", mainMenu);
+  // Wiki first, then folders (parents before children, as planned), then pages: the relation rules check each reference.
+  if (wikiDoc) await put("wiki", WIKI, wikiDoc);
+  for (const f of folders) await put("wiki-folder", f.slug, f);
+  for (const p of wikiPageDocs) await put("wiki-page", p.slug, p);
+  for (const t of termDocs) await put("term", t.slug, t);
+  const total = docs.length + 2 + (wikiDoc ? 1 : 0) + folders.length + wikiPageDocs.length + termDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
-  console.log(`✓ ${written} written, ${docs.length + 2 - written} unchanged or failed`);
+  console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }
 
 main().then(
