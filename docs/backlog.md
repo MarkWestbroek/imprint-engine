@@ -807,6 +807,19 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 7. Open beslissingen (vragen aan Mark)
 
+- [ ] **Common Ground-showcase afmaken** (`sites/commonground`, 30-09):
+      - [ ] DNS: A-record `commonground.imprint-engine.nl` → VPS (Mark), dan
+            Caddy-blok aan (staat klaar in `Caddyfile.snippet`).
+      - [ ] Nieuws, agenda, blogs en termen meenemen (313/322/291/124 publiek);
+            de overzichtsblokken zijn nu callouts met een knop naar Pleio.
+      - [ ] Afbeeldingen en bestanden naar de beeldbibliotheek i.p.v. linken
+            naar commonground.nl.
+      - [ ] Rij-achtergrondkleur (Pleio `backgroundColor` per rij) als optie in
+            `LayoutRowSchema`; nu wordt een gekleurd tekstblok een callout.
+      - [ ] Lettertype: Rijksoverheid Sans is voorbehouden aan de Rijksoverheid;
+            nu Source Sans 3. Navragen wat Common Ground mag.
+      - [ ] Redirects van Pleio-URL's (`/page/view/<guid>/<slug>`) naar de slug.
+      - [ ] Echte avatarfoto (ledenprofiel) en mededelingen (communities §4.4).
 - [ ] **Communities, Imprint als alternatief voor Pleio?** Verkenning in
       [design/communities.md](design/communities.md): leden, groepen met drie
       zichtbaarheidsniveaus, discussies, mail, evenementen, bitemporele

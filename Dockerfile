@@ -27,6 +27,7 @@ COPY packages/plugin-planning/package.json packages/plugin-planning/
 COPY packages/plugin-wiki/package.json packages/plugin-wiki/
 COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
+COPY sites/commonground/package.json sites/commonground/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund
 COPY . .
 

@@ -10,11 +10,12 @@
   "scripts": {
     "dev": "npm run dev --workspace=musicbrain",
     "dev:imprint": "npm run dev --workspace=@imprint/site -- --port 3100",
+    "dev:commonground": "npm run dev --workspace=commonground",
     "dev:start": "node scripts/dev-server.mjs start",
     "dev:stop": "node scripts/dev-server.mjs stop",
     "dev:restart": "node scripts/dev-server.mjs restart",
     "dev:status": "node scripts/dev-server.mjs status",
-    "build": "npm run build --workspace=musicbrain && npm run build --workspace=@imprint/site",
+    "build": "npm run build --workspace=musicbrain && npm run build --workspace=@imprint/site && npm run build --workspace=commonground",
     "start": "npm run start --workspace=musicbrain",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",

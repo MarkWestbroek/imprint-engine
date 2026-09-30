@@ -1134,6 +1134,32 @@ flowchart LR
     IMDB -- ContentStore --> REN
 ```
 
+Een derde site, `sites/commonground`, is de **Common Ground-showcase**
+([design/communities.md](design/communities.md)): géén vaste routes, alles
+uit de store. Drie patronen die ook voor andere sites bruikbaar zijn:
+
+- **Chrome als content**: het menu is de `menu` `main` (met `children` als
+  uitklapmenu), de footer is de pagina `_footer`, door dezelfde
+  `PageRenderer` getekend; slugs met `_` zijn bouwstenen, geen pagina's.
+- **Wie kijkt, zonder dynamische pagina's**: de header vraagt in de browser
+  `/api/me` (sessie + `canEdit`) en toont dan avatar, bel en het potlood
+  naar de studio; de pagina's zelf blijven SSG.
+- **Stijl per widgettype zonder engine-wijziging**: de site verpakt elke
+  viewer in `<div data-widget="<type>">` (`src/widgets/components.tsx`), zodat
+  `globals.css` bv. het kaartkader van tekstwidgets kan weghalen.
+
+De inhoud komt uit Pleio: `scripts/import-pleio.ts` leest de GraphQL-API,
+zet TipTap-JSON om naar Markdown en Pleio-rijen (12 kolommen) naar
+`PageLayout`-rijen, en schrijft via de `WritableContentStore`.
+
+```mermaid
+flowchart LR
+    P["Pleio GraphQL<br/>site + pages"] --> I["import-pleio.ts<br/>TipTap → Markdown<br/>rows → cells"]
+    I -- putItem --> DB[("Postgres<br/>commonground")]
+    DB -- ContentStore --> R["PageRenderer<br/>+ data-widget-viewers"]
+    R --> S["commonground.imprint-engine.nl"]
+```
+
 Stappen voor een nieuwe site:
 
 1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,

@@ -307,6 +307,28 @@ de snapshot-taak (`Pool1/backup/vps1`, 07:00, 2 weken) moet snapshots maken.
    datamap) — de opdracht staat bovenin [pg-init.sh](../deploy/vps/pg-init.sh).
 4. Caddy-blok, DNS, `SITES=<naam> ./deploy.sh`.
 
+**Voorbeeld: de Common Ground-showcase** (`commonground`, poort 3300). De
+service, het Caddy-blok (`commonground.imprint-engine.nl`) en de
+Dockerfile-regel staan klaar; op de VPS:
+
+```bash
+cd /srv/imprint/deploy/vps
+# geheimen in .env, zonder ze te tonen
+printf 'COMMONGROUND_DB_PASSWORD=%s
+COMMONGROUND_SESSION_SECRET=%s
+'   "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" >> .env
+# SITES in .env aanvullen met commonground
+set -a; . ./.env; set +a
+docker compose exec -T postgres psql -U postgres   -c "CREATE ROLE commonground LOGIN PASSWORD '$COMMONGROUND_DB_PASSWORD'"   -c "CREATE DATABASE commonground OWNER commonground"
+./deploy.sh migrate commonground
+./deploy.sh import-pleio commonground --base-url=https://commonground.imprint-engine.nl
+./deploy.sh user commonground add <naam> admin
+SITES=commonground ./deploy.sh
+```
+
+Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
+en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
+
 ## Valkuilen
 
 - **`.env`-wachtwoorden in hex**: ze komen in een `postgres://`-URL.

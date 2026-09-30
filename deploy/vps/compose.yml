@@ -6,6 +6,7 @@
 # SSG-build, backups en een SSH-tunnel.
 #
 #   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
+#   commonground → 127.0.0.1:3300    (showcase, design/communities.md)
 #   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
 #   minio      → alleen imprint_net (API :9000); console 127.0.0.1:9011
 #
@@ -32,6 +33,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD ontbreekt in .env}
       MUSICBRAIN_DB_PASSWORD: ${MUSICBRAIN_DB_PASSWORD:?MUSICBRAIN_DB_PASSWORD ontbreekt in .env}
       IMPRINT_DB_PASSWORD: ${IMPRINT_DB_PASSWORD:?IMPRINT_DB_PASSWORD ontbreekt in .env}
+      # Leeg mag: dan maakt pg-init.sh die database niet aan (bestaand volume: zie docs/deploy-vps.md).
+      COMMONGROUND_DB_PASSWORD: ${COMMONGROUND_DB_PASSWORD:-}
     ports:
       - "127.0.0.1:${PG_PORT:-5434}:5432"
     volumes:
@@ -113,6 +116,26 @@ services:
     volumes:
       - imprint_assets:/data/assets
 
+  # Showcase: Common Ground op Imprint (design/communities.md). Pagina's uit
+  # Pleio via `./deploy.sh import-pleio commonground`; plaatjes linken nog naar
+  # commonground.nl, dus geen bucket nodig.
+  commonground:
+    <<: *site
+    image: imprint/commonground:${COMMONGROUND_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: commonground, BUILD_ID: "${BUILD_ID:-dev}" }
+      network: host
+      secrets: [database_url]
+    environment:
+      DATABASE_URL: postgres://commonground:${COMMONGROUND_DB_PASSWORD}@postgres:5432/commonground
+      SESSION_SECRET: ${COMMONGROUND_SESSION_SECRET:-}
+      ASSET_ROOT: /data/assets
+    ports:
+      - "127.0.0.1:${COMMONGROUND_PORT:-3300}:3000"
+    volumes:
+      - commonground_assets:/data/assets
+
   # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
   # productiedatabase. Draait alleen op verzoek:
   #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
@@ -139,6 +162,7 @@ volumes:
   pg_data:
   musicbrain_assets:
   imprint_assets:
+  commonground_assets:
 
 networks:
   imprint_net:

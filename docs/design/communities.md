@@ -6,6 +6,11 @@
 > **▶**. Status: **verkenning**. Er is nog niets besloten en niets gepland;
 > concreet werk komt pas in `docs/backlog.md` als we een stap kiezen.
 
+> **Showcase (30 september 2026):** `sites/commonground` draait Common
+> Ground op Imprint, met de vormgeving van commonground.nl en de publieke
+> pagina's, het menu en de footer uit Pleio (GraphQL-import). Nieuws, agenda,
+> groepen en termen komen nog niet mee; zie de backlog.
+
 ## 1. Samenvatting
 
 Op het **websitedeel** is Imprint al sterker dan Pleio: de studio, widgets,

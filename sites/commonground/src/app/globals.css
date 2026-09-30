@@ -1,0 +1,154 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer en de standaardwidgets, met classes
+ * die buiten deze site-map staan; Tailwind moet ze dus expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+
+/*
+ * Common Ground-huisstijl, naar commonground.nl: wit, navy tekst en knoppen,
+ * een lichtblauwe footer met witte kaarten. De vormgeving is van Common
+ * Ground zelf, niet van Pleio; hier alleen als tokens.
+ */
+:root {
+	--cg-navy: #143462;
+	--cg-navy-deep: #0e2446;
+	--cg-ink: #1d1d1b;
+	--cg-ink-soft: #595959;
+	--cg-blue: #00a1e5;
+	--cg-yellow: #ffc200;
+	--cg-sky: #ebf8fd;
+	--cg-line: #d9dee5;
+	--cg-surface: #f4f6f9;
+	--cg-alert: #d52b1e;
+	--cg-online: #39870c;
+	--cg-width: 1100px;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3), met het Common Ground-palet. */
+@theme inline {
+	--color-background: #ffffff;
+	--color-surface: var(--cg-surface);
+	--color-line: var(--cg-line);
+	--color-foreground: var(--cg-ink);
+	--color-muted: var(--cg-ink-soft);
+	--color-accent: var(--cg-navy);
+	--color-accent-strong: var(--cg-navy-deep);
+	--color-accent-2: var(--cg-blue);
+}
+
+@layer base {
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		min-height: 100vh;
+		display: flex;
+		flex-direction: column;
+		background: #fff;
+		color: var(--cg-ink);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 16px;
+		line-height: 1.65;
+	}
+	a { color: inherit; }
+	h1, h2, h3, h4 { color: var(--cg-navy); line-height: 1.25; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.cg-container { width: 100%; max-width: var(--cg-width); margin: 0 auto; padding: 0 16px; }
+
+/* ── Header ─────────────────────────────────────────────────────────── */
+.cg-header { background: #fff; position: relative; z-index: 20; }
+.cg-header-row { display: flex; align-items: flex-start; gap: 24px; padding-top: 6px; padding-bottom: 6px; }
+.cg-logo { flex: none; display: block; padding: 2px 0; }
+.cg-logo img { display: block; height: 40px; width: auto; }
+.cg-nav { flex: 1; min-width: 0; }
+.cg-nav > ul { display: flex; flex-wrap: wrap; align-items: center; column-gap: 4px; margin: 0; padding: 0; list-style: none; }
+.cg-nav li { position: relative; list-style: none; }
+.cg-nav a, .cg-nav button, .cg-nav span {
+	display: inline-flex; align-items: center; gap: 4px;
+	padding: 10px 14px; border: 0; background: none;
+	color: var(--cg-ink); font: inherit; font-weight: 700; font-size: 16px; line-height: 1.4;
+	text-decoration: none; cursor: pointer; white-space: nowrap;
+}
+.cg-nav a:hover, .cg-nav button:hover { color: var(--cg-navy); text-decoration: underline; text-underline-offset: 4px; }
+.cg-nav li ul {
+	display: none; position: absolute; left: 0; top: 100%; min-width: 220px;
+	margin: 0; padding: 6px 0; background: #fff; border: 1px solid var(--cg-line);
+	border-radius: 4px; box-shadow: 0 8px 24px rgb(0 0 0 / .1); list-style: none;
+}
+.cg-nav li:hover > ul, .cg-nav li:focus-within > ul { display: block; }
+.cg-nav li ul a, .cg-nav li ul span { display: flex; padding: 8px 16px; font-weight: 600; }
+.cg-tools { flex: none; display: flex; align-items: center; gap: 12px; padding-top: 8px; }
+.cg-icon-button { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: var(--cg-ink); }
+.cg-icon-button:hover { background: var(--cg-surface); }
+.cg-avatar {
+	position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+	background: var(--cg-navy); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none;
+	box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--cg-line);
+}
+.cg-avatar.is-pending { background: var(--cg-surface); box-shadow: none; }
+.cg-online { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--cg-online); border: 2px solid #fff; }
+.cg-login { padding: 8px 16px; border-radius: 4px; background: var(--cg-navy); color: #fff; font-weight: 700; text-decoration: none; }
+.cg-login:hover { background: var(--cg-navy-deep); }
+.cg-edit {
+	position: fixed; right: 24px; bottom: 24px; z-index: 30;
+	display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%;
+	background: #fff; color: var(--cg-navy); border: 1px solid var(--cg-line);
+	box-shadow: 0 4px 16px rgb(0 0 0 / .15);
+}
+.cg-edit:hover { background: var(--cg-sky); }
+
+/* ── Inhoud ─────────────────────────────────────────────────────────── */
+.cg-main { flex: 1; padding: 48px 0 96px; }
+.cg-page { max-width: var(--cg-width); }
+.cg-page > h1 { margin: 0 0 24px; font-size: 32px; }
+.cg-muted { color: var(--cg-ink-soft); }
+.eyebrow { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--cg-ink-soft); }
+.markdown { line-height: 1.65; }
+.markdown > * + * { margin-top: 1em; }
+.markdown h2 { font-size: 24px; margin-top: 1.6em; }
+.markdown h3 { font-size: 20px; margin-top: 1.4em; }
+.markdown a { color: var(--cg-navy); text-decoration: underline; text-underline-offset: 3px; }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown img { max-width: 100%; height: auto; }
+.markdown blockquote { border-left: 4px solid var(--cg-blue); padding-left: 16px; color: var(--cg-ink-soft); }
+.markdown code { font-size: .9em; padding: .1em .35em; background: var(--cg-surface); }
+.markdown table { border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--cg-line); padding: 6px 10px; }
+
+/* Zoeken */
+.cg-search { display: flex; gap: 8px; max-width: 640px; margin-bottom: 24px; }
+.cg-search input { flex: 1; min-width: 0; padding: 10px 14px; border: 1px solid #8a94a3; border-radius: 4px; font: inherit; }
+.cg-search button { padding: 10px 20px; border: 0; border-radius: 4px; background: var(--cg-navy); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.cg-results { list-style: none; padding: 0; }
+.cg-results li { padding: 16px 0; border-bottom: 1px solid var(--cg-line); }
+.cg-results a { color: var(--cg-navy); font-weight: 700; font-size: 18px; }
+.cg-results p { margin: 4px 0 0; color: var(--cg-ink-soft); }
+
+/* ── Footer: lichtblauw, met witte kaarten (de cards-widget op de pagina _footer) ── */
+.cg-footer { background: var(--cg-sky); padding: 44px 0 56px; }
+.cg-footer .markdown a { color: var(--cg-navy); }
+
+@media (max-width: 900px) {
+	.cg-header-row { flex-wrap: wrap; }
+	.cg-nav { order: 3; flex-basis: 100%; }
+	.cg-nav > ul { overflow-x: auto; flex-wrap: nowrap; }
+	.cg-tools { margin-left: auto; }
+	.cg-nav li ul { position: static; box-shadow: none; }
+}
+
+/* ── Widgets in de Common Ground-stijl (data-widget: src/widgets/components.tsx) ── */
+/* Tekst en knoppen zonder kaartkader, zoals op commonground.nl. */
+[data-widget="text"] > section,
+[data-widget="buttons"] > section { border: 0; background: none; padding: 0; border-radius: 0; }
+[data-widget="text"] > section > h2.eyebrow { text-transform: none; letter-spacing: 0; font-size: 22px; color: var(--cg-navy); }
+/* Knoppen: navy, afgerond, vet — Pleio's secundaire kleur. */
+[data-widget] a.bg-accent, [data-widget="buttons"] a { border-radius: 4px; font-weight: 700; }
+/* Footer: witte kaarten, knop over de volle breedte. */
+.cg-footer [data-widget="callout"] > section { background: #fff; border-color: var(--cg-line); border-radius: 6px; box-shadow: 0 1px 8px rgb(0 0 0 / .02); }
+.cg-footer [data-widget="callout"] > section > h2 { color: var(--cg-navy); font-size: 20px; }
+.cg-footer [data-widget="callout"] > section > a:last-child { display: block; text-align: center; padding-top: 10px; padding-bottom: 10px; font-size: 16px; }
+[data-widget="image"] > section, [data-widget="image"] > figure { border: 0; background: none; padding: 0; }

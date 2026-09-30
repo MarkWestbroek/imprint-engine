@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Showcase: Common Ground op Imprint** (`sites/commonground`, poort 3300):
+  de vormgeving van commonground.nl (logo, menu met uitklapmenu's, zoeken,
+  mededelingen, avatar van de ingelogde gebruiker, lichtblauwe footer met
+  kaarten, potlood naar de studio) op de engine, met de publieke pagina's,
+  het menu en de footer uit Pleio via `npm run import:pleio` (GraphQL,
+  TipTap → Markdown, Pleio-rijen → Imprint-layout). Menu en footer zijn
+  gewone content; `/zoeken` doorzoekt de pagina's. Op de VPS als
+  `commonground` (`./deploy.sh import-pleio commonground`).
 - **V3 model diagram getekend door Omnium**: met `OMNIUM_URL` haalt de
   `v3model`-widget de SVG bij Omnium (render-API): een model in Omnium op naam
   + versie + `asOf`, of geplakte/opgehaalde modelcode; weergave als opgeslagen

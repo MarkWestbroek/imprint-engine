@@ -30,6 +30,13 @@ www.imprint-engine.nl {
 	redir https://imprint-engine.nl{uri} permanent
 }
 
+# Showcase Common Ground op Imprint (design/communities.md). Aanzetten zodra
+# het A-record van commonground.imprint-engine.nl naar de VPS wijst.
+commonground.imprint-engine.nl {
+	import veilig
+	reverse_proxy 127.0.0.1:3300
+}
+
 # Het tijdelijke adres van de productsite (19 september 2026) stuurt door.
 imprint.musicbrain.nl {
 	redir https://imprint-engine.nl{uri} permanent

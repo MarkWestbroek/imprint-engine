@@ -465,6 +465,26 @@ Naast de gewone accentkleur kent een thema een optionele **Accent 2** — een
 tweede accent voor sierelementen zoals de scope-divider. Leeg gelaten valt
 hij terug op de gewone accentkleur.
 
+## De Common Ground-showcase
+
+De site `commonground` laat Common Ground op Imprint zien
+([ontwerp](design/communities.md)). Voor een redacteur werkt hij als de
+andere sites, met een paar dingen van commonground.nl:
+
+- **Het potlood** rechtsonder (alleen als je bent ingelogd en mag bewerken)
+  opent de pagina die je bekijkt in de studio.
+- **Rechtsboven** staan zoeken, de bel voor mededelingen (die komen met de
+  groepen; nu nog leeg) en je avatar met je initialen; die brengt je naar de
+  admin. Niet ingelogd staat daar **Inloggen**.
+- **Het menu** is het menu `main` onder Menus: een item met onderliggende
+  items klapt uit.
+- **De footer** is de pagina `_footer`: bewerk hem in de studio zoals elke
+  pagina (twee kaarten naast elkaar = twee vakken in één rij).
+- **De startpagina** is de pagina `home`.
+- Blokken met **"komt uit Pleio"** zijn overzichten (nieuws, agenda,
+  communities) waarvan de inhoud nog niet is overgenomen; de knop gaat naar
+  commonground.nl.
+
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een

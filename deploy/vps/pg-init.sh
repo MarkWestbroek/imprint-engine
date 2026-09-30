@@ -18,3 +18,4 @@ SQL
 
 create musicbrain "$MUSICBRAIN_DB_PASSWORD"
 create imprint "$IMPRINT_DB_PASSWORD"
+[ -n "${COMMONGROUND_DB_PASSWORD:-}" ] && create commonground "$COMMONGROUND_DB_PASSWORD"

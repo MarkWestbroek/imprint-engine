@@ -1,0 +1,10 @@
+{
+  "name": "Common Ground",
+  "tagline": "Samen bouwen aan de informatievoorziening van gemeenten",
+  "motto": "",
+  "baseUrl": "http://localhost:3300",
+  "defaultLocale": "nl",
+  "links": {},
+  "aliases": {},
+  "releaseSources": {}
+}

@@ -11,6 +11,9 @@
 #                                    (de Imprint-site heeft geen catalogus/planning:
 #                                    altijd met --only, zie sites/imprint/README.md)
 #   ./deploy.sh user imprint <args>  npm run user (gebruikersbeheer) voor die site
+#   ./deploy.sh import-pleio commonground [--base-url=https://…]
+#                                    publieke pagina's, menu en footer uit Pleio (GraphQL)
+#                                    → database; daarna bouwen (SITES=commonground ./deploy.sh)
 #   ./deploy.sh s3-setup musicbrain  bucket + gebruiker in de eigen MinIO (eenmalig;
 #                                    <SITE>_S3_SECRET_KEY en MINIO_ROOT_PASSWORD eerst in .env)
 #   ./deploy.sh s3-move musicbrain [--apply]
@@ -56,6 +59,11 @@ case "${1:-}" in
   user)
     site="${2:?gebruik: deploy.sh user <site> <args>}"; shift 2
     tools "$site" npm run user -- "$@"
+    exit 0 ;;
+  import-pleio)
+    site="${2:?gebruik: deploy.sh import-pleio <site> [--base-url=…]}"; shift 2
+    tools "$site" npm run import:pleio --workspace="$site" -- "$@"
+    echo "Geïmporteerd. Bouw nu (SITES=$site ./deploy.sh)."
     exit 0 ;;
   s3-setup)
     site="${2:?gebruik: deploy.sh s3-setup <site>}"
