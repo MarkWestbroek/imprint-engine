@@ -61,9 +61,9 @@ andere Pleio-site).
   ingelogde gebruiker (via `/api/me`, zodat pagina's statisch blijven) en het
   potlood.
 - `src/components/page-view.tsx`: een pagina uit de store, en de footer.
-- `src/app/(site)/`: `/` (pagina `home`), `/<slug>`, `/search`; de
-  Nederlandse aliassen (`zoeken`, `groep`, `term`) staan in de site-config
-  en sturen door.
+- `src/app/(site)/`: `/` (pagina `home`), `/<slug>`, `/search` (met
+  `/zoeken` als doorstuurroute die de zoekterm meeneemt); de aliassen
+  `groep` en `term` staan in de site-config en sturen door.
 - `src/widgets/components.tsx`: de viewers, elk in een `data-widget`-element,
   zodat `globals.css` per widgettype de Common Ground-stijl kan geven.
 - `src/app/globals.css`: de huisstijl (kleuren uit het logo en het Pleio-thema).

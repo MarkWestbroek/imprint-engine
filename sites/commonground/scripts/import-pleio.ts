@@ -778,13 +778,8 @@ async function main() {
     tagline: site.subtitle || "",
     baseUrl: BASE_URL ?? (current?.data as { baseUrl?: string } | undefined)?.baseUrl ?? "http://localhost:3300",
     defaultLocale: "nl",
-    // Dutch aliases for the English routes (the site's catch-all redirects them).
-    aliases: {
-      ...((current?.data as { aliases?: Record<string, string> } | undefined)?.aliases ?? {}),
-      zoeken: "search",
-      groep: GROUPS_PREFIX,
-      term: TERM_PREFIX,
-    },
+    // Dutch aliases for the English routes (the site's catch-all redirects them; /zoeken has its own route).
+    aliases: { groep: GROUPS_PREFIX, term: TERM_PREFIX },
   };
   await put("site", "site", siteData);
   for (const d of docs) await put("page", d.slug, d.data);

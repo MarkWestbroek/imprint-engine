@@ -12,7 +12,7 @@ import { store } from "@/lib/content";
  */
 
 export const metadata: Metadata = { title: "Zoeken", robots: { index: false } };
-// Canonical: /search (plugins and core routes are English); /zoeken is an alias in the site config.
+// Canonical: /search (plugins and core routes are English); /zoeken forwards here (zoeken/route.ts).
 
 type Props = { searchParams: Promise<{ q?: string }> };
 

@@ -11,7 +11,7 @@ import { imprint, store } from "@/lib/content";
  * Plugins get the first say: the wiki claims `/<wiki>/…` (design/wiki.md).
  */
 
-type Props = { params: Promise<{ slug: string[] }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
+type Props = { params: Promise<{ slug: string[] }> };
 
 export async function generateStaticParams() {
   const pages = await store.listPages();
@@ -26,19 +26,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return hit && "render" in hit && hit.metadata ? hit.metadata : {};
 }
 
-export default async function ContentPage({ params, searchParams }: Props) {
+export default async function ContentPage({ params }: Props) {
   const parts = (await params).slug.map(decodeURIComponent);
   const slug = parts.join("/");
   if (slug === "home") permanentRedirect("/");
-  // URL aliases from the site config (Dutch names for the English routes): /zoeken → /search, /groep/x → /groups/x.
+  // URL aliases from the site config (Dutch names for the English routes): /groep/x → /groups/x.
+  // No query string here: reading searchParams would make this prerendered route dynamic (/zoeken has its own route).
   const opts = await readOpts();
   const target = (await store.getSiteConfig(opts)).aliases[parts[0]!];
-  if (target) {
-    const query = new URLSearchParams(
-      Object.entries(await searchParams).flatMap(([k, v]) => (Array.isArray(v) ? v.map((x) => [k, x]) : v !== undefined ? [[k, v]] : []))
-    ).toString();
-    permanentRedirect(`/${[target, ...parts.slice(1)].join("/")}${query ? `?${query}` : ""}`);
-  }
+  if (target) permanentRedirect(`/${[target, ...parts.slice(1)].join("/")}`);
   const hit = await pluginPublicRoute({ imprint, slug: slug.split("/"), members: false, session: null });
   if (hit) {
     if ("redirect" in hit) redirect(hit.redirect);
