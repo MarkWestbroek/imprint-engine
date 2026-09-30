@@ -70,9 +70,11 @@ export interface ImprintConfig {
     contentDir: string;
   };
   /**
-   * The content types this site uses, out of those the model offers
-   * (`CONTENT_TYPES`). Absent = all of them. Drives the admin and the write
-   * API; the store itself holds whatever type it is given.
+   * The content types this site uses, out of those the core offers
+   * (`CONTENT_TYPES`). Absent = all of them. The types of the plugins switched
+   * on and the site's own definitions are always active on top: switching a
+   * plugin on means wanting its types. Drives the admin and the write API; the
+   * store itself holds whatever type it is given.
    */
   contentTypes?: ContentType[];
   /** Content types this site defines itself, on top of the core's (plugins bring theirs). */
@@ -217,6 +219,16 @@ function registryOf(cfg: ImprintConfig): ContentTypeRegistry {
   return ContentTypeRegistry.of(...groups, cfg.contentTypeDefinitions ?? []);
 }
 
+/**
+ * The active types: the site's selection plus every plugin's and the site's
+ * own definitions (absent selection = all, left to the catalogue).
+ */
+function activeTypesOf(cfg: ImprintConfig): ContentType[] | undefined {
+  if (!cfg.contentTypes) return undefined;
+  const extra = [...(cfg.plugins ?? []).flatMap((p) => p.contentTypes ?? []), ...(cfg.contentTypeDefinitions ?? [])];
+  return [...new Set([...cfg.contentTypes, ...extra.map((d) => d.name)])];
+}
+
 /** The bucket settings when all four are there (empty strings count as absent), else null: disk. */
 function s3Config(s3: Partial<S3AssetConfig> | undefined): S3AssetConfig | null {
   if (!s3?.endpoint || !s3.bucket || !s3.accessKey || !s3.secretKey) return null;
@@ -248,7 +260,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     pdp,
     users: opened?.users ?? null,
     widgets,
-    contentTypes: new ContentTypeCatalog(registry, cfg.contentTypes),
+    contentTypes: new ContentTypeCatalog(registry, activeTypesOf(cfg)),
     plugins: cfg.plugins ?? [],
     assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
     media: {
@@ -293,7 +305,7 @@ export function fingerprintOf(config: ImprintConfig): string {
     types: registryOf(cfg)
       .definitions()
       .map((d) => [d.name, (d.flags ?? []).join(","), schemaPrint(d.schema)]),
-    active: cfg.contentTypes ?? null,
+    active: activeTypesOf(cfg) ?? null,
     plugins: (cfg.plugins ?? []).map((p) => `${p.name}@${p.version}`),
     widgets: cfg.widgets.definitions().map((w) => [w.name, w.version ?? "", schemaPrint(w.configSchema)]),
     // Where the files live (not the secret key): switching disk ↔ bucket is a different instance.

@@ -100,6 +100,35 @@ Nu maakt een admin de accounts aan, met een rol per site
 - De huidige `RoleType` blijft voor redactie en beheer. `lid` komt erbij als
   lichtste rol: mag lezen wat voor leden is en meedoen in groepen.
 
+### 4.1a Leden meenemen uit Pleio: toestemming via een uitnodiging ▶
+
+Mark (30 september 2026): de export `group_owners-export.csv` (naam, e-mail,
+groep) is goede data, maar buiten Pleio lastig bruikbaar. Vraag iedereen
+**via e-mail vanuit Pleio** of ze een nieuw account in Imprint willen, zodat
+hun groepslidmaatschap doorloopt.
+
+Uitwerking:
+
+1. **Mail vanuit Pleio**, door de eigenaar van de site (VNG), aan de
+   groepseigenaren en eventueel via de groepsmail aan alle leden: waarom,
+   wat er met hun gegevens gebeurt, hoe lang, en een **uitnodigingslink per
+   groep** (`/uitnodiging/<groep>/<code>`).
+2. **Wie klikt, maakt zelf een account** (e-mail met passkey, of LinkedIn/
+   Google via de IdP, §5). Pas dan heeft Imprint zijn gegevens, van hemzelf
+   en met toestemming.
+3. **Rollen herstellen**: na e-mailverificatie wordt het adres vergeleken met
+   de export. Eigenaar in de export → weer beheerder van die groep; anders →
+   lid, goed te keuren door de beheerder (toetreden is gemodereerd, §4.2).
+4. **Opruimen**: na de migratie gaat de export weg; wie niet reageert,
+   bestaat in Imprint niet.
+
+De export is zo alleen een **matchlijst**, nooit een bron om accounts mee aan
+te maken; niemand krijgt een account waar hij niet om vroeg. De export bevat
+alleen eigenaren; voor gewone leden is een tweede export nodig, of de
+groepsmail met de uitnodigingslink (werkt ook zonder lijst). Hangt af van
+zelf registreren, groepen met een beheerdersrol en de uitnodigingsroute
+(§10, stap 1–2). Eerst proefdraaien met een paar bekenden.
+
 ### 4.2 Groepen en de drie niveaus ▶
 
 Mark: een site heeft leden, leden gaan in groepen zitten en delen daar

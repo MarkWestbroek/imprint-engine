@@ -160,6 +160,19 @@ describe("plugins in the config", () => {
     assert.deepEqual(imprint.plugins.map((p) => p.name), ["recipes"]);
   });
 
+  it("keeps a plugin's types active when the site selects its core types", async () => {
+    const imprint = resolveImprint({
+      id: "plugged-selected",
+      store: { contentDir: await contentDir() },
+      widgets: registry(),
+      contentTypes: ["page", "site"],
+      plugins: [plugin("recipes", ["recipe"])],
+    });
+    assert.ok(imprint.contentTypes.has("recipe", "listable"));
+    assert.ok(imprint.contentTypes.has("page"));
+    assert.ok(!imprint.contentTypes.has("product"));
+  });
+
   it("refuses a bad name, a missing version, a plugin configured twice, and a type that already exists", async () => {
     const base = { id: "plugged-2", store: { contentDir: await contentDir() }, widgets: registry() };
     assert.throws(() => defineImprint({ ...base, plugins: [{ ...plugin("Bad Name") }] }), /must be lowercase/);

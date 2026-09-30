@@ -827,6 +827,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             pagina kunnen zíjn. Plus kortere slugs (nu `wiki-<titel>` per
             niveau).
       - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
+      - [ ] Leden meenemen via een uitnodiging vanuit Pleio (communities §4.1a):
+            uitnodigingsroute per groep, e-mailverificatie, rol herstellen door
+            te matchen op de export (alleen als matchlijst, daarna weg). Na
+            zelf registreren + groepen.
       - [ ] Portfolio als widget i.p.v. het iframe: tabel + detail uit een
             databron met een tabeldefinitie (de "Weergave" van Omnium als
             widget); zie het antwoord aan Mark van 30-09.

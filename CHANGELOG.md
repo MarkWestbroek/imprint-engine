@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Plugintypen altijd actief**: zet een site `contentTypes` (de keuze uit de
+  kerntypen), dan zijn de typen van haar plugins en haar eigen definities er
+  toch bij; voorheen gaf bv. `/admin/term` een 404 tot je ze er zelf bij zette.
 - **plugin-glossary**: termen als contenttype (`term`: titel, samenvatting,
   tekst, tags), de widget `glossary` (kaarten met zoekveld, optioneel één
   tag) en een pagina per term op `/term/<slug>`.

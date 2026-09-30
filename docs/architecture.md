@@ -172,8 +172,10 @@ optioneel het formulierschema. De kern levert zijn typen in
 plugins en site voegen de hunne toe. *Beschikbaar* is het
 `ContentTypeRegistry` (kern + plugins + site) — de store valideert
 schrijfacties ermee, een niet-geregistreerd type wordt geweigerd, bestaande
-rijen blijven leesbaar. *Actief*: `contentTypes` in `imprint.config.ts`, als
-`ContentTypeCatalog` over dat register op de instantie. `ContentType` is een
+rijen blijven leesbaar. *Actief*: `contentTypes` in `imprint.config.ts` (de
+keuze uit de kerntypen), aangevuld met de typen van elke aangezette plugin en
+de eigen definities van de site — wie een plugin aanzet, wil zijn typen —
+als `ContentTypeCatalog` over dat register op de instantie. `ContentType` is een
 open string (besluit Mark, Fase 5): de compiler kent de lijst niet meer, het
 register bewaakt op runtime, zoals bij widgets. Admin-routes, server actions, dashboard, relatie-editor en
 `/api/content` vragen `contentTypes.has(type, "editable")` in plaats van elk
