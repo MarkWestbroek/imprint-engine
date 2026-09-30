@@ -55,6 +55,18 @@ andere Pleio-site).
 - Links naar geïmporteerde pagina's, wikipagina's en termen worden Imprint-paden; al het andere
   (nieuws, agenda, groepen, bestanden, afbeeldingen) wijst naar commonground.nl.
 
+## Leden
+
+Bezoekers registreren zelf (`/account/register`): naam, e-mailadres en
+wachtwoord; een bevestigingsmail (of, lokaal zonder SMTP, een link op het
+scherm) maakt het adres geldig. Daarna: inloggen op `/account/login`, lid
+worden op een groepspagina, beheren op `/groups/<slug>/manage`,
+uitnodigingslinks op `/groups/<slug>/join/<code>`. De logica staat in
+`@imprint/runtime-admin/admin-server` (members) en `@imprint/plugin-groups`
+(actions); de site heeft alleen de routes en de "use server"-wrappers
+(`src/app/(site)/account/`). Mail: `SMTP_*` en `MAIL_FROM` in `.env.local`
+(zie `.env.example`).
+
 ## Bestanden
 
 - `src/components/site-chrome.tsx`: header en footer; `user-tools.tsx`: de

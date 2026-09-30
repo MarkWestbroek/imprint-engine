@@ -37,6 +37,15 @@ export default defineImprint({
       region: process.env.ASSET_S3_REGION,
     },
   },
+  // Outbound mail (design/mail.md): the verification mail for new members. Without SMTP_HOST there is no mail.
+  mail: {
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : undefined,
+    secure: process.env.SMTP_SECURE ? process.env.SMTP_SECURE === "true" : undefined,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
+    from: process.env.MAIL_FROM,
+  },
   secrets: {
     session: process.env.SESSION_SECRET,
     ingestToken: process.env.INGEST_TOKEN,

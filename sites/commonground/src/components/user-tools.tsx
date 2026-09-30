@@ -42,7 +42,7 @@ export function UserTools() {
   if (me === undefined) return <span className="cg-avatar is-pending" aria-hidden />;
   if (!me) {
     return (
-      <Link href="/admin" className="cg-login">
+      <Link href="/account/login" className="cg-login">
         Inloggen
       </Link>
     );
@@ -53,7 +53,7 @@ export function UserTools() {
       <span className="cg-icon-button" title="Mededelingen (volgen met de groepen)" aria-label="Mededelingen">
         <Bell size={22} aria-hidden />
       </span>
-      <Link href="/admin" className="cg-avatar" title={`${me.name} (${me.role})`} aria-label={`Ingelogd als ${me.name}`}>
+      <Link href="/account" className="cg-avatar" title={me.name} aria-label={`Ingelogd als ${me.name}`}>
         {initials(me.name)}
         <span className="cg-online" aria-hidden />
       </Link>
@@ -66,7 +66,7 @@ export function UserTools() {
 function EditButton() {
   const path = usePathname();
   const slug = path.replace(/^\/+|\/+$/g, "") || "home";
-  if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups") return null;
+  if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups" || slug.startsWith("account")) return null;
   return (
     <Link href={`/admin/page/edit/${slug}`} className="cg-edit" aria-label="Deze pagina bewerken" title="Deze pagina bewerken">
       <Pencil size={22} aria-hidden />

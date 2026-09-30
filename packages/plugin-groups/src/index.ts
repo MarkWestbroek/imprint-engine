@@ -1,4 +1,5 @@
-import { definePlugin, type ImprintPlugin, type WidgetViewers } from "@imprint/runtime-admin";
+import { definePlugin, type ImprintPlugin, type PluginAction, type WidgetViewers } from "@imprint/runtime-admin";
+import { groupsActions } from "./actions";
 import { groupsContentTypes } from "./content-types";
 import { groupsPublicRoute } from "./public";
 import { GroupsConfig, GroupsWidget } from "./widget";
@@ -8,7 +9,11 @@ import { GroupsConfig, GroupsWidget } from "./widget";
  * design/communities.md: the content type `group`, a card overview as widget,
  * `/groups` and a page per group under `/groups/<slug>`, with the group's
  * wiki (a Wiki of its own) and pages (`groups/<slug>/…`) linked from it.
- * Members, joining and group-only content follow (G1–G3). A site switches it
+ * G1: joining (open or on request), the manager's page
+ * (`GroupManageScreen`, mounted by the site at `/groups/<slug>/manage`) and
+ * invitation links (`/groups/<slug>/join/<code>`, redeemed by the site);
+ * the actions run through the site's plugin dispatcher. Group-only content
+ * follows (G2). A site switches it
  * on with `plugins: [groupsPlugin()]` and composes the widget into its
  * catalogue (`groupsWidgets` / `groupsViewers`).
  *
@@ -36,6 +41,7 @@ export function groupsPlugin(): ImprintPlugin {
     contentTypes: groupsContentTypes,
     widgets: [...groupsWidgets],
     menu: [{ group: "content", section: "Groups", items: [{ href: "/admin/group", label: "Groups" }] }],
+    actions: groupsActions as unknown as Record<string, PluginAction>,
     publicRoute: groupsPublicRoute,
   });
 }
@@ -45,3 +51,5 @@ export { GROUPS_PREFIX, groupHref, groupPagePrefix, groupSlug, groupsHref } from
 export { GroupSchema, type Group } from "./schemas";
 export { GroupsConfig, type GroupsConfig as GroupsWidgetConfig } from "./widget";
 export { getGroup, listGroups } from "./groups";
+export { groupsActions, redeem as redeemInvite, type JoinStatus, type MemberList } from "./actions";
+export { GroupManageScreen } from "./manage";

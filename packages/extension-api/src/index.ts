@@ -26,6 +26,7 @@ import {
 import { dialectOf, openContentDatabase, type Dialect } from "@imprint/content-core/db";
 import { S3AssetStore, type S3AssetConfig } from "@imprint/content-core/asset-store.s3";
 import type { UserStore } from "@imprint/content-core/user-store";
+import { createMailer, type MailConfig, type Mailer } from "./mail";
 
 /**
  * The composition root of an Imprint instance (architecture.md §0, Fase 1 of
@@ -98,6 +99,8 @@ export interface ImprintConfig {
    * from a browser — e.g. `["https://editor.musicbrain.nl"]`.
    */
   media?: { maxBytes?: Partial<Record<string, number>>; cors?: string[] };
+  /** Outbound mail (design/mail.md): the SMTP relay and sender of this instance; absent = no mail. */
+  mail?: MailConfig;
   /**
    * Secrets and outbound targets. The config file is the only place that reads
    * `process.env` for them, so shared code (the admin, Fase 3) never does.
@@ -154,6 +157,8 @@ export interface ImprintInstance {
   assets: AssetStore;
   /** Upload limits per file kind (defaults from content-core, overridden by the config), and the API's allowed origins. */
   media: { maxBytes: Record<string, number>; cors: string[] };
+  /** The instance's mailer, or null when no relay is configured (members' verification mail says so). */
+  mail: Mailer | null;
   session: { cookie: string; hours: number };
   /** As configured; empty strings count as absent. */
   secrets: ImprintSecrets;
@@ -263,6 +268,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     contentTypes: new ContentTypeCatalog(registry, activeTypesOf(cfg)),
     plugins: cfg.plugins ?? [],
     assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
+    mail: createMailer(cfg.mail),
     media: {
       maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) },
       // An origin is scheme + host (+ port), without a trailing slash: that is what the browser sends.
@@ -391,3 +397,5 @@ export function createImprint(config: ImprintConfig): ImprintInstance {
   }
   return instance;
 }
+
+export { createMailer, type MailConfig, type Mailer, type MailMessage } from "./mail";

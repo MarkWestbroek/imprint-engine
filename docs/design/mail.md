@@ -72,6 +72,16 @@ spammap te eindigen.
 4. **Spambescherming hoort bij het formulier**, niet bij de mail: een honeypot
    en een snelheidsbegrenzing per IP. Dat ontbreekt nu.
 
+## Stand: Imprint verstuurt mail (1 oktober 2026)
+
+Het `mail`-blok hieronder bestaat nu (`packages/extension-api/src/mail.ts`,
+nodemailer): `imprint.mail` is een `Mailer` of `null`. Eerste gebruiker: de
+bevestigingsmail voor nieuwe leden van de Common Ground-showcase, via
+`noreply@common-ground-lab.nl` bij Quickhost (poort 465). Zonder relay toont
+de ontwikkelomgeving de link op het scherm; productie zegt dat mail niet is
+ingesteld (regel 3). Voor echte stakeholders moet de afzender later van
+`commonground.nl` komen (Mark).
+
 ## Wat dit voor Imprint betekent
 
 Een `mail`-blok in `imprint.config.ts`, gelezen uit de omgeving, met één

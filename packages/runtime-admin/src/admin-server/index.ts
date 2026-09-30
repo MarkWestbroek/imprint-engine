@@ -19,6 +19,16 @@ export { clearDraft, draftKey, getDraft, setDraft } from "./drafts";
 export { PageStudioScreen } from "./studio-screen";
 export { draftOp, resetDraft, savePageDraft } from "./studio-actions";
 export { createSessionAuth, type SessionAuth } from "./session";
+export {
+  confirmEmail,
+  memberProfile,
+  registerMember,
+  sendVerification,
+  signInMember,
+  signOutMember,
+  type MemberProfile,
+  type RegisterResult,
+} from "./members";
 export { previewEnter, previewExit } from "./preview-routes";
 export { UsersScreen } from "./users-screen";
 export { RelationsScreen } from "./relations";

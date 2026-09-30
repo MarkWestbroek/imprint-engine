@@ -326,6 +326,12 @@ docker compose exec -T postgres psql -U postgres   -c "CREATE ROLE commonground 
 SITES=commonground ./deploy.sh
 ```
 
+**Mail voor leden** (design/mail.md): zet in `.env` op de VPS
+`COMMONGROUND_SMTP_HOST`, `_SMTP_USER`, `_SMTP_PASS` en `_MAIL_FROM` (een
+mailbox bij Quickhost, poort 465) en herstart de site (`SITES=commonground
+./deploy.sh`). Zonder die vier zegt registreren dat mail niet is ingesteld.
+De tabellen voor leden komen met de gewone migratie in `deploy.sh`.
+
 Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
 en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
 

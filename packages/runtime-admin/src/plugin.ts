@@ -43,6 +43,12 @@ export type PublicRouteContext = {
   slug: string[];
   members: boolean;
   session: AdminSession | null;
+  /**
+   * The site's action dispatcher, when the page may carry client islands that
+   * act (a join button). A prerendered page passes it too: a server action
+   * reference is static, the call happens in the browser.
+   */
+  call?: PluginCall;
 };
 
 export type PublicRouteResult =

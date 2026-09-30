@@ -502,6 +502,21 @@ andere sites, met een paar dingen van commonground.nl:
   communities"); elke community heeft een eigen pagina op `/groups/<slug>`
   met daarop haar wiki en pagina's. **Lid worden** staat er al, maar doet
   nog niets: leden komen in de volgende stap.
+- **Account en lid worden**: bezoekers maken zelf een account
+  (**Registreren** rechtsboven, of `/account/register`): gebruikersnaam,
+  e-mailadres en een wachtwoord van minstens 12 tekens. Ze krijgen een mail
+  met een bevestigingslink (24 uur geldig); pas met een bevestigd adres
+  kunnen ze lid worden. Inloggen kan met naam of e-mailadres; op
+  `/account` staan je gegevens, je communities en de knop om de
+  bevestigingsmail opnieuw te sturen. Op een community-pagina staat **Lid
+  worden**: bij een open community ben je meteen lid, bij "op aanvraag"
+  keurt een beheerder je goed. **Verlaten** kan altijd, behalve als eigenaar.
+- **Een community beheren** (eigenaar, beheerders en de redactie van de
+  site): **Beheer** op de community-pagina, of `/groups/<slug>/manage`:
+  aanvragen goedkeuren of afwijzen, leden verwijderen, rollen (lid,
+  beheerder, eigenaar) en **uitnodigingslinks**: wie zo'n link opent en
+  inlogt, is meteen lid of beheerder zonder goedkeuring. Een link is 30
+  dagen geldig, wordt één keer getoond en is in te trekken.
 - **Adressen**: de vaste routes heten Engels (`/groups`, `/terms/…`,
   `/search`); de Nederlandse namen (`/groep/…`, `/term/…`, `/zoeken`) zijn
   aliassen in de site-instellingen en sturen door.
@@ -519,7 +534,11 @@ andere sites, met een paar dingen van commonground.nl:
 - **Relations**: welke verwijzingen tussen contenttypen worden afgedwongen.
   Je kunt kiezen uit alle contenttypen die op deze site actief zijn.
 - **Site**: naam, tagline, motto (het regeltje onder het logo; leeg =
-  tagline) en links van de site zelf.
+  tagline) en links van de site zelf. Op MusicBrain staan die links in de
+  footer, elk met een eigen label: `github` → *source*, `docs` → *docs*,
+  `releases` → *firmware*, `issues` → *issues*, `editor` → *editor*,
+  `discord` → *discord*; een andere sleutel verschijnt onder haar eigen
+  naam. Een link weghalen = de sleutel leegmaken.
 - Machine-koppelingen (hardware-toolkit die borden publiceert, andere
   systemen die content lezen/schrijven): zie
   [mmb-ingest-guide.md](mmb-ingest-guide.md) en de API-sectie in de README.

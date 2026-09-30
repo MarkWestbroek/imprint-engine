@@ -3,6 +3,7 @@ import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { pluginPublicRoute, readOpts } from "@imprint/runtime-admin";
 import { isInternal, PageView } from "@/components/page-view";
 import { imprint, store } from "@/lib/content";
+import { pluginAction } from "@/app/admin/actions";
 
 /**
  * Every page from the store (Postgres with DATABASE_URL, content/ without),
@@ -35,7 +36,8 @@ export default async function ContentPage({ params }: Props) {
   const opts = await readOpts();
   const target = (await store.getSiteConfig(opts)).aliases[parts[0]!];
   if (target) permanentRedirect(`/${[target, ...parts.slice(1)].join("/")}`);
-  const hit = await pluginPublicRoute({ imprint, slug: slug.split("/"), members: false, session: null });
+  // `call`: a server action reference is static, so client islands (a join button) may act on a prerendered page.
+  const hit = await pluginPublicRoute({ imprint, slug: slug.split("/"), members: false, session: null, call: pluginAction });
   if (hit) {
     if ("redirect" in hit) redirect(hit.redirect);
     return <article className="cg-page">{hit.render}</article>;

@@ -192,3 +192,22 @@
 .cg-theme { display: inline-flex; align-items: center; gap: 4px; color: var(--cg-ink-soft); }
 .cg-theme select { border: 1px solid var(--cg-line); border-radius: 4px; background: var(--background); color: var(--cg-ink); padding: 4px 6px; font: inherit; font-size: 14px; }
 .cg-logo svg { display: block; height: 40px; width: auto; }
+
+/* ── Account: registreren, inloggen, profiel ─────────────────────────── */
+.cg-narrow { max-width: 640px; }
+.cg-form { display: grid; gap: 16px; margin-top: 24px; }
+.cg-form label { display: grid; gap: 6px; font-weight: 700; }
+.cg-form label small { font-weight: 400; color: var(--cg-ink-soft); }
+.cg-form input { padding: 10px 12px; border: 1px solid #8a94a3; border-radius: 4px; background: var(--background); color: var(--cg-ink); font: inherit; font-weight: 400; }
+.cg-form button[type="submit"] { justify-self: start; padding: 10px 20px; border: 0; border-radius: 4px; background: var(--cg-navy); color: var(--cg-on-accent); font: inherit; font-weight: 700; cursor: pointer; }
+.cg-form button[type="submit"]:disabled { opacity: .6; }
+.cg-form-inline { grid-auto-flow: column; justify-content: start; align-items: center; gap: 20px; }
+.cg-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cg-error { color: var(--cg-alert); }
+.cg-notice { padding: 12px 16px; border-radius: 4px; background: var(--cg-sky); }
+.cg-link { padding: 0; border: 0; background: none; color: var(--cg-navy); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.cg-inline { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
+.cg-badge { padding: 1px 8px; border-radius: 999px; background: var(--cg-yellow); color: #2b2112; font-size: 13px; font-weight: 700; }
+.cg-dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; margin: 24px 0; }
+.cg-dl dt { font-weight: 700; }
+.cg-dl dd { margin: 0; }

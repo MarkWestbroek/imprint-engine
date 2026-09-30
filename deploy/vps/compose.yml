@@ -131,6 +131,12 @@ services:
       DATABASE_URL: postgres://commonground:${COMMONGROUND_DB_PASSWORD}@postgres:5432/commonground
       SESSION_SECRET: ${COMMONGROUND_SESSION_SECRET:-}
       ASSET_ROOT: /data/assets
+      # Members' verification mail (design/mail.md); empty = no mail.
+      SMTP_HOST: ${COMMONGROUND_SMTP_HOST:-}
+      SMTP_PORT: ${COMMONGROUND_SMTP_PORT:-465}
+      SMTP_USER: ${COMMONGROUND_SMTP_USER:-}
+      SMTP_PASS: ${COMMONGROUND_SMTP_PASS:-}
+      MAIL_FROM: ${COMMONGROUND_MAIL_FROM:-}
     ports:
       - "127.0.0.1:${COMMONGROUND_PORT:-3400}:3000"
     volumes:

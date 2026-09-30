@@ -322,9 +322,10 @@ Nederlandse alias (`/groups`, `/groep` stuurt door); eerst eigen accounts
 - **G0 — groepen tonen** (gedaan): contenttype `group`, `/groups` en
   `/groups/<slug>`, de groups-widget, per groep één wiki en haar pagina's
   onder `groups/<slug>/…`; de knop "Lid worden" staat er al.
-- **G1 — leden en lidmaatschap**: zelf registreren, lidmaatschap als eigen
-  tabel (persoonsgegevens), open of op aanvraag, uitnodigingslinks (§4.1a),
-  beheer op de groep zelf.
+- **G1 — leden en lidmaatschap** (gedaan, 1 oktober 2026): zelf registreren
+  met e-mail en wachtwoord, bevestiging per maillink, lidmaatschap als eigen
+  tabel, open of op aanvraag, beheerpagina op de groep, uitnodigingslinks.
+  Nog niet: passkeys, wachtwoord vergeten, de IdP (§5) — zie de backlog.
 - **G2 — de drie niveaus**: `access: group:<slug>` naast publiek en
   beperkt, lidmaatschap als attribuut in de toegangscheck, promoveren als
   nieuwe versie, groepspagina's snel (één opzoeking per lijst).

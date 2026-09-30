@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "@imprint/content-core": "*",
+    "nodemailer": "^10.0.13",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "typescript": "^5"
   }
 }

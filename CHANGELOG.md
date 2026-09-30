@@ -6,6 +6,27 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Leden (G1 van communities.md)**: zelf registreren met e-mailadres en
+  wachtwoord, bevestiging per maillink (eenmalige tokens), inloggen op de
+  site zelf met naam of e-mailadres (`/account/login`), een accountpagina
+  met je communities. In de kern: `email` op users, tabellen
+  `email_tokens`, `memberships` en `invites` (migraties voor beide
+  dialecten), `UserStore.register/verify/join/setMembership/createInvite/…`,
+  en `mail` in `imprint.config.ts` (SMTP via nodemailer, design/mail.md).
+- **Lid worden van groepen** (plugin-groups): open of op aanvraag; de
+  beheerpagina `/groups/<slug>/manage` (aanvragen goedkeuren, leden en
+  rollen, uitnodigingslinks van 30 dagen); `/groups/<slug>/join/<code>`
+  maakt wie inlogt meteen lid. Pagina's blijven vooraf gerenderd: de knop
+  vraagt in de browser wie er kijkt (`PublicRouteContext.call`).
+- **MusicBrain-actualisatie (verzoek MusicBrain, 2026-09-30)**: homepage
+  vertelt het platformverhaal (browserinstrumenten, gedeelde DSP op een
+  Teensy, hybride hardware; analoog/digitaal-onderscheid, recall onder
+  voorwaarden) met "Open the editor" + "Get started"; de footer toont alle
+  `site.links` met eigen labels (source/docs/firmware/issues/editor); de
+  header-navigatie wrapt op mobiel (was horizontale overflow). Seedcontent
+  bijgewerkt: juiste GitHub-links, nieuwe pagina's `get-started` en
+  `devlog`, herschreven About/Editor/Planning en producttekst van
+  Cortex/Reflex/Relay zonder universele claims.
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
   wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht

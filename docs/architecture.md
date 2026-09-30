@@ -1006,8 +1006,29 @@ niet van elkaar afwijken.
   [plugin-groups](../packages/plugin-groups/src/index.ts) (type `group` met
   relatie naar zijn wiki; widget `groups`; publieke routes `/groups` en
   `/groups/<slug>`, de pagina's van een groep zijn gewone pagina's onder
-  `groups/<slug>/…` — G0 van design/communities.md). Node-scripts
+  `groups/<slug>/…` — G0 van design/communities.md; G1: de acties
+  `status/join/leave/members/decide/setRole/createInvite/revokeInvite/redeem`
+  via de dispatcher van de site, `JoinButton` als client-eiland op de
+  vooraf gerenderde groepspagina — `PublicRouteContext.call` is de
+  dispatcher van de site, een server-action-referentie is statisch — en
+  `GroupManageScreen` voor de dynamische beheerpagina van de site). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
+- **Leden** (design/communities.md §4.1, G1): `UserStore` kent naast de
+  redactie-accounts ook geregistreerde leden — `register(name, email,
+  password)` maakt een `reader` met een onbevestigd adres, `verify()` accepteert
+  naam of e-mailadres, `createEmailToken/consumeEmailToken` zijn de
+  eenmalige maillinks (alleen de hash opgeslagen, met doel en vervaltijd).
+  Lidmaatschap is persoonsgegeven, geen content: de tabel `memberships`
+  (groep, gebruiker, rol owner|manager|member, status requested|active,
+  wie besliste) en `invites` (uitnodigingslinks, alleen de hash), met
+  `join/setMembership/leave/createInvite/redeemInvite` op dezelfde store —
+  in beide dialecten, bewaakt door de contractsuite. Mail: `mail` in
+  `imprint.config.ts` → `imprint.mail` (nodemailer, design/mail.md); zonder
+  relay toont de ontwikkelomgeving de link en zegt productie dat mail niet
+  is ingesteld. De ledenlogica (registreren met honeypot en snelheidsgrens
+  per IP, bevestigen, inloggen op de site, profiel) staat in
+  [members.ts](../packages/runtime-admin/src/admin-server/members.ts); de
+  site wikkelt haar in "use server"-acties en routes onder `/account`.
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

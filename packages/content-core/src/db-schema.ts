@@ -2,8 +2,10 @@ import {
   bigint,
   datetime,
   index,
+  int,
   json,
   mysqlTable,
+  uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
 
@@ -51,7 +53,69 @@ export const users = mysqlTable("users", {
   hashedPassword: varchar("hashed_password", { length: 255 }).notNull(),
   /** "admin" | "editor" | "reader" (RoleType). */
   role: varchar("role", { length: 16 }).notNull().default("reader"),
+  /** Members register with an address (design/communities.md §4.1); admin-made accounts may have none. */
+  email: varchar("email", { length: 255 }).unique(),
+  emailVerifiedAt: datetime("email_verified_at", { fsp: 3 }),
 });
+
+/**
+ * One-time e-mail tokens: verifying an address, resetting a password. Only
+ * a SHA-256 of the token is stored; `purpose` keeps a verify token from
+ * doubling as a reset.
+ */
+export const emailTokens = mysqlTable(
+  "email_tokens",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    purpose: varchar("purpose", { length: 16 }).notNull(),
+    hash: varchar("hash", { length: 64 }).notNull().unique(),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    expiresAt: datetime("expires_at", { fsp: 3 }).notNull(),
+    usedAt: datetime("used_at", { fsp: 3 }),
+  },
+  (t) => [index("idx_email_tokens_user").on(t.userName)]
+);
+
+/**
+ * Group membership (design/communities.md §4.1–4.2): personal data, so a
+ * table of its own and not content. `role` owner | manager | member;
+ * `status` requested | active. The group itself is content (plugin-groups).
+ */
+export const memberships = mysqlTable(
+  "memberships",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    groupSlug: varchar("group_slug", { length: 128 }).notNull(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    role: varchar("role", { length: 16 }).notNull().default("member"),
+    status: varchar("status", { length: 16 }).notNull().default("requested"),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    decidedAt: datetime("decided_at", { fsp: 3 }),
+    decidedBy: varchar("decided_by", { length: 64 }),
+  },
+  (t) => [uniqueIndex("uq_memberships").on(t.groupSlug, t.userName), index("idx_memberships_user").on(t.userName)]
+);
+
+/**
+ * Invitation links to a group (design/communities.md §4.1a): whoever opens
+ * one and signs in joins with `role`, no approval needed. Only a hash of the
+ * code is stored.
+ */
+export const invites = mysqlTable(
+  "invites",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    groupSlug: varchar("group_slug", { length: 128 }).notNull(),
+    hash: varchar("hash", { length: 64 }).notNull().unique(),
+    role: varchar("role", { length: 16 }).notNull().default("member"),
+    createdBy: varchar("created_by", { length: 64 }).notNull(),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    expiresAt: datetime("expires_at", { fsp: 3 }).notNull(),
+    uses: int("uses").notNull().default(0),
+  },
+  (t) => [index("idx_invites_group").on(t.groupSlug)]
+);
 
 /**
  * Personal API tokens (design/beeldbibliotheek.md §12.4): a client outside the

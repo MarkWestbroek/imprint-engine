@@ -827,10 +827,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Kortere wiki-slugs (nu `wiki-<titel>` per niveau in de URL).
       - [x] ~~G0 groepen~~ — plugin-groups: 41 communities, 8 groepswiki's,
             groepspagina's, `/groups` (30-09).
-      - [ ] **G1 leden** (communities §4.1, §4.1a): zelf registreren (e-mail +
-            passkey, rol `member`), lidmaatschap als eigen tabel (persoons-
-            gegevens, geen content), open/op aanvraag, uitnodigingslinks,
-            tab "Beheer" op de groep. IdP met LinkedIn/Google daarna.
+      - [x] ~~G1 leden~~ — registreren met e-mail + wachtwoord en
+            bevestigingsmail, lidmaatschap als tabel, open/op aanvraag,
+            beheerpagina, uitnodigingslinks (01-10).
+      - [ ] G1b: **passkeys** (WebAuthn) naast het wachtwoord; **wachtwoord
+            vergeten** (de `reset`-tokens bestaan al); sessies intrekbaar.
+      - [ ] G1c: IdP (Zitadel) met LinkedIn/Google (communities §5).
+      - [ ] Ledenlijst per groep ook zichtbaar voor leden (nu alleen beheer);
+            gebruikersnaam → weergavenaam en avatarfoto.
+      - [ ] Matching op de Pleio-export bij het inwisselen van een
+            uitnodiging (communities §4.1a, stap 3).
       - [ ] **G2 drie niveaus** (§4.2): `access: group:<slug>`, lidmaatschap
             als attribuut in de toegangscheck, promoveren = nieuwe versie.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
