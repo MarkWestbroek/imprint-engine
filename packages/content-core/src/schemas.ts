@@ -570,6 +570,13 @@ export const ThemeSchema = z.object({
       mono: z.string().default(""),
     })
     .default({ sans: "", mono: "" }),
+  /** Layout tokens; empty = keep the site's default. */
+  layout: z
+    .object({
+      /** Maximum width of the content column, as CSS (e.g. "1100px", "90rem", "100%"). */
+      width: z.string().default(""),
+    })
+    .default({ width: "" }),
   order: z.number().int().default(0),
 });
 export type Theme = z.infer<typeof ThemeSchema>;

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Source_Sans_3 } from "next/font/google";
+import { ThemeInit, ThemeStyles } from "@/components/theme";
 import { store } from "@/lib/content";
 import "./globals.css";
 
@@ -19,10 +20,17 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const themes = await store.listThemes();
   return (
-    <html lang="nl">
-      <body className={sans.variable}>{children}</body>
+    // ThemeInit sets data-theme on <html> before hydration (no flash); React
+    // did not render that attribute, hence suppressHydrationWarning.
+    <html lang="nl" suppressHydrationWarning>
+      <body className={sans.variable}>
+        <ThemeInit />
+        <ThemeStyles themes={themes} />
+        {children}
+      </body>
     </html>
   );
 }

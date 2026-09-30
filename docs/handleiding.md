@@ -465,6 +465,12 @@ Naast de gewone accentkleur kent een thema een optionele **Accent 2** — een
 tweede accent voor sierelementen zoals de scope-divider. Leeg gelaten valt
 hij terug op de gewone accentkleur.
 
+Een thema kan ook de **breedte** van de pagina zetten (*Layout → Width*, als
+CSS, bijvoorbeeld `1100px` of `1440px`); leeg laat de breedte van de site
+staan. Op de Common Ground-showcase zijn er vier: **Common Ground** (smal,
+zoals het origineel), **Common Ground breed**, **Donker** en **Zonnig**; de
+keuzelijst staat rechtsboven naast het zoeken.
+
 ## De Common Ground-showcase
 
 De site `commonground` laat Common Ground op Imprint zien
@@ -486,7 +492,8 @@ andere sites, met een paar dingen van commonground.nl:
   commonground.nl.
 - **De wiki** (onder `/wiki`) is de wiki van de groep "Common Ground
   publicatiesite"; bewerken gaat onder **Wikis** in de admin, zoals bij
-  MusicBrain. Een Pleio-wikipagina met onderliggende pagina's is hier een
+  MusicBrain. De navigatieboom klapt in: alleen de eerste laag en de weg
+  naar de pagina die je leest staan open, met **Alles uitklappen** erboven. Een Pleio-wikipagina met onderliggende pagina's is hier een
   map met die pagina als eerste pagina erin.
 - **Termen**: onder **Terms** in de admin staat elke term met een titel, een
   **samenvatting** (de tekst op de kaart; leeg = het begin van de tekst), de

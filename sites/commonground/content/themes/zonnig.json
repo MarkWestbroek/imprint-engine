@@ -1,0 +1,22 @@
+{
+  "name": "zonnig",
+  "label": "Zonnig",
+  "colors": {
+    "background": "#fffdf6",
+    "surface": "#fff3d1",
+    "border": "#ecd9a4",
+    "foreground": "#2b2112",
+    "muted": "#6f5f3c",
+    "accent": "#9a4d00",
+    "accentStrong": "#733900",
+    "accent2": "#ffc200"
+  },
+  "fonts": {
+    "sans": "",
+    "mono": ""
+  },
+  "layout": {
+    "width": "1280px"
+  },
+  "order": 3
+}

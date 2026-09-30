@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Thema's met breedte**: `ThemeSchema` kent `layout.width` (de breedte van
+  de inhoudskolom, als CSS). De Common Ground-showcase heeft vier thema's
+  (Common Ground, breed, Donker, Zonnig) met een keuzelijst in de header; de
+  huisstijl loopt nu via de themakleuren, het logo kleurt mee.
+- **Wiki-boom inklapbaar** (plugin-wiki, ook MusicBrain): mappen klappen in,
+  alleen de eerste laag en het pad naar de huidige pagina staan open, met
+  "Alles uitklappen"; een map met een gelijknamige pagina linkt daar zelf
+  naartoe in plaats van hem nog eens te tonen.
 - **Plugintypen altijd actief**: zet een site `contentTypes` (de keuze uit de
   kerntypen), dan zijn de typen van haar plugins en haar eigen definities er
   toch bij; voorheen gaf bv. `/admin/term` een 404 tot je ze er zelf bij zette.

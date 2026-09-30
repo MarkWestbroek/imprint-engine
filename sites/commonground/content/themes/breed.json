@@ -1,0 +1,22 @@
+{
+  "name": "breed",
+  "label": "Common Ground breed",
+  "colors": {
+    "background": "#ffffff",
+    "surface": "#f4f6f9",
+    "border": "#d9dee5",
+    "foreground": "#1d1d1b",
+    "muted": "#595959",
+    "accent": "#143462",
+    "accentStrong": "#0e2446",
+    "accent2": "#00a1e5"
+  },
+  "fonts": {
+    "sans": "",
+    "mono": ""
+  },
+  "layout": {
+    "width": "1440px"
+  },
+  "order": 1
+}

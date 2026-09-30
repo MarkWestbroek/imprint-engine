@@ -13,31 +13,53 @@
  * een lichtblauwe footer met witte kaarten. De vormgeving is van Common
  * Ground zelf, niet van Pleio; hier alleen als tokens.
  */
+/*
+ * Het thema levert de kleurtokens (--background … --accent-2) en de breedte
+ * (--content-width); de :root-waarden hieronder zijn het Common Ground-thema
+ * zonder keuze. Een thema wisselen = andere waarden op <html data-theme>
+ * (src/components/theme.tsx); de --cg-namen zijn daarvan afgeleid.
+ */
 :root {
-	--cg-navy: #143462;
-	--cg-navy-deep: #0e2446;
-	--cg-ink: #1d1d1b;
-	--cg-ink-soft: #595959;
-	--cg-blue: #00a1e5;
+	--background: #ffffff;
+	--surface: #f4f6f9;
+	--border: #d9dee5;
+	--foreground: #1d1d1b;
+	--muted: #595959;
+	--accent: #143462;
+	--accent-strong: #0e2446;
+	--accent-2: #00a1e5;
+	--content-width: 1100px;
+
+	--cg-navy: var(--accent);
+	--cg-navy-deep: var(--accent-strong);
+	--cg-ink: var(--foreground);
+	--cg-ink-soft: var(--muted);
+	--cg-blue: var(--accent-2);
+	--cg-line: var(--border);
+	--cg-surface: var(--surface);
+	/* De lichtblauwe footer: een vleugje accent 2 door de achtergrond (#ebf8fd op wit). */
+	--cg-sky: color-mix(in srgb, var(--accent-2) 8%, var(--background));
+	/* Tekst op een knop in accentkleur: de achtergrond (wit op navy, donker op lichtblauw). */
+	--cg-on-accent: var(--background);
+	--cg-logo-text: var(--accent);
 	--cg-yellow: #ffc200;
-	--cg-sky: #ebf8fd;
-	--cg-line: #d9dee5;
-	--cg-surface: #f4f6f9;
 	--cg-alert: #d52b1e;
 	--cg-online: #39870c;
-	--cg-width: 1100px;
+	--cg-width: var(--content-width);
+	color-scheme: light;
 }
+[data-theme="donker"] { color-scheme: dark; }
 
-/* Tokencontract van de standaardwidgets (architecture.md §3), met het Common Ground-palet. */
+/* Tokencontract van de standaardwidgets (architecture.md §3), uit het thema. */
 @theme inline {
-	--color-background: #ffffff;
-	--color-surface: var(--cg-surface);
-	--color-line: var(--cg-line);
-	--color-foreground: var(--cg-ink);
-	--color-muted: var(--cg-ink-soft);
-	--color-accent: var(--cg-navy);
-	--color-accent-strong: var(--cg-navy-deep);
-	--color-accent-2: var(--cg-blue);
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
 }
 
 @layer base {
@@ -47,7 +69,7 @@
 		min-height: 100vh;
 		display: flex;
 		flex-direction: column;
-		background: #fff;
+		background: var(--background);
 		color: var(--cg-ink);
 		font-family: var(--font-sans), system-ui, sans-serif;
 		font-size: 16px;
@@ -61,10 +83,10 @@
 .cg-container { width: 100%; max-width: var(--cg-width); margin: 0 auto; padding: 0 16px; }
 
 /* ── Header ─────────────────────────────────────────────────────────── */
-.cg-header { background: #fff; position: relative; z-index: 20; }
+.cg-header { background: var(--background); position: relative; z-index: 20; }
 .cg-header-row { display: flex; align-items: flex-start; gap: 24px; padding-top: 6px; padding-bottom: 6px; }
 .cg-logo { flex: none; display: block; padding: 2px 0; }
-.cg-logo img { display: block; height: 40px; width: auto; }
+
 .cg-nav { flex: 1; min-width: 0; }
 .cg-nav > ul { display: flex; flex-wrap: wrap; align-items: center; column-gap: 4px; margin: 0; padding: 0; list-style: none; }
 .cg-nav li { position: relative; list-style: none; }
@@ -77,7 +99,7 @@
 .cg-nav a:hover, .cg-nav button:hover { color: var(--cg-navy); text-decoration: underline; text-underline-offset: 4px; }
 .cg-nav li ul {
 	display: none; position: absolute; left: 0; top: 100%; min-width: 220px;
-	margin: 0; padding: 6px 0; background: #fff; border: 1px solid var(--cg-line);
+	margin: 0; padding: 6px 0; background: var(--background); border: 1px solid var(--cg-line);
 	border-radius: 4px; box-shadow: 0 8px 24px rgb(0 0 0 / .1); list-style: none;
 }
 .cg-nav li:hover > ul, .cg-nav li:focus-within > ul { display: block; }
@@ -87,17 +109,17 @@
 .cg-icon-button:hover { background: var(--cg-surface); }
 .cg-avatar {
 	position: relative; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
-	background: var(--cg-navy); color: #fff; font-weight: 700; font-size: 14px; text-decoration: none;
-	box-shadow: 0 0 0 2px #fff, 0 0 0 3px var(--cg-line);
+	background: var(--cg-navy); color: var(--cg-on-accent); font-weight: 700; font-size: 14px; text-decoration: none;
+	box-shadow: 0 0 0 2px var(--background), 0 0 0 3px var(--cg-line);
 }
 .cg-avatar.is-pending { background: var(--cg-surface); box-shadow: none; }
-.cg-online { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--cg-online); border: 2px solid #fff; }
-.cg-login { padding: 8px 16px; border-radius: 4px; background: var(--cg-navy); color: #fff; font-weight: 700; text-decoration: none; }
+.cg-online { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--cg-online); border: 2px solid var(--background); }
+.cg-login { padding: 8px 16px; border-radius: 4px; background: var(--cg-navy); color: var(--cg-on-accent); font-weight: 700; text-decoration: none; }
 .cg-login:hover { background: var(--cg-navy-deep); }
 .cg-edit {
 	position: fixed; right: 24px; bottom: 24px; z-index: 30;
 	display: grid; place-items: center; width: 60px; height: 60px; border-radius: 50%;
-	background: #fff; color: var(--cg-navy); border: 1px solid var(--cg-line);
+	background: var(--background); color: var(--cg-navy); border: 1px solid var(--cg-line);
 	box-shadow: 0 4px 16px rgb(0 0 0 / .15);
 }
 .cg-edit:hover { background: var(--cg-sky); }
@@ -124,7 +146,7 @@
 /* Zoeken */
 .cg-search { display: flex; gap: 8px; max-width: 640px; margin-bottom: 24px; }
 .cg-search input { flex: 1; min-width: 0; padding: 10px 14px; border: 1px solid #8a94a3; border-radius: 4px; font: inherit; }
-.cg-search button { padding: 10px 20px; border: 0; border-radius: 4px; background: var(--cg-navy); color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.cg-search button { padding: 10px 20px; border: 0; border-radius: 4px; background: var(--cg-navy); color: var(--cg-on-accent); font: inherit; font-weight: 700; cursor: pointer; }
 .cg-results { list-style: none; padding: 0; }
 .cg-results li { padding: 16px 0; border-bottom: 1px solid var(--cg-line); }
 .cg-results a { color: var(--cg-navy); font-weight: 700; font-size: 18px; }
@@ -150,7 +172,7 @@
 /* Knoppen: navy, afgerond, vet — Pleio's secundaire kleur. */
 [data-widget] a.bg-accent, [data-widget="buttons"] a { border-radius: 4px; font-weight: 700; }
 /* Footer: witte kaarten, knop over de volle breedte. */
-.cg-footer [data-widget="callout"] > section { background: #fff; border-color: var(--cg-line); border-radius: 6px; box-shadow: 0 1px 8px rgb(0 0 0 / .02); }
+.cg-footer [data-widget="callout"] > section { background: var(--background); border-color: var(--cg-line); border-radius: 6px; box-shadow: 0 1px 8px rgb(0 0 0 / .02); }
 .cg-footer [data-widget="callout"] > section > h2 { color: var(--cg-navy); font-size: 20px; }
 .cg-footer [data-widget="callout"] > section > a:last-child { display: block; text-align: center; padding-top: 10px; padding-bottom: 10px; font-size: 16px; }
 [data-widget="image"] > section, [data-widget="image"] > figure { border: 0; background: none; padding: 0; }
@@ -161,3 +183,8 @@
 .cg-footer [data-widget="callout"] > section { display: flex; flex-direction: column; }
 .cg-footer [data-widget="callout"] > section > a:last-child { margin-top: auto; }
 .cg-footer [data-widget="callout"] > section > :nth-last-child(2) { margin-bottom: 16px; }
+
+/* Themakiezer in de header. */
+.cg-theme { display: inline-flex; align-items: center; gap: 4px; color: var(--cg-ink-soft); }
+.cg-theme select { border: 1px solid var(--cg-line); border-radius: 4px; background: var(--background); color: var(--cg-ink); padding: 4px 6px; font: inherit; font-size: 14px; }
+.cg-logo svg { display: block; height: 40px; width: auto; }

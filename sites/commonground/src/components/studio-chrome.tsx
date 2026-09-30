@@ -8,11 +8,11 @@ import { store } from "@/lib/content";
  * the real header, menu and footer, not clickable while editing.
  */
 export async function StudioChrome({ children }: { children: ReactNode }) {
-  const menu = await store.getMenu("main");
+  const [menu, themes] = await Promise.all([store.getMenu("main"), store.listThemes()]);
   return (
     <div className="relative isolate">
       <div className="pointer-events-none select-none">
-        <SiteHeader nav={menuToNav(menu)} inert />
+        <SiteHeader nav={menuToNav(menu)} themes={themes.map((t) => ({ name: t.name, label: t.label }))} inert />
       </div>
       <main className="cg-main">
         <div className="cg-container">

@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import type { Menu } from "@imprint/content-core";
+import { Logo } from "@/components/logo";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { UserTools } from "@/components/user-tools";
 
 /**
@@ -49,13 +51,21 @@ function NavEntry({ item }: { item: NavItem }) {
   );
 }
 
-export function SiteHeader({ nav, inert = false }: { nav: NavItem[]; inert?: boolean }) {
+export function SiteHeader({
+  nav,
+  themes = [],
+  inert = false,
+}: {
+  nav: NavItem[];
+  /** The themes from the store; two or more give the picker. */
+  themes?: { name: string; label: string }[];
+  inert?: boolean;
+}) {
   return (
     <header className={`cg-header${inert ? " is-inert" : ""}`}>
       <div className="cg-container cg-header-row">
         <Link className="cg-logo" href="/" aria-label="Common Ground, naar home">
-          {/* eslint-disable-next-line @next/next/no-img-element -- a vector logo, no optimising needed */}
-          <img src="/brand/Common_gound_logo_rgb.svg" alt="Common Ground" width={128} height={37} />
+          <Logo />
         </Link>
         <nav aria-label="Hoofdmenu" className="cg-nav">
           <ul>
@@ -65,6 +75,10 @@ export function SiteHeader({ nav, inert = false }: { nav: NavItem[]; inert?: boo
           </ul>
         </nav>
         <div className="cg-tools">
+          {/* Stays usable in the studio's inert chrome: trying themes is what the canvas is for. */}
+          <span className={inert ? "pointer-events-auto" : undefined}>
+            <ThemeSwitcher themes={themes} />
+          </span>
           <Link href="/zoeken" className="cg-icon-button" aria-label="Zoeken">
             <Search size={22} aria-hidden />
           </Link>

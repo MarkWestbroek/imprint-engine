@@ -1,0 +1,22 @@
+{
+  "name": "donker",
+  "label": "Donker",
+  "colors": {
+    "background": "#0e1522",
+    "surface": "#162133",
+    "border": "#2b3a52",
+    "foreground": "#e8eef6",
+    "muted": "#9fb0c6",
+    "accent": "#8cc8ff",
+    "accentStrong": "#b8ddff",
+    "accent2": "#3aa7e6"
+  },
+  "fonts": {
+    "sans": "",
+    "mono": ""
+  },
+  "layout": {
+    "width": "1440px"
+  },
+  "order": 2
+}

@@ -822,10 +822,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Echte avatarfoto (ledenprofiel) en mededelingen (communities §4.4).
       - [x] ~~Wiki en termen~~ — geïmporteerd (30-09): wiki via plugin-wiki,
             termen via de nieuwe plugin-glossary; crosslinks omgezet.
-      - [ ] Wiki-boom: map + gelijknamige eerste pagina staan nu dubbel in de
-            navigatie (Pleio-knoop met kinderen = map + pagina); de map zou de
-            pagina kunnen zíjn. Plus kortere slugs (nu `wiki-<titel>` per
-            niveau).
+      - [x] ~~Wiki-boom dubbel + niet inklapbaar~~ — een map met een gelijknamige
+            pagina linkt daar nu zelf naar; de boom klapt in (30-09).
+      - [ ] Kortere wiki-slugs (nu `wiki-<titel>` per niveau in de URL).
       - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
       - [ ] Leden meenemen via een uitnodiging vanuit Pleio (communities §4.1a):
             uitnodigingsroute per groep, e-mailverificatie, rol herstellen door

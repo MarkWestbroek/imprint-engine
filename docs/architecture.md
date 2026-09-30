@@ -674,7 +674,9 @@ geversioneerd zoals alles. De aanpak volgt de standaardpraktijk:
   bovenin `<body>` past de keuze vóór de eerste paint toe (geen flash).
 - **Formaat**: het zod-`ThemeSchema` is bewust plat (7 kleurtokens + een
   optioneel achtste, `accent2`, voor sierelementen zoals de scope-divider —
-  leeg valt het serverside terug op `accent` — plus optionele font-stacks) —
+  leeg valt het serverside terug op `accent` — plus optionele font-stacks en
+  één layouttoken, `layout.width`: de breedte van de inhoudskolom, als CSS;
+  leeg = de standaard van de site, die hem als `--content-width` gebruikt) —
   in de geest van het W3C **Design Tokens (DTCG)**-formaat (tokens als
   data), maar zonder de volle diepte daarvan. Import/export naar DTCG-JSON
   kan later een dunne mapping zijn.
