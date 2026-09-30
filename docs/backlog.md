@@ -343,6 +343,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           (`pickLang`), dus de Nederlandstalige Imprint-site moet haar
           pagina's als `en` opslaan om ze zonder taalparameter te tonen. Een
           `defaultLocale` uit de siteconfig als basis maakt dat recht. _(S9; M)_
+          Gezien 30-09: een in de studio als `nl` opgeslagen pagina
+          (`/canoniek-model`) geeft op de site 404, zonder enige waarschuwing
+          in de studio. Tot `defaultLocale` er is: in de studio waarschuwen
+          (of de taalkeuze verbergen) als de gekozen taal niet de basistaal is
+          die de site toont.
         - [ ] **Viewers per widget importeerbaar** — `standardViewers` is één
           object, dus elke site bundelt alle twintig viewers en hun
           client-eilanden, ook als ze er acht kiest. Losse exports per widget
