@@ -307,7 +307,7 @@ de snapshot-taak (`Pool1/backup/vps1`, 07:00, 2 weken) moet snapshots maken.
    datamap) — de opdracht staat bovenin [pg-init.sh](../deploy/vps/pg-init.sh).
 4. Caddy-blok, DNS, `SITES=<naam> ./deploy.sh`.
 
-**Voorbeeld: de Common Ground-showcase** (`commonground`, poort 3300). De
+**Voorbeeld: de Common Ground-showcase** (`commonground`, op de VPS poort 3400: 3200 en 3300 zijn van volksgebouw en psycholog). De
 service, het Caddy-blok (`commonground.imprint-engine.nl`) en de
 Dockerfile-regel staan klaar; op de VPS:
 

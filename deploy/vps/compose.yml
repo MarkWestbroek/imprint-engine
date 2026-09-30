@@ -6,7 +6,7 @@
 # SSG-build, backups en een SSH-tunnel.
 #
 #   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
-#   commonground → 127.0.0.1:3300    (showcase, design/communities.md)
+#   commonground → 127.0.0.1:3400    (showcase; 3200/3300: volksgebouw/psycholog)
 #   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
 #   minio      → alleen imprint_net (API :9000); console 127.0.0.1:9011
 #
@@ -132,7 +132,7 @@ services:
       SESSION_SECRET: ${COMMONGROUND_SESSION_SECRET:-}
       ASSET_ROOT: /data/assets
     ports:
-      - "127.0.0.1:${COMMONGROUND_PORT:-3300}:3000"
+      - "127.0.0.1:${COMMONGROUND_PORT:-3400}:3000"
     volumes:
       - commonground_assets:/data/assets
 
