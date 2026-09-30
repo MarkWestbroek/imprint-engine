@@ -154,7 +154,8 @@ export function WikiView({
         </nav>
       </aside>
 
-      <article className="min-w-0 max-w-3xl">
+      {/* 48rem by default for readable lines; a site can widen it with --wiki-article-width. */}
+      <article className="min-w-0 max-w-[var(--wiki-article-width,48rem)]">
         {current ? (
           <>
             <h1 className="text-3xl font-semibold tracking-tight">{current.title}</h1>

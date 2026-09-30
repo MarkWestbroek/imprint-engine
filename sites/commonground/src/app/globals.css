@@ -184,6 +184,9 @@
 .cg-footer [data-widget="callout"] > section > a:last-child { margin-top: auto; }
 .cg-footer [data-widget="callout"] > section > :nth-last-child(2) { margin-bottom: 16px; }
 
+/* De wiki gaat mee met de breedte van het thema (plugin-wiki: standaard 48rem). */
+:root { --wiki-article-width: none; }
+
 /* Themakiezer in de header. */
 .cg-theme { display: inline-flex; align-items: center; gap: 4px; color: var(--cg-ink-soft); }
 .cg-theme select { border: 1px solid var(--cg-line); border-radius: 4px; background: var(--background); color: var(--cg-ink); padding: 4px 6px; font: inherit; font-size: 14px; }
