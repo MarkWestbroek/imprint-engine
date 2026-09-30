@@ -808,8 +808,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 ## 7. Open beslissingen (vragen aan Mark)
 
 - [ ] **Common Ground-showcase afmaken** (`sites/commonground`, 30-09):
-      - [ ] DNS: A-record `commonground.imprint-engine.nl` → VPS (Mark), dan
-            Caddy-blok aan (staat klaar in `Caddyfile.snippet`).
+      - [x] ~~DNS + Caddy~~ — live op https://commonground.imprint-engine.nl
+            (30-09, VPS-poort 3400).
       - [ ] Nieuws, agenda, blogs en termen meenemen (313/322/291/124 publiek);
             de overzichtsblokken zijn nu callouts met een knop naar Pleio.
       - [ ] Afbeeldingen en bestanden naar de beeldbibliotheek i.p.v. linken
