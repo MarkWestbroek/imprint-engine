@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { afterEach, describe, it } from "node:test";
 
-import { omniumBaseUrl, omniumRequest, renderOmniumSvg } from "../src/omnium";
+import { fetchOmniumViews, omniumBaseUrl, omniumRequest, renderOmniumSvg, viewsOfModel } from "../src/omnium";
 import { sanitizeSvg } from "../src/svg-sanitize";
 
 /** Recorded from the Omnium sidecar: MusicBrain's content model, domein=catalogus. */
@@ -109,5 +109,39 @@ describe("renderOmniumSvg", () => {
     answer("<html>login</html>");
     const html = await renderOmniumSvg("https://o.test", source, {});
     assert.ok("problem" in html && html.problem.detail === "Omnium returned no usable SVG.");
+  });
+});
+
+describe("views for the studio pick list", () => {
+  it("reads diagrams and domains from a model, also inside a Studio envelope", () => {
+    const model = {
+      domeinen: [{ naam: "catalogus" }],
+      entiteiten: [{ typenaam: "A", domein: "catalogus" }, { typenaam: "B", domein: "site" }],
+      diagrammen: [{ naam: "Overzicht" }, { naam: "Overzicht" }],
+    };
+    const expected = { diagrammen: ["Overzicht"], domeinen: ["catalogus", "site"] };
+    assert.deepEqual(viewsOfModel(model), expected);
+    assert.deepEqual(viewsOfModel({ versie: 3, model }), expected);
+    assert.deepEqual(viewsOfModel("nonsense"), { diagrammen: [], domeinen: [] });
+  });
+
+  it("asks Omnium for views.json and reports its problem", async () => {
+    const realFetch = globalThis.fetch;
+    const seen: string[] = [];
+    try {
+      globalThis.fetch = (async (url: string) => {
+        seen.push(url);
+        return url.includes("weg")
+          ? new Response(JSON.stringify({ status: 404, detail: "Geen model weg." }), { status: 404 })
+          : new Response(JSON.stringify({ diagrammen: ["D"], domeinen: ["x"], naam: "m", versie: 2, tijdstip: "2026-09-30T10:00:00Z" }));
+      }) as typeof fetch;
+      assert.deepEqual(await fetchOmniumViews("https://o.test", "np-loc + register", "2"), {
+        diagrammen: ["D"], domeinen: ["x"], versie: "2", tijdstip: "2026-09-30T10:00:00Z",
+      });
+      assert.deepEqual(await fetchOmniumViews("https://o.test", "weg"), { error: "Geen model weg." });
+      assert.deepEqual(seen, ["https://o.test/api/models/np-loc%20%2B%20register/views.json?versie=2", "https://o.test/api/models/weg/views.json"]);
+    } finally {
+      globalThis.fetch = realFetch;
+    }
   });
 });

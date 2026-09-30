@@ -306,24 +306,33 @@ naar de koppen op de pagina, uit welke widget ze ook komen), **Breadcrumb**
 **Testimonials** en **Pricing**.
 
 **V3 model diagram.** Imprint tekent het model niet zelf: Omnium doet dat
-(layout, kleuren, notatie horen bij het model). Je geeft op *welk model*:
-- een **model in Omnium**: vul `model` in (de naam zoals in Omnium) en liefst
-  een vaste `versie` — zonder versie krijg je steeds de nieuwste, en als het
-  model in Omnium een nieuwe naam krijgt, vindt de pagina het niet meer.
-  Met `asOf` toon je het model zoals het op dat moment was;
-- of **modelcode**: plak de V3-JSON in `json`, of geef een `url` waar hij
-  staat (bv. `https://musicbrain.nl/api/meta?format=v3`).
+(layout, kleuren, notatie horen bij het model). De sidebar gaat van boven
+naar beneden:
 
-En *welk deel*: een opgeslagen **diagram** uit het model (eerste keus), of
-alle entiteiten van één **domein**. Een heel model in één plaat wordt een
-chaos; alleen een model met één domein en zonder diagrammen tekent Omnium
-zonder keuze. Kies je niets, dan toont de widget welke diagrammen en domeinen
-er zijn. Verder: `entiteiten` (alleen deze, komma-gescheiden), `richting`
-(boven→onder of links→rechts), `afhankelijkheden` (datatypes en «use»-lijnen)
-en `kleuren`: **licht** (standaard, als een figuur, ook op een donker thema)
-of **site** (de kleuren van het sitethema; de elementen houden hun eigen
-kleur). Gaat er iets mis, dan staat Omniums melding in de widget, met het
-foute element — de rest van de pagina werkt gewoon.
+1. **Welk model** — kies één van drie:
+   - **Model in Omnium**: de *modelnaam* zoals in Omnium, liefst met een
+     vaste *versie*. Zonder versie krijg je steeds de nieuwste; de knop
+     "vastzetten op …" legt de huidige vast. Als het model in Omnium een
+     nieuwe naam krijgt, vindt de pagina het niet meer. *Zoals op* toont het
+     model zoals het op dat moment was. Omnium kent alleen gepubliceerde
+     modellen (vanuit Studio of de IDE), niet wat alleen in je browser staat.
+   - **Code plakken**: de V3-JSON.
+   - **Van URL**: een adres waar de modelcode staat (bv.
+     `https://musicbrain.nl/api/meta?format=v3`).
+2. **Wat tonen** — een keuzelijst met de opgeslagen **diagrammen** van het
+   model (eerste keus) en de **domeinen** (alle entiteiten van één domein).
+   Een heel model in één plaat wordt een chaos; alleen een model met één
+   domein en zonder diagrammen kan "Het hele model". Bij "Van URL" typ je
+   diagram of domein zelf; kies je niets, dan toont de widget op het canvas
+   welke er zijn.
+3. **Kleuren** — *licht* (standaard, als een figuur, ook op een donker thema)
+   of *kleuren van de site*; de elementen houden hun eigen kleur.
+4. **Meer** (ingeklapt) — alleen bepaalde entiteiten, links→rechts in plaats
+   van boven→onder, velden in de kaarten, datatypes en «use»-lijnen, en een
+   maximale breedte.
+
+Gaat er iets mis, dan staat Omniums melding in de widget, met het foute
+element — de rest van de pagina werkt gewoon.
 
 Heeft de site nog geen Omnium-koppeling, dan tekent Imprint geplakte of
 opgehaalde modelcode tijdelijk zelf (eenvoudiger); een model in Omnium kan

@@ -16,6 +16,15 @@ const key = async (admin: AdminContext, slug: string | undefined, lang: string) 
   return session ? { session, key: draftKey(admin.imprint.id, session.name, slug, lang) } : null;
 };
 
+/** A validation error (zod) as "title: …; slug: …", anything else as its message. */
+function saveError(err: unknown): string {
+  const issues = (err as { issues?: { path?: PropertyKey[]; message?: string }[] } | null)?.issues;
+  if (Array.isArray(issues) && issues.length > 0) {
+    return issues.map((i) => `${(i.path ?? []).map(String).join(".") || "page"}: ${i.message ?? "invalid"}`).join("; ");
+  }
+  return err instanceof Error ? err.message : String(err);
+}
+
 /** Apply one edit to the server-side draft; the client refreshes after. */
 export async function draftOp(admin: AdminContext, slug: string | undefined, lang: string, op: DraftOp): Promise<StudioResult> {
   const k = await key(admin, slug, lang);
@@ -64,7 +73,7 @@ export async function savePageDraft(
       validTo: validity.validTo ? new Date(validity.validTo) : undefined,
     });
   } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    return { ok: false, error: saveError(err) };
   }
 
   clearDraft(k.key);

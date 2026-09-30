@@ -96,6 +96,55 @@ async function problemFrom(res: Response): Promise<OmniumProblem> {
   }
 }
 
+/** What a model offers to draw (`views.json`), for the studio's pick list. */
+export type OmniumViews = { diagrammen: string[]; domeinen: string[]; versie?: string; tijdstip?: string };
+
+export async function fetchOmniumViews(
+  base: string,
+  naam: string,
+  versie?: string,
+  asOf?: string
+): Promise<OmniumViews | { error: string }> {
+  const q = new URLSearchParams();
+  if (versie) q.set("versie", versie);
+  if (asOf) q.set("asOf", asOf);
+  const url = `${base}/api/models/${encodeURIComponent(naam)}/views.json${q.size ? `?${q}` : ""}`;
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(TIMEOUT_MS), cache: "no-store" });
+    if (!res.ok) return { error: (await problemFrom(res)).detail };
+    const v = (await res.json()) as Partial<OmniumViews> & { versie?: unknown };
+    return {
+      diagrammen: Array.isArray(v.diagrammen) ? v.diagrammen.map(String) : [],
+      domeinen: Array.isArray(v.domeinen) ? v.domeinen.map(String) : [],
+      versie: v.versie != null ? String(v.versie) : undefined,
+      tijdstip: typeof v.tijdstip === "string" ? v.tijdstip : undefined,
+    };
+  } catch (e) {
+    return { error: `Omnium not reachable (${e instanceof Error ? e.message : String(e)})` };
+  }
+}
+
+/**
+ * The same pick list from a V3 model document the editor has at hand; the
+ * rule mirrors Omnium's `v3Views` (diagramsvg/selectie.js): diagram names,
+ * and domains from `domeinen[]` plus every entity's `domein`.
+ */
+export function viewsOfModel(model: unknown): OmniumViews {
+  const o = (model && typeof model === "object" ? model : {}) as Record<string, unknown>;
+  // A Studio export wraps the model in an envelope: { versie, model: {…} }.
+  const m = (o.model && typeof o.model === "object" ? o.model : o) as Record<string, unknown>;
+  const list = (v: unknown) => (Array.isArray(v) ? (v as Record<string, unknown>[]) : []);
+  const add = (into: string[], n: unknown) => {
+    if (typeof n === "string" && n && !into.includes(n)) into.push(n);
+  };
+  const diagrammen: string[] = [];
+  const domeinen: string[] = [];
+  for (const d of list(m.diagrammen)) add(diagrammen, d?.naam);
+  for (const d of list(m.domeinen)) add(domeinen, d?.naam);
+  for (const e of list(m.entiteiten)) add(domeinen, e?.domein);
+  return { diagrammen, domeinen };
+}
+
 export async function renderOmniumSvg(base: string, source: OmniumSource, view: OmniumView): Promise<OmniumResult> {
   const { url, init } = omniumRequest(base, source, view);
   let res: Response;

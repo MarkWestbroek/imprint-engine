@@ -376,6 +376,11 @@ flowchart LR
   de wrapper die aan de widget-tokens (`--theme(--color-surface)` enz.).
   Zonder `OMNIUM_URL` blijft de tijdelijke tekenaar `v3-diagram.tsx` voor
   modelcode; die vervalt zodra Omnium in productie draait.
+  De studio-editor (`V3ModelEditor` in `editors.tsx`) vult de keuzelijst
+  diagram/domein uit `views.json` via de server action `omnium-actions.ts`
+  (alleen die vaste route op de eigen `OMNIUM_URL`, geen vrije fetch), en bij
+  geplakte code uit de JSON zelf (`viewsOfModel`, dezelfde regel als Omniums
+  `v3Views`).
 
   ```mermaid
   flowchart LR

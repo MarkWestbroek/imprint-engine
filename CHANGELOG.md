@@ -14,6 +14,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   (allow-list, `svg-sanitize.ts`) inline in de pagina; Omniums foutmelding
   (met het foute element, of de beschikbare diagrammen/domeinen) staat in de
   widget. Zonder `OMNIUM_URL` blijft de tijdelijke eigen tekenaar.
+- **Eigen editor voor V3 model diagram**: eerst "welk model" (Omnium-model,
+  code plakken of URL — alleen die velden zichtbaar), dan "wat tonen" als
+  keuzelijst van de diagrammen en domeinen (uit Omnium of uit de geplakte
+  code), kleuren, en de fijnafstelling ingeklapt onder "Meer"; knop om de
+  huidige Omnium-versie vast te zetten.
+- **Studio: leesbare fout bij opslaan** — een validatiefout (bv. een pagina
+  zonder titel) staat er nu als `title: Too small: …` in plaats van als
+  zod-JSON.
 
 ## [0.11.0] - 2026-09-29
 - **SysEx (.syx) in de bibliotheek**: soort `data`, mime `application/x-sysex`,
