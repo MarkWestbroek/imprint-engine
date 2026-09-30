@@ -21,7 +21,8 @@ export default defineImprint({
   // The wiki of the "Common Ground publicatiesite" group and the terms, imported from Pleio (scripts/import-pleio.ts).
   plugins: [wikiPlugin(), glossaryPlugin({ indexHref: "/termen" })],
   // A community site: pages and their chrome; groups, news and events follow (communities.md).
-  contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],
+  // The plugins' types have to be listed too: this list is the whole active catalogue.
+  contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist", "wiki", "wiki-folder", "wiki-page", "term"],
   // Unset locally (engine default: .assets/); the container points these at a volume.
   assets: {
     root: process.env.ASSET_ROOT,
