@@ -26,6 +26,7 @@ COPY packages/widgets-standard/package.json packages/widgets-standard/
 COPY packages/plugin-planning/package.json packages/plugin-planning/
 COPY packages/plugin-wiki/package.json packages/plugin-wiki/
 COPY packages/plugin-glossary/package.json packages/plugin-glossary/
+COPY packages/plugin-groups/package.json packages/plugin-groups/
 COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
 COPY sites/commonground/package.json sites/commonground/

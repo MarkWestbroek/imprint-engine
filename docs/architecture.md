@@ -1002,7 +1002,11 @@ niet van elkaar afwijken.
   [plugin-glossary](../packages/plugin-glossary/src/index.ts) (type `term`
   met samenvatting, tekst en tags; de widget `glossary` — kaarten met een
   zoekveld dat in de browser filtert, optioneel één tag — die de site in zijn
-  catalogus componeert; publieke route `/term/<slug>`). Node-scripts
+  catalogus componeert; publieke route `/terms/<slug>`) en
+  [plugin-groups](../packages/plugin-groups/src/index.ts) (type `group` met
+  relatie naar zijn wiki; widget `groups`; publieke routes `/groups` en
+  `/groups/<slug>`, de pagina's van een groep zijn gewone pagina's onder
+  `groups/<slug>/…` — G0 van design/communities.md). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie

@@ -6,7 +6,7 @@ import { GlossaryConfig, GlossaryWidget } from "./widget";
 /**
  * @imprint/plugin-glossary — a glossary as a plugin (design/communities.md
  * §4.7): the content type `term`, a searchable card overview as widget, and a
- * page per term under `/term/<slug>`. A site switches it on with
+ * page per term under `/terms/<slug>`. A site switches it on with
  * `plugins: [glossaryPlugin()]` and composes the widget into its catalogue
  * (`glossaryWidgets` / `glossaryViewers`), as with the planning plugin.
  * Recognising terms in running text is the next step (backlog).

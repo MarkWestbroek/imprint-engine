@@ -1,6 +1,7 @@
 import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
 import { glossaryWidgets } from "@imprint/plugin-glossary";
+import { groupsWidgets } from "@imprint/plugin-groups";
 
 /**
  * The widgets this site offers (architecture.md §3): a selection from the
@@ -40,6 +41,8 @@ export const widgetCatalog = [
   standardWidgets.video,
   // The terms overview (plugin-glossary): Pleio's "Termen" and "Afkortingen" pages.
   ...glossaryWidgets,
+  // The communities overview (plugin-groups): Pleio's "Onze communities".
+  ...groupsWidgets,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

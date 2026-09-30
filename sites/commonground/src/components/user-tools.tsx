@@ -66,7 +66,7 @@ export function UserTools() {
 function EditButton() {
   const path = usePathname();
   const slug = path.replace(/^\/+|\/+$/g, "") || "home";
-  if (slug === "zoeken") return null;
+  if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups") return null;
   return (
     <Link href={`/admin/page/edit/${slug}`} className="cg-edit" aria-label="Deze pagina bewerken" title="Deze pagina bewerken">
       <Pencil size={22} aria-hidden />

@@ -32,7 +32,7 @@ function TermView({ term, indexHref }: { term: Term; indexHref?: string }) {
 }
 
 /**
- * The page of a term: `/term/<slug>`. Public terms render in the prerendered
+ * The page of a term: `/terms/<slug>`. Public terms render in the prerendered
  * catch-all; a restricted term goes to /members, where the PDP decides for
  * the session at hand (as the wiki does, design/fase-3 §4.3).
  */

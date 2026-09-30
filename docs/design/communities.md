@@ -9,8 +9,9 @@
 > **Showcase (30 september 2026):** `sites/commonground` draait Common
 > Ground op Imprint (https://commonground.imprint-engine.nl), met de vormgeving van commonground.nl en de publieke
 > pagina's, het menu, de footer, de wiki van de groep "Common Ground
-> publicatiesite" en de termen uit Pleio (GraphQL-import; termen via de nieuwe
-> plugin-glossary). Nieuws, agenda en groepen komen nog niet mee; zie de backlog.
+> publicatiesite", de termen en de 41 communities met hun wiki's uit Pleio
+> (GraphQL-import; plugin-glossary en plugin-groups, stap G0 van §7a).
+> Nieuws en agenda komen nog niet mee; zie de backlog.
 
 ## 1. Samenvatting
 
@@ -311,6 +312,25 @@ architectuurkeuze in dit document, en die moet vóór §4.2 vallen.
 **Stille communities kosten bijna niets.** Hun infopagina's zijn statisch
 gerenderd HTML. Een community zonder bezoekers gebruikt geen CPU, en de
 eerste bezoeker op maandagochtend krijgt direct een pagina.
+
+### 7a. De stappen voor groepen (30 september 2026) ▶
+
+Mark: `plugin-groups` (zoals wiki en glossary); routes Engels met een
+Nederlandse alias (`/groups`, `/groep` stuurt door); eerst eigen accounts
+(e-mail + passkey), de IdP daarna; maximaal één wiki per groep.
+
+- **G0 — groepen tonen** (gedaan): contenttype `group`, `/groups` en
+  `/groups/<slug>`, de groups-widget, per groep één wiki en haar pagina's
+  onder `groups/<slug>/…`; de knop "Lid worden" staat er al.
+- **G1 — leden en lidmaatschap**: zelf registreren, lidmaatschap als eigen
+  tabel (persoonsgegevens), open of op aanvraag, uitnodigingslinks (§4.1a),
+  beheer op de groep zelf.
+- **G2 — de drie niveaus**: `access: group:<slug>` naast publiek en
+  beperkt, lidmaatschap als attribuut in de toegangscheck, promoveren als
+  nieuwe versie, groepspagina's snel (één opzoeking per lijst).
+- **G3 — groepsinhoud en activiteit**: `group`-veld op wiki, pagina's,
+  termen, planning en media; discussies, reacties, mail; de niet-publieke
+  inhoud uit de admin-export alleen op een besloten testomgeving.
 
 ## 8. Hosting met fallback
 

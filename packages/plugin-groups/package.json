@@ -1,8 +1,8 @@
 {
-  "name": "@imprint/plugin-glossary",
+  "name": "@imprint/plugin-groups",
   "version": "0.11.0",
   "private": true,
-  "description": "Plugin: glossary — terms (title, summary, text, tags) as a content type, a searchable card overview as widget, and a page per term under /terms/<slug>.",
+  "description": "Plugin: groups (communities) — a content type with a page per group under /groups/<slug>, a card overview as widget, and the group's wiki and pages linked to it.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",

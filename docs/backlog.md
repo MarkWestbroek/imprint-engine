@@ -825,6 +825,21 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Wiki-boom dubbel + niet inklapbaar~~ — een map met een gelijknamige
             pagina linkt daar nu zelf naar; de boom klapt in (30-09).
       - [ ] Kortere wiki-slugs (nu `wiki-<titel>` per niveau in de URL).
+      - [x] ~~G0 groepen~~ — plugin-groups: 41 communities, 8 groepswiki's,
+            groepspagina's, `/groups` (30-09).
+      - [ ] **G1 leden** (communities §4.1, §4.1a): zelf registreren (e-mail +
+            passkey, rol `member`), lidmaatschap als eigen tabel (persoons-
+            gegevens, geen content), open/op aanvraag, uitnodigingslinks,
+            tab "Beheer" op de groep. IdP met LinkedIn/Google daarna.
+      - [ ] **G2 drie niveaus** (§4.2): `access: group:<slug>`, lidmaatschap
+            als attribuut in de toegangscheck, promoveren = nieuwe versie.
+      - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
+            termen, planning, media; discussies, reacties, notificaties.
+      - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)
+            naar de beeldbibliotheek; links in pagina's, wiki en termen naar
+            `asset:`-verwijzingen. Groeps- en privébestanden pas na G2.
+      - [ ] Zoeken naar de kern (nu een route van de site: `/search`), met
+            `/zoeken` als alias; dan ook wiki, termen en groepen doorzoeken.
       - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
       - [ ] Leden meenemen via een uitnodiging vanuit Pleio (communities §4.1a):
             uitnodigingsroute per groep, e-mailverificatie, rol herstellen door

@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
+  naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
+  wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht
+  `/groups` en een pagina per groep op `/groups/<slug>` met haar wiki en
+  pagina's (`groups/<slug>/…`). Lid worden volgt (G1).
+- **Common Ground-showcase: groepen**: `import:pleio` neemt de 41 zichtbare
+  communities over, per groep één wiki (8) en de groepspagina's; "Onze
+  communities" is de groups-widget, "Community" in het menu gaat naar
+  `/groups`.
+- **Engelse routes met Nederlandse aliassen**: plugins en routes heten
+  Engels (`/groups`, `/terms/<slug>`, `/search`); de site-`aliases`
+  (`groep`, `term`, `zoeken`) sturen door, met de query mee.
 - **Thema's met breedte**: `ThemeSchema` kent `layout.width` (de breedte van
   de inhoudskolom, als CSS). De Common Ground-showcase heeft vier thema's
   (Common Ground, breed, Donker, Zonnig) met een keuzelijst in de header; de

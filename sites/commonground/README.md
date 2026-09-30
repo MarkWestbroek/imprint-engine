@@ -43,9 +43,12 @@ andere Pleio-site).
   Pleio-inhoud (nieuws, agenda, groepen, activiteit, zoeken) worden een
   callout met een knop naar het origineel, tot die inhoud meekomt.
 - Rich text (TipTap-JSON) → Markdown.
-- De wiki van de groep "Common Ground publicatiesite" (`--wiki=<root-guid>,…`)
-  → één Imprint-wiki `wiki` (plugin-wiki): een knoop met kinderen wordt een
-  map met de eigen tekst als eerste pagina, een blad een pagina.
+- Wiki's (plugin-wiki): een knoop met kinderen wordt een map met de eigen
+  tekst als eerste pagina, een blad een pagina.
+- Groepen (de zichtbare; een "Copy: …"-groep is Pleio's kopie) → `group`
+  (plugin-groups) op `/groups/<slug>`, met per groep één wiki (de wiki's van
+  de groep samen, slug = groepsslug; "Common Ground publicatiesite" heet
+  `wiki`) en haar pagina's als `groups/<slug>/<pagina>`.
 - Termen (Pleio's `custom_term`) → `term` (plugin-glossary), met de
   samenvatting (excerpt) voor de kaart en de tag-categorie als tags; de
   overzichten erop (`objects`-widgets over `custom_term`) → de widget `glossary`.
@@ -58,7 +61,9 @@ andere Pleio-site).
   ingelogde gebruiker (via `/api/me`, zodat pagina's statisch blijven) en het
   potlood.
 - `src/components/page-view.tsx`: een pagina uit de store, en de footer.
-- `src/app/(site)/`: `/` (pagina `home`), `/<slug>`, `/zoeken`.
+- `src/app/(site)/`: `/` (pagina `home`), `/<slug>`, `/search`; de
+  Nederlandse aliassen (`zoeken`, `groep`, `term`) staan in de site-config
+  en sturen door.
 - `src/widgets/components.tsx`: de viewers, elk in een `data-widget`-element,
   zodat `globals.css` per widgettype de Common Ground-stijl kan geven.
 - `src/app/globals.css`: de huisstijl (kleuren uit het logo en het Pleio-thema).

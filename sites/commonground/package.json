@@ -15,6 +15,7 @@
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
     "@imprint/plugin-glossary": "*",
+    "@imprint/plugin-groups": "*",
     "@imprint/plugin-wiki": "*",
     "@imprint/runtime-admin": "*",
     "@imprint/widgets-standard": "*",

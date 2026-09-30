@@ -8,7 +8,9 @@ import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
 import { scopedSlug, wikiPageHref } from "@imprint/plugin-wiki/href";
 import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
 import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
-import { termHref, termSlug } from "@imprint/plugin-glossary/href";
+import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
+import { groupsContentTypes } from "@imprint/plugin-groups/content-types";
+import { GROUPS_PREFIX, groupHref, groupPagePrefix, groupsHref } from "@imprint/plugin-groups/href";
 import { widgetRegistry } from "../src/widgets/registry";
 
 /**
@@ -34,8 +36,10 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   comes along;
  * - rich text is TipTap JSON → Markdown;
  * - the main menu → menu `main`, the footer rows → page `_footer`;
- * - Pleio wikis (--wiki=<root guid>,…) → one Imprint wiki `wiki`: a node with
- *   children becomes a folder plus a page with its own text, a leaf a page;
+ * - groups (the visible ones) → `group` (plugin-groups) with `/groups/<slug>`;
+ *   a group's pages → `groups/<slug>/<page>`; a group's wikis → one Imprint
+ *   wiki with the group's slug: a node with children becomes a folder plus a
+ *   page with its own text, a leaf a page;
  * - terms (the custom type `custom_term`) → `term` (plugin-glossary), their
  *   overviews (objects widgets over custom_term) → the `glossary` widget.
  * Links to imported pages become Imprint paths; everything else (news,
@@ -51,15 +55,10 @@ const DRY = process.argv.includes("--dry-run");
 const BASE_URL = process.argv.find((a) => a.startsWith("--base-url="))?.slice(11);
 const BY = "import-pleio";
 /**
- * The Pleio wikis to import (root guids): by default the wiki of the group
- * "Common Ground publicatiesite". They become one Imprint wiki, `/wiki/…`.
+ * Every group's wikis become one Imprint wiki per group (at most one, Mark),
+ * with the group's slug as wiki slug — except where a short name is nicer.
  */
-const WIKI_ROOTS = (
-  process.argv.find((a) => a.startsWith("--wiki="))?.slice(7) ?? "92b5d296-dbbb-4625-b8fb-1b7ced3d3526"
-)
-  .split(",")
-  .filter(Boolean);
-const WIKI = "wiki";
+const WIKI_SLUGS: Record<string, string> = { "common-ground-publicatiesite": "wiki" };
 
 // ── Pleio GraphQL ────────────────────────────────────────────────────────
 
@@ -74,6 +73,15 @@ const SITE_QUERY = `query Site { site { name subtitle startpage
 const PAGES_QUERY = `query Pages($offset: Int, $limit: Int) { entities(subtype: "page", offset: $offset, limit: $limit) {
   total edges { guid ... on Page { pageType statusPublished accessId title url description richDescription
   timeCreated timeUpdated group { guid } rows { ${ROW} } } } } }`;
+
+/** Groups (communities): their public face; membership stays behind (G1). */
+const GROUPS_QUERY = `query Groups($offset: Int, $limit: Int) { groups(offset: $offset, limit: $limit) {
+  total edges { guid name url excerpt introduction richDescription isClosed isHidden isMembershipOnRequest memberCount tags
+  icon { download } featured { image { ... on File { download } } } } } }`;
+
+/** The root wikis (the list gives roots only; the tree comes per root). */
+const WIKIS_QUERY = `query Wikis($offset: Int, $limit: Int) { entities(subtype: "wiki", offset: $offset, limit: $limit) {
+  total edges { guid ... on Wiki { title accessId statusPublished group { guid } } } } }`;
 
 /** A Pleio wiki is a tree: every node has its own text and may have children. */
 const WIKI_FIELDS = "guid title url accessId statusPublished richDescription";
@@ -144,6 +152,22 @@ type PWiki = {
   richDescription: string | null;
   children?: PWiki[] | null;
 };
+type PGroup = {
+  guid: string;
+  name: string;
+  url: string;
+  excerpt: string | null;
+  introduction: string | null;
+  richDescription: string | null;
+  isClosed: boolean;
+  isHidden: boolean;
+  isMembershipOnRequest: boolean;
+  memberCount: number;
+  tags: string[] | null;
+  icon: { download: string | null } | null;
+  featured: { image: { download: string | null } | null } | null;
+};
+type PWikiRoot = { guid: string; title: string; accessId: number; statusPublished: string; group: { guid: string } | null };
 type PTerm = {
   guid: string;
   title: string;
@@ -175,6 +199,7 @@ function href(raw: string | null | undefined): string {
   let url = raw.trim();
   if (url.startsWith(ORIGIN)) url = url.slice(ORIGIN.length) || "/";
   if (/^(mailto:|tel:|#)/.test(url) || /^[a-z]+:\/\//i.test(url)) return url;
+  if (/^\/groups\/?$/.test(url)) return groupsHref();
   // The item's own guid comes last (/groups/view/<group>/…/wiki/view/<guid>/<slug>).
   const guids = [...url.matchAll(GUID)].map((m) => m[0]).reverse();
   const known = guids.find((g) => hrefOf.has(g));
@@ -489,10 +514,11 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
       );
       return links.length ? [{ type: "text", config: { markdown: links.join("\n\n") } }] : [];
     }
+    case "groups":
+      return [{ type: "groups", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), showSearch: true } }];
     case "objects":
     case "featured":
     case "events":
-    case "groups":
     case "activity":
     case "search": {
       // Lists of terms are the glossary widget now (which searches itself); the rest points at Pleio.
@@ -545,14 +571,16 @@ function slugFromUrl(url: string): string {
   );
 }
 
-function menu(items: PMenuItem[]): { label: string; page?: string; url?: string; children?: unknown[] }[] {
+function menu(items: PMenuItem[], pageSlugs: Set<string>): { label: string; page?: string; url?: string; children?: unknown[] }[] {
   return items.map((item) => {
     const target = href(item.link);
+    // A page by slug; any other path (the groups overview, a term) is a plain URL.
     const internal = target.startsWith("/") ? target.slice(1) || "home" : null;
-    const children = item.children?.length ? menu(item.children) : undefined;
+    const page = internal !== null && pageSlugs.has(internal) ? internal : null;
+    const children = item.children?.length ? menu(item.children, pageSlugs) : undefined;
     return {
       label: item.label,
-      ...(internal !== null ? { page: internal } : target ? { url: target } : {}),
+      ...(page !== null ? { page } : target ? { url: target } : {}),
       ...(children ? { children } : {}),
     };
   });
@@ -564,19 +592,43 @@ async function main() {
     gql(PAGES_QUERY, { offset: 0, limit: 1000 })
   ).then((d) => d.entities.edges);
 
-  const wikiRoots = await Promise.all(
-    WIKI_ROOTS.map((guid) =>
-      cached<{ entity: PWiki }>(`wiki-${guid}.json`, () => gql(WIKI_QUERY, { guid })).then((d) => d.entity)
-    )
-  );
+  // Groups (plugin-groups): the visible ones; a "Copy: …" group is Pleio's duplicate of another.
+  const allGroups = await cached<{ groups: { edges: PGroup[] } }>("groups.json", () =>
+    gql(GROUPS_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.groups.edges);
+  const groups = allGroups.filter((g) => !g.isHidden && !/^copy:/i.test(g.name));
+  const groupSlugOf = new Map<string, string>();
+  const takenGroups = new Set<string>();
+  for (const g of groups) {
+    let slug = slugFromUrl(g.url);
+    for (let n = 2; takenGroups.has(slug); n++) slug = `${slugFromUrl(g.url)}-${n}`;
+    takenGroups.add(slug);
+    groupSlugOf.set(g.guid, slug);
+    hrefOf.set(g.guid, groupHref(slug));
+  }
 
-  // Public, published, site-level pages only; groups come with the community work.
-  const wanted = pages.filter((p) => !p.group && p.statusPublished === "published" && p.accessId === 2);
+  // One wiki per group, from that group's root wikis; the wiki's slug is the group's (or a short name).
+  const wikiRoots = await cached<{ entities: { edges: PWikiRoot[] } }>("wikis.json", () =>
+    gql(WIKIS_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.entities.edges.filter((w) => w.accessId === 2 && w.statusPublished === "published"));
+  const wikiOfGroup = new Map<string, string>(); // group slug → wiki slug
+  for (const g of groups) {
+    const slug = groupSlugOf.get(g.guid)!;
+    if (wikiRoots.some((w) => w.group?.guid === g.guid)) wikiOfGroup.set(slug, WIKI_SLUGS[slug] ?? slug);
+  }
+
+  // Public, published pages: site-level as `<slug>`, a group's as `groups/<group>/<slug>`.
+  const wanted = pages.filter(
+    (p) => p.statusPublished === "published" && p.accessId === 2 && (!p.group || groupSlugOf.has(p.group.guid))
+  );
   const slugOf = new Map<string, string>();
-  const taken = new Set<string>(["zoeken", "admin", "api", WIKI]);
+  // A page must not shadow a route: search, the admin, the plugins' spaces and every wiki's URL.
+  const taken = new Set<string>(["search", "zoeken", "admin", "api", GROUPS_PREFIX, TERM_PREFIX, ...wikiOfGroup.values()]);
   for (const p of wanted) {
-    let slug = p.guid === site.startpage ? "home" : slugFromUrl(p.url);
-    for (let n = 2; taken.has(slug); n++) slug = `${slugFromUrl(p.url)}-${n}`;
+    const base = p.guid === site.startpage ? "home" : slugFromUrl(p.url);
+    const prefix = p.group ? groupPagePrefix(groupSlugOf.get(p.group.guid)!) : "";
+    let slug = prefix + base;
+    for (let n = 2; taken.has(slug); n++) slug = `${prefix}${base}-${n}`;
     taken.add(slug);
     slugOf.set(p.guid, slug);
     hrefOf.set(p.guid, slug === "home" ? "/" : `/${slug}`);
@@ -597,29 +649,39 @@ async function main() {
     hrefOf.set(t.guid, termHref(slug));
   }
 
-  // The wiki tree: plan folders and pages first, so every page's URL is known before any text is converted.
+  // The wiki trees: plan folders and pages first, so every page's URL is known before any text is converted.
   const folders: WikiFolder[] = [];
   const wikiPages: { node: PWiki; page: Omit<WikiPage, "body"> }[] = [];
   const takenFolders = new Set<string>();
   const takenPages = new Set<string>();
   const isPublic = (w: PWiki) => w.accessId === 2 && w.statusPublished === "published";
-  const plan = (node: PWiki, parent: string, order: number) => {
+  const plan = (wiki: string, node: PWiki, parent: string, order: number) => {
     const kids = (node.children ?? []).filter(isPublic);
-    const pageSlug = scopedSlug(WIKI, node.title, takenPages);
+    const pageSlug = scopedSlug(wiki, node.title, takenPages);
     takenPages.add(pageSlug);
-    const base = { lang: "en" as const, access: "public" as const, wiki: WIKI, title: node.title };
+    const base = { lang: "en" as const, access: "public" as const, wiki, title: node.title };
     if (kids.length || !parent) {
       // A node with children: a folder, with the node's own text as its first page.
-      const folder = scopedSlug(WIKI, node.title, takenFolders);
+      const folder = scopedSlug(wiki, node.title, takenFolders);
       takenFolders.add(folder);
-      folders.push({ slug: folder, lang: "en", wiki: WIKI, parent, title: node.title, order });
+      folders.push({ slug: folder, lang: "en", wiki, parent, title: node.title, order });
       wikiPages.push({ node, page: { ...base, slug: pageSlug, folder, order: 0 } });
-      kids.forEach((kid, i) => plan(kid, folder, i + 1));
+      kids.forEach((kid, i) => plan(wiki, kid, folder, i + 1));
     } else {
       wikiPages.push({ node, page: { ...base, slug: pageSlug, folder: parent, order } });
     }
   };
-  wikiRoots.filter(isPublic).forEach((root, i) => plan(root, "", i));
+  const wikiDocs: Record<string, unknown>[] = [];
+  for (const g of groups) {
+    const wiki = wikiOfGroup.get(groupSlugOf.get(g.guid)!);
+    if (!wiki) continue;
+    const roots = wikiRoots.filter((w) => w.group?.guid === g.guid);
+    const trees = await Promise.all(
+      roots.map((r) => cached<{ entity: PWiki }>(`wiki-${r.guid}.json`, () => gql(WIKI_QUERY, { guid: r.guid })).then((d) => d.entity))
+    );
+    trees.filter(isPublic).forEach((root, i) => plan(wiki, root, "", i));
+    wikiDocs.push({ slug: wiki, lang: "en", title: g.name, description: "", access: "public", order: wikiDocs.length });
+  }
   for (const { node, page } of wikiPages) hrefOf.set(node.guid, wikiPageHref({ ...page, body: "" }, folders));
 
   const docs: { slug: string; data: Record<string, unknown> }[] = [];
@@ -645,11 +707,28 @@ async function main() {
       data: { slug: "_footer", lang: "en", title: "Footer", description: "", body: "", layout: { rows: footer } },
     });
   }
-  const mainMenu = { name: "main", items: menu(site.menu ?? []) };
+  const mainMenu = { name: "main", items: menu(site.menu ?? [], new Set(slugOf.values())) };
 
-  const wikiDoc = wikiRoots[0]
-    ? { slug: WIKI, lang: "en", title: wikiRoots[0].title, description: "", access: "public", order: 0 }
-    : null;
+  const groupDocs = groups.map((g, i) => {
+    const slug = groupSlugOf.get(g.guid)!;
+    const image = g.featured?.image?.download ?? g.icon?.download ?? "";
+    return {
+      slug,
+      lang: "en",
+      access: "public",
+      title: g.name,
+      summary: (g.excerpt ?? "").replace(/\s+/g, " ").trim(),
+      introduction: markdown(g.introduction),
+      body: markdown(g.richDescription),
+      ...(image ? { image: href(image) } : {}),
+      tags: g.tags ?? [],
+      closed: g.isClosed,
+      membershipOnRequest: g.isMembershipOnRequest,
+      wiki: wikiOfGroup.get(slug) ?? "",
+      memberCount: g.memberCount,
+      order: i,
+    };
+  });
   const wikiPageDocs = wikiPages.map(({ node, page }) => ({ ...page, body: markdown(node.richDescription) }));
   const termDocs = terms.map((t) => ({
     slug: termSlugOf.get(t.guid)!,
@@ -663,7 +742,7 @@ async function main() {
 
   console.log(
     `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
-      `wiki ${folders.length} folders + ${wikiPageDocs.length} pages, ${termDocs.length} terms`
+      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms`
   );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
@@ -677,7 +756,7 @@ async function main() {
   // The store with this site's widgets and content types, so it validates as the admin does.
   const store = openContentDatabase(url, {
     widgets: widgetRegistry,
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes),
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes),
   }).store;
 
   let written = 0;
@@ -699,16 +778,24 @@ async function main() {
     tagline: site.subtitle || "",
     baseUrl: BASE_URL ?? (current?.data as { baseUrl?: string } | undefined)?.baseUrl ?? "http://localhost:3300",
     defaultLocale: "nl",
+    // Dutch aliases for the English routes (the site's catch-all redirects them).
+    aliases: {
+      ...((current?.data as { aliases?: Record<string, string> } | undefined)?.aliases ?? {}),
+      zoeken: "search",
+      groep: GROUPS_PREFIX,
+      term: TERM_PREFIX,
+    },
   };
   await put("site", "site", siteData);
   for (const d of docs) await put("page", d.slug, d.data);
   await put("menu", "main", mainMenu);
-  // Wiki first, then folders (parents before children, as planned), then pages: the relation rules check each reference.
-  if (wikiDoc) await put("wiki", WIKI, wikiDoc);
+  // Wikis first, then folders (parents before children, as planned), pages and groups: the relation rules check each reference.
+  for (const w of wikiDocs) await put("wiki", w.slug as string, w);
   for (const f of folders) await put("wiki-folder", f.slug, f);
   for (const p of wikiPageDocs) await put("wiki-page", p.slug, p);
+  for (const g of groupDocs) await put("group", g.slug, g);
   for (const t of termDocs) await put("term", t.slug, t);
-  const total = docs.length + 2 + (wikiDoc ? 1 : 0) + folders.length + wikiPageDocs.length + termDocs.length;
+  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
   console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }

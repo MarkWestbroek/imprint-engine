@@ -10,7 +10,7 @@ test("termSlug: lower case, diacritics off, hyphens", () => {
 });
 
 test("termHref: the plugin's URL space", () => {
-  assert.equal(termHref("abac"), "/term/abac");
+  assert.equal(termHref("abac"), "/terms/abac");
 });
 
 test("termSummary: the summary, else the text without Markdown, cut at a word", () => {

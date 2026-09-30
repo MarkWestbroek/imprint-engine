@@ -3,8 +3,8 @@
  * in Node scripts such as an import).
  */
 
-/** The URL space the plugin claims: `/term/<slug>`. */
-export const TERM_PREFIX = "term";
+/** The URL space the plugin claims: `/terms/<slug>` (a site may alias `/term`, `/termen`). */
+export const TERM_PREFIX = "terms";
 
 export const termHref = (slug: string) => `/${TERM_PREFIX}/${slug}`;
 

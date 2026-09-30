@@ -5,7 +5,7 @@ import { Access, Locale } from "@imprint/content-core";
  * A term in a glossary (design/communities.md §4.7): a title, a short summary
  * for the overview cards, the full explanation in Markdown, and tags to tell
  * kinds apart (e.g. "afkorting"). Terms link to each other with ordinary
- * links to `/term/<slug>`.
+ * links to `/terms/<slug>`.
  */
 export const TermSchema = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),

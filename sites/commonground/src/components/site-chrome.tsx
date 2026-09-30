@@ -79,7 +79,7 @@ export function SiteHeader({
           <span className={inert ? "pointer-events-auto" : undefined}>
             <ThemeSwitcher themes={themes} />
           </span>
-          <Link href="/zoeken" className="cg-icon-button" aria-label="Zoeken">
+          <Link href="/search" className="cg-icon-button" aria-label="Zoeken">
             <Search size={22} aria-hidden />
           </Link>
           {!inert && <UserTools />}

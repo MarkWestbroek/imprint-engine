@@ -495,10 +495,20 @@ andere sites, met een paar dingen van commonground.nl:
   MusicBrain. De navigatieboom klapt in: alleen de eerste laag en de weg
   naar de pagina die je leest staan open, met **Alles uitklappen** erboven. Een Pleio-wikipagina met onderliggende pagina's is hier een
   map met die pagina als eerste pagina erin.
+- **Communities** (groepen): onder **Groups** in de admin staat elke
+  community met naam, samenvatting (de kaarttekst), introductie, tekst,
+  beeld, tags, of ze besloten is of lid worden op aanvraag gaat, en haar
+  wiki. Het overzicht staat op `/groups` (en als widget **Groups** op "Onze
+  communities"); elke community heeft een eigen pagina op `/groups/<slug>`
+  met daarop haar wiki en pagina's. **Lid worden** staat er al, maar doet
+  nog niets: leden komen in de volgende stap.
+- **Adressen**: de vaste routes heten Engels (`/groups`, `/terms/…`,
+  `/search`); de Nederlandse namen (`/groep/…`, `/term/…`, `/zoeken`) zijn
+  aliassen in de site-instellingen en sturen door.
 - **Termen**: onder **Terms** in de admin staat elke term met een titel, een
   **samenvatting** (de tekst op de kaart; leeg = het begin van de tekst), de
   **tekst** en **tags** (bijvoorbeeld `afkorting`). Elke term heeft een eigen
-  pagina op `/term/<slug>`; verwijs ernaar met een gewone link. Het overzicht
+  pagina op `/terms/<slug>`; verwijs ernaar met een gewone link. Het overzicht
   is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
   tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 

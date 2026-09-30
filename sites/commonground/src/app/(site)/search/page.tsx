@@ -12,6 +12,7 @@ import { store } from "@/lib/content";
  */
 
 export const metadata: Metadata = { title: "Zoeken", robots: { index: false } };
+// Canonical: /search (plugins and core routes are English); /zoeken is an alias in the site config.
 
 type Props = { searchParams: Promise<{ q?: string }> };
 
@@ -41,7 +42,7 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     <article className="cg-page">
       <h1>Zoeken</h1>
-      <form action="/zoeken" role="search" className="cg-search">
+      <form action="/search" role="search" className="cg-search">
         <label htmlFor="q" className="sr-only">
           Zoekterm
         </label>
