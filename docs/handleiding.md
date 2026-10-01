@@ -607,7 +607,7 @@ andere sites, met een paar dingen van commonground.nl:
 
 ## Reacties (annotaties)
 
-Onder een bericht, een evenement en een wikipagina staat een draad
+Onder een bericht, een evenement, een term en een wikipagina staat een draad
 **Reacties**. Wie mag reageren is per type ingesteld (op de showcase:
 leden); een gewone pagina doet standaard niet mee en zet het per pagina aan
 met het veld *Annotations* in de pagina-eigenschappen (`off`, `members`,

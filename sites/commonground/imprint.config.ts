@@ -30,7 +30,7 @@ export default defineImprint({
     blogPlugin(),
     eventsPlugin(),
     // Reacties (design/annotaties.md): per type the default; a page opts in with its own `annotations` field.
-    annotationsPlugin({ targets: { post: "members", event: "members", "wiki-page": "members", page: "off" } }),
+    annotationsPlugin({ targets: { post: "members", event: "members", "wiki-page": "members", term: "members", page: "off" } }),
   ],
   // A community site: pages and their chrome; groups, news and events follow (communities.md).
   // The core types this site uses; the plugins' types (wiki, term) are active on top of these.

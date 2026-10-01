@@ -11,7 +11,7 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   volgt het W3C Web Annotation-model (`target[]` met `source`, `field`,
   `selector[]` en `state` = de versie van toen; `body[]` als tekst of asset;
   `motivation`), in de kern als `annotation-model.ts`. Stap 1: de draad
-  onder berichten, evenementen en wikipagina's (pagina's zetten het per
+  onder berichten, evenementen, termen en wikipagina's (pagina's zetten het per
   item aan met het veld `annotations`): reageren, beantwoorden, eigen
   reactie bewerken ("bewerkt" met eerdere versies) en verwijderen,
   beheerders en groepsbeheerders verbergen (een versie), en "de tekst is

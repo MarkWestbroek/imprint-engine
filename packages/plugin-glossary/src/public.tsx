@@ -50,6 +50,7 @@ export function glossaryPublicRoute(indexHref?: string) {
     return {
       render: <TermView term={term} indexHref={indexHref} />,
       metadata: { title: term.title, description: termSummary(term, 160) },
+      item: { type: "term", slug: term.slug },
     };
   };
 }
