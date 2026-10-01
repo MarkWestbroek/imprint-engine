@@ -903,9 +903,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             "Uitgelicht nieuws" en de feeds zijn de posts-widget (01-10).
       - [x] ~~G3a: leden schrijven zelf~~ — update of blog vanaf de
             groepspagina, eigen verwijderen, beheerder verwijdert (01-10).
-      - [ ] G3a+: eigen bericht bewerken (de PDP staat `update` al toe; een
-            formulier ontbreekt), beeld bij een bericht via de bibliotheek,
-            een rijke editor i.p.v. Markdown-tekstvak.
+      - [x] ~~Eigen bericht bewerken~~ — "bewerken" op de groepspagina (01-10).
+      - [ ] G3a+: "bewerken" ook op de berichtpagina zelf; beeld bij een
+            bericht via de bibliotheek; een rijke editor i.p.v.
+            Markdown-tekstvak; leden maken ook evenementen in hun groep (de
+            regel is er al).
       - [ ] G3b: reacties en discussies, G3c: notificaties en mail.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.

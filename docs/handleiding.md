@@ -548,8 +548,9 @@ andere sites, met een paar dingen van commonground.nl:
 - **Zelf schrijven in een community**: ben je lid, dan staat op de
   community-pagina **Schrijf een bericht**: een update (kort) of een blog,
   zichtbaar voor de leden van de community of voor iedereen. Je eigen
-  berichten kun je verwijderen; de beheerders van de community kunnen elk
-  bericht erin verwijderen (de historie bewaart het).
+  berichten kun je **bewerken** (hetzelfde formulier, vooringevuld) en
+  verwijderen; de beheerders van de community kunnen elk bericht erin
+  verwijderen, maar niet herschrijven (de historie bewaart alles).
 - **Een community beheren** (eigenaar, beheerders en de redactie van de
   site): **Beheer** op de community-pagina, of `/groups/<slug>/manage`:
   aanvragen goedkeuren of afwijzen, leden verwijderen, rollen (lid,

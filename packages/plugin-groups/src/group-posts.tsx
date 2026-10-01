@@ -23,6 +23,8 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
   // The page is prerendered with the public posts; a signed-in visitor fetches the timeline as they may see it.
   const [posts, setPosts] = useState<GroupPostItem[]>(initial);
   const [writing, setWriting] = useState(false);
+  /** The slug of the post being edited; null = writing a new one. */
+  const [editing, setEditing] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [kind, setKind] = useState<PostInput["kind"]>("update");
@@ -44,18 +46,40 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
   }, [refresh]);
 
   const member = state?.membership?.status === "active";
-  const mayRemove = (p: GroupPostItem) => !!state && (state.canManage || (!!state.name && p.author === state.name));
+  const own = (p: GroupPostItem) => !!state?.name && p.author === state.name;
+  const mayRemove = (p: GroupPostItem) => !!state && (state.canManage || own(p));
+
+  const startEdit = async (postSlug: string) => {
+    if (!call) return;
+    setError(null);
+    const current = (await call("groups", "post", slug, postSlug)) as (PostInput & { slug: string }) | null;
+    if (!current) return setError("Dit bericht is niet te laden.");
+    setKind(current.kind);
+    setTitle(current.title);
+    setBody(current.body);
+    setMembersOnly(current.membersOnly);
+    setEditing(postSlug);
+    setWriting(true);
+  };
+
+  const cancel = () => {
+    setWriting(false);
+    setEditing(null);
+    setTitle("");
+    setBody("");
+  };
 
   const submit = async () => {
     if (!call) return;
     setBusy(true);
     setError(null);
-    const result = (await call("groups", "writePost", slug, { kind, title, body, membersOnly } satisfies PostInput)) as ActionResult;
+    const input = { kind, title, body, membersOnly } satisfies PostInput;
+    const result = (editing
+      ? await call("groups", "editPost", slug, editing, input)
+      : await call("groups", "writePost", slug, input)) as ActionResult;
     setBusy(false);
     if (!result.ok) return setError(result.error ?? "Dat lukte niet.");
-    setTitle("");
-    setBody("");
-    setWriting(false);
+    cancel();
     await refresh();
     router.refresh();
   };
@@ -76,7 +100,7 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-xl font-semibold">Berichten</h2>
         {member && !writing && (
-          <button type="button" className={button} onClick={() => setWriting(true)}>
+          <button type="button" className={button} onClick={() => { setEditing(null); setWriting(true); }}>
             Schrijf een bericht
           </button>
         )}
@@ -110,9 +134,9 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
           {error && <p className="text-sm text-red-700">{error}</p>}
           <div className="flex gap-3">
             <button type="submit" className={button} disabled={busy}>
-              {busy ? "Bezig…" : "Plaatsen"}
+              {busy ? "Bezig…" : editing ? "Opslaan" : "Plaatsen"}
             </button>
-            <button type="button" className="text-sm text-muted underline-offset-2 hover:underline" onClick={() => setWriting(false)}>
+            <button type="button" className="text-sm text-muted underline-offset-2 hover:underline" onClick={cancel}>
               Annuleren
             </button>
           </div>
@@ -135,11 +159,18 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
                   {p.author && ` · ${p.author}`}
                 </span>
               </span>
-              {mayRemove(p) && (
-                <button type="button" className="shrink-0 text-xs text-muted underline-offset-2 hover:underline" onClick={() => remove(p.slug)}>
-                  verwijderen
-                </button>
-              )}
+              <span className="flex shrink-0 gap-3">
+                {own(p) && (
+                  <button type="button" className="text-xs text-muted underline-offset-2 hover:underline" onClick={() => startEdit(p.slug)}>
+                    bewerken
+                  </button>
+                )}
+                {mayRemove(p) && (
+                  <button type="button" className="text-xs text-muted underline-offset-2 hover:underline" onClick={() => remove(p.slug)}>
+                    verwijderen
+                  </button>
+                )}
+              </span>
             </li>
           ))}
         </ul>

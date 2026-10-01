@@ -108,17 +108,19 @@ export const inProcessPdp: PolicyDecisionPoint = {
       if (role === "reader") return { decision: true, context: { reason: "reader" } };
       return { decision: false, context: { reason: "restricted" } };
     }
-    // Members write in their own groups (design/communities.md §4.3, G3a): a
-    // post in a group you belong to; your own post you may change or remove;
-    // a group's manager removes any post in that group.
-    if (role === "reader" && resource.type === "post") {
+    // Members write in their own groups (design/communities.md §4.3, G3a), for
+    // any type a plugin offers them: create in a group you belong to, as
+    // yourself (`author` = you); keep changing and removing what you authored;
+    // a group's manager removes anything in that group. Which types members
+    // get a form for is the plugins' choice, not the policy's.
+    if (role === "reader") {
       const group = typeof resource.properties?.group === "string" ? resource.properties.group : "";
       const author = typeof resource.properties?.author === "string" ? resource.properties.author : "";
-      if (action.name === "create" && group && groupsOf(subject).includes(group)) {
+      if (action.name === "create" && group && author === subject.id && groupsOf(subject).includes(group)) {
         return { decision: true, context: { reason: `member of ${group}` } };
       }
       if ((action.name === "update" || action.name === "delete") && author && author === subject.id) {
-        return { decision: true, context: { reason: "own post" } };
+        return { decision: true, context: { reason: "own work" } };
       }
       if (action.name === "delete" && group && managesOf(subject).includes(group)) {
         return { decision: true, context: { reason: `manages ${group}` } };

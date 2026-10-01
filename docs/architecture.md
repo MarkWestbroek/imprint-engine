@@ -1068,10 +1068,12 @@ niet van elkaar afwijken.
   dispatcher van de site, een server-action-referentie is statisch — en
   `GroupManageScreen` voor de dynamische beheerpagina van de site; G3a: de
   acties `writePost`/`removePost` vragen de PDP met een resource
-  `{type: post, group, author, access}` — `inProcessPdp` laat een `reader`
-  een post maken in een groep uit `subject.groups`, eigen posts wijzigen en
-  verwijderen, en als beheerder (`subject.manages`) elke post van de groep
-  verwijderen; `GroupPosts` is het client-eiland met formulier en knoppen —
+  `{type, group, author, access}` — `inProcessPdp` laat een `reader` in een
+  groep uit `subject.groups` iets maken als zichzelf (`author` = het
+  subject), eigen werk wijzigen en verwijderen, en als beheerder
+  (`subject.manages`) alles in de groep verwijderen — typeonafhankelijk; welk
+  type leden een formulier krijgen bepaalt de plugin (nu posts via
+  `writePost`/`editPost`/`removePost`); `GroupPosts` is het client-eiland met formulier en knoppen —
   de statische groepspagina toont de publieke berichten, een ingelogde
   bezoeker haalt via de actie `posts` de tijdlijn op zoals híj die mag zien,
   dus met de berichten voor leden; `revalidatePath` ververst de statische

@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { permit } from "@imprint/content-core";
+import { permit, type WritableContentStore } from "@imprint/content-core";
 import type { Invite, Membership, MembershipRole } from "@imprint/content-core/user-store";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
 import { subjectFor } from "@imprint/runtime-admin/admin-server";
@@ -199,6 +199,7 @@ export async function writePost(admin: AdminContext, slug: string, input: PostIn
   let postSlug = base;
   for (let n = 2; await store.getItem("post", postSlug); n++) postSlug = `${base}-${n}`;
   const subject = await subjectFor(admin, ctx.session);
+  // The policy: create in your group, as yourself (author = you); see inProcessPdp.
   const resource = { type: "post", id: postSlug, properties: { access, group: slug, author: ctx.session.name } };
   if (!(await permit(admin.imprint.pdp, subject, "create", resource))) return { ok: false, error: "Alleen leden van deze community kunnen hier schrijven." };
   await store.putItem(
@@ -223,6 +224,45 @@ export async function writePost(admin: AdminContext, slug: string, input: PostIn
   return { ok: true, slug: postSlug };
 }
 
+/** A post of the group to edit, as the visitor may see it: the fields the form needs. */
+export async function post(admin: AdminContext, slug: string, postSlug: string): Promise<(PostInput & { slug: string }) | null> {
+  const ctx = await context(admin, slug);
+  if (!ctx) return null;
+  const reader = ctx.session ? admin.imprint.storeFor(await subjectFor(admin, ctx.session)) : admin.imprint.store;
+  const listing = reader as Partial<WritableContentStore>;
+  if (typeof listing.getItem !== "function") return null;
+  const record = await listing.getItem("post", postSlug, "en");
+  const d = record?.data as { group?: string; title?: string; body?: string; kind?: string; access?: string } | undefined;
+  if (!d || d.group !== slug) return null;
+  return { slug: postSlug, title: d.title ?? "", body: d.body ?? "", kind: d.kind === "blog" ? "blog" : "update", membersOnly: d.access === `group:${slug}` };
+}
+
+/** Change your own post: a new version with the same slug (the history keeps the old one); the PDP decides ("own work"). */
+export async function editPost(admin: AdminContext, slug: string, postSlug: string, input: PostInput): Promise<ActionResult> {
+  const ctx = await context(admin, slug);
+  if (!ctx) return { ok: false, error: "Onbekende groep." };
+  if (!ctx.session) return { ok: false, error: "Log eerst in." };
+  const store = admin.imprint.writableStore!;
+  const record = await store.getItem("post", postSlug, "en");
+  const data = record?.data as Record<string, unknown> | undefined;
+  if (!data || data.group !== slug) return { ok: false, error: "Geen bericht van deze community." };
+  const title = String(input?.title ?? "").trim();
+  const body = String(input?.body ?? "").trim();
+  if (title.length < 2 || title.length > 160) return { ok: false, error: "Geef een titel van 2 tot 160 tekens." };
+  if (!body || body.length > 20000) return { ok: false, error: "Schrijf een bericht (hooguit 20.000 tekens)." };
+  const subject = await subjectFor(admin, ctx.session);
+  const resource = { type: "post", id: postSlug, properties: { access: String(data.access ?? "public"), group: slug, author: String(data.author ?? "") } };
+  if (!(await permit(admin.imprint.pdp, subject, "update", resource))) return { ok: false, error: "Je kunt alleen je eigen berichten bewerken." };
+  await store.putItem(
+    "post",
+    postSlug,
+    { ...data, title, body, kind: input?.kind === "blog" ? "blog" : "update", access: input?.membersOnly ? `group:${slug}` : "public" },
+    { lang: "en", by: ctx.session.name }
+  );
+  touched(slug, postSlug);
+  return { ok: true };
+}
+
 /** Remove a post from the group: your own, or any as the group's manager (the history keeps it). */
 export async function removePost(admin: AdminContext, slug: string, postSlug: string): Promise<ActionResult> {
   const ctx = await context(admin, slug);
@@ -240,4 +280,4 @@ export async function removePost(admin: AdminContext, slug: string, postSlug: st
   return { ok: true };
 }
 
-export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, writePost, removePost };
+export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, post, writePost, editPost, removePost };

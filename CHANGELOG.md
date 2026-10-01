@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Eigen bericht bewerken** (groepen): "bewerken" bij je eigen berichten op
+  de community-pagina opent hetzelfde formulier, vooringevuld; opslaan is een
+  nieuwe versie met dezelfde slug. De regel in de PDP is nu generiek: een lid
+  maakt in zijn eigen groep als zichzelf (`author`), houdt wat hij schreef
+  bewerkbaar en verwijderbaar, en een beheerder verwijdert alles in zijn
+  groep — voor elk type waar een plugin leden een formulier voor geeft.
 - **Zoeken in de kern**: elk contenttype beschrijft zelf hoe het gevonden
   wordt (`ContentTypeDefinition.search`: soorten met voorvoegsels, en de
   documenten), de engine zoekt (`search()` in content-core: voorvoegsels
