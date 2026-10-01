@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import type { Menu } from "@imprint/content-core";
 import { Logo } from "@/components/logo";
-import { ThemeSwitcher } from "@/components/theme-switcher";
+import { ThemeSwitcher, type ThemeChoice } from "@/components/theme-switcher";
 import { UserTools } from "@/components/user-tools";
 
 /**
@@ -58,7 +58,7 @@ export function SiteHeader({
 }: {
   nav: NavItem[];
   /** The themes from the store; two or more give the picker. */
-  themes?: { name: string; label: string }[];
+  themes?: ThemeChoice[];
   inert?: boolean;
 }) {
   return (

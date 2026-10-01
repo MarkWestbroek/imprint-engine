@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Themakiezer als palet** (showcase): een knop die een paneeltje met
+  tegels opent (kleurstaal per thema) in plaats van een keuzelijst; het menu
+  past weer op één regel.
 - **Leden schrijven zelf (G3a van communities.md)**: een actief lid plaatst
   vanaf de community-pagina een update of blog ("Schrijf een bericht"),
   voor de leden of voor iedereen, en verwijdert zijn eigen berichten; de

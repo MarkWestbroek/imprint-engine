@@ -9,7 +9,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
   const [menu, themes] = await Promise.all([store.getMenu("main", opts), store.listThemes(opts)]);
   return (
     <>
-      <SiteHeader nav={menuToNav(menu)} themes={themes.map((t) => ({ name: t.name, label: t.label }))} />
+      <SiteHeader nav={menuToNav(menu)} themes={themes.map((t) => ({ name: t.name, label: t.label, colors: { background: t.colors.background, accent: t.colors.accent, accent2: t.colors.accent2 || t.colors.accent } }))} />
       <main className="cg-main">
         <div className="cg-container">{children}</div>
       </main>

@@ -190,9 +190,19 @@
 /* De wiki gaat mee met de breedte van het thema (plugin-wiki: standaard 48rem). */
 :root { --wiki-article-width: none; }
 
-/* Themakiezer in de header. */
-.cg-theme { display: inline-flex; align-items: center; gap: 4px; color: var(--cg-ink-soft); }
-.cg-theme select { border: 1px solid var(--cg-line); border-radius: 4px; background: var(--background); color: var(--cg-ink); padding: 4px 6px; font: inherit; font-size: 14px; }
+/* Themakiezer in de header: een palet-knop met een paneeltje van tegels. */
+.cg-theme { position: relative; display: inline-flex; }
+.cg-theme-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 30; min-width: 280px; padding: 12px; border: 1px solid var(--cg-line); border-radius: 8px; background: var(--background); box-shadow: 0 12px 32px rgb(0 0 0 / .18); }
+.cg-theme-title { margin: 0 0 8px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--cg-ink-soft); }
+.cg-theme-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.cg-theme-tile { display: grid; gap: 6px; padding: 8px; border: 1px solid var(--cg-line); border-radius: 6px; background: var(--surface); color: var(--cg-ink); font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+.cg-theme-tile:hover { border-color: var(--cg-navy); }
+.cg-theme-tile.is-current { border-color: var(--cg-navy); box-shadow: 0 0 0 1px var(--cg-navy); }
+.cg-swatch { position: relative; display: block; height: 44px; border: 1px solid rgb(0 0 0 / .12); border-radius: 4px; overflow: hidden; }
+.cg-swatch span { position: absolute; bottom: 6px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgb(0 0 0 / .15); }
+.cg-swatch span:first-child { left: 8px; }
+.cg-swatch span:last-child { left: 30px; }
+.cg-theme-label { display: flex; align-items: center; justify-content: space-between; gap: 6px; font-weight: 700; }
 .cg-logo svg { display: block; height: 40px; width: auto; }
 
 /* ── Account: registreren, inloggen, profiel ─────────────────────────── */

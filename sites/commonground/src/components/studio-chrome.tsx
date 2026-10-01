@@ -12,7 +12,7 @@ export async function StudioChrome({ children }: { children: ReactNode }) {
   return (
     <div className="relative isolate">
       <div className="pointer-events-none select-none">
-        <SiteHeader nav={menuToNav(menu)} themes={themes.map((t) => ({ name: t.name, label: t.label }))} inert />
+        <SiteHeader nav={menuToNav(menu)} themes={themes.map((t) => ({ name: t.name, label: t.label, colors: { background: t.colors.background, accent: t.colors.accent, accent2: t.colors.accent2 || t.colors.accent } }))} inert />
       </div>
       <main className="cg-main">
         <div className="cg-container">
