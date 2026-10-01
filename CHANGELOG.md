@@ -17,6 +17,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   = "Bij een eerdere versie van de tekst", met het citaat. Per type aan te
   zetten (`targets: { post: { allow: "members", inline: true } }`); de
   viewer markeert zijn tekstveld met `data-annotation-field`.
+  De markering is een thematoken (`--annotation-mark`, `-active`, `-draft`)
+  met eigen waarden voor het donkere thema.
 - **Reacties als annotaties** (`@imprint/plugin-annotations`, design
   [annotaties.md](docs/design/annotaties.md)): het contenttype `annotation`
   volgt het W3C Web Annotation-model (`target[]` met `source`, `field`,

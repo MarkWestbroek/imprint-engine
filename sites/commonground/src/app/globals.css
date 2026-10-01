@@ -50,9 +50,20 @@
 	--cg-alert: #d52b1e;
 	--cg-online: #39870c;
 	--cg-width: var(--content-width);
+	/* Markering van geannoteerde passages (plugin-annotations): licht = een
+	   vleugje navy; donker (hieronder) = een band van het heldere blauw, zodat
+	   lichte tekst erop leesbaar blijft. */
+	--annotation-mark: color-mix(in srgb, var(--accent) 18%, transparent);
+	--annotation-mark-active: color-mix(in srgb, var(--accent) 38%, transparent);
+	--annotation-mark-draft: color-mix(in srgb, var(--cg-yellow) 45%, transparent);
 	color-scheme: light;
 }
-[data-theme="donker"] { color-scheme: dark; }
+[data-theme="donker"] {
+	color-scheme: dark;
+	--annotation-mark: color-mix(in srgb, var(--accent-2) 45%, transparent);
+	--annotation-mark-active: color-mix(in srgb, var(--accent-2) 65%, transparent);
+	--annotation-mark-draft: color-mix(in srgb, var(--cg-yellow) 35%, transparent);
+}
 
 /* Tokencontract van de standaardwidgets (architecture.md §3), uit het thema. */
 @theme inline {
@@ -162,9 +173,9 @@
 
 /* Annotaties in de kantlijn (plugin-annotations): de gemarkeerde passages via de
    CSS Custom Highlight API; de ballonnen zelf zijn Tailwind. */
-::highlight(imprint-annotation) { background: color-mix(in srgb, var(--accent) 22%, transparent); }
-::highlight(imprint-annotation-active) { background: color-mix(in srgb, var(--accent) 50%, transparent); }
-::highlight(imprint-annotation-draft) { background: color-mix(in srgb, var(--accent-2, var(--accent)) 35%, transparent); }
+::highlight(imprint-annotation) { background: var(--annotation-mark); }
+::highlight(imprint-annotation-active) { background: var(--annotation-mark-active); }
+::highlight(imprint-annotation-draft) { background: var(--annotation-mark-draft); }
 
 @media (max-width: 900px) {
 	.cg-header-row { flex-wrap: wrap; }
