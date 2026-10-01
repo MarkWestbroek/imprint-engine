@@ -77,7 +77,7 @@ const PAGES_QUERY = `query Pages($offset: Int, $limit: Int) { entities(subtype: 
 /** Groups (communities): their public face; membership stays behind (G1). */
 const GROUPS_QUERY = `query Groups($offset: Int, $limit: Int) { groups(offset: $offset, limit: $limit) {
   total edges { guid name url excerpt introduction richDescription isClosed isHidden isMembershipOnRequest memberCount tags
-  icon { download } featured { image { ... on File { download } } } } } }`;
+  tagCategories { name values } icon { download } featured { image { ... on File { download } } } } } }`;
 
 /** The root wikis (the list gives roots only; the tree comes per root). */
 const WIKIS_QUERY = `query Wikis($offset: Int, $limit: Int) { entities(subtype: "wiki", offset: $offset, limit: $limit) {
@@ -164,6 +164,8 @@ type PGroup = {
   isMembershipOnRequest: boolean;
   memberCount: number;
   tags: string[] | null;
+  /** Pleio's category tags (e.g. "Werkgroep Label": Data, Coalities, …): what the group lists filter on. */
+  tagCategories: { name: string; values: string[] }[] | null;
   icon: { download: string | null } | null;
   featured: { image: { download: string | null } | null } | null;
 };
@@ -514,8 +516,12 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
       );
       return links.length ? [{ type: "text", config: { markdown: links.join("\n\n") } }] : [];
     }
-    case "groups":
-      return [{ type: "groups", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), showSearch: true } }];
+    case "groups": {
+      // Pleio filters a group list on a category tag ("Werkgroep Label": Data, Coalities, …); so does the widget.
+      const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
+      const tag = cleanTag(categories.flatMap((c) => c.values ?? [])[0] ?? "");
+      return [{ type: "groups", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), tag, showSearch: !tag } }];
+    }
     case "objects":
     case "featured":
     case "events":
@@ -537,6 +543,9 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
       return [];
   }
 }
+
+/** Pleio's tag values carry stray zero-width spaces ("Data\u200b"); without them, tags compare. */
+const cleanTag = (tag: string) => tag.replace(/[\u200b\u200c\ufeff]/g, "").trim();
 
 const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
 
@@ -721,7 +730,7 @@ async function main() {
       introduction: markdown(g.introduction),
       body: markdown(g.richDescription),
       ...(image ? { image: href(image) } : {}),
-      tags: g.tags ?? [],
+      tags: [...new Set([...(g.tagCategories ?? []).flatMap((c) => c.values), ...(g.tags ?? [])].map(cleanTag).filter(Boolean))],
       closed: g.isClosed,
       membershipOnRequest: g.isMembershipOnRequest,
       wiki: wikiOfGroup.get(slug) ?? "",
@@ -737,7 +746,7 @@ async function main() {
     title: t.title,
     summary: (t.excerpt ?? "").replace(/\s+/g, " ").trim(),
     body: markdown(t.richDescription),
-    tags: [...new Set([...(t.tagCategories ?? []).flatMap((c) => c.values), ...(t.tags ?? [])])],
+    tags: [...new Set([...(t.tagCategories ?? []).flatMap((c) => c.values), ...(t.tags ?? [])].map(cleanTag).filter(Boolean))],
   }));
 
   console.log(
