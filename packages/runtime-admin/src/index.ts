@@ -9,6 +9,7 @@ export { LAYOUT_PRESETS, layoutRows } from "./layout";
 export { Markdown } from "./markdown";
 export { imgProps, resolveMedia, resolveMediaAll, type ResolvedMedia } from "./media/resolve";
 export { WidgetFrame } from "./widget-frame";
+export { SearchPage } from "./search-page";
 export {
   PageRenderer,
   Widget,

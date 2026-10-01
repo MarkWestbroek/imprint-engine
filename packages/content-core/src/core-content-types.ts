@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { plain, textOf } from "./search";
 import type { ContentTypeDefinition } from "./content-types";
 import { ContentTypeRegistry } from "./content-types";
 import { RelationsDoc, type RelationRule } from "./relations";
@@ -29,6 +30,19 @@ const today = () => new Date().toISOString().slice(0, 10);
 export const coreContentTypeDefinitions: ContentTypeDefinition[] = [
   {
     name: "page",
+    search: {
+      kinds: { page: { label: "pagina", prefixes: ["pagina", "page"] } },
+      docs: async (store) =>
+        (await store.listPages())
+          .filter((p) => !p.slug.startsWith("_"))
+          .map((p) => ({
+            kind: "page",
+            href: p.slug === "home" ? "/" : `/${p.slug}`,
+            title: p.title,
+            summary: plain(p.description || p.body || ""),
+            text: `${p.description ?? ""} ${p.body ?? ""} ${textOf(p.layout)}`,
+          })),
+    },
     schema: PageRecordSchema,
     formSchema: PageMetaSchema, // body and layout are the studio's, not the form's
     label: "Pages",

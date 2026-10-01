@@ -912,9 +912,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)
             naar de beeldbibliotheek; links in pagina's, wiki en termen naar
             `asset:`-verwijzingen. Groeps- en privébestanden pas na G2.
-      - [ ] Zoeken naar de kern: de showcase heeft nu `src/lib/search.ts`
-            (alle typen, voorvoegsels, in het geheugen); als engine-onderdeel
-            met een index (Postgres full-text) zodra het volume vraagt.
+      - [x] ~~Zoeken naar de kern~~ — `ContentTypeDefinition.search`,
+            `search()` in content-core, `SearchPage` in runtime-admin (01-10).
+      - [ ] Zoeken: een index (Postgres full-text) zodra het volume vraagt;
+            MusicBrain en de Imprint-site een `/search`-route geven (één
+            bestand, de zoekknop in hun header ontbreekt nog).
       - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
       - [ ] Leden meenemen via een uitnodiging vanuit Pleio (communities §4.1a):
             uitnodigingsroute per groep, e-mailverificatie, rol herstellen door

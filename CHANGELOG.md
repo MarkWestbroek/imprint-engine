@@ -6,12 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
-- **Zoeken over alles** (showcase): `/search` doorzoekt pagina's, blogs,
-  nieuws, updates, evenementen, communities, termen en wikipagina's — alleen
-  wat de bezoeker mag zien — met een voorvoegsel om één soort te kiezen
-  (`community: archi`, `groep: arch`, `blog: togaf`, `term: api`,
-  `agenda: fieldlab`, `wiki: register`), een soort-label per resultaat en
-  titeltreffers eerst.
+- **Zoeken in de kern**: elk contenttype beschrijft zelf hoe het gevonden
+  wordt (`ContentTypeDefinition.search`: soorten met voorvoegsels, en de
+  documenten), de engine zoekt (`search()` in content-core: voorvoegsels
+  zoals `community: archi`, `groep: arch`, `blog: togaf`, `term: api`,
+  `agenda: fieldlab`, `wiki: register`; elke term moet voorkomen;
+  titeltreffers eerst) door de store van de bezoeker, dus alleen wat die mag
+  zien; `SearchPage` in runtime-admin is de standaardpagina die een site in
+  zijn chrome zet. Pagina's (kern), posts (blog/nieuws/update), evenementen,
+  communities, termen en wikipagina's doen mee; een nieuwe plugin zoekt mee
+  door een `search`-blok op zijn type. De showcase gebruikt dit op `/search`.
 - **Themakiezer als palet** (showcase): een knop die een paneeltje met
   tegels opent (kleurstaal per thema) in plaats van een keuzelijst; het menu
   past weer op één regel.

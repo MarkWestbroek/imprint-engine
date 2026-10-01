@@ -1090,6 +1090,17 @@ niet van elkaar afwijken.
   organisatorpagina van de site; de aanmelding zelf is persoonsgegeven in
   de tabel `attendances` van de user store, met `consentAt`). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
+- **Zoeken** ([search.ts](../packages/content-core/src/search.ts)): een
+  contenttype dat gevonden wil worden geeft `search: { kinds, docs(store) }`
+  mee — `kinds` zijn de soorten met hun label en voorvoegsels (`community:`,
+  `groep:`, `group:`), `docs` levert per item `{kind, href, title, summary,
+  text}`; één type kan meerdere soorten leveren (posts: blog, nieuws,
+  update). `search(definitions, store, q)` parseert het voorvoegsel, haalt de
+  documenten door de meegegeven store (de bezoeker ziet alleen wat die mag),
+  eist elke term in titel of tekst en rangschikt titeltreffers eerst.
+  `SearchPage` (runtime-admin) is de standaardpagina; de site mount hem op
+  `/search` in zijn eigen chrome. In het geheugen, zonder index: bij meer
+  dan enkele duizenden items komt Postgres full-text search (backlog).
 - **Leden** (design/communities.md §4.1, G1): `UserStore` kent naast de
   redactie-accounts ook geregistreerde leden — `register(name, email,
   password)` maakt een `reader` met een onbevestigd adres, `verify()` accepteert

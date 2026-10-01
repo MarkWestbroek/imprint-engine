@@ -1,5 +1,6 @@
-import type { ContentTypeDefinition } from "@imprint/content-core";
-import { WikiFieldsSchema, WikiFolderSchema, WikiPageSchema, WikiSchema } from "./schemas";
+import { itemsOf, plain, type ContentTypeDefinition } from "@imprint/content-core";
+import { wikiPageHref } from "./href";
+import { WikiFieldsSchema, WikiFolderSchema, WikiPageSchema, WikiSchema, type WikiFolder, type WikiPage } from "./schemas";
 
 /** The plugin's three content types, with the rules, starting data and form shapes that used to sit in the core. */
 export const wikiContentTypes: ContentTypeDefinition[] = [
@@ -36,5 +37,12 @@ export const wikiContentTypes: ContentTypeDefinition[] = [
       { fromType: "wiki-page", field: "folder", toType: "wiki-folder", enforce: true, label: "Wiki-page → folder" },
     ],
     emptyData: () => ({ slug: "", lang: "en", wiki: "", folder: "", title: "", body: "", order: 0 }),
+    search: {
+      kinds: { wiki: { label: "wiki", prefixes: ["wiki", "wikis"] } },
+      docs: async (store) => {
+        const [pages, folders] = await Promise.all([itemsOf<WikiPage>(store, "wiki-page"), itemsOf<WikiFolder>(store, "wiki-folder")]);
+        return pages.map((p) => ({ kind: "wiki", href: wikiPageHref(p, folders), title: p.title, summary: plain(p.body || ""), text: p.body }));
+      },
+    },
   },
 ];

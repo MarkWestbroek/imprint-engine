@@ -1,5 +1,6 @@
 import type { z } from "zod";
 import type { RelationRule } from "./relations";
+import type { SearchSource } from "./search";
 import type { ContentType } from "./store";
 
 /**
@@ -40,6 +41,8 @@ export interface ContentTypeDefinition {
   slugOf?: (data: Record<string, unknown>) => string;
   /** The fields the generic form edits, when that is not the whole schema. */
   formSchema?: z.ZodObject;
+  /** How site search finds items of this type (search.ts); absent = not searchable. */
+  search?: SearchSource;
 }
 
 /** What the admin asks about a type without touching zod: label, capabilities, menu place. */
