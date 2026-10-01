@@ -160,11 +160,14 @@ export function Margin({ target, items, status, run, call }: { target: Target; i
 
   // The host must be in the DOM before the body can be found through it.
   if (!index || !article) return <div ref={host} className="contents" />;
+  // Room is measured against the viewport, not the article: on a wide theme the text may fill the
+  // article while the window still has space beside it (the margin overflows the article on purpose).
   const fieldRect = index.root.getBoundingClientRect();
   const artRect = article.getBoundingClientRect();
   const left = fieldRect.right - artRect.left + 24;
-  const room = wide && artRect.width - left >= 220;
-  const width = Math.min(BALLOON, artRect.width - left);
+  const free = window.innerWidth - fieldRect.right - 24 - 16;
+  const room = wide && free >= 220;
+  const width = Math.min(BALLOON, free);
 
   const balloon = (key: string, top: number | undefined, children: React.ReactNode, extra = "") => (
     <div
