@@ -1,5 +1,7 @@
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
+import { createElement } from "react";
+import { patchesPlugin } from "@imprint/plugin-patches";
 import { planningPlugin } from "@imprint/plugin-planning";
 import { wikiPlugin } from "@imprint/plugin-wiki";
 import { widgetRegistry } from "@/widgets/registry";
@@ -21,7 +23,16 @@ export default defineImprint({
   },
   widgets: widgetRegistry,
   // Site-wide capabilities (design/fase-5): content types, admin screens and menu items come with them.
-  plugins: [planningPlugin(), wikiPlugin()],
+  plugins: [
+    planningPlugin(),
+    wikiPlugin(),
+    // The patch pool (doc/plans/patch-pool.md in the MusicBrain repo): the editor opens a patch by slug;
+    // the demo is the site's take widget, loaded lazily so Node scripts importing this config stay React-free.
+    patchesPlugin({
+      editorUrl: "https://editor.musicbrain.nl/",
+      demo: async (audio) => createElement((await import("./src/components/take-demo")).TakeDemo, { audio }),
+    }),
+  ],
   // Keep the cookie name this site has always used, so nobody is logged out.
   session: { cookie: "imprint_session", hours: 12 },
   assets: {

@@ -22,7 +22,7 @@ export type TokenRow = {
 
 const INPUT = "mt-1 w-full rounded-md border border-line bg-background px-2.5 py-1.5 text-sm focus:border-accent focus:outline-none";
 const LABEL = "block text-xs font-medium uppercase tracking-wide text-muted";
-const SCOPE_LABELS: Record<string, string> = { "media:upload": "upload media", "media:read": "list media" };
+const SCOPE_LABELS: Record<string, string> = { "media:upload": "upload media", "media:read": "list media", "patch:propose": "propose patches" };
 
 const day = (iso: string | null) => (iso ? iso.slice(0, 10) : "—");
 

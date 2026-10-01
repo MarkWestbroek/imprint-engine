@@ -1125,6 +1125,26 @@ niet van elkaar afwijken.
   `add` krijgt dan `{ field, selector: [TextQuote, TextPosition] }` en de
   kern valideert ze). Node-scripts gebruiken de React-vrije entries
   (`/content-types`, `/schemas`).
+- **Patch-pool** ([plugin-patches](../packages/plugin-patches/src/index.ts),
+  MusicBrain `doc/plans/patch-pool.md`): type `patch` met `file`/`syx` als
+  `asset:`-verwijzingen (de library bewaart de bestanden, de gc ziet de
+  verwijzing), `takes` als take-groepen, `requires` (semver), `derivedFrom`
+  als RelationRule; `access` is afgeleid van `pool` in een `z.preprocess`
+  (voorstel → `private`, anders `public`), zodat admin en API het niet uit
+  elkaar kunnen trekken. `patchesApi` is een dunne PEP voor `POST/GET
+  /api/patches` (token-scope `patch:propose`, CORS uit `media.cors`): het
+  lichaam (`PatchInput`) kent geen pool en geen auteur; de route zet
+  `author` uit het token, `pool` uit `kind`, en vraagt `permit(create,
+  {access, author, proposal: true})`. De kern kreeg daarvoor twee generieke
+  dingen: toegangsniveau `private` (lezen: `author === subject.id`, of
+  redactie; `contentResource` geeft `author` mee) en de regel "een voorstel
+  (`proposal: true`) maak je als jezelf; eigen werk is bewerkbaar zolang
+  `proposal !== false`" — zo kan een inzender zijn voorstel nooit zelf
+  promoveren. De pagina's zijn een `publicRoute` (lijsten uit de
+  guarded store van de bezoeker, een privé-patch via /members) met
+  `PublicRouteResult.item`, zodat annotaties eronder kunnen; de demo rendert
+  de site via `demo` (MusicBrain: `TakeDemo` → de take-widget), lazy
+  geïmporteerd zodat `imprint.config.ts` React-vrij blijft voor scripts.
 - **Mededelingen** (design/communities.md §4.4, G3c): tabel `notifications`
   in de user store (persoonsgegeven, geen content; gaat met de gebruiker
   mee) met `kind`, `title`, `href` (altijd een pad op deze site), `actor`,

@@ -3,6 +3,7 @@ import { before, describe, it } from "node:test";
 
 import {
   ANONYMOUS,
+  contentResource,
   guardReads,
   inProcessPdp,
   permit,
@@ -163,4 +164,26 @@ describe("guardReads: the store as one subject sees it", () => {
     assert.equal((await store.listVersions("page", "members")).length, 1);
     assert.equal(typeof store.putItem, "function");
   });
+});
+
+it("private: the author reads their own, nobody else but the staff", async () => {
+  const ann = userSubject("ann", "reader");
+  const ed = userSubject("ed", "reader");
+  const resource = contentResource("patch", "warm-pad", { access: "private", author: "ann" });
+  assert.equal(await permit(inProcessPdp, ann, "read", resource), true);
+  assert.equal(await permit(inProcessPdp, ed, "read", resource), false);
+  assert.equal(await permit(inProcessPdp, ANONYMOUS, "read", resource), false);
+  assert.equal(await permit(inProcessPdp, userSubject("mod", "editor"), "read", resource), true);
+});
+
+it("a proposal: anyone signed in creates one as themself; own work stays editable while it is a proposal", async () => {
+  const ann = userSubject("ann", "reader");
+  const propose = (author: string, proposal: boolean) => ({ type: "patch", id: "x", properties: { access: "private", author, proposal } });
+  assert.equal(await permit(inProcessPdp, ann, "create", propose("ann", true)), true);
+  assert.equal(await permit(inProcessPdp, ann, "create", propose("ed", true)), false, "as yourself");
+  assert.equal(await permit(inProcessPdp, ann, "create", propose("ann", false)), false, "never higher than a proposal");
+  assert.equal(await permit(inProcessPdp, ANONYMOUS, "create", propose("", true)), false);
+  assert.equal(await permit(inProcessPdp, ann, "update", propose("ann", true)), true);
+  assert.equal(await permit(inProcessPdp, ann, "update", propose("ann", false)), false, "accepted work is the staff's");
+  assert.equal(await permit(inProcessPdp, ann, "update", { type: "post", id: "p", properties: { access: "public", author: "ann" } }), true, "types without proposals are untouched");
 });

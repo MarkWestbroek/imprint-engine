@@ -16,6 +16,7 @@
     "@google/model-viewer": "^4.3.1",
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
+    "@imprint/plugin-patches": "*",
     "@imprint/plugin-planning": "*",
     "@imprint/plugin-wiki": "*",
     "@imprint/runtime-admin": "*",

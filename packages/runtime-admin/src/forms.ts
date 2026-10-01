@@ -50,7 +50,7 @@ export function withAccessOptions(schema: JsonSchema, groups: { slug: string }[]
   for (const [name, prop] of Object.entries(props)) {
     const hint = prop["x-imprint"] as { access?: boolean } | undefined;
     out[name] = hint?.access
-      ? { ...prop, enum: ["public", "restricted", ...groups.map((g) => `group:${g.slug}`)] }
+      ? { ...prop, enum: ["public", "restricted", "private", ...groups.map((g) => `group:${g.slug}`)] }
       : prop;
   }
   return { ...schema, properties: out };

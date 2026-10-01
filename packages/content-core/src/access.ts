@@ -76,7 +76,8 @@ export function accessOf(data: unknown): Access {
 }
 
 export function contentResource(type: string, id: string, data?: unknown): AuthzenResource {
-  return { type, id, properties: { access: accessOf(data) } };
+  const author = (data as { author?: unknown } | null)?.author;
+  return { type, id, properties: { access: accessOf(data), ...(typeof author === "string" && author ? { author } : {}) } };
 }
 
 // ---------- the in-process decider ----------
@@ -97,6 +98,12 @@ export const inProcessPdp: PolicyDecisionPoint = {
     if (action.name === "read") {
       const access = String(resource.properties?.access ?? "public");
       if (access === "public") return { decision: true, context: { reason: "public" } };
+      // Private: the author's own (a proposal, a draft); staff was allowed above.
+      if (access === "private") {
+        return subject.id && resource.properties?.author === subject.id
+          ? { decision: true, context: { reason: "own work" } }
+          : { decision: false, context: { reason: "private" } };
+      }
       const group = accessGroup(access);
       if (group !== null) {
         // Group content: for that group's active members (staff was allowed above).
@@ -129,8 +136,15 @@ export const inProcessPdp: PolicyDecisionPoint = {
           ? { decision: true, context: { reason: "on a readable item that allows it" } }
           : { decision: false, context: { reason: allowed ? "may not read the item" : "the item does not allow it" } };
       }
+      // A proposal (`proposal: true`, the plugin's word for "not yet accepted"): anyone signed in
+      // may make one as themself; own work stays editable as long as it remains a proposal.
+      if (action.name === "create" && resource.properties?.proposal === true && author === subject.id) {
+        return { decision: true, context: { reason: "a proposal of your own" } };
+      }
       if ((action.name === "update" || action.name === "delete") && author && author === subject.id) {
-        return { decision: true, context: { reason: "own work" } };
+        return resource.properties?.proposal === false
+          ? { decision: false, context: { reason: "no longer a proposal" } }
+          : { decision: true, context: { reason: "own work" } };
       }
       if (action.name === "delete" && group && managesOf(subject).includes(group)) {
         return { decision: true, context: { reason: `manages ${group}` } };

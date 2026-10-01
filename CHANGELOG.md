@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Patch-pool** (`@imprint/plugin-patches`, MusicBrain
+  `doc/plans/patch-pool.md`): contenttype `patch` (het `.patch.json` en de
+  `.syx` als library-assets, demo-takes als groepen, `requires`, `derivedFrom`
+  als relatieregel, licentie CC BY 4.0 / CC0, pool `voorstel` ·
+  `experimenteel` · `centraal` · `vraag`); `POST /api/patches` voor de editor
+  (token met de nieuwe scope `patch:propose`; het lichaam zegt alleen
+  `kind: proposal | question`, de PDP maakt er een voorstel van), `GET
+  /api/patches?pool=&tag=&slug=`; pagina's `/patches`, `/patches/lab`,
+  `/patches/vragen`, `/patches/<slug>` met demo (de take-widget van de site),
+  downloads, "Open in de editor", vereisten en stamboom. Beleid in de kern:
+  toegangsniveau **`private`** (de auteur en de redactie — een voorstel, een
+  concept) en de regel *een voorstel maak je als jezelf; eigen werk blijft
+  bewerkbaar zolang het een voorstel is*. `access` volgt `pool` in het
+  schema; `centraal` eist CC0.
 - **Mededelingen** (G3c, stap 1: het postvak): een lid hoort het als iemand
   reageert op zijn bericht of een kanttekening maakt, zijn reactie
   beantwoordt, een bericht wijzigt waar hij op reageerde of een

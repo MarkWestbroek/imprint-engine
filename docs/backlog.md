@@ -943,6 +943,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Portfolio als widget i.p.v. het iframe: tabel + detail uit een
             databron met een tabeldefinitie (de "Weergave" van Omnium als
             widget); zie het antwoord aan Mark van 30-09.
+- [ ] **Patch-pool** (MusicBrain `doc/plans/patch-pool.md`): stap 1 en 3
+      gebouwd (02-10). Open: stap 4 gesprek onder een patch — `patch` als
+      annotatiedoel zodra MusicBrain leden heeft; "antwoord met patch";
+      taglijsten klank/techniek/stemmen aanmaken; de take-widget op het
+      bewerkscherm (nu: luisteren op de patchpagina); rol `contributor` →
+      direct naar experimenteel (één PDP-regel); basisset-export voor de
+      editor-build.
 - [ ] **Communities, Imprint als alternatief voor Pleio?** Verkenning in
       [design/communities.md](design/communities.md): leden, groepen met drie
       zichtbaarheidsniveaus, discussies, mail, evenementen, bitemporele

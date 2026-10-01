@@ -24,6 +24,7 @@
 @source "../../../../packages/widgets-standard/src";
 @source "../../../../packages/plugin-planning/src";
 @source "../../../../packages/plugin-wiki/src";
+@source "../../../../packages/plugin-patches/src";
 
 /*
  * Design tokens (B1, ontwerper-rol): één plek voor huisstijl.

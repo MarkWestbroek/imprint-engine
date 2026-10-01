@@ -28,9 +28,10 @@ export type Locale = z.infer<typeof Locale>;
  * string so a new group needs no schema change. Promoting an item to a wider
  * audience is an ordinary new version.
  */
-export const ACCESS_RE = /^(public|restricted|group:[a-z0-9-]+)$/;
+export const ACCESS_RE = /^(public|restricted|private|group:[a-z0-9-]+)$/;
 export const Access = z.string().regex(ACCESS_RE).meta({ "x-imprint": { access: true } });
-export type Access = "public" | "restricted" | `group:${string}`;
+/** `private` — the item's author (`data.author`) and the staff: a proposal, a draft of a member. */
+export type Access = "public" | "restricted" | "private" | `group:${string}`;
 
 /** The group an access value names, or null for the site-wide levels. */
 export const accessGroup = (access: string): string | null => (access.startsWith("group:") ? access.slice(6) : null);

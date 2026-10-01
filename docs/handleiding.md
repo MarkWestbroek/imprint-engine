@@ -665,6 +665,29 @@ Alle reacties staan ook in de admin onder **Annotations**, voor moderatie.
 Technisch zijn reacties en kanttekeningen *annotaties* (W3C Web
 Annotation): één model, met of zonder passage.
 
+## De patch-pool (MusicBrain)
+
+Patches uit de editor staan op de site als content: onder **Patches** in de
+admin, en openbaar op `/patches` (de centrale set), `/patches/lab`
+(experimenteel) en `/patches/vragen`. Elke patch heeft een eigen pagina
+met beschrijving, demo (de take-widget: audio met pianorol), downloads
+(`.patch.json`, `.syx`), een knop **Open in de editor**, de vereisten
+(editorversie, firmwarecontract, moduletypen) en de stamboom (afgeleid
+van, afgeleiden).
+
+**Voorstellen** komen binnen via de editor (knop *Voorstellen*; een
+persoonlijk API-token met de scope *propose patches*). Een voorstel is
+**privé**: alleen de inzender en de redactie zien het, ook op de site.
+Modereren is het veld **pool** wijzigen in het bewerkscherm; luisteren doe
+je op de patchpagina zelf (als redactie zie je ook voorstellen). Naar
+`centraal` kan alleen met licentie **CC0** — het formulier weigert anders.
+Een **vraag** ("lukt niet, wie helpt?") heeft een vraagtekst en een vinkje
+*beantwoord*.
+
+Tags: `klank/pad`, `techniek/fm` uit een taglijst (maak de lijsten
+*klank*, *techniek* en *stemmen* aan onder Media → taglijsten), of losse
+woorden.
+
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een

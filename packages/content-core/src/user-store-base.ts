@@ -115,7 +115,7 @@ const toMembership = (row: MembershipRow): Membership => ({ ...row, role: asRole
  * the user's own rights: a token never lets its user do more than the PDP
  * already allows them.
  */
-export const TOKEN_SCOPES = ["media:upload", "media:read"] as const;
+export const TOKEN_SCOPES = ["media:upload", "media:read", "patch:propose"] as const;
 export type TokenScope = (typeof TOKEN_SCOPES)[number];
 
 /** One `api_tokens` row, dialect-neutral. */
