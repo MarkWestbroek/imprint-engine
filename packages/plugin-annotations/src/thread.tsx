@@ -37,6 +37,8 @@ export function AnnotationThread({ target, call, loginHref, title = "Reacties" }
 
   const run: Run = async (action, ...args) => {
     setError(null);
+    // An `add` carries the page it happens on, so a notification can link back here.
+    if (action === "add") args = [args[0], args[1], { ...((args[2] as object | undefined) ?? {}), href: window.location.pathname }];
     const result = (await call("annotations", action, ...args)) as ActionResult;
     if (!result.ok) setError(result.error ?? "Dat lukte niet.");
     await refresh();

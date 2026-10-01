@@ -1,9 +1,10 @@
-import { and, eq } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull } from "drizzle-orm";
 
-import { apiTokens, attendances, emailTokens, invites, memberships, users } from "./db-schema.pg";
+import { apiTokens, attendances, emailTokens, invites, memberships, notifications, users } from "./db-schema.pg";
 import {
   UserStore,
   type AttendanceRow,
+  type NotificationRow,
   type EmailTokenRow,
   type InviteRow,
   type MembershipRow,
@@ -173,5 +174,36 @@ export class PgUserStore extends UserStore {
 
   protected async deleteAttendancesOf(userName: string): Promise<void> {
     await this.db.delete(attendances).where(eq(attendances.userName, userName));
+  }
+
+  // Notifications
+  protected async selectNotificationsOf(userName: string, limit: number): Promise<NotificationRow[]> {
+    return this.db.select().from(notifications).where(eq(notifications.userName, userName)).orderBy(desc(notifications.createdAt), desc(notifications.id)).limit(limit);
+  }
+
+  protected async countUnread(userName: string): Promise<number> {
+    const [row] = await this.db.select({ n: count() }).from(notifications).where(and(eq(notifications.userName, userName), isNull(notifications.readAt)));
+    return Number(row?.n ?? 0);
+  }
+
+  protected async selectUnmailed(): Promise<NotificationRow[]> {
+    return this.db.select().from(notifications).where(isNull(notifications.mailedAt)).orderBy(asc(notifications.createdAt), asc(notifications.id));
+  }
+
+  protected async insertNotification(row: Omit<NotificationRow, "id">): Promise<void> {
+    await this.db.insert(notifications).values(row);
+  }
+
+  protected async markNotifications(userName: string, ids: number[] | null, patch: Partial<Pick<NotificationRow, "readAt" | "mailedAt">>): Promise<void> {
+    if (ids && ids.length === 0) return;
+    await this.db.update(notifications).set(patch).where(ids ? and(eq(notifications.userName, userName), inArray(notifications.id, ids)) : eq(notifications.userName, userName));
+  }
+
+  protected async markMailed(ids: number[], at: Date): Promise<void> {
+    await this.db.update(notifications).set({ mailedAt: at }).where(inArray(notifications.id, ids));
+  }
+
+  protected async deleteNotificationsOf(userName: string): Promise<void> {
+    await this.db.delete(notifications).where(eq(notifications.userName, userName));
   }
 }

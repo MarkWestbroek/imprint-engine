@@ -176,6 +176,12 @@ site* of naar *openbaar*.
 
 ### 4.4 Mail en notificaties
 
+> **Stand (2 oktober 2026):** het postvak is er (G3c stap 1): de bel telt,
+> `/account/notifications` toont wat er gebeurde — reacties, antwoorden,
+> kanttekeningen, gewijzigde items waar je bij schreef, nieuwe berichten in
+> je community, verzoeken en beslissingen over lidmaatschap. De digest-mail
+> is stap 2.
+
 Het meest onderschatte stuk:
 
 - Gebeurtenissen in een groep, zoals een nieuwe discussie, een reactie op

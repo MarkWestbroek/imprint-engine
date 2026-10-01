@@ -605,6 +605,22 @@ andere sites, met een paar dingen van commonground.nl:
   is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
   tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 
+## Mededelingen
+
+De bel in de balk telt wat er nieuw voor je is; klik erop voor je
+**mededelingen** (ook via *Mijn account*). Je krijgt er een als:
+
+- iemand reageert op je bericht of een kanttekening bij je tekst maakt;
+- iemand je reactie of kanttekening beantwoordt;
+- een bericht wijzigt waar je op reageerde of een kanttekening bij maakte
+  (kijk of je kanttekening nog klopt);
+- iemand in je community een bericht schrijft;
+- je verzoek om lid te worden is toegekend of afgewezen; beheerders horen
+  het als iemand lid wil worden.
+
+De lijst openen is lezen: daarna staat de teller weer op nul. Een mail met
+een samenvatting volgt in een volgende stap.
+
 ## Reacties (annotaties)
 
 Onder een bericht, een evenement, een term en een wikipagina staat een draad

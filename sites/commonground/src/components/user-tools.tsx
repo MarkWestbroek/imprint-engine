@@ -12,7 +12,7 @@ import { Bell, Pencil } from "lucide-react";
  * photo); may edit: the floating pencil to the studio. Not signed in: "Inloggen".
  */
 
-type Me = { name: string; role: string; canEdit: boolean } | null;
+type Me = { name: string; role: string; canEdit: boolean; unread: number } | null;
 
 function useMe(): Me | undefined {
   const [me, setMe] = useState<Me | undefined>(undefined);
@@ -49,10 +49,10 @@ export function UserTools() {
   }
   return (
     <>
-      {/* Notifications arrive with groups (design/communities.md §4.4); the bell is already in place. */}
-      <span className="cg-icon-button" title="Mededelingen (volgen met de groepen)" aria-label="Mededelingen">
+      <Link href="/account/notifications" className="cg-icon-button relative" title="Mededelingen" aria-label={me.unread > 0 ? `Mededelingen, ${me.unread} nieuw` : "Mededelingen"}>
         <Bell size={22} aria-hidden />
-      </span>
+        {me.unread > 0 && <span className="cg-badge-dot">{me.unread > 9 ? "9+" : me.unread}</span>}
+      </Link>
       <Link href="/account" className="cg-avatar" title={me.name} aria-label={`Ingelogd als ${me.name}`}>
         {initials(me.name)}
         <span className="cg-online" aria-hidden />

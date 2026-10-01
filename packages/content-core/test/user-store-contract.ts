@@ -161,6 +161,29 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.equal(await users.attendance("demo", "ed"), null);
     });
 
+    it("notifications: per member, newest first, unread count, mark read, the digest's queue; they go with the user", async () => {
+      const users = await factory();
+      assert.equal(await users.unreadNotifications("ann"), 0);
+      await users.notify("ann", { kind: "reply", title: "ed beantwoordde je reactie", href: "/blog/x", actor: "ed" }, new Date("2026-10-02T08:00:00Z"));
+      await users.notify("ann", { kind: "post", title: "ed schreef in Atlas", href: "/groups/atlas", actor: "ed" }, new Date("2026-10-02T09:00:00Z"));
+      await users.notify("ed", { kind: "decision", title: "Je bent toegelaten", href: "/groups/atlas" });
+      await assert.rejects(users.notify("nobody", { kind: "x", title: "t", href: "/" }), /No such user/);
+      await assert.rejects(users.notify("ann", { kind: "x", title: "t", href: "https://elders" }), /path on this site/);
+      const list = await users.notificationsOf("ann");
+      assert.deepEqual(list.map((n) => [n.title, n.readAt]), [["ed schreef in Atlas", null], ["ed beantwoordde je reactie", null]]);
+      assert.equal(await users.unreadNotifications("ann"), 2);
+      await users.markRead("ann", [list[1]!.id]);
+      assert.equal(await users.unreadNotifications("ann"), 1);
+      await users.markRead("ed", [list[0]!.id]); // not ed's: nothing happens
+      assert.equal(await users.unreadNotifications("ann"), 1);
+      await users.markRead("ann");
+      assert.equal(await users.unreadNotifications("ann"), 0);
+      const queue = await users.unmailedNotifications();
+      assert.deepEqual(queue.map((n) => n.userName).sort(), ["ann", "ann", "ed"]);
+      await users.markMailedNotifications(queue.filter((n) => n.userName === "ann").map((n) => n.id));
+      assert.deepEqual((await users.unmailedNotifications()).map((n) => n.userName), ["ed"]);
+    });
+
     it("removes users; unknown names are an error", async () => {
       const users = await factory();
       await users.remove("mark");
@@ -170,6 +193,7 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       await users.remove("ann");
       assert.deepEqual(await users.membersOf("atlas"), [], "memberships go with the user");
       assert.deepEqual(await users.attendeesOf("demo"), [], "sign-ups go with the user");
+      assert.deepEqual(await users.notificationsOf("ann"), [], "notifications go with the user");
       await assert.rejects(users.remove("mark"), /No such user/);
       await assert.rejects(users.setPassword("mark", PASSWORD), /No such user/);
     });

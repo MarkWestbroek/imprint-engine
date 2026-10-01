@@ -50,6 +50,10 @@ export default async function AccountPage({ searchParams }: Props) {
         <dd>{canEdit ? user.role : "lid"}</dd>
       </dl>
 
+      <p>
+        <Link href="/account/notifications">Mededelingen</Link>
+      </p>
+
       <h2>Mijn communities</h2>
       {memberships.length === 0 ? (
         <p className="cg-muted">

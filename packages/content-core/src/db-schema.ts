@@ -137,6 +137,29 @@ export const attendances = mysqlTable(
 );
 
 /**
+ * Notifications (design/communities.md §4.4, G3c): what happened that a
+ * member wants to know — a reply, a comment on your post, a changed passage
+ * you annotated, a membership decision. Personal data in the user store, like
+ * sign-ups: not content, no history; they go with the user. `read_at` is the
+ * only thing that changes; the mail digest reads `mailed_at`.
+ */
+export const notifications = mysqlTable(
+  "notifications",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    kind: varchar("kind", { length: 32 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    href: varchar("href", { length: 512 }).notNull(),
+    actor: varchar("actor", { length: 64 }),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    readAt: datetime("read_at", { fsp: 3 }),
+    mailedAt: datetime("mailed_at", { fsp: 3 }),
+  },
+  (t) => [index("idx_notifications_user").on(t.userName, t.createdAt)]
+);
+
+/**
  * Personal API tokens (design/beeldbibliotheek.md §12.4): a client outside the
  * admin (the patch editor) acts as its user, limited to the token's scopes.
  * Only a SHA-256 of the token is stored (tokens are long and random, so no

@@ -52,7 +52,7 @@ export type Selector = z.infer<typeof Selector>;
  * the whole item.
  */
 export const AnnotationTarget = z.object({
-  source: z.object({ type: z.string().min(1), slug: z.string().min(1) }),
+  source: z.object({ type: z.string().min(1), slug: z.string().min(1), href: z.string().regex(/^\/[^\s]*$/).optional() }),
   /** The field of the item the selectors point into (`body`, …); empty = the item as a whole. */
   field: z.string().default(""),
   selector: z.array(Selector).default([]),

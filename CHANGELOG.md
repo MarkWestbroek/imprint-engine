@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Mededelingen** (G3c, stap 1: het postvak): een lid hoort het als iemand
+  reageert op zijn bericht of een kanttekening maakt, zijn reactie
+  beantwoordt, een bericht wijzigt waar hij op reageerde of een
+  kanttekening bij maakte, in zijn community schrijft, of zijn verzoek om
+  lid te worden beslist; beheerders horen van verzoeken. De bel in de
+  balk telt wat nieuw is, `/account/notifications` toont de lijst en
+  markeert gelezen. Tabel `notifications` in de user store (migratie 0004,
+  beide dialecten), `notify/notifyGroup/notifyManagers` in
+  `runtime-admin/admin-server`, de plugin-haak `onItemChanged` plus
+  `itemChanged()` zodat de annotatieplugin hoort dat een item wijzigde.
+  Een annotatie onthoudt de pagina waarop ze gemaakt is (`source.href`).
+  De maildigest is stap 2.
 
 ## [0.12.0] - 2026-10-01
 - **Kanttekeningen in de kantlijn** (annotaties, stap 2): selecteer een

@@ -63,7 +63,12 @@ export type PublicRouteResult =
       item?: { type: string; slug: string };
     };
 
+/** A content item got a new version through a member's or editor's action. */
+export type ItemChange = { type: string; slug: string; by: string };
+
 export interface ImprintPlugin extends ImprintPluginCore {
+  /** Hears about changed items (an annotation plugin tells the annotators); never throws into the writer's action. */
+  onItemChanged?: (admin: AdminContext, change: ItemChange) => Promise<void>;
   /** Renders `/admin/<name>/<path>`; null = not found. */
   screen?: (props: PluginScreenProps) => ReactNode | Promise<ReactNode | null> | null;
   /** Server-side actions, by name; each checks the session itself. */
@@ -93,6 +98,14 @@ export async function runPluginAction(admin: AdminContext, plugin: string, actio
     throw new Error(`Unknown plugin action "${plugin}.${action}"`);
   }
   return fn(admin, ...(args as never[]));
+}
+
+/** Tell every plugin an item changed (after the write); a failing listener is logged, not thrown. */
+export async function itemChanged(admin: AdminContext, change: ItemChange): Promise<void> {
+  for (const plugin of admin.plugins) {
+    if (!plugin.onItemChanged) continue;
+    await plugin.onItemChanged(admin, change).catch((err) => console.error(`plugin ${plugin.name}: onItemChanged failed`, err));
+  }
 }
 
 /** The public-route hook: the first plugin that claims the slug answers; null = a page, or nothing. */

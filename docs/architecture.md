@@ -1125,6 +1125,25 @@ niet van elkaar afwijken.
   `add` krijgt dan `{ field, selector: [TextQuote, TextPosition] }` en de
   kern valideert ze). Node-scripts gebruiken de React-vrije entries
   (`/content-types`, `/schemas`).
+- **Mededelingen** (design/communities.md §4.4, G3c): tabel `notifications`
+  in de user store (persoonsgegeven, geen content; gaat met de gebruiker
+  mee) met `kind`, `title`, `href` (altijd een pad op deze site), `actor`,
+  `readAt`, `mailedAt`. `UserStore.notify/notificationsOf/
+  unreadNotifications/markRead` en voor de digest
+  `unmailedNotifications/markMailedNotifications`.
+  [notifications.ts](../packages/runtime-admin/src/admin-server/notifications.ts)
+  in de engine: `notify(admin, to, input)` (slaat de actor zelf en onbekende
+  namen stil over), `notifyGroup` (actieve leden), `notifyManagers`;
+  `myNotifications/unreadNotifications/markNotificationsRead` voor de
+  schermen. Plugins zenden waar hun acties al zijn (groups: verzoek,
+  beslissing, nieuw bericht; annotations: reactie, antwoord). Voor "het
+  item waar je bij schreef is gewijzigd" heeft het plugincontract de haak
+  `onItemChanged(admin, {type, slug, by})`; wie een item schrijft roept
+  `itemChanged(admin, …)` aan (nu: `editPost` in plugin-groups), en de
+  annotatieplugin waarschuwt de annotatoren via de pagina die de annotatie
+  bij het maken onthield (`target.source.href`). De site toont de teller
+  via `/api/me` (per bezoeker, de pagina's blijven statisch) en de lijst op
+  `/account/notifications`; openen markeert gelezen.
 - **Zoeken** ([search.ts](../packages/content-core/src/search.ts)): een
   contenttype dat gevonden wil worden geeft `search: { kinds, docs(store) }`
   mee — `kinds` zijn de soorten met hun label en voorvoegsels (`community:`,

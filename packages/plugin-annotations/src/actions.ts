@@ -1,7 +1,8 @@
 import { randomBytes } from "node:crypto";
 import { annotationText, permit, type AnnotationTarget, type ContentRecord, type WritableContentStore } from "@imprint/content-core";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
-import { subjectFor } from "@imprint/runtime-admin/admin-server";
+import { notify, subjectFor } from "@imprint/runtime-admin/admin-server";
+import type { ItemChange } from "@imprint/runtime-admin";
 import { quoteOf, type Selector } from "./anchor";
 import { AnnotationSchema, type Annotation, type AnnotationSetting } from "./schemas";
 
@@ -26,7 +27,9 @@ export type AnnotationsConfig = {
 };
 
 /** What `add` may take besides the text: a segment of a field (design/annotaties.md §2). */
-export type AddOptions = { motivation?: string; field?: string; selector?: Selector[] };
+export type AddOptions = { motivation?: string; field?: string; selector?: Selector[]; /** The page the thread is on (a path on this site), for notifications. */ href?: string };
+
+const HREF_RE = /^\/[^\s]*$/;
 
 export type ThreadStatus = {
   signedIn: boolean;
@@ -173,6 +176,7 @@ export async function list(admin: AdminContext, target: Target): Promise<ThreadI
 /** Write an annotation on an item, as the signed-in member; a reply is one whose target is an annotation. */
 export async function add(admin: AdminContext, target: Target, text: string, options: AddOptions = {}): Promise<ActionResult> {
   const { motivation } = options;
+  const href = typeof options.href === "string" && HREF_RE.test(options.href) ? options.href : undefined;
   const store = admin.imprint.writableStore;
   if (!store) return { ok: false, error: "Reageren kan alleen met een database." };
   const session = await admin.auth.getSession();
@@ -197,7 +201,7 @@ export async function add(admin: AdminContext, target: Target, text: string, opt
     motivation: target.type === "annotation" ? "replying" : motivation === "questioning" ? "questioning" : "commenting",
     target: [
       {
-        source: target,
+        source: { ...target, ...(href ? { href } : {}) },
         field: target.type === "annotation" ? "" : String(options.field ?? ""),
         // Checked by the schema below (the core's selectors fill in the defaults).
         selector: target.type === "annotation" ? [] : ((options.selector ?? []) as Annotation["target"][number]["selector"]),
@@ -212,6 +216,19 @@ export async function add(admin: AdminContext, target: Target, text: string, opt
   const checked = AnnotationSchema.safeParse(annotation);
   if (!checked.success) return { ok: false, error: "De selectie is niet geldig." };
   await store.putItem("annotation", slug, checked.data, { lang: "en", by: session.name });
+  // Who wants to know (design/communities.md §4.4): the author of what was replied to, or of the item commented on.
+  const parentData = parent.data as { author?: string; title?: string } | null;
+  const rootTitle = String((root.record.data as { title?: string } | null)?.title ?? "").trim();
+  const link = href ?? (checked.data.target[0]?.source.href as string | undefined);
+  if (link) {
+    if (target.type === "annotation") {
+      await notify(admin, String(parentData?.author ?? ""), { kind: "reply", title: `${session.name} beantwoordde je reactie${rootTitle ? ` bij "${rootTitle}"` : ""}`, href: link, actor: session.name });
+    } else {
+      const author = String(parentData?.author ?? "");
+      const what = options.selector?.length ? "maakte een kanttekening bij" : "reageerde op";
+      await notify(admin, author, { kind: "comment", title: `${session.name} ${what} "${rootTitle || target.slug}"`, href: link, actor: session.name });
+    }
+  }
   return { ok: true, slug };
 }
 
@@ -281,3 +298,27 @@ export async function history(admin: AdminContext, slug: string): Promise<{ at: 
 }
 
 export const annotationsActions = { status, list, add, edit, remove, hide, history };
+
+/** An item changed: whoever annotated it hears so (the passage may have moved or gone). */
+export async function onItemChanged(admin: AdminContext, change: ItemChange): Promise<void> {
+  const store = admin.imprint.writableStore;
+  if (!store) return;
+  const title = String(((await store.getItem(change.type, change.slug, "en"))?.data as { title?: string } | null)?.title ?? change.slug);
+  const mine = (await store.listItems("annotation")).flatMap((r) => {
+    const a = AnnotationSchema.safeParse(r.data);
+    const t = a.success ? a.data.target.find((t) => t.source.type === change.type && t.source.slug === change.slug) : undefined;
+    return a.success && t ? [{ author: a.data.author, href: t.source.href, segment: t.selector.length > 0 }] : [];
+  });
+  for (const author of new Set(mine.map((m) => m.author))) {
+    const own = mine.filter((m) => m.author === author);
+    const href = own.find((m) => m.href)?.href;
+    if (!href) continue;
+    const segment = own.some((m) => m.segment);
+    await notify(admin, author, {
+      kind: "changed",
+      title: `${change.by} wijzigde "${title}"${segment ? ", waar je een kanttekening bij maakte" : ", waar je op reageerde"}`,
+      href,
+      actor: change.by,
+    });
+  }
+}

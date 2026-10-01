@@ -1,5 +1,5 @@
 import { definePlugin, type ImprintPlugin, type PluginAction } from "@imprint/runtime-admin";
-import { annotationsActions, type AnnotationsConfig } from "./actions";
+import { annotationsActions, onItemChanged, type AnnotationsConfig } from "./actions";
 import { annotationsContentTypes } from "./content-types";
 
 /**
@@ -22,6 +22,7 @@ export function annotationsPlugin(config: AnnotationsConfig): ImprintPlugin & { 
       contentTypes: annotationsContentTypes,
       menu: [{ group: "content", section: "Annotations", items: [{ href: "/admin/annotation", label: "Annotations" }] }],
       actions: annotationsActions as unknown as Record<string, PluginAction>,
+      onItemChanged,
     }),
     config,
   };

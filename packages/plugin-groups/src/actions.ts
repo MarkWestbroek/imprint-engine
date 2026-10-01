@@ -2,7 +2,8 @@ import { revalidatePath } from "next/cache";
 import { permit, type WritableContentStore } from "@imprint/content-core";
 import type { Invite, Membership, MembershipRole } from "@imprint/content-core/user-store";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
-import { subjectFor } from "@imprint/runtime-admin/admin-server";
+import { notify, notifyGroup, notifyManagers, subjectFor } from "@imprint/runtime-admin/admin-server";
+import { itemChanged } from "@imprint/runtime-admin";
 import { getGroup } from "./groups";
 import { groupHref, groupSlug } from "./href";
 import { groupPosts, type GroupPost } from "./timeline";
@@ -87,6 +88,9 @@ export async function join(admin: AdminContext, slug: string): Promise<ActionRes
   const mode = modeOf(ctx.group);
   if (mode === "closed") return { ok: false, error: "Deze groep is alleen op uitnodiging." };
   await ctx.users.join(slug, user.name, { status: mode === "open" ? "active" : "requested" });
+  if (mode !== "open") {
+    await notifyManagers(admin, slug, { kind: "request", title: `${user.name} wil lid worden van ${ctx.group.title}`, href: `${groupHref(slug)}/manage`, actor: user.name });
+  }
   return { ok: true };
 }
 
@@ -117,10 +121,15 @@ export async function decide(
   if (!ctx?.session || !(await canManage(ctx))) return { ok: false, error: "Alleen beheerders van de groep." };
   const m = await ctx.users.membership(slug, userName);
   if (!m) return { ok: false, error: "Geen lid." };
-  if (decision === "approve") await ctx.users.setMembership(slug, userName, { status: "active" }, ctx.session.name);
-  else {
+  if (decision === "approve") {
+    await ctx.users.setMembership(slug, userName, { status: "active" }, ctx.session.name);
+    await notify(admin, userName, { kind: "decision", title: `Je bent toegelaten tot ${ctx.group.title}`, href: groupHref(slug), actor: ctx.session.name });
+  } else {
     if (m.role === "owner") return { ok: false, error: "De eigenaar kan niet worden verwijderd." };
     await ctx.users.leave(slug, userName);
+    if (m.status === "requested") {
+      await notify(admin, userName, { kind: "decision", title: `Je verzoek om lid te worden van ${ctx.group.title} is niet toegekend`, href: groupHref(slug), actor: ctx.session.name });
+    }
   }
   return { ok: true };
 }
@@ -221,6 +230,7 @@ export async function writePost(admin: AdminContext, slug: string, input: PostIn
     { lang: "en", by: ctx.session.name }
   );
   touched(slug, postSlug);
+  await notifyGroup(admin, slug, { kind: "post", title: `${ctx.session.name} schreef in ${ctx.group.title}: ${title}`, href: `/blog/${postSlug}`, actor: ctx.session.name });
   return { ok: true, slug: postSlug };
 }
 
@@ -260,6 +270,7 @@ export async function editPost(admin: AdminContext, slug: string, postSlug: stri
     { lang: "en", by: ctx.session.name }
   );
   touched(slug, postSlug);
+  await itemChanged(admin, { type: "post", slug: postSlug, by: ctx.session.name });
   return { ok: true };
 }
 

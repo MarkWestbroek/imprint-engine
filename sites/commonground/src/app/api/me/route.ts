@@ -1,4 +1,5 @@
-import { auth } from "@/lib/admin";
+import { unreadNotifications } from "@imprint/runtime-admin/admin-server";
+import { admin, auth } from "@/lib/admin";
 
 /**
  * Who is looking — for the chrome's user tools (components/user-tools.tsx).
@@ -10,7 +11,7 @@ export async function GET() {
   const session = await auth.getSession();
   if (!session) return Response.json(null, { headers: { "Cache-Control": "no-store" } });
   return Response.json(
-    { name: session.name, role: session.role, canEdit: await auth.canEdit(session) },
+    { name: session.name, role: session.role, canEdit: await auth.canEdit(session), unread: await unreadNotifications(admin) },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

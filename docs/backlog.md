@@ -919,8 +919,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             vlag op de reactie; zodra er een reden, beroep of
             moderatiewachtrij bij komt wordt het een annotatie met
             motivation `moderating` (W3C) óp de reactie.
-      - [ ] G3c: notificaties en mail (ook: de auteur van een annotatie als
-            haar doel wijzigt).
+      - [x] ~~G3c stap 1: mededelingen~~ — postvak, bel, de gebeurtenissen
+            (02-10).
+      - [ ] G3c stap 2: de maildigest (dagelijks per lid, `deploy.sh digest`
+            via cron; voorkeur per lid, afmeldlink), en `itemChanged` ook
+            vanuit de generieke admin-save en de studio (nu alleen bij
+            `editPost`); aanmelden voor een evenement → organisator.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

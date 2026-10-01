@@ -79,6 +79,21 @@ const asAttendance = (row: AttendanceRow): Attendance => ({
   status: (ATTENDANCE_STATUSES as readonly string[]).includes(row.status) ? (row.status as AttendanceStatus) : "maybe",
 });
 
+/** One notification for one member (design/communities.md §4.4). */
+export type NotificationRow = {
+  id: number;
+  userName: string;
+  kind: string;
+  title: string;
+  href: string;
+  actor: string | null;
+  createdAt: Date;
+  readAt: Date | null;
+  mailedAt: Date | null;
+};
+export type Notification = NotificationRow;
+export type NotificationInput = { kind: string; title: string; href: string; actor?: string | null };
+
 export type InviteRow = {
   id: number;
   groupSlug: string;
@@ -170,6 +185,15 @@ export abstract class UserStore {
   protected abstract updateAttendance(id: number, patch: Partial<Pick<AttendanceRow, "status" | "updatedAt">>): Promise<void>;
   protected abstract deleteAttendance(id: number): Promise<void>;
   protected abstract deleteAttendancesOf(userName: string): Promise<void>;
+
+  // Notifications
+  protected abstract selectNotificationsOf(userName: string, limit: number): Promise<NotificationRow[]>;
+  protected abstract countUnread(userName: string): Promise<number>;
+  protected abstract selectUnmailed(): Promise<NotificationRow[]>;
+  protected abstract insertNotification(row: Omit<NotificationRow, "id">): Promise<void>;
+  protected abstract markNotifications(userName: string, ids: number[] | null, patch: Partial<Pick<NotificationRow, "readAt" | "mailedAt">>): Promise<void>;
+  protected abstract markMailed(ids: number[], at: Date): Promise<void>;
+  protected abstract deleteNotificationsOf(userName: string): Promise<void>;
   // Invites
   protected abstract insertInvite(row: Omit<InviteRow, "id">): Promise<void>;
   protected abstract selectInvitesOfGroup(groupSlug: string): Promise<InviteRow[]>;
@@ -452,7 +476,43 @@ export abstract class UserStore {
     await this.deleteEmailTokensOf(name);
     await this.deleteMembershipsOf(name);
     await this.deleteAttendancesOf(name);
+    await this.deleteNotificationsOf(name);
     await this.deleteByName(name);
+  }
+
+  // ---------- Notifications (design/communities.md §4.4, G3c) ----------
+
+  /** Tell a member something happened; an unknown member is an error (the engine filters). */
+  async notify(userName: string, input: NotificationInput, now = new Date()): Promise<void> {
+    await this.mustExist(userName);
+    const title = String(input.title ?? "").trim().slice(0, 255);
+    const href = String(input.href ?? "");
+    if (!title) throw new Error("A notification needs a title");
+    if (!/^\/[^\s]*$/.test(href)) throw new Error("A notification links to a path on this site");
+    await this.insertNotification({ userName, kind: String(input.kind ?? "").slice(0, 32), title, href, actor: input.actor ?? null, createdAt: now, readAt: null, mailedAt: null });
+  }
+
+  /** A member's notifications, newest first. */
+  async notificationsOf(userName: string, limit = 50): Promise<Notification[]> {
+    return this.selectNotificationsOf(userName, limit);
+  }
+
+  async unreadNotifications(userName: string): Promise<number> {
+    return this.countUnread(userName);
+  }
+
+  /** Mark some (or all) of a member's notifications as read. */
+  async markRead(userName: string, ids: number[] | null = null, now = new Date()): Promise<void> {
+    await this.markNotifications(userName, ids, { readAt: now });
+  }
+
+  /** What the mail digest has not sent yet, oldest first, across members. */
+  async unmailedNotifications(): Promise<Notification[]> {
+    return this.selectUnmailed();
+  }
+
+  async markMailedNotifications(ids: number[], now = new Date()): Promise<void> {
+    if (ids.length > 0) await this.markMailed(ids, now);
   }
 
   // ---------- API tokens ----------

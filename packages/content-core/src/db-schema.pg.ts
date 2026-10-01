@@ -122,6 +122,23 @@ export const attendances = pgTable(
   (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
 );
 
+/** Notifications — see db-schema.ts. */
+export const notifications = pgTable(
+  "notifications",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    kind: varchar("kind", { length: 32 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    href: varchar("href", { length: 512 }).notNull(),
+    actor: varchar("actor", { length: 64 }),
+    createdAt: ts("created_at").notNull(),
+    readAt: ts("read_at"),
+    mailedAt: ts("mailed_at"),
+  },
+  (t) => [index("idx_notifications_user").on(t.userName, t.createdAt)]
+);
+
 /** Personal API tokens — see db-schema.ts. */
 export const apiTokens = pgTable(
   "api_tokens",

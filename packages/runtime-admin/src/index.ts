@@ -28,4 +28,4 @@ export {
 } from "./admin-context";
 export { withAccessOptions, contentFormSchema, widgetFormSchemas, type JsonSchema, type WidgetFormSchema } from "./forms";
 export { ASOF_COOKIE, getPreview, readOpts, type Preview } from "./preview";
-export { definePlugin, pluginOf, pluginPublicRoute, runPluginAction, type ImprintPlugin, type PluginAction, type PluginCall, type PluginScreenProps, type PublicRouteContext, type PublicRouteResult } from "./plugin";
+export { definePlugin, itemChanged, pluginOf, pluginPublicRoute, runPluginAction, type ImprintPlugin, type ItemChange, type PluginAction, type PluginCall, type PluginScreenProps, type PublicRouteContext, type PublicRouteResult } from "./plugin";
