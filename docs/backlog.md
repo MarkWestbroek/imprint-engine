@@ -883,10 +883,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] De OpenFTV-sidecar (fase 3 §4) moet het `groups`-attribuut en
             `group:<slug>` ook kennen zodra die de in-process PDP vervangt.
       - [x] ~~Blogs~~ — plugin-blog, 254 publieke berichten geïmporteerd (01-10).
-      - [ ] Agenda (§4.5): (a) `event` + agendawidget + import van de 322
-            publieke evenementen; (b) aanmelden voor leden (komt/misschien/
-            komt niet) met privacytekst en organisatormail. Herhalingen
-            (`range_*`) eerst alleen als tekst.
+      - [x] ~~Agenda (a)~~ — plugin-events, 315 publieke evenementen (01-10).
+      - [ ] Agenda (b) (§4.5): aanmelden voor leden (komt/misschien/komt niet)
+            als eigen tabel, privacytekst bij aanmelden, organisator bereikt
+            aanmelders, `maxAttendees`; later QR en aanmelden zonder account.
+      - [ ] Agenda: dagelijkse herbouw (of ISR met tijd) zodat "komend" op
+            statische pagina's niet veroudert; herhalingen uitrollen.
       - [ ] Nieuws (313 publiek): als `post` met tag, of eigen type; de
             "Uitgelicht nieuws"-blokken verwijzen nu nog naar Pleio.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,

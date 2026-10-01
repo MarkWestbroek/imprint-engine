@@ -11,6 +11,8 @@ import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
 import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
 import { blogContentTypes } from "@imprint/plugin-blog/content-types";
 import { postHref } from "@imprint/plugin-blog/href";
+import { eventsContentTypes } from "@imprint/plugin-events/content-types";
+import { eventHref, eventsHref } from "@imprint/plugin-events/href";
 import { groupsContentTypes } from "@imprint/plugin-groups/content-types";
 import { GROUPS_PREFIX, groupHref, groupPagePrefix, groupsHref } from "@imprint/plugin-groups/href";
 import { widgetRegistry } from "../src/widgets/registry";
@@ -44,6 +46,9 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   page with its own text, a leaf a page;
  * - blog posts → `post` (plugin-blog) on `/blog/<slug>`, with writer, date,
  *   tags and group; blog lists → the `posts` widget;
+ * - events → `event` (plugin-events) on `/events/<slug>`, with time, place,
+ *   links, organiser and the repeat rule as text; event lists → the
+ *   `events` widget; the menu's "Agenda" → `/events`;
  * - terms (the custom type `custom_term`) → `term` (plugin-glossary), their
  *   overviews (objects widgets over custom_term) → the `glossary` widget.
  * Links to imported pages become Imprint paths; everything else (news,
@@ -82,6 +87,13 @@ const PAGES_QUERY = `query Pages($offset: Int, $limit: Int) { entities(subtype: 
 const BLOG_QUERY = `query Blogs($offset: Int, $limit: Int) { entities(subtype: "blog", offset: $offset, limit: $limit) {
   total edges { guid ... on Blog { title url excerpt richDescription timePublished statusPublished accessId tags
   tagCategories { name values } owner { name } featured { image { ... on File { download } } } group { guid } } } } }`;
+
+/** Events: the public ones of the site and the groups; sign-ups stay behind (step b). */
+const EVENTS_QUERY = `query Events($offset: Int, $limit: Int) { entities(subtype: "event", offset: $offset, limit: $limit) {
+  total edges { guid ... on Event { title url excerpt richDescription statusPublished accessId tags tagCategories { name values }
+  owner { name } featured { image { ... on File { download } } } group { guid } parent { guid }
+  startDate endDate location locationAddress locationLink source ticketLink maxAttendees rsvp attendEventOnline
+  rangeSettings { type interval repeatUntil instanceLimit isIgnored } } } } }`;
 
 /** Groups (communities): their public face; membership stays behind (G1). */
 const GROUPS_QUERY = `query Groups($offset: Int, $limit: Int) { groups(offset: $offset, limit: $limit) {
@@ -193,6 +205,32 @@ type PBlog = {
   featured: { image: { download: string | null } | null } | null;
   group: { guid: string } | null;
 };
+type PEvent = {
+  guid: string;
+  title: string;
+  url: string;
+  excerpt: string | null;
+  richDescription: string | null;
+  statusPublished: string;
+  accessId: number | string;
+  tags: string[] | null;
+  tagCategories: { name: string; values: string[] }[] | null;
+  owner: { name: string | null } | null;
+  featured: { image: { download: string | null } | null } | null;
+  group: { guid: string } | null;
+  parent: { guid: string } | null;
+  startDate: string | null;
+  endDate: string | null;
+  location: string | null;
+  locationAddress: string | null;
+  locationLink: string | null;
+  source: string | null;
+  ticketLink: string | null;
+  maxAttendees: string | null;
+  rsvp: boolean | null;
+  attendEventOnline: boolean | null;
+  rangeSettings: { type: string | null; interval: number | null; repeatUntil: string | null; instanceLimit: number | null; isIgnored: boolean | null } | null;
+};
 type PWikiRoot = { guid: string; title: string; accessId: number; statusPublished: string; group: { guid: string } | null };
 type PTerm = {
   guid: string;
@@ -226,6 +264,7 @@ function href(raw: string | null | undefined): string {
   if (url.startsWith(ORIGIN)) url = url.slice(ORIGIN.length) || "/";
   if (/^(mailto:|tel:|#)/.test(url) || /^[a-z]+:\/\//i.test(url)) return url;
   if (/^\/groups\/?$/.test(url)) return groupsHref();
+  if (/^\/events\/?$/.test(url)) return eventsHref();
   // The item's own guid comes last (/groups/view/<group>/…/wiki/view/<guid>/<slug>).
   const guids = [...url.matchAll(GUID)].map((m) => m[0]).reverse();
   const known = guids.find((g) => hrefOf.has(g));
@@ -551,6 +590,13 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
     case "events":
     case "activity":
     case "search": {
+      // Lists of events are the agenda widget now.
+      if (((val(s, "subtypes") + val(s, "typeFilter")).includes("event") || w.type === "events") && w.type !== "search") {
+        const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
+        const tag = cleanTag(categories.flatMap((c) => c.values ?? [])[0] ?? "");
+        const limit = Math.min(50, Math.max(1, Number(val(s, "limit")) || Number(val(s, "numberOfItems")) || 5));
+        return [{ type: "events", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), limit, tag } }];
+      }
       // Lists of blog posts are the posts widget now.
       if ((val(s, "subtypes") + val(s, "typeFilter")).includes("blog") && w.type !== "search") {
         const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
@@ -573,6 +619,23 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
       console.warn(`  ! widget type "${w.type}" not mapped (${page?.url ?? "footer"})`);
       return [];
   }
+}
+
+/** Pleio's DateTime ("2026-11-30T15:00:03+01:00") → the event's ISO form, seconds dropped. */
+const isoDateTime = (s: string) => s.replace(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2})(:\d{2}(\.\d+)?)?/, "$1");
+
+/** Pleio's recurrence as a sentence; the occurrences themselves are not expanded. */
+function repeatText(r: PEvent["rangeSettings"]): string {
+  if (!r?.type || r.isIgnored) return "";
+  const every = r.interval && r.interval > 1 ? `elke ${r.interval} ` : "elke ";
+  const unit =
+    r.type === "daily" ? (r.interval && r.interval > 1 ? "dagen" : "dag")
+    : r.type === "dayOfTheWeek" ? (r.interval && r.interval > 1 ? "weken, op dezelfde weekdag" : "week, op dezelfde weekdag")
+    : r.type === "dayOfTheMonth" ? (r.interval && r.interval > 1 ? "maanden, op dezelfde dag" : "maand, op dezelfde dag")
+    : r.type === "weekdayOfTheMonth" ? (r.interval && r.interval > 1 ? "maanden, op dezelfde weekdag" : "maand, op dezelfde weekdag")
+    : r.type;
+  const until = r.repeatUntil ? `, t/m ${r.repeatUntil.slice(0, 10)}` : r.instanceLimit ? `, ${r.instanceLimit} keer` : "";
+  return `Herhaalt ${every}${unit}${until}`;
 }
 
 /** Pleio's tag values carry stray zero-width spaces ("Data\u200b"); without them, tags compare. */
@@ -692,6 +755,24 @@ async function main() {
     hrefOf.set(b.guid, postHref(slug));
   }
 
+  // Events (plugin-events): public ones of the site and of the known groups; each gets /events/<slug>.
+  const allEvents = await cached<{ entities: { edges: PEvent[] } }>("events.json", () =>
+    gql(EVENTS_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.entities.edges);
+  const events = allEvents.filter(
+    (e) => e.statusPublished === "published" && Number(e.accessId) === 2 && e.startDate && (!e.group || groupSlugOf.has(e.group.guid))
+  );
+  const eventSlugOf = new Map<string, string>();
+  const takenEvents = new Set<string>();
+  for (const e of events) {
+    const base = slugFromUrl(e.url);
+    let slug = base;
+    for (let n = 2; takenEvents.has(slug); n++) slug = `${base}-${n}`;
+    takenEvents.add(slug);
+    eventSlugOf.set(e.guid, slug);
+    hrefOf.set(e.guid, eventHref(slug));
+  }
+
   // Terms (plugin-glossary): site-level, public ones; each gets its /term/<slug>, so the crosslinks between them resolve.
   const allTerms = await cached<{ entities: { edges: PTerm[] } }>("terms.json", () =>
     gql(TERMS_QUERY, { offset: 0, limit: 1000 })
@@ -804,6 +885,33 @@ async function main() {
       ...(image ? { image: href(image) } : {}),
     };
   });
+  const eventDocs = events.map((e) => {
+    const image = e.featured?.image?.download ?? "";
+    const max = Number(e.maxAttendees);
+    return {
+      slug: eventSlugOf.get(e.guid)!,
+      lang: "en",
+      access: "public",
+      title: e.title,
+      summary: (e.excerpt ?? "").replace(/\s+/g, " ").trim(),
+      body: markdown(e.richDescription),
+      start: isoDateTime(e.startDate!),
+      end: e.endDate ? isoDateTime(e.endDate) : "",
+      location: (e.location ?? "").trim(),
+      address: (e.locationAddress ?? "").trim(),
+      locationLink: (e.locationLink ?? "").trim(),
+      externalLink: (e.source ?? "").trim(),
+      ticketLink: (e.ticketLink ?? "").trim(),
+      online: e.attendEventOnline === true,
+      organizer: e.owner?.name ?? "",
+      rsvp: e.rsvp === true,
+      ...(Number.isInteger(max) && max > 0 ? { maxAttendees: max } : {}),
+      repeat: repeatText(e.rangeSettings),
+      tags: [...new Set([...(e.tagCategories ?? []).flatMap((c) => c.values), ...(e.tags ?? [])].map(cleanTag).filter(Boolean))],
+      group: e.group ? groupSlugOf.get(e.group.guid)! : "",
+      ...(image ? { image: href(image) } : {}),
+    };
+  });
   const termDocs = terms.map((t) => ({
     slug: termSlugOf.get(t.guid)!,
     lang: "en",
@@ -816,7 +924,7 @@ async function main() {
 
   console.log(
     `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
-      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts`
+      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts, ${eventDocs.length} events`
   );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
@@ -830,7 +938,7 @@ async function main() {
   // The store with this site's widgets and content types, so it validates as the admin does.
   const store = openContentDatabase(url, {
     widgets: widgetRegistry,
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes),
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes, eventsContentTypes),
   }).store;
 
   let written = 0;
@@ -865,7 +973,8 @@ async function main() {
   for (const g of groupDocs) await put("group", g.slug, g);
   for (const t of termDocs) await put("term", t.slug, t);
   for (const b of postDocs) await put("post", b.slug, b); // after the groups: the relation rule checks `group`
-  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length;
+  for (const e of eventDocs) await put("event", e.slug, e);
+  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length + eventDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
   console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }

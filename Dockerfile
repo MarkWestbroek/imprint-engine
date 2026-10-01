@@ -28,6 +28,7 @@ COPY packages/plugin-wiki/package.json packages/plugin-wiki/
 COPY packages/plugin-glossary/package.json packages/plugin-glossary/
 COPY packages/plugin-groups/package.json packages/plugin-groups/
 COPY packages/plugin-blog/package.json packages/plugin-blog/
+COPY packages/plugin-events/package.json packages/plugin-events/
 COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
 COPY sites/commonground/package.json sites/commonground/

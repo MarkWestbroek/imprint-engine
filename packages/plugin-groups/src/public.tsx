@@ -10,18 +10,22 @@ import { toCard } from "./widget";
 
 /** A post of the group (plugin-blog's `post`), as far as this view needs it; the type is known by name only. */
 type GroupPost = { slug: string; title: string; publishedAt: string; author: string };
+/** An event of the group (plugin-events' `event`), likewise. */
+type GroupEvent = { slug: string; title: string; start: string; end: string; location: string };
 
 function GroupView({
   group,
   pages,
   wikiTitle,
   posts,
+  events,
   call,
 }: {
   group: Group;
   pages: Page[];
   wikiTitle: string | null;
   posts: GroupPost[];
+  events: GroupEvent[];
   call?: PluginCall;
 }) {
   return (
@@ -68,6 +72,24 @@ function GroupView({
         {group.introduction && <Markdown>{group.introduction}</Markdown>}
         {group.body && <Markdown>{group.body}</Markdown>}
       </div>
+      {events.length > 0 && (
+        <section className="mt-10 max-w-3xl">
+          <h2 className="text-xl font-semibold">Agenda</h2>
+          <ul className="mt-2 divide-y divide-line">
+            {events.map((e) => (
+              <li key={e.slug} className="py-2">
+                <Link href={`/events/${e.slug}`} className="font-semibold text-accent hover:underline">
+                  {e.title}
+                </Link>
+                <span className="ml-2 text-sm text-muted">
+                  {new Date(e.start).toLocaleDateString("nl-NL", { day: "numeric", month: "long", year: "numeric", timeZone: "Europe/Amsterdam" })}
+                  {e.location && ` · ${e.location}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {posts.length > 0 && (
         <section className="mt-10 max-w-3xl">
           <h2 className="text-xl font-semibold">Berichten</h2>
@@ -115,6 +137,24 @@ async function groupPosts(reader: ContentStore, slug: string): Promise<GroupPost
   }
 }
 
+/** The group's upcoming events (type `event`, when the site has plugin-events), soonest first. */
+async function groupEvents(reader: ContentStore, slug: string): Promise<GroupEvent[]> {
+  const listing = reader as Partial<WritableContentStore>;
+  if (typeof listing.listItems !== "function") return [];
+  try {
+    const now = Date.now();
+    return (await listing.listItems("event"))
+      .map((r) => r.data as Partial<GroupEvent> & { group?: string })
+      .filter((e): e is GroupEvent & { group: string } => e.group === slug && typeof e.slug === "string" && typeof e.title === "string" && typeof e.start === "string")
+      .map((e) => ({ slug: e.slug, title: e.title, start: e.start, end: e.end ?? "", location: e.location ?? "" }))
+      .filter((e) => new Date(e.end || e.start).getTime() >= now)
+      .sort((a, b) => a.start.localeCompare(b.start))
+      .slice(0, 5);
+  } catch {
+    return []; // no such type on this site
+  }
+}
+
 /**
  * `/groups`: the overview; `/groups/<slug>`: the group's page. A group's own
  * pages (`/groups/<slug>/<page>`) are ordinary pages, left to the site.
@@ -142,14 +182,15 @@ export async function groupsPublicRoute({ imprint, slug, members, session, subje
   if (members && !(await permit(imprint.pdp, subject, "read", contentResource("group", group.slug, group)))) return null;
   // The group's pages as this visitor may see them (public in the catch-all; the member's own under /members).
   const reader = members ? imprint.storeFor(subject) : imprint.store;
-  const [pages, wiki, posts] = await Promise.all([
+  const [pages, wiki, posts, events] = await Promise.all([
     reader.listPages({ prefix: groupPagePrefix(group.slug) }),
     group.wiki ? store.getItem("wiki", group.wiki) : null,
     groupPosts(reader, group.slug),
+    groupEvents(reader, group.slug),
   ]);
   const wikiTitle = (wiki?.data as { title?: string } | undefined)?.title ?? null;
   return {
-    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} posts={posts} call={call} />,
+    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} posts={posts} events={events} call={call} />,
     metadata: { title: group.title, description: group.summary },
   };
 }

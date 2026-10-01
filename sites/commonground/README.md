@@ -51,6 +51,9 @@ andere Pleio-site).
   `wiki`) en haar pagina's als `groups/<slug>/<pagina>`.
 - Blogs → `post` (plugin-blog) op `/blog/<slug>`, met schrijver, datum,
   tags en groep; bloglijsten → de widget `posts`.
+- Evenementen → `event` (plugin-events) op `/events/<slug>`, met tijd,
+  plaats, links, organisatie en de herhaling als tekst; agendalijsten → de
+  widget `events`; "Agenda" in het menu → `/events`.
 - Termen (Pleio's `custom_term`) → `term` (plugin-glossary), met de
   samenvatting (excerpt) voor de kaart en de tag-categorie als tags; de
   overzichten erop (`objects`-widgets over `custom_term`) → de widget `glossary`.

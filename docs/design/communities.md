@@ -198,6 +198,9 @@ Het meest onderschatte stuk:
   (persoon, toestemming, doel, termijn) en laat aanmeldingen en formulieren
   het delen.
 
+> **Stand (1 oktober 2026):** stap a is gedaan (plugin-events, 315 publieke
+> evenementen in de showcase); stap b, aanmelden, volgt.
+
 ### 4.6 Annotaties in de kantlijn ▶
 
 Mark: wat Pleio mist is elkaars werk kunnen annoteren, in de kantlijn

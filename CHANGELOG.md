@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **plugin-events (agenda, stap a)**: evenementen als contenttype (`event`:
+  begin, einde, plaats, adres, links, organisatie, online, herhaling als
+  tekst, tags, groep, beeld), de widget `events` (eerstvolgende van de site,
+  een groep of een tag), de agenda `/events` (komend per maand, daarna
+  "Eerder") en een pagina per evenement op `/events/<slug>`; een groepspagina
+  toont haar komende evenementen. De showcase importeert de 315 publieke
+  evenementen; "Agenda" in het menu is nu intern. Aanmelden volgt (stap b).
 - **plugin-blog**: berichten als contenttype (`post`: titel, samenvatting,
   tekst, schrijver, datum, tags, groep, beeld), de widget `posts` (laatste
   berichten van de site, een groep of een tag), het overzicht `/blog` en

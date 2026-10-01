@@ -552,6 +552,13 @@ andere sites, met een paar dingen van commonground.nl:
   hoort. Alle berichten staan op `/blog`, elk bericht op `/blog/<slug>`, en
   een community-pagina toont haar eigen berichten. De widget **Posts** zet
   de laatste berichten (van de site, een community of een tag) op een pagina.
+- **Agenda**: onder **Events** in de admin staat elk evenement met begin en
+  einde (datum en tijd), plaats, adres, links, organisatie, of het ook online
+  is, een herhalingsregel als tekst, tags en (optioneel) de community. De
+  agenda staat op `/events` (komend per maand, daaronder "Eerder"), elk
+  evenement op `/events/<slug>`, en een community-pagina toont haar komende
+  evenementen. De widget **Agenda** zet de eerstvolgende op een pagina.
+  Aanmelden (komt / misschien / komt niet) komt in de volgende stap.
 - **Wie mag wat zien**: elke pagina, wikipagina, term en groep heeft een
   veld **Toegang**: *public* (iedereen), *restricted* (alleen ingelogde
   leden van de site) of *group: …* (alleen de leden van die community; de

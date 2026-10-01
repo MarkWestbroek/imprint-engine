@@ -1057,7 +1057,12 @@ niet van elkaar afwijken.
   [plugin-blog](../packages/plugin-blog/src/index.ts) (type `post` met
   datum, schrijver, tags en groep; widget `posts`; routes `/blog` en
   `/blog/<slug>`; de groepspagina leest de berichten van haar groep alleen
-  op typenaam, zonder import van de plugin). Node-scripts
+  op typenaam, zonder import van de plugin) en
+  [plugin-events](../packages/plugin-events/src/index.ts) (type `event` met
+  ISO-tijden en `Europe/Amsterdam`-weergave, `repeat` als tekst; widget
+  `events`; routes `/events` en `/events/<slug>`; "komend" wordt bij het
+  renderen bepaald, dus een vooraf gerenderde pagina toont de stand van zijn
+  laatste build — backlog: dagelijkse herbouw). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **Leden** (design/communities.md §4.1, G1): `UserStore` kent naast de
   redactie-accounts ook geregistreerde leden — `register(name, email,

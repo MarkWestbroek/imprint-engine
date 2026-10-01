@@ -3,6 +3,7 @@ import { standardWidgets } from "@imprint/widgets-standard/schemas";
 import { glossaryWidgets } from "@imprint/plugin-glossary";
 import { groupsWidgets } from "@imprint/plugin-groups";
 import { blogWidgets } from "@imprint/plugin-blog";
+import { eventsWidgets } from "@imprint/plugin-events";
 
 /**
  * The widgets this site offers (architecture.md §3): a selection from the
@@ -46,6 +47,8 @@ export const widgetCatalog = [
   ...groupsWidgets,
   // The latest blog posts (plugin-blog): Pleio's blog lists.
   ...blogWidgets,
+  // The agenda (plugin-events): Pleio's event lists.
+  ...eventsWidgets,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(
