@@ -174,8 +174,13 @@ export async function accessGroups(admin: AdminContext): Promise<{ slug: string;
 export async function subjectFor(admin: Pick<AdminContext, "imprint">, session: AdminSession | null): Promise<AuthzenSubject> {
   if (!session) return ANONYMOUS;
   const users = admin.imprint.users;
-  const groups = users ? (await users.membershipsOf(session.name)).filter((m) => m.status === "active").map((m) => m.groupSlug) : [];
-  return userSubject(session.name, session.role, groups);
+  const active = users ? (await users.membershipsOf(session.name)).filter((m) => m.status === "active") : [];
+  return userSubject(
+    session.name,
+    session.role,
+    active.map((m) => m.groupSlug),
+    active.filter((m) => m.role === "owner" || m.role === "manager").map((m) => m.groupSlug)
+  );
 }
 
 export type MemberProfile = { user: UserRecord; memberships: Membership[]; canEdit: boolean };

@@ -66,6 +66,29 @@ describe("inProcessPdp: group content (design/communities.md §4.2)", () => {
   });
 });
 
+describe("inProcessPdp: members write in their groups (G3a)", () => {
+  const post = (props: Record<string, unknown>) => ({ type: "post", id: "p", properties: { access: "public", ...props } });
+  const inAtlas = post({ group: "atlas", author: "ann" });
+  it("a member creates a post in their group, not elsewhere; a visitor never", async () => {
+    const ann = userSubject("ann", "reader", ["atlas"]);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "create" }, resource: inAtlas })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "create" }, resource: post({ group: "signalen" }) })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "create" }, resource: post({ group: "" }) })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: ANONYMOUS, action: { name: "create" }, resource: inAtlas })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "create" }, resource: { type: "page", id: "x", properties: { group: "atlas" } } })).decision, false, "only posts");
+  });
+  it("own posts may be changed and removed; a manager removes any post in the group", async () => {
+    const ann = userSubject("ann", "reader", ["atlas"]);
+    const bob = userSubject("bob", "reader", ["atlas"]);
+    const boss = userSubject("boss", "reader", ["atlas"], ["atlas"]);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "update" }, resource: inAtlas })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "delete" }, resource: inAtlas })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: bob, action: { name: "delete" }, resource: inAtlas })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: boss, action: { name: "delete" }, resource: inAtlas })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: boss, action: { name: "update" }, resource: inAtlas })).decision, false, "removing, not rewriting someone's words");
+  });
+});
+
 describe("permit: the PEP", () => {
   const broken: PolicyDecisionPoint = {
     evaluate: async () => {

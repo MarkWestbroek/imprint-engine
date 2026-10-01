@@ -1071,8 +1071,11 @@ niet van elkaar afwijken.
   `{type: post, group, author, access}` — `inProcessPdp` laat een `reader`
   een post maken in een groep uit `subject.groups`, eigen posts wijzigen en
   verwijderen, en als beheerder (`subject.manages`) elke post van de groep
-  verwijderen; `GroupPosts` is het client-eiland met formulier en knoppen,
-  `revalidatePath` ververst de statische pagina's) en
+  verwijderen; `GroupPosts` is het client-eiland met formulier en knoppen —
+  de statische groepspagina toont de publieke berichten, een ingelogde
+  bezoeker haalt via de actie `posts` de tijdlijn op zoals híj die mag zien,
+  dus met de berichten voor leden; `revalidatePath` ververst de statische
+  pagina's) en
   [plugin-blog](../packages/plugin-blog/src/index.ts) (type `post` met
   datum, schrijver, tags en groep; widget `posts`; routes `/blog` en
   `/blog/<slug>`; de groepspagina leest de berichten van haar groep alleen

@@ -1,7 +1,11 @@
+import { revalidatePath } from "next/cache";
+import { permit } from "@imprint/content-core";
 import type { Invite, Membership, MembershipRole } from "@imprint/content-core/user-store";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
+import { subjectFor } from "@imprint/runtime-admin/admin-server";
 import { getGroup } from "./groups";
-import { groupHref } from "./href";
+import { groupHref, groupSlug } from "./href";
+import { groupPosts, type GroupPost } from "./timeline";
 import type { Group } from "./schemas";
 
 /**
@@ -18,6 +22,8 @@ export type JoinMode = "open" | "request" | "closed";
 
 export type JoinStatus = {
   signedIn: boolean;
+  /** The visitor's user name, to recognise their own posts. */
+  name: string | null;
   /** Registered members join only with a verified address; admins and editors always may. */
   verified: boolean;
   membership: { role: MembershipRole; status: Membership["status"] } | null;
@@ -58,11 +64,12 @@ export async function status(admin: AdminContext, slug: string): Promise<JoinSta
   const ctx = await context(admin, slug);
   if (!ctx) return null;
   const mode = modeOf(ctx.group);
-  if (!ctx.session) return { signedIn: false, verified: false, membership: null, canManage: false, mode };
+  if (!ctx.session) return { signedIn: false, name: null, verified: false, membership: null, canManage: false, mode };
   const user = await ctx.users.get(ctx.session.name);
   const m = await ctx.users.membership(slug, ctx.session.name);
   return {
     signedIn: true,
+    name: ctx.session.name,
     verified: isStaff(ctx.session) || (user?.emailVerified ?? false),
     membership: m ? { role: m.role, status: m.status } : null,
     canManage: await canManage(ctx),
@@ -155,4 +162,82 @@ export async function redeem(admin: AdminContext, slug: string, code: string): P
   return { ok: true };
 }
 
-export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem };
+/** The group's timeline as this visitor may see it (a member sees the members-only posts; the page itself stays static). */
+export async function posts(admin: AdminContext, slug: string): Promise<GroupPost[]> {
+  const session = await admin.auth.getSession();
+  const reader = session ? admin.imprint.storeFor(await subjectFor(admin, session)) : admin.imprint.store;
+  return groupPosts(reader, slug);
+}
+
+// ── Members write (design/communities.md §4.3, G3a) ──────────────────────
+
+export type PostInput = { kind: "update" | "blog"; title: string; body: string; membersOnly: boolean };
+
+/** The pages a post shows on; stale prerendered HTML is refreshed. */
+function touched(slug: string, postSlug: string) {
+  for (const path of [groupHref(slug), `/blog/${postSlug}`, "/blog", `/members${groupHref(slug)}`]) revalidatePath(path);
+}
+
+/**
+ * A member writes an update or a blog in their group. The PDP decides
+ * ("create a post in a group you belong to"); the post is content, written
+ * as the member (`by`), with the member's name as writer.
+ */
+export async function writePost(admin: AdminContext, slug: string, input: PostInput): Promise<ActionResult & { slug?: string }> {
+  const ctx = await context(admin, slug);
+  if (!ctx) return { ok: false, error: "Onbekende groep." };
+  if (!ctx.session) return { ok: false, error: "Log eerst in." };
+  const store = admin.imprint.writableStore!;
+  if (!admin.imprint.contentTypes.has("post")) return { ok: false, error: "Deze site heeft geen berichten." };
+  const title = String(input?.title ?? "").trim();
+  const body = String(input?.body ?? "").trim();
+  const kind = input?.kind === "blog" ? "blog" : "update";
+  if (title.length < 2 || title.length > 160) return { ok: false, error: "Geef een titel van 2 tot 160 tekens." };
+  if (!body || body.length > 20000) return { ok: false, error: "Schrijf een bericht (hooguit 20.000 tekens)." };
+  const access = input?.membersOnly ? `group:${slug}` : "public";
+  const base = `${slug}-${groupSlug(title)}`.slice(0, 100);
+  let postSlug = base;
+  for (let n = 2; await store.getItem("post", postSlug); n++) postSlug = `${base}-${n}`;
+  const subject = await subjectFor(admin, ctx.session);
+  const resource = { type: "post", id: postSlug, properties: { access, group: slug, author: ctx.session.name } };
+  if (!(await permit(admin.imprint.pdp, subject, "create", resource))) return { ok: false, error: "Alleen leden van deze community kunnen hier schrijven." };
+  await store.putItem(
+    "post",
+    postSlug,
+    {
+      slug: postSlug,
+      lang: "en",
+      access,
+      title,
+      summary: "",
+      body,
+      author: ctx.session.name,
+      publishedAt: new Date().toISOString().slice(0, 10),
+      tags: [],
+      group: slug,
+      kind,
+    },
+    { lang: "en", by: ctx.session.name }
+  );
+  touched(slug, postSlug);
+  return { ok: true, slug: postSlug };
+}
+
+/** Remove a post from the group: your own, or any as the group's manager (the history keeps it). */
+export async function removePost(admin: AdminContext, slug: string, postSlug: string): Promise<ActionResult> {
+  const ctx = await context(admin, slug);
+  if (!ctx) return { ok: false, error: "Onbekende groep." };
+  if (!ctx.session) return { ok: false, error: "Log eerst in." };
+  const store = admin.imprint.writableStore!;
+  const record = await store.getItem("post", postSlug);
+  const data = record?.data as { group?: string; author?: string; access?: string } | undefined;
+  if (!data || data.group !== slug) return { ok: false, error: "Geen bericht van deze community." };
+  const subject = await subjectFor(admin, ctx.session);
+  const resource = { type: "post", id: postSlug, properties: { access: data.access ?? "public", group: slug, author: data.author ?? "" } };
+  if (!(await permit(admin.imprint.pdp, subject, "delete", resource))) return { ok: false, error: "Je kunt alleen je eigen berichten verwijderen." };
+  await store.deleteItem("post", postSlug, "en");
+  touched(slug, postSlug);
+  return { ok: true };
+}
+
+export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, writePost, removePost };

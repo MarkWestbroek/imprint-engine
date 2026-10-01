@@ -33,6 +33,8 @@ export function JoinButton({ slug, call, loginHref }: { slug: string; call?: Plu
     if (!result.ok) setError(result.error ?? "Dat lukte niet.");
     await refresh();
     setBusy(false);
+    // Other islands on the page (the timeline's form) follow the membership.
+    window.dispatchEvent(new CustomEvent("imprint:membership", { detail: { slug } }));
   };
 
   const button = "rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background hover:bg-accent-strong disabled:opacity-60";

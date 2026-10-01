@@ -168,6 +168,9 @@ site* of naar *openbaar*.
   en groepsbeheerders die modereren. Tel ook een spamdrempel in (rate
   limits, alleen leden).
 
+> **Stand (1 oktober 2026):** leden schrijven zelf updates en blogs in hun
+> community (G3a); reacties, discussies en moderatie-meldingen volgen.
+
 ### 4.4 Mail en notificaties
 
 Het meest onderschatte stuk:

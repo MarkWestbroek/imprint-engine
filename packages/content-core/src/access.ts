@@ -46,14 +46,22 @@ export type ContentAction = "read" | "create" | "update" | "delete";
 
 export const ANONYMOUS: AuthzenSubject = { type: "visitor", id: "anonymous" };
 
-/** A signed-in user: role, and the groups they are an active member of (design/communities.md §4.2). */
-export function userSubject(name: string, role: RoleType, groups: string[] = []): AuthzenSubject {
-  return { type: "user", id: name, properties: { role, groups } };
+/**
+ * A signed-in user: role, the groups they are an active member of
+ * (design/communities.md §4.2), and the groups they manage (owner or manager).
+ */
+export function userSubject(name: string, role: RoleType, groups: string[] = [], manages: string[] = []): AuthzenSubject {
+  return { type: "user", id: name, properties: { role, groups, manages } };
 }
 
+const strings = (value: unknown): string[] => (Array.isArray(value) ? value.filter((g): g is string => typeof g === "string") : []);
+
 export function groupsOf(subject: AuthzenSubject): string[] {
-  const groups = subject.properties?.groups;
-  return Array.isArray(groups) ? groups.filter((g): g is string => typeof g === "string") : [];
+  return strings(subject.properties?.groups);
+}
+
+export function managesOf(subject: AuthzenSubject): string[] {
+  return strings(subject.properties?.manages);
 }
 
 export function roleOf(subject: AuthzenSubject): RoleType | undefined {
@@ -99,6 +107,22 @@ export const inProcessPdp: PolicyDecisionPoint = {
       // Restricted: for the members of the site, whatever their role.
       if (role === "reader") return { decision: true, context: { reason: "reader" } };
       return { decision: false, context: { reason: "restricted" } };
+    }
+    // Members write in their own groups (design/communities.md §4.3, G3a): a
+    // post in a group you belong to; your own post you may change or remove;
+    // a group's manager removes any post in that group.
+    if (role === "reader" && resource.type === "post") {
+      const group = typeof resource.properties?.group === "string" ? resource.properties.group : "";
+      const author = typeof resource.properties?.author === "string" ? resource.properties.author : "";
+      if (action.name === "create" && group && groupsOf(subject).includes(group)) {
+        return { decision: true, context: { reason: `member of ${group}` } };
+      }
+      if ((action.name === "update" || action.name === "delete") && author && author === subject.id) {
+        return { decision: true, context: { reason: "own post" } };
+      }
+      if (action.name === "delete" && group && managesOf(subject).includes(group)) {
+        return { decision: true, context: { reason: `manages ${group}` } };
+      }
     }
     return { decision: false, context: { reason: role ? `${role} may not write` : "not signed in" } };
   },

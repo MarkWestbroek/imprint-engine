@@ -12,8 +12,9 @@ import { GroupsConfig, GroupsWidget } from "./widget";
  * G1: joining (open or on request), the manager's page
  * (`GroupManageScreen`, mounted by the site at `/groups/<slug>/manage`) and
  * invitation links (`/groups/<slug>/join/<code>`, redeemed by the site);
- * the actions run through the site's plugin dispatcher. Group-only content
- * follows (G2). A site switches it
+ * the actions run through the site's plugin dispatcher. G2: `access:
+ * group:<slug>` on content. G3a: members write updates and blogs in their
+ * group from its page (`writePost`/`removePost`, the PDP decides). A site switches it
  * on with `plugins: [groupsPlugin()]` and composes the widget into its
  * catalogue (`groupsWidgets` / `groupsViewers`).
  *
@@ -51,5 +52,5 @@ export { GROUPS_PREFIX, groupHref, groupPagePrefix, groupSlug, groupsHref } from
 export { GroupSchema, type Group } from "./schemas";
 export { GroupsConfig, type GroupsConfig as GroupsWidgetConfig } from "./widget";
 export { getGroup, listGroups } from "./groups";
-export { groupsActions, redeem as redeemInvite, type JoinStatus, type MemberList } from "./actions";
+export { groupsActions, redeem as redeemInvite, type JoinStatus, type MemberList, type PostInput } from "./actions";
 export { GroupManageScreen } from "./manage";
