@@ -100,7 +100,7 @@ function GroupView({
                   {p.title}
                 </Link>
                 <span className="ml-2 text-sm text-muted">
-                  {p.kind === "update" ? "update · " : ""}
+                  {p.kind === "update" ? "update · " : p.kind === "news" ? "nieuws · " : ""}
                   {p.publishedAt}
                   {p.author && ` · ${p.author}`}
                 </span>

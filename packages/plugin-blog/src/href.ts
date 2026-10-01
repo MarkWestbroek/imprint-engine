@@ -4,6 +4,9 @@
 export const BLOG_PREFIX = "blog";
 
 export const blogHref = () => `/${BLOG_PREFIX}`;
+/** The news overview: `/news` (a site may alias `/nieuws`). */
+export const NEWS_PREFIX = "news";
+export const newsHref = () => `/${NEWS_PREFIX}`;
 export const postHref = (slug: string) => `/${BLOG_PREFIX}/${slug}`;
 
 /** Title → slug: lower case, diacritics off, the rest to hyphens. */

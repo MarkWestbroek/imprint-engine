@@ -10,7 +10,7 @@ import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
 import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
 import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
 import { blogContentTypes } from "@imprint/plugin-blog/content-types";
-import { postHref } from "@imprint/plugin-blog/href";
+import { newsHref, postHref } from "@imprint/plugin-blog/href";
 import { eventsContentTypes } from "@imprint/plugin-events/content-types";
 import { eventHref, eventsHref } from "@imprint/plugin-events/href";
 import { groupsContentTypes } from "@imprint/plugin-groups/content-types";
@@ -46,6 +46,8 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   page with its own text, a leaf a page;
  * - blog posts → `post` (plugin-blog) on `/blog/<slug>`, with writer, date,
  *   tags and group; blog lists → the `posts` widget;
+ * - news → `post` with `kind: news` (featured mark, source link), on /news;
+ *   news lists and feeds → the `posts` widget with kind news;
  * - a group's status updates → `post` with `kind: update` (its timeline; the
  *   title is the first sentence), shown on the group's page, not in /blog;
  * - events → `event` (plugin-events) on `/events/<slug>`, with time, place,
@@ -96,6 +98,11 @@ const EVENTS_QUERY = `query Events($offset: Int, $limit: Int) { entities(subtype
   owner { name } featured { image { ... on File { download } } } group { guid } parent { guid }
   startDate endDate location locationAddress locationLink source ticketLink maxAttendees rsvp attendEventOnline
   rangeSettings { type interval repeatUntil instanceLimit isIgnored } } } } }`;
+
+/** News items: the site's own news (and the groups'), with the "featured" mark and the source link. */
+const NEWS_QUERY = `query NewsItems($offset: Int, $limit: Int) { entities(subtype: "news", offset: $offset, limit: $limit) {
+  total edges { guid ... on News { title url excerpt richDescription timePublished statusPublished accessId tags
+  tagCategories { name values } owner { name } isFeatured source featured { image { ... on File { download } } } group { guid } } } } }`;
 
 /** A group's status updates (its timeline): only reachable per container, the global list ignores the type. */
 const UPDATES_QUERY = `query Updates($group: String!, $offset: Int, $limit: Int) { entities(containerGuid: $group, subtypes: ["status_update"], offset: $offset, limit: $limit) {
@@ -237,6 +244,7 @@ type PEvent = {
   attendEventOnline: boolean | null;
   rangeSettings: { type: string | null; interval: number | null; repeatUntil: string | null; instanceLimit: number | null; isIgnored: boolean | null } | null;
 };
+type PNews = PBlog & { isFeatured: boolean | null; source: string | null };
 type PUpdate = {
   guid: string;
   url: string;
@@ -281,6 +289,7 @@ function href(raw: string | null | undefined): string {
   if (/^(mailto:|tel:|#)/.test(url) || /^[a-z]+:\/\//i.test(url)) return url;
   if (/^\/groups\/?$/.test(url)) return groupsHref();
   if (/^\/events\/?$/.test(url)) return eventsHref();
+  if (/^\/news\/?$/.test(url)) return newsHref();
   // The item's own guid comes last (/groups/view/<group>/…/wiki/view/<guid>/<slug>).
   const guids = [...url.matchAll(GUID)].map((m) => m[0]).reverse();
   const known = guids.find((g) => hrefOf.has(g));
@@ -613,8 +622,20 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
         const limit = Math.min(50, Math.max(1, Number(val(s, "limit")) || Number(val(s, "numberOfItems")) || 5));
         return [{ type: "events", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), limit, tag } }];
       }
+      // News lists ("Uitgelicht nieuws", the news feed) are the posts widget with kind news.
+      const subtypes = val(s, "subtypes") + val(s, "typeFilter");
+      if (subtypes.includes("news") && w.type !== "search") {
+        const limit = Math.min(50, Math.max(1, Number(val(s, "limit")) || Number(val(s, "numberOfItems")) || (w.type === "activity" ? 10 : 6)));
+        const kind = subtypes.includes("blog") ? "all" : "news";
+        return [
+          {
+            type: "posts",
+            config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), limit, kind, featuredOnly: w.type === "featured", showSummary: true },
+          },
+        ];
+      }
       // Lists of blog posts are the posts widget now.
-      if ((val(s, "subtypes") + val(s, "typeFilter")).includes("blog") && w.type !== "search") {
+      if (subtypes.includes("blog") && w.type !== "search") {
         const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
         const tag = cleanTag(categories.flatMap((c) => c.values ?? [])[0] ?? "");
         const limit = Math.min(50, Math.max(1, Number(val(s, "limit")) || Number(val(s, "numberOfItems")) || 5));
@@ -802,6 +823,23 @@ async function main() {
     hrefOf.set(e.guid, eventHref(slug));
   }
 
+  // News (plugin-blog, kind "news"): public items of the site and of the known groups.
+  const allNews = await cached<{ entities: { edges: PNews[] } }>("news.json", () =>
+    gql(NEWS_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.entities.edges);
+  const news = allNews.filter(
+    (n) => n.statusPublished === "published" && Number(n.accessId) === 2 && (!n.group || groupSlugOf.has(n.group.guid))
+  );
+  const newsSlugOf = new Map<string, string>();
+  for (const n of news) {
+    const base = slugFromUrl(n.url);
+    let slug = base;
+    for (let k = 2; takenPosts.has(slug); k++) slug = `${base}-${k}`;
+    takenPosts.add(slug);
+    newsSlugOf.set(n.guid, slug);
+    hrefOf.set(n.guid, postHref(slug));
+  }
+
   // Status updates (plugin-blog, kind "update"): each group's timeline, public ones; one query per group.
   const updates: PUpdate[] = [];
   for (const g of groups) {
@@ -956,6 +994,25 @@ async function main() {
       ...(image ? { image: href(image) } : {}),
     };
   });
+  const newsDocs = news.map((n) => {
+    const image = n.featured?.image?.download ?? "";
+    return {
+      slug: newsSlugOf.get(n.guid)!,
+      lang: "en",
+      access: "public",
+      title: n.title,
+      summary: (n.excerpt ?? "").replace(/\s+/g, " ").trim(),
+      body: markdown(n.richDescription),
+      author: n.owner?.name && !/verwijderd account/i.test(n.owner.name) ? n.owner.name : "",
+      publishedAt: (n.timePublished ?? "").slice(0, 10) || "1970-01-01",
+      tags: [...new Set([...(n.tagCategories ?? []).flatMap((c) => c.values), ...(n.tags ?? [])].map(cleanTag).filter(Boolean))],
+      group: n.group ? groupSlugOf.get(n.group.guid)! : "",
+      kind: "news",
+      featured: n.isFeatured === true,
+      source: (n.source ?? "").trim(),
+      ...(image ? { image: href(image) } : {}),
+    };
+  });
   const updateDocs = updates.map((u) => {
     const body = markdown(u.richDescription);
     return {
@@ -984,7 +1041,7 @@ async function main() {
 
   console.log(
     `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
-      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts, ${updateDocs.length} updates, ${eventDocs.length} events`
+      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts, ${newsDocs.length} news, ${updateDocs.length} updates, ${eventDocs.length} events`
   );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
@@ -1033,9 +1090,10 @@ async function main() {
   for (const g of groupDocs) await put("group", g.slug, g);
   for (const t of termDocs) await put("term", t.slug, t);
   for (const b of postDocs) await put("post", b.slug, b); // after the groups: the relation rule checks `group`
+  for (const n of newsDocs) await put("post", n.slug, n);
   for (const u of updateDocs) await put("post", u.slug, u);
   for (const e of eventDocs) await put("event", e.slug, e);
-  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length + updateDocs.length + eventDocs.length;
+  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length + newsDocs.length + updateDocs.length + eventDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
   console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }

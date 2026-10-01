@@ -6,8 +6,9 @@ import { PostsConfig, PostsWidget } from "./widget";
 /**
  * @imprint/plugin-blog — blog posts as a plugin (design/communities.md §2):
  * the content type `post` (dated, with a writer, tags and optionally a
- * group), the `posts` widget (latest posts of the site, a group or a tag),
- * the overview `/blog` and a page per post under `/blog/<slug>`. A site
+ * group; of kind blog, news or update), the `posts` widget (latest posts
+ * of the site, a group or a tag), the overviews `/blog` and `/news` and a
+ * page per post under `/blog/<slug>`. A site
  * switches it on with `plugins: [blogPlugin()]` and composes the widget into
  * its catalogue (`blogWidgets` / `blogViewers`).
  *
@@ -38,7 +39,7 @@ export function blogPlugin(): ImprintPlugin {
 }
 
 export { blogContentTypes } from "./content-types";
-export { BLOG_PREFIX, blogHref, formatDate, postHref, postSlug, postSummary } from "./href";
+export { BLOG_PREFIX, NEWS_PREFIX, blogHref, formatDate, newsHref, postHref, postSlug, postSummary } from "./href";
 export { PostSchema, type Post } from "./schemas";
 export { PostsConfig, type PostsConfig as PostsWidgetConfig } from "./widget";
 export { getPost, listPosts } from "./posts";

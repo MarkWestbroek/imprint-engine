@@ -9,7 +9,7 @@ const canList = (store: ContentStore): store is ContentStore & Listing =>
 /** Current posts, newest first; `group` narrows to one group's, `tag` to one tag. */
 export async function listPosts(
   store: ContentStore,
-  opts: { group?: string; tag?: string; kind?: "blog" | "update" | "all" } = {}
+  opts: { group?: string; tag?: string; kind?: "blog" | "news" | "update" | "all"; featured?: boolean } = {}
 ): Promise<Post[]> {
   const kind = opts.kind ?? "blog";
   if (!canList(store)) return [];
@@ -20,6 +20,7 @@ export async function listPosts(
     .map((r) => r.data)
     .filter((p) => (opts.group === undefined || p.group === opts.group) && (!opts.tag || p.tags.includes(opts.tag)))
     .filter((p) => kind === "all" || p.kind === kind)
+    .filter((p) => !opts.featured || p.featured)
     .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt) || a.title.localeCompare(b.title, "nl"));
 }
 

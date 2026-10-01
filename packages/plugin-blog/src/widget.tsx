@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { z } from "zod";
 import type { WidgetContext } from "@imprint/runtime-admin";
-import { blogHref } from "./href";
+import { blogHref, newsHref } from "./href";
 import { PostList } from "./post-list";
 import { listPosts } from "./posts";
 
@@ -17,23 +17,30 @@ export const PostsConfig = z.object({
   group: z.string().default(""),
   tag: z.string().default(""),
   showSummary: z.boolean().default(true),
-  /** Blog posts, a group's short updates, or both. */
-  kind: z.enum(["blog", "update", "all"]).default("blog"),
+  /** Blog posts, news, a group's short updates, or everything. */
+  kind: z.enum(["blog", "news", "update", "all"]).default("blog"),
+  /** News only: the items marked as featured ("Uitgelicht"). */
+  featuredOnly: z.boolean().default(false),
   /** A link to the full overview under the list. */
   showMore: z.boolean().default(true),
 });
 export type PostsConfig = z.infer<typeof PostsConfig>;
 
 export async function PostsWidget({ config, ctx }: { config: PostsConfig; ctx: WidgetContext }) {
-  const posts = await listPosts(ctx.store, { group: config.group || undefined, tag: config.tag || undefined, kind: config.kind });
+  const posts = await listPosts(ctx.store, {
+    group: config.group || undefined,
+    tag: config.tag || undefined,
+    kind: config.kind,
+    featured: config.featuredOnly,
+  });
   return (
     <section>
       {config.title && <h2 className="mb-2 text-2xl font-semibold tracking-tight">{config.title}</h2>}
       <PostList posts={posts.slice(0, config.limit)} showSummary={config.showSummary} />
-      {config.showMore && config.kind === "blog" && posts.length > config.limit && (
+      {config.showMore && (config.kind === "blog" || config.kind === "news") && posts.length > config.limit && (
         <p className="mt-3 text-sm">
-          <Link href={blogHref()} className="font-semibold text-accent hover:underline">
-            Alle berichten ({posts.length}) →
+          <Link href={config.kind === "news" ? newsHref() : blogHref()} className="font-semibold text-accent hover:underline">
+            {config.kind === "news" ? "Al het nieuws" : "Alle berichten"} ({posts.length}) →
           </Link>
         </p>
       )}

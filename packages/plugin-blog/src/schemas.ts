@@ -23,10 +23,15 @@ export const PostSchema = z.object({
   /** Slug of the group this post belongs to; empty = the site itself. */
   group: z.string().default(""),
   /**
-   * A blog post, or a short update in a group's timeline (Pleio's status
-   * update): updates stay out of /blog and show on the group's page.
+   * A blog post, a news item (the site's own news, /news), or a short update
+   * in a group's timeline (Pleio's status update): updates stay out of the
+   * overviews and show on the group's page.
    */
-  kind: z.enum(["blog", "update"]).default("blog"),
+  kind: z.enum(["blog", "news", "update"]).default("blog"),
+  /** News: picked out for the "Uitgelicht nieuws" blocks. */
+  featured: z.boolean().default(false),
+  /** News: the original elsewhere (a link to the source). */
+  source: z.string().default(""),
   /** A library asset (`asset:<slug>`), a URL, or a path under public/. */
   image: assetSrc().optional(),
 });

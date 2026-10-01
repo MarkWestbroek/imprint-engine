@@ -897,8 +897,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Statusupdates~~ — als `post` met `kind: update`, 135 publieke per
             groep geïmporteerd (01-10). Mark's export (172) is deels anders
             dan de API; de 6 groepsgebonden wachten op de besloten test.
-      - [ ] Nieuws (313 publiek): als `post` met `kind: news`, of eigen type;
-            de "Uitgelicht nieuws"-blokken verwijzen nu nog naar Pleio.
+      - [x] ~~Nieuws~~ — `post` met `kind: news`, 312 publieke geïmporteerd;
+            "Uitgelicht nieuws" en de feeds zijn de posts-widget (01-10).
+      - [ ] **G3a: leden schrijven zelf** — een lid van een groep plaatst een
+            update of blog vanaf de groepspagina (PDP-regel "create post in
+            eigen groep", formulier op de groep, zonder admin). Daarna
+            reacties, discussies, notificaties.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

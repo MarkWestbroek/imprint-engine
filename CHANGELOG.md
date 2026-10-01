@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Nieuws** (plugin-blog): een bericht kan `kind: news` zijn, met
+  `featured` ("Uitgelicht") en `source` (bronlink); overzicht op `/news`; de
+  widget `posts` kent `kind: news` en `featuredOnly`. De showcase importeert
+  de 312 publieke nieuwsberichten; "Uitgelicht nieuws" en de nieuwsfeeds
+  komen nu uit de eigen database in plaats van te verwijzen naar Pleio.
 - **Updates in groepen** (plugin-blog): een bericht heeft een `kind`: `blog`
   of `update` (Pleio's status update, het korte bericht in de tijdlijn van
   een groep). Updates staan op de groepspagina en niet in `/blog`; de widget

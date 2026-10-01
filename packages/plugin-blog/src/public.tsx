@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ANONYMOUS, contentResource, permit, userSubject } from "@imprint/content-core";
 import { Markdown, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
-import { BLOG_PREFIX, blogHref, formatDate, postSummary } from "./href";
+import { BLOG_PREFIX, NEWS_PREFIX, blogHref, formatDate, newsHref, postSummary } from "./href";
 import { PostList } from "./post-list";
 import { getPost, listPosts } from "./posts";
 import type { Post } from "./schemas";
@@ -13,13 +13,17 @@ function PostView({ post }: { post: Post }) {
         <Link href={`/groups/${post.group}`} className="text-sm text-muted hover:underline">
           ← Community
         </Link>
+      ) : post.kind === "news" ? (
+        <Link href={newsHref()} className="text-sm text-muted hover:underline">
+          ← Nieuws
+        </Link>
       ) : (
         <Link href={blogHref()} className="text-sm text-muted hover:underline">
           ← Alle berichten
         </Link>
       )}
       <p className="mt-4 text-xs text-muted">
-        {post.kind === "update" ? "Update · " : ""}
+        {post.kind === "update" ? "Update · " : post.kind === "news" ? "Nieuws · " : ""}
         {formatDate(post.publishedAt)}
         {post.author && ` · ${post.author}`}
         {post.group && post.kind !== "update" && (
@@ -39,6 +43,13 @@ function PostView({ post }: { post: Post }) {
       <div className="markdown mt-6">
         <Markdown>{post.body || post.summary}</Markdown>
       </div>
+      {post.source && (
+        <p className="mt-6 text-sm">
+          <a href={post.source} className="text-accent underline" target="_blank" rel="noopener noreferrer">
+            Bron
+          </a>
+        </p>
+      )}
       {post.tags.length > 0 && (
         <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tags">
           {post.tags.map((tag) => (
@@ -53,11 +64,25 @@ function PostView({ post }: { post: Post }) {
 }
 
 /**
- * `/blog`: the overview, newest first; `/blog/<slug>`: one post. Public
+ * `/blog` and `/news`: the overviews, newest first; `/blog/<slug>`: one post
+ * (of any kind: news and updates share the address space). Public
  * posts render in the prerendered catch-all; a non-public one goes to
  * /members, where the PDP decides for the subject at hand.
  */
 export async function blogPublicRoute({ imprint, slug, members, session, subject: given }: PublicRouteContext): Promise<PublicRouteResult | null> {
+  if (slug[0] === NEWS_PREFIX && slug.length === 1) {
+    const subject0 = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
+    const posts = await listPosts(members ? imprint.storeFor(subject0) : imprint.store, { kind: "news" });
+    return {
+      render: (
+        <section>
+          <h1 className="mb-6 text-3xl font-semibold tracking-tight">Nieuws</h1>
+          <PostList posts={posts} />
+        </section>
+      ),
+      metadata: { title: "Nieuws" },
+    };
+  }
   if (slug[0] !== BLOG_PREFIX || slug.length > 2) return null;
   const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
   const store = members ? imprint.storeFor(subject) : imprint.store;

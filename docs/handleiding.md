@@ -555,7 +555,8 @@ andere sites, met een paar dingen van commonground.nl:
   datum, samenvatting, tekst, tags en (optioneel) de community waar het bij
   hoort. Alle berichten staan op `/blog`, elk bericht op `/blog/<slug>`, en
   een community-pagina toont haar eigen berichten. Een bericht is een
-  **blog** of een **update** (het korte bericht in de tijdlijn van een
+  **blog**, een **nieuwsbericht** (op `/news`, met het vinkje *Featured* voor
+  "Uitgelicht nieuws" en een *Source*-link naar het origineel) of een **update** (het korte bericht in de tijdlijn van een
   community, zoals Pleio's statusupdate): updates staan alleen op de
   community-pagina, niet in `/blog`. De widget **Posts** zet de laatste
   berichten (van de site, een community of een tag; blogs, updates of beide)
