@@ -22,6 +22,11 @@ export const PostSchema = z.object({
   tags: z.array(z.string()).default([]),
   /** Slug of the group this post belongs to; empty = the site itself. */
   group: z.string().default(""),
+  /**
+   * A blog post, or a short update in a group's timeline (Pleio's status
+   * update): updates stay out of /blog and show on the group's page.
+   */
+  kind: z.enum(["blog", "update"]).default("blog"),
   /** A library asset (`asset:<slug>`), a URL, or a path under public/. */
   image: assetSrc().optional(),
 });

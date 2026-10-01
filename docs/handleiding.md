@@ -554,8 +554,12 @@ andere sites, met een paar dingen van commonground.nl:
 - **Blog**: onder **Posts** in de admin staat elk bericht met schrijver,
   datum, samenvatting, tekst, tags en (optioneel) de community waar het bij
   hoort. Alle berichten staan op `/blog`, elk bericht op `/blog/<slug>`, en
-  een community-pagina toont haar eigen berichten. De widget **Posts** zet
-  de laatste berichten (van de site, een community of een tag) op een pagina.
+  een community-pagina toont haar eigen berichten. Een bericht is een
+  **blog** of een **update** (het korte bericht in de tijdlijn van een
+  community, zoals Pleio's statusupdate): updates staan alleen op de
+  community-pagina, niet in `/blog`. De widget **Posts** zet de laatste
+  berichten (van de site, een community of een tag; blogs, updates of beide)
+  op een pagina.
 - **Agenda**: onder **Events** in de admin staat elk evenement met begin en
   einde (datum en tijd), plaats, adres, links, organisatie, of het ook online
   is, een herhalingsregel als tekst, tags en (optioneel) de community. De

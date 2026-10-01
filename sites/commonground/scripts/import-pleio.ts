@@ -46,6 +46,8 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   page with its own text, a leaf a page;
  * - blog posts → `post` (plugin-blog) on `/blog/<slug>`, with writer, date,
  *   tags and group; blog lists → the `posts` widget;
+ * - a group's status updates → `post` with `kind: update` (its timeline; the
+ *   title is the first sentence), shown on the group's page, not in /blog;
  * - events → `event` (plugin-events) on `/events/<slug>`, with time, place,
  *   links, organiser and the repeat rule as text; event lists → the
  *   `events` widget; the menu's "Agenda" → `/events`;
@@ -94,6 +96,10 @@ const EVENTS_QUERY = `query Events($offset: Int, $limit: Int) { entities(subtype
   owner { name } featured { image { ... on File { download } } } group { guid } parent { guid }
   startDate endDate location locationAddress locationLink source ticketLink maxAttendees rsvp attendEventOnline
   rangeSettings { type interval repeatUntil instanceLimit isIgnored } } } } }`;
+
+/** A group's status updates (its timeline): only reachable per container, the global list ignores the type. */
+const UPDATES_QUERY = `query Updates($group: String!, $offset: Int, $limit: Int) { entities(containerGuid: $group, subtypes: ["status_update"], offset: $offset, limit: $limit) {
+  total edges { guid ... on StatusUpdate { url richDescription timePublished statusPublished accessId owner { name } group { guid } } } } }`;
 
 /** Groups (communities): their public face; membership stays behind (G1). */
 const GROUPS_QUERY = `query Groups($offset: Int, $limit: Int) { groups(offset: $offset, limit: $limit) {
@@ -230,6 +236,16 @@ type PEvent = {
   rsvp: boolean | null;
   attendEventOnline: boolean | null;
   rangeSettings: { type: string | null; interval: number | null; repeatUntil: string | null; instanceLimit: number | null; isIgnored: boolean | null } | null;
+};
+type PUpdate = {
+  guid: string;
+  url: string;
+  richDescription: string | null;
+  timePublished: string | null;
+  statusPublished: string;
+  accessId: number | string;
+  owner: { name: string | null } | null;
+  group: { guid: string } | null;
 };
 type PWikiRoot = { guid: string; title: string; accessId: number; statusPublished: string; group: { guid: string } | null };
 type PTerm = {
@@ -638,6 +654,19 @@ function repeatText(r: PEvent["rangeSettings"]): string {
   return `Herhaalt ${every}${unit}${until}`;
 }
 
+/** A status update has no title: its first sentence (or line), at most ~90 characters. */
+function titleFromText(md: string): string {
+  const plain = md
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1")
+    .replace(/[*_`>#|]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  const first = plain.split(/(?<=[.!?])\s/)[0] ?? plain;
+  const cut = first.length > 90 ? `${first.slice(0, 90).replace(/\s+\S*$/, "")}…` : first;
+  return cut || "Update";
+}
+
 /** Pleio's tag values carry stray zero-width spaces ("Data\u200b"); without them, tags compare. */
 const cleanTag = (tag: string) => tag.replace(/[\u200b\u200c\ufeff]/g, "").trim();
 
@@ -771,6 +800,21 @@ async function main() {
     takenEvents.add(slug);
     eventSlugOf.set(e.guid, slug);
     hrefOf.set(e.guid, eventHref(slug));
+  }
+
+  // Status updates (plugin-blog, kind "update"): each group's timeline, public ones; one query per group.
+  const updates: PUpdate[] = [];
+  for (const g of groups) {
+    const list = await cached<{ entities: { edges: PUpdate[] } }>(`updates-${g.guid}.json`, () =>
+      gql(UPDATES_QUERY, { group: g.guid, offset: 0, limit: 500 })
+    ).then((d) => d.entities.edges);
+    updates.push(...list.filter((u) => u.statusPublished === "published" && Number(u.accessId) === 2 && u.richDescription));
+  }
+  const updateSlugOf = new Map<string, string>();
+  for (const u of updates) {
+    const slug = `update-${u.guid.slice(0, 8)}`;
+    updateSlugOf.set(u.guid, slug);
+    hrefOf.set(u.guid, postHref(slug));
   }
 
   // Terms (plugin-glossary): site-level, public ones; each gets its /term/<slug>, so the crosslinks between them resolve.
@@ -912,6 +956,22 @@ async function main() {
       ...(image ? { image: href(image) } : {}),
     };
   });
+  const updateDocs = updates.map((u) => {
+    const body = markdown(u.richDescription);
+    return {
+      slug: updateSlugOf.get(u.guid)!,
+      lang: "en",
+      access: "public",
+      title: titleFromText(body),
+      summary: "",
+      body,
+      author: u.owner?.name && !/verwijderd account/i.test(u.owner.name) ? u.owner.name : "",
+      publishedAt: (u.timePublished ?? "").slice(0, 10) || "1970-01-01",
+      tags: [],
+      group: u.group ? groupSlugOf.get(u.group.guid)! : "",
+      kind: "update",
+    };
+  });
   const termDocs = terms.map((t) => ({
     slug: termSlugOf.get(t.guid)!,
     lang: "en",
@@ -924,7 +984,7 @@ async function main() {
 
   console.log(
     `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
-      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts, ${eventDocs.length} events`
+      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts, ${updateDocs.length} updates, ${eventDocs.length} events`
   );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
@@ -973,8 +1033,9 @@ async function main() {
   for (const g of groupDocs) await put("group", g.slug, g);
   for (const t of termDocs) await put("term", t.slug, t);
   for (const b of postDocs) await put("post", b.slug, b); // after the groups: the relation rule checks `group`
+  for (const u of updateDocs) await put("post", u.slug, u);
   for (const e of eventDocs) await put("event", e.slug, e);
-  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length + eventDocs.length;
+  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length + updateDocs.length + eventDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
   console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }

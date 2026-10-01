@@ -17,18 +17,20 @@ export const PostsConfig = z.object({
   group: z.string().default(""),
   tag: z.string().default(""),
   showSummary: z.boolean().default(true),
+  /** Blog posts, a group's short updates, or both. */
+  kind: z.enum(["blog", "update", "all"]).default("blog"),
   /** A link to the full overview under the list. */
   showMore: z.boolean().default(true),
 });
 export type PostsConfig = z.infer<typeof PostsConfig>;
 
 export async function PostsWidget({ config, ctx }: { config: PostsConfig; ctx: WidgetContext }) {
-  const posts = await listPosts(ctx.store, { group: config.group || undefined, tag: config.tag || undefined });
+  const posts = await listPosts(ctx.store, { group: config.group || undefined, tag: config.tag || undefined, kind: config.kind });
   return (
     <section>
       {config.title && <h2 className="mb-2 text-2xl font-semibold tracking-tight">{config.title}</h2>}
       <PostList posts={posts.slice(0, config.limit)} showSummary={config.showSummary} />
-      {config.showMore && posts.length > config.limit && (
+      {config.showMore && config.kind === "blog" && posts.length > config.limit && (
         <p className="mt-3 text-sm">
           <Link href={blogHref()} className="font-semibold text-accent hover:underline">
             Alle berichten ({posts.length}) →

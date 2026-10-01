@@ -894,8 +894,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             account i.p.v. tekst.
       - [ ] Agenda: dagelijkse herbouw (of ISR met tijd) zodat "komend" op
             statische pagina's niet veroudert; herhalingen uitrollen.
-      - [ ] Nieuws (313 publiek): als `post` met tag, of eigen type; de
-            "Uitgelicht nieuws"-blokken verwijzen nu nog naar Pleio.
+      - [x] ~~Statusupdates~~ — als `post` met `kind: update`, 135 publieke per
+            groep geïmporteerd (01-10). Mark's export (172) is deels anders
+            dan de API; de 6 groepsgebonden wachten op de besloten test.
+      - [ ] Nieuws (313 publiek): als `post` met `kind: news`, of eigen type;
+            de "Uitgelicht nieuws"-blokken verwijzen nu nog naar Pleio.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

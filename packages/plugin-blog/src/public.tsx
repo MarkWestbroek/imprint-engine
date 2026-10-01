@@ -9,13 +9,20 @@ import type { Post } from "./schemas";
 function PostView({ post }: { post: Post }) {
   return (
     <article className="max-w-3xl">
-      <Link href={blogHref()} className="text-sm text-muted hover:underline">
-        ← Alle berichten
-      </Link>
+      {post.kind === "update" ? (
+        <Link href={`/groups/${post.group}`} className="text-sm text-muted hover:underline">
+          ← Community
+        </Link>
+      ) : (
+        <Link href={blogHref()} className="text-sm text-muted hover:underline">
+          ← Alle berichten
+        </Link>
+      )}
       <p className="mt-4 text-xs text-muted">
+        {post.kind === "update" ? "Update · " : ""}
         {formatDate(post.publishedAt)}
         {post.author && ` · ${post.author}`}
-        {post.group && (
+        {post.group && post.kind !== "update" && (
           <>
             {" · "}
             <Link href={`/groups/${post.group}`} className="hover:underline">

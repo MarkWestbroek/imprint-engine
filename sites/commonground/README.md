@@ -50,7 +50,9 @@ andere Pleio-site).
   de groep samen, slug = groepsslug; "Common Ground publicatiesite" heet
   `wiki`) en haar pagina's als `groups/<slug>/<pagina>`.
 - Blogs → `post` (plugin-blog) op `/blog/<slug>`, met schrijver, datum,
-  tags en groep; bloglijsten → de widget `posts`.
+  tags en groep; bloglijsten → de widget `posts`. De statusupdates van een
+  groep (alleen per groep op te vragen) → `post` met `kind: update`, titel
+  uit de eerste zin.
 - Evenementen → `event` (plugin-events) op `/events/<slug>`, met tijd,
   plaats, links, organisatie en de herhaling als tekst; agendalijsten → de
   widget `events`; "Agenda" in het menu → `/events`.

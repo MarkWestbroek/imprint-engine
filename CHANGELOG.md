@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Updates in groepen** (plugin-blog): een bericht heeft een `kind`: `blog`
+  of `update` (Pleio's status update, het korte bericht in de tijdlijn van
+  een groep). Updates staan op de groepspagina en niet in `/blog`; de widget
+  `posts` kiest met `kind`. De showcase importeert de 135 publieke updates
+  per groep (titel = de eerste zin).
 - **Aanmelden voor evenementen (agenda, stap b)**: leden kiezen op een
   evenement *ik kom / misschien / ik kom niet* (met de privacytekst erbij; de
   keuze is de toestemming), met een teller, een maximum (`maxAttendees`:

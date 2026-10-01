@@ -9,7 +9,7 @@ import type { Group } from "./schemas";
 import { toCard } from "./widget";
 
 /** A post of the group (plugin-blog's `post`), as far as this view needs it; the type is known by name only. */
-type GroupPost = { slug: string; title: string; publishedAt: string; author: string };
+type GroupPost = { slug: string; title: string; publishedAt: string; author: string; kind: string };
 /** An event of the group (plugin-events' `event`), likewise. */
 type GroupEvent = { slug: string; title: string; start: string; end: string; location: string };
 
@@ -100,6 +100,7 @@ function GroupView({
                   {p.title}
                 </Link>
                 <span className="ml-2 text-sm text-muted">
+                  {p.kind === "update" ? "update · " : ""}
                   {p.publishedAt}
                   {p.author && ` · ${p.author}`}
                 </span>
@@ -129,9 +130,9 @@ async function groupPosts(reader: ContentStore, slug: string): Promise<GroupPost
     return (await listing.listItems("post"))
       .map((r) => r.data as Partial<GroupPost> & { group?: string })
       .filter((p): p is GroupPost & { group: string } => p.group === slug && typeof p.slug === "string" && typeof p.title === "string")
-      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt ?? "", author: p.author ?? "" }))
+      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt ?? "", author: p.author ?? "", kind: p.kind ?? "blog" }))
       .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
-      .slice(0, 10);
+      .slice(0, 15);
   } catch {
     return []; // no such type on this site
   }
