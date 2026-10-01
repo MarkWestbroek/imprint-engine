@@ -13,7 +13,7 @@ import { layoutRows } from "@imprint/runtime-admin/layout";
  * from the site's point of view.
  */
 const CATALOG = [
-  "accordion", "album", "api", "audio", "board", "boardspec", "breadcrumb", "buttons", "callout",
+  "accordion", "album", "api", "assembly", "audio", "board", "boardspec", "breadcrumb", "buttons", "callout",
   "cards", "carousel", "code", "components", "divider", "downloads", "embed", "file", "gallery",
   "hero", "image", "itinerary", "kanban", "list", "logos", "map", "mediatext", "mermaid",
   "pdf", "people", "planning", "posts", "pricing", "products", "quote", "releases",
@@ -50,6 +50,7 @@ const STUDIO_CATALOG: [name: string, label: string, version: string, help: strin
   ["board", "Board annotations", "1.0.0", "A PCB render with hover/expanded hotspots per point."],
   ["take", "Take (audio + piano roll)", "1.0.0", "A take from the patch editor: pick its wav; the .mid of the same take shows as a piano roll you can play, seek and loop."],
   ["boardspec", "Board spec", "1.0.0", "Render a board-spec: render, connectors, pinouts and notes."],
+  ["assembly", "Hardware assembly", "1.0.0", "The unit assembling itself in 3D: board-specs fly into place on a timeline, with the front panel from its SVG. Play, scrub, drag to look around."],
   ["template", "Template (merge fields)", "1.0.0", "Markdown with {{fields}} merged from a content item."],
   ["list", "List (links)", "1.0.0", "A list of links following the content graph (e.g. a product's releases)."],
   ["callout", "Callout / CTA", "1.0.0", "A coloured box with markdown and an optional button."],

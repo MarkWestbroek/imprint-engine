@@ -400,6 +400,32 @@ flowchart LR
   `eyebrow` en `markdown`, en per engine-package een `@source`-regel in
   `globals.css`. De bibliotheek levert geen merk; dat blijft van de site
   (besluit in §0).
+- **`assembly` (MusicBrain-domeinwidget, 1 okt 2026)**: de hardware-unit
+  die zichzelf in 3D in elkaar zet. Schema in `registry.ts`
+  (`AssemblyConfig`: onderdelen = board-spec-slug + positie/normaal/spin/
+  flip + `from`/`start`/`duration`; paneel-SVG; rails; tijdlijn; audio). De
+  server-viewer (`AssemblyWidget`) lost per onderdeel `assets.model3d` op via
+  `ctx.store.getBoardSpec` — dezelfde GLB als de "3D"-tab — en geeft kale
+  URL's aan het client-eiland `components/assembly-scene.tsx`. Dat eiland
+  importeert three.js + GLTFLoader/SVGLoader/OrbitControls pas bij mount
+  (zoals `Model3D`), schaalt de GLB's van meter naar mm, bepaalt de
+  bordnormaal uit de dunste as van de bounding box en draait die naar de
+  geconfigureerde as, extrudeert het paneel uit de SVG (plate = class
+  `panel`, overige vormen = gaten) en beweegt alles op één tijdlijn
+  (`home + from·(1−ease)`). Coördinaten zijn de millimeters van
+  `doc/mechanics/MusicBrainAssembly.FCMacro` in de MusicBrain-repo (x rechts,
+  y diepte, z omhoog → three: x, y=z, z=−y), zodat een Blender-render dezelfde
+  page-config kan lezen. `three` staat expliciet in de site (zelfde versie
+  als model-viewer meebrengt, één kopie).
+
+  ```mermaid
+  flowchart LR
+      CFG["assembly-config<br/>parts: spec@versie + at/normal/spin/from/start"] --> W["AssemblyWidget<br/>(server)"]
+      W -->|"ctx.store.getBoardSpec"| BS["board-spec<br/>assets.model3d"]
+      W -->|"URL's + choreografie"| C["assembly-scene.tsx<br/>(client, lazy three.js)"]
+      C -->|GLTFLoader| GLB["/api/assets/…/model.glb"]
+      C -->|SVGLoader + Extrude| SVG["/boards/frontpanel-v1.svg"]
+  ```
 
 ## 3b. Product / component / release
 

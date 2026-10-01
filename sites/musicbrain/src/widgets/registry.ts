@@ -140,6 +140,71 @@ export const BoardConfig = z.object({
 });
 export type BoardConfig = z.infer<typeof BoardConfig>;
 
+/** A point or offset in unit millimetres: x to the right, y depth (0 = panel front, positive = towards the back), z up. */
+const mm3 = z.tuple([z.number(), z.number(), z.number()]);
+
+/**
+ * The hardware unit assembling itself (Mark, 1 Oct 2026: "zodat je kunt zien
+ * hoe een MusicBrain hardware-unit er uiteindelijk uitziet"). Each part is a
+ * board-spec whose 3D model (the KiCad GLB behind the "3D" tab) flies from
+ * `from` to `at` on a shared timeline; the front panel is extruded from its
+ * SVG drawing, holes included. Coordinates follow doc/mechanics/
+ * MusicBrainAssembly.FCMacro in the MusicBrain repo, so the choreography can
+ * be shared with a Blender render of the same scene.
+ */
+export const AssemblyPartConfig = z.object({
+  /** Board-spec slug, e.g. "adc8@v2.0"; its `assets.model3d` is the model. */
+  spec: z.string().min(1),
+  /** Caption while this part moves, e.g. "ADC8 → slot 1". */
+  label: z.string().optional(),
+  /** Centre of the board when seated, in unit mm. */
+  at: mm3,
+  /** Direction of the board's normal when seated: "x" = vertical card, "y" = parallel to the panel, "z" = flat. */
+  normal: z.enum(["x", "y", "z"]).default("y"),
+  /** Rotation around that normal, in degrees. */
+  spin: z.number().default(0),
+  /** Turn the board over (components to the other side). */
+  flip: z.boolean().default(false),
+  /** Where it starts, as an offset from `at` (mm). */
+  from: mm3.default([0, -120, 0]),
+  /** When it starts moving, 0..1 of the timeline, and how long it takes (fraction). */
+  start: z.number().min(0).max(1).default(0),
+  duration: z.number().min(0.01).max(1).default(0.1),
+});
+export type AssemblyPartConfig = z.infer<typeof AssemblyPartConfig>;
+
+export const AssemblyConfig = z.object({
+  title: z.string().optional(),
+  /** Panel width and height in mm — the frame the coordinates live in. */
+  width: z.number().positive().default(200),
+  height: z.number().positive().default(128.5),
+  /**
+   * Front panel from an SVG drawing (URL or a path under public/): the
+   * element with class "panel" is the plate, circles and rects with classes
+   * hole/pot/enc/btn/din/usb/mnt/disp become holes. Leave empty for no panel.
+   */
+  panel: z
+    .object({
+      svg: z.string().min(1),
+      thickness: z.number().positive().default(2),
+      from: mm3.default([0, -140, 0]),
+      start: z.number().min(0).max(1).default(0.86),
+      duration: z.number().min(0.01).max(1).default(0.1),
+    })
+    .optional(),
+  /** Eurorack rails top and bottom, seated last. */
+  rails: z.boolean().default(true),
+  parts: z.array(AssemblyPartConfig).default([]),
+  /** Length of one run in seconds; the camera circles slowly while it plays. */
+  seconds: z.number().min(2).max(300).default(24),
+  autoplay: z.boolean().default(true),
+  loop: z.boolean().default(true),
+  /** Music under the animation (URL or public path); starts on the visitor's play click, never by itself. */
+  audio: z.string().optional(),
+  caption: z.string().optional(),
+});
+export type AssemblyConfig = z.infer<typeof AssemblyConfig>;
+
 /**
  * The catalogue as a list, so the admin composer can enumerate it — in the
  * order the studio shows it. Each entry carries its own `version` (the widget
@@ -170,6 +235,7 @@ export const widgetCatalog = [
   { name: "board", label: "Board annotations", version: "1.0.0", help: "A PCB render with hover/expanded hotspots per point.", configSchema: BoardConfig },
   { name: "take", label: "Take (audio + piano roll)", version: "1.0.0", help: "A take from the patch editor: pick its wav; the .mid of the same take shows as a piano roll you can play, seek and loop.", configSchema: TakeConfig },
   { name: "boardspec", label: "Board spec", version: "1.0.0", help: "Render a board-spec: render, connectors, pinouts and notes.", configSchema: BoardSpecConfig },
+  { name: "assembly", label: "Hardware assembly", version: "1.0.0", help: "The unit assembling itself in 3D: board-specs fly into place on a timeline, with the front panel from its SVG. Play, scrub, drag to look around.", configSchema: AssemblyConfig },
   standardWidgets.template,
   standardWidgets.list,
   standardWidgets.callout,

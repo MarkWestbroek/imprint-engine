@@ -638,12 +638,24 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       Nog te doen aan jouw kant: secret zetten + webhook aanmaken in de
       GitHub-repo('s) + mapping invullen.
 - [ ] **W4** Beta-/interesse-aanmelding per product (formulier → lijst). _(must; M)_
-- [ ] **Montagefilmpje Cortex** (wens Mark, 1 okt 2026): busboard, insteek-
+- [~] **Montagefilmpje Cortex** (wens Mark, 1 okt 2026): busboard, insteek-
       kaarten, jack8 en frontpaneel langzaam in elkaar gestoken, MusicBrain-
       muziek eronder — laat zien hoe een hardware-unit er uiteindelijk uitziet
-      (Eurorack of standalone). Plaatsen met de `video`-widget op
-      `/products/cortex` (of in de product-view). Vraagt opname + montage aan
-      MusicBrain-kant; Imprint hoeft niets nieuws. _(should; M)_
+      (Eurorack of standalone).
+      - [x] ~~Interactief in de browser~~ — widget `assembly` (1 okt 2026),
+            choreografie op `/cortex`; muziekbestand nog in te stellen zodra
+            Mark een take kiest.
+      - [ ] Oriëntatie per bord nalopen met Mark (spin/flip in de studio) en
+            de kaartposities tegen de echte connectorhoogte leggen.
+      - [ ] **Mp4-render (route A)**: Blender-script dat dezelfde choreografie
+            (page-config via `/api/content/pages/cortex`) afspeelt met de GLB's
+            + paneel-extrusie, rendert (Eevee 1080p) en met ffmpeg een take
+            eronder mengt. Blender en FreeCAD worden via winget op de desktop
+            gezet (gestart 1 okt; controleer met `winget list`).
+      - [ ] Busboard-spec v3.1 verwijst in zijn tekst naar
+            `audio-aanlanding-v3.svg` (relatief pad, 404 op de site) — bij de
+            volgende publicatie vanuit de KiCad-toolkit meenemen als asset.
+      _(should; M)_
 - [ ] **GitHub-releasefeed voor MusicBrain**: `releaseSources` kent geen
       tag-filter; `fw-0.5.78` zou als "vfw-0.5.78" verschijnen en de
       `banks`-release komt mee. Per bron een tag-prefix (filter + strip) →

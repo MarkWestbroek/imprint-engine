@@ -422,6 +422,11 @@ export const WIDGET_CASES: Record<string, WidgetCase[]> = {
     { name: "missing-spec", config: { spec: "nope@v1" } },
     { name: "no-spec", config: {} },
   ],
+  assembly: [
+    { name: "unit", config: { title: "Assembling", width: 200, height: 128.5, panel: { svg: "/boards/frontpanel-v1.svg" }, parts: [{ spec: "adc8@v1.2", label: "ADC8 → slot 1", at: [84, 37.1, 64.25], normal: "x" }], caption: "Drag to look around." } },
+    { name: "missing-model", config: { parts: [{ spec: "nope@v1", at: [0, 0, 0] }], rails: false, autoplay: false } },
+    { name: "empty", config: {} },
+  ],
   template: [
     { name: "explicit-item", config: { type: "product", slug: "cortex", template: "# {{name}}\n\n{{tagline}}\n\n{{#specs}}- {{label}}: {{value}}\n{{/specs}}" } },
     { name: "subject", config: { template: "Hello {{name}}, status {{status}}" }, subject: "product:relay" },

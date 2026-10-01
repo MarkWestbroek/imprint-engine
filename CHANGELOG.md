@@ -47,6 +47,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   risers, matrix, FPGA voice, editor) en Reflex zijn drie borden + editor,
   zodat de `components`-widget ze met board-spec toont; de Cortex-tekst
   beschrijft de fysieke unit (Eurorack of standalone).
+- **Widget `assembly` (MusicBrain)**: de hardware-unit zet zichzelf in 3D in
+  elkaar — board-specs vliegen via hun KiCad-GLB (de "3D"-tab) op een
+  tijdlijn naar hun plek, het frontpaneel wordt uit zijn SVG geëxtrudeerd
+  (gaten incl.), rails erbij; play/pauze, scrubben, rondkijken, optioneel
+  muziek (start alleen op klik). three.js lazy geladen in een client-eiland;
+  coördinaten volgen `MusicBrainAssembly.FCMacro` zodat dezelfde choreografie
+  een Blender-render kan sturen. Eerste choreografie op `/cortex`.
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
   wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht

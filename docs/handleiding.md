@@ -305,6 +305,27 @@ naar de koppen op de pagina, uit welke widget ze ook komen), **Breadcrumb**
 **Timeline**, **Media & text** (beeld naast tekst), **People / team**,
 **Testimonials** en **Pricing**.
 
+**Hardware assembly** (MusicBrain): de hardware-unit die zichzelf in 3D in
+elkaar zet. Je zet er *onderdelen* in — elk een board-spec (bv. `adc8@v2.0`;
+het 3D-model achter de "3D"-tab van dat bord is wat je ziet) met een positie
+in millimeters (x naar rechts, y diepte vanaf de paneelvoorkant naar achteren,
+z omhoog), de richting van het bord (`normal`: `x` = kaart rechtop in een
+slot, `y` = evenwijdig aan het paneel, `z` = plat), een draai om die as
+(`spin`, graden — nodig als KiCad het bord liggend tekent) en `flip` om het
+om te keren. Per onderdeel kies je waar het vandaan komt (`from`, een
+verschuiving in mm) en wanneer het begint en hoe lang het duurt (`start`,
+`duration`, als deel van de tijdlijn 0..1). Het **frontpaneel** komt uit een
+SVG-tekening (de plaat heeft class `panel`; cirkels en rechthoeken met de
+classes hole/pot/enc/btn/din/usb/mnt/disp worden gaten), de **rails** zijn
+een vinkje. Verder: de duur van één doorloop in seconden, autoplay, herhalen
+en optioneel een **muziekbestand** — dat start pas als de bezoeker op Play
+drukt, nooit vanzelf. De bezoeker kan afspelen, pauzeren, door de tijdlijn
+schuiven, slepen om rond te kijken en met *Reset view* terug naar het
+beginstandpunt; het label linksboven zegt welk onderdeel beweegt.
+Onderdelen zonder 3D-model worden onder de scène genoemd, zodat je ziet wat
+er nog ontbreekt. De eerste choreografie staat op `/cortex` (busboard v3.1,
+zes kaarten, zes fronten, paneel concept v1).
+
 **V3 model diagram.** Imprint tekent het model niet zelf: Omnium doet dat
 (layout, kleuren, notatie horen bij het model). De sidebar gaat van boven
 naar beneden:

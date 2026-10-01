@@ -14,6 +14,268 @@
             "span": 1,
             "widgets": [
               {
+                "type": "assembly",
+                "config": {
+                  "title": "The hardware unit, assembling",
+                  "width": 200,
+                  "height": 128.5,
+                  "panel": {
+                    "svg": "/boards/frontpanel-v1.svg",
+                    "thickness": 2,
+                    "from": [
+                      0,
+                      -140,
+                      0
+                    ],
+                    "start": 0.86,
+                    "duration": 0.1
+                  },
+                  "rails": true,
+                  "seconds": 24,
+                  "autoplay": true,
+                  "loop": true,
+                  "caption": "Busboard v3.1 with six function cards, their panel fronts and the 40 HP front panel (concept v1). Drag to look around; the models are the boards' own KiCad 3D exports.",
+                  "parts": [
+                    {
+                      "spec": "busboard@v3.1",
+                      "label": "Busboard v3.1 with Teensy 4.1",
+                      "at": [
+                        100,
+                        60.4,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "from": [
+                        0,
+                        160,
+                        0
+                      ],
+                      "start": 0,
+                      "duration": 0.12
+                    },
+                    {
+                      "spec": "adc8@v2.0",
+                      "label": "ADC8 → slot 1",
+                      "at": [
+                        84,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.14,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "gatein8@v2.0",
+                      "label": "GateIn8 → slot 2",
+                      "at": [
+                        104,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.22000000000000003,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "potriser@v2.0",
+                      "label": "Pot-Riser → slot 3",
+                      "at": [
+                        124,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.30000000000000004,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "i2criser@v2.0",
+                      "label": "I2C-Riser → slot 4",
+                      "at": [
+                        144,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.38,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "dac8@v2.0",
+                      "label": "DAC8 → slot 5",
+                      "at": [
+                        164,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.46,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "gate8@v2.0",
+                      "label": "Gate8 → slot 6",
+                      "at": [
+                        184,
+                        37.1,
+                        64.25
+                      ],
+                      "normal": "x",
+                      "from": [
+                        0,
+                        -110,
+                        0
+                      ],
+                      "start": 0.54,
+                      "duration": 0.08
+                    },
+                    {
+                      "spec": "jack8@v2.0",
+                      "label": "Jack8 — CV in",
+                      "at": [
+                        84,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 90,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.62,
+                      "duration": 0.07
+                    },
+                    {
+                      "spec": "jack8@v2.0",
+                      "label": "Jack8 — gate in",
+                      "at": [
+                        104,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 90,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.66,
+                      "duration": 0.07
+                    },
+                    {
+                      "spec": "pot8front@v1.1",
+                      "label": "Pot8-Front",
+                      "at": [
+                        124,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 0,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.7,
+                      "duration": 0.07
+                    },
+                    {
+                      "spec": "enc5front@v2.0",
+                      "label": "Enc5-Front",
+                      "at": [
+                        144,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 0,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.74,
+                      "duration": 0.07
+                    },
+                    {
+                      "spec": "jack8@v2.0",
+                      "label": "Jack8 — CV out",
+                      "at": [
+                        164,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 90,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.78,
+                      "duration": 0.07
+                    },
+                    {
+                      "spec": "jack8@v2.0",
+                      "label": "Jack8 — gate out",
+                      "at": [
+                        184,
+                        13.8,
+                        64.25
+                      ],
+                      "normal": "y",
+                      "spin": 90,
+                      "from": [
+                        0,
+                        -90,
+                        0
+                      ],
+                      "start": 0.8200000000000001,
+                      "duration": 0.07
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
                 "type": "boardspec",
                 "config": {
                   "title": "Busboard v3.1",

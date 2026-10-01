@@ -21,10 +21,12 @@ import {
   ProductSpecs,
 } from "@/components/product-sections";
 import { BoardSpecView } from "@/components/board-spec-view";
+import { AssemblyScene, type AssemblyPart } from "@/components/assembly-scene";
 import { StatusBadge } from "@/components/status-badge";
 import { displayVersion } from "@/lib/format";
 import { BoardCanvas } from "./board-canvas";
 import type {
+  AssemblyConfig,
   BoardConfig,
   BoardSpecConfig,
   ComponentsConfig,
@@ -155,6 +157,60 @@ async function BoardSpecWidget({
       ) : (
         <p className="text-sm text-muted">
           {slug ? `No board-spec "${slug}".` : "No board-spec (set one, or use on a component)."}
+        </p>
+      )}
+    </WidgetFrame>
+  );
+}
+
+/**
+ * The hardware unit assembling itself: resolve every part's board-spec to its
+ * GLB here (server, through the store), hand the client scene plain URLs.
+ * Parts whose spec has no 3D model are listed under the scene, not dropped
+ * silently — the editor should see what is missing.
+ */
+async function AssemblyWidget({ config, ctx }: { config: AssemblyConfig; ctx: WidgetContext }) {
+  const specs = await Promise.all(
+    config.parts.map((p) => ctx.store.getBoardSpec(p.spec, ctx.readOptions))
+  );
+  const parts: AssemblyPart[] = [];
+  const missing: string[] = [];
+  config.parts.forEach((p, i) => {
+    const src = specs[i]?.assets.model3d;
+    if (!src) {
+      missing.push(p.spec);
+      return;
+    }
+    parts.push({
+      id: `${i}-${p.spec}`,
+      label: p.label ?? p.spec,
+      src,
+      at: p.at,
+      normal: p.normal,
+      spin: p.spin,
+      flip: p.flip,
+      from: p.from,
+      start: p.start,
+      duration: p.duration,
+    });
+  });
+  return (
+    <WidgetFrame title={config.title}>
+      <AssemblyScene
+        parts={parts}
+        panel={config.panel ?? null}
+        rails={config.rails}
+        width={config.width}
+        height={config.height}
+        seconds={config.seconds}
+        autoplay={config.autoplay}
+        loop={config.loop}
+        audio={config.audio}
+        caption={config.caption}
+      />
+      {missing.length > 0 && (
+        <p className="mt-2 text-xs text-muted">
+          No 3D model yet for: {missing.join(", ")}.
         </p>
       )}
     </WidgetFrame>
@@ -416,6 +472,7 @@ export const widgetComponents: WidgetViewers = {
   take: TakeWidget as WidgetViewer,
   board: BoardWidget as WidgetViewer,
   boardspec: BoardSpecWidget as WidgetViewer,
+  assembly: AssemblyWidget as WidgetViewer,
   template: standardViewers.template,
   list: standardViewers.list,
   callout: standardViewers.callout,
