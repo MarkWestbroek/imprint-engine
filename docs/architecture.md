@@ -435,7 +435,13 @@ flowchart LR
   class `audio` een paneelbus: moer + huls) op de tekenposities, als kinderen van de paneelgroep (ze reizen mee; los
   zwevend stonden ze in het pad van het busboard). **Hold**: na t = 1 blijft
   de unit `hold` seconden staan (alleen de camera draait), dan spoelt t in
-  1,5 s terug naar 0 (de unit trekt uit elkaar) en begint de lus opnieuw. Coördinaten zijn de millimeters van
+  1,5 s terug naar 0 (de unit trekt uit elkaar) en begint de lus opnieuw.
+  **Route A** (`scripts/assembly-render/render_assembly.py`): Blender leest
+  dezelfde page-config (bestand of `/api/content/pages/<slug>`), haalt per
+  part `assets.model3d` via `/api/content/board-specs/<spec>` en de paneel-
+  SVG van de site, en past dezelfde plaatsingsregels toe (three x,y,z →
+  Blender x,−z,y); de paneelplaat is een 2D-curve met gaten, geëxtrudeerd.
+  Eén bron voor web en video. Coördinaten zijn de millimeters van
   `doc/mechanics/MusicBrainAssembly.FCMacro` in de MusicBrain-repo (x rechts,
   y diepte, z omhoog → three: x, y=z, z=−y), zodat een Blender-render dezelfde
   page-config kan lezen. `three` staat expliciet in de site (zelfde versie
@@ -1060,7 +1066,13 @@ niet van elkaar afwijken.
   via de dispatcher van de site, `JoinButton` als client-eiland op de
   vooraf gerenderde groepspagina — `PublicRouteContext.call` is de
   dispatcher van de site, een server-action-referentie is statisch — en
-  `GroupManageScreen` voor de dynamische beheerpagina van de site) en
+  `GroupManageScreen` voor de dynamische beheerpagina van de site; G3a: de
+  acties `writePost`/`removePost` vragen de PDP met een resource
+  `{type: post, group, author, access}` — `inProcessPdp` laat een `reader`
+  een post maken in een groep uit `subject.groups`, eigen posts wijzigen en
+  verwijderen, en als beheerder (`subject.manages`) elke post van de groep
+  verwijderen; `GroupPosts` is het client-eiland met formulier en knoppen,
+  `revalidatePath` ververst de statische pagina's) en
   [plugin-blog](../packages/plugin-blog/src/index.ts) (type `post` met
   datum, schrijver, tags en groep; widget `posts`; routes `/blog` en
   `/blog/<slug>`; de groepspagina leest de berichten van haar groep alleen

@@ -664,11 +664,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             busboard-offset 35,7, kolommen op de slots, audiofront vervalt
             (zit in het hoofdpaneel). ENC5-encoders zitten in het GLB op
             −33/+21/+43,6 mm — klopt dat met de 17,6 mm-steek?
-      - [ ] **Mp4-render (route A)**: Blender-script dat dezelfde choreografie
-            (page-config via `/api/content/pages/cortex`) afspeelt met de GLB's
-            + paneel-extrusie, rendert (Eevee 1080p) en met ffmpeg een take
-            eronder mengt. Blender 5.2 en FreeCAD 1.1.4 staan sinds 1 okt op de
-            desktop (winget; paden in Claude's geheugen `3d-tooling-desktop`).
+      - [x] ~~Mp4-render (route A), script~~ — `scripts/assembly-render/
+            render_assembly.py` (Blender 5.2, Eevee; README ernaast): leest de
+            page-config, haalt GLB's en SVG van de site, rendert, mengt audio.
+      - [ ] **Definitieve render** zodra Mark zijn take heeft ingespeeld
+            (avond 1 okt): `--quality final --audio <take>`; daarna op de
+            site met de `video`-widget (bv. onder de animatie op `/cortex`)
+            en op YouTube/socials.
       - [ ] Busboard-spec v3.1 verwijst in zijn tekst naar
             `audio-aanlanding-v3.svg` (relatief pad, 404 op de site) — bij de
             volgende publicatie vanuit de KiCad-toolkit meenemen als asset.
@@ -899,10 +901,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             dan de API; de 6 groepsgebonden wachten op de besloten test.
       - [x] ~~Nieuws~~ — `post` met `kind: news`, 312 publieke geïmporteerd;
             "Uitgelicht nieuws" en de feeds zijn de posts-widget (01-10).
-      - [ ] **G3a: leden schrijven zelf** — een lid van een groep plaatst een
-            update of blog vanaf de groepspagina (PDP-regel "create post in
-            eigen groep", formulier op de groep, zonder admin). Daarna
-            reacties, discussies, notificaties.
+      - [x] ~~G3a: leden schrijven zelf~~ — update of blog vanaf de
+            groepspagina, eigen verwijderen, beheerder verwijdert (01-10).
+      - [ ] G3a+: eigen bericht bewerken (de PDP staat `update` al toe; een
+            formulier ontbreekt), beeld bij een bericht via de bibliotheek,
+            een rijke editor i.p.v. Markdown-tekstvak.
+      - [ ] G3b: reacties en discussies, G3c: notificaties en mail.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

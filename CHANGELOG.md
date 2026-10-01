@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Leden schrijven zelf (G3a van communities.md)**: een actief lid plaatst
+  vanaf de community-pagina een update of blog ("Schrijf een bericht"),
+  voor de leden of voor iedereen, en verwijdert zijn eigen berichten; de
+  beheerders van de community verwijderen elk bericht erin. De regel zit in
+  de PDP (`create` op `post` in een eigen groep; `update`/`delete` van eigen
+  werk; `delete` door wie de groep beheert — het subject draagt nu ook
+  `manages`), niet in de UI.
 - **Nieuws** (plugin-blog): een bericht kan `kind: news` zijn, met
   `featured` ("Uitgelicht") en `source` (bronlink); overzicht op `/news`; de
   widget `posts` kent `kind: news` en `featuredOnly`. De showcase importeert
@@ -91,6 +98,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   paneelbussen). Paneel **concept v3, 48 HP** (besluit 1 okt): breder dan
   het busboard, kolommen boven de echte slots (gemeten), jacks op 13,75 mm
   door de gaten, codec-audio rechts; 40 HP-schets met staand display bewaard.
+- **Montagevideo (route A)**: `scripts/assembly-render/render_assembly.py`
+  rendert met Blender dezelfde choreografie (page-config, board-spec-GLB's
+  uit de site-API, paneel-SVG met accessoires) naar mp4 en mengt met ffmpeg
+  een take eronder; `--stills` voor een snelle controle. README erbij.
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
   wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht
