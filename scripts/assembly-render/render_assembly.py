@@ -492,26 +492,26 @@ def main():
             print(f"still → {scene.render.filepath}")
         return
 
-    video = os.path.abspath(args.out + ("-video.mp4" if args.audio else ".mp4"))
-    scene.render.image_settings.file_format = "FFMPEG"
-    scene.render.ffmpeg.format = "MPEG4"
-    scene.render.ffmpeg.codec = "H264"
-    scene.render.ffmpeg.constant_rate_factor = "HIGH" if args.quality == "final" else "MEDIUM"
-    scene.render.ffmpeg.gopsize = args.fps
-    scene.render.filepath = video
-    print(f"rendering {scene.frame_end + 1} frames → {video}")
+    # Frames as PNGs, then ffmpeg: version-proof (Blender 5 moved its video
+    # output) and the audio mix is the same pass.
+    frames_dir = os.path.abspath(args.out + "-frames")
+    os.makedirs(frames_dir, exist_ok=True)
+    scene.render.image_settings.file_format = "PNG"
+    scene.render.image_settings.color_mode = "RGB"
+    scene.render.filepath = os.path.join(frames_dir, "f")
+    print(f"rendering {scene.frame_end + 1} frames → {frames_dir}")
     bpy.ops.render.render(animation=True)
 
+    out = os.path.abspath(args.out + ".mp4")
+    crf = "18" if args.quality == "final" else "23"
+    cmd = ["ffmpeg", "-y", "-framerate", str(args.fps), "-i", os.path.join(frames_dir, "f%04d.png")]
     if args.audio:
-        out = os.path.abspath(args.out + ".mp4")
         fade_at = max(0.0, total - 2.0)
-        cmd = ["ffmpeg", "-y", "-i", video, "-i", os.path.abspath(args.audio), "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
-               "-af", f"afade=t=in:st=0:d=1,afade=t=out:st={fade_at:.2f}:d=2", "-shortest", "-movflags", "+faststart", out]
-        print("mixing audio:", " ".join(cmd))
-        subprocess.run(cmd, check=True)
-        print(f"done → {out}")
-    else:
-        print(f"done → {video} (no audio; add --audio <take> to mix music under it)")
+        cmd += ["-i", os.path.abspath(args.audio), "-af", f"afade=t=in:st=0:d=1,afade=t=out:st={fade_at:.2f}:d=2", "-c:a", "aac", "-b:a", "192k", "-shortest"]
+    cmd += ["-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", crf, "-preset", "slow" if args.quality == "final" else "medium", "-movflags", "+faststart", out]
+    print("encoding:", " ".join(cmd))
+    subprocess.run(cmd, check=True)
+    print(f"done → {out}" + ("" if args.audio else " (no audio; add --audio <take> to mix music under it)"))
 
 
 if __name__ == "__main__":
