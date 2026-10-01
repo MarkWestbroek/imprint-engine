@@ -914,7 +914,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             selecteren → annoteren, ballonnen naast de passage, opnieuw
             verankeren, de diff; daarna `discussion` als type, melden
             (spam), resource-bodies uit de bibliotheek, export als W3C
-            JSON-LD. Vraag: ook reacties op termen?
+            JSON-LD. Vraag: ook reacties op termen? Verbergen is nu een
+            vlag op de reactie; zodra er een reden, beroep of
+            moderatiewachtrij bij komt wordt het een annotatie met
+            motivation `moderating` (W3C) óp de reactie.
       - [ ] G3c: notificaties en mail (ook: de auteur van een annotatie als
             haar doel wijzigt).
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
