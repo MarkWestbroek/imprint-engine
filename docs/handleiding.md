@@ -329,9 +329,13 @@ op Play drukt, nooit vanzelf. De bezoeker kan afspelen, pauzeren, door de tijdli
 schuiven, slepen om rond te kijken en met *Reset view* terug naar het
 beginstandpunt; het label linksboven zegt welk onderdeel beweegt.
 Onderdelen zonder 3D-model worden onder de scène genoemd, zodat je ziet wat
-er nog ontbreekt. De eerste choreografie staat op `/cortex` (busboard v3.1,
-zes kaarten, zes fronten, paneel concept v2 — v1 met de jack/pot-gaten op
-de 13,75 mm-steek van de echte borden).
+er nog ontbreekt. Gaten met class `audio` krijgen een paneelbus (jack
+zonder bord erachter). De eerste choreografie staat op `/cortex`:
+busboard v3.1, zes kaarten, zes fronten en het **48 HP-paneel concept v3**
+(besluit 1 okt 2026: het paneel is breder dan de print — console links,
+de zes kolommen boven de echte busboard-slots, codec-audio rechts). De
+alternatieve 40 HP-schets met staand display staat lokaal op
+`/_sketch/40hp` (`public/boards/frontpanel-sketch-40hp-portrait.svg`).
 
 **V3 model diagram.** Imprint tekent het model niet zelf: Omnium doet dat
 (layout, kleuren, notatie horen bij het model). De sidebar gaat van boven

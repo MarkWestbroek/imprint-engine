@@ -68,8 +68,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   een Blender-render kan sturen. Eerste choreografie op `/cortex`. Met
   `hold` (unit blijft aan het eind staan, trekt dan rustig uit elkaar en
   begint opnieuw) en `panel.accessories` (display, MIDI-DIN, USB-C, knoppen
-  uit de paneeltekening, mee met het paneel); paneel v2 op de echte
-  13,75 mm-jacksteek, jacks door de gaten.
+  uit de paneeltekening, mee met het paneel; `audio`-gaten worden
+  paneelbussen). Paneel **concept v3, 48 HP** (besluit 1 okt): breder dan
+  het busboard, kolommen boven de echte slots (gemeten), jacks op 13,75 mm
+  door de gaten, codec-audio rechts; 40 HP-schets met staand display bewaard.
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
   wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht

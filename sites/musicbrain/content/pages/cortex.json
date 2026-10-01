@@ -17,10 +17,10 @@
                 "type": "assembly",
                 "config": {
                   "title": "The hardware unit, assembling",
-                  "width": 200,
+                  "width": 243.84,
                   "height": 128.5,
                   "panel": {
-                    "svg": "/boards/frontpanel-v2.svg",
+                    "svg": "/boards/frontpanel-v3.svg",
                     "thickness": 2,
                     "from": [
                       0,
@@ -36,13 +36,13 @@
                   "seconds": 24,
                   "autoplay": true,
                   "loop": true,
-                  "caption": "Busboard v3.1 with six function cards, their panel fronts and the 40 HP front panel (concept v2). Drag to look around; the models are the boards' own KiCad 3D exports.",
+                  "caption": "Busboard v3.1 with six function cards, their panel fronts and the 48 HP front panel (concept v3: console left, audio right, the board behind the six columns). Drag to look around; the models are the boards' own KiCad 3D exports.",
                   "parts": [
                     {
                       "spec": "busboard@v3.1",
                       "label": "Busboard v3.1 with Teensy 4.1",
                       "at": [
-                        100,
+                        137.3,
                         60.4,
                         64.25
                       ],
@@ -77,7 +77,7 @@
                       "spec": "gatein8@v2.0",
                       "label": "GateIn8 → slot 2",
                       "at": [
-                        104,
+                        104.3,
                         37.1,
                         64.25
                       ],
@@ -95,7 +95,7 @@
                       "spec": "potriser@v2.0",
                       "label": "Pot-Riser → slot 3",
                       "at": [
-                        124,
+                        124.60000000000001,
                         37.1,
                         64.25
                       ],
@@ -113,7 +113,7 @@
                       "spec": "i2criser@v2.0",
                       "label": "I2C-Riser → slot 4",
                       "at": [
-                        144,
+                        144.9,
                         37.1,
                         64.25
                       ],
@@ -131,7 +131,7 @@
                       "spec": "dac8@v2.0",
                       "label": "DAC8 → slot 5",
                       "at": [
-                        164,
+                        165.2,
                         37.1,
                         64.25
                       ],
@@ -149,7 +149,7 @@
                       "spec": "gate8@v2.0",
                       "label": "Gate8 → slot 6",
                       "at": [
-                        184,
+                        185.60000000000002,
                         37.1,
                         64.25
                       ],
@@ -184,7 +184,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — gate in",
                       "at": [
-                        106,
+                        106.3,
                         10.8,
                         64.25
                       ],
@@ -201,7 +201,7 @@
                       "spec": "pot8front@v1.1",
                       "label": "Pot8-Front",
                       "at": [
-                        124,
+                        124.60000000000001,
                         10.8,
                         64.25
                       ],
@@ -218,7 +218,7 @@
                       "spec": "enc5front@v2.0",
                       "label": "Enc5-Front",
                       "at": [
-                        144,
+                        144.9,
                         10.8,
                         64.25
                       ],
@@ -235,7 +235,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — CV out",
                       "at": [
-                        166,
+                        167.2,
                         10.8,
                         64.25
                       ],
@@ -252,7 +252,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — gate out",
                       "at": [
-                        186,
+                        187.60000000000002,
                         10.8,
                         64.25
                       ],

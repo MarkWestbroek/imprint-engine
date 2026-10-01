@@ -420,12 +420,19 @@ flowchart LR
   14,5 mm vóór het bord op een **13,75 mm**-steek (2 mm links van het
   bordmidden); kaarten 40–65 × 45 mm met 6 mm header-overstek aan beide
   Z-kanten (dubbele rij → busboard, enkele haakse rij → front; KiCad tekent
-  ze andersom, vandaar `spin: 180`). Het paneel-SVG concept v1 had 12,6 mm;
-  `public/boards/frontpanel-v2.svg` is v1 met de jack/pot-rijen op 13,75.
+  ze andersom, vandaar `spin: 180`); busboard-slots op 48,3 + 20,32·i mm
+  vanaf de linker bordrand (gecentreerd), terwijl paneelconcept v1 de
+  kolommen rechts had (84–184) en 12,6 mm-rijen. **Besluit Mark 1 okt 2026
+  (optie 2)**: 48 HP-paneel (243,84 mm) breder dan de print — busboard vanaf
+  x = 35,7, kolommen boven de slots (84,0 … 185,6), console links zonder
+  PCB erachter, codec-audio als paneelbussen rechts over het hub-gebied;
+  `public/boards/frontpanel-v3.svg` (gegenereerd; kopie in de MusicBrain-
+  repo `doc/mechanics/`). Alternatief bewaard: `frontpanel-sketch-40hp-
+  portrait.svg` (40 HP, display staand, MIDI rechts gestapeld).
   **Accessoires** (`panel.accessories`): uit de SVG-elementen `disp`, `din`,
   `usb`, `btn`, `enc`, `pot` maakt het eiland eenvoudige solids (bezel +
-  glas, DIN-cilinders, USB-C-plaatje met pil, knopkappen, knoppen) op de
-  tekenposities, als kinderen van de paneelgroep (ze reizen mee; los
+  glas, DIN-cilinders, USB-C-plaatje met pil, knopkappen, knoppen, en voor
+  class `audio` een paneelbus: moer + huls) op de tekenposities, als kinderen van de paneelgroep (ze reizen mee; los
   zwevend stonden ze in het pad van het busboard). **Hold**: na t = 1 blijft
   de unit `hold` seconden staan (alleen de camera draait), dan spoelt t in
   1,5 s terug naar 0 (de unit trekt uit elkaar) en begint de lus opnieuw. Coördinaten zijn de millimeters van

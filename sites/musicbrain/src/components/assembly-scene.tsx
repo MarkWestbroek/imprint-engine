@@ -63,7 +63,7 @@ type Mover = {
 };
 
 /** SVG classes in frontpanel-v1.svg that are openings in the plate. */
-const HOLE_CLASSES = new Set(["hole", "pot", "enc", "btn", "din", "usb", "mnt", "disp"]);
+const HOLE_CLASSES = new Set(["hole", "pot", "enc", "btn", "din", "usb", "mnt", "disp", "audio"]);
 
 const easeOutCubic = (p: number) => 1 - Math.pow(1 - p, 3);
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -335,6 +335,12 @@ export function AssemblyScene(props: AssemblySceneProps) {
                   break;
                 case "pot":
                   plug(x, y, 5.5, 11, 12, dark);
+                  break;
+                case "audio":
+                  // Panel-mounted jack (no board behind it): nut + barrel.
+                  plug(x, y, w / 2 + 0.6, 1.6, 1.6, metal);
+                  plug(x, y, w / 2 - 0.6, 1.8, 14, dark);
+                  plug(x, y, w / 2 - 2.2, 1.9, 1, black);
                   break;
               }
             }
