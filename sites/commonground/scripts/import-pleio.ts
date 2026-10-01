@@ -9,6 +9,7 @@ import { scopedSlug, wikiPageHref } from "@imprint/plugin-wiki/href";
 import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
 import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
 import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
+import { annotationsContentTypes } from "@imprint/plugin-annotations/content-types";
 import { blogContentTypes } from "@imprint/plugin-blog/content-types";
 import { newsHref, postHref } from "@imprint/plugin-blog/href";
 import { eventsContentTypes } from "@imprint/plugin-events/content-types";
@@ -1055,7 +1056,7 @@ async function main() {
   // The store with this site's widgets and content types, so it validates as the admin does.
   const store = openContentDatabase(url, {
     widgets: widgetRegistry,
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes, eventsContentTypes),
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes, eventsContentTypes, annotationsContentTypes),
   }).store;
 
   let written = 0;

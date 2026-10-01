@@ -908,7 +908,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             bericht via de bibliotheek; een rijke editor i.p.v.
             Markdown-tekstvak; leden maken ook evenementen in hun groep (de
             regel is er al).
-      - [ ] G3b: reacties en discussies, G3c: notificaties en mail.
+      - [x] ~~G3b stap 1: reacties~~ — annotaties onder berichten,
+            evenementen en wikipagina's (01-10, `plugin-annotations`).
+      - [ ] G3b stap 2: de kantlijn (`docs/design/annotaties.md` §5):
+            selecteren → annoteren, ballonnen naast de passage, opnieuw
+            verankeren, de diff; daarna `discussion` als type, melden
+            (spam), resource-bodies uit de bibliotheek, export als W3C
+            JSON-LD. Vraag: ook reacties op termen?
+      - [ ] G3c: notificaties en mail (ook: de auteur van een annotatie als
+            haar doel wijzigt).
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

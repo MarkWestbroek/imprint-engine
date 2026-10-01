@@ -119,6 +119,16 @@ export const inProcessPdp: PolicyDecisionPoint = {
       if (action.name === "create" && group && author === subject.id && groupsOf(subject).includes(group)) {
         return { decision: true, context: { reason: `member of ${group}` } };
       }
+      // Something ON another item (an annotation on a post, a reply on an annotation): as yourself, on
+      // a thing you may read, when that thing allows it (`on.annotations`, resolved by the plugin as PIP).
+      const on = resource.properties?.on as { access?: string; annotations?: string } | undefined;
+      if (action.name === "create" && on && author === subject.id) {
+        const allowed = on.annotations === "members" || on.annotations === "public";
+        const readable = (await inProcessPdp.evaluate({ subject, action: { name: "read" }, resource: { type: "target", id: resource.id, properties: { access: on.access ?? "public" } } })).decision;
+        return allowed && readable
+          ? { decision: true, context: { reason: "on a readable item that allows it" } }
+          : { decision: false, context: { reason: allowed ? "may not read the item" : "the item does not allow it" } };
+      }
       if ((action.name === "update" || action.name === "delete") && author && author === subject.id) {
         return { decision: true, context: { reason: "own work" } };
       }

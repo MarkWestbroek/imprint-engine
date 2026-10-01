@@ -30,6 +30,7 @@ export async function wikiPublicRoute({ imprint, slug, members, session, subject
     return {
       render: <WikiView wiki={wiki} folders={tree.folders} pages={pages} current={page} />,
       metadata: { title: page ? `${page.title} — ${wiki.title}` : wiki.title, description: wiki.description },
+      ...(page ? { item: { type: "wiki-page", slug: page.slug } } : {}),
     };
   }
 
@@ -41,5 +42,6 @@ export async function wikiPublicRoute({ imprint, slug, members, session, subject
   return {
     render: <WikiView wiki={wiki} folders={tree.folders} pages={pages} current={page} />,
     metadata: { title: page ? `${page.title} — ${wiki.title}` : wiki.title, description: wiki.description },
+    ...(page ? { item: { type: "wiki-page", slug: page.slug } } : {}),
   };
 }

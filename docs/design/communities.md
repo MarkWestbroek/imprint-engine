@@ -169,7 +169,10 @@ site* of naar *openbaar*.
   limits, alleen leden).
 
 > **Stand (1 oktober 2026):** leden schrijven zelf updates en blogs in hun
-> community (G3a); reacties, discussies en moderatie-meldingen volgen.
+> community (G3a); reacties staan onder berichten, evenementen en
+> wikipagina's als **annotaties** (G3b, stap 1: [annotaties.md](annotaties.md)
+> — één model voor "onder de pagina" en, in stap 2, "in de kantlijn");
+> `discussion` als eigen type en moderatie-meldingen volgen.
 
 ### 4.4 Mail en notificaties
 
@@ -231,6 +234,11 @@ schrijven. *Natuurlijk bitemporeel.*
   annotatie wordt een draadje in de kantlijn.
 - **UI**: een tekst selecteren geeft een knop "annoteren"; de opmerkingen
   staan in de kantlijn, en op mobiel onder de alinea.
+
+> **Stand (1 oktober 2026):** het model staat — uitgewerkt in
+> [annotaties.md](annotaties.md): annotatie als contentitem, W3C-termen,
+> bevatting vs. annotatie, versies, beleid als één `permit`. Stap 1 (de
+> draad onder een item) is gebouwd; de kantlijn met selectors is stap 2.
 
 ### 4.7 Termenlijsten en term-herkenning
 

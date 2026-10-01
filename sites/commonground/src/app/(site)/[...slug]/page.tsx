@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { pluginPublicRoute, readOpts } from "@imprint/runtime-admin";
 import { isInternal, PageView } from "@/components/page-view";
+import { Thread } from "@/components/thread";
 import { imprint, store } from "@/lib/content";
 import { pluginAction } from "@/app/admin/actions";
 
@@ -40,7 +41,12 @@ export default async function ContentPage({ params }: Props) {
   const hit = await pluginPublicRoute({ imprint, slug: slug.split("/"), members: false, session: null, call: pluginAction });
   if (hit) {
     if ("redirect" in hit) redirect(hit.redirect);
-    return <article className="cg-page">{hit.render}</article>;
+    return (
+      <article className="cg-page">
+        {hit.render}
+        {hit.item && <Thread type={hit.item.type} slug={hit.item.slug} path={`/${slug}`} />}
+      </article>
+    );
   }
   const page = isInternal(slug) ? null : await store.getPage(slug, opts);
   if (!page) {
@@ -51,6 +57,7 @@ export default async function ContentPage({ params }: Props) {
   return (
     <article className="cg-page">
       <PageView page={page} />
+      <Thread type="page" slug={page.slug} path={`/${slug}`} />
     </article>
   );
 }

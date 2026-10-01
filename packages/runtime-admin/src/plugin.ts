@@ -56,7 +56,12 @@ export type PublicRouteContext = {
 
 export type PublicRouteResult =
   | { redirect: string }
-  | { render: ReactNode; metadata?: { title?: string; description?: string } };
+  | {
+      render: ReactNode;
+      metadata?: { title?: string; description?: string };
+      /** The content item this render is about, for what a site hangs under it (an annotation thread). */
+      item?: { type: string; slug: string };
+    };
 
 export interface ImprintPlugin extends ImprintPluginCore {
   /** Renders `/admin/<name>/<path>`; null = not found. */

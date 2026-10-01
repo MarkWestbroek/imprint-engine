@@ -136,5 +136,5 @@ export async function eventsPublicRoute({ imprint, slug, members, session, subje
     if (!members) return { redirect: `/members/${slug.join("/")}` };
     if (!(await permit(imprint.pdp, subject, "read", contentResource("event", raw.slug, raw)))) return null;
   }
-  return { render: <EventView event={raw} call={call} />, metadata: { title: raw.title, description: eventSummary(raw, 160) } };
+  return { render: <EventView event={raw} call={call} />, metadata: { title: raw.title, description: eventSummary(raw, 160) }, item: { type: "event", slug: raw.slug } };
 }

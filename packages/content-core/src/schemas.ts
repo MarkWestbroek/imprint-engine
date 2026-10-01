@@ -467,6 +467,8 @@ export const PageMetaSchema = z.object({
   draft: z.boolean().default(false),
   /** Publish date; pages with a future date are hidden (S6, file-backed version). */
   publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  /** Annotations on this page (design/annotaties.md): off, for members, …; absent = the site's default for pages. */
+  annotations: z.enum(["off", "members", "public"]).optional(),
 });
 export type PageMeta = z.infer<typeof PageMetaSchema>;
 

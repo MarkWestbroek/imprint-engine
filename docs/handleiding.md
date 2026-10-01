@@ -605,6 +605,33 @@ andere sites, met een paar dingen van commonground.nl:
   is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
   tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 
+## Reacties (annotaties)
+
+Onder een bericht, een evenement en een wikipagina staat een draad
+**Reacties**. Wie mag reageren is per type ingesteld (op de showcase:
+leden); een gewone pagina doet standaard niet mee en zet het per pagina aan
+met het veld *Annotations* in de pagina-eigenschappen (`off`, `members`,
+`public`).
+
+- **Reageren** kan als ingelogd lid met bevestigd e-mailadres; Markdown mag.
+  **Beantwoorden** maakt een antwoord onder de reactie (tot vier niveaus
+  diep).
+- **Je eigen reactie** kun je bewerken en verwijderen. Een bewerking is een
+  nieuwe versie: er staat "bewerkt" bij, en wie de draad mag lezen kan de
+  eerdere versies openklappen.
+- **Beheerders** (redactie, en de beheerders van de groep waar het item in
+  staat) kunnen een reactie **verbergen**; ze blijft bewaard en alleen voor
+  beheerders en de schrijver zichtbaar, en kan weer getoond worden.
+- **"De tekst is sindsdien gewijzigd"** verschijnt bij een reactie als het
+  item ná de reactie een nieuwe versie kreeg: lees de reactie dan met een
+  korrel zout, ze ging over een eerdere tekst.
+- Wie het item mag lezen mag de draad lezen: reacties onder een
+  groepsbericht zien alleen de groepsleden.
+
+Alle reacties staan ook in de admin onder **Annotations**, voor moderatie.
+Technisch zijn reacties *annotaties* (W3C Web Annotation): hetzelfde model
+krijgt in een volgende stap kanttekeningen bij een passage, in de kantlijn.
+
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een

@@ -4,6 +4,7 @@ export * from "./content-types";
 export * from "./core-content-types";
 export * from "./access";
 export * from "./search";
+export * from "./annotation-model";
 export * from "./widgets";
 export * from "./itinerary";
 export * from "./relations";

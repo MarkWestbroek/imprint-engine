@@ -1090,8 +1090,30 @@ niet van elkaar afwijken.
   `status/attend/withdraw/attendees`, `AttendButton` als client-eiland op de
   statische evenementpagina, `EventAttendeesScreen` voor de dynamische
   organisatorpagina van de site; de aanmelding zelf is persoonsgegeven in
-  de tabel `attendances` van de user store, met `consentAt`). Node-scripts
-  gebruiken de React-vrije entries (`/content-types`, `/schemas`).
+  de tabel `attendances` van de user store, met `consentAt`) en
+  [plugin-annotations](../packages/plugin-annotations/src/index.ts) (type
+  `annotation` naar het W3C Web Annotation-model, kernschema's in
+  [annotation-model.ts](../packages/content-core/src/annotation-model.ts):
+  `target[]` = `{source, field, selector[], state}` waarbij `state.sourceDate`
+  de transactietijd is van de versie waarop geannoteerd werd, `body[]` =
+  `TextualBody | Resource(asset)`, `motivation`; ontwerp in
+  [design/annotaties.md](design/annotaties.md). Een antwoord is een
+  annotatie met een annotatie als doel; de plugin loopt de keten af naar
+  het wortel-item en leidt daar de leesrechten van af — een annotatie slaat
+  geen `access` op. De acties `status/list/add/edit/remove/hide/history`
+  lopen door de plugin-dispatcher; `AnnotationThread` is een client-eiland
+  dat de site onder een item hangt. Daarvoor zegt een plugin-route in
+  `PublicRouteResult.item` welk item ze toonde. **Beleid**: de plugin is de
+  PIP — hij lost per item (`annotations`-veld) dan wel per type (config
+  `targets`) op of annoteren mag en geeft dat als `on: {access,
+  annotations}` aan de PDP; de generieke regel in `access.ts` ("create óp
+  een leesbaar item dat het toelaat, als jezelf") beslist, en zowel het
+  scherm (`status.canAnnotate`) als de schrijfactie (`add`) vragen het via
+  `permit`. Verbergen en bewerken zijn versies; "gewijzigd sindsdien" is
+  `state.sourceDate < txFrom` van de huidige versie van het doel, berekend
+  bij het tonen — er wordt bij een wijziging van het doel niets
+  overgeschreven). Node-scripts gebruiken de React-vrije entries
+  (`/content-types`, `/schemas`).
 - **Zoeken** ([search.ts](../packages/content-core/src/search.ts)): een
   contenttype dat gevonden wil worden geeft `search: { kinds, docs(store) }`
   mee — `kinds` zijn de soorten met hun label en voorvoegsels (`community:`,

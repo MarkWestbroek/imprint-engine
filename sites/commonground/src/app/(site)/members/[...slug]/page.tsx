@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { pluginPublicRoute, readOpts } from "@imprint/runtime-admin";
 import { subjectFor } from "@imprint/runtime-admin/admin-server";
 import { PageView } from "@/components/page-view";
+import { Thread } from "@/components/thread";
 import { admin } from "@/lib/admin";
 import { imprint } from "@/lib/content";
 import { pluginAction } from "@/app/admin/actions";
@@ -36,7 +37,12 @@ export default async function MembersPage({ params }: Props) {
   const hit = await pluginPublicRoute({ imprint, slug, members: true, session, subject, call: pluginAction });
   if (hit) {
     if ("redirect" in hit) notFound();
-    return <article className="cg-page">{hit.render}</article>;
+    return (
+      <article className="cg-page">
+        {hit.render}
+        {hit.item && <Thread type={hit.item.type} slug={hit.item.slug} path={`/members/${joined}`} />}
+      </article>
+    );
   }
 
   const page = await imprint.storeFor(subject).getPage(joined, await readOpts());
@@ -44,6 +50,7 @@ export default async function MembersPage({ params }: Props) {
   return (
     <article className="cg-page">
       <PageView page={page} />
+      <Thread type="page" slug={page.slug} path={`/members/${joined}`} />
     </article>
   );
 }

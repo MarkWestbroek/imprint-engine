@@ -90,6 +90,26 @@ describe("inProcessPdp: members write in their groups (G3a)", () => {
   });
 });
 
+describe("inProcessPdp: annotating — on a readable item that allows it (design/annotaties.md)", () => {
+  const anno = (on: Record<string, unknown>, author = "ann") => ({ type: "annotation", id: "a", properties: { access: "public", author, on } });
+  const ann = userSubject("ann", "reader", ["atlas"]);
+  const create = { name: "create" };
+  it("a member annotates a public item that allows members; not one that is off, not one they may not read, not as someone else", async () => {
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: create, resource: anno({ access: "public", annotations: "members" }) })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: create, resource: anno({ access: "group:atlas", annotations: "members" }) })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: create, resource: anno({ access: "group:signalen", annotations: "members" }) })).decision, false, "not readable");
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: create, resource: anno({ access: "public", annotations: "off" }) })).decision, false, "switched off");
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: create, resource: anno({ access: "public", annotations: "members" }, "bob") })).decision, false, "only as yourself");
+    assert.equal((await inProcessPdp.evaluate({ subject: ANONYMOUS, action: create, resource: anno({ access: "public", annotations: "members" }) })).decision, false, "a visitor has no account to annotate as");
+  });
+  it("own annotations stay editable and removable; staff may do anything", async () => {
+    const own = { type: "annotation", id: "a", properties: { access: "public", author: "ann" } };
+    assert.equal((await inProcessPdp.evaluate({ subject: ann, action: { name: "update" }, resource: own })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: userSubject("bob", "reader"), action: { name: "delete" }, resource: own })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: userSubject("ed", "editor"), action: { name: "delete" }, resource: own })).decision, true);
+  });
+});
+
 describe("permit: the PEP", () => {
   const broken: PolicyDecisionPoint = {
     evaluate: async () => {

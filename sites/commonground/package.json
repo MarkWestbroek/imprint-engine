@@ -14,6 +14,7 @@
   "dependencies": {
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
+    "@imprint/plugin-annotations": "*",
     "@imprint/plugin-blog": "*",
     "@imprint/plugin-events": "*",
     "@imprint/plugin-glossary": "*",

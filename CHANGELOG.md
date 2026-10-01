@@ -6,6 +6,21 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Reacties als annotaties** (`@imprint/plugin-annotations`, design
+  [annotaties.md](docs/design/annotaties.md)): het contenttype `annotation`
+  volgt het W3C Web Annotation-model (`target[]` met `source`, `field`,
+  `selector[]` en `state` = de versie van toen; `body[]` als tekst of asset;
+  `motivation`), in de kern als `annotation-model.ts`. Stap 1: de draad
+  onder berichten, evenementen en wikipagina's (pagina's zetten het per
+  item aan met het veld `annotations`): reageren, beantwoorden, eigen
+  reactie bewerken ("bewerkt" met eerdere versies) en verwijderen,
+  beheerders en groepsbeheerders verbergen (een versie), en "de tekst is
+  sindsdien gewijzigd" als het item na de reactie veranderde. Wie mag
+  reageren is beleid: één generieke regel in de PDP ("maak iets óp een item
+  dat je mag lezen, als dat item het toelaat"), gevraagd door het scherm én
+  door de schrijfactie via `permit`. `PublicRouteResult.item` laat een
+  plugin-route zeggen welk item ze toonde, zodat de site er iets onder kan
+  hangen.
 - **Eigen bericht bewerken** (groepen): "bewerken" bij je eigen berichten op
   de community-pagina opent hetzelfde formulier, vooringevuld; opslaan is een
   nieuwe versie met dezelfde slug. De regel in de PDP is nu generiek: een lid

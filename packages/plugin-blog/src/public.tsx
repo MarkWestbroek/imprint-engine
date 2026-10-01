@@ -104,5 +104,5 @@ export async function blogPublicRoute({ imprint, slug, members, session, subject
     if (!members) return { redirect: `/members/${slug.join("/")}` };
     if (!(await permit(imprint.pdp, subject, "read", contentResource("post", raw.slug, raw)))) return null;
   }
-  return { render: <PostView post={raw} />, metadata: { title: raw.title, description: postSummary(raw, 160) } };
+  return { render: <PostView post={raw} />, metadata: { title: raw.title, description: postSummary(raw, 160) }, item: { type: "post", slug: raw.slug } };
 }

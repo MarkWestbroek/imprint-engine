@@ -1,0 +1,32 @@
+{
+  "name": "@imprint/plugin-annotations",
+  "version": "0.11.0",
+  "private": true,
+  "description": "Plugin: annotations after the W3C Web Annotation model — comments and replies on any content item (whole item or a segment, on a version), as a content type, with the thread below the page and moderation.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schemas": "./src/schemas.ts",
+    "./content-types": "./src/content-types.ts",
+    "./href": "./src/href.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test \"test/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "@imprint/runtime-admin": "*",
+    "zod": "^4.1.5"
+  },
+  "peerDependencies": {
+    "next": "^16",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
