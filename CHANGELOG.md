@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.12.0] - 2026-10-01
 - **Kanttekeningen in de kantlijn** (annotaties, stap 2): selecteer een
   passage in de tekst van een bericht, wikipagina of term → "Annoteren" →
   een ballon naast de passage (op smalle schermen een lijst onder de
