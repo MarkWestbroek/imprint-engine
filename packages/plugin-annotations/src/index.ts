@@ -18,7 +18,7 @@ export function annotationsPlugin(config: AnnotationsConfig): ImprintPlugin & { 
   return {
     ...definePlugin({
       name: "annotations",
-      version: "0.11.0",
+      version: "0.12.0",
       contentTypes: annotationsContentTypes,
       menu: [{ group: "content", section: "Annotations", items: [{ href: "/admin/annotation", label: "Annotations" }] }],
       actions: annotationsActions as unknown as Record<string, PluginAction>,
@@ -29,5 +29,6 @@ export function annotationsPlugin(config: AnnotationsConfig): ImprintPlugin & { 
 
 export { annotationsContentTypes } from "./content-types";
 export { AnnotationSchema, AnnotationSetting, type Annotation } from "./schemas";
-export { annotationsActions, type AnnotationsConfig, type Target, type ThreadItem, type ThreadStatus } from "./actions";
+export { annotationsActions, type AddOptions, type AnnotationsConfig, type Target, type TargetConfig, type ThreadItem, type ThreadStatus } from "./actions";
+export { anchor, describe, quoteOf, type Selector, type TextPosition, type TextQuote } from "./anchor";
 export { AnnotationThread } from "./thread";

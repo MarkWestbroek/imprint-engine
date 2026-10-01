@@ -1112,7 +1112,18 @@ niet van elkaar afwijken.
   `permit`. Verbergen en bewerken zijn versies; "gewijzigd sindsdien" is
   `state.sourceDate < txFrom` van de huidige versie van het doel, berekend
   bij het tonen — er wordt bij een wijziging van het doel niets
-  overgeschreven). Node-scripts gebruiken de React-vrije entries
+  overgeschreven. **De kantlijn** (stap 2): de config zegt per type
+  `inline: true`, de viewer markeert zijn tekstveld met
+  `data-annotation-field="body"`; `margin.tsx` indexeert de tekst van dat
+  element (`dom-text.ts`: tekstknopen → één string en terug naar een
+  `Range`), verankert elke segment-annotatie met `anchor.ts` (puur: citaat
+  letterlijk, context en positie als scheidsrechter, anders wees), schildert
+  de passages met de CSS Custom Highlight API (`::highlight(imprint-annotation)`
+  in de globals van de site; geen DOM-mutaties in Reacts boom) en zet
+  ballonnen absoluut naast de passage, gestapeld als ze elkaar raken; onder
+  1100px een lijst met citaten. Een selectie in het veld geeft "Annoteren";
+  `add` krijgt dan `{ field, selector: [TextQuote, TextPosition] }` en de
+  kern valideert ze). Node-scripts gebruiken de React-vrije entries
   (`/content-types`, `/schemas`).
 - **Zoeken** ([search.ts](../packages/content-core/src/search.ts)): een
   contenttype dat gevonden wil worden geeft `search: { kinds, docs(store) }`

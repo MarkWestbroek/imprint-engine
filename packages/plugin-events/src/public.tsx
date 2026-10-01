@@ -85,7 +85,7 @@ function EventView({ event, call }: { event: Event; call?: PluginCall }) {
         // eslint-disable-next-line @next/next/no-img-element -- remote or library image, sized by CSS
         <img src={event.image} alt="" className="mt-6 max-h-96 w-full rounded-md object-cover" />
       )}
-      <div className="markdown mt-6">
+      <div className="markdown mt-6" data-annotation-field="body">
         <Markdown>{event.body || event.summary}</Markdown>
       </div>
       {event.tags.length > 0 && (

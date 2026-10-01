@@ -160,6 +160,12 @@
 .cg-footer { background: var(--cg-sky); padding: 44px 0 56px; }
 .cg-footer .markdown a { color: var(--cg-navy); }
 
+/* Annotaties in de kantlijn (plugin-annotations): de gemarkeerde passages via de
+   CSS Custom Highlight API; de ballonnen zelf zijn Tailwind. */
+::highlight(imprint-annotation) { background: color-mix(in srgb, var(--accent) 22%, transparent); }
+::highlight(imprint-annotation-active) { background: color-mix(in srgb, var(--accent) 50%, transparent); }
+::highlight(imprint-annotation-draft) { background: color-mix(in srgb, var(--accent-2, var(--accent)) 35%, transparent); }
+
 @media (max-width: 900px) {
 	.cg-header-row { flex-wrap: wrap; }
 	.cg-nav { order: 3; flex-basis: 100%; }

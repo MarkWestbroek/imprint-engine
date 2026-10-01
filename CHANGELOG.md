@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Kanttekeningen in de kantlijn** (annotaties, stap 2): selecteer een
+  passage in de tekst van een bericht, wikipagina of term → "Annoteren" →
+  een ballon naast de passage (op smalle schermen een lijst onder de
+  reacties); de passage is gemarkeerd (CSS Custom Highlight API, geen
+  DOM-ingrepen), klikken erop licht de ballon op. Opgeslagen als W3C
+  `TextQuoteSelector` + `TextPositionSelector` op het veld `body`;
+  bij het tonen opnieuw verankerd in de huidige versie (`anchor.ts`, puur
+  en getest: citaat, context en positie — nooit raden). Niet meer gevonden
+  = "Bij een eerdere versie van de tekst", met het citaat. Per type aan te
+  zetten (`targets: { post: { allow: "members", inline: true } }`); de
+  viewer markeert zijn tekstveld met `data-annotation-field`.
 - **Reacties als annotaties** (`@imprint/plugin-annotations`, design
   [annotaties.md](docs/design/annotaties.md)): het contenttype `annotation`
   volgt het W3C Web Annotation-model (`target[]` met `source`, `field`,

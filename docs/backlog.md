@@ -910,11 +910,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             regel is er al).
       - [x] ~~G3b stap 1: reacties~~ — annotaties onder berichten,
             evenementen en wikipagina's (01-10, `plugin-annotations`).
-      - [ ] G3b stap 2: de kantlijn (`docs/design/annotaties.md` §5):
-            selecteren → annoteren, ballonnen naast de passage, opnieuw
-            verankeren, de diff; daarna `discussion` als type, melden
-            (spam), resource-bodies uit de bibliotheek, export als W3C
-            JSON-LD. Verbergen is nu een
+      - [x] ~~G3b stap 2: de kantlijn~~ — ballonnen naast de passage,
+            verankeren, wezen (02-10).
+      - [ ] G3b stap 3 (`docs/design/annotaties.md` §5): de diff van een
+            gewijzigde passage en "de versie van toen" openen; `discussion`
+            als post-soort; melden (spam); resource-bodies uit de
+            bibliotheek; export als W3C JSON-LD. Verbergen is nu een
             vlag op de reactie; zodra er een reden, beroep of
             moderatiewachtrij bij komt wordt het een annotatie met
             motivation `moderating` (W3C) óp de reactie.

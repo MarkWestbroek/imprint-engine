@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { annotationText, permit, type AnnotationTarget, type ContentRecord, type WritableContentStore } from "@imprint/content-core";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
 import { subjectFor } from "@imprint/runtime-admin/admin-server";
+import { quoteOf, type Selector } from "./anchor";
 import { AnnotationSchema, type Annotation, type AnnotationSetting } from "./schemas";
 
 /**
@@ -16,10 +17,16 @@ import { AnnotationSchema, type Annotation, type AnnotationSetting } from "./sch
 export type ActionResult = { ok: boolean; error?: string; slug?: string };
 export type Target = { type: string; slug: string };
 
+/** Per type: who may annotate, and whether segments of the body get balloons in the margin. */
+export type TargetConfig = AnnotationSetting | { allow: AnnotationSetting; inline?: boolean };
+
 export type AnnotationsConfig = {
   /** Per content type: may its items be annotated, and by whom. Absent = off. */
-  targets: Record<string, AnnotationSetting>;
+  targets: Record<string, TargetConfig>;
 };
+
+/** What `add` may take besides the text: a segment of a field (design/annotaties.md §2). */
+export type AddOptions = { motivation?: string; field?: string; selector?: Selector[] };
 
 export type ThreadStatus = {
   signedIn: boolean;
@@ -28,6 +35,8 @@ export type ThreadStatus = {
   canAnnotate: boolean;
   canModerate: boolean;
   setting: AnnotationSetting;
+  /** Segments of the body may be annotated (balloons in the margin). */
+  inline: boolean;
 };
 
 export type ThreadItem = {
@@ -42,8 +51,15 @@ export type ThreadItem = {
   hidden: boolean;
   /** The target changed after this annotation was made (its state is older than the current version). */
   changedSince: boolean;
+  /** Which field of the item, and the segment of it (empty: the whole item). */
+  field: string;
+  selector: Selector[];
+  quote: string;
   replies: ThreadItem[];
 };
+
+const allowOf = (c: TargetConfig | undefined): AnnotationSetting | undefined => (typeof c === "string" ? c : c?.allow);
+const inlineOf = (c: TargetConfig | undefined): boolean => typeof c === "object" && !!c.inline;
 
 const isStaff = (session: AdminSession | null) => session?.role === "admin" || session?.role === "editor";
 
@@ -66,7 +82,7 @@ function configOf(admin: AdminContext): AnnotationsConfig {
 function settingOf(admin: AdminContext, root: { target: Target; record: ContentRecord }): AnnotationSetting {
   const own = (root.record.data as { annotations?: string } | null)?.annotations;
   if (own === "off" || own === "members" || own === "public") return own;
-  return configOf(admin).targets[root.target.type] ?? "off";
+  return allowOf(configOf(admin).targets[root.target.type]) ?? "off";
 }
 
 async function canModerate(admin: AdminContext, session: AdminSession | null, root: { record: ContentRecord }): Promise<boolean> {
@@ -108,6 +124,7 @@ export async function status(admin: AdminContext, target: Target): Promise<Threa
     canAnnotate: setting !== "off" && (await mayCreateOn(admin, session, root, setting)),
     canModerate: await canModerate(admin, session, root),
     setting,
+    inline: setting !== "off" && inlineOf(configOf(admin).targets[root.target.type]),
   };
 }
 
@@ -142,6 +159,9 @@ export async function list(admin: AdminContext, target: Target): Promise<ThreadI
         edited: a.edited,
         hidden: a.hidden,
         changedSince: parent.type !== "annotation" && !!sourceDate && sourceDate < currentState,
+        field: own?.field ?? "",
+        selector: (own?.selector ?? []) as Selector[],
+        quote: quoteOf((own?.selector ?? []) as Selector[]),
         replies: await build({ type: "annotation", slug: a.slug }),
       });
     }
@@ -151,7 +171,8 @@ export async function list(admin: AdminContext, target: Target): Promise<ThreadI
 }
 
 /** Write an annotation on an item, as the signed-in member; a reply is one whose target is an annotation. */
-export async function add(admin: AdminContext, target: Target, text: string, motivation?: string): Promise<ActionResult> {
+export async function add(admin: AdminContext, target: Target, text: string, options: AddOptions = {}): Promise<ActionResult> {
+  const { motivation } = options;
   const store = admin.imprint.writableStore;
   if (!store) return { ok: false, error: "Reageren kan alleen met een database." };
   const session = await admin.auth.getSession();
@@ -174,13 +195,23 @@ export async function add(admin: AdminContext, target: Target, text: string, mot
     author: session.name,
     created: now.toISOString(),
     motivation: target.type === "annotation" ? "replying" : motivation === "questioning" ? "questioning" : "commenting",
-    target: [{ source: target, field: "", selector: [], state: { type: "TimeState", sourceDate: parent.txFrom.toISOString() } }],
+    target: [
+      {
+        source: target,
+        field: target.type === "annotation" ? "" : String(options.field ?? ""),
+        // Checked by the schema below (the core's selectors fill in the defaults).
+        selector: target.type === "annotation" ? [] : ((options.selector ?? []) as Annotation["target"][number]["selector"]),
+        state: { type: "TimeState", sourceDate: parent.txFrom.toISOString() },
+      },
+    ],
     body: [{ type: "TextualBody", value: body, format: "text/markdown" }],
     edited: false,
     hidden: false,
     hiddenBy: "",
   };
-  await store.putItem("annotation", slug, annotation, { lang: "en", by: session.name });
+  const checked = AnnotationSchema.safeParse(annotation);
+  if (!checked.success) return { ok: false, error: "De selectie is niet geldig." };
+  await store.putItem("annotation", slug, checked.data, { lang: "en", by: session.name });
   return { ok: true, slug };
 }
 

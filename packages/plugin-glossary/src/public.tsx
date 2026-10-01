@@ -15,7 +15,7 @@ function TermView({ term, indexHref }: { term: Term; indexHref?: string }) {
       )}
       <p className="mt-4 text-xs text-muted">Term</p>
       <h1 className="text-3xl font-semibold tracking-tight">{term.title}</h1>
-      <div className="markdown mt-6">
+      <div className="markdown mt-6" data-annotation-field="body">
         <Markdown>{term.body || term.summary}</Markdown>
       </div>
       {term.tags.length > 0 && (

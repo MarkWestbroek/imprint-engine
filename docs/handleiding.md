@@ -628,9 +628,26 @@ met het veld *Annotations* in de pagina-eigenschappen (`off`, `members`,
 - Wie het item mag lezen mag de draad lezen: reacties onder een
   groepsbericht zien alleen de groepsleden.
 
+### Kanttekeningen bij een passage
+
+Bij berichten, wikipagina's en termen kun je ook **op een stuk tekst**
+reageren: selecteer de passage, klik op **Annoteren**, schrijf en kies
+**Plaats**. De passage krijgt een markering en je kanttekening staat als
+ballon in de kantlijn ernaast; op een smal scherm staan de kanttekeningen
+onder de reacties, elk met het citaat erbij. Klik op een gemarkeerde
+passage om haar ballon op te lichten. Beantwoorden, bewerken, verwijderen
+en verbergen werken als bij gewone reacties.
+
+Verandert de tekst later, dan wordt de kanttekening opnieuw bij haar
+passage gezocht: staat de passage er nog (ook als er tekst vóór of na is
+bijgekomen), dan blijft de ballon ernaast — met de melding "de tekst is
+sindsdien gewijzigd". Is de passage zelf veranderd of weg, dan staat de
+kanttekening onder **Bij een eerdere versie van de tekst**, met het citaat
+waar ze over ging. Er wordt nooit gegokt.
+
 Alle reacties staan ook in de admin onder **Annotations**, voor moderatie.
-Technisch zijn reacties *annotaties* (W3C Web Annotation): hetzelfde model
-krijgt in een volgende stap kanttekeningen bij een passage, in de kantlijn.
+Technisch zijn reacties en kanttekeningen *annotaties* (W3C Web
+Annotation): één model, met of zonder passage.
 
 ## Voor gevorderden
 

@@ -159,7 +159,7 @@ export function WikiView({
         {current ? (
           <>
             <h1 className="text-3xl font-semibold tracking-tight">{current.title}</h1>
-            <div className="mt-6">
+            <div data-annotation-field="body" className="mt-6">
               <Markdown>{current.body}</Markdown>
             </div>
           </>

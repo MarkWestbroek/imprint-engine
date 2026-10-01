@@ -4,8 +4,8 @@
 > [communities.md](communities.md) (§4.3 reacties, §4.6 annotaties in de
 > kantlijn). Mark leverde het UML-model en wees op het
 > [W3C Web Annotation Data Model](https://www.w3.org/TR/annotation-model/);
-> dat is de taal die we overnemen. Status: **stap 1 gebouwd** (de draad onder
-> een item), stap 2 (de kantlijn) volgt.
+> dat is de taal die we overnemen. Status: **stap 1 en 2 gebouwd** (de draad
+> onder een item, en de kantlijn met ballonnen naast een passage).
 
 ## 1. Het model
 
@@ -131,10 +131,17 @@ OpenFTV-sidecar verandert geen van beide.
    bewerken en verwijderen, verbergen door beheerders (redactie, of de
    beheerders van de groep van het doel), "bewerkt" met versies, "de tekst
    is sindsdien gewijzigd".
-2. **De kantlijn**: selecteren → "annoteren", ballonnen naast de passage
-   (markers op smalle schermen), opnieuw verankeren, de diff. Doelen: de
-   tekstvelden van items; per type een verklaring welke velden segmenteerbaar
-   zijn en hoe (tekstselectors; voor assets fragmentselectors).
+2. **Gedaan — de kantlijn**: selecteren → "Annoteren", ballonnen naast de
+   passage (op smalle schermen een lijst onder de reacties, met het citaat),
+   de passage gemarkeerd via de CSS Custom Highlight API, klik op de passage
+   licht de ballon op. Per type aan te zetten (`inline: true`); de viewer
+   markeert zijn tekstveld met `data-annotation-field="body"` — dat is de
+   "verklaring welk veld segmenteerbaar is". Verankeren gebeurt bij het
+   tonen in `anchor.ts` (puur, getest): het citaat letterlijk zoeken, bij
+   meerdere treffers de context (prefix/suffix) en dan de positie laten
+   kiezen; niet gevonden = wees ("Bij een eerdere versie van de tekst", met
+   het citaat). Nog niet: de diff van het gewijzigde stuk, en de versie van
+   toen openen.
 3. **Later**: resource-bodies kiezen uit de bibliotheek, markeringen zonder
    tekst, bladwijzers, annotaties op assets (regio van een beeld, tijdvak van
    een take), meldingen aan de auteur, export als W3C-JSON-LD via de API.
