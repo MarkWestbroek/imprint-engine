@@ -562,7 +562,15 @@ andere sites, met een paar dingen van commonground.nl:
   agenda staat op `/events` (komend per maand, daaronder "Eerder"), elk
   evenement op `/events/<slug>`, en een community-pagina toont haar komende
   evenementen. De widget **Agenda** zet de eerstvolgende op een pagina.
-  Aanmelden (komt / misschien / komt niet) komt in de volgende stap.
+  Staat bij een evenement **Aanmelding** aan (het vinkje *rsvp* in de
+  admin, eventueel met een maximum), dan kiezen ingelogde leden met een
+  bevestigd adres *ik kom / misschien / ik kom niet*; de pagina telt mee,
+  zegt "vol" bij het maximum, en intrekken kan altijd. Bij de keuze staat
+  waar ze mee instemmen: de organisatie ziet naam en e-mailadres voor dit
+  evenement. Wie het evenement organiseert (de redactie, of de beheerders van
+  de community van het evenement) ziet onder **Aanmeldingen bekijken** wie
+  komt, met adres en een knop om iedereen te mailen. Eigen aanmeldingen
+  staan onder **Mijn evenementen** op `/account`.
 - **Wie mag wat zien**: elke pagina, wikipagina, term en groep heeft een
   veld **Toegang**: *public* (iedereen), *restricted* (alleen ingelogde
   leden van de site) of *group: …* (alleen de leden van die community; de

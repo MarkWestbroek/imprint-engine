@@ -66,7 +66,7 @@ export function UserTools() {
 function EditButton() {
   const path = usePathname();
   const slug = path.replace(/^\/+|\/+$/g, "") || "home";
-  if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups" || slug.startsWith("account")) return null;
+  if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups" || slug.startsWith("account") || slug.startsWith("events/") || slug === "events" || slug === "blog" || slug.startsWith("blog/")) return null;
   // A members-only page edits as the page it is.
   const target = slug.startsWith("members/") ? slug.slice(8) : slug;
   return (

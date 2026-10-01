@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ANONYMOUS, contentResource, permit, userSubject } from "@imprint/content-core";
-import { Markdown, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
+import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
+import { AttendButton } from "./attend-button";
 import { EventList } from "./event-list";
 import { getEvent, listEvents } from "./events";
 import { EVENTS_PREFIX, eventSummary, eventsHref, formatWhen, isPast } from "./href";
@@ -15,7 +16,7 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
   );
 }
 
-function EventView({ event }: { event: Event }) {
+function EventView({ event, call }: { event: Event; call?: PluginCall }) {
   const over = isPast(event);
   return (
     <article className="max-w-3xl">
@@ -53,10 +54,15 @@ function EventView({ event }: { event: Event }) {
           </Row>
         )}
         {event.organizer && <Row label="Organisatie">{event.organizer}</Row>}
-        {event.rsvp && (
+        {event.rsvp && !over && (
           <Row label="Aanmelden">
-            {event.maxAttendees ? `Maximaal ${event.maxAttendees} deelnemers · ` : ""}
-            <span className="text-muted">aanmelden komt met de volgende stap</span>
+            {event.maxAttendees ? <span className="block text-muted">Maximaal {event.maxAttendees} deelnemers</span> : null}
+            <AttendButton
+              slug={event.slug}
+              call={call}
+              organizer={event.organizer}
+              loginHref={`/account/login?next=${encodeURIComponent(`/events/${event.slug}`)}`}
+            />
           </Row>
         )}
         {(event.externalLink || event.ticketLink) && (
@@ -100,7 +106,7 @@ function EventView({ event }: { event: Event }) {
  * `/events/<slug>`: one event. A non-public event goes to /members, where
  * the PDP decides for the subject at hand.
  */
-export async function eventsPublicRoute({ imprint, slug, members, session, subject: given }: PublicRouteContext): Promise<PublicRouteResult | null> {
+export async function eventsPublicRoute({ imprint, slug, members, session, subject: given, call }: PublicRouteContext): Promise<PublicRouteResult | null> {
   if (slug[0] !== EVENTS_PREFIX || slug.length > 2) return null;
   const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
   const store = members ? imprint.storeFor(subject) : imprint.store;
@@ -130,5 +136,5 @@ export async function eventsPublicRoute({ imprint, slug, members, session, subje
     if (!members) return { redirect: `/members/${slug.join("/")}` };
     if (!(await permit(imprint.pdp, subject, "read", contentResource("event", raw.slug, raw)))) return null;
   }
-  return { render: <EventView event={raw} />, metadata: { title: raw.title, description: eventSummary(raw, 160) } };
+  return { render: <EventView event={raw} call={call} />, metadata: { title: raw.title, description: eventSummary(raw, 160) } };
 }

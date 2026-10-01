@@ -198,8 +198,11 @@ Het meest onderschatte stuk:
   (persoon, toestemming, doel, termijn) en laat aanmeldingen en formulieren
   het delen.
 
-> **Stand (1 oktober 2026):** stap a is gedaan (plugin-events, 315 publieke
-> evenementen in de showcase); stap b, aanmelden, volgt.
+> **Stand (1 oktober 2026):** stap a (plugin-events, 315 publieke evenementen
+> in de showcase) en stap b (aanmelden met toestemming, teller, maximum,
+> organisatorlijst) zijn gedaan. Het opruimen na afloop en de welkomstmail
+> staan in de backlog; het gedeelde contactmodel met het bitemporal-formulier
+> is nog niet uitgewerkt.
 
 ### 4.6 Annotaties in de kantlijn ▶
 

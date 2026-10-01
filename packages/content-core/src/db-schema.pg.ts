@@ -107,6 +107,21 @@ export const invites = pgTable(
   (t) => [index("idx_invites_group").on(t.groupSlug)]
 );
 
+/** Sign-ups for events (design/communities.md §4.5) — see db-schema.ts. */
+export const attendances = pgTable(
+  "attendances",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    eventSlug: varchar("event_slug", { length: 128 }).notNull(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    status: varchar("status", { length: 16 }).notNull(),
+    createdAt: ts("created_at").notNull(),
+    updatedAt: ts("updated_at").notNull(),
+    consentAt: ts("consent_at").notNull(),
+  },
+  (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
+);
+
 /** Personal API tokens — see db-schema.ts. */
 export const apiTokens = pgTable(
   "api_tokens",

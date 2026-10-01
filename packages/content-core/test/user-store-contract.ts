@@ -144,6 +144,23 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.equal((await users.invitesOf("signalen"))[0].active, false);
     });
 
+    it("sign-ups for events: komt / misschien / komt niet, changeable, withdrawable; they go with the user", async () => {
+      const users = await factory();
+      assert.deepEqual(await users.attendeesOf("demo"), []);
+      const first = await users.attend("demo", "ann", "attending");
+      assert.deepEqual([first.status, first.consentAt instanceof Date], ["attending", true]);
+      await assert.rejects(users.attend("demo", "nobody", "maybe"), /No such user/);
+      await assert.rejects(users.attend("demo", "ann", "yes" as never), /Unknown attendance status/);
+      const changed = await users.attend("demo", "ann", "maybe");
+      assert.deepEqual([changed.status, changed.consentAt.getTime() === first.consentAt.getTime()], ["maybe", true]);
+      await users.attend("demo", "ed", "not");
+      assert.deepEqual((await users.attendeesOf("demo")).map((a) => [a.userName, a.status]), [["ann", "maybe"], ["ed", "not"]]);
+      assert.deepEqual((await users.attendancesOf("ann")).map((a) => a.eventSlug), ["demo"]);
+      await users.withdraw("demo", "ed");
+      await users.withdraw("demo", "ed"); // gone already: no error
+      assert.equal(await users.attendance("demo", "ed"), null);
+    });
+
     it("removes users; unknown names are an error", async () => {
       const users = await factory();
       await users.remove("mark");
@@ -152,6 +169,7 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.ok((await users.tokens("ed")).length > 0, "a user's tokens go only with the user");
       await users.remove("ann");
       assert.deepEqual(await users.membersOf("atlas"), [], "memberships go with the user");
+      assert.deepEqual(await users.attendeesOf("demo"), [], "sign-ups go with the user");
       await assert.rejects(users.remove("mark"), /No such user/);
       await assert.rejects(users.setPassword("mark", PASSWORD), /No such user/);
     });

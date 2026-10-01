@@ -886,9 +886,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             `group:<slug>` ook kennen zodra die de in-process PDP vervangt.
       - [x] ~~Blogs~~ — plugin-blog, 254 publieke berichten geïmporteerd (01-10).
       - [x] ~~Agenda (a)~~ — plugin-events, 315 publieke evenementen (01-10).
-      - [ ] Agenda (b) (§4.5): aanmelden voor leden (komt/misschien/komt niet)
-            als eigen tabel, privacytekst bij aanmelden, organisator bereikt
-            aanmelders, `maxAttendees`; later QR en aanmelden zonder account.
+      - [x] ~~Agenda (b)~~ — aanmelden (komt/misschien/komt niet), teller,
+            maximum, organisatorlijst met mailto (01-10).
+      - [ ] Agenda (c): aanmeldingen automatisch opruimen na afloop (de
+            privacytekst belooft dat), welkomstmail bij aanmelden, aanmelden
+            zonder account en QR-toegang (Pleio-opties), de organisatie als
+            account i.p.v. tekst.
       - [ ] Agenda: dagelijkse herbouw (of ISR met tijd) zodat "komend" op
             statische pagina's niet veroudert; herhalingen uitrollen.
       - [ ] Nieuws (313 publiek): als `post` met tag, of eigen type; de

@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { memberProfile } from "@imprint/runtime-admin/admin-server";
 import { groupHref } from "@imprint/plugin-groups/href";
+import { eventHref } from "@imprint/plugin-events/href";
+import { imprint } from "@/lib/content";
 import { ResendButton } from "@/components/account-forms";
 import { admin } from "@/lib/admin";
 import { logoutAction, resendVerificationAction } from "./actions";
@@ -20,6 +22,12 @@ export default async function AccountPage({ searchParams }: Props) {
   if (!profile) redirect("/account/login?next=/account");
   const { verified } = await searchParams;
   const { user, memberships, canEdit } = profile;
+  // The member's sign-ups, with the events' titles (as far as they still exist).
+  const signups = imprint.users ? await imprint.users.attendancesOf(user.name) : [];
+  const events = await Promise.all(
+    signups.map(async (a) => ({ ...a, title: ((await imprint.writableStore?.getItem("event", a.eventSlug))?.data as { title?: string } | undefined)?.title }))
+  );
+  const ANSWER: Record<string, string> = { attending: "ik kom", maybe: "misschien", not: "ik kom niet" };
   return (
     <article className="cg-page cg-narrow">
       <h1>Mijn account</h1>
@@ -61,6 +69,22 @@ export default async function AccountPage({ searchParams }: Props) {
                   </>
                 )}
               </p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <h2>Mijn evenementen</h2>
+      {events.length === 0 ? (
+        <p className="cg-muted">
+          Nog geen aanmeldingen. <Link href="/events">Bekijk de agenda.</Link>
+        </p>
+      ) : (
+        <ul className="cg-results">
+          {events.map((e) => (
+            <li key={e.eventSlug}>
+              <Link href={eventHref(e.eventSlug)}>{e.title ?? e.eventSlug}</Link>
+              <p>{ANSWER[e.status] ?? e.status}</p>
             </li>
           ))}
         </ul>

@@ -61,6 +61,24 @@ export type MembershipRow = {
 };
 export type Membership = Omit<MembershipRow, "role" | "status"> & { role: MembershipRole; status: MembershipStatus };
 
+/** A sign-up for an event: komt / misschien / komt niet. */
+export const ATTENDANCE_STATUSES = ["attending", "maybe", "not"] as const;
+export type AttendanceStatus = (typeof ATTENDANCE_STATUSES)[number];
+export type AttendanceRow = {
+  id: number;
+  eventSlug: string;
+  userName: string;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+  consentAt: Date;
+};
+export type Attendance = Omit<AttendanceRow, "status"> & { status: AttendanceStatus };
+const asAttendance = (row: AttendanceRow): Attendance => ({
+  ...row,
+  status: (ATTENDANCE_STATUSES as readonly string[]).includes(row.status) ? (row.status as AttendanceStatus) : "maybe",
+});
+
 export type InviteRow = {
   id: number;
   groupSlug: string;
@@ -144,6 +162,14 @@ export abstract class UserStore {
   protected abstract updateMembership(id: number, patch: Partial<Pick<MembershipRow, "role" | "status" | "decidedAt" | "decidedBy">>): Promise<void>;
   protected abstract deleteMembership(id: number): Promise<void>;
   protected abstract deleteMembershipsOf(userName: string): Promise<void>;
+  // Attendances
+  protected abstract selectAttendancesOfEvent(eventSlug: string): Promise<AttendanceRow[]>;
+  protected abstract selectAttendancesOfUser(userName: string): Promise<AttendanceRow[]>;
+  protected abstract selectAttendance(eventSlug: string, userName: string): Promise<AttendanceRow | null>;
+  protected abstract insertAttendance(row: Omit<AttendanceRow, "id">): Promise<void>;
+  protected abstract updateAttendance(id: number, patch: Partial<Pick<AttendanceRow, "status" | "updatedAt">>): Promise<void>;
+  protected abstract deleteAttendance(id: number): Promise<void>;
+  protected abstract deleteAttendancesOf(userName: string): Promise<void>;
   // Invites
   protected abstract insertInvite(row: Omit<InviteRow, "id">): Promise<void>;
   protected abstract selectInvitesOfGroup(groupSlug: string): Promise<InviteRow[]>;
@@ -305,6 +331,37 @@ export abstract class UserStore {
     if (existing) await this.deleteMembership(existing.id);
   }
 
+  // ---------- Attendances (design/communities.md §4.5) ----------
+
+  async attendeesOf(eventSlug: string): Promise<Attendance[]> {
+    return (await this.selectAttendancesOfEvent(eventSlug)).map(asAttendance);
+  }
+
+  async attendancesOf(userName: string): Promise<Attendance[]> {
+    return (await this.selectAttendancesOfUser(userName)).map(asAttendance);
+  }
+
+  async attendance(eventSlug: string, userName: string): Promise<Attendance | null> {
+    const row = await this.selectAttendance(eventSlug, userName);
+    return row ? asAttendance(row) : null;
+  }
+
+  /** Sign up, or change the answer; the consent moment is kept from the first time. */
+  async attend(eventSlug: string, userName: string, status: AttendanceStatus, now = new Date()): Promise<Attendance> {
+    await this.mustExist(userName);
+    if (!(ATTENDANCE_STATUSES as readonly string[]).includes(status)) throw new Error(`Unknown attendance status "${status}"`);
+    const existing = await this.selectAttendance(eventSlug, userName);
+    if (existing) await this.updateAttendance(existing.id, { status, updatedAt: now });
+    else await this.insertAttendance({ eventSlug, userName, status, createdAt: now, updatedAt: now, consentAt: now });
+    return (await this.attendance(eventSlug, userName))!;
+  }
+
+  /** Withdraw: the sign-up (and with it the consent) goes. */
+  async withdraw(eventSlug: string, userName: string): Promise<void> {
+    const existing = await this.selectAttendance(eventSlug, userName);
+    if (existing) await this.deleteAttendance(existing.id);
+  }
+
   // ---------- Invites ----------
 
   /** An invitation link's code (only its hash is stored); whoever redeems it joins with `role`. */
@@ -394,6 +451,7 @@ export abstract class UserStore {
     await this.deleteTokensOf(name);
     await this.deleteEmailTokensOf(name);
     await this.deleteMembershipsOf(name);
+    await this.deleteAttendancesOf(name);
     await this.deleteByName(name);
   }
 

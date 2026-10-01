@@ -118,6 +118,25 @@ export const invites = mysqlTable(
 );
 
 /**
+ * Sign-ups for events (design/communities.md §4.5): who comes, maybe comes
+ * or does not come. Personal data: a table, not content. `consent_at` is
+ * when the member agreed that the organiser may see name and address.
+ */
+export const attendances = mysqlTable(
+  "attendances",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    eventSlug: varchar("event_slug", { length: 128 }).notNull(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    status: varchar("status", { length: 16 }).notNull(),
+    createdAt: datetime("created_at", { fsp: 3 }).notNull(),
+    updatedAt: datetime("updated_at", { fsp: 3 }).notNull(),
+    consentAt: datetime("consent_at", { fsp: 3 }).notNull(),
+  },
+  (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
+);
+
+/**
  * Personal API tokens (design/beeldbibliotheek.md §12.4): a client outside the
  * admin (the patch editor) acts as its user, limited to the token's scopes.
  * Only a SHA-256 of the token is stored (tokens are long and random, so no

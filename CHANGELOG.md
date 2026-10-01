@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Aanmelden voor evenementen (agenda, stap b)**: leden kiezen op een
+  evenement *ik kom / misschien / ik kom niet* (met de privacytekst erbij; de
+  keuze is de toestemming), met een teller, een maximum (`maxAttendees`:
+  "vol") en intrekken; de aanmeldingen staan op `/account`. De organisatie
+  (redactie, of de beheerders van de groep van het evenement) ziet op
+  `/events/<slug>/attendees` wie komt, met e-mailadres en een mailto-knop.
+  In de kern: tabel `attendances` (beide dialecten) en
+  `UserStore.attend/withdraw/attendeesOf/attendancesOf`; de testsuites
+  ruimen nu ook de ledentabellen op vóór de migraties.
 - **plugin-events (agenda, stap a)**: evenementen als contenttype (`event`:
   begin, einde, plaats, adres, links, organisatie, online, herhaling als
   tekst, tags, groep, beeld), de widget `events` (eerstvolgende van de site,

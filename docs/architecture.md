@@ -1069,7 +1069,11 @@ niet van elkaar afwijken.
   ISO-tijden en `Europe/Amsterdam`-weergave, `repeat` als tekst; widget
   `events`; routes `/events` en `/events/<slug>`; "komend" wordt bij het
   renderen bepaald, dus een vooraf gerenderde pagina toont de stand van zijn
-  laatste build — backlog: dagelijkse herbouw). Node-scripts
+  laatste build — backlog: dagelijkse herbouw; stap b: de acties
+  `status/attend/withdraw/attendees`, `AttendButton` als client-eiland op de
+  statische evenementpagina, `EventAttendeesScreen` voor de dynamische
+  organisatorpagina van de site; de aanmelding zelf is persoonsgegeven in
+  de tabel `attendances` van de user store, met `consentAt`). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **Leden** (design/communities.md §4.1, G1): `UserStore` kent naast de
   redactie-accounts ook geregistreerde leden — `register(name, email,

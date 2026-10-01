@@ -26,6 +26,10 @@ describe("PgContentStore (Postgres)", { skip: url ? false : "TEST_PG_DATABASE_UR
     await db.execute(sql`DROP TABLE IF EXISTS content_items`);
     await db.execute(sql`DROP TABLE IF EXISTS users`);
     await db.execute(sql`DROP TABLE IF EXISTS api_tokens`);
+    // The members' tables (design/communities.md G1, §4.5): every table a migration creates, so a re-run starts clean.
+    for (const table of ["email_tokens", "memberships", "invites", "attendances"]) {
+      await db.execute(sql.raw(`DROP TABLE IF EXISTS ${table}`));
+    }
     for (const statement of await migrationStatements("drizzle-pg")) await db.execute(sql.raw(statement));
     await seedFixtures(new PgContentStore(db));
   });

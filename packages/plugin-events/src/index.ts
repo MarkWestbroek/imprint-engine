@@ -1,4 +1,5 @@
-import { definePlugin, type ImprintPlugin, type WidgetViewers } from "@imprint/runtime-admin";
+import { definePlugin, type ImprintPlugin, type PluginAction, type WidgetViewers } from "@imprint/runtime-admin";
+import { eventsActions } from "./actions";
 import { eventsContentTypes } from "./content-types";
 import { eventsPublicRoute } from "./public";
 import { EventsConfig, EventsWidget } from "./widget";
@@ -8,8 +9,10 @@ import { EventsConfig, EventsWidget } from "./widget";
  * §4.5, step a): the content type `event` (when, where, links, organiser,
  * optionally a group), the `events` widget (the next events of the site, a
  * group or a tag), the agenda `/events` and a page per event under
- * `/events/<slug>`. Step b, signing up (komt / misschien / komt niet) for
- * members, comes next. A site switches it on with `plugins: [eventsPlugin()]`
+ * `/events/<slug>`. Step b: signing up (komt / misschien / komt niet) for
+ * members through the site's dispatcher (`AttendButton` on the prerendered
+ * event page), and `EventAttendeesScreen` for the organiser, mounted by the
+ * site at `/events/<slug>/attendees`. A site switches it on with `plugins: [eventsPlugin()]`
  * and composes the widget into its catalogue (`eventsWidgets` / `eventsViewers`).
  *
  * Node scripts import the React-free entries: `./content-types`, `./schemas`, `./href`.
@@ -34,6 +37,7 @@ export function eventsPlugin(): ImprintPlugin {
     contentTypes: eventsContentTypes,
     widgets: [...eventsWidgets],
     menu: [{ group: "content", section: "Agenda", items: [{ href: "/admin/event", label: "Events" }] }],
+    actions: eventsActions as unknown as Record<string, PluginAction>,
     publicRoute: eventsPublicRoute,
   });
 }
@@ -44,3 +48,5 @@ export { EventSchema, type Event } from "./schemas";
 export { EventsConfig, type EventsConfig as EventsWidgetConfig } from "./widget";
 export { getEvent, listEvents } from "./events";
 export { EventList } from "./event-list";
+export { eventsActions, type AttendStatus, type Attendee } from "./actions";
+export { EventAttendeesScreen } from "./attendees";

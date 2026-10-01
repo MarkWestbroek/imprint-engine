@@ -1,8 +1,9 @@
 import { and, eq } from "drizzle-orm";
 
-import { apiTokens, emailTokens, invites, memberships, users } from "./db-schema";
+import { apiTokens, attendances, emailTokens, invites, memberships, users } from "./db-schema";
 import {
   UserStore,
+  type AttendanceRow,
   type EmailTokenRow,
   type InviteRow,
   type MembershipRow,
@@ -12,11 +13,14 @@ import {
 import type { Db } from "./db-store";
 
 export {
+  ATTENDANCE_STATUSES,
   EMAIL_TOKEN_PURPOSES,
   MEMBERSHIP_ROLES,
   MEMBERSHIP_STATUSES,
   TOKEN_SCOPES,
   UserStore,
+  type Attendance,
+  type AttendanceStatus,
   type EmailTokenPurpose,
   type Invite,
   type Membership,
@@ -155,5 +159,39 @@ export class DbUserStore extends UserStore {
 
   protected async updateInvite(id: number, patch: Partial<Pick<InviteRow, "uses" | "expiresAt">>): Promise<void> {
     await this.db.update(invites).set(patch).where(eq(invites.id, id));
+  }
+
+  // Attendances
+  protected async selectAttendancesOfEvent(eventSlug: string): Promise<AttendanceRow[]> {
+    return this.db.select().from(attendances).where(eq(attendances.eventSlug, eventSlug)).orderBy(attendances.createdAt);
+  }
+
+  protected async selectAttendancesOfUser(userName: string): Promise<AttendanceRow[]> {
+    return this.db.select().from(attendances).where(eq(attendances.userName, userName)).orderBy(attendances.eventSlug);
+  }
+
+  protected async selectAttendance(eventSlug: string, userName: string): Promise<AttendanceRow | null> {
+    const rows = await this.db
+      .select()
+      .from(attendances)
+      .where(and(eq(attendances.eventSlug, eventSlug), eq(attendances.userName, userName)))
+      .limit(1);
+    return rows[0] ?? null;
+  }
+
+  protected async insertAttendance(row: Omit<AttendanceRow, "id">): Promise<void> {
+    await this.db.insert(attendances).values(row);
+  }
+
+  protected async updateAttendance(id: number, patch: Partial<Pick<AttendanceRow, "status" | "updatedAt">>): Promise<void> {
+    await this.db.update(attendances).set(patch).where(eq(attendances.id, id));
+  }
+
+  protected async deleteAttendance(id: number): Promise<void> {
+    await this.db.delete(attendances).where(eq(attendances.id, id));
+  }
+
+  protected async deleteAttendancesOf(userName: string): Promise<void> {
+    await this.db.delete(attendances).where(eq(attendances.userName, userName));
   }
 }
