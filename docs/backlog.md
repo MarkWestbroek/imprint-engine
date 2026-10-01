@@ -665,8 +665,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] **Mp4-render (route A)**: Blender-script dat dezelfde choreografie
             (page-config via `/api/content/pages/cortex`) afspeelt met de GLB's
             + paneel-extrusie, rendert (Eevee 1080p) en met ffmpeg een take
-            eronder mengt. Blender en FreeCAD worden via winget op de desktop
-            gezet (gestart 1 okt; controleer met `winget list`).
+            eronder mengt. Blender 5.2 en FreeCAD 1.1.4 staan sinds 1 okt op de
+            desktop (winget; paden in Claude's geheugen `3d-tooling-desktop`).
       - [ ] Busboard-spec v3.1 verwijst in zijn tekst naar
             `audio-aanlanding-v3.svg` (relatief pad, 404 op de site) — bij de
             volgende publicatie vanuit de KiCad-toolkit meenemen als asset.
