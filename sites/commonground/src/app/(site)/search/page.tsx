@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { readOpts } from "@imprint/runtime-admin";
-import { isInternal } from "@/components/page-view";
+import { KIND_LABEL, search, type Kind } from "@/lib/search";
 import { store } from "@/lib/content";
 
 /**
- * Simple search over the public pages: title, description and all the text
- * in the body and widgets. Per request (the query is in the URL); the store
- * only returns what this visitor may see. A real index comes with groups and
- * news (design/communities.md).
+ * Site search over pages, posts, events, communities, terms and wiki pages,
+ * with a prefix to narrow it (`community: archi`, `blog: togaf`). Per
+ * request (the query is in the URL); the store only returns what this
+ * visitor may see. A real index comes with search in the core (backlog).
  */
 
 export const metadata: Metadata = { title: "Zoeken", robots: { index: false } };
@@ -16,28 +15,19 @@ export const metadata: Metadata = { title: "Zoeken", robots: { index: false } };
 
 type Props = { searchParams: Promise<{ q?: string }> };
 
-/** All string values in a page's layout, flattened: widget texts, titles, captions. */
-function textOf(value: unknown): string {
-  if (typeof value === "string") return value;
-  if (Array.isArray(value)) return value.map(textOf).join(" ");
-  if (value && typeof value === "object") return Object.values(value).map(textOf).join(" ");
-  return "";
-}
-
-const normalise = (s: string) => s.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+const EXAMPLES: [string, string][] = [
+  ["community: architectuur", "een community"],
+  ["blog: togaf", "een blog"],
+  ["term: api", "een term"],
+  ["agenda: fieldlab", "een evenement"],
+  ["wiki: register", "een wikipagina"],
+];
 
 export default async function SearchPage({ searchParams }: Props) {
   const q = ((await searchParams).q ?? "").trim();
-  const terms = normalise(q).split(/\s+/).filter(Boolean);
-  const pages = terms.length ? (await store.listPages(await readOpts())).filter((p) => !isInternal(p.slug)) : [];
-  const hits = pages
-    .map((page) => {
-      const haystack = normalise(`${page.title} ${page.description ?? ""} ${page.body ?? ""} ${textOf(page.layout)}`);
-      const inTitle = terms.filter((t) => normalise(page.title).includes(t)).length;
-      return { page, match: terms.every((t) => haystack.includes(t)), score: inTitle };
-    })
-    .filter((h) => h.match)
-    .sort((a, b) => b.score - a.score || a.page.title.localeCompare(b.page.title));
+  const { hits, kind } = q ? await search(store, q) : { hits: [], kind: null as Kind | null };
+  const byKind = new Map<Kind, number>();
+  for (const h of hits) byKind.set(h.kind, (byKind.get(h.kind) ?? 0) + 1);
 
   return (
     <article className="cg-page">
@@ -49,20 +39,40 @@ export default async function SearchPage({ searchParams }: Props) {
         <input id="q" name="q" type="search" defaultValue={q} placeholder="Waar ben je naar op zoek?" autoFocus />
         <button type="submit">Zoeken</button>
       </form>
+      <p className="cg-muted cg-search-hint">
+        Tip: zoek in één soort met een voorvoegsel, bijvoorbeeld{" "}
+        {EXAMPLES.map(([ex, what], i) => (
+          <span key={ex}>
+            {i > 0 && ", "}
+            <Link href={`/search?q=${encodeURIComponent(ex)}`}>
+              <code>{ex}</code>
+            </Link>{" "}
+            ({what})
+          </span>
+        ))}
+        .
+      </p>
       {q && (
         <p className="cg-muted">
-          {hits.length === 0 ? "Geen resultaten" : `${hits.length} resultaat${hits.length === 1 ? "" : "en"}`} voor
-          “{q}”
+          {hits.length === 0 ? "Geen resultaten" : hits.length === 1 ? "1 resultaat" : `${hits.length} resultaten`} voor “{q}”
+          {kind && ` in ${KIND_LABEL[kind]}s`}
+          {!kind && hits.length > 0 && (
+            <>
+              {" · "}
+              {[...byKind].map(([k, n]) => `${n} ${KIND_LABEL[k]}${n === 1 || k === "news" ? "" : "s"}`).join(", ")}
+            </>
+          )}
         </p>
       )}
       <ul className="cg-results">
-        {hits.map(({ page }) => (
-          <li key={page.slug}>
-            <Link href={page.slug === "home" ? "/" : `/${page.slug}`}>{page.title}</Link>
-            {page.description && <p>{page.description}</p>}
+        {hits.slice(0, 100).map((h) => (
+          <li key={`${h.kind}-${h.href}`}>
+            <span className="cg-badge-soft">{KIND_LABEL[h.kind]}</span> <Link href={h.href}>{h.title}</Link>
+            {h.summary && <p>{h.summary}</p>}
           </li>
         ))}
       </ul>
+      {hits.length > 100 && <p className="cg-muted">De eerste 100 worden getoond; maak je zoekterm preciezer.</p>}
     </article>
   );
 }

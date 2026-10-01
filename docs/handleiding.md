@@ -588,6 +588,12 @@ andere sites, met een paar dingen van commonground.nl:
   een andere waarde: de historie laat zien wie dat wanneer deed. Niet-publieke
   pagina's staan voor leden onder `/members/…`; wie niet is ingelogd, komt
   eerst bij de inlogpagina.
+- **Zoeken**: het vergrootglas (of `/search`) doorzoekt alles wat je mag
+  zien: pagina's, blogs, nieuws, updates, evenementen, communities, termen en
+  wikipagina's. Wil je één soort, typ een voorvoegsel met een dubbele punt:
+  `community: archi` (ook `groep:` of `group:`), `blog: togaf`, `term: api`,
+  `agenda: fieldlab`, `wiki: register`, `nieuws: …`, `pagina: …`. Treffers in
+  de titel staan bovenaan; elk resultaat draagt zijn soort.
 - **Adressen**: de vaste routes heten Engels (`/groups`, `/terms/…`,
   `/search`); de Nederlandse namen (`/groep/…`, `/term/…`, `/zoeken`) zijn
   aliassen in de site-instellingen en sturen door.

@@ -223,3 +223,7 @@
 .cg-dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 24px; margin: 24px 0; }
 .cg-dl dt { font-weight: 700; }
 .cg-dl dd { margin: 0; }
+/* Zoeken: soort-badge voor een resultaat, en de tip met voorvoegsels. */
+.cg-badge-soft { display: inline-block; padding: 1px 8px; border-radius: 999px; background: var(--cg-surface); color: var(--cg-ink-soft); font-size: 12px; font-weight: 700; vertical-align: 2px; }
+.cg-search-hint { margin: -8px 0 16px; font-size: 14px; }
+.cg-search-hint code { font-size: 13px; padding: .1em .35em; background: var(--cg-surface); }

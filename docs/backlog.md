@@ -912,8 +912,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)
             naar de beeldbibliotheek; links in pagina's, wiki en termen naar
             `asset:`-verwijzingen. Groeps- en privébestanden pas na G2.
-      - [ ] Zoeken naar de kern (nu een route van de site: `/search`), met
-            `/zoeken` als alias; dan ook wiki, termen en groepen doorzoeken.
+      - [ ] Zoeken naar de kern: de showcase heeft nu `src/lib/search.ts`
+            (alle typen, voorvoegsels, in het geheugen); als engine-onderdeel
+            met een index (Postgres full-text) zodra het volume vraagt.
       - [ ] Term-herkenning in lopende tekst (communities §4.7), op plugin-glossary.
       - [ ] Leden meenemen via een uitnodiging vanuit Pleio (communities §4.1a):
             uitnodigingsroute per groep, e-mailverificatie, rol herstellen door

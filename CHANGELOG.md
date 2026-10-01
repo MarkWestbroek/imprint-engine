@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Zoeken over alles** (showcase): `/search` doorzoekt pagina's, blogs,
+  nieuws, updates, evenementen, communities, termen en wikipagina's — alleen
+  wat de bezoeker mag zien — met een voorvoegsel om één soort te kiezen
+  (`community: archi`, `groep: arch`, `blog: togaf`, `term: api`,
+  `agenda: fieldlab`, `wiki: register`), een soort-label per resultaat en
+  titeltreffers eerst.
 - **Themakiezer als palet** (showcase): een knop die een paneeltje met
   tegels opent (kleurstaal per thema) in plaats van een keuzelijst; het menu
   past weer op één regel.
