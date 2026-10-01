@@ -285,6 +285,20 @@ zijn nog MariaDB-only.
   Tussendoor vanaf een eigen machine: `scp -r vps1:/srv/imprint-backups/<datum> …`
   (buiten gesynchroniseerde mappen — `env.txt` bevat de secrets).
 
+## De dagelijkse mededelingen-mail (cron)
+
+De showcase stuurt leden één mail per dag met wat er nieuw voor ze is
+(communities.md §4.4). De site verstuurt zelf (SMTP in `.env`); cron geeft
+alleen het sein: `./deploy.sh digest commonground` doet `POST /api/digest`
+op de loopback-poort met `COMMONGROUND_INGEST_TOKEN` uit `.env` (zet hem
+eenmalig: `openssl rand -base64 24`; de container leest hem als
+`INGEST_TOKEN`, dus daarna één keer herstarten). `--dry` telt alleen.
+Crontab van de deploy-gebruiker (UTC; 06:30 UTC = 08:30 zomertijd):
+
+```
+30 6 * * * /srv/imprint/deploy/vps/deploy.sh digest commonground >> /srv/imprint-backups/digest.log 2>&1
+```
+
 ## Periodieke controle
 
 Alleen lezen, niets wijzigen. Af en toe draaien, of in een nieuwe Claude-sessie

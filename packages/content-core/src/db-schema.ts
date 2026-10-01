@@ -56,6 +56,8 @@ export const users = mysqlTable("users", {
   /** Members register with an address (design/communities.md §4.1); admin-made accounts may have none. */
   email: varchar("email", { length: 255 }).unique(),
   emailVerifiedAt: datetime("email_verified_at", { fsp: 3 }),
+  /** The mail digest of notifications (design/communities.md §4.4): "daily" | "off". */
+  digest: varchar("digest", { length: 16 }).notNull().default("daily"),
 });
 
 /**

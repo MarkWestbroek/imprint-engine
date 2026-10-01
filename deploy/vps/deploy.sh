@@ -14,6 +14,8 @@
 #   ./deploy.sh import-pleio commonground [--base-url=https://…]
 #                                    publieke pagina's, menu en footer uit Pleio (GraphQL)
 #                                    → database; daarna bouwen (SITES=commonground ./deploy.sh)
+#   ./deploy.sh digest commonground  de dagelijkse mededelingen-mail versturen (cron;
+#                                    POST /api/digest met <SITE>_INGEST_TOKEN; --dry telt alleen)
 #   ./deploy.sh s3-setup musicbrain  bucket + gebruiker in de eigen MinIO (eenmalig;
 #                                    <SITE>_S3_SECRET_KEY en MINIO_ROOT_PASSWORD eerst in .env)
 #   ./deploy.sh s3-move musicbrain [--apply]
@@ -64,6 +66,16 @@ case "${1:-}" in
     site="${2:?gebruik: deploy.sh import-pleio <site> [--base-url=…]}"; shift 2
     tools "$site" npm run import:pleio --workspace="$site" -- "$@"
     echo "Geïmporteerd. Bouw nu (SITES=$site ./deploy.sh)."
+    exit 0 ;;
+  digest)
+    site="${2:?gebruik: deploy.sh digest <site> [--dry]}"
+    SITE="$(echo "$site" | tr '[:lower:]' '[:upper:]')"
+    token_var="${SITE}_INGEST_TOKEN"; port_var="${SITE}_PORT"
+    token="${!token_var:?$token_var ontbreekt in .env (bv. openssl rand -base64 24)}"
+    query=""; [ "${3:-}" = "--dry" ] && query="?dry=1"
+    # De site zelf verstuurt (zij heeft de SMTP-instellingen); dit is alleen de wekker.
+    curl -fsS -X POST -H "Authorization: Bearer $token" "http://127.0.0.1:${!port_var:-3000}/api/digest$query"
+    echo
     exit 0 ;;
   s3-setup)
     site="${2:?gebruik: deploy.sh s3-setup <site>}"

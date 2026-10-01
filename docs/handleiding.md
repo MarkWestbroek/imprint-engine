@@ -618,8 +618,13 @@ De bel in de balk telt wat er nieuw voor je is; klik erop voor je
 - je verzoek om lid te worden is toegekend of afgewezen; beheerders horen
   het als iemand lid wil worden.
 
-De lijst openen is lezen: daarna staat de teller weer op nul. Een mail met
-een samenvatting volgt in een volgende stap.
+De lijst openen is lezen: daarna staat de teller weer op nul.
+
+**Dagelijkse mail.** Eén keer per dag krijg je een mail met wat er nieuw
+voor je is (alleen als je e-mailadres bevestigd is) — nooit een mail per
+gebeurtenis. Uitzetten: het vinkje op *Mijn account*, of de afmeldlink
+onderaan de mail (één klik, geen inloggen). De mededelingen op de site
+blijven dan gewoon staan.
 
 ## Reacties (annotaties)
 

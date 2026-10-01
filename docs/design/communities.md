@@ -179,8 +179,9 @@ site* of naar *openbaar*.
 > **Stand (2 oktober 2026):** het postvak is er (G3c stap 1): de bel telt,
 > `/account/notifications` toont wat er gebeurde — reacties, antwoorden,
 > kanttekeningen, gewijzigde items waar je bij schreef, nieuwe berichten in
-> je community, verzoeken en beslissingen over lidmaatschap. De digest-mail
-> is stap 2.
+> je community, verzoeken en beslissingen over lidmaatschap. Stap 2, de
+> dagelijkse digest-mail met voorkeur en afmeldlink, draait ook (cron op de
+> VPS).
 
 Het meest onderschatte stuk:
 

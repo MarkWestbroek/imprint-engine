@@ -238,6 +238,9 @@
 .cg-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .cg-error { color: var(--cg-alert); }
 .cg-notice { padding: 12px 16px; border-radius: 4px; background: var(--cg-sky); }
+.cg-inline-form { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 8px 0 16px; }
+.cg-button-small { padding: 4px 12px; border: 1px solid var(--cg-line); border-radius: 4px; background: var(--cg-surface); font-size: 14px; }
+.cg-button-small:hover { border-color: var(--cg-navy); }
 .cg-link { padding: 0; border: 0; background: none; color: var(--cg-navy); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .cg-inline { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
 .cg-badge { padding: 1px 8px; border-radius: 999px; background: var(--cg-yellow); color: #2b2112; font-size: 13px; font-weight: 700; }

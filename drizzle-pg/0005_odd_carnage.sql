@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "digest" varchar(16) DEFAULT 'daily' NOT NULL;

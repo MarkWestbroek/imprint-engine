@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Dagelijkse mededelingen-mail** (G3c stap 2): één mail per lid per dag
+  met wat er sinds de vorige mail in zijn postvak kwam (titels met links,
+  link naar het postvak, afmeldlink met eenmalig token). Voorkeur per lid
+  (`users.digest`, migratie 0005; vinkje op *Mijn account*); zonder
+  bevestigd adres of met "uit" wordt niets gestuurd en loopt er ook niets
+  op. `POST /api/digest` (ingest-token) is de wekker; `deploy.sh digest
+  <site> [--dry]` roept hem aan vanuit cron.
 - **Patch-pool** (`@imprint/plugin-patches`, MusicBrain
   `doc/plans/patch-pool.md`): contenttype `patch` (het `.patch.json` en de
   `.syx` als library-assets, demo-takes als groepen, `requires`, `derivedFrom`

@@ -20,7 +20,9 @@ export {
   MEMBERSHIP_STATUSES,
   TOKEN_SCOPES,
   UserStore,
+  DIGESTS,
   type Attendance,
+  type Digest,
   type Notification,
   type NotificationInput,
   type AttendanceStatus,
@@ -56,7 +58,7 @@ export class DbUserStore extends UserStore {
 
   protected async updateByName(
     name: string,
-    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt">>
+    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt" | "digest">>
   ): Promise<void> {
     await this.db.update(users).set(patch).where(eq(users.name, name));
   }

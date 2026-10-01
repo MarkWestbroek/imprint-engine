@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import * as members from "@imprint/runtime-admin/admin-server";
 import { admin } from "@/lib/admin";
@@ -42,6 +43,12 @@ export async function forgotPasswordAction(_prev: ActionResult | null, formData:
 
 export async function resetPasswordAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
   return members.resetPasswordByToken(admin, String(formData.get("token") ?? ""), String(formData.get("password") ?? ""));
+}
+
+export async function setDigestAction(formData: FormData): Promise<void> {
+  // An unchecked box sends nothing: that is "off".
+  await members.setDigestPreference(admin, formData.get("digest") === "daily" ? "daily" : "off");
+  revalidatePath("/account");
 }
 
 export async function resendVerificationAction(): Promise<ActionResult> {

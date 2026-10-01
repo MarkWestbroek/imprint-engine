@@ -1163,7 +1163,17 @@ niet van elkaar afwijken.
   annotatieplugin waarschuwt de annotatoren via de pagina die de annotatie
   bij het maken onthield (`target.source.href`). De site toont de teller
   via `/api/me` (per bezoeker, de pagina's blijven statisch) en de lijst op
-  `/account/notifications`; openen markeert gelezen.
+  `/account/notifications`; openen markeert gelezen. **De digest**
+  ([digest.ts](../packages/runtime-admin/src/admin-server/digest.ts)):
+  `sendDigests` groepeert `unmailedNotifications()` per lid, slaat wie geen
+  bevestigd adres heeft of `digest: off` koos over (wel markeren, zodat er
+  geen stapel ontstaat), stelt per lid één tekstmail samen (`composeDigest`,
+  puur en getest) met een afmeldlink (`createEmailToken(…, "digest-off",
+  30 dagen)` → `/account/digest?token=` → `setDigest(off)`), verstuurt via
+  `imprint.mail` en markeert `mailedAt`. De wekker is `POST /api/digest`
+  met het ingest-token van de site; `deploy.sh digest <site>` doet die
+  aanroep vanuit cron. De site houdt de SMTP-instellingen, de VPS alleen
+  het schema.
 - **Zoeken** ([search.ts](../packages/content-core/src/search.ts)): een
   contenttype dat gevonden wil worden geeft `search: { kinds, docs(store) }`
   mee — `kinds` zijn de soorten met hun label en voorvoegsels (`community:`,

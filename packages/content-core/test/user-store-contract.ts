@@ -20,7 +20,7 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.equal(ed.role, "editor");
       const all = await users.list();
       assert.deepEqual(all.map((u) => u.name), ["ed", "mark"]);
-      assert.deepEqual(Object.keys(all[0]).sort(), ["email", "emailVerified", "id", "name", "role"]);
+      assert.deepEqual(Object.keys(all[0]).sort(), ["digest", "email", "emailVerified", "id", "name", "role"]);
       assert.deepEqual([all[0].email, all[0].emailVerified], [null, false], "admin-made accounts have no address");
     });
 
@@ -182,6 +182,19 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.deepEqual(queue.map((n) => n.userName).sort(), ["ann", "ann", "ed"]);
       await users.markMailedNotifications(queue.filter((n) => n.userName === "ann").map((n) => n.id));
       assert.deepEqual((await users.unmailedNotifications()).map((n) => n.userName), ["ed"]);
+    });
+
+    it("the mail digest: daily unless the member says off; the unsubscribe link is a one-time token", async () => {
+      const users = await factory();
+      assert.equal((await users.get("ann"))!.digest, "daily");
+      await users.setDigest("ann", "off");
+      assert.equal((await users.get("ann"))!.digest, "off");
+      await assert.rejects(users.setDigest("ann", "weekly" as never), /Unknown digest/);
+      await users.setDigest("ann", "daily");
+      const token = await users.createEmailToken("ann", "digest-off", 24 * 30);
+      const who = await users.consumeEmailToken(token, "digest-off");
+      assert.equal(who?.name, "ann");
+      assert.equal(await users.consumeEmailToken(token, "digest-off"), null, "one-time");
     });
 
     it("removes users; unknown names are an error", async () => {

@@ -34,7 +34,7 @@ export class PgUserStore extends UserStore {
 
   protected async updateByName(
     name: string,
-    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt">>
+    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt" | "digest">>
   ): Promise<void> {
     await this.db.update(users).set(patch).where(eq(users.name, name));
   }

@@ -33,6 +33,7 @@ export {
   type MemberProfile,
   type RegisterResult,
 } from "./members";
+export { composeDigest, digestApi, digestOffByToken, sendDigests, setDigestPreference, type DigestReport } from "./digest";
 export { markNotificationsRead, myNotifications, notify, notifyGroup, notifyManagers, unreadNotifications, type Inbox } from "./notifications";
 export { previewEnter, previewExit } from "./preview-routes";
 export { UsersScreen } from "./users-screen";

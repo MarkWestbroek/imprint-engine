@@ -17,7 +17,9 @@ import { hashPassword, passwordProblem, verifyPassword } from "./passwords";
  */
 
 /** Never carries hashedPassword: this is what callers may show. */
-export type UserRecord = { id: number; name: string; role: RoleType; email: string | null; emailVerified: boolean };
+export const DIGESTS = ["daily", "off"] as const;
+export type Digest = (typeof DIGESTS)[number];
+export type UserRecord = { id: number; name: string; role: RoleType; email: string | null; emailVerified: boolean; digest: Digest };
 
 export type UserRow = {
   id: number;
@@ -26,13 +28,14 @@ export type UserRow = {
   role: string;
   email: string | null;
   emailVerifiedAt: Date | null;
+  digest: string;
 };
 
 const NAME_RE = /^[a-z0-9][a-z0-9._-]{1,63}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** One-time e-mail tokens: what they are for. */
-export const EMAIL_TOKEN_PURPOSES = ["verify", "reset"] as const;
+export const EMAIL_TOKEN_PURPOSES = ["verify", "reset", "digest-off"] as const;
 export type EmailTokenPurpose = (typeof EMAIL_TOKEN_PURPOSES)[number];
 export type EmailTokenRow = {
   id: number;
@@ -148,7 +151,14 @@ function toTokenRecord(row: TokenRow, now = new Date()): TokenRecord {
 }
 
 function toRecord(row: UserRow): UserRecord {
-  return { id: row.id, name: row.name, role: RoleType.parse(row.role), email: row.email, emailVerified: row.emailVerifiedAt !== null };
+  return {
+    id: row.id,
+    name: row.name,
+    role: RoleType.parse(row.role),
+    email: row.email,
+    emailVerified: row.emailVerifiedAt !== null,
+    digest: row.digest === "off" ? "off" : "daily",
+  };
 }
 
 const normaliseEmail = (email: string) => email.trim().toLowerCase();
@@ -161,7 +171,7 @@ export abstract class UserStore {
   protected abstract insertRow(row: Omit<UserRow, "id">): Promise<void>;
   protected abstract updateByName(
     name: string,
-    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt">>
+    patch: Partial<Pick<UserRow, "hashedPassword" | "role" | "email" | "emailVerifiedAt" | "digest">>
   ): Promise<void>;
   protected abstract deleteByName(name: string): Promise<void>;
   // E-mail tokens
@@ -242,6 +252,14 @@ export abstract class UserStore {
   }
 
   /** Set (or change) an address; verification starts over. */
+  /** The member's choice about the mail digest (the inbox stays). */
+  async setDigest(name: string, digest: Digest, now = new Date()): Promise<void> {
+    void now;
+    await this.mustExist(name);
+    if (!(DIGESTS as readonly string[]).includes(digest)) throw new Error(`Unknown digest "${digest}"`);
+    await this.updateByName(name, { digest });
+  }
+
   async setEmail(name: string, email: string): Promise<void> {
     const address = normaliseEmail(email);
     if (!EMAIL_RE.test(address)) throw new Error("That is not an e-mail address");
@@ -442,6 +460,7 @@ export abstract class UserStore {
       hashedPassword: hashPassword(password),
       role: RoleType.parse(role),
       email: null,
+      digest: "daily",
       emailVerifiedAt: null,
     });
     const created = await this.get(name);

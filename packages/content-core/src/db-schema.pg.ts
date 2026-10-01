@@ -58,6 +58,8 @@ export const users = pgTable("users", {
   /** Members register with an address (design/communities.md §4.1); admin-made accounts may have none. */
   email: varchar("email", { length: 255 }).unique(),
   emailVerifiedAt: ts("email_verified_at"),
+  /** The mail digest of notifications: "daily" | "off" — see db-schema.ts. */
+  digest: varchar("digest", { length: 16 }).notNull().default("daily"),
 });
 
 /** One-time e-mail tokens (verify an address, reset a password) — see db-schema.ts. */

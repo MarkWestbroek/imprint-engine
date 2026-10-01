@@ -7,7 +7,7 @@ import { eventHref } from "@imprint/plugin-events/href";
 import { imprint } from "@/lib/content";
 import { ResendButton } from "@/components/account-forms";
 import { admin } from "@/lib/admin";
-import { logoutAction, resendVerificationAction } from "./actions";
+import { logoutAction, resendVerificationAction, setDigestAction } from "./actions";
 
 export const metadata: Metadata = { title: "Mijn account", robots: { index: false } };
 export const dynamic = "force-dynamic";
@@ -53,6 +53,15 @@ export default async function AccountPage({ searchParams }: Props) {
       <p>
         <Link href="/account/notifications">Mededelingen</Link>
       </p>
+      <form action={setDigestAction} className="cg-inline-form">
+        <label>
+          <input type="checkbox" name="digest" value="daily" defaultChecked={user.digest !== "off"} /> Dagelijkse mail met wat er nieuw voor je is
+          {!user.emailVerified && <span className="cg-muted"> (zodra je adres bevestigd is)</span>}
+        </label>
+        <button type="submit" className="cg-button-small">
+          Opslaan
+        </button>
+      </form>
 
       <h2>Mijn communities</h2>
       {memberships.length === 0 ? (
