@@ -23,6 +23,8 @@ export {
   confirmEmail,
   memberProfile,
   registerMember,
+  requestPasswordReset,
+  resetPasswordByToken,
   sendVerification,
   signInMember,
   signOutMember,

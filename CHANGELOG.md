@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Wachtwoord vergeten**: `/account/forgot` mailt een eenmalige link (2 uur),
+  `/account/reset` zet het nieuwe wachtwoord; het antwoord verraadt niet of
+  een adres bekend is, en de snelheidsgrens per IP geldt per doel.
 - **Leden (G1 van communities.md)**: zelf registreren met e-mailadres en
   wachtwoord, bevestiging per maillink (eenmalige tokens), inloggen op de
   site zelf met naam of e-mailadres (`/account/login`), een accountpagina

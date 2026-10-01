@@ -33,6 +33,17 @@ export async function logoutAction(): Promise<void> {
   return members.signOutMember(admin, "/");
 }
 
+export async function forgotPasswordAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  const h = await headers();
+  const ip = (h.get("x-forwarded-for") ?? "").split(",")[0]!.trim() || undefined;
+  const site = await store.getSiteConfig();
+  return members.requestPasswordReset(admin, String(formData.get("email") ?? ""), { ip, baseUrl: site.baseUrl });
+}
+
+export async function resetPasswordAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  return members.resetPasswordByToken(admin, String(formData.get("token") ?? ""), String(formData.get("password") ?? ""));
+}
+
 export async function resendVerificationAction(): Promise<ActionResult> {
   const session = await admin.auth.getSession();
   if (!session) return { ok: false, error: "Log eerst in." };

@@ -25,10 +25,12 @@ const WINDOW_MS = 10 * 60_000;
 const MAX_PER_WINDOW = 5;
 const attempts = new Map<string, number[]>();
 
-function rateLimited(ip: string, now = Date.now()): boolean {
-  const recent = (attempts.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
+/** Per IP and per purpose (registering, a reset request), so one does not block the other. */
+function rateLimited(ip: string, purpose: string, now = Date.now()): boolean {
+  const key = `${purpose}:${ip}`;
+  const recent = (attempts.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
-  attempts.set(ip, recent);
+  attempts.set(key, recent);
   return recent.length > MAX_PER_WINDOW;
 }
 
@@ -47,7 +49,7 @@ export async function registerMember(
   if (!users) return { ok: false, error: "Registreren kan alleen met een database (DATABASE_URL)." };
   // The honeypot: a real visitor never sees the field, so a value means a bot. Pretend it worked.
   if (input.website) return { ok: true };
-  if (opts.ip && rateLimited(opts.ip)) return { ok: false, error: "Te veel pogingen; probeer het over tien minuten nog eens." };
+  if (opts.ip && rateLimited(opts.ip, "register")) return { ok: false, error: "Te veel pogingen; probeer het over tien minuten nog eens." };
   let user: UserRecord;
   try {
     user = await users.register(input.name.trim(), input.email, input.password);
@@ -80,6 +82,54 @@ export async function sendVerification(admin: AdminContext, userName: string, ba
       `Hallo ${user.name},\n\nBevestig je e-mailadres voor ${site.name} met deze link (24 uur geldig):\n\n${verifyUrl}\n\n` +
       `Heb je je niet aangemeld? Dan kun je dit bericht negeren.\n`,
   });
+  return { ok: true };
+}
+
+/**
+ * "Wachtwoord vergeten": mail a one-time reset link to the address — and
+ * answer the same whether the address is known or not, so the form cannot be
+ * used to find out who has an account. Rate-limited like registration.
+ */
+export async function requestPasswordReset(
+  admin: AdminContext,
+  email: string,
+  opts: { ip?: string; baseUrl: string }
+): Promise<RegisterResult> {
+  const users = admin.imprint.users;
+  if (!users) return { ok: false, error: "Dit kan alleen met een database (DATABASE_URL)." };
+  if (opts.ip && rateLimited(opts.ip, "reset")) return { ok: false, error: "Te veel pogingen; probeer het over tien minuten nog eens." };
+  const user = await users.getByEmail(email);
+  if (!user?.email) return { ok: true };
+  const token = await users.createEmailToken(user.name, "reset", 2);
+  const resetUrl = `${opts.baseUrl.replace(/\/$/, "")}/account/reset?token=${encodeURIComponent(token)}`;
+  const mailer = admin.imprint.mail;
+  if (!mailer) {
+    if (process.env.NODE_ENV === "production") return { ok: true }; // nothing to say that would not reveal the address
+    console.info(`[members] no mailer configured; reset link for ${user.name}: ${resetUrl}`);
+    return { ok: true, verifyUrl: resetUrl };
+  }
+  const site = await admin.imprint.store.getSiteConfig();
+  await mailer.send({
+    to: user.email,
+    subject: `Nieuw wachtwoord voor ${site.name}`,
+    text:
+      `Hallo ${user.name},\n\nKies met deze link een nieuw wachtwoord voor ${site.name} (2 uur geldig):\n\n${resetUrl}\n\n` +
+      `Heb je dit niet aangevraagd? Dan kun je dit bericht negeren; je wachtwoord blijft zoals het was.\n`,
+  });
+  return { ok: true };
+}
+
+/** The reset link's second step: the token once, then the new password. */
+export async function resetPasswordByToken(admin: AdminContext, token: string, password: string): Promise<ActionResult> {
+  const users = admin.imprint.users;
+  if (!users) return { ok: false, error: "Dit kan alleen met een database (DATABASE_URL)." };
+  const user = await users.consumeEmailToken(token, "reset");
+  if (!user) return { ok: false, error: "Deze link is onbekend, al gebruikt of verlopen. Vraag een nieuwe aan." };
+  try {
+    await users.setPassword(user.name, password);
+  } catch (err) {
+    return { ok: false, error: (err as Error).message };
+  }
   return { ok: true };
 }
 

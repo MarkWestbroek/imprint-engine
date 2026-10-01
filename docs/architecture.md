@@ -1026,7 +1026,8 @@ niet van elkaar afwijken.
   `imprint.config.ts` → `imprint.mail` (nodemailer, design/mail.md); zonder
   relay toont de ontwikkelomgeving de link en zegt productie dat mail niet
   is ingesteld. De ledenlogica (registreren met honeypot en snelheidsgrens
-  per IP, bevestigen, inloggen op de site, profiel) staat in
+  per IP en per doel, bevestigen, wachtwoord vergeten met een `reset`-token
+  van twee uur, inloggen op de site, profiel) staat in
   [members.ts](../packages/runtime-admin/src/admin-server/members.ts); de
   site wikkelt haar in "use server"-acties en routes onder `/account`.
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):

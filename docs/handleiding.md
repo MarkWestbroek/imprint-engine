@@ -508,7 +508,9 @@ andere sites, met een paar dingen van commonground.nl:
   met een bevestigingslink (24 uur geldig); pas met een bevestigd adres
   kunnen ze lid worden. Inloggen kan met naam of e-mailadres; op
   `/account` staan je gegevens, je communities en de knop om de
-  bevestigingsmail opnieuw te sturen. Op een community-pagina staat **Lid
+  bevestigingsmail opnieuw te sturen. Wachtwoord kwijt? **Wachtwoord
+  vergeten?** op de inlogpagina mailt een link (2 uur geldig) om een nieuw
+  wachtwoord te kiezen. Op een community-pagina staat **Lid
   worden**: bij een open community ben je meteen lid, bij "op aanvraag"
   keurt een beheerder je goed. **Verlaten** kan altijd, behalve als eigenaar.
 - **Een community beheren** (eigenaar, beheerders en de redactie van de

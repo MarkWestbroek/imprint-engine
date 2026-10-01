@@ -840,8 +840,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~G1 leden~~ — registreren met e-mail + wachtwoord en
             bevestigingsmail, lidmaatschap als tabel, open/op aanvraag,
             beheerpagina, uitnodigingslinks (01-10).
-      - [ ] G1b: **passkeys** (WebAuthn) naast het wachtwoord; **wachtwoord
-            vergeten** (de `reset`-tokens bestaan al); sessies intrekbaar.
+      - [x] ~~Wachtwoord vergeten~~ — `/account/forgot` + `/account/reset` (01-10).
+      - [ ] G1b: **passkeys** (WebAuthn) naast het wachtwoord; sessies intrekbaar.
       - [ ] G1c: IdP (Zitadel) met LinkedIn/Google (communities §5).
       - [ ] Ledenlijst per groep ook zichtbaar voor leden (nu alleen beheer);
             gebruikersnaam → weergavenaam en avatarfoto.
