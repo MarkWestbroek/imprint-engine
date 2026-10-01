@@ -8,6 +8,7 @@
 @source "../../../../packages/plugin-wiki/src";
 @source "../../../../packages/plugin-glossary/src";
 @source "../../../../packages/plugin-groups/src";
+@source "../../../../packages/plugin-blog/src";
 
 /*
  * Common Ground-huisstijl, naar commonground.nl: wit, navy tekst en knoppen,

@@ -546,6 +546,11 @@ andere sites, met een paar dingen van commonground.nl:
   beheerder, eigenaar) en **uitnodigingslinks**: wie zo'n link opent en
   inlogt, is meteen lid of beheerder zonder goedkeuring. Een link is 30
   dagen geldig, wordt één keer getoond en is in te trekken.
+- **Blog**: onder **Posts** in de admin staat elk bericht met schrijver,
+  datum, samenvatting, tekst, tags en (optioneel) de community waar het bij
+  hoort. Alle berichten staan op `/blog`, elk bericht op `/blog/<slug>`, en
+  een community-pagina toont haar eigen berichten. De widget **Posts** zet
+  de laatste berichten (van de site, een community of een tag) op een pagina.
 - **Wie mag wat zien**: elke pagina, wikipagina, term en groep heeft een
   veld **Toegang**: *public* (iedereen), *restricted* (alleen ingelogde
   leden van de site) of *group: …* (alleen de leden van die community; de

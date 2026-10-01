@@ -2,6 +2,7 @@ import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
 import { glossaryWidgets } from "@imprint/plugin-glossary";
 import { groupsWidgets } from "@imprint/plugin-groups";
+import { blogWidgets } from "@imprint/plugin-blog";
 
 /**
  * The widgets this site offers (architecture.md §3): a selection from the
@@ -43,6 +44,8 @@ export const widgetCatalog = [
   ...glossaryWidgets,
   // The communities overview (plugin-groups): Pleio's "Onze communities".
   ...groupsWidgets,
+  // The latest blog posts (plugin-blog): Pleio's blog lists.
+  ...blogWidgets,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

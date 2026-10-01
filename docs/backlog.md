@@ -880,6 +880,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             "jouw groepen" op de startpagina ontbreekt); media per groep.
       - [ ] De OpenFTV-sidecar (fase 3 §4) moet het `groups`-attribuut en
             `group:<slug>` ook kennen zodra die de in-process PDP vervangt.
+      - [x] ~~Blogs~~ — plugin-blog, 254 publieke berichten geïmporteerd (01-10).
+      - [ ] Agenda (§4.5): (a) `event` + agendawidget + import van de 322
+            publieke evenementen; (b) aanmelden voor leden (komt/misschien/
+            komt niet) met privacytekst en organisatormail. Herhalingen
+            (`range_*`) eerst alleen als tekst.
+      - [ ] Nieuws (313 publiek): als `post` met tag, of eigen type; de
+            "Uitgelicht nieuws"-blokken verwijzen nu nog naar Pleio.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)

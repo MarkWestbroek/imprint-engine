@@ -9,6 +9,8 @@ import { scopedSlug, wikiPageHref } from "@imprint/plugin-wiki/href";
 import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
 import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
 import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
+import { blogContentTypes } from "@imprint/plugin-blog/content-types";
+import { postHref } from "@imprint/plugin-blog/href";
 import { groupsContentTypes } from "@imprint/plugin-groups/content-types";
 import { GROUPS_PREFIX, groupHref, groupPagePrefix, groupsHref } from "@imprint/plugin-groups/href";
 import { widgetRegistry } from "../src/widgets/registry";
@@ -40,6 +42,8 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   a group's pages → `groups/<slug>/<page>`; a group's wikis → one Imprint
  *   wiki with the group's slug: a node with children becomes a folder plus a
  *   page with its own text, a leaf a page;
+ * - blog posts → `post` (plugin-blog) on `/blog/<slug>`, with writer, date,
+ *   tags and group; blog lists → the `posts` widget;
  * - terms (the custom type `custom_term`) → `term` (plugin-glossary), their
  *   overviews (objects widgets over custom_term) → the `glossary` widget.
  * Links to imported pages become Imprint paths; everything else (news,
@@ -73,6 +77,11 @@ const SITE_QUERY = `query Site { site { name subtitle startpage
 const PAGES_QUERY = `query Pages($offset: Int, $limit: Int) { entities(subtype: "page", offset: $offset, limit: $limit) {
   total edges { guid ... on Page { pageType statusPublished accessId title url description richDescription
   timeCreated timeUpdated group { guid } rows { ${ROW} } } } } }`;
+
+/** Blog posts: the site's and the groups' (public ones; the rest comes with the admin export later). */
+const BLOG_QUERY = `query Blogs($offset: Int, $limit: Int) { entities(subtype: "blog", offset: $offset, limit: $limit) {
+  total edges { guid ... on Blog { title url excerpt richDescription timePublished statusPublished accessId tags
+  tagCategories { name values } owner { name } featured { image { ... on File { download } } } group { guid } } } } }`;
 
 /** Groups (communities): their public face; membership stays behind (G1). */
 const GROUPS_QUERY = `query Groups($offset: Int, $limit: Int) { groups(offset: $offset, limit: $limit) {
@@ -168,6 +177,21 @@ type PGroup = {
   tagCategories: { name: string; values: string[] }[] | null;
   icon: { download: string | null } | null;
   featured: { image: { download: string | null } | null } | null;
+};
+type PBlog = {
+  guid: string;
+  title: string;
+  url: string;
+  excerpt: string | null;
+  richDescription: string | null;
+  timePublished: string | null;
+  statusPublished: string;
+  accessId: number | string;
+  tags: string[] | null;
+  tagCategories: { name: string; values: string[] }[] | null;
+  owner: { name: string | null } | null;
+  featured: { image: { download: string | null } | null } | null;
+  group: { guid: string } | null;
 };
 type PWikiRoot = { guid: string; title: string; accessId: number; statusPublished: string; group: { guid: string } | null };
 type PTerm = {
@@ -527,6 +551,13 @@ function widget(w: PWidget, page: PPage | null, rowColor: string | null): Widget
     case "events":
     case "activity":
     case "search": {
+      // Lists of blog posts are the posts widget now.
+      if ((val(s, "subtypes") + val(s, "typeFilter")).includes("blog") && w.type !== "search") {
+        const categories = JSON.parse(val(s, "categoryTags") || "[]") as { values?: string[] }[];
+        const tag = cleanTag(categories.flatMap((c) => c.values ?? [])[0] ?? "");
+        const limit = Math.min(50, Math.max(1, Number(val(s, "limit")) || Number(val(s, "numberOfItems")) || 5));
+        return [{ type: "posts", config: { ...(val(s, "title") ? { title: val(s, "title") } : {}), limit, tag } }];
+      }
       // Lists of terms are the glossary widget now (which searches itself); the rest points at Pleio.
       if ((val(s, "subtypes") + val(s, "typeFilter")).includes("custom_term")) {
         if (w.type === "search") return [];
@@ -643,6 +674,24 @@ async function main() {
     hrefOf.set(p.guid, slug === "home" ? "/" : `/${slug}`);
   }
 
+  // Blog posts (plugin-blog): public ones of the site and of the known groups; each gets /blog/<slug>.
+  const allBlogs = await cached<{ entities: { edges: PBlog[] } }>("blogs.json", () =>
+    gql(BLOG_QUERY, { offset: 0, limit: 1000 })
+  ).then((d) => d.entities.edges);
+  const blogs = allBlogs.filter(
+    (b) => b.statusPublished === "published" && Number(b.accessId) === 2 && (!b.group || groupSlugOf.has(b.group.guid))
+  );
+  const postSlugOf = new Map<string, string>();
+  const takenPosts = new Set<string>();
+  for (const b of blogs) {
+    const base = slugFromUrl(b.url);
+    let slug = base;
+    for (let n = 2; takenPosts.has(slug); n++) slug = `${base}-${n}`;
+    takenPosts.add(slug);
+    postSlugOf.set(b.guid, slug);
+    hrefOf.set(b.guid, postHref(slug));
+  }
+
   // Terms (plugin-glossary): site-level, public ones; each gets its /term/<slug>, so the crosslinks between them resolve.
   const allTerms = await cached<{ entities: { edges: PTerm[] } }>("terms.json", () =>
     gql(TERMS_QUERY, { offset: 0, limit: 1000 })
@@ -739,6 +788,22 @@ async function main() {
     };
   });
   const wikiPageDocs = wikiPages.map(({ node, page }) => ({ ...page, body: markdown(node.richDescription) }));
+  const postDocs = blogs.map((b) => {
+    const image = b.featured?.image?.download ?? "";
+    return {
+      slug: postSlugOf.get(b.guid)!,
+      lang: "en",
+      access: "public",
+      title: b.title,
+      summary: (b.excerpt ?? "").replace(/\s+/g, " ").trim(),
+      body: markdown(b.richDescription),
+      author: b.owner?.name ?? "",
+      publishedAt: (b.timePublished ?? "").slice(0, 10) || "1970-01-01",
+      tags: [...new Set([...(b.tagCategories ?? []).flatMap((c) => c.values), ...(b.tags ?? [])].map(cleanTag).filter(Boolean))],
+      group: b.group ? groupSlugOf.get(b.group.guid)! : "",
+      ...(image ? { image: href(image) } : {}),
+    };
+  });
   const termDocs = terms.map((t) => ({
     slug: termSlugOf.get(t.guid)!,
     lang: "en",
@@ -751,7 +816,7 @@ async function main() {
 
   console.log(
     `${wanted.length} pages (of ${pages.length}), footer ${footer.length ? "✓" : "–"}, menu ${mainMenu.items.length} items, ` +
-      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms`
+      `${groupDocs.length} groups, ${wikiDocs.length} wikis (${folders.length} folders + ${wikiPageDocs.length} pages), ${termDocs.length} terms, ${postDocs.length} posts`
   );
   if (DRY) {
     for (const d of docs) console.log(`  ${d.slug}  ${(d.data.layout as { rows: unknown[] } | undefined)?.rows.length ?? 0} rows`);
@@ -765,7 +830,7 @@ async function main() {
   // The store with this site's widgets and content types, so it validates as the admin does.
   const store = openContentDatabase(url, {
     widgets: widgetRegistry,
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes),
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes),
   }).store;
 
   let written = 0;
@@ -799,7 +864,8 @@ async function main() {
   for (const p of wikiPageDocs) await put("wiki-page", p.slug, p);
   for (const g of groupDocs) await put("group", g.slug, g);
   for (const t of termDocs) await put("term", t.slug, t);
-  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length;
+  for (const b of postDocs) await put("post", b.slug, b); // after the groups: the relation rule checks `group`
+  const total = docs.length + 2 + wikiDocs.length + folders.length + wikiPageDocs.length + groupDocs.length + termDocs.length + postDocs.length;
   // Stored values get their schema defaults, so a re-run compares unequal once; the second re-run is quiet.
   console.log(`✓ ${written} written, ${total - written} unchanged or failed`);
 }

@@ -2,6 +2,7 @@ import type { WidgetViewer, WidgetViewers } from "@imprint/runtime-admin";
 import { standardViewers } from "@imprint/widgets-standard/viewers";
 import { glossaryViewers } from "@imprint/plugin-glossary";
 import { groupsViewers } from "@imprint/plugin-groups";
+import { blogViewers } from "@imprint/plugin-blog";
 
 /**
  * Widget type name → viewer, for every widget in ./registry.ts. Each viewer
@@ -39,6 +40,7 @@ const viewers: WidgetViewers = {
   video: standardViewers.video,
   ...glossaryViewers,
   ...groupsViewers,
+  ...blogViewers,
 };
 
 function tagged(type: string, Viewer: WidgetViewer): WidgetViewer {

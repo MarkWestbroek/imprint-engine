@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ANONYMOUS, contentResource, permit, userSubject, type Page } from "@imprint/content-core";
+import { ANONYMOUS, contentResource, permit, userSubject, type ContentStore, type Page, type WritableContentStore } from "@imprint/content-core";
 import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
 import { GroupCards } from "./group-cards";
 import { getGroup, listGroups } from "./groups";
@@ -8,15 +8,20 @@ import { JoinButton } from "./join-button";
 import type { Group } from "./schemas";
 import { toCard } from "./widget";
 
+/** A post of the group (plugin-blog's `post`), as far as this view needs it; the type is known by name only. */
+type GroupPost = { slug: string; title: string; publishedAt: string; author: string };
+
 function GroupView({
   group,
   pages,
   wikiTitle,
+  posts,
   call,
 }: {
   group: Group;
   pages: Page[];
   wikiTitle: string | null;
+  posts: GroupPost[];
   call?: PluginCall;
 }) {
   return (
@@ -63,6 +68,24 @@ function GroupView({
         {group.introduction && <Markdown>{group.introduction}</Markdown>}
         {group.body && <Markdown>{group.body}</Markdown>}
       </div>
+      {posts.length > 0 && (
+        <section className="mt-10 max-w-3xl">
+          <h2 className="text-xl font-semibold">Berichten</h2>
+          <ul className="mt-2 divide-y divide-line">
+            {posts.map((p) => (
+              <li key={p.slug} className="py-2">
+                <Link href={`/blog/${p.slug}`} className="font-semibold text-accent hover:underline">
+                  {p.title}
+                </Link>
+                <span className="ml-2 text-sm text-muted">
+                  {p.publishedAt}
+                  {p.author && ` · ${p.author}`}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {group.tags.length > 0 && (
         <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tags">
           {group.tags.map((tag) => (
@@ -74,6 +97,22 @@ function GroupView({
       )}
     </article>
   );
+}
+
+/** The group's posts (type `post`, when the site has plugin-blog), newest first, as the reader may see them. */
+async function groupPosts(reader: ContentStore, slug: string): Promise<GroupPost[]> {
+  const listing = reader as Partial<WritableContentStore>;
+  if (typeof listing.listItems !== "function") return [];
+  try {
+    return (await listing.listItems("post"))
+      .map((r) => r.data as Partial<GroupPost> & { group?: string })
+      .filter((p): p is GroupPost & { group: string } => p.group === slug && typeof p.slug === "string" && typeof p.title === "string")
+      .map((p) => ({ slug: p.slug, title: p.title, publishedAt: p.publishedAt ?? "", author: p.author ?? "" }))
+      .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+      .slice(0, 10);
+  } catch {
+    return []; // no such type on this site
+  }
 }
 
 /**
@@ -102,13 +141,15 @@ export async function groupsPublicRoute({ imprint, slug, members, session, subje
   const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
   if (members && !(await permit(imprint.pdp, subject, "read", contentResource("group", group.slug, group)))) return null;
   // The group's pages as this visitor may see them (public in the catch-all; the member's own under /members).
-  const [pages, wiki] = await Promise.all([
-    (members ? imprint.storeFor(subject) : imprint.store).listPages({ prefix: groupPagePrefix(group.slug) }),
+  const reader = members ? imprint.storeFor(subject) : imprint.store;
+  const [pages, wiki, posts] = await Promise.all([
+    reader.listPages({ prefix: groupPagePrefix(group.slug) }),
     group.wiki ? store.getItem("wiki", group.wiki) : null,
+    groupPosts(reader, group.slug),
   ]);
   const wikiTitle = (wiki?.data as { title?: string } | undefined)?.title ?? null;
   return {
-    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} call={call} />,
+    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} posts={posts} call={call} />,
     metadata: { title: group.title, description: group.summary },
   };
 }

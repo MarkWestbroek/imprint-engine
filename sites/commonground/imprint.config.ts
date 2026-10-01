@@ -1,5 +1,6 @@
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
+import { blogPlugin } from "@imprint/plugin-blog";
 import { glossaryPlugin } from "@imprint/plugin-glossary";
 import { groupsPlugin } from "@imprint/plugin-groups";
 import { wikiPlugin } from "@imprint/plugin-wiki";
@@ -20,7 +21,7 @@ export default defineImprint({
   },
   widgets: widgetRegistry,
   // Groups with their wikis, and the terms, imported from Pleio (scripts/import-pleio.ts).
-  plugins: [wikiPlugin(), glossaryPlugin({ indexHref: "/termen" }), groupsPlugin()],
+  plugins: [wikiPlugin(), glossaryPlugin({ indexHref: "/termen" }), groupsPlugin(), blogPlugin()],
   // A community site: pages and their chrome; groups, news and events follow (communities.md).
   // The core types this site uses; the plugins' types (wiki, term) are active on top of these.
   contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],

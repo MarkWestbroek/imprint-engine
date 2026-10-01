@@ -1051,7 +1051,11 @@ niet van elkaar afwijken.
   via de dispatcher van de site, `JoinButton` als client-eiland op de
   vooraf gerenderde groepspagina — `PublicRouteContext.call` is de
   dispatcher van de site, een server-action-referentie is statisch — en
-  `GroupManageScreen` voor de dynamische beheerpagina van de site). Node-scripts
+  `GroupManageScreen` voor de dynamische beheerpagina van de site) en
+  [plugin-blog](../packages/plugin-blog/src/index.ts) (type `post` met
+  datum, schrijver, tags en groep; widget `posts`; routes `/blog` en
+  `/blog/<slug>`; de groepspagina leest de berichten van haar groep alleen
+  op typenaam, zonder import van de plugin). Node-scripts
   gebruiken de React-vrije entries (`/content-types`, `/schemas`).
 - **Leden** (design/communities.md §4.1, G1): `UserStore` kent naast de
   redactie-accounts ook geregistreerde leden — `register(name, email,

@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **plugin-blog**: berichten als contenttype (`post`: titel, samenvatting,
+  tekst, schrijver, datum, tags, groep, beeld), de widget `posts` (laatste
+  berichten van de site, een groep of een tag), het overzicht `/blog` en
+  een pagina per bericht op `/blog/<slug>`; een groepspagina toont haar
+  berichten. De showcase importeert de 254 publieke blogs uit Pleio.
 - **Drie zichtbaarheidsniveaus (G2 van communities.md)**: `access` kent naast
   `public` en `restricted` nu `group:<slug>`; de ingelogde gebruiker draagt
   zijn actieve groepen mee (`userSubject(name, role, groups)`), de

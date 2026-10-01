@@ -49,6 +49,8 @@ andere Pleio-site).
   (plugin-groups) op `/groups/<slug>`, met per groep één wiki (de wiki's van
   de groep samen, slug = groepsslug; "Common Ground publicatiesite" heet
   `wiki`) en haar pagina's als `groups/<slug>/<pagina>`.
+- Blogs → `post` (plugin-blog) op `/blog/<slug>`, met schrijver, datum,
+  tags en groep; bloglijsten → de widget `posts`.
 - Termen (Pleio's `custom_term`) → `term` (plugin-glossary), met de
   samenvatting (excerpt) voor de kaart en de tag-categorie als tags; de
   overzichten erop (`objects`-widgets over `custom_term`) → de widget `glossary`.
