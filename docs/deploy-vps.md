@@ -136,6 +136,17 @@ SITES=musicbrain ./deploy.sh
 ```
 
 Gebruikersbeheer: `./deploy.sh user musicbrain passwd mark` (= `npm run user`).
+Eerst `./deploy.sh user <site> list`: elke site heeft een eigen database en
+dus eigen gebruikers. Toont die "No users yet", maak dan de eerste admin aan
+met `./deploy.sh user <site> add mark admin`; het wachtwoord verschijnt één
+keer. Wachtwoorden zijn gehasht en dus niet op te vragen, alleen opnieuw te
+zetten.
+
+Faalt `user` met `✗ Failed query: … from "users"`, dan draait de
+tools-container nieuwere code dan het schema van die site (bv. alleen een
+andere site gedeployd). Eerst `./deploy.sh migrate <site>`: de migraties
+voegen toe, de live site blijft gewoon draaien. `SITES=<site> ./deploy.sh`
+trekt daarna ook de site zelf gelijk.
 
 ## MusicBrain verhuizen (MariaDB → Postgres)
 
