@@ -20,6 +20,8 @@ import { readOpts } from "../preview";
 import type { PageDraft } from "../studio/layout-ops";
 import type { AdminActions } from "./actions";
 import { draftKey, getDraft, setDraft } from "./drafts";
+import { withAccessOptions } from "../forms";
+import { accessGroups } from "./members";
 
 /**
  * Server half of the page studio: loads (or initialises) the draft, renders
@@ -126,7 +128,7 @@ export async function PageStudioScreen({
       meta={draft.meta}
       body={draft.body}
       rows={draft.rows}
-      metaSchema={admin.forms.content("page")}
+      metaSchema={withAccessOptions(admin.forms.content("page"), await accessGroups(admin))}
       widgetSchemas={widgetSchemas}
       actions={actions.studio}
       editor={studio.editor}

@@ -20,8 +20,20 @@ export type Locale = z.infer<typeof Locale>;
  * is only ever rendered per request, after the PDP said yes (access.ts).
  * Configuration types (site, menu, theme, relations) have no access value.
  */
-export const Access = z.enum(["public", "restricted"]);
-export type Access = z.infer<typeof Access>;
+/**
+ * Who may read an item (design/communities.md §4.2, the three levels):
+ * `public` — everyone; `restricted` — members of the site (anyone signed
+ * in, as the policy decides); `group:<slug>` — members of that group. The
+ * admin offers the groups as options (`x-imprint.access`); the value stays a
+ * string so a new group needs no schema change. Promoting an item to a wider
+ * audience is an ordinary new version.
+ */
+export const ACCESS_RE = /^(public|restricted|group:[a-z0-9-]+)$/;
+export const Access = z.string().regex(ACCESS_RE).meta({ "x-imprint": { access: true } });
+export type Access = "public" | "restricted" | `group:${string}`;
+
+/** The group an access value names, or null for the site-wide levels. */
+export const accessGroup = (access: string): string | null => (access.startsWith("group:") ? access.slice(6) : null);
 
 /* ---------- the media library (design/beeldbibliotheek.md) ---------- */
 

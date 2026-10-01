@@ -20,8 +20,10 @@ export { PageStudioScreen } from "./studio-screen";
 export { draftOp, resetDraft, savePageDraft } from "./studio-actions";
 export { createSessionAuth, type SessionAuth } from "./session";
 export {
+  accessGroups,
   confirmEmail,
   memberProfile,
+  subjectFor,
   registerMember,
   requestPasswordReset,
   resetPasswordByToken,

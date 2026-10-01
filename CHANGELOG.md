@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Drie zichtbaarheidsniveaus (G2 van communities.md)**: `access` kent naast
+  `public` en `restricted` nu `group:<slug>`; de ingelogde gebruiker draagt
+  zijn actieve groepen mee (`userSubject(name, role, groups)`), de
+  in-process PDP laat groepsinhoud alleen aan die leden (en de redactie)
+  zien. De admin biedt de groepen aan in het toegangsveld (itemeditor,
+  studio, wiki-studio). De showcase heeft `/members/…`: niet-publieke
+  inhoud per verzoek voor de ingelogde bezoeker; de publieke route stuurt
+  ernaartoe, niet ingelogd gaat eerst naar de login.
 - **Wachtwoord vergeten**: `/account/forgot` mailt een eenmalige link (2 uur),
   `/account/reset` zet het nieuwe wachtwoord; het antwoord verraadt niet of
   een adres bekend is, en de snelheidsgrens per IP geldt per doel.

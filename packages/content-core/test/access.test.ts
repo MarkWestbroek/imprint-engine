@@ -44,6 +44,28 @@ describe("inProcessPdp: the fixed rule set", () => {
   });
 });
 
+describe("inProcessPdp: group content (design/communities.md §4.2)", () => {
+  const forAtlas = (id: string) => ({ type: "page", id, properties: { access: "group:atlas" } });
+  const read = { name: "read" };
+  it("a group's members read its content; other members, readers and visitors do not; staff always does", async () => {
+    const member = userSubject("ann", "reader", ["atlas", "signalen"]);
+    const other = userSubject("bob", "reader", ["signalen"]);
+    assert.equal((await inProcessPdp.evaluate({ subject: member, action: read, resource: forAtlas("x") })).decision, true);
+    assert.equal((await inProcessPdp.evaluate({ subject: other, action: read, resource: forAtlas("x") })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: userSubject("ria", "reader"), action: read, resource: forAtlas("x") })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: ANONYMOUS, action: read, resource: forAtlas("x") })).decision, false);
+    assert.equal((await inProcessPdp.evaluate({ subject: userSubject("ed", "editor"), action: read, resource: forAtlas("x") })).decision, true);
+  });
+  it("permit and permitted treat group content as non-public; a member keeps it in a list", async () => {
+    const member = userSubject("ann", "reader", ["atlas"]);
+    assert.equal(await permit(inProcessPdp, ANONYMOUS, "read", forAtlas("x")), false);
+    assert.equal(await permit(inProcessPdp, member, "read", forAtlas("x")), true);
+    const items = [{ slug: "a", access: "public" }, { slug: "b", access: "group:atlas" }, { slug: "c", access: "group:signalen" }];
+    assert.deepEqual((await permitted(inProcessPdp, member, "page", items, (i) => i.slug)).map((i) => i.slug), ["a", "b"]);
+    assert.deepEqual((await permitted(inProcessPdp, ANONYMOUS, "page", items, (i) => i.slug)).map((i) => i.slug), ["a"]);
+  });
+});
+
 describe("permit: the PEP", () => {
   const broken: PolicyDecisionPoint = {
     evaluate: async () => {

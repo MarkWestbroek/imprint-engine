@@ -67,8 +67,10 @@ function EditButton() {
   const path = usePathname();
   const slug = path.replace(/^\/+|\/+$/g, "") || "home";
   if (slug === "search" || slug.startsWith("groups/") || slug.startsWith("terms/") || slug === "groups" || slug.startsWith("account")) return null;
+  // A members-only page edits as the page it is.
+  const target = slug.startsWith("members/") ? slug.slice(8) : slug;
   return (
-    <Link href={`/admin/page/edit/${slug}`} className="cg-edit" aria-label="Deze pagina bewerken" title="Deze pagina bewerken">
+    <Link href={`/admin/page/edit/${target}`} className="cg-edit" aria-label="Deze pagina bewerken" title="Deze pagina bewerken">
       <Pencil size={22} aria-hidden />
     </Link>
   );

@@ -3,6 +3,7 @@ import type { PluginScreenProps } from "@imprint/runtime-admin";
 import { WikiFolderSchema, WikiPageSchema, WikiSchema } from "../schemas";
 import { NewWikiForm } from "./new-form";
 import { WikiStudio } from "./studio";
+import { accessGroups } from "@imprint/runtime-admin/admin-server";
 
 /** `/admin/wiki` — overview and create form; `/admin/wiki/<slug>` — the tree studio (design/wiki.md §4b). */
 export async function wikiScreen({ admin, path, call }: PluginScreenProps) {
@@ -95,7 +96,14 @@ async function WikiStudioScreen({ admin, slug, call }: Pick<PluginScreenProps, "
         <h1 className="text-2xl font-semibold tracking-tight">{wiki.title}</h1>
         <span className="font-mono text-xs text-muted">/{wiki.slug}</span>
       </div>
-      <WikiStudio wiki={wiki} folders={folders} pages={pages} publishTarget={publishTarget(admin.imprint.secrets.publish)} call={call} />
+      <WikiStudio
+        wiki={wiki}
+        folders={folders}
+        pages={pages}
+        publishTarget={publishTarget(admin.imprint.secrets.publish)}
+        call={call}
+        groups={await accessGroups(admin)}
+      />
     </div>
   );
 }

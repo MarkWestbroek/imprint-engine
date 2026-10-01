@@ -3,6 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { ItemEditor } from "../admin/item-editor";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
+import { withAccessOptions } from "../forms";
+import { accessGroups } from "./members";
 
 /** Date → value for <input type="datetime-local"> (minute precision). */
 function toLocalInput(date: Date | null | undefined): string | undefined {
@@ -62,7 +64,7 @@ export async function ItemEditScreen({
         <ItemEditor
           type={contentType}
           initialData={(item?.data as Record<string, unknown>) ?? def.emptyData?.() ?? {}}
-          formSchema={admin.forms.content(contentType)}
+          formSchema={withAccessOptions(admin.forms.content(contentType), await accessGroups(admin))}
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}
           validTo={toLocalInput(item?.validTo)}

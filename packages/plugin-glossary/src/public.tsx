@@ -37,14 +37,14 @@ function TermView({ term, indexHref }: { term: Term; indexHref?: string }) {
  * the session at hand (as the wiki does, design/fase-3 §4.3).
  */
 export function glossaryPublicRoute(indexHref?: string) {
-  return async ({ imprint, slug, members, session }: PublicRouteContext): Promise<PublicRouteResult | null> => {
+  return async ({ imprint, slug, members, session, subject: given }: PublicRouteContext): Promise<PublicRouteResult | null> => {
     const store = imprint.writableStore;
     if (!store || slug.length !== 2 || slug[0] !== TERM_PREFIX) return null;
     const term = await getTerm(store, slug[1]!);
     if (!term) return null;
     if (term.access !== "public") {
       if (!members) return { redirect: `/members/${slug.join("/")}` };
-      const subject = session ? userSubject(session.name, session.role) : ANONYMOUS;
+      const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
       if (!(await permit(imprint.pdp, subject, "read", contentResource("term", term.slug, term)))) return null;
     }
     return {

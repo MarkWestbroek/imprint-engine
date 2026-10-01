@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { ANONYMOUS, userSubject, type AuthzenSubject } from "@imprint/content-core";
 import type { Membership, UserRecord } from "@imprint/content-core/user-store";
-import type { AdminContext } from "../admin-context";
+import type { AdminContext, AdminSession } from "../admin-context";
 
 /** Same shape as the admin actions' ActionResult. */
 type ActionResult = { ok: boolean; error?: string };
@@ -152,6 +153,29 @@ export async function signInMember(admin: AdminContext, _prev: ActionResult | nu
 export async function signOutMember(admin: AdminContext, to = "/"): Promise<void> {
   await admin.auth.signOut();
   redirect(localPath(to, "/"));
+}
+
+/** The groups of this site (for the access options), or none when the site has no group type. */
+export async function accessGroups(admin: AdminContext): Promise<{ slug: string; title: string }[]> {
+  const store = admin.imprint.writableStore;
+  if (!store || !admin.imprint.contentTypes.has("group")) return [];
+  return (await store.listItems("group"))
+    .map((r) => r.data as { slug?: string; title?: string })
+    .filter((g): g is { slug: string; title: string } => typeof g.slug === "string")
+    .map((g) => ({ slug: g.slug, title: g.title ?? g.slug }))
+    .sort((a, b) => a.title.localeCompare(b.title, "nl"));
+}
+
+/**
+ * The AuthZEN subject of a session, with the groups the user is an active
+ * member of — what the PDP needs for `group:<slug>` content. Null session =
+ * the anonymous visitor.
+ */
+export async function subjectFor(admin: Pick<AdminContext, "imprint">, session: AdminSession | null): Promise<AuthzenSubject> {
+  if (!session) return ANONYMOUS;
+  const users = admin.imprint.users;
+  const groups = users ? (await users.membershipsOf(session.name)).filter((m) => m.status === "active").map((m) => m.groupSlug) : [];
+  return userSubject(session.name, session.role, groups);
 }
 
 export type MemberProfile = { user: UserRecord; memberships: Membership[]; canEdit: boolean };

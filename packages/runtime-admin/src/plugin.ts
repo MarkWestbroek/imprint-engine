@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { AuthzenSubject } from "@imprint/content-core";
 import type { ImprintInstance, ImprintPluginCore } from "@imprint/extension-api";
 import type { AdminContext, AdminSession } from "./admin-context";
 
@@ -43,6 +44,8 @@ export type PublicRouteContext = {
   slug: string[];
   members: boolean;
   session: AdminSession | null;
+  /** Under /members: the session's subject with its groups (`subjectFor`), for the PDP. */
+  subject?: AuthzenSubject;
   /**
    * The site's action dispatcher, when the page may carry client islands that
    * act (a join button). A prerendered page passes it too: a server action

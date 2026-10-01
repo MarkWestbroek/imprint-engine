@@ -38,6 +38,24 @@ export function objectSchema(schema: z.ZodObject): JsonSchema {
  * subset (page meta, a menu's name), else the whole schema; a type whose
  * schema is not an object (a wrapped one) gets no generated fields.
  */
+/**
+ * An `access` field (`x-imprint.access`, content-core's Access) as a select:
+ * the site-wide levels plus `group:<slug>` for every group the site has
+ * (design/communities.md §4.2). Without groups the field stays as it is.
+ */
+export function withAccessOptions(schema: JsonSchema, groups: { slug: string }[]): JsonSchema {
+  const props = schema.properties as Record<string, JsonSchema> | undefined;
+  if (!props) return schema;
+  const out: Record<string, JsonSchema> = {};
+  for (const [name, prop] of Object.entries(props)) {
+    const hint = prop["x-imprint"] as { access?: boolean } | undefined;
+    out[name] = hint?.access
+      ? { ...prop, enum: ["public", "restricted", ...groups.map((g) => `group:${g.slug}`)] }
+      : prop;
+  }
+  return { ...schema, properties: out };
+}
+
 export function contentFormSchema(def: ContentTypeDefinition): JsonSchema {
   const schema = def.formSchema ?? def.schema;
   return schema instanceof z.ZodObject ? objectSchema(schema) : { type: "object", properties: {} };

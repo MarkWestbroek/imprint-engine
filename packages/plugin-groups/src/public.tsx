@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Page } from "@imprint/content-core";
+import { ANONYMOUS, contentResource, permit, userSubject, type Page } from "@imprint/content-core";
 import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
 import { GroupCards } from "./group-cards";
 import { getGroup, listGroups } from "./groups";
@@ -81,7 +81,7 @@ function GroupView({
  * pages (`/groups/<slug>/<page>`) are ordinary pages, left to the site.
  * Restricted groups go to /members (G2), where the PDP decides.
  */
-export async function groupsPublicRoute({ imprint, slug, members, call }: PublicRouteContext): Promise<PublicRouteResult | null> {
+export async function groupsPublicRoute({ imprint, slug, members, session, subject: given, call }: PublicRouteContext): Promise<PublicRouteResult | null> {
   const store = imprint.writableStore;
   if (!store || slug[0] !== GROUPS_PREFIX || slug.length > 2) return null;
   if (slug.length === 1) {
@@ -99,8 +99,11 @@ export async function groupsPublicRoute({ imprint, slug, members, call }: Public
   const group = await getGroup(store, slug[1]!);
   if (!group) return null;
   if (group.access !== "public" && !members) return { redirect: `/members/${slug.join("/")}` };
+  const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
+  if (members && !(await permit(imprint.pdp, subject, "read", contentResource("group", group.slug, group)))) return null;
+  // The group's pages as this visitor may see them (public in the catch-all; the member's own under /members).
   const [pages, wiki] = await Promise.all([
-    imprint.store.listPages({ prefix: groupPagePrefix(group.slug) }),
+    (members ? imprint.storeFor(subject) : imprint.store).listPages({ prefix: groupPagePrefix(group.slug) }),
     group.wiki ? store.getItem("wiki", group.wiki) : null,
   ]);
   const wikiTitle = (wiki?.data as { title?: string } | undefined)?.title ?? null;

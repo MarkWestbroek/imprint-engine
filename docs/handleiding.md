@@ -519,6 +519,13 @@ andere sites, met een paar dingen van commonground.nl:
   beheerder, eigenaar) en **uitnodigingslinks**: wie zo'n link opent en
   inlogt, is meteen lid of beheerder zonder goedkeuring. Een link is 30
   dagen geldig, wordt één keer getoond en is in te trekken.
+- **Wie mag wat zien**: elke pagina, wikipagina, term en groep heeft een
+  veld **Toegang**: *public* (iedereen), *restricted* (alleen ingelogde
+  leden van de site) of *group: …* (alleen de leden van die community; de
+  redactie ziet alles). Iets breder zichtbaar maken is gewoon opslaan met
+  een andere waarde: de historie laat zien wie dat wanneer deed. Niet-publieke
+  pagina's staan voor leden onder `/members/…`; wie niet is ingelogd, komt
+  eerst bij de inlogpagina.
 - **Adressen**: de vaste routes heten Engels (`/groups`, `/terms/…`,
   `/search`); de Nederlandse namen (`/groep/…`, `/term/…`, `/zoeken`) zijn
   aliassen in de site-instellingen en sturen door.

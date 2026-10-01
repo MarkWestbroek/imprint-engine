@@ -326,9 +326,11 @@ Nederlandse alias (`/groups`, `/groep` stuurt door); eerst eigen accounts
   met e-mail en wachtwoord, bevestiging per maillink, lidmaatschap als eigen
   tabel, open of op aanvraag, beheerpagina op de groep, uitnodigingslinks.
   Nog niet: passkeys, wachtwoord vergeten, de IdP (§5) — zie de backlog.
-- **G2 — de drie niveaus**: `access: group:<slug>` naast publiek en
-  beperkt, lidmaatschap als attribuut in de toegangscheck, promoveren als
-  nieuwe versie, groepspagina's snel (één opzoeking per lijst).
+- **G2 — de drie niveaus** (gedaan, 1 oktober 2026): `access: group:<slug>`
+  naast publiek en beperkt, de groepen van de gebruiker als attribuut van het
+  subject, de PDP-regel, de keuzelijst in de admin, `/members` op de
+  showcase. Promoveren is een nieuwe versie. Eén opzoeking van de groepen per
+  verzoek (`subjectFor`); de lijsten filteren via `permitted`.
 - **G3 — groepsinhoud en activiteit**: `group`-veld op wiki, pagina's,
   termen, planning en media; discussies, reacties, mail; de niet-publieke
   inhoud uit de admin-export alleen op een besloten testomgeving.

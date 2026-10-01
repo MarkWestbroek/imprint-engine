@@ -1,4 +1,4 @@
-import type { Access, RoleType } from "./schemas";
+import { ACCESS_RE, accessGroup, type Access, type RoleType } from "./schemas";
 import type { ContentRecord, ContentStore, ContentType, WritableContentStore } from "./store";
 
 /**
@@ -46,8 +46,14 @@ export type ContentAction = "read" | "create" | "update" | "delete";
 
 export const ANONYMOUS: AuthzenSubject = { type: "visitor", id: "anonymous" };
 
-export function userSubject(name: string, role: RoleType): AuthzenSubject {
-  return { type: "user", id: name, properties: { role } };
+/** A signed-in user: role, and the groups they are an active member of (design/communities.md §4.2). */
+export function userSubject(name: string, role: RoleType, groups: string[] = []): AuthzenSubject {
+  return { type: "user", id: name, properties: { role, groups } };
+}
+
+export function groupsOf(subject: AuthzenSubject): string[] {
+  const groups = subject.properties?.groups;
+  return Array.isArray(groups) ? groups.filter((g): g is string => typeof g === "string") : [];
 }
 
 export function roleOf(subject: AuthzenSubject): RoleType | undefined {
@@ -57,7 +63,8 @@ export function roleOf(subject: AuthzenSubject): RoleType | undefined {
 
 /** The access value of a stored item; anything without one is public. */
 export function accessOf(data: unknown): Access {
-  return (data as { access?: unknown } | null)?.access === "restricted" ? "restricted" : "public";
+  const access = (data as { access?: unknown } | null)?.access;
+  return typeof access === "string" && ACCESS_RE.test(access) ? (access as Access) : "public";
 }
 
 export function contentResource(type: string, id: string, data?: unknown): AuthzenResource {
@@ -80,10 +87,18 @@ export const inProcessPdp: PolicyDecisionPoint = {
     if (role === "admin") return { decision: true, context: { reason: "admin" } };
     if (role === "editor") return { decision: true, context: { reason: "editor" } };
     if (action.name === "read") {
+      const access = String(resource.properties?.access ?? "public");
+      if (access === "public") return { decision: true, context: { reason: "public" } };
+      const group = accessGroup(access);
+      if (group !== null) {
+        // Group content: for that group's active members (staff was allowed above).
+        return groupsOf(subject).includes(group)
+          ? { decision: true, context: { reason: `member of ${group}` } }
+          : { decision: false, context: { reason: `not a member of ${group}` } };
+      }
+      // Restricted: for the members of the site, whatever their role.
       if (role === "reader") return { decision: true, context: { reason: "reader" } };
-      return resource.properties?.access !== "restricted"
-        ? { decision: true, context: { reason: "public" } }
-        : { decision: false, context: { reason: "restricted" } };
+      return { decision: false, context: { reason: "restricted" } };
     }
     return { decision: false, context: { reason: role ? `${role} may not write` : "not signed in" } };
   },
@@ -105,7 +120,7 @@ export async function permit(
   resource: AuthzenResource,
   context?: Record<string, unknown>
 ): Promise<boolean> {
-  if (action === "read" && resource.properties?.access !== "restricted") return true;
+  if (action === "read" && (resource.properties?.access ?? "public") === "public") return true;
   try {
     return (await pdp.evaluate({ subject, action: { name: action }, resource, context })).decision;
   } catch {
@@ -121,7 +136,7 @@ export async function permitted<T>(
   list: T[],
   idOf: (item: T) => string
 ): Promise<T[]> {
-  const restricted = list.filter((item) => accessOf(item) === "restricted");
+  const restricted = list.filter((item) => accessOf(item) !== "public");
   if (restricted.length === 0) return list;
   let answers: EvaluationResponse[];
   try {

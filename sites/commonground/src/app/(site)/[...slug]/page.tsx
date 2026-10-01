@@ -43,7 +43,11 @@ export default async function ContentPage({ params }: Props) {
     return <article className="cg-page">{hit.render}</article>;
   }
   const page = isInternal(slug) ? null : await store.getPage(slug, opts);
-  if (!page) notFound();
+  if (!page) {
+    // Exists, but not for everyone: /members decides per request (design/communities.md §4.2).
+    if (!isInternal(slug) && (await imprint.readStore.getPage(slug, opts))) redirect(`/members/${slug}`);
+    notFound();
+  }
   return (
     <article className="cg-page">
       <PageView page={page} />

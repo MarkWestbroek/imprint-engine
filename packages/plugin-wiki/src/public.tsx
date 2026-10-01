@@ -10,7 +10,7 @@ import { getWiki, getWikiTree } from "./wiki";
  * restricted page in a public wiki, is sent to /members; there the PDP
  * decides for the session at hand (design/fase-3 §4.3).
  */
-export async function wikiPublicRoute({ imprint, slug, members, session }: PublicRouteContext): Promise<PublicRouteResult | null> {
+export async function wikiPublicRoute({ imprint, slug, members, session, subject: given }: PublicRouteContext): Promise<PublicRouteResult | null> {
   const store = imprint.writableStore;
   if (!store || slug.length === 0) return null;
   const wiki = await getWiki(store, slug[0]);
@@ -20,7 +20,7 @@ export async function wikiPublicRoute({ imprint, slug, members, session }: Publi
   const tree = await getWikiTree(store, wiki.slug);
 
   if (!members) {
-    if (wiki.access === "restricted") return { redirect: `/members/${joined}` };
+    if (wiki.access !== "public") return { redirect: `/members/${joined}` };
     // A restricted page inside a public wiki: off the tree here, on it under /members.
     const pages = tree.pages.filter((p) => p.access === "public");
     const page = wanted ? (pages.find((p) => p.slug === wanted) ?? null) : null;
@@ -33,7 +33,7 @@ export async function wikiPublicRoute({ imprint, slug, members, session }: Publi
     };
   }
 
-  const subject = session ? userSubject(session.name, session.role) : ANONYMOUS;
+  const subject = given ?? (session ? userSubject(session.name, session.role) : ANONYMOUS);
   if (!(await permit(imprint.pdp, subject, "read", contentResource("wiki", wiki.slug, wiki)))) return null;
   const pages = await permitted(imprint.pdp, subject, "wiki-page", tree.pages, (p) => p.slug);
   const page = wanted ? (pages.find((p) => p.slug === wanted) ?? null) : null;

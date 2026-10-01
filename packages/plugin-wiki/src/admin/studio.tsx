@@ -29,6 +29,7 @@ export function WikiStudio({
   pages,
   publishTarget,
   call,
+  groups = [],
 }: {
   wiki: Wiki;
   folders: WikiFolder[];
@@ -37,6 +38,8 @@ export function WikiStudio({
   publishTarget: string | null;
   /** De plugin-action-dispatcher van de site. */
   call: PluginCall;
+  /** De groepen van de site, als keuze bij Toegang (`group:<slug>`, communities.md §4.2). */
+  groups?: { slug: string; title: string }[];
 }) {
   const router = useRouter();
   // De acties van de plugin, via de dispatcher (zie admin/actions.ts).
@@ -507,6 +510,11 @@ export function WikiStudio({
                 >
                   <option value="public">publiek — iedereen</option>
                   <option value="restricted">beperkt — alleen wie het beleid toelaat</option>
+                  {groups.map((g) => (
+                    <option key={g.slug} value={`group:${g.slug}`}>
+                      groep — {g.title}
+                    </option>
+                  ))}
                 </select>
               </label>
             </>

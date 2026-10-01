@@ -1030,6 +1030,20 @@ niet van elkaar afwijken.
   van twee uur, inloggen op de site, profiel) staat in
   [members.ts](../packages/runtime-admin/src/admin-server/members.ts); de
   site wikkelt haar in "use server"-acties en routes onder `/account`.
+- **Drie niveaus** (design/communities.md §4.2, G2): `Access` is een string
+  `public | restricted | group:<slug>` (regex, met `x-imprint.access` als
+  hint voor de formulieren); `userSubject(name, role, groups)` geeft de PDP
+  de actieve groepen van de gebruiker, `inProcessPdp` laat `group:x` alleen
+  toe aan leden van x en aan admin/editor, `restricted` aan elke ingelogde.
+  `permit`/`permitted`/`guardReads` behandelen alles wat niet `public` is
+  als te beslissen. `withAccessOptions(schema, groups)` (forms.ts) maakt van
+  het veld een keuzelijst met de groepen (`accessGroups(admin)`); de wiki-
+  studio krijgt dezelfde lijst. `subjectFor(admin, session)` bouwt het
+  subject met groepen; de site geeft het via `PublicRouteContext.subject`
+  aan de plugins onder `/members`. De showcase-route `/members/[...slug]`
+  rendert per verzoek: plugins eerst (met het subject), dan
+  `storeFor(subject).getPage`; de publieke catch-all stuurt een bestaand
+  niet-publiek item ernaartoe (`readStore`), zonder sessie naar de login.
 - **AdminContext** ([admin-context.ts](../packages/runtime-admin/src/admin-context.ts)):
   wat de gedeelde admin van de site krijgt, in één object — de instantie
   (stores, users, PDP, catalogus, assets, sessie-instellingen, secrets), de

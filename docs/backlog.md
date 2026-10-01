@@ -847,8 +847,14 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             gebruikersnaam → weergavenaam en avatarfoto.
       - [ ] Matching op de Pleio-export bij het inwisselen van een
             uitnodiging (communities §4.1a, stap 3).
-      - [ ] **G2 drie niveaus** (§4.2): `access: group:<slug>`, lidmaatschap
-            als attribuut in de toegangscheck, promoveren = nieuwe versie.
+      - [x] ~~G2 drie niveaus~~ — `access: group:<slug>`, groepen in het
+            subject, PDP-regel, keuzelijst in de admin, `/members` op de
+            showcase (01-10).
+      - [ ] G2b: groepsinhoud ook in de lijsten voor leden (wiki-boom en
+            groepspagina tonen nu alleen wat de bezoeker mag zien; een lijst
+            "jouw groepen" op de startpagina ontbreekt); media per groep.
+      - [ ] De OpenFTV-sidecar (fase 3 §4) moet het `groups`-attribuut en
+            `group:<slug>` ook kennen zodra die de in-process PDP vervangt.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
       - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)
