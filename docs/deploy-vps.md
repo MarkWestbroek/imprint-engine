@@ -123,6 +123,18 @@ Per site: migreren → bouwen → herstarten, sites na elkaar (twee gelijktijdig
 draaiende container op de vorige image staan. **Terugdraaien** = dezelfde
 opdracht met de vorige tag.
 
+Contentwijziging uit `sites/<site>/content/` (seedbestanden) live zetten:
+het tools-image bevat de werkboom, dus na een pull eerst opnieuw bouwen,
+dan seeden, dan de site bouwen — in die volgorde, anders bouwt de SSG met
+de oude content of leest de seed de oude bestanden:
+
+```bash
+cd /srv/imprint && git pull --ff-only && cd deploy/vps
+set -a; . ./.env; set +a; docker compose build tools
+./deploy.sh seed musicbrain --only=site,product,release,page,menu
+SITES=musicbrain ./deploy.sh
+```
+
 Gebruikersbeheer: `./deploy.sh user musicbrain passwd mark` (= `npm run user`).
 
 ## MusicBrain verhuizen (MariaDB → Postgres)
