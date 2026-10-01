@@ -196,12 +196,11 @@ export function AssemblyScene(props: AssemblySceneProps) {
           try {
             const model = await loadModel(part.src);
             model.scale.setScalar(1000); // metres → mm
-            const box = new T.Box3().setFromObject(model);
-            const size = box.getSize(new T.Vector3());
-            // The thin axis of the box is the board's normal.
-            const axes = [size.x, size.y, size.z];
-            const thin = axes.indexOf(Math.min(...axes));
-            const native = new T.Vector3(thin === 0 ? 1 : 0, thin === 1 ? 1 : 0, thin === 2 ? 1 : 0);
+            // KiCad's glTF export lays the board in XZ with front copper up:
+            // the normal is native +Y, components on the front side extend
+            // towards +Y. (Measuring the thin axis instead misfires on a
+            // jack8, whose jacks make the board "thicker" than it is wide.)
+            const native = new T.Vector3(0, 1, 0);
             const target =
               part.normal === "x" ? new T.Vector3(1, 0, 0)
               : part.normal === "z" ? new T.Vector3(0, 1, 0)
@@ -215,8 +214,26 @@ export function AssemblyScene(props: AssemblySceneProps) {
             model.quaternion.copy(q);
             const group = new T.Group();
             group.add(model);
-            // Seat the box centre on `at`.
+            group.updateMatrixWorld(true);
+            // Seat the *board* on `at`: in the plane, the centre of everything;
+            // along the normal, the centre of the PCB itself (the mesh with the
+            // largest footprint), so jacks or connectors sticking out one side
+            // do not push the board off its plane.
             const centred = new T.Box3().setFromObject(group).getCenter(new T.Vector3());
+            let bestArea = -1;
+            model.traverse((o) => {
+              if (!(o as THREE.Mesh).isMesh) return;
+              const mb = new T.Box3().setFromObject(o);
+              const s = mb.getSize(new T.Vector3());
+              const area = part.normal === "x" ? s.y * s.z : part.normal === "z" ? s.x * s.z : s.x * s.y;
+              if (area > bestArea) {
+                bestArea = area;
+                const c = mb.getCenter(new T.Vector3());
+                if (part.normal === "x") centred.x = c.x;
+                else if (part.normal === "z") centred.y = c.y;
+                else centred.z = c.z;
+              }
+            });
             model.position.sub(centred);
             scene.add(group);
             movers.push({

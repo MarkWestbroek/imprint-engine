@@ -408,11 +408,18 @@ flowchart LR
   `ctx.store.getBoardSpec` — dezelfde GLB als de "3D"-tab — en geeft kale
   URL's aan het client-eiland `components/assembly-scene.tsx`. Dat eiland
   importeert three.js + GLTFLoader/SVGLoader/OrbitControls pas bij mount
-  (zoals `Model3D`), schaalt de GLB's van meter naar mm, bepaalt de
-  bordnormaal uit de dunste as van de bounding box en draait die naar de
-  geconfigureerde as, extrudeert het paneel uit de SVG (plate = class
-  `panel`, overige vormen = gaten) en beweegt alles op één tijdlijn
-  (`home + from·(1−ease)`). Coördinaten zijn de millimeters van
+  (zoals `Model3D`), schaalt de GLB's van meter naar mm, draait de
+  KiCad-conventie (bord in XZ, normaal = +Y, componenten van de
+  voorkoperlaag naar +Y) naar de geconfigureerde normaal — níet uit de
+  bounding box afleiden: bij een jack8 maken de jacks het bord "dikker" dan
+  breed — en zet het *bordvlak* (de mesh met de grootste footprint) op `at`,
+  zodat uitstekende jacks of headers het bord niet uit zijn vlak duwen. Het
+  paneel wordt uit de SVG geëxtrudeerd (plate = class `panel`, overige
+  vormen = gaten) en alles beweegt op één tijdlijn (`home + from·(1−ease)`).
+  Gemeten (1 okt 2026, `glb-measure`): fronten 20–30 × 110 mm met jacks
+  14,5 mm vóór het bord; kaarten 40–65 × 45 mm met 6 mm header-overstek aan
+  beide Z-kanten (dubbele rij → busboard, enkele haakse rij → front; KiCad
+  tekent ze andersom, vandaar `spin: 180`). Coördinaten zijn de millimeters van
   `doc/mechanics/MusicBrainAssembly.FCMacro` in de MusicBrain-repo (x rechts,
   y diepte, z omhoog → three: x, y=z, z=−y), zodat een Blender-render dezelfde
   page-config kan lezen. `three` staat expliciet in de site (zelfde versie

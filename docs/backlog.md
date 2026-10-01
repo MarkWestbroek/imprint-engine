@@ -645,8 +645,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Interactief in de browser~~ — widget `assembly` (1 okt 2026),
             choreografie op `/cortex`; muziekbestand nog in te stellen zodra
             Mark een take kiest.
-      - [ ] Oriëntatie per bord nalopen met Mark (spin/flip in de studio) en
-            de kaartposities tegen de echte connectorhoogte leggen.
+      - [x] ~~Oriëntatie per bord nalopen met Mark~~ — 1 okt: kaarten 180°
+            (dubbele rij → busboard), fronten op 10,8 mm zodat de jacks door
+            de gaten komen; `at` = bordvlak.
+      - [ ] **Pot8-Front en Enc5-Front komen niet door de gaten**: hun
+            KiCad-3D-modellen hebben geen as/knop (pot +1,5 mm, encoder
+            +4,3 mm vóór het bord). 3D-model met as aan de footprints hangen
+            en opnieuw publiceren (MusicBrain-kant); de site hoeft niets.
+      - [ ] Kaartpinnen eindigen ~3 mm vóór de busboard-sockets; `at`-diepte
+            van de kaarten (nu 37,1) finetunen tegen de echte headerlengte.
       - [ ] **Mp4-render (route A)**: Blender-script dat dezelfde choreografie
             (page-config via `/api/content/pages/cortex`) afspeelt met de GLB's
             + paneel-extrusie, rendert (Eevee 1080p) en met ffmpeg een take
