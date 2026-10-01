@@ -203,6 +203,7 @@ async function AssemblyWidget({ config, ctx }: { config: AssemblyConfig; ctx: Wi
         width={config.width}
         height={config.height}
         seconds={config.seconds}
+        hold={config.hold}
         autoplay={config.autoplay}
         loop={config.loop}
         audio={config.audio}

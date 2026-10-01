@@ -20,7 +20,7 @@
                   "width": 200,
                   "height": 128.5,
                   "panel": {
-                    "svg": "/boards/frontpanel-v1.svg",
+                    "svg": "/boards/frontpanel-v2.svg",
                     "thickness": 2,
                     "from": [
                       0,
@@ -28,13 +28,15 @@
                       0
                     ],
                     "start": 0.86,
-                    "duration": 0.1
+                    "duration": 0.1,
+                    "accessories": true
                   },
+                  "hold": 8,
                   "rails": true,
                   "seconds": 24,
                   "autoplay": true,
                   "loop": true,
-                  "caption": "Busboard v3.1 with six function cards, their panel fronts and the 40 HP front panel (concept v1). Drag to look around; the models are the boards' own KiCad 3D exports.",
+                  "caption": "Busboard v3.1 with six function cards, their panel fronts and the 40 HP front panel (concept v2). Drag to look around; the models are the boards' own KiCad 3D exports.",
                   "parts": [
                     {
                       "spec": "busboard@v3.1",
@@ -165,7 +167,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — CV in",
                       "at": [
-                        84,
+                        86,
                         10.8,
                         64.25
                       ],
@@ -182,7 +184,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — gate in",
                       "at": [
-                        104,
+                        106,
                         10.8,
                         64.25
                       ],
@@ -233,7 +235,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — CV out",
                       "at": [
-                        164,
+                        166,
                         10.8,
                         64.25
                       ],
@@ -250,7 +252,7 @@
                       "spec": "jack8@v2.0",
                       "label": "Jack8 — gate out",
                       "at": [
-                        184,
+                        186,
                         10.8,
                         64.25
                       ],

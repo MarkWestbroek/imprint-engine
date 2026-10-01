@@ -417,9 +417,16 @@ flowchart LR
   paneel wordt uit de SVG geëxtrudeerd (plate = class `panel`, overige
   vormen = gaten) en alles beweegt op één tijdlijn (`home + from·(1−ease)`).
   Gemeten (1 okt 2026, `glb-measure`): fronten 20–30 × 110 mm met jacks
-  14,5 mm vóór het bord; kaarten 40–65 × 45 mm met 6 mm header-overstek aan
-  beide Z-kanten (dubbele rij → busboard, enkele haakse rij → front; KiCad
-  tekent ze andersom, vandaar `spin: 180`). Coördinaten zijn de millimeters van
+  14,5 mm vóór het bord op een **13,75 mm**-steek (2 mm links van het
+  bordmidden); kaarten 40–65 × 45 mm met 6 mm header-overstek aan beide
+  Z-kanten (dubbele rij → busboard, enkele haakse rij → front; KiCad tekent
+  ze andersom, vandaar `spin: 180`). Het paneel-SVG concept v1 had 12,6 mm;
+  `public/boards/frontpanel-v2.svg` is v1 met de jack/pot-rijen op 13,75.
+  **Accessoires** (`panel.accessories`): uit de SVG-elementen `disp`, `din`,
+  `usb`, `btn`, `enc`, `pot` maakt het eiland eenvoudige solids (bezel +
+  glas, DIN-cilinders, USB-blok, knopkappen, knoppen) op de tekenposities —
+  één mover die na het paneel van achteren inplugt. **Hold**: na t = 1 blijft
+  de unit `hold` seconden staan (camera draait door) voor de lus herstart. Coördinaten zijn de millimeters van
   `doc/mechanics/MusicBrainAssembly.FCMacro` in de MusicBrain-repo (x rechts,
   y diepte, z omhoog → three: x, y=z, z=−y), zodat een Blender-render dezelfde
   page-config kan lezen. `three` staat expliciet in de site (zelfde versie

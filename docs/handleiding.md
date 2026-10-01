@@ -317,14 +317,20 @@ verschuiving in mm) en wanneer het begint en hoe lang het duurt (`start`,
 `duration`, als deel van de tijdlijn 0..1). Het **frontpaneel** komt uit een
 SVG-tekening (de plaat heeft class `panel`; cirkels en rechthoeken met de
 classes hole/pot/enc/btn/din/usb/mnt/disp worden gaten), de **rails** zijn
-een vinkje. Verder: de duur van één doorloop in seconden, autoplay, herhalen
-en optioneel een **muziekbestand** — dat start pas als de bezoeker op Play
-drukt, nooit vanzelf. De bezoeker kan afspelen, pauzeren, door de tijdlijn
+een vinkje. Met **accessoires** aan (standaard) bouwt de widget uit dezelfde
+tekening wat geen bord levert: display (`disp`), MIDI-DIN-bussen (`din`),
+USB (`usb`), drukknoppen (`btn`) en knoppen op encoder- en potgaten (`enc`,
+`pot`); ze pluggen van achteren in zodra het paneel zit. Verder: de duur
+van één doorloop in seconden, **hold** (hoe lang de unit aan het eind
+compleet blijft staan voor hij opnieuw begint; standaard 8 s), autoplay,
+herhalen en optioneel een **muziekbestand** — dat start pas als de bezoeker
+op Play drukt, nooit vanzelf. De bezoeker kan afspelen, pauzeren, door de tijdlijn
 schuiven, slepen om rond te kijken en met *Reset view* terug naar het
 beginstandpunt; het label linksboven zegt welk onderdeel beweegt.
 Onderdelen zonder 3D-model worden onder de scène genoemd, zodat je ziet wat
 er nog ontbreekt. De eerste choreografie staat op `/cortex` (busboard v3.1,
-zes kaarten, zes fronten, paneel concept v1).
+zes kaarten, zes fronten, paneel concept v2 — v1 met de jack/pot-gaten op
+de 13,75 mm-steek van de echte borden).
 
 **V3 model diagram.** Imprint tekent het model niet zelf: Omnium doet dat
 (layout, kleuren, notatie horen bij het model). De sidebar gaat van boven

@@ -35,6 +35,7 @@ export type AssemblyPanel = {
   from: [number, number, number];
   start: number;
   duration: number;
+  accessories: boolean;
 };
 
 export type AssemblySceneProps = {
@@ -44,6 +45,7 @@ export type AssemblySceneProps = {
   width: number;
   height: number;
   seconds: number;
+  hold: number;
   autoplay: boolean;
   loop: boolean;
   audio?: string;
@@ -78,7 +80,7 @@ async function loadThree() {
 }
 
 export function AssemblyScene(props: AssemblySceneProps) {
-  const { parts, panel, rails, width, height, seconds, autoplay, loop, audio, caption } = props;
+  const { parts, panel, rails, width, height, seconds, hold, autoplay, loop, audio, caption } = props;
   const hostRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [status, setStatus] = useState<string>("Loading…");
@@ -256,13 +258,87 @@ export function AssemblyScene(props: AssemblySceneProps) {
           const text = await (await fetch(panel.svg)).text();
           const data = new kit.SVGLoader().parse(text);
           let plate: THREE.Shape | null = null;
+          let plateNode: Element | null = null;
           const holes: THREE.Shape[] = [];
+          const fixtures: Element[] = [];
           for (const path of data.paths) {
             const node = path.userData?.node as Element | undefined;
             const cls = node?.getAttribute("class") ?? "";
             const shapes = kit.SVGLoader.createShapes(path);
-            if (cls === "panel" && shapes[0]) plate = shapes[0];
-            else if (HOLE_CLASSES.has(cls)) holes.push(...shapes);
+            if (cls === "panel" && shapes[0]) {
+              plate = shapes[0];
+              plateNode = node ?? null;
+            } else if (HOLE_CLASSES.has(cls)) {
+              holes.push(...shapes);
+              if (node && cls !== "hole" && cls !== "mnt") fixtures.push(node);
+            }
+          }
+          if (plate && panel.accessories && plateNode) {
+            // What the drawing shows but no board carries: display, DIN
+            // sockets, USB, buttons, knobs — simple solids at the drawing's
+            // positions, plugged in from behind once the panel is on.
+            const num = (el: Element, a: string) => Number(el.getAttribute(a) ?? 0);
+            const pcx = num(plateNode, "x") + num(plateNode, "width") / 2;
+            const pcy = num(plateNode, "y") + num(plateNode, "height") / 2;
+            const th = panel.thickness;
+            const group = new T.Group();
+            const dark = new T.MeshStandardMaterial({ color: 0x23262b, metalness: 0.3, roughness: 0.6 });
+            const black = new T.MeshStandardMaterial({ color: 0x0b0c0e, roughness: 0.9 });
+            const metal = new T.MeshStandardMaterial({ color: 0xb9bdc3, metalness: 0.85, roughness: 0.3 });
+            const red = new T.MeshStandardMaterial({ color: 0x8a2d26, roughness: 0.5 });
+            const glass = new T.MeshStandardMaterial({ color: 0x0f3a4a, emissive: 0x1d6f86, emissiveIntensity: 0.5, roughness: 0.2 });
+            /** A cylinder along the depth axis: front face at `front`, `len` deep. */
+            const plug = (x: number, y: number, r: number, front: number, len: number, mat: THREE.Material) => {
+              const m = new T.Mesh(new T.CylinderGeometry(r, r, len, 32), mat);
+              m.rotation.x = Math.PI / 2;
+              m.position.set(x, y, front - len / 2);
+              group.add(m);
+            };
+            const slab = (x: number, y: number, w: number, h: number, front: number, len: number, mat: THREE.Material) => {
+              const m = new T.Mesh(new T.BoxGeometry(w, h, len), mat);
+              m.position.set(x, y, front - len / 2);
+              group.add(m);
+            };
+            for (const el of fixtures) {
+              const cls = el.getAttribute("class") ?? "";
+              const isRect = el.tagName.toLowerCase() === "rect";
+              const w = isRect ? num(el, "width") : num(el, "r") * 2;
+              const h = isRect ? num(el, "height") : w;
+              const x = (isRect ? num(el, "x") + w / 2 : num(el, "cx")) - pcx;
+              const y = -((isRect ? num(el, "y") + h / 2 : num(el, "cy")) - pcy);
+              switch (cls) {
+                case "disp":
+                  slab(x, y, w + 2, h + 2, -th, 6, black);
+                  slab(x, y, w - 3, h - 3, -th + 0.6, 0.4, glass);
+                  break;
+                case "din":
+                  plug(x, y, w / 2 - 0.3, 0.6, 14, dark);
+                  plug(x, y, w * 0.33, 0.7, 1.2, black);
+                  break;
+                case "usb":
+                  slab(x, y, w - 1, h - 0.8, 0.4, 12, metal);
+                  slab(x, y, w - 3, h - 2.6, 0.5, 1, black);
+                  break;
+                case "btn":
+                  plug(x, y, w / 2 - 0.4, 2, 5, red);
+                  break;
+                case "enc":
+                  plug(x, y, 7, 12, 13, dark);
+                  break;
+                case "pot":
+                  plug(x, y, 5.5, 11, 12, dark);
+                  break;
+              }
+            }
+            scene.add(group);
+            movers.push({
+              object: group,
+              home: new T.Vector3(0, 0, 0),
+              offset: new T.Vector3(0, 0, -70),
+              start: Math.min(0.93, panel.start + panel.duration),
+              duration: 0.07,
+              label: "Display, MIDI, USB and knobs",
+            });
           }
           if (plate) {
             for (const h of holes) plate.holes.push(h);
@@ -328,6 +404,7 @@ export function AssemblyScene(props: AssemblySceneProps) {
 
       let last = performance.now();
       let lastLabel = "";
+      let holdLeft = -1; // seconds left of the pause at the end; -1 = not holding
       const frame = (now: number) => {
         raf = requestAnimationFrame(frame);
         const dt = (now - last) / 1000;
@@ -335,14 +412,22 @@ export function AssemblyScene(props: AssemblySceneProps) {
         if (playingRef.current) {
           let next = tRef.current + dt / seconds;
           if (next >= 1) {
-            if (loop) {
-              next = 0;
-              const a = audioRef.current;
-              if (a) a.currentTime = 0;
-            } else {
-              next = 1;
+            next = 1;
+            if (!loop) {
               setPlaying(false);
+            } else {
+              // Finished: stay assembled for `hold` seconds, then start over.
+              if (holdLeft < 0) holdLeft = hold;
+              holdLeft -= dt;
+              if (holdLeft <= 0) {
+                holdLeft = -1;
+                next = 0;
+                const a = audioRef.current;
+                if (a) a.currentTime = 0;
+              }
             }
+          } else {
+            holdLeft = -1;
           }
           tRef.current = next;
           setT(next);
@@ -354,7 +439,7 @@ export function AssemblyScene(props: AssemblySceneProps) {
           const p = clamp01((tt - m.start) / m.duration);
           const e = easeOutCubic(p);
           m.object.position.copy(m.home).addScaledVector(m.offset, 1 - e);
-          if (tt >= m.start && p < 1 && m.start > labelStart) {
+          if (tt >= m.start && p < 0.999 && m.start > labelStart) {
             label = m.label;
             labelStart = m.start;
           }
@@ -386,7 +471,7 @@ export function AssemblyScene(props: AssemblySceneProps) {
       dispose();
     };
     // The scene is built once per configuration; props are stable content.
-  }, [parts, panel, rails, width, height, seconds, loop]);
+  }, [parts, panel, rails, width, height, seconds, hold, loop]);
 
   return (
     <figure className="m-0">

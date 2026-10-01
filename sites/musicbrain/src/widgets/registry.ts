@@ -190,6 +190,12 @@ export const AssemblyConfig = z.object({
       from: mm3.default([0, -140, 0]),
       start: z.number().min(0).max(1).default(0.86),
       duration: z.number().min(0.01).max(1).default(0.1),
+      /**
+       * Build what the drawing shows but no board-spec models: display
+       * (class disp), MIDI DIN sockets (din), USB (usb), buttons (btn) and
+       * knobs on encoder/pot holes (enc, pot). They plug in from behind.
+       */
+      accessories: z.boolean().default(true),
     })
     .optional(),
   /** Eurorack rails top and bottom, seated last. */
@@ -197,6 +203,8 @@ export const AssemblyConfig = z.object({
   parts: z.array(AssemblyPartConfig).default([]),
   /** Length of one run in seconds; the camera circles slowly while it plays. */
   seconds: z.number().min(2).max(300).default(24),
+  /** Seconds the finished unit stays on show before the loop starts over. */
+  hold: z.number().min(0).max(120).default(8),
   autoplay: z.boolean().default(true),
   loop: z.boolean().default(true),
   /** Music under the animation (URL or public path); starts on the visitor's play click, never by itself. */
