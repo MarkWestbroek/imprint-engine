@@ -659,7 +659,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             12,6 mm, de PCB's staan op 13,75 mm. De site gebruikt intussen
             `frontpanel-v2.svg` (zelfde tekening, rijen op 13,75). De
             ENC5-encoders zitten in het GLB op −33/+21/+43,6 mm — klopt dat
-            met de 17,6 mm-steek van de tekening?
+            met de 17,6 mm-steek van de tekening? En de `usb`-uitsparing is
+            24 × 7 mm (USB-A-maat); voor de USB-C-host (Mark, 1 okt) volstaat
+            ~10 × 4 mm.
       - [ ] **Mp4-render (route A)**: Blender-script dat dezelfde choreografie
             (page-config via `/api/content/pages/cortex`) afspeelt met de GLB's
             + paneel-extrusie, rendert (Eevee 1080p) en met ffmpeg een take

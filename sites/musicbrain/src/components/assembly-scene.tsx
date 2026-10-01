@@ -273,15 +273,17 @@ export function AssemblyScene(props: AssemblySceneProps) {
               if (node && cls !== "hole" && cls !== "mnt") fixtures.push(node);
             }
           }
+          let fixturesGroup: THREE.Group | null = null;
           if (plate && panel.accessories && plateNode) {
             // What the drawing shows but no board carries: display, DIN
-            // sockets, USB, buttons, knobs — simple solids at the drawing's
-            // positions, plugged in from behind once the panel is on.
+            // sockets, USB-C, buttons, knobs — simple solids at the drawing's
+            // positions. They are fitted to the panel, so they travel with it.
             const num = (el: Element, a: string) => Number(el.getAttribute(a) ?? 0);
             const pcx = num(plateNode, "x") + num(plateNode, "width") / 2;
             const pcy = num(plateNode, "y") + num(plateNode, "height") / 2;
             const th = panel.thickness;
             const group = new T.Group();
+            fixturesGroup = group;
             const dark = new T.MeshStandardMaterial({ color: 0x23262b, metalness: 0.3, roughness: 0.6 });
             const black = new T.MeshStandardMaterial({ color: 0x0b0c0e, roughness: 0.9 });
             const metal = new T.MeshStandardMaterial({ color: 0xb9bdc3, metalness: 0.85, roughness: 0.3 });
@@ -315,10 +317,16 @@ export function AssemblyScene(props: AssemblySceneProps) {
                   plug(x, y, w / 2 - 0.3, 0.6, 14, dark);
                   plug(x, y, w * 0.33, 0.7, 1.2, black);
                   break;
-                case "usb":
-                  slab(x, y, w - 1, h - 0.8, 0.4, 12, metal);
-                  slab(x, y, w - 3, h - 2.6, 0.5, 1, black);
+                case "usb": {
+                  // USB-C host: a flush plate filling the cut-out, with the
+                  // receptacle as a pill (8.9 × 3.2 mm) in the middle.
+                  slab(x, y, w, h, 0.2, 10, metal);
+                  const pill = new T.Mesh(new T.CapsuleGeometry(1.6, 5.7, 4, 12), black);
+                  pill.rotation.z = Math.PI / 2;
+                  pill.position.set(x, y, 0.4);
+                  group.add(pill);
                   break;
+                }
                 case "btn":
                   plug(x, y, w / 2 - 0.4, 2, 5, red);
                   break;
@@ -330,15 +338,6 @@ export function AssemblyScene(props: AssemblySceneProps) {
                   break;
               }
             }
-            scene.add(group);
-            movers.push({
-              object: group,
-              home: new T.Vector3(0, 0, 0),
-              offset: new T.Vector3(0, 0, -70),
-              start: Math.min(0.93, panel.start + panel.duration),
-              duration: 0.07,
-              label: "Display, MIDI, USB and knobs",
-            });
           }
           if (plate) {
             for (const h of holes) plate.holes.push(h);
@@ -355,6 +354,7 @@ export function AssemblyScene(props: AssemblySceneProps) {
             const mesh = new T.Mesh(geo, mat);
             const group = new T.Group();
             group.add(mesh);
+            if (fixturesGroup) group.add(fixturesGroup);
             scene.add(group);
             movers.push({
               object: group,
@@ -362,7 +362,7 @@ export function AssemblyScene(props: AssemblySceneProps) {
               offset: toOffset(panel.from),
               start: panel.start,
               duration: panel.duration,
-              label: "Front panel",
+              label: fixturesGroup ? "Front panel with display, MIDI and USB-C" : "Front panel",
             });
           }
         } catch (err) {
@@ -405,32 +405,46 @@ export function AssemblyScene(props: AssemblySceneProps) {
       let last = performance.now();
       let lastLabel = "";
       let holdLeft = -1; // seconds left of the pause at the end; -1 = not holding
+      let rewinding = false; // after the hold: pull the unit apart again, gently
+      const REWIND_SECONDS = 1.5;
       const frame = (now: number) => {
         raf = requestAnimationFrame(frame);
         const dt = (now - last) / 1000;
         last = now;
         if (playingRef.current) {
-          let next = tRef.current + dt / seconds;
-          if (next >= 1) {
-            next = 1;
-            if (!loop) {
-              setPlaying(false);
-            } else {
-              // Finished: stay assembled for `hold` seconds, then start over.
-              if (holdLeft < 0) holdLeft = hold;
-              holdLeft -= dt;
-              if (holdLeft <= 0) {
-                holdLeft = -1;
-                next = 0;
-                const a = audioRef.current;
-                if (a) a.currentTime = 0;
-              }
+          let next = tRef.current;
+          if (rewinding) {
+            next -= dt / REWIND_SECONDS;
+            if (next <= 0) {
+              next = 0;
+              rewinding = false;
+              const a = audioRef.current;
+              if (a) a.currentTime = 0;
             }
           } else {
-            holdLeft = -1;
+            next += dt / seconds;
+            if (next >= 1) {
+              next = 1;
+              if (!loop) {
+                setPlaying(false);
+              } else {
+                // Finished: stay assembled for `hold` seconds (the camera
+                // keeps circling), then come apart and start over.
+                if (holdLeft < 0) holdLeft = hold;
+                holdLeft -= dt;
+                if (holdLeft <= 0) {
+                  holdLeft = -1;
+                  rewinding = true;
+                }
+              }
+            } else {
+              holdLeft = -1;
+            }
           }
           tRef.current = next;
           setT(next);
+        } else {
+          rewinding = false;
         }
         const tt = tRef.current;
         let label = "";

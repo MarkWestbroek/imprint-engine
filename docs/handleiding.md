@@ -319,10 +319,11 @@ SVG-tekening (de plaat heeft class `panel`; cirkels en rechthoeken met de
 classes hole/pot/enc/btn/din/usb/mnt/disp worden gaten), de **rails** zijn
 een vinkje. Met **accessoires** aan (standaard) bouwt de widget uit dezelfde
 tekening wat geen bord levert: display (`disp`), MIDI-DIN-bussen (`din`),
-USB (`usb`), drukknoppen (`btn`) en knoppen op encoder- en potgaten (`enc`,
-`pot`); ze pluggen van achteren in zodra het paneel zit. Verder: de duur
+USB-C (`usb`), drukknoppen (`btn`) en knoppen op encoder- en potgaten
+(`enc`, `pot`); ze zitten aan het paneel en komen ermee mee. Verder: de duur
 van één doorloop in seconden, **hold** (hoe lang de unit aan het eind
-compleet blijft staan voor hij opnieuw begint; standaard 8 s), autoplay,
+compleet blijft staan — alleen de camera draait — voor hij in anderhalve
+seconde weer uit elkaar gaat en opnieuw begint; standaard 8 s), autoplay,
 herhalen en optioneel een **muziekbestand** — dat start pas als de bezoeker
 op Play drukt, nooit vanzelf. De bezoeker kan afspelen, pauzeren, door de tijdlijn
 schuiven, slepen om rond te kijken en met *Reset view* terug naar het

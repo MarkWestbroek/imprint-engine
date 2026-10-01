@@ -424,9 +424,11 @@ flowchart LR
   `public/boards/frontpanel-v2.svg` is v1 met de jack/pot-rijen op 13,75.
   **Accessoires** (`panel.accessories`): uit de SVG-elementen `disp`, `din`,
   `usb`, `btn`, `enc`, `pot` maakt het eiland eenvoudige solids (bezel +
-  glas, DIN-cilinders, USB-blok, knopkappen, knoppen) op de tekenposities —
-  één mover die na het paneel van achteren inplugt. **Hold**: na t = 1 blijft
-  de unit `hold` seconden staan (camera draait door) voor de lus herstart. Coördinaten zijn de millimeters van
+  glas, DIN-cilinders, USB-C-plaatje met pil, knopkappen, knoppen) op de
+  tekenposities, als kinderen van de paneelgroep (ze reizen mee; los
+  zwevend stonden ze in het pad van het busboard). **Hold**: na t = 1 blijft
+  de unit `hold` seconden staan (alleen de camera draait), dan spoelt t in
+  1,5 s terug naar 0 (de unit trekt uit elkaar) en begint de lus opnieuw. Coördinaten zijn de millimeters van
   `doc/mechanics/MusicBrainAssembly.FCMacro` in de MusicBrain-repo (x rechts,
   y diepte, z omhoog → three: x, y=z, z=−y), zodat een Blender-render dezelfde
   page-config kan lezen. `three` staat expliciet in de site (zelfde versie

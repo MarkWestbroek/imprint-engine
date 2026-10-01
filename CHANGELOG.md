@@ -59,8 +59,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   muziek (start alleen op klik). three.js lazy geladen in een client-eiland;
   coördinaten volgen `MusicBrainAssembly.FCMacro` zodat dezelfde choreografie
   een Blender-render kan sturen. Eerste choreografie op `/cortex`. Met
-  `hold` (unit blijft aan het eind staan) en `panel.accessories` (display,
-  MIDI-DIN, USB, knoppen uit de paneeltekening); paneel v2 op de echte
+  `hold` (unit blijft aan het eind staan, trekt dan rustig uit elkaar en
+  begint opnieuw) en `panel.accessories` (display, MIDI-DIN, USB-C, knoppen
+  uit de paneeltekening, mee met het paneel); paneel v2 op de echte
   13,75 mm-jacksteek, jacks door de gaten.
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
