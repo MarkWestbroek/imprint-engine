@@ -1,15 +1,36 @@
 {
   "slug": "reflex",
   "lang": "en",
+  "access": "public",
   "name": "Reflex",
-  "tagline": "Silent relay switching for your whole board in one tap. Configure over WiFi from any browser — no app.",
+  "tagline": "Relay loop switching for pedalboards, driven by a MIDI/footswitch controller. In development.",
   "audience": "for pedalboards",
   "status": "in-development",
+  "description": "Reflex has two parts that work together but are separate: a **controller** (footswitches and MIDI) that decides what should be on, and **relay loop boards** that actually switch your pedals in and out of the audio path.\n\nThe offline editor lets you build a pedal chain and patches, and simulates MIDI and relay states — it visualizes the switching, it does not emulate the sound of your pedals. Firmware implementations and hardware designs exist (see the Reflex releases); they are not a production-ready build, and hardware status is listed per board. Reflex does not use the Cortex USB workflow.",
   "specs": [
-    { "label": "Switches", "value": "8 footswitches, RGB LED rings" },
-    { "label": "Display", "value": "Per-switch OLED labels" },
-    { "label": "Connectivity", "value": "MIDI DIN, USB, 2x expression pedal" }
+    {
+      "label": "Loop boards",
+      "value": "gswitch-loop8 / loop8sh: relay loops (v0.1 designs)"
+    },
+    {
+      "label": "Controller (design)",
+      "value": "8 footswitches with RGB rings, per-switch OLED labels"
+    },
+    {
+      "label": "Connectivity (design)",
+      "value": "MIDI DIN, USB, 2x expression pedal"
+    },
+    {
+      "label": "Editor",
+      "value": "Offline chain editor with MIDI/relay-state simulation"
+    }
   ],
   "media": [],
+  "components": [
+    "gswitch-brain",
+    "gswitch-loop8",
+    "gswitch-loop8sh",
+    "editor-reflex"
+  ],
   "order": 2
 }

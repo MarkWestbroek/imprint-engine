@@ -43,7 +43,7 @@ export async function buildStore(): Promise<MemoryContentStore> {
     tagline: "The open brain for your analog rig",
     motto: "open hardware · est. NL",
     baseUrl: "https://musicbrain.test",
-    links: { github: "https://github.com/musicbrain", discord: "https://discord.gg/musicbrain" },
+    links: { github: "https://github.com/MarkWestbroek/MusicBrain", discord: "https://discord.gg/musicbrain" },
   });
 
   await put("menu", "main", {

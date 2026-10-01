@@ -1,0 +1,29 @@
+{
+  "slug": "devlog",
+  "lang": "en",
+  "access": "public",
+  "title": "Devlog",
+  "description": "Progress notes from the MusicBrain workbench.",
+  "draft": false,
+  "body": "Progress notes from the workbench. The detailed, day-to-day history is in the [development log on GitHub](https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/RELEASE-LOG.md).",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "posts",
+                "config": {
+                  "prefix": "posts/",
+                  "limit": 20
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

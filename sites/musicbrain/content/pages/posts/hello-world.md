@@ -7,6 +7,4 @@ publishedAt: "2026-07-06"
 ---
 
 Welcome to the MusicBrain devlog. This is where we'll post progress on
-Cortex, Reflex, Relay and Synapse — the good, the bad and the solder fumes.
-
-More soon.
+Cortex, Reflex and Relay — the good, the bad and the solder fumes.

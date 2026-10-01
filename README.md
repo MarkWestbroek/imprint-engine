@@ -391,7 +391,7 @@ Alles onder `sites/musicbrain/content/`; zod valideert bij de build, dus een
 kapot bestand breekt de build in plaats van stil verkeerde output te geven.
 
 - **Product:** `content/products/<slug>.json` — naam, tagline, status
-  (`in-development | beta | available | discontinued`), specs als lijst.
+  (`concept | in-development | beta | available | discontinued`), specs als lijst.
 - **Release:** `content/releases/<naam>.json` — later automatisch gevuld
   via GitHub-webhook (S7).
 - **Pagina/post:** `content/pages/**/*.md` — frontmatter + markdown.

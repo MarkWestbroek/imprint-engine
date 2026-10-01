@@ -1,6 +1,7 @@
 import type { ProductStatus } from "@imprint/content-core";
 
 const LABELS: Record<ProductStatus, string> = {
+  concept: "Concept",
   "in-development": "In development",
   beta: "Beta",
   available: "Available",
@@ -8,6 +9,7 @@ const LABELS: Record<ProductStatus, string> = {
 };
 
 const STYLES: Record<ProductStatus, string> = {
+  concept: "bg-violet-400/10 text-violet-300 border-violet-400/30",
   "in-development": "bg-amber-400/10 text-amber-300 border-amber-400/30",
   beta: "bg-sky-400/10 text-sky-300 border-sky-400/30",
   available: "bg-emerald-400/10 text-emerald-300 border-emerald-400/30",

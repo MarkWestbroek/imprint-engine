@@ -1,0 +1,23 @@
+{
+  "project": "firmware",
+  "version": "0.5.78",
+  "date": "2026-09-25",
+  "channel": "stable",
+  "access": "public",
+  "product": "cortex",
+  "components": [],
+  "highlights": [
+    "Rotary (Leslie-style) speaker: slow/fast, brake and motor inertia",
+    "Shimmer reverb with an octave grain shifter in the loop",
+    "Harmonizer with a new grain mode",
+    "73 modules in the firmware/editor contract"
+  ],
+  "body": "Firmware for **Teensy 4.1 with PSRAM**. Flash `mmb-fw-0.5.78.hex` with [PJRC Teensy Loader](https://www.pjrc.com/teensy/loader.html), or from the editor (**Teensy → Firmware**). Measured on a Teensy: rotary ~12 % CPU, shimmer ~17 % CPU. Full release notes (NL) on GitHub.",
+  "sourceUrl": "https://github.com/MarkWestbroek/MusicBrain/releases/tag/fw-0.5.78",
+  "downloads": [
+    {
+      "label": "mmb-fw-0.5.78.hex",
+      "url": "https://github.com/MarkWestbroek/MusicBrain/releases/download/fw-0.5.78/mmb-fw-0.5.78.hex"
+    }
+  ]
+}

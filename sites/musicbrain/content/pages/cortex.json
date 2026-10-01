@@ -1,0 +1,29 @@
+{
+  "slug": "cortex",
+  "lang": "en",
+  "access": "public",
+  "title": "Cortex — hardware status",
+  "description": "The current Cortex backplane: busboard v3.1, with connectors and pinouts.",
+  "draft": false,
+  "body": "The current Cortex backplane is **busboard v3.1**, as pinned by release [Cortex v0.3](/releases/cortex-v0.3). Validation differs per board — see each component's page for its status. Earlier generations stay available on the [busboard component page](/components/busboard).",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "boardspec",
+                "config": {
+                  "title": "Busboard v3.1",
+                  "spec": "busboard@v3.1"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

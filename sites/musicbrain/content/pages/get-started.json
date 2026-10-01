@@ -1,0 +1,139 @@
+{
+  "slug": "get-started",
+  "lang": "en",
+  "access": "public",
+  "title": "Get started",
+  "description": "Three ways in: play in your browser, run it on a Teensy, or build hardware.",
+  "draft": false,
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Three ways *in*.",
+                  "subtitle": "Play in your browser, run it on a Teensy, or build hardware. The step-by-step documentation lives in the MusicBrain repository on GitHub; guides marked (NL) are in Dutch.",
+                  "align": "left",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Play in your browser",
+                      "markdown": "1. Open the [editor](https://editor.musicbrain.nl/) and select **Modular MB**.\n2. Load a ready-made patch from **Solo** or **Poly**.\n3. Open **Simulation**, start audio at a low volume and play the on-screen keyboard or a MIDI keyboard.\n4. Export the project as JSON — browser storage is not a backup.\n\n[Step by step →](https://github.com/MarkWestbroek/MusicBrain#try-it-in-the-browser)"
+                    },
+                    {
+                      "title": "Use a Teensy",
+                      "markdown": "You need a **Teensy 4.1**, a USB data cable and a computer; sampler and bank patches also need PSRAM and a microSD card.\n\n1. Download a [released firmware](https://github.com/MarkWestbroek/MusicBrain/releases) and flash it with PJRC Teensy Loader.\n2. Connect from the editor's Teensy link and check the version it reports.\n3. Listen over USB audio — the current firmware has no standalone analog output.\n\n[Use a Teensy →](https://github.com/MarkWestbroek/MusicBrain#use-a-teensy) · [Firmware distribution (NL)](https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/firmware-distributie.md) · [Teensy on a PC (NL)](https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/teensy-aan-de-pc.md)"
+                    },
+                    {
+                      "title": "Build hardware",
+                      "markdown": "Stick to one board generation. Check each card's revision, pinouts, BOM/fab files and validation status, and verify power and orientation before first power-up.\n\nA clean ERC/DRC or fab package is not proof of an assembled, tested board.\n\n[Build hardware →](https://github.com/MarkWestbroek/MusicBrain#build-hardware)"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "buttons",
+                "config": {
+                  "items": [
+                    {
+                      "label": "Open the editor",
+                      "href": "https://editor.musicbrain.nl/",
+                      "style": "primary",
+                      "newTab": true
+                    },
+                    {
+                      "label": "Documentation",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#start-here",
+                      "style": "secondary",
+                      "newTab": true
+                    },
+                    {
+                      "label": "Firmware releases",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/releases",
+                      "style": "secondary",
+                      "newTab": true
+                    },
+                    {
+                      "label": "Issues",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/issues",
+                      "style": "ghost",
+                      "newTab": true
+                    },
+                    {
+                      "label": "Source",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain",
+                      "style": "ghost",
+                      "newTab": true
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Before you start",
+                  "tone": "info",
+                  "markdown": "- **Browser:** a current Chrome or Edge gives the most straightforward Web MIDI/USB workflow. Audio, MIDI and serial access each ask for permission.\n- **Backup:** export your projects as JSON; browser storage is not a backup.\n- **Teensy:** Teensy 4.1 and a USB data cable; PSRAM and microSD for samplers and banks. The documented flashing and audio workflow is for Windows.\n- **Optional:** AI assistance and local speech generation have their own configuration. The core editor needs neither.\n\nOnly the combinations above are documented; others may work but have not been tested."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "License",
+                  "markdown": "MusicBrain's own code is MIT-licensed. Third-party libraries and assets keep their own licenses and notices; check them before redistributing firmware, sample banks or bundled material. [License and source →](https://github.com/MarkWestbroek/MusicBrain#license)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

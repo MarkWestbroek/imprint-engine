@@ -1,7 +1,10 @@
 {
   "slug": "editor",
+  "lang": "en",
+  "access": "public",
   "title": "Editor & simulator",
-  "description": "Patch MusicBrain in your browser — the free editor runs the exact same firmware core in simulation, no hardware and no account needed.",
+  "description": "Patch and play in your browser — the free editor & simulator needs no MusicBrain hardware and no account.",
+  "draft": false,
   "body": "",
   "layout": {
     "rows": [
@@ -14,16 +17,19 @@
                 "type": "hero",
                 "config": {
                   "title": "Patch it in your *browser*.",
-                  "subtitle": "The free editor patches modules, turns knobs live and shows every CV on a built-in scope. No hardware yet? The simulator runs the exact same firmware core on your laptop — a complete synth, in a browser tab.",
+                  "subtitle": "Assemble a rack, patch instruments and effects, and play in your browser. Start with a ready-made patch or build your own. No MusicBrain hardware or account is required for the core editor and simulator.",
                   "buttonLabel": "Open the editor",
-                  "buttonUrl": "https://editor.musicbrain.nl",
-                  "variant": "open",
-                  "align": "left"
+                  "buttonUrl": "https://editor.musicbrain.nl/",
+                  "align": "left",
+                  "variant": "open"
                 }
               },
               {
                 "type": "divider",
-                "config": { "style": "scope", "size": 2 }
+                "config": {
+                  "style": "scope",
+                  "size": 2
+                }
               }
             ]
           }
@@ -39,11 +45,102 @@
                 "config": {
                   "title": "What runs in the tab",
                   "items": [
-                    { "value": "16 voices", "label": "polyphonic, live from MIDI" },
-                    { "value": "Built-in scope", "label": "every CV and gate, live" },
-                    { "value": "No install", "label": "no account, nothing to set up" },
-                    { "value": "MIT", "label": "same firmware core, open" }
+                    {
+                      "value": "No install",
+                      "label": "no account, nothing to set up"
+                    },
+                    {
+                      "value": "Firmware DSP",
+                      "label": "the Teensy's C++ code, compiled to WebAssembly"
+                    },
+                    {
+                      "value": "Export",
+                      "label": "projects as JSON, your own backup"
+                    },
+                    {
+                      "value": "MIT",
+                      "label": "MusicBrain's own code, open"
+                    }
                   ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Browser and Teensy",
+                  "markdown": "The simulator runs the Teensy firmware's own C++ DSP code, compiled to WebAssembly, and new modules are built for browser and Teensy together — so a patch sounds nearly the same in both places. What differs is the surroundings: audio I/O, some routing (Web Audio in the browser), and the CPU and memory a Teensy has. The **Sim** column in the editor's **Modules** tab shows which modules the simulator supports."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "What you can explore",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Synthesis",
+                      "markdown": "Subtractive, FM/DX7, wavetable, physical models and SID.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    },
+                    {
+                      "title": "Sampling",
+                      "markdown": "Your own material, SF2 import, key/velocity zones and banks.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    },
+                    {
+                      "title": "Effects",
+                      "markdown": "Filters, delays, modulation, reverb, compressors and EQ.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    },
+                    {
+                      "title": "Voice & external audio",
+                      "markdown": "Vocoder, ZANG and lyric banks — each with its own requirements (banks, audio input).",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    },
+                    {
+                      "title": "Control",
+                      "markdown": "MIDI, CC and aftertouch, control surfaces. MPE is in development.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    },
+                    {
+                      "title": "Patch tools",
+                      "markdown": "Presets and recipes; optional AI/MCP workflows with their own setup. A/B morph is a prototype.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#feature-guide"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "*This is an overview of the project, not a list of what is in the live editor today — newer features can land in the source before they are deployed. Morph and early instrument experiments are prototypes.*"
                 }
               }
             ]
@@ -58,11 +155,11 @@
               {
                 "type": "callout",
                 "config": {
-                  "title": "Try it before it exists.",
-                  "markdown": "The editor is the same tool you'll use with the hardware — so you can design patches, learn the routing and hear the simulation today, and load them onto a **Cortex** the day it arrives. It talks only relays, CV and gate; your ideas stay yours.",
+                  "title": "Take it to a Teensy.",
+                  "markdown": "The editor is also the front end for the hardware. To play the internal digital instruments on a **Teensy 4.1** you need a USB cable and a released firmware — no complete backplane. Check the version the device reports and start with a simple patch.",
                   "tone": "accent",
-                  "buttonLabel": "Open the editor",
-                  "buttonUrl": "https://editor.musicbrain.nl"
+                  "buttonLabel": "Get started",
+                  "buttonUrl": "/get-started"
                 }
               }
             ]

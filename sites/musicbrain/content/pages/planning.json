@@ -1,8 +1,11 @@
 {
   "slug": "planning",
+  "lang": "en",
+  "access": "public",
   "title": "Planning",
-  "description": "Van idee tot geproduceerd bord — de roadmap als levend kanban-bord.",
-  "body": "Dit bord wordt bijgehouden in de admin (**Planning**): kaarten worden tussen fasen gesleept en elke wijziging is een nieuwe versie. Met *Time travel* zie je het bord zoals het op een gekozen datum was.",
+  "description": "What is available, what is being worked on, and what is research.",
+  "draft": false,
+  "body": "MusicBrain grows in small steps: most ideas are built and tried right away. This page shows the state of things in three levels — **available now**, **working on now** and **research**. A research prototype is not a product promise.\n\nFor hardware we separate *design*, *produced prototype*, *physically tested* and *orderable* — a clean ERC/DRC or a fab package covers only part of design validation. Nothing is orderable yet.",
   "layout": {
     "rows": [
       {
@@ -11,9 +14,168 @@
             "span": 1,
             "widgets": [
               {
+                "type": "cards",
+                "config": {
+                  "title": "Available now · as of 1 October 2026",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Editor & simulator",
+                      "markdown": "Live at editor.musicbrain.nl, deployed 30 September 2026. No hardware or account needed.",
+                      "href": "https://editor.musicbrain.nl/"
+                    },
+                    {
+                      "title": "Firmware 0.5.78",
+                      "markdown": "The latest released `.hex` for Teensy 4.1 (25 September 2026), flashed with PJRC Teensy Loader.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/releases"
+                    },
+                    {
+                      "title": "Reflex editor 0.2.0",
+                      "markdown": "Offline chain editor with MIDI/relay-state simulation, part of Reflex v0.1.",
+                      "href": "/releases"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Working on now",
+                  "columns": 2,
+                  "items": [
+                    {
+                      "title": "Cortex",
+                      "markdown": "The modular brain: playing, patch changes and simulator/Teensy behaviour, and integrating the busboard v3.1 hardware generation.",
+                      "href": "/products/cortex"
+                    },
+                    {
+                      "title": "Reflex",
+                      "markdown": "The guitar effect switcher: the MIDI/footswitch controller and the relay loop boards.",
+                      "href": "/products/reflex"
+                    },
+                    {
+                      "title": "Singing voice",
+                      "markdown": "A playable digital formant voice (FOF) that runs in the browser and on a Teensy. Working prototype; listening tests and a test on a physical Teensy are still open."
+                    },
+                    {
+                      "title": "Material Bridge",
+                      "markdown": "A research instrument: four coupled resonators whose bridge contact remembers how hard you just played. Built for browser and Teensy; not yet tested on hardware."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Research",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "State-Graph synthesis",
+                      "markdown": "Instruments whose sound depends on what happened before — Material Bridge is the first one.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/plans/state-graph-synthesis.md"
+                    },
+                    {
+                      "title": "Instrument Lab",
+                      "markdown": "Analog and hybrid voice circuits, such as voice tiles.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/plans/musicbrain-instrument-lab.md"
+                    },
+                    {
+                      "title": "Expressive control",
+                      "markdown": "MPE, patch morphing and richer voice workflows — partly implemented, each with its own status.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain#where-it-is-going"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Further out · ideas, not commitments",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "More ways to play",
+                      "markdown": "Alternative controllers for Cortex: trackpad, joystick, a rolling-ball 3D controller, and your phone — or a few old phones — running the controller app, which already works."
+                    },
+                    {
+                      "title": "External control surfaces",
+                      "markdown": "Pairing with devices such as the Melbourne Instruments Roto-Control, and MPE compatibility for controllers like the Expressive E Osmose.",
+                      "href": "https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/plans/control-surface.md"
+                    },
+                    {
+                      "title": "Korg logue SDK",
+                      "markdown": "Looking into the logue SDK as a way to run MusicBrain DSP on Korg's platform."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "*Versions:* the firmware source is at 0.5.94; builds after 0.5.78 are development snapshots, not downloads. The day-to-day list of work is the [backlog on GitHub (NL)](https://github.com/MarkWestbroek/MusicBrain/blob/main/doc/BACKLOG.md)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Hardware boards",
+                  "markdown": "Each board on its way from idea to produced board."
+                }
+              },
+              {
                 "type": "planning",
                 "config": {
-                  "planning": "roadmap"
+                  "planning": "roadmap",
+                  "titleField": "title",
+                  "phaseField": "status",
+                  "ownerField": "owner",
+                  "phases": []
                 }
               }
             ]

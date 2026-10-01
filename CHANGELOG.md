@@ -27,6 +27,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   bijgewerkt: juiste GitHub-links, nieuwe pagina's `get-started` en
   `devlog`, herschreven About/Editor/Planning en producttekst van
   Cortex/Reflex/Relay zonder universele claims.
+- **Productstatus `concept`**: nieuwe eerste fase vóór `in-development`
+  (idee/architectuur, nog geen geverifieerd ontwerp), met eigen badge;
+  Relay staat erop. Seed: release `firmware-0.5.78` (download van GitHub) en
+  de placeholder-tekst van `simulator-0.1.0` vervangen.
+- **Hardware terug op de productpagina's**: Cortex koppelt nu alle 16
+  componenten van release v0.3 (busboard, functiekaarten, panelfronten,
+  risers, matrix, FPGA voice, editor) en Reflex zijn drie borden + editor,
+  zodat de `components`-widget ze met board-spec toont; de Cortex-tekst
+  beschrijft de fysieke unit (Eurorack of standalone).
 - **plugin-groups (G0 van communities.md)**: groepen als contenttype (`group`:
   naam, samenvatting, introductie, tekst, beeld, tags, besloten/op aanvraag,
   wiki, ledental), de widget `groups` (kaarten met zoekveld), het overzicht

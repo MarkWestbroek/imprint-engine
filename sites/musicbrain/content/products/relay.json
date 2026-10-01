@@ -1,14 +1,27 @@
 {
   "slug": "relay",
   "lang": "en",
+  "access": "public",
   "name": "Relay",
-  "tagline": "Any pre-amp to any power amp to any cab. Pop-free, pure relays, recalled from your desk.",
+  "tagline": "Amp and cab switching for studios — architecture and safety requirements, not yet a verified design.",
   "audience": "for studios",
-  "status": "in-development",
+  "status": "concept",
+  "description": "Relay is the studio direction: recalling which pre-amp, power amp and cabinet are connected, from your desk, over MIDI.\n\nIt is at the architecture stage. Switching power amps and speaker cabinets involves impedance, power, load and switching conditions that must come from a verified design. Until then we make no claims about universal amp/cab compatibility or pop-free operation, and the Relay mode in the editor is a placeholder. Never treat an unverified relay design as safe for power-amp or speaker switching.",
   "specs": [
-    { "label": "Switching", "value": "4x relay loops, amp channel switching" },
-    { "label": "Control", "value": "MIDI program/control change" }
+    {
+      "label": "Status",
+      "value": "Architecture and safety requirements"
+    },
+    {
+      "label": "Switching (planned)",
+      "value": "Relay loops, amp channel switching"
+    },
+    {
+      "label": "Control (planned)",
+      "value": "MIDI program/control change"
+    }
   ],
   "media": [],
+  "components": [],
   "order": 3
 }

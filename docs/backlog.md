@@ -638,6 +638,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       Nog te doen aan jouw kant: secret zetten + webhook aanmaken in de
       GitHub-repo('s) + mapping invullen.
 - [ ] **W4** Beta-/interesse-aanmelding per product (formulier → lijst). _(must; M)_
+- [ ] **Montagefilmpje Cortex** (wens Mark, 1 okt 2026): busboard, insteek-
+      kaarten, jack8 en frontpaneel langzaam in elkaar gestoken, MusicBrain-
+      muziek eronder — laat zien hoe een hardware-unit er uiteindelijk uitziet
+      (Eurorack of standalone). Plaatsen met de `video`-widget op
+      `/products/cortex` (of in de product-view). Vraagt opname + montage aan
+      MusicBrain-kant; Imprint hoeft niets nieuws. _(should; M)_
+- [ ] **GitHub-releasefeed voor MusicBrain**: `releaseSources` kent geen
+      tag-filter; `fw-0.5.78` zou als "vfw-0.5.78" verschijnen en de
+      `banks`-release komt mee. Per bron een tag-prefix (filter + strip) →
+      daarna gaat elke firmware-release automatisch de site op. _(should; S)_
 - [ ] **S10** Formulieren → DB + notificatie-mail + spam-bescherming (de basis
       onder W1/W4). _(must; L)_ **Spooraanpassing (juli 2026)**: Mark bouwt in
       het bitemporal-project (Omnium) een metamodel-gedreven formuliereditor +

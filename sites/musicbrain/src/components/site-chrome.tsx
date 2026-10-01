@@ -57,7 +57,7 @@ export function SiteChrome({
   return (
     <>
       <header className={`border-b border-line ${chromeCls}`}>
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-6">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-6 gap-y-4 px-4 py-6">
           <Link href="/" className="flex items-center gap-4">
             <BrainMark className="h-12 w-14" />
             <span className="leading-tight">
@@ -69,7 +69,7 @@ export function SiteChrome({
               </span>
             </span>
           </Link>
-          <nav className="flex items-center gap-5 text-sm text-muted">
+          <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted">
             {nav.map((item) => (
               <Link key={item.href} href={item.href} className="hover:text-foreground">
                 {item.label}
@@ -91,26 +91,17 @@ export function SiteChrome({
       <footer className={`border-t border-line ${chromeCls}`}>
         <div className="mx-auto flex max-w-5xl flex-wrap items-baseline justify-between gap-2 px-4 py-6 text-sm text-muted">
           <p className="flex flex-wrap gap-x-4 font-mono text-xs">
-            {site.links.github && (
+            {footerLinks(site.links).map(([label, href]) => (
               <a
-                href={site.links.github}
+                key={label}
+                href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-accent hover:underline"
               >
-                github
+                {label}
               </a>
-            )}
-            {site.links.discord && (
-              <a
-                href={site.links.discord}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-accent hover:underline"
-              >
-                discord
-              </a>
-            )}
+            ))}
             <span>
               © {new Date().getFullYear()} {site.name} · open source, open
               hardware
@@ -140,4 +131,26 @@ export function menuToNav(
       { href: "/about", label: "About" },
     ]
   );
+}
+
+/**
+ * Footer labels per `site.links` key: source, docs, downloads and help each
+ * get their own name. Known keys come first in this order; any other key is
+ * shown under its own name.
+ */
+const LINK_LABELS: [key: string, label: string][] = [
+  ["github", "source"],
+  ["docs", "docs"],
+  ["releases", "firmware"],
+  ["issues", "issues"],
+  ["editor", "editor"],
+  ["discord", "discord"],
+];
+
+function footerLinks(links: Record<string, string>): [string, string][] {
+  const known = LINK_LABELS.filter(([key]) => links[key]).map(
+    ([key, label]): [string, string] => [label, links[key]]
+  );
+  const rest = Object.entries(links).filter(([key]) => !LINK_LABELS.some(([k]) => k === key));
+  return [...known, ...rest];
 }

@@ -1,18 +1,60 @@
 {
   "slug": "cortex",
   "lang": "en",
+  "access": "public",
   "name": "Cortex",
-  "tagline": "Save and recall full patches. Play your analog oscillators polyphonically — up to 16 voices, allocated live from MIDI.",
+  "tagline": "Modular patches you can play and recall — in your browser, on a Teensy, and on supported modular hardware.",
   "audience": "for modular synths",
   "status": "in-development",
-  "description": "Modular synths forget. Every patch, every routing, every knob — gone the moment you touch it. Cortex gives your case memory: save and recall full patches, and play your analog oscillators polyphonically with up to 16 voices, allocated live from MIDI.\n\nYour audio stays 100% analog; the brain speaks only CV and gate. Built on open firmware — configure it with the free editor & simulator, or hack it yourself.",
+  "description": "Cortex connects three places a patch can live: the browser editor, a Teensy 4.1 running the MusicBrain firmware, and external modules driven over MIDI, CV and gates.\n\nStart in the browser: assemble a rack, patch instruments and effects, and play — no hardware needed. The simulator runs the Teensy firmware's own C++ DSP code, compiled to WebAssembly, and new modules are built for both at once, so a patch sounds nearly the same in the browser and on a Teensy. To hear the internal digital instruments on hardware you only need a Teensy 4.1 and a USB cable: the current firmware's audio connection is USB audio, and no complete backplane is required.\n\n**The hardware unit.** A physical Cortex is a Teensy 4.1 on the **busboard**, with six slots for function cards: **ADC8** and **DAC8** for eight CV inputs and outputs, **Gate8** and **GateIn8** for gates and triggers, risers for panel controls. Each card gets its panel side — a **Jack8** with eight 3.5 mm jacks, a **Pot8-Front** with eight potentiometers or an **Enc5-Front** with encoders and buttons — and the whole unit fits in a Eurorack case or stands on its own. One box that plays and patches your Eurorack modules and MusicBrain's own cards from the browser, and remembers every patch.\n\nThe hardware is in development: the boards below exist as designs and prototypes, and validation differs per board and function. External audio paths stay analog; internal DSP and USB audio are digital. Recall of external modules depends on which parameters and connections the hardware can actually control, and polyphony depends on the patch and the target.",
   "specs": [
-    { "label": "Latency", "value": "≤ 5 ms note-on → CV" },
-    { "label": "Pitch CV", "value": "16-bit, 1V/oct" },
-    { "label": "Voices", "value": "16, multi-case" },
-    { "label": "Editor", "value": "Free browser editor & simulator" },
-    { "label": "Firmware", "value": "Open source (MIT), updatable over USB" }
+    {
+      "label": "Editor",
+      "value": "Browser editor & simulator — usable now"
+    },
+    {
+      "label": "DSP",
+      "value": "One C++ codebase: WebAssembly in the browser, native on Teensy 4.1"
+    },
+    {
+      "label": "Audio on Teensy",
+      "value": "USB audio in the current firmware"
+    },
+    {
+      "label": "Hardware",
+      "value": "Busboard with six slots, function cards and panel fronts; Eurorack or standalone"
+    },
+    {
+      "label": "External control",
+      "value": "MIDI, CV and gates via the function cards (in development)"
+    },
+    {
+      "label": "Pitch CV (design)",
+      "value": "16-bit, 1V/oct"
+    },
+    {
+      "label": "Firmware",
+      "value": "Open source (MIT), released builds on GitHub, flashed with Teensy Loader"
+    }
   ],
   "media": [],
+  "components": [
+    "busboard",
+    "adc8",
+    "dac8",
+    "gate8",
+    "gatein8",
+    "jack8",
+    "jack4",
+    "pot8front",
+    "potriser",
+    "enc5front",
+    "i2criser",
+    "riser",
+    "ad5754r-breakout",
+    "matrix",
+    "fpga-voice",
+    "editor-cortex"
+  ],
   "order": 1
 }

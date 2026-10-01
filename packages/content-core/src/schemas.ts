@@ -204,6 +204,8 @@ export const AssetMetaSchema = AssetRecordSchema.pick({
 export type AssetMeta = z.infer<typeof AssetMetaSchema>;
 
 export const ProductStatus = z.enum([
+  /** Idea/architecture stage: requirements, no verified design yet. */
+  "concept",
   "in-development",
   "beta",
   "available",

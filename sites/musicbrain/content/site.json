@@ -1,12 +1,15 @@
 {
   "name": "MusicBrain",
-  "tagline": "The open brain for your analog rig",
+  "tagline": "Open instruments, recallable patches, musical control",
   "motto": "open hardware · est. NL",
-  "baseUrl": "https://musicbrain.example",
+  "baseUrl": "https://musicbrain.nl",
   "defaultLocale": "en",
   "links": {
-    "github": "https://github.com/musicbrain",
-    "discord": "https://discord.gg/musicbrain"
+    "github": "https://github.com/MarkWestbroek/MusicBrain",
+    "docs": "https://github.com/MarkWestbroek/MusicBrain#start-here",
+    "releases": "https://github.com/MarkWestbroek/MusicBrain/releases",
+    "issues": "https://github.com/MarkWestbroek/MusicBrain/issues",
+    "editor": "https://editor.musicbrain.nl/"
   },
   "aliases": {
     "hw": "components"

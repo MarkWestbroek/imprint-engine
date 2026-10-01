@@ -3,11 +3,13 @@
   "version": "0.1.0",
   "date": "2026-07-01",
   "channel": "beta",
+  "access": "public",
+  "components": [],
   "highlights": [
     "First public beta of the editor & simulator",
     "Full Cortex routing model, no hardware required"
   ],
-  "body": "Placeholder release note. Once the GitHub webhook (S7) is wired up, entries like this are created automatically from GitHub releases.",
-  "sourceUrl": "https://github.com/musicbrain",
+  "body": "The first public beta of the browser simulator (July 2026). The simulator has since become part of the editor: it now runs the Teensy firmware's own C++ DSP code compiled to WebAssembly, and new modules are built for browser and Teensy together. See the [editor page](/editor) for the current state.",
+  "sourceUrl": "https://github.com/MarkWestbroek/MusicBrain/releases",
   "downloads": []
 }

@@ -17,16 +17,34 @@ export default async function Home() {
     <div className="space-y-16">
       <section className="pt-8">
         <h1 className="max-w-2xl text-balance text-4xl font-extrabold leading-[1.05] tracking-tighter sm:text-5xl">
-          The open brain for your <span className="text-accent">analog</span>{" "}
-          rig.
+          Playable instruments, <span className="text-accent">recallable</span>{" "}
+          patches.
         </h1>
         <p className="mt-4 max-w-xl text-lg text-muted">
-          Pedalboards, amp racks and modular synths have one thing in common:{" "}
-          <strong className="font-semibold text-foreground">they forget.</strong>{" "}
-          Every setting, every routing, every patch — gone the moment you touch
-          it. MusicBrain gives them memory. Your audio stays 100% analog; the
-          brain speaks only relays, CV and gate.
+          MusicBrain is an open platform for playable instruments, recallable
+          patches and musical control. Build and play modular patches in your
+          browser, run shared DSP on a Teensy, and connect supported hardware
+          through MIDI, CV, gates and relays.
         </p>
+        <p className="mt-3 max-w-xl text-sm text-muted">
+          Keep external audio paths analog where your setup allows it, or
+          combine them with digital synthesis, sampling and effects. Recall
+          depends on the parameters and connections your hardware can control.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a
+            href={site.links.editor ?? "/editor"}
+            className="rounded-md bg-accent px-5 py-2.5 text-sm font-semibold text-background hover:bg-accent-strong"
+          >
+            Open the editor
+          </a>
+          <Link
+            href="/get-started"
+            className="rounded-md border border-line px-5 py-2.5 text-sm font-semibold transition-colors hover:border-accent"
+          >
+            Get started
+          </Link>
+        </div>
       </section>
 
       <section id="products" className="scroll-mt-20">
@@ -46,7 +64,7 @@ export default async function Home() {
             opacity="0.9"
           />
         </svg>
-        <p className="eyebrow">One platform · three machines</p>
+        <p className="eyebrow">One platform · three directions</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
           {products.map((product) => (
             <Link
@@ -101,20 +119,20 @@ export default async function Home() {
           className="block rounded-xl border border-line bg-surface p-6 transition-colors hover:border-accent"
         >
           <h2 className="text-xl font-semibold tracking-tight">
-            Try it before it exists.
+            Play it in your browser.
           </h2>
           <p className="mt-2 text-sm text-muted">
             The{" "}
             <strong className="font-semibold text-foreground">
-              free browser editor
+              editor &amp; simulator
             </strong>{" "}
-            patches modules, turns knobs live and shows every CV on a built-in
-            scope. No hardware yet? The{" "}
-            <strong className="font-semibold text-foreground">simulator</strong>{" "}
-            runs the exact same firmware core on your laptop.
+            is usable today: assemble a rack, patch instruments and effects,
+            and play — no hardware or account needed. The simulator runs the
+            Teensy firmware&apos;s own DSP code as WebAssembly, so a patch
+            sounds nearly the same when you move it to a Teensy.
           </p>
           <span className="mt-3 inline-block text-sm text-accent underline underline-offset-4">
-            Open the editor →
+            About the editor →
           </span>
         </Link>
         <div className="rounded-xl border border-line bg-surface p-6">
@@ -122,12 +140,12 @@ export default async function Home() {
             Open, top to bottom.
           </h2>
           <p className="mt-2 text-sm text-muted">
-            Firmware, editor, schematics and protocols are{" "}
+            MusicBrain&apos;s own firmware, editor, schematics and protocols are{" "}
             <strong className="font-semibold text-foreground">
               MIT-licensed
             </strong>
-            . No lock-in, no orphaned gear — extend it, port to it, fix it at 2
-            a.m.{" "}
+            ; third-party libraries and assets keep their own licenses. No
+            lock-in — extend it, port to it, fix it at 2 a.m.{" "}
             {site.links.github && (
               <a
                 href={site.links.github}
@@ -135,7 +153,7 @@ export default async function Home() {
                 rel="noopener noreferrer"
                 className="text-accent underline underline-offset-4"
               >
-                Everything on GitHub
+                Source on GitHub
               </a>
             )}
             .
