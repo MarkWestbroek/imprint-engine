@@ -928,9 +928,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             evenement → organisator; per soort mededeling aan/uit.
       - [ ] **G3 groepsinhoud** (§4.3–4.4): `group`-veld op wiki, pagina's,
             termen, planning, media; discussies, reacties, notificaties.
-      - [ ] Bestanden en beelden uit Pleio's `file-export.csv` (4.896 publiek)
-            naar de beeldbibliotheek; links in pagina's, wiki en termen naar
-            `asset:`-verwijzingen. Groeps- en privébestanden pas na G2.
+      - [x] ~~Bestanden en beelden waar de inhoud naar linkt~~ — 1.200 naar
+            de bibliotheek, links naar `asset:` (02-10,
+            `import:pleio-files`).
+      - [ ] De overige publieke Pleio-bestanden (`file-export.csv`: 4.896,
+            waarvan zo'n 3.700 nergens gelinkt) als bestandenmap per groep;
+            groeps- en privébestanden met de besloten test. Wat de
+            bibliotheek niet aanneemt (pptx, mp4) linkt nog naar Pleio.
       - [x] ~~Zoeken naar de kern~~ — `ContentTypeDefinition.search`,
             `search()` in content-core, `SearchPage` in runtime-admin (01-10).
       - [ ] Zoeken: een index (Postgres full-text) zodra het volume vraagt;

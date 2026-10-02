@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
 export type GroupCard = {
   href: string;
@@ -58,7 +59,7 @@ export function GroupCards({ groups, showSearch }: { groups: GroupCard[]; showSe
             >
               {g.image && (
                 // eslint-disable-next-line @next/next/no-img-element -- remote group image, sized by CSS
-                <img src={g.image} alt="" className="aspect-[3/1] w-full object-cover" loading="lazy" />
+                <img src={mediaSrc(g.image)} alt="" className="aspect-[3/1] w-full object-cover" loading="lazy" />
               )}
               <span className="flex flex-1 flex-col p-5">
                 <span className="text-xs text-muted">

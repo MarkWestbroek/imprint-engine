@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Pleio-bestanden in de bibliotheek** (showcase): `npm run
+  import:pleio-files --workspace=commonground` haalt de bestanden en
+  beelden op waar de geïmporteerde inhoud naar linkt (1.200 stuks), zet ze
+  via de gewone upload-kern in de beeldbibliotheek (map `pleio`, met de
+  herkomst in `source`) en herschrijft de links naar `asset:<slug>`;
+  `import:pleio` houdt die verwijzingen daarna vast. Herhaalbaar: wat er al
+  is wordt niet opnieuw gehaald. `deploy.sh import-pleio-files <site>`
+  draait het op de VPS, als de gebruiker en op het volume van de site.
+  De upload-kern neemt per bestand een gewenste slug, titel en herkomst aan
+  (`@imprint/runtime-admin/media-ingest`); beeldvelden van berichten,
+  evenementen en groepen tonen ook `asset:`-verwijzingen (`mediaSrc`).
 
 ## [0.13.0] - 2026-10-02
 - **Dagelijkse mededelingen-mail** (G3c stap 2): één mail per lid per dag

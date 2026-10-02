@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { formatDate, postHref, postSummary } from "./href";
 import type { Post } from "./schemas";
+import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
 /** The posts as a list: date, title, summary, writer. Server-rendered; nothing to click but the links. */
 export function PostList({ posts, showSummary = true }: { posts: Post[]; showSummary?: boolean }) {
@@ -11,7 +12,7 @@ export function PostList({ posts, showSummary = true }: { posts: Post[]; showSum
         <li key={p.slug} className="flex gap-4 py-4">
           {p.image && (
             // eslint-disable-next-line @next/next/no-img-element -- remote or library image, sized by CSS
-            <img src={p.image} alt="" className="hidden h-20 w-28 shrink-0 rounded object-cover sm:block" loading="lazy" />
+            <img src={mediaSrc(p.image)} alt="" className="hidden h-20 w-28 shrink-0 rounded object-cover sm:block" loading="lazy" />
           )}
           <div className="min-w-0">
             <p className="text-xs text-muted">

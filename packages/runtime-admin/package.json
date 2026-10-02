@@ -10,6 +10,8 @@
     "./admin": "./src/admin/index.ts",
     "./forms": "./src/forms.ts",
     "./admin-server": "./src/admin-server/index.ts",
+    "./media-ingest": "./src/admin-server/media.ts",
+    "./media-ref": "./src/media/ref.ts",
     "./studio": "./src/studio/index.ts"
   },
   "scripts": {

@@ -10,6 +10,7 @@ import type { Group } from "./schemas";
 import { toCard } from "./widget";
 
 import { groupPosts, type GroupPost } from "./timeline";
+import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
 /** An event of the group (plugin-events' `event`), likewise. */
 type GroupEvent = { slug: string; title: string; start: string; end: string; location: string };
@@ -37,7 +38,7 @@ function GroupView({
       <header className="mt-4 overflow-hidden rounded-md border border-line bg-surface">
         {group.image && (
           // eslint-disable-next-line @next/next/no-img-element -- remote group image, sized by CSS
-          <img src={group.image} alt="" className="max-h-72 w-full object-cover" />
+          <img src={mediaSrc(group.image)} alt="" className="max-h-72 w-full object-cover" />
         )}
         <div className="flex flex-wrap items-start justify-between gap-4 p-6">
           <div>

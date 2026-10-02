@@ -1,22 +1,14 @@
 import "./load-env";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { ContentTypeRegistry, coreContentTypeDefinitions } from "@imprint/content-core";
-import { openContentDatabase } from "@imprint/content-core/db";
 // React-free entries of the wiki plugin: this runs under tsx, not Next (as scripts/seed.ts does).
-import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
 import { scopedSlug, wikiPageHref } from "@imprint/plugin-wiki/href";
 import type { WikiFolder, WikiPage } from "@imprint/plugin-wiki/schemas";
-import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
 import { TERM_PREFIX, termHref, termSlug } from "@imprint/plugin-glossary/href";
-import { annotationsContentTypes } from "@imprint/plugin-annotations/content-types";
-import { blogContentTypes } from "@imprint/plugin-blog/content-types";
 import { newsHref, postHref } from "@imprint/plugin-blog/href";
-import { eventsContentTypes } from "@imprint/plugin-events/content-types";
 import { eventHref, eventsHref } from "@imprint/plugin-events/href";
-import { groupsContentTypes } from "@imprint/plugin-groups/content-types";
 import { GROUPS_PREFIX, groupHref, groupPagePrefix, groupsHref } from "@imprint/plugin-groups/href";
-import { widgetRegistry } from "../src/widgets/registry";
+import { assetMap, openSiteStore, rewriteFiles } from "./pleio-files";
 
 /**
  * Import the public pages of a Pleio site into this Imprint instance — the
@@ -56,8 +48,9 @@ import { widgetRegistry } from "../src/widgets/registry";
  *   `events` widget; the menu's "Agenda" → `/events`;
  * - terms (the custom type `custom_term`) → `term` (plugin-glossary), their
  *   overviews (objects widgets over custom_term) → the `glossary` widget.
- * Links to imported pages become Imprint paths; everything else (news,
- * events, groups, files, images) points at the Pleio site itself.
+ * Links to imported pages become Imprint paths; files and images point at
+ * the Pleio site until `import:pleio-files` has put them in the library —
+ * from then on this import writes their `asset:` references (pleio-files.ts).
  * Unchanged pages are skipped, so running it again only adds real changes.
  */
 
@@ -1053,14 +1046,13 @@ async function main() {
 
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("Writing needs DATABASE_URL (see .env.example)");
-  // The store with this site's widgets and content types, so it validates as the admin does.
-  const store = openContentDatabase(url, {
-    widgets: widgetRegistry,
-    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, groupsContentTypes, blogContentTypes, eventsContentTypes, annotationsContentTypes),
-  }).store;
+  const store = openSiteStore(url).store;
+  // Files already in the library (import-pleio-files) keep their `asset:` reference on a re-import.
+  const files = await assetMap(store, ORIGIN);
 
   let written = 0;
-  const put = async (type: string, slug: string, data: unknown) => {
+  const put = async (type: string, slug: string, raw: unknown) => {
+    const data = rewriteFiles(raw, files, ORIGIN);
     const current = await store.getItem(type, slug, "en");
     if (current && JSON.stringify(current.data) === JSON.stringify(data)) return;
     try {

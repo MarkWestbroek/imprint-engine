@@ -55,6 +55,10 @@ andere Pleio-site).
   activity-feeds over nieuws → de widget `posts` met `kind: news`. De statusupdates van een
   groep (alleen per groep op te vragen) → `post` met `kind: update`, titel
   uit de eerste zin.
+- Bestanden en beelden: `npm run import:pleio-files --workspace=commonground`
+  (na `import:pleio`) haalt op wat de inhoud gebruikt, zet het in de
+  beeldbibliotheek (map `pleio`) en maakt van de links `asset:`-verwijzingen;
+  `--dry-run` telt, `--limit=N` probeert, `--cache=DIR` bewaart downloads.
 - Evenementen → `event` (plugin-events) op `/events/<slug>`, met tijd,
   plaats, links, organisatie en de herhaling als tekst; agendalijsten → de
   widget `events`; "Agenda" in het menu → `/events`.

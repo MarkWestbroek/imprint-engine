@@ -78,7 +78,8 @@ export function normalizeGroup(value: string): string {
 
 const titleFromFilename = (name: string) => name.replace(/\.[^.]*$/, "").replace(/[-_]+/g, " ").trim();
 
-export type IngestFile = { name: string; bytes: Uint8Array };
+/** slug, 	itle and source are for imports: a wanted slug (made unique), a title other than the filename's, where the file came from. */
+export type IngestFile = { name: string; bytes: Uint8Array; slug?: string; title?: string; source?: string };
 export type IngestOptions = { folder?: string; tags?: string[]; group?: string; exif?: ExifPolicy; by?: string };
 export type IngestResult = {
   name: string;
@@ -130,7 +131,7 @@ export async function ingestFiles(
   for (const file of files) {
     try {
       const processed = await processUpload(file.bytes, policy, { maxBytes: admin.imprint.media.maxBytes });
-      const slug = uniqueSlug(slugFromFilename(file.name), taken);
+      const slug = uniqueSlug(file.slug || slugFromFilename(file.name), taken);
       const assets = admin.imprint.assets;
       const original = await assets.put(`${LIBRARY}${slug}/original.${processed.ext}`, file.bytes);
       const variants = [];
@@ -140,8 +141,9 @@ export async function ingestFiles(
       const data: AssetRecord = AssetRecordSchema.parse({
         slug,
         lang: "en",
-        title: titleFromFilename(file.name),
+        title: file.title ?? titleFromFilename(file.name),
         credit: processed.credit,
+        source: file.source,
         folder,
         tags,
         group,

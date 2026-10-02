@@ -6,6 +6,7 @@ import { EventList } from "./event-list";
 import { getEvent, listEvents } from "./events";
 import { EVENTS_PREFIX, eventSummary, eventsHref, formatWhen, isPast } from "./href";
 import type { Event } from "./schemas";
+import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -83,7 +84,7 @@ function EventView({ event, call }: { event: Event; call?: PluginCall }) {
       </dl>
       {event.image && (
         // eslint-disable-next-line @next/next/no-img-element -- remote or library image, sized by CSS
-        <img src={event.image} alt="" className="mt-6 max-h-96 w-full rounded-md object-cover" />
+        <img src={mediaSrc(event.image)} alt="" className="mt-6 max-h-96 w-full rounded-md object-cover" />
       )}
       <div className="markdown mt-6" data-annotation-field="body">
         <Markdown>{event.body || event.summary}</Markdown>

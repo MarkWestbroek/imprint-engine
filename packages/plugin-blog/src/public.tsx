@@ -5,6 +5,7 @@ import { BLOG_PREFIX, NEWS_PREFIX, blogHref, formatDate, newsHref, postSummary }
 import { PostList } from "./post-list";
 import { getPost, listPosts } from "./posts";
 import type { Post } from "./schemas";
+import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
 function PostView({ post }: { post: Post }) {
   return (
@@ -38,7 +39,7 @@ function PostView({ post }: { post: Post }) {
       <h1 className="text-3xl font-semibold tracking-tight">{post.title}</h1>
       {post.image && (
         // eslint-disable-next-line @next/next/no-img-element -- remote or library image, sized by CSS
-        <img src={post.image} alt="" className="mt-6 max-h-96 w-full rounded-md object-cover" />
+        <img src={mediaSrc(post.image)} alt="" className="mt-6 max-h-96 w-full rounded-md object-cover" />
       )}
       <div className="markdown mt-6" data-annotation-field="body">
         <Markdown>{post.body || post.summary}</Markdown>

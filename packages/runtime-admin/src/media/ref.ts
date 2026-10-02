@@ -8,6 +8,9 @@
 export const ASSET_REF_ROUTE = "/api/assets/_ref/";
 
 /** `asset:<slug>` → the ref route; anything else unchanged (null). */
+/** What an <img> or a link shows for a stored value: the ref route for `asset:<slug>`, the value itself otherwise. */
+export const mediaSrc = (url: string): string => assetRefUrl(url) ?? url;
+
 export function assetRefUrl(url: string): string | null {
   return url.startsWith("asset:") ? ASSET_REF_ROUTE + encodeURIComponent(url.slice("asset:".length)) : null;
 }

@@ -1145,6 +1145,20 @@ niet van elkaar afwijken.
   `PublicRouteResult.item`, zodat annotaties eronder kunnen; de demo rendert
   de site via `demo` (MusicBrain: `TakeDemo` → de take-widget), lazy
   geïmporteerd zodat `imprint.config.ts` React-vrij blijft voor scripts.
+- **Bestanden uit Pleio** (showcase,
+  [import-pleio-files.ts](../sites/commonground/scripts/import-pleio-files.ts)):
+  het script leest alle inhoud, vindt de links naar Pleio-bestanden
+  (`fileRefs`), haalt ze op zoals een bezoeker dat doet en geeft ze aan
+  dezelfde `ingestFiles` als de admin en `/api/media` (via de Node-ingang
+  `@imprint/runtime-admin/media-ingest`; een `IngestFile` mag `slug`,
+  `title` en `source` meegeven). De herkomst staat in `asset.source`; de
+  tabel guid → asset wordt daar bij elke run uit opgebouwd (`assetMap`),
+  dus er is geen staat buiten de bibliotheek. `rewriteFiles` vervangt de
+  links door `asset:<slug>`; `import-pleio` past dezelfde tabel toe vóór
+  het vergelijken, zodat een herimport ze niet terugzet. Een beeldveld is
+  een string: viewers tonen het via `mediaSrc` (`asset:` → de ref-route,
+  framework-vrij in `@imprint/runtime-admin/media-ref`, dus ook voor
+  client-componenten).
 - **Mededelingen** (design/communities.md §4.4, G3c): tabel `notifications`
   in de user store (persoonsgegeven, geen content; gaat met de gebruiker
   mee) met `kind`, `title`, `href` (altijd een pad op deze site), `actor`,

@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\"",
-    "import:pleio": "tsx --tsconfig tsconfig.json scripts/import-pleio.ts"
+    "import:pleio": "tsx --tsconfig tsconfig.test.json scripts/import-pleio.ts",
+    "import:pleio-files": "tsx --tsconfig tsconfig.test.json scripts/import-pleio-files.ts"
   },
   "dependencies": {
     "@imprint/content-core": "*",

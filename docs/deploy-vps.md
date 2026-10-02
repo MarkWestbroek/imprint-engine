@@ -285,6 +285,21 @@ zijn nog MariaDB-only.
   Tussendoor vanaf een eigen machine: `scp -r vps1:/srv/imprint-backups/<datum> …`
   (buiten gesynchroniseerde mappen — `env.txt` bevat de secrets).
 
+## Pleio-bestanden naar de bibliotheek (showcase)
+
+Na `./deploy.sh import-pleio commonground`:
+
+```
+./deploy.sh import-pleio-files commonground --dry-run   # telt
+./deploy.sh import-pleio-files commonground             # haalt op, zet in de bibliotheek, herschrijft links
+SITES=commonground ./deploy.sh                          # bouwen: de statische pagina's krijgen de nieuwe links
+```
+
+Het draait in de tools-container als gebruiker `node` met het volume van de
+site (`imprint_commonground_assets`), zodat de site wat er landt kan lezen
+en aanvullen. Reken op ruim 2 GB (originelen plus WebP-varianten).
+Herhaalbaar: een bestand dat er al is wordt overgeslagen.
+
 ## De dagelijkse mededelingen-mail (cron)
 
 De showcase stuurt leden één mail per dag met wat er nieuw voor ze is

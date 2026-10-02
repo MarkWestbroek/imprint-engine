@@ -14,6 +14,9 @@
 #   ./deploy.sh import-pleio commonground [--base-url=https://…]
 #                                    publieke pagina's, menu en footer uit Pleio (GraphQL)
 #                                    → database; daarna bouwen (SITES=commonground ./deploy.sh)
+#   ./deploy.sh import-pleio-files commonground [--dry-run] [--limit=N]
+#                                    de bestanden en beelden waar de inhoud naar linkt → bibliotheek,
+#                                    links → asset:; daarna bouwen (SITES=commonground ./deploy.sh)
 #   ./deploy.sh digest commonground  de dagelijkse mededelingen-mail versturen (cron;
 #                                    POST /api/digest met <SITE>_INGEST_TOKEN; --dry telt alleen)
 #   ./deploy.sh s3-setup musicbrain  bucket + gebruiker in de eigen MinIO (eenmalig;
@@ -66,6 +69,14 @@ case "${1:-}" in
     site="${2:?gebruik: deploy.sh import-pleio <site> [--base-url=…]}"; shift 2
     tools "$site" npm run import:pleio --workspace="$site" -- "$@"
     echo "Geïmporteerd. Bouw nu (SITES=$site ./deploy.sh)."
+    exit 0 ;;
+  import-pleio-files)
+    site="${2:?gebruik: deploy.sh import-pleio-files <site> [--dry-run] [--limit=N]}"; shift 2
+    # Als de gebruiker van de site (node) en op het volume van de site: wat hier landt moet zij kunnen lezen én aanvullen.
+    dc run --rm --user node -e DATABASE_URL="$(db_url "$site")" \
+      -v "imprint_${site}_assets:/data/assets" -e ASSET_ROOT=/data/assets \
+      tools npm run import:pleio-files --workspace="$site" -- "$@"
+    echo "Klaar. Bouw nu (SITES=$site ./deploy.sh)."
     exit 0 ;;
   digest)
     site="${2:?gebruik: deploy.sh digest <site> [--dry]}"
