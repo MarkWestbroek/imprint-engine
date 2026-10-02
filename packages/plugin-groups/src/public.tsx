@@ -7,6 +7,7 @@ import { getGroup, listGroups } from "./groups";
 import { GROUPS_PREFIX, groupHref, groupPagePrefix, groupsHref } from "./href";
 import { GroupPosts } from "./group-posts";
 import { JoinButton } from "./join-button";
+import { GroupMembers, MyGroups } from "./members-island";
 import type { Group } from "./schemas";
 import { toCard } from "./widget";
 
@@ -105,6 +106,8 @@ function GroupView({
       )}
       {/* The timeline, with the member's form and delete buttons (G3a); without a dispatcher it is just the list. */}
       <GroupPosts slug={group.slug} posts={posts} closed={group.closed} call={call} />
+      {/* Who else is here: for members, asked in the browser (G2b). */}
+      <GroupMembers slug={group.slug} call={call} />
       {group.tags.length > 0 && (
         <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tags">
           {group.tags.map((tag) => (
@@ -150,6 +153,7 @@ export async function groupsPublicRoute({ imprint, slug, members, session, subje
       render: (
         <section>
           <h1 className="mb-6 text-3xl font-semibold tracking-tight">Communities</h1>
+          <MyGroups call={call} />
           <GroupCards showSearch groups={groups.map(toCard)} />
         </section>
       ),

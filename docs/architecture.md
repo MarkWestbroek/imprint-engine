@@ -1158,6 +1158,12 @@ niet van elkaar afwijken.
   URL. `PostTools` vraagt `mine(postSlug)` (dezelfde `permit`-vragen als
   `editPost`/`removePost`) en toont de knoppen; de site hangt het boven een
   item van type `post` (`ItemTools`), want de blog-plugin kent geen groepen.
+- **Leden zien elkaar** (plugin-groups, `members-island.tsx`): `roster`
+  geeft namen en rollen van de actieve leden als `permit(read, {type:
+  "group-members", access: group:<slug>})` ja zegt — de bestaande leesregel
+  voor groepsinhoud, geen nieuwe; `myGroups` de eigen groepen. Eilanden op
+  de groepspagina (`GroupMembers`) en het overzicht (`MyGroups`); ze
+  luisteren naar `imprint:membership`.
 - **Evenementen van leden** (plugin-events,
   [member-actions.ts](../packages/plugin-events/src/member-actions.ts)):
   `agenda/writeEvent/eventInput/editEvent/removeEvent/rights`, alle met

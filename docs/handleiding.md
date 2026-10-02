@@ -621,6 +621,13 @@ pagina van het bericht zelf: daar staat bovenaan "Dit is jouw bericht" met
 bericht verwijderen. Een bewerking is een nieuwe versie; wie op je bericht
 reageerde krijgt een mededeling dat het gewijzigd is.
 
+## Wie zit er in je community
+
+Als lid zie je op de pagina van je community de sectie **Leden**: de
+namen en wie eigenaar of beheerder is (geen e-mailadressen). Niet-leden
+zien die lijst niet. Op het overzicht *Communities* staan je eigen
+communities bovenaan onder **Jouw communities**.
+
 ## Evenementen plannen als lid
 
 Onder **Agenda** op de pagina van je community staat *+ Evenement plannen*.

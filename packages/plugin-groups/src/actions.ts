@@ -311,6 +311,42 @@ export async function removePost(admin: AdminContext, slug: string, postSlug: st
   return { ok: true };
 }
 
+/** A member as the other members see them: no address. */
+export type RosterEntry = { name: string; role: MembershipRole };
+export type MyGroup = { slug: string; title: string; role: MembershipRole; status: Membership["status"] };
+
+const RANK: Record<string, number> = { owner: 0, manager: 1, member: 2 };
+
+/**
+ * Who is in the group, for its members (G2b): names and roles. The PDP
+ * decides with the read rule for group content (`access: group:<slug>`):
+ * active members and the staff; anyone else gets nothing.
+ */
+export async function roster(admin: AdminContext, slug: string): Promise<RosterEntry[] | null> {
+  const ctx = await context(admin, slug);
+  if (!ctx?.session) return null;
+  const subject = await subjectFor(admin, ctx.session);
+  if (!(await permit(admin.imprint.pdp, subject, "read", { type: "group-members", id: slug, properties: { access: `group:${slug}` } }))) return null;
+  return (await ctx.users.membersOf(slug))
+    .filter((m) => m.status === "active")
+    .map((m) => ({ name: m.userName, role: m.role }))
+    .sort((a, b) => RANK[a.role]! - RANK[b.role]! || a.name.localeCompare(b.name, "nl"));
+}
+
+/** The signed-in visitor's own groups, with their titles. */
+export async function myGroups(admin: AdminContext): Promise<MyGroup[] | null> {
+  const session = await admin.auth.getSession();
+  const users = admin.imprint.users;
+  const store = admin.imprint.writableStore;
+  if (!session || !users || !store) return null;
+  const out: MyGroup[] = [];
+  for (const m of await users.membershipsOf(session.name)) {
+    const group = await getGroup(store, m.groupSlug);
+    if (group) out.push({ slug: group.slug, title: group.title, role: m.role, status: m.status });
+  }
+  return out.sort((a, b) => a.title.localeCompare(b.title, "nl"));
+}
+
 /** What this visitor may do with a post, for the post's own page: the same questions `editPost` and `removePost` ask. */
 export async function mine(admin: AdminContext, postSlug: string): Promise<PostRights | null> {
   const store = admin.imprint.writableStore;
@@ -353,4 +389,4 @@ export async function uploadImage(admin: AdminContext, slug: string, form: FormD
   }
 }
 
-export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, post, writePost, editPost, removePost, mine, uploadImage };
+export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, post, writePost, editPost, removePost, mine, uploadImage, roster, myGroups };

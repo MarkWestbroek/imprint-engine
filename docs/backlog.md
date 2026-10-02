@@ -874,16 +874,20 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Wachtwoord vergeten~~ — `/account/forgot` + `/account/reset` (01-10).
       - [ ] G1b: **passkeys** (WebAuthn) naast het wachtwoord; sessies intrekbaar.
       - [ ] G1c: IdP (Zitadel) met LinkedIn/Google (communities §5).
-      - [ ] Ledenlijst per groep ook zichtbaar voor leden (nu alleen beheer);
-            gebruikersnaam → weergavenaam en avatarfoto.
+      - [x] ~~Ledenlijst per groep zichtbaar voor leden; "Jouw
+            communities" op het overzicht~~ (02-10).
+      - [ ] Gebruikersnaam → weergavenaam en avatarfoto.
       - [ ] Matching op de Pleio-export bij het inwisselen van een
             uitnodiging (communities §4.1a, stap 3).
       - [x] ~~G2 drie niveaus~~ — `access: group:<slug>`, groepen in het
             subject, PDP-regel, keuzelijst in de admin, `/members` op de
             showcase (01-10).
-      - [ ] G2b: groepsinhoud ook in de lijsten voor leden (wiki-boom en
-            groepspagina tonen nu alleen wat de bezoeker mag zien; een lijst
-            "jouw groepen" op de startpagina ontbreekt); media per groep.
+      - [ ] G2b: groepsinhoud ook in de lijsten voor leden: de wiki-boom
+            en de pagina-links op de groepspagina tonen op de statische
+            pagina alleen het openbare (berichten, evenementen en de
+            ledenlijst gaan al via een eiland). Speelt pas met niet-openbare
+            wiki's en pagina's (de besloten test); media per groep; een
+            widget "jouw communities" voor de startpagina.
       - [ ] De OpenFTV-sidecar (fase 3 §4) moet het `groups`-attribuut en
             `group:<slug>` ook kennen zodra die de in-process PDP vervangt.
       - [x] ~~Blogs~~ — plugin-blog, 254 publieke berichten geïmporteerd (01-10).

@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Leden zien elkaar** (G2b): op de pagina van een community staat voor
+  leden de sectie *Leden* (namen en rollen, geen adressen); op het
+  communities-overzicht staan je eigen communities bovenaan. Beide als
+  eiland, de pagina's blijven statisch; de PDP beslist over de ledenlijst
+  met de leesregel voor groepsinhoud (`access: group:<slug>`).
 - **Leden plannen evenementen** (G3a+): op de pagina van een community
   staat onder *Agenda* "+ Evenement plannen" voor leden (titel, begin en
   einde in Nederlandse tijd, plaats, online, aanmelden, zichtbaarheid,
