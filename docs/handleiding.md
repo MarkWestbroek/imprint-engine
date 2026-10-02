@@ -621,6 +621,16 @@ pagina van het bericht zelf: daar staat bovenaan "Dit is jouw bericht" met
 bericht verwijderen. Een bewerking is een nieuwe versie; wie op je bericht
 reageerde krijgt een mededeling dat het gewijzigd is.
 
+## Evenementen plannen als lid
+
+Onder **Agenda** op de pagina van je community staat *+ Evenement plannen*.
+Vul titel, begin (en eventueel einde), plaats en een beschrijving in; kies
+of het online bij te wonen is, of leden zich kunnen aanmelden, en of
+iedereen het ziet of alleen de leden. Tijden zijn Nederlandse tijd. De
+andere leden krijgen een mededeling. Op de pagina van het evenement zelf
+kun je het bewerken of verwijderen; beheerders van de community kunnen elk
+evenement verwijderen.
+
 ## Mededelingen
 
 De bel in de balk telt wat er nieuw voor je is; klik erop voor je

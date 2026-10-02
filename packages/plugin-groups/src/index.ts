@@ -1,7 +1,8 @@
 import { definePlugin, type ImprintPlugin, type PluginAction, type WidgetViewers } from "@imprint/runtime-admin";
 import { groupsActions } from "./actions";
 import { groupsContentTypes } from "./content-types";
-import { groupsPublicRoute } from "./public";
+import { groupsPublicRoute, type GroupsOptions } from "./public";
+export type { GroupsOptions } from "./public";
 import { GroupsConfig, GroupsWidget } from "./widget";
 
 /**
@@ -35,7 +36,7 @@ export const groupsWidgets = [
 /** The widget's viewer, for the site's `widgetComponents`. */
 export const groupsViewers: WidgetViewers = { groups: GroupsWidget as WidgetViewers[string] };
 
-export function groupsPlugin(): ImprintPlugin {
+export function groupsPlugin(opts: GroupsOptions = {}): ImprintPlugin {
   return definePlugin({
     name: "groups",
     version: "0.11.0",
@@ -43,7 +44,7 @@ export function groupsPlugin(): ImprintPlugin {
     widgets: [...groupsWidgets],
     menu: [{ group: "content", section: "Groups", items: [{ href: "/admin/group", label: "Groups" }] }],
     actions: groupsActions as unknown as Record<string, PluginAction>,
-    publicRoute: groupsPublicRoute,
+    publicRoute: (ctx) => groupsPublicRoute(ctx, opts),
   });
 }
 

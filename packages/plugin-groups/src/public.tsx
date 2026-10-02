@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { ANONYMOUS, contentResource, permit, userSubject, type ContentStore, type Page, type WritableContentStore } from "@imprint/content-core";
 import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
@@ -12,6 +13,12 @@ import { toCard } from "./widget";
 import { groupPosts, type GroupPost } from "./timeline";
 import { mediaSrc } from "@imprint/runtime-admin/media-ref";
 
+/** What a site composes into the group's page (the groups plugin imports no other plugin). */
+export type GroupsOptions = {
+  /** Under the group's agenda: e.g. the events plugin's "Evenement plannen" island. */
+  agendaTools?: (group: string, call?: PluginCall) => ReactNode;
+};
+
 /** An event of the group (plugin-events' `event`), likewise. */
 type GroupEvent = { slug: string; title: string; start: string; end: string; location: string };
 
@@ -22,6 +29,7 @@ function GroupView({
   posts,
   events,
   call,
+  agendaTools,
 }: {
   group: Group;
   pages: Page[];
@@ -29,6 +37,7 @@ function GroupView({
   posts: GroupPost[];
   events: GroupEvent[];
   call?: PluginCall;
+  agendaTools?: GroupsOptions["agendaTools"];
 }) {
   return (
     <article>
@@ -74,9 +83,10 @@ function GroupView({
         {group.introduction && <Markdown>{group.introduction}</Markdown>}
         {group.body && <Markdown>{group.body}</Markdown>}
       </div>
-      {events.length > 0 && (
+      {(events.length > 0 || agendaTools) && (
         <section className="mt-10 max-w-3xl">
           <h2 className="text-xl font-semibold">Agenda</h2>
+          {events.length === 0 && <p className="mt-2 text-sm text-muted">Nog niets gepland.</p>}
           <ul className="mt-2 divide-y divide-line">
             {events.map((e) => (
               <li key={e.slug} className="py-2">
@@ -90,6 +100,7 @@ function GroupView({
               </li>
             ))}
           </ul>
+          {agendaTools?.(group.slug, call)}
         </section>
       )}
       {/* The timeline, with the member's form and delete buttons (G3a); without a dispatcher it is just the list. */}
@@ -130,7 +141,7 @@ async function groupEvents(reader: ContentStore, slug: string): Promise<GroupEve
  * pages (`/groups/<slug>/<page>`) are ordinary pages, left to the site.
  * Restricted groups go to /members (G2), where the PDP decides.
  */
-export async function groupsPublicRoute({ imprint, slug, members, session, subject: given, call }: PublicRouteContext): Promise<PublicRouteResult | null> {
+export async function groupsPublicRoute({ imprint, slug, members, session, subject: given, call }: PublicRouteContext, opts: GroupsOptions = {}): Promise<PublicRouteResult | null> {
   const store = imprint.writableStore;
   if (!store || slug[0] !== GROUPS_PREFIX || slug.length > 2) return null;
   if (slug.length === 1) {
@@ -160,7 +171,7 @@ export async function groupsPublicRoute({ imprint, slug, members, session, subje
   ]);
   const wikiTitle = (wiki?.data as { title?: string } | undefined)?.title ?? null;
   return {
-    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} posts={posts} events={events} call={call} />,
+    render: <GroupView group={group} pages={pages} wikiTitle={wikiTitle} posts={posts} events={events} call={call} agendaTools={opts.agendaTools} />,
     metadata: { title: group.title, description: group.summary },
   };
 }

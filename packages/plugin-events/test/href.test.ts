@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { eventHref, eventSlug, formatDay, formatTime, formatWhen, isPast } from "../src/href";
+import { eventHref, eventSlug, formatDay, formatTime, formatWhen, isPast, withZone } from "../src/href";
 import { EventSchema } from "../src/schemas";
 
 test("eventSlug and eventHref", () => {
@@ -29,4 +29,10 @@ test("EventSchema: a start is required and must be ISO; the rest has defaults", 
   const e = EventSchema.parse({ slug: "a", title: "A", start: "2026-11-30T15:00+01:00" });
   assert.deepEqual([e.end, e.online, e.rsvp, e.group, e.tags], ["", false, false, "", []]);
   assert.equal(EventSchema.safeParse({ slug: "a", title: "A", start: "30 nov" }).success, false);
+});
+
+test("withZone: a local time gets the Dutch offset of that day (winter +01:00, summer +02:00)", () => {
+  assert.equal(withZone("2026-11-30T15:00"), "2026-11-30T15:00+01:00");
+  assert.equal(withZone("2026-07-01T09:30"), "2026-07-01T09:30+02:00");
+  assert.equal(withZone("onzin"), "onzin");
 });

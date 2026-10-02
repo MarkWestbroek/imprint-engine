@@ -32,6 +32,8 @@ export const EventSchema = z.object({
   online: z.boolean().default(false),
   /** Display name of the organiser. */
   organizer: z.string().default(""),
+  /** The account that made it, when a member did (set by the engine; the policy's "own work"). */
+  author: z.string().default(""),
   /** Sign-up asked for (step b); informational until then. */
   rsvp: z.boolean().default(false),
   maxAttendees: z.number().int().positive().optional(),

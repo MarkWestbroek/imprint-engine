@@ -20,6 +20,19 @@ export function eventSlug(title: string): string {
 
 const TZ = "Europe/Amsterdam";
 
+/**
+ * A local time as typed in a form (`2026-11-30T15:00`) with the zone's offset
+ * of that day (`2026-11-30T15:00+01:00`); the events are held in Dutch time.
+ */
+export function withZone(local: string, timeZone = TZ): string {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local)) return local;
+  const asUtc = new Date(`${local}:00Z`);
+  if (Number.isNaN(asUtc.getTime())) return local;
+  const name = new Intl.DateTimeFormat("en", { timeZone, timeZoneName: "longOffset" }).formatToParts(asUtc).find((p) => p.type === "timeZoneName")?.value ?? "GMT";
+  const offset = /GMT([+-]\d{2}:\d{2})/.exec(name)?.[1] ?? "+00:00";
+  return `${local}${offset}`;
+}
+
 /** "maandag 30 november 2026" */
 export function formatDay(iso: string, locale = "nl-NL"): string {
   const d = new Date(iso);

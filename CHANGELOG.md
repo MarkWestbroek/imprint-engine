@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Leden plannen evenementen** (G3a+): op de pagina van een community
+  staat onder *Agenda* "+ Evenement plannen" voor leden (titel, begin en
+  einde in Nederlandse tijd, plaats, online, aanmelden, zichtbaarheid,
+  beschrijving); op de pagina van het evenement "bewerken" en "verwijderen"
+  voor wie het maakte (beheerders: verwijderen). Dezelfde ledenregel in de
+  PDP als voor berichten; `event.author` is erbij gekomen. Evenementen
+  alleen voor leden staan op de (statische) communitypagina via het eiland.
+  De groepen-plugin kent de evenementen-plugin niet: de site geeft het
+  eiland mee (`groupsPlugin({ agendaTools })`).
 - **Berichten van leden, rijker** (G3a+): op de berichtpagina zelf staan
   voor de schrijver "bewerken" en "verwijderen" (beheerders: verwijderen);
   het formulier heeft de rijke editor (Visueel / Markdown) en een beeld

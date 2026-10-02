@@ -1,5 +1,6 @@
 import { definePlugin, type ImprintPlugin, type PluginAction, type WidgetViewers } from "@imprint/runtime-admin";
 import { eventsActions } from "./actions";
+import { memberEventActions } from "./member-actions";
 import { eventsContentTypes } from "./content-types";
 import { eventsPublicRoute } from "./public";
 import { EventsConfig, EventsWidget } from "./widget";
@@ -37,13 +38,15 @@ export function eventsPlugin(): ImprintPlugin {
     contentTypes: eventsContentTypes,
     widgets: [...eventsWidgets],
     menu: [{ group: "content", section: "Agenda", items: [{ href: "/admin/event", label: "Events" }] }],
-    actions: eventsActions as unknown as Record<string, PluginAction>,
+    actions: { ...eventsActions, ...memberEventActions } as unknown as Record<string, PluginAction>,
     publicRoute: eventsPublicRoute,
   });
 }
 
 export { eventsContentTypes } from "./content-types";
-export { EVENTS_PREFIX, eventHref, eventSlug, eventSummary, eventsHref, formatDay, formatMonth, formatTime, formatWhen, isPast } from "./href";
+export { EVENTS_PREFIX, eventHref, eventSlug, eventSummary, eventsHref, formatDay, formatMonth, formatTime, formatWhen, isPast, withZone } from "./href";
+export { EventTools, GroupAgendaTools } from "./event-tools";
+export { memberEventActions, type EventInput, type EventRights, type GroupAgenda } from "./member-actions";
 export { EventSchema, type Event } from "./schemas";
 export { EventsConfig, type EventsConfig as EventsWidgetConfig } from "./widget";
 export { getEvent, listEvents } from "./events";

@@ -1,8 +1,9 @@
+import { createElement } from "react";
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
 import { annotationsPlugin } from "@imprint/plugin-annotations";
 import { blogPlugin } from "@imprint/plugin-blog";
-import { eventsPlugin } from "@imprint/plugin-events";
+import { eventsPlugin, GroupAgendaTools } from "@imprint/plugin-events";
 import { glossaryPlugin } from "@imprint/plugin-glossary";
 import { groupsPlugin } from "@imprint/plugin-groups";
 import { wikiPlugin } from "@imprint/plugin-wiki";
@@ -26,7 +27,8 @@ export default defineImprint({
   plugins: [
     wikiPlugin(),
     glossaryPlugin({ indexHref: "/termen" }),
-    groupsPlugin(),
+    // The agenda on a group's page gets the events plugin's "Evenement plannen" (the plugins do not know each other).
+    groupsPlugin({ agendaTools: (group, call) => createElement(GroupAgendaTools, { group, call }) }),
     blogPlugin(),
     eventsPlugin(),
     // Reacties (design/annotaties.md): per type the default; a page opts in with its own `annotations` field.

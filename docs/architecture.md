@@ -1158,6 +1158,16 @@ niet van elkaar afwijken.
   URL. `PostTools` vraagt `mine(postSlug)` (dezelfde `permit`-vragen als
   `editPost`/`removePost`) en toont de knoppen; de site hangt het boven een
   item van type `post` (`ItemTools`), want de blog-plugin kent geen groepen.
+- **Evenementen van leden** (plugin-events,
+  [member-actions.ts](../packages/plugin-events/src/member-actions.ts)):
+  `agenda/writeEvent/eventInput/editEvent/removeEvent/rights`, alle met
+  dezelfde `permit`-vraag als bij berichten (resource `{access, group,
+  author}`); het formulier levert lokale tijden, `withZone` zet er de
+  Nederlandse offset van die dag bij. De groep leest de plugin op typenaam
+  (`group`), zonder import. Omgekeerd kent plugin-groups de evenementen
+  niet: `groupsPlugin({ agendaTools })` laat de site een eiland in de
+  agendasectie zetten (`GroupAgendaTools`), en `ItemTools` van de site hangt
+  `EventTools` boven een evenement.
 - **Bestanden uit Pleio** (showcase,
   [import-pleio-files.ts](../sites/commonground/scripts/import-pleio-files.ts)):
   het script leest alle inhoud, vindt de links naar Pleio-bestanden
