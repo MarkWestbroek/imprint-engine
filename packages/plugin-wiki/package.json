@@ -1,6 +1,6 @@
 {
   "name": "@imprint/plugin-wiki",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "Plugin: wikis — self-contained documentation bundles (wiki → folders → pages) with a tree studio in the admin, a public route per wiki and publish-to-live; content types with relation rules.",
   "type": "module",

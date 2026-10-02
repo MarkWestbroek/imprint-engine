@@ -1,6 +1,6 @@
 {
   "name": "@imprint/plugin-groups",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "private": true,
   "description": "Plugin: groups (communities) — a content type with a page per group under /groups/<slug>, a card overview as widget, and the group's wiki and pages linked to it.",
   "type": "module",

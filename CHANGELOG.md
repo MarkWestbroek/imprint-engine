@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.13.0] - 2026-10-02
 - **Dagelijkse mededelingen-mail** (G3c stap 2): één mail per lid per dag
   met wat er sinds de vorige mail in zijn postvak kwam (titels met links,
   link naar het postvak, afmeldlink met eenmalig token). Voorkeur per lid
