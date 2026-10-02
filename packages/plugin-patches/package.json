@@ -1,6 +1,6 @@
 {
   "name": "@imprint/plugin-patches",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "description": "Plugin: a patch pool — patches (files from the editor) as a content type with pools (voorstel, experimenteel, centraal, vraag), an ingest API for the editor, and pages to browse, listen and open in the editor.",
   "type": "module",

@@ -1,6 +1,6 @@
 {
   "name": "@imprint/plugin-blog",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "description": "Plugin: blog — posts (title, summary, text, author, date, tags, optional group) as a content type, a latest-posts widget, the overview /blog and a page per post under /blog/<slug>.",
   "type": "module",

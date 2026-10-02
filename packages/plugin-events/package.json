@@ -1,6 +1,6 @@
 {
   "name": "@imprint/plugin-events",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "description": "Plugin: events (agenda) — an event with start, end, place, links and optional group as a content type, an agenda widget (upcoming), the overview /events and a page per event under /events/<slug>.",
   "type": "module",

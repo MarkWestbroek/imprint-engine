@@ -1,6 +1,6 @@
 {
   "name": "@imprint/extension-api",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "description": "Composition-root contract for an Imprint instance: defineImprint()/createImprint(). Framework-free; the one place a site chooses backend, widget catalogue and instance settings.",
   "type": "module",

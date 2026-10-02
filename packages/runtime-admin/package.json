@@ -1,6 +1,6 @@
 {
   "name": "@imprint/runtime-admin",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "private": true,
   "description": "Engine runtime (and, from Fase 3, the shared admin): the page renderer and layout helpers every Imprint site uses. Knows no concrete widget; a site hands in its catalogue.",
   "type": "module",

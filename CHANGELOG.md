@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.14.0] - 2026-10-02
 - **Leden zien elkaar** (G2b): op de pagina van een community staat voor
   leden de sectie *Leden* (namen en rollen, geen adressen); op het
   communities-overzicht staan je eigen communities bovenaan. Beide als
