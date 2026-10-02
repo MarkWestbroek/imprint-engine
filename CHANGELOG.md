@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Privé-patches** (patch-pool): een vijfde pool `prive` voor patches die
+  je voor jezelf bewaart. Inzenden met `kind: "private"`; alleen de inzender
+  (en de redactie) ziet ze, ook via `GET /api/patches?pool=prive`; niet in
+  zoeken of de openbare lijsten. `PATCH /api/patches/<slug>` met `kind:
+  proposal | question` maakt er een voorstel of vraag van, alleen door de
+  eigenaar en nooit hoger. CORS-origins van MusicBrain komen uit
+  `MUSICBRAIN_MEDIA_CORS_ORIGINS` op de VPS.
 
 ## [0.14.0] - 2026-10-02
 - **Leden zien elkaar** (G2b): op de pagina van een community staat voor

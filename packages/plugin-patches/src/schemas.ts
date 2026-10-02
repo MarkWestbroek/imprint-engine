@@ -4,13 +4,14 @@ import { Access, assetSrc, Locale } from "@imprint/content-core";
 /**
  * A patch in the pool (MusicBrain doc/plans/patch-pool.md §3): the file from
  * the editor as a library asset, metadata, a pool (its status) and a licence.
- * The pool decides who sees it: a proposal is private to its author and the
+ * The pool decides who sees it: a proposal and a private patch (`prive`: kept
+ * for yourself, not up for review) are private to their author and the
  * staff; the rest is public. That link is part of the schema (`access` is
  * derived, never typed), so the admin cannot set the two apart.
  */
-export const Pool = z.enum(["voorstel", "experimenteel", "centraal", "vraag"]);
+export const Pool = z.enum(["prive", "voorstel", "experimenteel", "centraal", "vraag"]);
 export type Pool = z.infer<typeof Pool>;
-export const POOL_LABELS: Record<Pool, string> = { voorstel: "voorstel", experimenteel: "experimenteel", centraal: "centraal", vraag: "vraag" };
+export const POOL_LABELS: Record<Pool, string> = { prive: "privé", voorstel: "voorstel", experimenteel: "experimenteel", centraal: "centraal", vraag: "vraag" };
 
 export const License = z.enum(["CC-BY-4.0", "CC0"]);
 export type License = z.infer<typeof License>;
@@ -29,8 +30,8 @@ export const Requires = z.object({
 });
 export type Requires = z.infer<typeof Requires>;
 
-/** A proposal is private; everything else public. */
-export const poolAccess = (pool: string): "private" | "public" => (pool === "voorstel" ? "private" : "public");
+/** A proposal and a private patch are private; everything else public. */
+export const poolAccess = (pool: string): "private" | "public" => (pool === "voorstel" || pool === "prive" ? "private" : "public");
 
 const PatchBase = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -80,7 +81,8 @@ export const PatchFormSchema = PatchBase.omit({ access: true, author: true, publ
 
 /** What the editor sends to `POST /api/patches` (the plan's §8 step 1): never a pool, never an author. */
 export const PatchInput = z.object({
-  kind: z.enum(["proposal", "question"]).default("proposal"),
+  /** `private`: keep it for yourself (pool `prive`); propose it later with PATCH /api/patches/<slug>. */
+  kind: z.enum(["proposal", "question", "private"]).default("proposal"),
   title: z.string().min(1).max(160),
   description: z.string().default(""),
   tags: z.array(z.string()).default([]),
@@ -93,3 +95,10 @@ export const PatchInput = z.object({
   question: z.string().optional(),
 });
 export type PatchInput = z.infer<typeof PatchInput>;
+
+/** PATCH /api/patches/<slug>: a private patch of your own becomes a proposal or a question. Never higher. */
+export const PatchPromote = z.object({
+  kind: z.enum(["proposal", "question"]),
+  question: z.string().optional(),
+});
+export type PatchPromote = z.infer<typeof PatchPromote>;

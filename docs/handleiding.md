@@ -722,6 +722,11 @@ je op de patchpagina zelf (als redactie zie je ook voorstellen). Naar
 Een **vraag** ("lukt niet, wie helpt?") heeft een vraagtekst en een vinkje
 *beantwoord*.
 
+**Privé** is een vijfde pool: patches die je vanuit de editor voor jezelf
+bewaart, zonder ze voor te stellen. Alleen jij (en de redactie) ziet ze. Met
+één statuswijziging vanuit de editor worden ze alsnog een voorstel of een
+vraag.
+
 Tags: `klank/pad`, `techniek/fm` uit een taglijst (maak de lijsten
 *klank*, *techniek* en *stemmen* aan onder Media → taglijsten), of losse
 woorden.

@@ -39,7 +39,7 @@ export const patchesContentTypes: ContentTypeDefinition[] = [
       },
       docs: async (store) =>
         (await itemsOf<Patch>(store, "patch"))
-          .filter((p) => p.pool !== "voorstel")
+          .filter((p) => p.pool !== "voorstel" && p.pool !== "prive")
           .map((p) => ({
             kind: p.pool === "centraal" ? "patch" : p.pool === "experimenteel" ? "lab" : "vraag",
             href: patchHref(p.slug),

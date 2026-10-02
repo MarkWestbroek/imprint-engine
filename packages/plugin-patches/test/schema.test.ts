@@ -37,3 +37,10 @@ test("slugs from titles", () => {
   assert.equal(patchSlug("Warm Pad — Zoë's #2"), "warm-pad-zoe-s-2");
   assert.equal(patchSlug("  FM Bell  "), "fm-bell");
 });
+
+test("a private patch (pool prive) is private like a proposal, and stays out of the public reach", () => {
+  const p = PatchSchema.parse({ ...base, pool: "prive", access: "public" });
+  assert.equal(p.access, "private");
+  const input = PatchInput.parse({ kind: "private", title: "Alleen voor mij", file: "asset:x", requires: base.requires });
+  assert.equal(input.kind, "private");
+});

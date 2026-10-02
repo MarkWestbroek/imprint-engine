@@ -3,8 +3,8 @@ import { ANONYMOUS, permit, userSubject, type AuthzenSubject } from "@imprint/co
 import type { TokenGrant } from "@imprint/content-core/user-store";
 import { assetRefUrl, type AdminContext } from "@imprint/runtime-admin";
 import { patchHref, patchSlug, patchesHref } from "./href";
-import { listPatches } from "./patches";
-import { PatchInput, poolAccess, type Patch, type Pool } from "./schemas";
+import { getPatch, listPatches } from "./patches";
+import { PatchInput, PatchPromote, PatchSchema, poolAccess, type Patch, type Pool } from "./schemas";
 
 /**
  * The pool's API for the editor (doc/plans/patch-pool.md §8 step 1), a thin
@@ -14,6 +14,8 @@ import { PatchInput, poolAccess, type Patch, type Pool } from "./schemas";
  *
  *   POST /api/patches            Bearer token with scope patch:propose; body = PatchInput (JSON)
  *                                → 201 { ok, slug, url, pool }
+ *   PATCH /api/patches/<slug>    Bearer token (patch:propose); body { kind: "proposal" | "question", question? }
+ *                                your own private patch (pool `prive`) becomes a proposal or a question → 200 { ok, slug, pool }
  *   GET  /api/patches?pool=&tag=&slug=
  *                                public: experimenteel, centraal, vraag; with a token also your own proposals
  *                                → 200 { patches: [{ slug, title, pool, tags, author, license, file, syx, takes, requires, derivedFrom, question, answered, url, fileUrl, syxUrl }] }
@@ -24,7 +26,7 @@ function corsHeaders(admin: AdminContext, req: Request): Record<string, string> 
   if (!origin || !admin.imprint.media.cors.includes(origin)) return {};
   return {
     "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
     "Access-Control-Allow-Headers": "Authorization, Content-Type",
     "Access-Control-Max-Age": "600",
     Vary: "Origin",
@@ -94,7 +96,7 @@ async function post(admin: AdminContext, req: Request): Promise<Response> {
   const input = PatchInput.safeParse(body);
   if (!input.success) return json(admin, req, { error: "Invalid patch", issues: input.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) }, 400);
   const { kind, ...rest } = input.data;
-  const pool: Pool = kind === "question" ? "vraag" : "voorstel";
+  const pool: Pool = kind === "question" ? "vraag" : kind === "private" ? "prive" : "voorstel";
   const base = patchSlug(rest.title) || "patch";
   let slug = base;
   for (let n = 2; await store.getItem("patch", slug, "en"); n++) slug = `${base}-${n}`;
@@ -111,6 +113,37 @@ async function post(admin: AdminContext, req: Request): Promise<Response> {
   }
   for (const path of [patchesHref(), `${patchesHref()}/lab`, `${patchesHref()}/vragen`, patchHref(slug)]) revalidatePath(path);
   return json(admin, req, { ok: true, slug, pool, url: new URL(patchHref(slug), publicOrigin(req)).toString() }, 201);
+}
+
+async function promote(admin: AdminContext, req: Request, slug: string): Promise<Response> {
+  const grant = await grantOf(admin, req);
+  if (!grant) return json(admin, req, { error: "Missing or invalid API token" }, 401);
+  if (!grant.scopes.includes("patch:propose")) return json(admin, req, { error: 'This token lacks the scope "patch:propose"' }, 403);
+  const store = admin.imprint.writableStore;
+  if (!store) return json(admin, req, { error: "The pool requires DATABASE_URL" }, 409);
+  const input = PatchPromote.safeParse(await req.json().catch(() => null));
+  if (!input.success) return json(admin, req, { error: "Invalid request", issues: input.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) }, 400);
+  const { user } = grant;
+  const subject = userSubject(user.name, user.role);
+  // Read as the token's user: someone else's private patch does not exist for them (404, not 403).
+  const patch = await getPatch(admin.imprint.storeFor(subject), slug);
+  if (!patch) return json(admin, req, { error: `No patch "${slug}"` }, 404);
+  if (patch.pool !== "prive") return json(admin, req, { error: "Only a private patch can be proposed this way" }, 409);
+  const resource = { type: "patch", id: slug, properties: { access: "private", author: patch.author, proposal: true } };
+  if (!(await permit(admin.imprint.pdp, subject, "update", resource))) return json(admin, req, { error: "Only its author can propose this patch" }, 403);
+  const pool: Pool = input.data.kind === "question" ? "vraag" : "voorstel";
+  const next = PatchSchema.safeParse({ ...patch, pool, question: input.data.question ?? patch.question, publishedAt: new Date().toISOString().slice(0, 10) });
+  if (!next.success) return json(admin, req, { error: "Invalid patch", issues: next.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) }, 400);
+  await store.putItem("patch", slug, next.data, { lang: "en", by: user.name });
+  for (const path of [`${patchesHref()}/vragen`, patchHref(slug)]) revalidatePath(path);
+  return json(admin, req, { ok: true, slug, pool });
+}
+
+/** The route handler for `/api/patches/<slug>` (PATCH, OPTIONS). */
+export async function patchesApiItem(admin: AdminContext, req: Request, slug: string): Promise<Response> {
+  if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(admin, req) });
+  if (req.method === "PATCH") return promote(admin, req, slug);
+  return json(admin, req, { error: "Method not allowed" }, 405);
 }
 
 /** The route handler for `/api/patches` (GET, POST, OPTIONS). */
