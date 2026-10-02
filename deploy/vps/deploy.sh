@@ -70,11 +70,13 @@ case "${1:-}" in
   digest)
     site="${2:?gebruik: deploy.sh digest <site> [--dry]}"
     SITE="$(echo "$site" | tr '[:lower:]' '[:upper:]')"
-    token_var="${SITE}_INGEST_TOKEN"; port_var="${SITE}_PORT"
+    token_var="${SITE}_INGEST_TOKEN"
     token="${!token_var:?$token_var ontbreekt in .env (bv. openssl rand -base64 24)}"
     query=""; [ "${3:-}" = "--dry" ] && query="?dry=1"
+    # De poort van de draaiende container (compose kent hem; .env hoeft hem niet te noemen).
+    addr="$(dc port "$site" 3000)"; [ -n "$addr" ] || { echo "$site draait niet" >&2; exit 1; }
     # De site zelf verstuurt (zij heeft de SMTP-instellingen); dit is alleen de wekker.
-    curl -fsS -X POST -H "Authorization: Bearer $token" "http://127.0.0.1:${!port_var:-3000}/api/digest$query"
+    curl -fsS --max-time 120 -X POST -H "Authorization: Bearer $token" "http://$addr/api/digest$query"
     echo
     exit 0 ;;
   s3-setup)
