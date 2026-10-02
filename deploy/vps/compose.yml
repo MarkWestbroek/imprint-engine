@@ -83,6 +83,8 @@ services:
       DATABASE_URL: postgres://musicbrain:${MUSICBRAIN_DB_PASSWORD}@postgres:5432/musicbrain
       SESSION_SECRET: ${MUSICBRAIN_SESSION_SECRET:?MUSICBRAIN_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${MUSICBRAIN_INGEST_TOKEN:-}
+      # Extra origins for /api/media and /api/patches next to editor.musicbrain.nl (comma-separated; e.g. the editor's dev server).
+      MEDIA_CORS_ORIGINS: ${MUSICBRAIN_MEDIA_CORS_ORIGINS:-}
       GITHUB_WEBHOOK_SECRET: ${MUSICBRAIN_GITHUB_WEBHOOK_SECRET:-}
       # Eigen MinIO-bucket (design/beeldbibliotheek.md §8); leeg = assets op het volume hieronder.
       ASSET_S3_ENDPOINT: ${MUSICBRAIN_S3_ENDPOINT:-}
