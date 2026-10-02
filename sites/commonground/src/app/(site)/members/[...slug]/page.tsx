@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { pluginPublicRoute, readOpts } from "@imprint/runtime-admin";
 import { subjectFor } from "@imprint/runtime-admin/admin-server";
 import { PageView } from "@/components/page-view";
+import { ItemTools } from "@/components/item-tools";
 import { Thread } from "@/components/thread";
 import { admin } from "@/lib/admin";
 import { imprint } from "@/lib/content";
@@ -39,6 +40,7 @@ export default async function MembersPage({ params }: Props) {
     if ("redirect" in hit) notFound();
     return (
       <article className="cg-page">
+        {hit.item && <ItemTools type={hit.item.type} slug={hit.item.slug} />}
         {hit.render}
         {hit.item && <Thread type={hit.item.type} slug={hit.item.slug} path={`/members/${joined}`} />}
       </article>

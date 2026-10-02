@@ -156,6 +156,21 @@ describe("ingestFiles + serveAsset", () => {
     await assert.rejects(ingestFiles(admin, ANONYMOUS, [{ name: "x.json", bytes: patch() }]), IngestRefused);
   });
 
+  it("a member adds a picture in their own group, as themself; only the kinds allowed; an import names slug, title and source", async () => {
+    const rita = userSubject("rita", "reader", ["atlas"]);
+    const member = { folder: "communities/atlas", policy: { group: "atlas", author: "rita" }, kinds: ["image"] };
+    const png = await sharp({ create: { width: 8, height: 8, channels: 3, background: "#369" } }).png().toBuffer();
+    const [ok] = await ingestFiles(admin, rita, [{ name: "kaart.png", bytes: png }], member);
+    assert.deepEqual([ok.ok, ok.kind], [true, "image"]);
+    const [json] = await ingestFiles(admin, rita, [{ name: "x.json", bytes: patch() }], member);
+    assert.deepEqual([json.ok, json.status], [false, 415], "not an image");
+    await assert.rejects(ingestFiles(admin, rita, [{ name: "kaart.png", bytes: png }], { ...member, policy: { group: "elders", author: "rita" } }), IngestRefused, "not her group");
+    await assert.rejects(ingestFiles(admin, rita, [{ name: "kaart.png", bytes: png }], { ...member, policy: { group: "atlas", author: "ed" } }), IngestRefused, "not as someone else");
+    const [imported] = await ingestFiles(admin, userSubject("mark", "editor"), [{ name: "a.png", bytes: png, slug: "van-elders", title: "Van elders", source: "https://elders.example/file/1" }]);
+    const record = (await admin.imprint.writableStore!.getItem("asset", imported.slug!))!.data as { title: string; source: string };
+    assert.deepEqual([imported.slug, record.title, record.source], ["van-elders", "Van elders", "https://elders.example/file/1"]);
+  });
+
   it("serves byte ranges (seeking in a player), and 416 for a range past the end", async () => {
     session = null; // a visitor: a public audio file needs no session
     const parts = (await admin.imprint.writableStore!.getItem("asset", "take-1"))!.data as { file: { original: string } };

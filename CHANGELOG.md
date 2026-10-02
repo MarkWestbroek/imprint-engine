@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Berichten van leden, rijker** (G3a+): op de berichtpagina zelf staan
+  voor de schrijver "bewerken" en "verwijderen" (beheerders: verwijderen);
+  het formulier heeft de rijke editor (Visueel / Markdown) en een beeld
+  bovenaan het bericht. Leden uploaden hun beeld zelf: `uploadImage` zet het
+  via de upload-kern in de bibliotheek (map `communities/<groep>`), met
+  dezelfde ledenregel in de PDP als voor een bericht; alleen rasterbeelden,
+  hooguit 10 MB. `ingestFiles` kreeg daarvoor `policy` (eigenschappen voor
+  de PDP) en `kinds`; de Markdown-editor een `pickImage`-prop. De site
+  hangt `PostTools` boven een bericht (`ItemTools`), zoals de reactiedraad
+  eronder.
 - **Pleio-bestanden in de bibliotheek** (showcase): `npm run
   import:pleio-files --workspace=commonground` haalt de bestanden en
   beelden op waar de geïmporteerde inhoud naar linkt (1.200 stuks), zet ze

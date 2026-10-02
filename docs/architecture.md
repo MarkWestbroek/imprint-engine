@@ -1145,6 +1145,19 @@ niet van elkaar afwijken.
   `PublicRouteResult.item`, zodat annotaties eronder kunnen; de demo rendert
   de site via `demo` (MusicBrain: `TakeDemo` → de take-widget), lazy
   geïmporteerd zodat `imprint.config.ts` React-vrij blijft voor scripts.
+- **Berichten van leden** (plugin-groups): `PostForm` (client, gedeeld door
+  de tijdlijn en de berichtpagina) laadt de Markdown-editor van de engine
+  lui (`next/dynamic`), zodat publieke pagina's licht blijven; de editor
+  krijgt `pickImage` en gebruikt dan niet de bibliotheekkiezer van de admin.
+  `uploadImage` is een plugin-actie die een `FormData` aanneemt (de site
+  zet `serverActions.bodySizeLimit`) en `ingestFiles` aanroept met
+  `policy: { group, author }` en `kinds: ["image"]`: de upload-kern vraagt
+  de PDP met die eigenschappen, en de generieke ledenregel ("maak in je
+  eigen groep, als jezelf") beslist — geen aparte regel voor beelden. Een
+  lid kan in `image` alleen een `asset:`-verwijzing zetten, geen externe
+  URL. `PostTools` vraagt `mine(postSlug)` (dezelfde `permit`-vragen als
+  `editPost`/`removePost`) en toont de knoppen; de site hangt het boven een
+  item van type `post` (`ItemTools`), want de blog-plugin kent geen groepen.
 - **Bestanden uit Pleio** (showcase,
   [import-pleio-files.ts](../sites/commonground/scripts/import-pleio-files.ts)):
   het script leest alle inhoud, vindt de links naar Pleio-bestanden

@@ -3,6 +3,7 @@ import { permit, type WritableContentStore } from "@imprint/content-core";
 import type { Invite, Membership, MembershipRole } from "@imprint/content-core/user-store";
 import type { AdminContext, AdminSession } from "@imprint/runtime-admin";
 import { notify, notifyGroup, notifyManagers, subjectFor } from "@imprint/runtime-admin/admin-server";
+import { IngestRefused, ingestFiles } from "@imprint/runtime-admin/media-ingest";
 import { itemChanged } from "@imprint/runtime-admin";
 import { getGroup } from "./groups";
 import { groupHref, groupSlug } from "./href";
@@ -180,7 +181,16 @@ export async function posts(admin: AdminContext, slug: string): Promise<GroupPos
 
 // ── Members write (design/communities.md §4.3, G3a) ──────────────────────
 
-export type PostInput = { kind: "update" | "blog"; title: string; body: string; membersOnly: boolean };
+export type PostInput = { kind: "update" | "blog"; title: string; body: string; membersOnly: boolean; /** The picture above the post: a library reference (`asset:<slug>`), or empty. */ image?: string };
+
+/** What the visitor may do with a post of a group (asked by the post's own page). */
+export type PostRights = { group: string; own: boolean; canEdit: boolean; canRemove: boolean };
+
+/** A member's picture is a library reference they got from `uploadImage`; nothing else (no remote URLs). */
+const imageOf = (input: PostInput | undefined): string | undefined => {
+  const image = String(input?.image ?? "").trim();
+  return /^asset:[a-z0-9-]+$/.test(image) ? image : undefined;
+};
 
 /** The pages a post shows on; stale prerendered HTML is refreshed. */
 function touched(slug: string, postSlug: string) {
@@ -226,6 +236,7 @@ export async function writePost(admin: AdminContext, slug: string, input: PostIn
       tags: [],
       group: slug,
       kind,
+      ...(imageOf(input) ? { image: imageOf(input) } : {}),
     },
     { lang: "en", by: ctx.session.name }
   );
@@ -242,9 +253,9 @@ export async function post(admin: AdminContext, slug: string, postSlug: string):
   const listing = reader as Partial<WritableContentStore>;
   if (typeof listing.getItem !== "function") return null;
   const record = await listing.getItem("post", postSlug, "en");
-  const d = record?.data as { group?: string; title?: string; body?: string; kind?: string; access?: string } | undefined;
+  const d = record?.data as { group?: string; title?: string; body?: string; kind?: string; access?: string; image?: string } | undefined;
   if (!d || d.group !== slug) return null;
-  return { slug: postSlug, title: d.title ?? "", body: d.body ?? "", kind: d.kind === "blog" ? "blog" : "update", membersOnly: d.access === `group:${slug}` };
+  return { slug: postSlug, title: d.title ?? "", body: d.body ?? "", kind: d.kind === "blog" ? "blog" : "update", membersOnly: d.access === `group:${slug}`, image: d.image ?? "" };
 }
 
 /** Change your own post: a new version with the same slug (the history keeps the old one); the PDP decides ("own work"). */
@@ -266,7 +277,16 @@ export async function editPost(admin: AdminContext, slug: string, postSlug: stri
   await store.putItem(
     "post",
     postSlug,
-    { ...data, title, body, kind: input?.kind === "blog" ? "blog" : "update", access: input?.membersOnly ? `group:${slug}` : "public" },
+    {
+      ...data,
+      title,
+      body,
+      // The form knows update and blog; another kind (imported news) stays what it was.
+      kind: data.kind === "blog" || data.kind === "update" ? (input?.kind === "blog" ? "blog" : "update") : data.kind,
+      access: input?.membersOnly ? `group:${slug}` : "public",
+      // An absent `image` leaves the picture alone; an empty one removes it; a remote one (imported) can only be kept or dropped.
+      ...(input?.image === undefined || input.image === data.image ? {} : { image: imageOf(input) }),
+    },
     { lang: "en", by: ctx.session.name }
   );
   touched(slug, postSlug);
@@ -291,4 +311,46 @@ export async function removePost(admin: AdminContext, slug: string, postSlug: st
   return { ok: true };
 }
 
-export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, post, writePost, editPost, removePost };
+/** What this visitor may do with a post, for the post's own page: the same questions `editPost` and `removePost` ask. */
+export async function mine(admin: AdminContext, postSlug: string): Promise<PostRights | null> {
+  const store = admin.imprint.writableStore;
+  const session = await admin.auth.getSession();
+  if (!store || !session) return null;
+  const record = await store.getItem("post", postSlug, "en");
+  const data = record?.data as { group?: string; author?: string; access?: string } | undefined;
+  if (!data?.group) return null;
+  const subject = await subjectFor(admin, session);
+  const resource = { type: "post", id: postSlug, properties: { access: data.access ?? "public", group: data.group, author: data.author ?? "" } };
+  const [canEdit, canRemove] = await Promise.all([permit(admin.imprint.pdp, subject, "update", resource), permit(admin.imprint.pdp, subject, "delete", resource)]);
+  return { group: data.group, own: data.author === session.name, canEdit, canRemove };
+}
+
+/**
+ * A member adds a picture for a post in their group: into the library, as
+ * themself. The PDP decides with the same rule as for a post ("create in a
+ * group you belong to, as yourself"); only raster images, one at a time.
+ */
+export async function uploadImage(admin: AdminContext, slug: string, form: FormData): Promise<ActionResult & { slug?: string }> {
+  const ctx = await context(admin, slug);
+  if (!ctx) return { ok: false, error: "Onbekende groep." };
+  if (!ctx.session) return { ok: false, error: "Log eerst in." };
+  const file = form instanceof FormData ? form.get("file") : null;
+  if (!(file instanceof File)) return { ok: false, error: "Geen bestand." };
+  if (file.size > 10 * 1024 * 1024) return { ok: false, error: "Het beeld is groter dan 10 MB." };
+  const subject = await subjectFor(admin, ctx.session);
+  try {
+    const [result] = await ingestFiles(admin, subject, [{ name: file.name, bytes: new Uint8Array(await file.arrayBuffer()) }], {
+      folder: `communities/${slug}`,
+      by: ctx.session.name,
+      policy: { group: slug, author: ctx.session.name },
+      kinds: ["image"],
+    });
+    if (!result?.ok || !result.slug) return { ok: false, error: result?.status === 415 ? "Alleen foto's en plaatjes (jpg, png, webp, gif)." : (result?.error ?? "Het beeld kon niet worden toegevoegd.") };
+    return { ok: true, slug: result.slug };
+  } catch (err) {
+    if (err instanceof IngestRefused) return { ok: false, error: "Alleen leden van deze community kunnen hier beelden toevoegen." };
+    throw err;
+  }
+}
+
+export const groupsActions = { status, join, leave, members, decide, setRole, createInvite, revokeInvite, redeem, posts, post, writePost, editPost, removePost, mine, uploadImage };

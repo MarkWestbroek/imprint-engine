@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import type { PluginCall } from "@imprint/runtime-admin";
-import type { ActionResult, JoinStatus, PostInput } from "./actions";
+import type { ActionResult, JoinStatus } from "./actions";
+import { PostForm } from "./post-form";
 
 import type { GroupPost as GroupPostItem } from "./timeline";
 
@@ -25,12 +26,7 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
   const [writing, setWriting] = useState(false);
   /** The slug of the post being edited; null = writing a new one. */
   const [editing, setEditing] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [kind, setKind] = useState<PostInput["kind"]>("update");
-  const [title, setTitle] = useState("");
-  const [body, setBody] = useState("");
-  const [membersOnly, setMembersOnly] = useState(closed);
 
   const refresh = useCallback(async () => {
     if (!call) return;
@@ -49,15 +45,8 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
   const own = (p: GroupPostItem) => !!state?.name && p.author === state.name;
   const mayRemove = (p: GroupPostItem) => !!state && (state.canManage || own(p));
 
-  const startEdit = async (postSlug: string) => {
-    if (!call) return;
+  const startEdit = (postSlug: string) => {
     setError(null);
-    const current = (await call("groups", "post", slug, postSlug)) as (PostInput & { slug: string }) | null;
-    if (!current) return setError("Dit bericht is niet te laden.");
-    setKind(current.kind);
-    setTitle(current.title);
-    setBody(current.body);
-    setMembersOnly(current.membersOnly);
     setEditing(postSlug);
     setWriting(true);
   };
@@ -65,23 +54,6 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
   const cancel = () => {
     setWriting(false);
     setEditing(null);
-    setTitle("");
-    setBody("");
-  };
-
-  const submit = async () => {
-    if (!call) return;
-    setBusy(true);
-    setError(null);
-    const input = { kind, title, body, membersOnly } satisfies PostInput;
-    const result = (editing
-      ? await call("groups", "editPost", slug, editing, input)
-      : await call("groups", "writePost", slug, input)) as ActionResult;
-    setBusy(false);
-    if (!result.ok) return setError(result.error ?? "Dat lukte niet.");
-    cancel();
-    await refresh();
-    router.refresh();
   };
 
   const remove = async (postSlug: string) => {
@@ -92,7 +64,6 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
     router.refresh();
   };
 
-  const input = "w-full rounded-md border border-line bg-background px-3 py-2";
   const button = "rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background hover:bg-accent-strong disabled:opacity-60";
 
   return (
@@ -105,42 +76,19 @@ export function GroupPosts({ slug, posts: initial, closed, call }: { slug: strin
           </button>
         )}
       </div>
-      {writing && (
-        <form
-          className="mt-4 space-y-3 rounded-md border border-line bg-surface p-4"
-          onSubmit={(e) => {
-            e.preventDefault();
-            void submit();
+      {writing && call && (
+        <PostForm
+          group={slug}
+          call={call}
+          closed={closed}
+          editing={editing}
+          onCancel={cancel}
+          onDone={async () => {
+            cancel();
+            await refresh();
+            router.refresh();
           }}
-        >
-          <div className="flex flex-wrap gap-4">
-            <label className="text-sm">
-              Soort{" "}
-              <select value={kind} onChange={(e) => setKind(e.target.value as PostInput["kind"])} className="ml-1 rounded-md border border-line bg-background px-2 py-1">
-                <option value="update">update (kort bericht)</option>
-                <option value="blog">blog</option>
-              </select>
-            </label>
-            <label className="text-sm">
-              Zichtbaar voor{" "}
-              <select value={membersOnly ? "group" : "public"} onChange={(e) => setMembersOnly(e.target.value === "group")} className="ml-1 rounded-md border border-line bg-background px-2 py-1">
-                <option value="group">leden van deze community</option>
-                <option value="public">iedereen</option>
-              </select>
-            </label>
-          </div>
-          <input className={input} placeholder="Titel" value={title} onChange={(e) => setTitle(e.target.value)} required minLength={2} maxLength={160} />
-          <textarea className={`${input} min-h-32`} placeholder="Je bericht (Markdown mag)" value={body} onChange={(e) => setBody(e.target.value)} required maxLength={20000} />
-          {error && <p className="text-sm text-red-700">{error}</p>}
-          <div className="flex gap-3">
-            <button type="submit" className={button} disabled={busy}>
-              {busy ? "Bezig…" : editing ? "Opslaan" : "Plaatsen"}
-            </button>
-            <button type="button" className="text-sm text-muted underline-offset-2 hover:underline" onClick={cancel}>
-              Annuleren
-            </button>
-          </div>
-        </form>
+        />
       )}
       {!writing && error && <p className="mt-2 text-sm text-red-700">{error}</p>}
       {posts.length === 0 ? (

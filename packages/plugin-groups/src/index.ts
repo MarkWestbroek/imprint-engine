@@ -52,5 +52,6 @@ export { GROUPS_PREFIX, groupHref, groupPagePrefix, groupSlug, groupsHref } from
 export { GroupSchema, type Group } from "./schemas";
 export { GroupsConfig, type GroupsConfig as GroupsWidgetConfig } from "./widget";
 export { getGroup, listGroups } from "./groups";
-export { groupsActions, redeem as redeemInvite, type JoinStatus, type MemberList, type PostInput } from "./actions";
+export { groupsActions, redeem as redeemInvite, type JoinStatus, type MemberList, type PostInput, type PostRights } from "./actions";
+export { PostTools } from "./post-tools";
 export { GroupManageScreen } from "./manage";

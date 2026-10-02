@@ -904,10 +904,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~G3a: leden schrijven zelf~~ — update of blog vanaf de
             groepspagina, eigen verwijderen, beheerder verwijdert (01-10).
       - [x] ~~Eigen bericht bewerken~~ — "bewerken" op de groepspagina (01-10).
-      - [ ] G3a+: "bewerken" ook op de berichtpagina zelf; beeld bij een
-            bericht via de bibliotheek; een rijke editor i.p.v.
-            Markdown-tekstvak; leden maken ook evenementen in hun groep (de
-            regel is er al).
+      - [x] ~~G3a+: bewerken op de berichtpagina, beeld bij een bericht,
+            rijke editor~~ (02-10).
+      - [ ] G3a+: leden maken ook evenementen in hun groep (de regel is er
+            al); beelden die nergens meer gebruikt worden opruimen
+            (`assets:gc`).
       - [x] ~~G3b stap 1: reacties~~ — annotaties onder berichten,
             evenementen en wikipagina's (01-10, `plugin-annotations`).
       - [x] ~~G3b stap 2: de kantlijn~~ — ballonnen naast de passage,

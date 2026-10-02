@@ -605,6 +605,22 @@ andere sites, met een paar dingen van commonground.nl:
   is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
   tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 
+## Berichten schrijven als lid
+
+Als lid van een community schrijf je op de community-pagina een **update**
+of een **blog** (*Schrijf een bericht*). Het formulier heeft een rijke
+editor — tabblad *Visueel* met knoppen voor vet, koppen, lijsten, links en
+beelden, tabblad *Markdown* voor wie liever typt — en je kunt een **beeld
+bovenaan het bericht** kiezen. Beelden upload je vanaf je eigen apparaat
+(jpg, png, webp of gif, hooguit 10 MB); ze komen in de beeldbibliotheek in
+de map van je community.
+
+Je eigen bericht bewerk of verwijder je op de community-pagina én op de
+pagina van het bericht zelf: daar staat bovenaan "Dit is jouw bericht" met
+*bewerken* en *verwijderen*. Beheerders van de community kunnen elk
+bericht verwijderen. Een bewerking is een nieuwe versie; wie op je bericht
+reageerde krijgt een mededeling dat het gewijzigd is.
+
 ## Mededelingen
 
 De bel in de balk telt wat er nieuw voor je is; klik erop voor je

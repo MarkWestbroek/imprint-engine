@@ -67,10 +67,13 @@ export function MarkdownEditor({
   value,
   onChange,
   rows = 8,
+  pickImage,
 }: {
   value: string;
   onChange: (value: string) => void;
   rows?: number;
+  /** Where the image button gets its image, instead of the library picker (which is the admin's): a library slug, or null. */
+  pickImage?: () => Promise<{ slug: string; alt?: string } | null>;
 }) {
   const [mode, setMode] = useState<Mode>("visual");
   const [picking, setPicking] = useState(false);
@@ -111,7 +114,16 @@ export function MarkdownEditor({
         <Tab active={mode === "markdown"} onClick={() => setMode("markdown")}>
           Markdown
         </Tab>
-        {mode === "visual" && editor && <Toolbar editor={editor} onImage={() => setPicking(true)} />}
+        {mode === "visual" && editor && (
+          <Toolbar
+            editor={editor}
+            onImage={async () => {
+              if (!pickImage) return setPicking(true);
+              const picked = await pickImage();
+              if (picked) editor.chain().focus().insertContent({ type: "image", attrs: { src: assetRefUrl(`asset:${picked.slug}`), alt: picked.alt ?? "", asset: picked.slug } }).run();
+            }}
+          />
+        )}
       </div>
 
       {mode === "visual" ? (
@@ -195,7 +207,7 @@ function Toolbar({ editor, onImage }: { editor: Editor; onImage: () => void }) {
       >
         🔗
       </Btn>
-      <Btn title="Image from the library" onClick={onImage}>
+      <Btn title="Image" onClick={onImage}>
         🖼
       </Btn>
       <Btn title="Divider" onClick={() => editor.chain().focus().setHorizontalRule().run()}>

@@ -80,7 +80,17 @@ const titleFromFilename = (name: string) => name.replace(/\.[^.]*$/, "").replace
 
 /** slug, 	itle and source are for imports: a wanted slug (made unique), a title other than the filename's, where the file came from. */
 export type IngestFile = { name: string; bytes: Uint8Array; slug?: string; title?: string; source?: string };
-export type IngestOptions = { folder?: string; tags?: string[]; group?: string; exif?: ExifPolicy; by?: string };
+export type IngestOptions = {
+  folder?: string;
+  tags?: string[];
+  group?: string;
+  exif?: ExifPolicy;
+  by?: string;
+  /** Extra properties of the asset for the PDP (a member's upload: `{ group, author }`), next to `access`. */
+  policy?: Record<string, unknown>;
+  /** Only these kinds (a member's upload: raster images); anything else is refused per file. */
+  kinds?: string[];
+};
 export type IngestResult = {
   name: string;
   ok: boolean;
@@ -116,7 +126,8 @@ export async function ingestFiles(
 ): Promise<IngestResult[]> {
   const store = admin.imprint.writableStore;
   if (!store) throw new IngestRefused("The media library requires DATABASE_URL", 409);
-  if (!(await permit(admin.imprint.pdp, subject, "create", contentResource("asset", "*")))) {
+  const resource = { ...contentResource("asset", "*"), properties: { access: "public", ...opts.policy } };
+  if (!(await permit(admin.imprint.pdp, subject, "create", resource))) {
     throw new IngestRefused("Not allowed to add media", 403);
   }
 
@@ -131,6 +142,7 @@ export async function ingestFiles(
   for (const file of files) {
     try {
       const processed = await processUpload(file.bytes, policy, { maxBytes: admin.imprint.media.maxBytes });
+      if (opts.kinds && !opts.kinds.includes(processed.kind)) throw new UploadError(`Only ${opts.kinds.join(", ")} here`, 415);
       const slug = uniqueSlug(file.slug || slugFromFilename(file.name), taken);
       const assets = admin.imprint.assets;
       const original = await assets.put(`${LIBRARY}${slug}/original.${processed.ext}`, file.bytes);
