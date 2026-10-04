@@ -44,3 +44,12 @@ test("a private patch (pool prive) is private like a proposal, and stays out of 
   const input = PatchInput.parse({ kind: "private", title: "Alleen voor mij", file: "asset:x", requires: base.requires });
   assert.equal(input.kind, "private");
 });
+
+test("the front is an optional asset reference, in the input and the item", () => {
+  const withFront = PatchInput.safeParse({ title: "Warm pad", file: "asset:x", front: "asset:warm-pad-front", requires: base.requires });
+  assert.equal(withFront.success, true);
+  assert.equal(withFront.success && withFront.data.front, "asset:warm-pad-front");
+  assert.equal(PatchInput.safeParse({ title: "Warm pad", file: "asset:x", front: "https://elders/front.svg", requires: base.requires }).success, false);
+  const item = PatchSchema.parse({ ...base, pool: "experimenteel", front: "asset:warm-pad-front" });
+  assert.equal(item.front, "asset:warm-pad-front");
+});

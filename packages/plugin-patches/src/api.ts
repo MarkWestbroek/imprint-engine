@@ -18,7 +18,7 @@ import { PatchInput, PatchPromote, PatchSchema, poolAccess, type Patch, type Poo
  *                                your own private patch (pool `prive`) becomes a proposal or a question → 200 { ok, slug, pool }
  *   GET  /api/patches?pool=&tag=&slug=
  *                                public: experimenteel, centraal, vraag; with a token also your own proposals
- *                                → 200 { patches: [{ slug, title, pool, tags, author, license, file, syx, takes, requires, derivedFrom, question, answered, url, fileUrl, syxUrl }] }
+ *                                → 200 { patches: [{ slug, title, pool, tags, author, license, file, syx, front, takes, requires, derivedFrom, question, answered, url, fileUrl, syxUrl, frontUrl }] }
  */
 
 function corsHeaders(admin: AdminContext, req: Request): Record<string, string> {
@@ -63,6 +63,7 @@ function wire(req: Request, p: Patch) {
     license: p.license,
     file: p.file,
     syx: p.syx,
+    front: p.front,
     takes: p.takes,
     requires: p.requires,
     derivedFrom: p.derivedFrom,
@@ -72,6 +73,7 @@ function wire(req: Request, p: Patch) {
     url: new URL(patchHref(p.slug), publicOrigin(req)).toString(),
     fileUrl: abs(p.file),
     syxUrl: abs(p.syx),
+    frontUrl: abs(p.front),
   };
 }
 

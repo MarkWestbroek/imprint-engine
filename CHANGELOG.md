@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Front bij een patch** (patch-pool): het item `patch` heeft een optioneel
+  veld `front` (asset, SVG): de speelkant van de patch zoals de MusicBrain-
+  editor hem tekent (MusicBrain `doc/plans/patch-front.md` §7). De editor
+  stuurt hem mee bij `POST /api/patches` (`front: "asset:…"`); `GET
+  /api/patches` geeft `front` en `frontUrl` terug; de patchpagina toont hem
+  als hoes boven de knoppen en de lijsten als kaartbeeld.
 - **Privé-patches** (patch-pool): een vijfde pool `prive` voor patches die
   je voor jezelf bewaart. Inzenden met `kind: "private"`; alleen de inzender
   (en de redactie) ziet ze, ook via `GET /api/patches?pool=prive`; niet in

@@ -708,8 +708,10 @@ Annotation): één model, met of zonder passage.
 Patches uit de editor staan op de site als content: onder **Patches** in de
 admin, en openbaar op `/patches` (de centrale set), `/patches/lab`
 (experimenteel) en `/patches/vragen`. Elke patch heeft een eigen pagina
-met beschrijving, demo (de take-widget: audio met pianorol), downloads
-(`.patch.json`, `.syx`), een knop **Open in de editor**, de vereisten
+met beschrijving, het **front** (de speelkant van de patch zoals de editor
+hem tekent: de belangrijkste knoppen en aansluitingen, zonder kabels; als
+de editor er een meestuurt), demo (de take-widget: audio met pianorol),
+downloads (`.patch.json`, `.syx`), een knop **Open in de editor**, de vereisten
 (editorversie, firmwarecontract, moduletypen) en de stamboom (afgeleid
 van, afgeleiden).
 

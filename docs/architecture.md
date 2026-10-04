@@ -1128,7 +1128,8 @@ niet van elkaar afwijken.
 - **Patch-pool** ([plugin-patches](../packages/plugin-patches/src/index.ts),
   MusicBrain `doc/plans/patch-pool.md`): type `patch` met `file`/`syx` als
   `asset:`-verwijzingen (de library bewaart de bestanden, de gc ziet de
-  verwijzing), `takes` als take-groepen, `requires` (semver), `derivedFrom`
+  verwijzing), `front` als optionele SVG-asset (de speelkant van de patch,
+  MusicBrain `doc/plans/patch-front.md` §7), `takes` als take-groepen, `requires` (semver), `derivedFrom`
   als RelationRule; `access` is afgeleid van `pool` in een `z.preprocess`
   (voorstel → `private`, anders `public`), zodat admin en API het niet uit
   elkaar kunnen trekken. `patchesApi` is een dunne PEP voor `POST/GET

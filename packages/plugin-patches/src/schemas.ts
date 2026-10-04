@@ -50,6 +50,9 @@ const PatchBase = z.object({
   file: assetSrc(["data"]),
   /** The `.syx`, for a DAW or the Teensy without the editor. */
   syx: assetSrc(["data"]).optional(),
+  /** The patch's front (MusicBrain doc/plans/patch-front.md §7): the
+   *  black-box view the editor draws, as an SVG; the "cover" of the patch. */
+  front: assetSrc(["svg", "image"]).optional(),
   /** Demo recordings: the `group` slugs of takes in the library (wav + mid). */
   takes: z.array(z.string().regex(/^[a-z0-9][a-z0-9-]*$/)).default([]),
   requires: Requires,
@@ -89,6 +92,8 @@ export const PatchInput = z.object({
   license: License.default("CC-BY-4.0"),
   file: z.string().regex(/^asset:[a-z0-9-]+$/),
   syx: z.string().regex(/^asset:[a-z0-9-]+$/).optional(),
+  /** The front as an SVG asset (optional; the editor sends it along). */
+  front: z.string().regex(/^asset:[a-z0-9-]+$/).optional(),
   takes: z.array(z.string().regex(/^[a-z0-9][a-z0-9-]*$/)).default([]),
   requires: Requires,
   derivedFrom: z.string().regex(/^[a-z0-9-]+$/).optional(),

@@ -67,6 +67,11 @@ function ListView({ pool, patches }: { pool: Pool; patches: Patch[] }) {
         <ul className="grid gap-4 sm:grid-cols-2">
           {patches.map((p) => (
             <li key={p.slug} className="rounded-lg border border-line bg-surface p-4">
+              {p.front && assetRefUrl(p.front) && (
+                <Link href={patchHref(p.slug)}>
+                  <img src={assetRefUrl(p.front) ?? undefined} alt="" className="mb-3 w-full rounded-md border border-line" />
+                </Link>
+              )}
               <h2 className="font-semibold">
                 <Link href={patchHref(p.slug)} className="hover:underline">
                   {p.title}
@@ -106,6 +111,7 @@ async function PatchView({ patch, parent, children, demos, opts }: { patch: Patc
   const back = LISTS.find((l) => l.pool === patch.pool) ?? LISTS[0]!;
   const file = assetRefUrl(patch.file);
   const syx = patch.syx ? assetRefUrl(patch.syx) : null;
+  const front = patch.front ? assetRefUrl(patch.front) : null;
   return (
     <article className="max-w-3xl">
       <Link href={back.href()} className="text-sm text-muted hover:underline">
@@ -120,6 +126,13 @@ async function PatchView({ patch, parent, children, demos, opts }: { patch: Patc
       <div className="mt-3">
         <Tags tags={patch.tags} />
       </div>
+      {front && (
+        <figure className="mt-6">
+          {/* Het front: de speelkant van de patch zoals de editor hem tekent (patch-front §7). */}
+          <img src={front} alt={`Front van ${patch.title}: de belangrijkste knoppen en aansluitingen`} className="w-full max-w-xl rounded-lg border border-line" />
+          <figcaption className="mt-1 text-xs text-muted">Het front: wat je in de editor ziet zonder de kabels.</figcaption>
+        </figure>
+      )}
       <div className="mt-6 flex flex-wrap gap-3">
         {opts.editorUrl && (
           <a href={`${opts.editorUrl}?patch=${encodeURIComponent(patch.slug)}`} className="rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background hover:bg-accent-strong">
