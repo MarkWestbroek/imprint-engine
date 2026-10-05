@@ -630,13 +630,18 @@ hoofditem + subitems + aanwijsbaar fase-veld + optionele eigenaar.
     (`?folder=&tag=&group=`). Authenticatie met een persoonlijke token
     (`Authorization: Bearer imp_…`); scopes `media:upload` / `media:read`
     bovenop de rechten van de gebruiker (PDP). Alles-of-niets: `checkUpload`
-    toetst eerst elk bestand (413/415/400), pas dan `ingestFiles`. CORS alleen
-    voor de origins in `media.cors` (`imprint.config.ts`), zonder credentials:
-    de sessiecookie komt nooit cross-origin in het spel. Dezelfde lijst geldt
-    voor het lezen van de bestanden: `assetsRoute` (de route
-    `/api/assets/…`) zet CORS op `serveAsset` (GET en preflight, `Range`
-    toegestaan, `Content-Range` zichtbaar, `Vary: Origin`); wat een bezoeker
-    niet mag zien blijft 403.
+    toetst eerst elk bestand (413/415/400), pas dan `ingestFiles`. CORS volgens
+    één policy voor `/api/media`, `/api/patches` en `/api/assets`
+    (`media/cors.ts`, `corsHeadersFor`): de origins in `media.cors`
+    (`imprint.config.ts`) krijgen het volledige aanbod (schrijven, token);
+    elke andere origin mag **lezen zonder token** (`GET` zonder
+    `Authorization` → `Access-Control-Allow-Origin: *`), zodat de patch-editor
+    op `localhost` of een telefoon op een LAN-adres de publieke pools en
+    bestanden kan ophalen. Nooit met credentials: de sessiecookie komt
+    cross-origin niet in het spel, en wat de anonieme lezer niet mag zien
+    blijft 403. `assetsRoute` (de route `/api/assets/…`) zet dezelfde policy
+    op `serveAsset` (GET en preflight, `Range` toegestaan, `Content-Range`
+    zichtbaar, `Vary: Origin`).
   - **Vervangen** (`PUT /api/media/<slug>`, `replaceAssetFile`): één bestand
     vervangt dat van een bestaand asset — nieuwe sleutel (cache blijft
     juist), nieuwe versie van het record (historie), groep/tags/`created`
@@ -1133,7 +1138,8 @@ niet van elkaar afwijken.
   als RelationRule; `access` is afgeleid van `pool` in een `z.preprocess`
   (voorstel → `private`, anders `public`), zodat admin en API het niet uit
   elkaar kunnen trekken. `patchesApi` is een dunne PEP voor `POST/GET
-  /api/patches` (token-scope `patch:propose`, CORS uit `media.cors`): het
+  /api/patches` (token-scope `patch:propose`; CORS: lezen zonder token vanaf
+  elke origin, schrijven alleen vanaf `media.cors`): het
   lichaam (`PatchInput`) kent geen pool en geen auteur; de route zet
   `author` uit het token, `pool` uit `kind`, en vraagt `permit(create,
   {access, author, proposal: true})`. De kern kreeg daarvoor twee generieke

@@ -246,7 +246,7 @@ describe("ingestFiles + serveAsset", () => {
     assert.ok(await resolveMedia(ctx(guardReads(store, userSubject("rita", "reader"), inProcessPdp)), `asset:${r.slug}`));
   });
 
-  it("assetsRoute: CORS for the listed origins only, reading only, and a 403 stays a 403", async () => {
+  it("assetsRoute: listed origins get the full offer, any origin may read, and a 403 stays a 403", async () => {
     const cors = admin.imprint.media as { cors?: string[] };
     cors.cors = ["http://editor.test"];
     session = null;
@@ -262,7 +262,13 @@ describe("ingestFiles + serveAsset", () => {
     assert.equal(ok.headers.get("access-control-allow-origin"), "http://editor.test");
     assert.equal(ok.headers.get("vary"), "Origin");
     assert.deepEqual(JSON.parse(await ok.text()).type, "mmb-patch");
-    assert.equal((await get("https://evil.example")).headers.get("access-control-allow-origin"), null);
+    // Public file, unlisted origin: readable with `*` (the editor on localhost),
+    // but never with credentials and never a write.
+    const other = await get("https://other.example");
+    assert.equal(other.status, 200);
+    assert.equal(other.headers.get("access-control-allow-origin"), "*");
+    const otherPre = await assetsRoute(admin, new Request("http://site.test/x", { method: "OPTIONS", headers: { Origin: "https://other.example", "Access-Control-Request-Method": "POST" } }), rel);
+    assert.equal(otherPre.headers.get("access-control-allow-origin"), null);
 
     const pre = await get("http://editor.test", "OPTIONS");
     assert.equal(pre.status, 204);

@@ -13,6 +13,7 @@ import {
 import type { AdminContext } from "../admin-context";
 import type { ActionResult } from "../admin/types";
 import { displayUrl, fileAccess, thumbUrl } from "../media/access";
+import { corsHeadersFor } from "../media/cors";
 import { processUpload, slugFromFilename, uniqueSlug, UploadError } from "../media/process";
 
 /**
@@ -541,25 +542,17 @@ export async function libraryIndex(admin: AdminContext): Promise<Response> {
 
 /**
  * The route handler for `/api/assets/<path>` (GET and the CORS preflight):
- * `serveAsset`, plus CORS for the origins in `media.cors` — the same list as
- * the media API, so a client there (the patch editor) can `fetch()` a file it
- * found through /api/media. Reading only, never with credentials: what a
- * visitor may not see stays 403 for another origin too.
+ * `serveAsset`, plus CORS (media/cors.ts): a file that is public on the site
+ * may be read from any origin — the patch editor on localhost, a phone on a
+ * LAN address — and the origins in `media.cors` get the same. Reading only,
+ * never with credentials: what a visitor may not see stays 403 for another
+ * origin too.
  */
 export async function assetsRoute(admin: AdminContext, req: Request, parts: string[]): Promise<Response> {
-  const origin = req.headers.get("origin");
-  const allowed = origin !== null && admin.imprint.media.cors.includes(origin);
-  const cors: Record<string, string> = allowed
-    ? {
-        "Access-Control-Allow-Origin": origin,
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Headers": "Range",
-        "Access-Control-Expose-Headers": "Content-Length, Content-Range, Accept-Ranges",
-        "Access-Control-Max-Age": "600",
-      }
-    : {};
-  // The answer differs per origin once there is a list: caches must keep them apart.
-  if (admin.imprint.media.cors.length > 0) cors.Vary = "Origin";
+  const cors = corsHeadersFor(admin.imprint.media.cors, req, {
+    methods: "GET, OPTIONS", headers: "Range", publicHeaders: "Range",
+    expose: "Content-Length, Content-Range, Accept-Ranges",
+  });
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
 
   let res: Response;

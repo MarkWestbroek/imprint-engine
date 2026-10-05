@@ -1,7 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { ANONYMOUS, permit, userSubject, type AuthzenSubject } from "@imprint/content-core";
 import type { TokenGrant } from "@imprint/content-core/user-store";
-import { assetRefUrl, type AdminContext } from "@imprint/runtime-admin";
+import { assetRefUrl, corsHeadersFor, type AdminContext } from "@imprint/runtime-admin";
 import { patchHref, patchSlug, patchesHref } from "./href";
 import { getPatch, listPatches } from "./patches";
 import { PatchInput, PatchPromote, PatchSchema, poolAccess, type Patch, type Pool } from "./schemas";
@@ -21,16 +21,11 @@ import { PatchInput, PatchPromote, PatchSchema, poolAccess, type Patch, type Poo
  *                                → 200 { patches: [{ slug, title, pool, tags, author, license, file, syx, front, takes, requires, derivedFrom, question, answered, url, fileUrl, syxUrl, frontUrl }] }
  */
 
+// The public pools are public: a GET without a token is answered for any
+// origin (the editor on localhost, a phone on a LAN address); the listed
+// origins may also propose and promote with their token (media/cors.ts).
 function corsHeaders(admin: AdminContext, req: Request): Record<string, string> {
-  const origin = req.headers.get("origin");
-  if (!origin || !admin.imprint.media.cors.includes(origin)) return {};
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-    "Access-Control-Max-Age": "600",
-    Vary: "Origin",
-  };
+  return corsHeadersFor(admin.imprint.media.cors, req, { methods: "GET, POST, PATCH, OPTIONS", headers: "Authorization, Content-Type" });
 }
 
 const json = (admin: AdminContext, req: Request, body: unknown, status = 200) =>

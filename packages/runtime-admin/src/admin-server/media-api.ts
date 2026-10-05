@@ -2,6 +2,7 @@ import { AssetRecordSchema, permitted, userSubject, type AssetRecord } from "@im
 import type { TokenGrant, TokenScope } from "@imprint/content-core/user-store";
 import type { AdminContext } from "../admin-context";
 import { displayUrl } from "../media/access";
+import { corsHeadersFor } from "../media/cors";
 import { checkUpload, UploadError } from "../media/process";
 import { IngestRefused, ingestFiles, normalizeFolder, normalizeGroup, normalizeTag, readUploadForm, replaceAssetFile } from "./media";
 
@@ -27,16 +28,10 @@ import { IngestRefused, ingestFiles, normalizeFolder, normalizeGroup, normalizeT
  * so a recording never lands half.
  */
 
+// One policy for the three public routes (media/cors.ts): listed origins get
+// the full offer, every origin may read without a token.
 function corsHeaders(admin: AdminContext, req: Request): Record<string, string> {
-  const origin = req.headers.get("origin");
-  if (!origin || !admin.imprint.media.cors.includes(origin)) return {};
-  return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "GET, POST, PUT, OPTIONS",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type",
-    "Access-Control-Max-Age": "600",
-    Vary: "Origin",
-  };
+  return corsHeadersFor(admin.imprint.media.cors, req, { methods: "GET, POST, PUT, OPTIONS", headers: "Authorization, Content-Type" });
 }
 
 function json(admin: AdminContext, req: Request, body: unknown, status = 200): Response {

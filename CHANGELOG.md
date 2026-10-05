@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Publieke pools vanaf elk adres leesbaar** (`/api/patches`, `/api/assets`,
+  `/api/media`): een `GET` zonder token wordt voor elke origin beantwoord
+  (`Access-Control-Allow-Origin: *`), zodat de MusicBrain-editor op
+  `localhost` of een telefoon op een LAN-adres de Basisset en de
+  patchbestanden kan ophalen zonder dat die origin eerst in `media.cors`
+  staat. Met token, en voor schrijven, blijft de lijst in `imprint.config.ts`
+  gelden. Eén implementatie voor de drie routes
+  (`runtime-admin/src/media/cors.ts`, 5 tests).
 - **Front bij een patch** (patch-pool): het item `patch` heeft een optioneel
   veld `front` (asset, SVG): de speelkant van de patch zoals de MusicBrain-
   editor hem tekent (MusicBrain `doc/plans/patch-front.md` §7). De editor
