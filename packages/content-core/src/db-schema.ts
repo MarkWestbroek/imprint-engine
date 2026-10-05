@@ -139,6 +139,23 @@ export const attendances = mysqlTable(
 );
 
 /**
+ * Site search, as statistics (the admin's "Statistieken"): what was asked,
+ * how many hits, when, and whether it looked typed by a machine. No person,
+ * no address, no session: the query alone. Kept 400 days.
+ */
+export const searchLog = mysqlTable(
+  "search_log",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    query: varchar("query", { length: 200 }).notNull(),
+    hits: int("hits").notNull(),
+    automated: int("automated").notNull().default(0),
+    at: datetime("at", { fsp: 3 }).notNull(),
+  },
+  (t) => [index("idx_search_log_at").on(t.at)]
+);
+
+/**
  * Notifications (design/communities.md §4.4, G3c): what happened that a
  * member wants to know — a reply, a comment on your post, a changed passage
  * you annotated, a membership decision. Personal data in the user store, like

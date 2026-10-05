@@ -30,6 +30,8 @@ export default defineImprint({
       region: process.env.ASSET_S3_REGION,
     },
   },
+  // Visits report (GoAccess from the web server's log, deploy/vps/stats.sh); unset locally.
+  stats: { reportDir: process.env.STATS_REPORT_DIR },
   secrets: {
     session: process.env.SESSION_SECRET,
     ingestToken: process.env.INGEST_TOKEN,

@@ -101,6 +101,8 @@ export interface ImprintConfig {
   media?: { maxBytes?: Partial<Record<string, number>>; cors?: string[] };
   /** Outbound mail (design/mail.md): the SMTP relay and sender of this instance; absent = no mail. */
   mail?: MailConfig;
+  /** Statistics: the folder with the visits report (GoAccess, deploy/vps/stats.sh); absent = the admin says there is none. */
+  stats?: { reportDir?: string };
   /**
    * Secrets and outbound targets. The config file is the only place that reads
    * `process.env` for them, so shared code (the admin, Fase 3) never does.
@@ -159,6 +161,8 @@ export interface ImprintInstance {
   media: { maxBytes: Record<string, number>; cors: string[] };
   /** The instance's mailer, or null when no relay is configured (members' verification mail says so). */
   mail: Mailer | null;
+  /** Where the visits report is; null = none for this instance. */
+  stats: { reportDir: string | null };
   session: { cookie: string; hours: number };
   /** As configured; empty strings count as absent. */
   secrets: ImprintSecrets;
@@ -269,6 +273,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     plugins: cfg.plugins ?? [],
     assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
     mail: createMailer(cfg.mail),
+    stats: { reportDir: cfg.stats?.reportDir || null },
     media: {
       maxBytes: { ...DEFAULT_MEDIA_MAX_BYTES, ...(cfg.media?.maxBytes as Record<string, number> | undefined) },
       // An origin is scheme + host (+ port), without a trailing slash: that is what the browser sends.

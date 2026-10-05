@@ -1,10 +1,11 @@
-import { and, asc, count, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lt } from "drizzle-orm";
 
-import { apiTokens, attendances, emailTokens, invites, memberships, notifications, users } from "./db-schema.pg";
+import { apiTokens, attendances, emailTokens, invites, memberships, notifications, searchLog, users } from "./db-schema.pg";
 import {
   UserStore,
   type AttendanceRow,
   type NotificationRow,
+  type SearchLogRow,
   type EmailTokenRow,
   type InviteRow,
   type MembershipRow,
@@ -174,6 +175,19 @@ export class PgUserStore extends UserStore {
 
   protected async deleteAttendancesOf(userName: string): Promise<void> {
     await this.db.delete(attendances).where(eq(attendances.userName, userName));
+  }
+
+  // Search log
+  protected async insertSearch(row: Omit<SearchLogRow, "id">): Promise<void> {
+    await this.db.insert(searchLog).values(row);
+  }
+
+  protected async selectSearchesSince(since: Date): Promise<SearchLogRow[]> {
+    return this.db.select().from(searchLog).where(gte(searchLog.at, since)).orderBy(asc(searchLog.at));
+  }
+
+  protected async deleteSearchesBefore(before: Date): Promise<void> {
+    await this.db.delete(searchLog).where(lt(searchLog.at, before));
   }
 
   // Notifications

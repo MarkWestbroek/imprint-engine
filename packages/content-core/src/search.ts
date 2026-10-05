@@ -123,3 +123,31 @@ export async function search(definitions: ContentTypeDefinition[], store: Conten
   hits.sort((a, b) => b.score - a.score || a.title.localeCompare(b.title, "nl"));
   return { hits, kind, terms, counts };
 }
+
+/**
+ * Whether a search query looks typed by a machine (site statistics leave it
+ * out): a scanner's marker (a run of 6–12 letters in mixed case, no vowel
+ * pattern a word has, like `XzZnWQWF`), a path or injection probe
+ * (`../`, `/etc/passwd`, `web.xml`, `system.ini`, `<script`, `union select`,
+ * `${`, `%00`), or something no person types into a search box (over 120
+ * characters). Pure, so the rule is testable and the same everywhere.
+ */
+export function searchLooksAutomated(query: string): boolean {
+  const q = query.trim();
+  if (q.length > 120) return true;
+  if (/(\.\.[\/\\]|[\/\\]etc[\/\\]|passwd|web-inf|web\.xml|system\.ini|win\.ini|boot\.ini|<\s*script|javascript:|onerror\s*=|union\s+select|\bselect\s.+\bfrom\b|sleep\s*\(|\$\{|\{\{|%00|%2e%2e|\bor\s+1\s*=\s*1)/i.test(q)) return true;
+  if (/^[A-Za-z]{6,12}$/.test(q)) {
+    const upper = (q.match(/[A-Z]/g) ?? []).length;
+    const lower = q.length - upper;
+    // Mixed case beyond a capital first letter, an acronym or one CamelCase hump: "XzZnWQWF", "sPbkyDhN",
+    // "TlqgUPWm" (capitals after a small letter); not "Fieldlab", "VNG", "VNGrealisatie", "OpenZaak".
+    const humps = (q.slice(1).match(/[a-z][A-Z]/g) ?? []).length;
+    // Also a capital run, small letters, and a capital again ("ATyqaVkj"), or more capitals than small ones
+    // ending in small letters ("FNEGQAqo").
+    const odd = /^[a-z]/.test(q) || /[a-z][A-Z]{2,}/.test(q) || /^[A-Z]{2,}[a-z]+[A-Z]/.test(q) || (upper > lower && /[a-z]$/.test(q));
+    if (upper >= 2 && lower >= 2 && (humps >= 2 || odd)) return true;
+    // One small letter hidden among capitals: "PTtEMIQE", "XHGFzLTK". (Eight capitals alone may be a person shouting.)
+    if (upper >= 5 && lower === 1 && /[A-Z][a-z][A-Z]/.test(q)) return true;
+  }
+  return false;
+}

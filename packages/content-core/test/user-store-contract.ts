@@ -197,6 +197,23 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.equal(await users.consumeEmailToken(token, "digest-off"), null, "one-time");
     });
 
+    it("search statistics: terms folded by case, the empty ones apart, machines counted but not listed", async () => {
+      const users = await factory();
+      const at = (h: number) => new Date(Date.UTC(2026, 9, 5, h));
+      await users.logSearch("Fieldlab", 3, false, at(8));
+      await users.logSearch("fieldlab ", 3, false, at(9));
+      await users.logSearch("haven", 0, false, at(9));
+      await users.logSearch("XzZnWQWF", 0, true, at(10));
+      await users.logSearch("   ", 0, false, at(10));
+      const stats = await users.searchStats(at(0));
+      assert.deepEqual([stats.total, stats.automated], [3, 1]);
+      assert.deepEqual(stats.terms.map((t) => [t.term, t.count]), [["fieldlab", 2], ["haven", 1]]);
+      assert.deepEqual(stats.empty.map((t) => t.term), ["haven"]);
+      assert.equal((await users.searchStats(at(9))).total, 2, "since");
+      await users.logSearch("later", 1, false, new Date(Date.UTC(2027, 11, 1)));
+      assert.equal((await users.searchStats(at(0))).total, 1, "older than 400 days is gone");
+    });
+
     it("removes users; unknown names are an error", async () => {
       const users = await factory();
       await users.remove("mark");

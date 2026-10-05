@@ -33,7 +33,7 @@ export function adminMenu(admin: AdminContext): MenuGroup[] {
     return sec;
   };
 
-  section("overview", undefined).items.push({ href: "/admin", label: "Dashboard" });
+  section("overview", undefined).items.push({ href: "/admin", label: "Dashboard" }, { href: "/admin/stats", label: "Statistieken" });
 
   const catalog = admin.imprint.contentTypes;
   for (const type of catalog.types("listable")) {

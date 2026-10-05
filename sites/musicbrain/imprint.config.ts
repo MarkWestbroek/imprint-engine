@@ -52,6 +52,8 @@ export default defineImprint({
   media: {
     cors: ["https://editor.musicbrain.nl", ...(process.env.MEDIA_CORS_ORIGINS ?? "").split(",")],
   },
+  // Visits report (GoAccess from the web server's log, deploy/vps/stats.sh); unset locally.
+  stats: { reportDir: process.env.STATS_REPORT_DIR },
   secrets: {
     session: process.env.SESSION_SECRET,
     ingestToken: process.env.INGEST_TOKEN,

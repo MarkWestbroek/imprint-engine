@@ -19,6 +19,7 @@ name: imprint
 
 x-site: &site
   restart: unless-stopped
+  # The visits report (stats.sh) is mounted per site at /data/stats.
   depends_on:
     postgres:
       condition: service_healthy
@@ -80,6 +81,7 @@ services:
       network: host
       secrets: [database_url]
     environment:
+      STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://musicbrain:${MUSICBRAIN_DB_PASSWORD}@postgres:5432/musicbrain
       SESSION_SECRET: ${MUSICBRAIN_SESSION_SECRET:?MUSICBRAIN_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${MUSICBRAIN_INGEST_TOKEN:-}
@@ -95,6 +97,7 @@ services:
       - "127.0.0.1:${MUSICBRAIN_PORT:-3000}:3000"
     volumes:
       - musicbrain_assets:/data/assets
+      - /srv/imprint-stats/musicbrain:/data/stats:ro
 
   imprint:
     <<: *site
@@ -105,6 +108,7 @@ services:
       network: host
       secrets: [database_url]
     environment:
+      STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://imprint:${IMPRINT_DB_PASSWORD}@postgres:5432/imprint
       SESSION_SECRET: ${IMPRINT_SESSION_SECRET:?IMPRINT_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${IMPRINT_INGEST_TOKEN:-}
@@ -117,6 +121,7 @@ services:
       - "127.0.0.1:${IMPRINT_PORT:-3100}:3000"
     volumes:
       - imprint_assets:/data/assets
+      - /srv/imprint-stats/imprint:/data/stats:ro
 
   # Showcase: Common Ground op Imprint (design/communities.md). Pagina's uit
   # Pleio via `./deploy.sh import-pleio commonground`; plaatjes linken nog naar
@@ -130,6 +135,7 @@ services:
       network: host
       secrets: [database_url]
     environment:
+      STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://commonground:${COMMONGROUND_DB_PASSWORD}@postgres:5432/commonground
       SESSION_SECRET: ${COMMONGROUND_SESSION_SECRET:-}
       ASSET_ROOT: /data/assets
@@ -145,6 +151,7 @@ services:
       - "127.0.0.1:${COMMONGROUND_PORT:-3400}:3000"
     volumes:
       - commonground_assets:/data/assets
+      - /srv/imprint-stats/commonground:/data/stats:ro
 
   # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
   # productiedatabase. Draait alleen op verzoek:

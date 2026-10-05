@@ -954,6 +954,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Portfolio als widget i.p.v. het iframe: tabel + detail uit een
             databron met een tabeldefinitie (de "Weergave" van Omnium als
             widget); zie het antwoord aan Mark van 30-09.
+- [x] ~~Statistieken: zoekopdrachten en bezoek~~ (05-10, kern +
+      GoAccess). Open: MusicBrain en de Imprint-site hebben nog geen
+      zoekpagina, dus daar alleen bezoek; een export (CSV) van de
+      zoektermen; Umami of Matomo als CG dashboards wil zoals in Pleio.
 - [ ] **Patch-pool** (MusicBrain `doc/plans/patch-pool.md`): stap 1 en 3
       gebouwd (02-10). Open: stap 4 gesprek onder een patch — `patch` als
       annotatiedoel zodra MusicBrain leden heeft; "antwoord met patch";

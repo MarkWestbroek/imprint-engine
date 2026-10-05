@@ -43,6 +43,13 @@
       "when": 1790897202011,
       "tag": "0005_tidy_unus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1791192929417,
+      "tag": "0006_chemical_victor_mancha",
+      "breakpoints": true
     }
   ]
 }

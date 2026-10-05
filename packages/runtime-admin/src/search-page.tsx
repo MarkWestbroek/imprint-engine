@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { search, searchKinds, type ContentStore, type ContentTypeDefinition } from "@imprint/content-core";
+import { search, searchKinds, searchLooksAutomated, type ContentStore, type ContentTypeDefinition } from "@imprint/content-core";
 
 /**
  * The standard search page (content-core/search.ts): a form, a hint with
  * the prefixes the site's types offer, and the hits with their kind. A site
  * mounts it in its own chrome at `/search` and gives it the store of the
  * visitor at hand, so nobody sees what they may not. Styled with the token
- * classes every site's theme provides (architecture.md §3).
+ * classes every site's theme provides (architecture.md §3). With `log` (the
+ * instance's user store) every search is counted for the admin's statistics:
+ * the query and its hits, no person.
  */
 export async function SearchPage({
   definitions,
@@ -14,6 +16,7 @@ export async function SearchPage({
   q,
   action = "/search",
   limit = 100,
+  log,
 }: {
   /** The site's active content types; those with `search` take part. */
   definitions: ContentTypeDefinition[];
@@ -21,9 +24,13 @@ export async function SearchPage({
   q: string;
   action?: string;
   limit?: number;
+  /** Where searches are counted (`imprint.users`); absent or null = not counted. */
+  log?: { logSearch(query: string, hits: number, automated: boolean): Promise<void> } | null;
 }) {
   const kinds = searchKinds(definitions);
   const result = q.trim() ? await search(definitions, store, q) : null;
+  // Counting never breaks the page.
+  if (result && log) await log.logSearch(q, result.hits.length, searchLooksAutomated(q)).catch(() => undefined);
   const examples = Object.entries(kinds).map(([kind, k]) => ({ kind, prefix: k.prefixes[0]!, label: k.label }));
 
   return (

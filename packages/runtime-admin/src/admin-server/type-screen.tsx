@@ -4,6 +4,7 @@ import type { AdminActions } from "./actions";
 import { ListScreen } from "./list";
 import { MediaLibraryScreen } from "./media-screen";
 import { PluginScreen } from "./plugin-screen";
+import { StatsScreen } from "./stats";
 
 /**
  * `/admin/<segment>`: a plugin that claims the segment wins (the wiki plugin
@@ -26,6 +27,10 @@ export async function AdminTypeScreen({
 }) {
   if (pluginOf(admin, type)?.screen) {
     return <PluginScreen admin={admin} name={type} path={[]} call={call} />;
+  }
+  // The core's statistics (searches, visits): every site, through the same route.
+  if (type === "stats" && !admin.imprint.contentTypes.has("stats")) {
+    return <StatsScreen admin={admin} />;
   }
   if (type === "asset" && admin.imprint.contentTypes.has("asset", "listable")) {
     return <MediaLibraryScreen admin={admin} actions={actions.media} />;

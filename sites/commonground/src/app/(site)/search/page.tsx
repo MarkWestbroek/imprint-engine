@@ -17,7 +17,7 @@ export default async function Search({ searchParams }: Props) {
   const definitions = imprint.contentTypes.registry.definitions().filter((d) => imprint.contentTypes.has(d.name));
   return (
     <article className="cg-page">
-      <SearchPage definitions={definitions} store={store} q={q} />
+      <SearchPage definitions={definitions} store={store} q={q} log={imprint.users} />
     </article>
   );
 }

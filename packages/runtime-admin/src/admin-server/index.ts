@@ -36,6 +36,7 @@ export {
 export { composeDigest, digestApi, digestOffByToken, sendDigests, setDigestPreference, type DigestReport } from "./digest";
 export { markNotificationsRead, myNotifications, notify, notifyGroup, notifyManagers, unreadNotifications, type Inbox } from "./notifications";
 export { previewEnter, previewExit } from "./preview-routes";
+export { StatsScreen } from "./stats";
 export { UsersScreen } from "./users-screen";
 export { RelationsScreen } from "./relations";
 export { ViewsScreen } from "./views";

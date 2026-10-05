@@ -124,6 +124,19 @@ export const attendances = pgTable(
   (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
 );
 
+/** Site search as statistics — see db-schema.ts. */
+export const searchLog = pgTable(
+  "search_log",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    query: varchar("query", { length: 200 }).notNull(),
+    hits: integer("hits").notNull(),
+    automated: integer("automated").notNull().default(0),
+    at: ts("at").notNull(),
+  },
+  (t) => [index("idx_search_log_at").on(t.at)]
+);
+
 /** Notifications — see db-schema.ts. */
 export const notifications = pgTable(
   "notifications",

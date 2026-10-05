@@ -1130,6 +1130,18 @@ niet van elkaar afwijken.
   `add` krijgt dan `{ field, selector: [TextQuote, TextPosition] }` en de
   kern valideert ze). Node-scripts gebruiken de React-vrije entries
   (`/content-types`, `/schemas`).
+- **Statistieken** (kern): `UserStore.logSearch/searchStats` op de tabel
+  `search_log` (zoekterm, hits, `automated`, tijdstip; geen persoon), met
+  `searchLooksAutomated` (content-core/search.ts, puur en getest op de
+  echte Pleio-export) als botfilter bij het loggen. `SearchPage` logt als
+  de site `log` meegeeft. Het scherm `StatsScreen` hangt aan de bestaande
+  `[type]`-route van elke site (`/admin/stats`), dus geen route per site;
+  het menu krijgt het onder Overzicht. Bezoek: Caddy schrijft per site een
+  JSON-toegangslog met ingekorte IP's en zonder Cookie/Authorization/token
+  (Caddyfile.snippet), `deploy/vps/stats.sh` maakt er elk uur met GoAccess
+  een HTML-rapport van (eigen database per site, dus historie voorbij de
+  logrotatie), en de site leest dat uit `stats.reportDir` (een read-only
+  mount) en toont het gesandboxed in een iframe.
 - **Patch-pool** ([plugin-patches](../packages/plugin-patches/src/index.ts),
   MusicBrain `doc/plans/patch-pool.md`): type `patch` met `file`/`syx` als
   `asset:`-verwijzingen (de library bewaart de bestanden, de gc ziet de

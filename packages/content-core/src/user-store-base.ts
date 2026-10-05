@@ -82,6 +82,11 @@ const asAttendance = (row: AttendanceRow): Attendance => ({
   status: (ATTENDANCE_STATUSES as readonly string[]).includes(row.status) ? (row.status as AttendanceStatus) : "maybe",
 });
 
+/** One logged site search: the query, its hits, whether a machine typed it. */
+export type SearchLogRow = { id: number; query: string; hits: number; automated: number; at: Date };
+export type SearchTerm = { term: string; count: number; hits: number };
+export type SearchStats = { since: Date; total: number; automated: number; terms: SearchTerm[]; empty: SearchTerm[] };
+
 /** One notification for one member (design/communities.md §4.4). */
 export type NotificationRow = {
   id: number;
@@ -195,6 +200,11 @@ export abstract class UserStore {
   protected abstract updateAttendance(id: number, patch: Partial<Pick<AttendanceRow, "status" | "updatedAt">>): Promise<void>;
   protected abstract deleteAttendance(id: number): Promise<void>;
   protected abstract deleteAttendancesOf(userName: string): Promise<void>;
+
+  // Search log
+  protected abstract insertSearch(row: Omit<SearchLogRow, "id">): Promise<void>;
+  protected abstract selectSearchesSince(since: Date): Promise<SearchLogRow[]>;
+  protected abstract deleteSearchesBefore(before: Date): Promise<void>;
 
   // Notifications
   protected abstract selectNotificationsOf(userName: string, limit: number): Promise<NotificationRow[]>;
@@ -497,6 +507,43 @@ export abstract class UserStore {
     await this.deleteAttendancesOf(name);
     await this.deleteNotificationsOf(name);
     await this.deleteByName(name);
+  }
+
+  // ---------- Site search statistics ----------
+
+  /** Log one search (the query only, no person); old entries go after 400 days. */
+  async logSearch(query: string, hits: number, automated: boolean, now = new Date()): Promise<void> {
+    const q = query.trim().replace(/\s+/g, " ").slice(0, 200);
+    if (!q) return;
+    await this.insertSearch({ query: q, hits: Math.max(0, Math.floor(hits)), automated: automated ? 1 : 0, at: now });
+    await this.deleteSearchesBefore(new Date(now.getTime() - 400 * 864e5));
+  }
+
+  /**
+   * What was searched since a moment: the terms people typed (case and spaces
+   * folded together), the ones that found nothing, and how many searches a
+   * machine typed (counted, not listed).
+   */
+  async searchStats(since: Date, limit = 50): Promise<SearchStats> {
+    const rows = await this.selectSearchesSince(since);
+    const human = rows.filter((r) => !r.automated);
+    const byTerm = new Map<string, SearchTerm & { last: number }>();
+    for (const r of human) {
+      const key = r.query.toLocaleLowerCase("nl");
+      const t = byTerm.get(key) ?? { term: r.query, count: 0, hits: r.hits, last: 0 };
+      t.count++;
+      if (r.at.getTime() >= t.last) Object.assign(t, { hits: r.hits, last: r.at.getTime(), term: r.query });
+      byTerm.set(key, t);
+    }
+    const all = [...byTerm.values()].sort((a, b) => b.count - a.count || a.term.localeCompare(b.term, "nl"));
+    const strip = ({ term, count, hits }: SearchTerm) => ({ term, count, hits });
+    return {
+      since,
+      total: human.length,
+      automated: rows.length - human.length,
+      terms: all.slice(0, limit).map(strip),
+      empty: all.filter((t) => t.hits === 0).slice(0, limit).map(strip),
+    };
   }
 
   // ---------- Notifications (design/communities.md §4.4, G3c) ----------

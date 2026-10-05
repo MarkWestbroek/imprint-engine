@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Statistieken** (kern, elke site): `/admin/stats` met de top
+  zoekopdrachten, zoekopdrachten zonder resultaat en het bezoekrapport.
+  Zoeken wordt geteld in de tabel `search_log` (migratie 0006: de
+  zoekterm, het aantal resultaten, het tijdstip; geen persoon of adres;
+  400 dagen bewaard); `searchLooksAutomated` houdt scannermerktekens
+  (`XzZnWQWF`) en pad- en injectieprobes (`../`, `web.xml`) buiten de
+  lijsten. `SearchPage` telt mee met `log={imprint.users}`. Bezoek komt
+  uit het toegangslog van Caddy via GoAccess (`deploy/vps/stats.sh`, elk
+  uur): geen script in de pagina, geen cookies, IP-adressen ingekort,
+  crawlers weggelaten; de site toont het rapport uit `stats.reportDir`.
 - **Publieke pools vanaf elk adres leesbaar** (`/api/patches`, `/api/assets`,
   `/api/media`): een `GET` zonder token wordt voor elke origin beantwoord
   (`Access-Control-Allow-Origin: *`), zodat de MusicBrain-editor op

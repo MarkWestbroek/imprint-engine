@@ -300,6 +300,26 @@ site (`imprint_commonground_assets`), zodat de site wat er landt kan lezen
 en aanvullen. Reken op ruim 2 GB (originelen plus WebP-varianten).
 Herhaalbaar: een bestand dat er al is wordt overgeslagen.
 
+## Bezoekstatistiek (GoAccess)
+
+Caddy schrijft per site een toegangslog naar `/var/log/caddy/<site>.log`
+(JSON, IP's ingekort tot /24 en /48, zonder cookies, Authorization en
+`token`-parameters; geroteerd bij 50 MB, 30 dagen bewaard). De blokken staan
+in `Caddyfile.snippet`. `stats.sh` maakt daar elk uur met GoAccess een
+rapport van in `/srv/imprint-stats/<site>/index.html`, met een eigen
+database per site zodat de historie langer blijft dan de logs. De
+containers zien die map read-only op `/data/stats` (`STATS_REPORT_DIR`),
+en de admin toont het onder Statistieken.
+
+Eenmalig: `sudo apt install goaccess`, de `log`-blokken in
+`/etc/caddy/Caddyfile` (daarna `sudo caddy validate --config
+/etc/caddy/Caddyfile && sudo systemctl reload caddy`), en in de crontab van
+de deploy-gebruiker:
+
+```
+5 * * * * /srv/imprint/deploy/vps/stats.sh >> /srv/imprint-backups/stats.log 2>&1
+```
+
 ## De dagelijkse mededelingen-mail (cron)
 
 De showcase stuurt leden één mail per dag met wat er nieuw voor ze is

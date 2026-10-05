@@ -43,6 +43,13 @@
       "when": 1790897202679,
       "tag": "0005_odd_carnage",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1791192930467,
+      "tag": "0006_nasty_spencer_smythe",
+      "breakpoints": true
     }
   ]
 }

@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import { z } from "zod";
 import type { ContentTypeDefinition } from "../src/content-types";
 import type { ContentStore } from "../src/store";
-import { parseQuery, plain, search, searchKinds } from "../src/search";
+import { parseQuery, plain, search, searchKinds, searchLooksAutomated } from "../src/search";
 
 const store = {} as ContentStore; // the fake sources below ignore it
 
@@ -65,3 +65,12 @@ describe("search: prefixes, matching, ranking", () => {
     assert.equal(plain("een twee drie vier", 9), "een twee…");
   });
 });
+
+describe("searchLooksAutomated", () => it("scanner markers and probes yes, real queries no", () => {
+  for (const q of ["XzZnWQWF", "sPbkyDhN", "FQdNRxVA", "TlqgUPWm", "../../../../etc/passwd", "/WEB-INF/web.xml", "windows/system.ini", "<script>alert(1)</script>", "1 union select 2", "${jndi:x}", "x".repeat(130)]) {
+    assert.equal(searchLooksAutomated(q), true, q);
+  }
+  for (const q of ["haven", "Fieldlab", "fieldlab", "VNG", "VTH", "OpenZaak", "Open Zaak", "IMG100.000+", "OpenWoo.app", "community: archi", "digitale identiteit", "Haven", "CGTS", "redhat"]) {
+    assert.equal(searchLooksAutomated(q), false, q);
+  }
+}));

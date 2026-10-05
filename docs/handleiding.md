@@ -733,6 +733,25 @@ Tags: `klank/pad`, `techniek/fm` uit een taglijst (maak de lijsten
 *klank*, *techniek* en *stemmen* aan onder Media → taglijsten), of losse
 woorden.
 
+## Statistieken
+
+Onder **Overzicht → Statistieken** in de admin staat wat bezoekers doen:
+
+- **Top zoekopdrachten**: wat er in de zoekfunctie van de site is gezocht,
+  per periode (7 dagen, 30 dagen, een jaar), met het aantal resultaten.
+  Zoekopdrachten die door scanners en bots zijn ingetypt (willekeurige
+  lettercodes, pogingen om bestanden van de server te lezen) worden geteld
+  maar niet getoond.
+- **Zonder resultaat**: wat mensen zochten en niet vonden. Dat is de
+  nuttigste lijst: kandidaten voor nieuwe inhoud, of voor een woord dat in
+  een bestaande pagina ontbreekt.
+- **Bezoek**: hoeveel bezoekers, welke pagina's, waar ze vandaan komen,
+  welke browsers. Het komt uit het logboek van de webserver; er staat
+  niets in de pagina's en er zijn geen cookies, dus bezoekers hoeven
+  nergens toestemming voor te geven. Het rapport wordt elk uur bijgewerkt.
+
+Er wordt niet bijgehouden wie er zocht of bezocht.
+
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een

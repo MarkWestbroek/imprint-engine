@@ -67,6 +67,8 @@ export default defineImprint({
     pass: process.env.SMTP_PASS,
     from: process.env.MAIL_FROM,
   },
+  // Visits report (GoAccess from the web server's log, deploy/vps/stats.sh); unset locally.
+  stats: { reportDir: process.env.STATS_REPORT_DIR },
   secrets: {
     session: process.env.SESSION_SECRET,
     ingestToken: process.env.INGEST_TOKEN,

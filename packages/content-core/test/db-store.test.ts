@@ -28,7 +28,7 @@ describe("DbContentStore (MariaDB)", { skip: url ? false : "TEST_DATABASE_URL no
     await db.execute(sql`DROP TABLE IF EXISTS users`);
     await db.execute(sql`DROP TABLE IF EXISTS api_tokens`);
     // The members' tables (design/communities.md G1, §4.5): every table a migration creates, so a re-run starts clean.
-    for (const table of ["email_tokens", "memberships", "invites", "attendances", "notifications"]) {
+    for (const table of ["email_tokens", "memberships", "invites", "attendances", "notifications", "search_log"]) {
       await db.execute(sql.raw(`DROP TABLE IF EXISTS ${table}`));
     }
     for (const statement of await migrationStatements("drizzle")) await db.execute(sql.raw(statement));

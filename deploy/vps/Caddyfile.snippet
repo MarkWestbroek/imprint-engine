@@ -2,7 +2,8 @@
 # in het Bitemporal-repo: bitemp_register_v06/deploy/vps/Caddyfile — het
 # (veilig)-snippet staat daar bovenaan). Na wijzigen: sudo systemctl reload caddy
 #
-# Alle blokken hieronder staan sinds 19 september 2026 live.
+# Alle blokken hieronder staan sinds 19 september 2026 live; de log-blokken
+# (bezoekstatistiek, stats.sh) sinds 5 oktober 2026.
 #
 # Zet een nieuw blok pas aan als het A-record naar de VPS wijst; anders blijft Caddy
 # vergeefs een certificaat proberen op te halen. Geen AAAA naar een
@@ -10,6 +11,24 @@
 
 musicbrain.nl {
 	import veilig
+	log {
+		output file /var/log/caddy/musicbrain.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+			mode 0644
+		}
+		format filter {
+			request>remote_ip ip_mask 24 48
+			request>client_ip ip_mask 24 48
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+			request>uri query {
+				delete token
+			}
+		}
+	}
 	# Uploads via de admin en /api/ingest (board-renders, 3D-modellen).
 	request_body {
 		max_size 50MB
@@ -23,6 +42,24 @@ www.musicbrain.nl {
 
 imprint-engine.nl {
 	import veilig
+	log {
+		output file /var/log/caddy/imprint.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+			mode 0644
+		}
+		format filter {
+			request>remote_ip ip_mask 24 48
+			request>client_ip ip_mask 24 48
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+			request>uri query {
+				delete token
+			}
+		}
+	}
 	reverse_proxy 127.0.0.1:3100
 }
 
@@ -34,6 +71,24 @@ www.imprint-engine.nl {
 # 30 september 2026.
 commonground.imprint-engine.nl {
 	import veilig
+	log {
+		output file /var/log/caddy/commonground.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+			mode 0644
+		}
+		format filter {
+			request>remote_ip ip_mask 24 48
+			request>client_ip ip_mask 24 48
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+			request>uri query {
+				delete token
+			}
+		}
+	}
 	reverse_proxy 127.0.0.1:3400
 }
 
