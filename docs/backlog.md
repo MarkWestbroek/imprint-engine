@@ -128,7 +128,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       design/opdracht-omnium-render-api.md.
 - [ ] **Omnium-diagram: rest** — ~~(a) keuzelijst diagram/domein in de
       studio~~ (gedaan: `V3ModelEditor`; bij "Van URL" nog vrij tekstveld); (b) `OMNIUM_URL` in `deploy/vps` (build + runtime) zodra
-      Omnium de render-API in productie heeft; (c) daarna `v3-diagram.tsx`
+      Omnium de render-API in productie heeft — wacht op Omniums release
+      api 0.9.0 (besluit Mark 5-10: de VPS-API is van 16-09, de uitrol is
+      een bewuste release met backup). Adres dan `https://app.omnium-ide.nl`,
+      zonder auth; niet `127.0.0.1:8083`, want dat bereiken de
+      site-containers niet. Lokaal werkt het al (F5: API :8082 + sidecar); (c) daarna `v3-diagram.tsx`
       schrappen; (d) klikbare entiteiten via `linkPattern`. _(S)_
 
 ### Widget-contract
