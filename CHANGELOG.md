@@ -11,7 +11,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   de zoektermen per periode, en het bezoekrapport los in een nieuw tabblad
   om af te drukken of als PDF te bewaren. De bestanden komen uit de
   bestaande asset-route (`/api/assets/_stats/…`), dus zonder route per
-  site; alleen voor de redactie, het rapport gesandboxed.
+  site; alleen voor de redactie, het rapport gesandboxed. Bestandsnamen
+  beginnen met datum en tijd in Nederlandse tijd (`2026-10-05 16u09`), ook
+  de PDF's (via de paginatitel); het bezoekrapport toont geen IP-paneel meer.
 - **Statistieken** (kern, elke site): `/admin/stats` met de top
   zoekopdrachten, zoekopdrachten zonder resultaat en het bezoekrapport.
   Zoeken wordt geteld in de tabel `search_log` (migratie 0006: de

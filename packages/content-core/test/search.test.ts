@@ -67,10 +67,10 @@ describe("search: prefixes, matching, ranking", () => {
 });
 
 describe("searchLooksAutomated", () => it("scanner markers and probes yes, real queries no", () => {
-  for (const q of ["XzZnWQWF", "sPbkyDhN", "FQdNRxVA", "TlqgUPWm", "../../../../etc/passwd", "/WEB-INF/web.xml", "windows/system.ini", "<script>alert(1)</script>", "1 union select 2", "${jndi:x}", "x".repeat(130)]) {
+  for (const q of ["XzZnWQWF", "sPbkyDhN", "FQdNRxVA", "TlqgUPWm", "MydxaFpj", "SNbcwkli", "../../../../etc/passwd", "/WEB-INF/web.xml", "windows/system.ini", "<script>alert(1)</script>", "1 union select 2", "${jndi:x}", "x".repeat(130)]) {
     assert.equal(searchLooksAutomated(q), true, q);
   }
-  for (const q of ["haven", "Fieldlab", "fieldlab", "VNG", "VTH", "OpenZaak", "Open Zaak", "IMG100.000+", "OpenWoo.app", "community: archi", "digitale identiteit", "Haven", "CGTS", "redhat"]) {
+  for (const q of ["haven", "Fieldlab", "fieldlab", "VNG", "VTH", "OpenZaak", "Open Zaak", "IMG100.000+", "OpenWoo.app", "community: archi", "digitale identiteit", "Haven", "CGTS", "redhat", "eHerkenning", "MijnServices", "OpenKlant", "NLDS", "SIMgroep", "SIMsite"]) {
     assert.equal(searchLooksAutomated(q), false, q);
   }
 }));

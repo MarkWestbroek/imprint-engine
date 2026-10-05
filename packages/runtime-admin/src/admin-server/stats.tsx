@@ -30,6 +30,7 @@ export async function StatsScreen({ admin }: { admin: AdminContext }) {
       <StatsView
         searches={searches.map((s, i) => ({ label: s.label, days: periods[i]!.days, stats: { ...s.stats, since: s.stats.since.toISOString() } }))}
         report={report}
+        site={admin.imprint.id}
       />
     </div>
   );

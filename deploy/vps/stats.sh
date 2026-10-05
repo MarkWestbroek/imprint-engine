@@ -28,8 +28,8 @@ for site in $SITES; do
     --log-format=CADDY \
     --persist --restore --db-path="$dir/db" \
     --anonymize-ip --ignore-crawlers \
-    --ignore-panel=REMOTE_HOSTS --ignore-panel=GEO_LOCATION \
-    --html-report-title="Bezoek · $site" \
+    --ignore-panel=HOSTS --ignore-panel=GEO_LOCATION \
+    --html-report-title="$(TZ=Europe/Amsterdam date '+%Y-%m-%d %Hu%M') Bezoek $site" \
     --tz=Europe/Amsterdam \
     --no-progress \
     -o "$dir/index.new.html" 2>/dev/null

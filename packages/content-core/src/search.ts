@@ -144,8 +144,16 @@ export function searchLooksAutomated(query: string): boolean {
     const humps = (q.slice(1).match(/[a-z][A-Z]/g) ?? []).length;
     // Also a capital run, small letters, and a capital again ("ATyqaVkj"), or more capitals than small ones
     // ending in small letters ("FNEGQAqo").
-    const odd = /^[a-z]/.test(q) || /[a-z][A-Z]{2,}/.test(q) || /^[A-Z]{2,}[a-z]+[A-Z]/.test(q) || (upper > lower && /[a-z]$/.test(q));
+    const odd =
+      /^[a-z]/.test(q) ||
+      /[a-z][A-Z]{2,}/.test(q) ||
+      /^[A-Z]{2,}[a-z]+[A-Z]/.test(q) ||
+      (upper > lower && /[a-z]$/.test(q)) ||
+      // a hump with a short tail ("MydxaFpj"), or five consonants in a row ("SNbcwkli")
+      /[a-z][A-Z][a-z]{0,2}$/.test(q) ||
+      /[^aeiouy]{5}/i.test(q);
     if (upper >= 2 && lower >= 2 && (humps >= 2 || odd)) return true;
+    if (upper === 2 && lower >= 4 && /^[A-Z][a-z]+[A-Z][a-z]{1,2}$/.test(q)) return true;
     // One small letter hidden among capitals: "PTtEMIQE", "XHGFzLTK". (Eight capitals alone may be a person shouting.)
     if (upper >= 5 && lower === 1 && /[A-Z][a-z][A-Z]/.test(q)) return true;
   }

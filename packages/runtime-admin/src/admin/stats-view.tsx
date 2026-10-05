@@ -11,7 +11,7 @@ type Report = { html: string; updated: string } | { missing: string };
  * result, visits) and a period. The visits report is GoAccess's own page,
  * shown sandboxed (its scripts run, it reaches nothing of the admin).
  */
-export function StatsView({ searches, report }: { searches: { label: string; days: number; stats: Stats }[]; report: Report }) {
+export function StatsView({ searches, report, site = "" }: { searches: { label: string; days: number; stats: Stats }[]; report: Report; site?: string }) {
   const [tab, setTab] = useState<"terms" | "empty" | "visits">("terms");
   const [period, setPeriod] = useState(Math.min(1, searches.length - 1));
   const current = searches[period]?.stats;
@@ -55,7 +55,18 @@ export function StatsView({ searches, report }: { searches: { label: string; day
                 {current.automated > 0 && ` · ${current.automated} van machines weggelaten`}
               </span>
               <span className="ml-auto flex gap-3">
-                <button type="button" className={tool} onClick={() => window.print()}>
+                <button
+                  type="button"
+                  className={tool}
+                  onClick={() => {
+                    // The browser names the PDF after the page title: "2026-10-05 16u09 Zoekopdrachten <site> (30 dagen)".
+                    const before = document.title;
+                    const now = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Amsterdam" }).slice(0, 16).replace(" ", " ").replace(":", "u");
+                    document.title = `${now} ${tab === "terms" ? "Zoekopdrachten" : "Zoekopdrachten zonder resultaat"} ${site} (${searches[period]?.days ?? 30} dagen)`.replace(/\s+/g, " ");
+                    window.print();
+                    document.title = before;
+                  }}
+                >
                   Afdrukken / PDF
                 </button>
                 <a className={tool} href={`/api/assets/_stats/searches.csv?days=${searches[period]?.days ?? 30}`} download>

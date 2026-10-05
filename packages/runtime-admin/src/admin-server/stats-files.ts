@@ -39,6 +39,20 @@ async function visits(admin: AdminContext): Promise<Response> {
   }
 }
 
+/**
+ * The moment as a file name starts: "2026-10-05 16u09", Dutch time. Sorts by
+ * date, reads as Dutch, and has no colon (Windows forbids it; ISO 8601's
+ * "16:09" is therefore out).
+ */
+export function fileStamp(at: Date, timeZone = "Europe/Amsterdam"): string {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-GB", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23" })
+      .formatToParts(at)
+      .map((p) => [p.type, p.value])
+  );
+  return `${parts.year}-${parts.month}-${parts.day} ${parts.hour}u${parts.minute}`;
+}
+
 /** A cell for a spreadsheet: quoted, and never read as a formula. */
 export function csvCell(value: string | number): string {
   let s = String(value);
@@ -52,11 +66,12 @@ async function searchesCsv(admin: AdminContext, req: Request): Promise<Response>
   const days = Math.min(400, Math.max(1, Number(new URL(req.url).searchParams.get("days")) || 30));
   const stats = await users.searchStats(new Date(Date.now() - days * 864e5), 100000);
   const lines = [["zoekterm", "aantal", "resultaten"].join(";"), ...stats.terms.map((t) => [csvCell(t.term), t.count, t.hits].join(";"))];
-  const site = admin.imprint.id;
+  const name = `${fileStamp(new Date())} zoekopdrachten ${admin.imprint.id} ${days}d.csv`;
+  // A byte-order mark first: Excel then reads the file as UTF-8.
   return new Response(`﻿${lines.join("\r\n")}\r\n`, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="zoekopdrachten-${site}-${days}d.csv"`,
+      "Content-Disposition": `attachment; filename="${name}"; filename*=UTF-8''${encodeURIComponent(name)}`,
       "Cache-Control": "no-store",
     },
   });
