@@ -147,10 +147,10 @@ export function AdminShell({
     "pointer-events-none absolute left-[52px] top-1/2 z-20 -translate-y-1/2 whitespace-nowrap rounded-md bg-foreground px-2 py-1 text-xs font-semibold text-background opacity-0 transition-opacity group-hover:opacity-100";
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden print:block print:h-auto print:overflow-visible">
       <DialogHost />
       {/* activity rail */}
-      <nav className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-background py-2">
+      <nav className="flex w-14 shrink-0 flex-col items-center gap-1 border-r border-line bg-background py-2 print:hidden">
         <Link href="/admin" className="mb-1 grid h-9 w-9 place-items-center rounded-md bg-accent/15 text-sm font-bold text-accent">
           I
         </Link>
@@ -205,7 +205,7 @@ export function AdminShell({
 
       {/* secondary panel */}
       {panelOpen && (
-      <aside className="w-56 shrink-0 overflow-y-auto border-r border-line bg-surface">
+      <aside className="w-56 shrink-0 overflow-y-auto border-r border-line bg-surface print:hidden">
         <h2 className="flex items-center justify-between px-4 pb-1.5 pt-4 text-xs font-semibold uppercase tracking-wider text-muted">
           {activeGroup?.label}
           <button
@@ -248,7 +248,7 @@ export function AdminShell({
       )}
 
       {/* editor; a screen that marks itself data-wide (the studio) escapes the reading-width cap */}
-      <main className="min-w-0 flex-1 overflow-y-auto px-6 py-8">
+      <main className="min-w-0 flex-1 overflow-y-auto px-6 py-8 print:overflow-visible print:p-0">
         <div className="mx-auto w-full max-w-6xl has-[[data-wide]]:max-w-none">{children}</div>
       </main>
     </div>

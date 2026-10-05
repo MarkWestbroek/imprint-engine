@@ -1141,7 +1141,13 @@ niet van elkaar afwijken.
   (Caddyfile.snippet), `deploy/vps/stats.sh` maakt er elk uur met GoAccess
   een HTML-rapport van (eigen database per site, dus historie voorbij de
   logrotatie), en de site leest dat uit `stats.reportDir` (een read-only
-  mount) en toont het gesandboxed in een iframe.
+  mount) en toont het gesandboxed in een iframe. Exporteren gaat via de
+  asset-route die elke site al heeft: `/api/assets/_stats/visits` (het
+  rapport los, met `Content-Security-Policy: sandbox`, zodat zijn scripts
+  een eigen origin krijgen) en `/api/assets/_stats/searches.csv?days=N`
+  (puntkomma's, BOM, formule-tekens onschadelijk gemaakt), beide alleen
+  met een redactiesessie; afdrukken is de browser, met `print:`-klassen in
+  de admin-shell.
 - **Patch-pool** ([plugin-patches](../packages/plugin-patches/src/index.ts),
   MusicBrain `doc/plans/patch-pool.md`): type `patch` met `file`/`syx` als
   `asset:`-verwijzingen (de library bewaart de bestanden, de gc ziet de

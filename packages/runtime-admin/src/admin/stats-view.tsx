@@ -11,16 +11,17 @@ type Report = { html: string; updated: string } | { missing: string };
  * result, visits) and a period. The visits report is GoAccess's own page,
  * shown sandboxed (its scripts run, it reaches nothing of the admin).
  */
-export function StatsView({ searches, report }: { searches: { label: string; stats: Stats }[]; report: Report }) {
+export function StatsView({ searches, report }: { searches: { label: string; days: number; stats: Stats }[]; report: Report }) {
   const [tab, setTab] = useState<"terms" | "empty" | "visits">("terms");
   const [period, setPeriod] = useState(Math.min(1, searches.length - 1));
   const current = searches[period]?.stats;
   const when = (iso: string) => new Date(iso).toLocaleString("nl-NL", { dateStyle: "medium", timeStyle: "short", timeZone: "Europe/Amsterdam" });
+  const tool = "rounded-md border border-line px-3 py-1 text-sm hover:border-accent hover:text-foreground";
   const tabCls = (on: boolean) => `border-b-2 px-1 pb-2 text-sm ${on ? "border-accent font-semibold text-foreground" : "border-transparent text-muted hover:text-foreground"}`;
 
   return (
     <div className="space-y-4">
-      <div role="tablist" className="flex gap-6 border-b border-line">
+      <div role="tablist" className="flex gap-6 border-b border-line print:hidden">
         <button type="button" role="tab" aria-selected={tab === "terms"} className={tabCls(tab === "terms")} onClick={() => setTab("terms")}>
           Top zoekopdrachten
         </button>
@@ -35,7 +36,10 @@ export function StatsView({ searches, report }: { searches: { label: string; sta
       {tab !== "visits" &&
         (current ? (
           <>
-            <div className="flex flex-wrap items-center gap-4 text-sm">
+            <p className="hidden text-sm print:block">
+              {tab === "terms" ? "Top zoekopdrachten" : "Zoekopdrachten zonder resultaat"} · {searches[period]?.label.toLowerCase()} · afgedrukt {when(new Date().toISOString())}
+            </p>
+            <div className="flex flex-wrap items-center gap-4 text-sm print:hidden">
               <label>
                 Periode{" "}
                 <select className="ml-1 rounded-md border border-line bg-background px-2 py-1" value={period} onChange={(e) => setPeriod(Number(e.target.value))}>
@@ -50,7 +54,18 @@ export function StatsView({ searches, report }: { searches: { label: string; sta
                 {current.total} zoekopdrachten van mensen
                 {current.automated > 0 && ` · ${current.automated} van machines weggelaten`}
               </span>
+              <span className="ml-auto flex gap-3">
+                <button type="button" className={tool} onClick={() => window.print()}>
+                  Afdrukken / PDF
+                </button>
+                <a className={tool} href={`/api/assets/_stats/searches.csv?days=${searches[period]?.days ?? 30}`} download>
+                  CSV (Excel)
+                </a>
+              </span>
             </div>
+            <p className="hidden text-sm text-muted print:block">
+              {current.total} zoekopdrachten van mensen{current.automated > 0 && `; ${current.automated} van machines weggelaten`}.
+            </p>
             <Terms list={tab === "terms" ? current.terms : current.empty} empty={tab === "terms" ? "Nog geen zoekopdrachten in deze periode." : "Alles wat gezocht werd, leverde iets op."} showHits={tab === "terms"} />
             {tab === "empty" && <p className="text-sm text-muted">Wat mensen zochten en niet vonden: kandidaten voor nieuwe inhoud, of voor een synoniem in een bestaande pagina.</p>}
           </>
@@ -61,7 +76,12 @@ export function StatsView({ searches, report }: { searches: { label: string; sta
       {tab === "visits" &&
         ("html" in report ? (
           <div className="space-y-2">
-            <p className="text-sm text-muted">Uit het toegangslog van de webserver, zonder cookies en met ingekorte IP-adressen; bots en crawlers zijn weggelaten. Bijgewerkt: {when(report.updated)}.</p>
+            <p className="flex flex-wrap items-center gap-3 text-sm text-muted">
+              <span>Uit het toegangslog van de webserver, zonder cookies en met ingekorte IP-adressen; bots en crawlers zijn weggelaten. Bijgewerkt: {when(report.updated)}.</span>
+              <a className={`${tool} ml-auto`} href="/api/assets/_stats/visits" target="_blank" rel="noreferrer">
+                Open in nieuw tabblad (om af te drukken of als PDF te bewaren)
+              </a>
+            </p>
             <iframe title="Bezoekrapport" srcDoc={report.html} sandbox="allow-scripts" className="h-[80vh] w-full rounded-md border border-line bg-white" />
           </div>
         ) : (

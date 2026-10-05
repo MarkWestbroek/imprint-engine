@@ -752,6 +752,11 @@ Onder **Overzicht → Statistieken** in de admin staat wat bezoekers doen:
 
 Er wordt niet bijgehouden wie er zocht of bezocht.
 
+**Exporteren.** Bij de zoekopdrachten staan *Afdrukken / PDF* (kies in het
+afdrukvenster "Opslaan als PDF"; de menu's vallen weg) en *CSV (Excel)*
+voor de gekozen periode. Bij *Bezoek* opent *Open in nieuw tabblad* het
+rapport los; daar druk je het af of bewaar je het als PDF.
+
 ## Voor gevorderden
 
 - **Menu's**: onder Menus bewerk je de navigatie; een item wijst naar een

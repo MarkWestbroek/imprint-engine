@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Statistieken exporteren**: *Afdrukken / PDF* (de admin print alleen het
+  scherm, zonder menu's, met site en periode in de kop), *CSV (Excel)* van
+  de zoektermen per periode, en het bezoekrapport los in een nieuw tabblad
+  om af te drukken of als PDF te bewaren. De bestanden komen uit de
+  bestaande asset-route (`/api/assets/_stats/…`), dus zonder route per
+  site; alleen voor de redactie, het rapport gesandboxed.
 - **Statistieken** (kern, elke site): `/admin/stats` met de top
   zoekopdrachten, zoekopdrachten zonder resultaat en het bezoekrapport.
   Zoeken wordt geteld in de tabel `search_log` (migratie 0006: de

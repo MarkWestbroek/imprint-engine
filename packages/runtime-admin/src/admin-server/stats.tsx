@@ -23,10 +23,14 @@ export async function StatsScreen({ admin }: { admin: AdminContext }) {
     ? await Promise.all(periods.map(async (p) => ({ label: p.label, stats: await users.searchStats(new Date(now - p.days * 864e5)) })))
     : [];
   const report = await readReport(admin.imprint.stats.reportDir);
+  const site = await admin.imprint.store.getSiteConfig();
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Statistieken</h1>
-      <StatsView searches={searches.map((s) => ({ label: s.label, stats: { ...s.stats, since: s.stats.since.toISOString() } }))} report={report} />
+      <h1 className="text-2xl font-semibold">Statistieken{site.name ? <span className="hidden print:inline"> · {site.name}</span> : null}</h1>
+      <StatsView
+        searches={searches.map((s, i) => ({ label: s.label, days: periods[i]!.days, stats: { ...s.stats, since: s.stats.since.toISOString() } }))}
+        report={report}
+      />
     </div>
   );
 }

@@ -15,6 +15,7 @@ import type { ActionResult } from "../admin/types";
 import { displayUrl, fileAccess, thumbUrl } from "../media/access";
 import { corsHeadersFor } from "../media/cors";
 import { processUpload, slugFromFilename, uniqueSlug, UploadError } from "../media/process";
+import { statsFile } from "./stats-files";
 
 /**
  * The media library's server side (design/beeldbibliotheek.md).
@@ -557,7 +558,12 @@ export async function assetsRoute(admin: AdminContext, req: Request, parts: stri
 
   let res: Response;
   try {
-    res = parts[0] === "_ref" && parts.length === 2 ? await assetRedirect(admin, req, parts[1]) : await serveAsset(admin, parts, req.headers.get("range"));
+    res =
+      parts[0] === "_ref" && parts.length === 2
+        ? await assetRedirect(admin, req, parts[1])
+        : parts[0] === "_stats" && parts.length === 2
+          ? await statsFile(admin, req, parts[1]!)
+          : await serveAsset(admin, parts, req.headers.get("range"));
   } catch (err) {
     // Unexpected (storage unreachable, …): logged here, and still an answer the
     // client may read — without CORS a browser only reports "Failed to fetch".
