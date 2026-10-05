@@ -1,5 +1,6 @@
 import { createHash, randomBytes } from "node:crypto";
 import { RoleType } from "./schemas";
+import { searchLooksAutomated } from "./search";
 import { hashPassword, passwordProblem, verifyPassword } from "./passwords";
 
 /**
@@ -526,7 +527,8 @@ export abstract class UserStore {
    */
   async searchStats(since: Date, limit = 50): Promise<SearchStats> {
     const rows = await this.selectSearchesSince(since);
-    const human = rows.filter((r) => !r.automated);
+    // The filter is applied again when reading, so a sharper rule also cleans up what was logged before it.
+    const human = rows.filter((r) => !r.automated && !searchLooksAutomated(r.query));
     const byTerm = new Map<string, SearchTerm & { last: number }>();
     for (const r of human) {
       const key = r.query.toLocaleLowerCase("nl");
