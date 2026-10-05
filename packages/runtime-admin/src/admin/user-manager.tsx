@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import type { RoleType } from "@imprint/content-core";
 import type { UserRecord } from "@imprint/content-core/user-store";
 import type { UserAction, UserActionResult, UserActions } from "./types";
+import { NewPasswordFields, PasswordInput } from "./password-fields";
 
 /**
  * Beheerscherm for the /admin users (UML: User + RoleType). Small on purpose:
@@ -166,16 +167,17 @@ export function NewUserForm({ roles, actions }: { roles: RoleType[]; actions: Us
             ))}
           </select>
         </label>
-        <label className="block">
-          <span className={LABEL}>password (optional)</span>
-          <input
-            name="password"
-            type="password"
-            autoComplete="new-password"
+        <span className="contents [&>label]:block [&>label]:w-56">
+          <NewPasswordFields
+            optional
+            label="password (optional)"
+            confirmLabel="repeat password"
             placeholder="leave empty to generate"
-            className={`${INPUT} w-56`}
+            inputClassName={INPUT}
+            labelTextClassName={LABEL}
+            errorClassName="mt-1 block text-xs text-red-400"
           />
-        </label>
+        </span>
         <button type="submit" disabled={pending} className={PRIMARY}>
           {pending ? "Adding…" : "Add user"}
         </button>
@@ -200,16 +202,17 @@ export function OwnPasswordForm({ name, action }: { name: string; action: UserAc
       <input type="hidden" name="username" autoComplete="username" value={name} readOnly />
       <label className="block">
         <span className={LABEL}>current password</span>
-        <input name="current" type="password" autoComplete="current-password" className={INPUT} />
+        <PasswordInput name="current" autoComplete="current-password" className={INPUT} />
       </label>
-      <label className="block">
-        <span className={LABEL}>new password</span>
-        <input name="next" type="password" autoComplete="new-password" className={INPUT} />
-      </label>
-      <label className="block">
-        <span className={LABEL}>repeat new password</span>
-        <input name="confirm" type="password" autoComplete="new-password" className={INPUT} />
-      </label>
+      <NewPasswordFields
+        name="next"
+        label="new password"
+        confirmLabel="repeat new password"
+        inputClassName={INPUT}
+        labelClassName="block"
+        labelTextClassName={LABEL}
+        errorClassName="mt-1 block text-xs text-red-400"
+      />
       <div className="flex items-center gap-3">
         <button type="submit" disabled={pending} className={PRIMARY}>
           {pending ? "Saving…" : "Change password"}

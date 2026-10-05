@@ -10,6 +10,7 @@ export { AssetField, AssetListField, AssetPicker, useAssetPreview, useLibrary, t
 export { confirmDialog, DialogHost, promptDialog } from "./dialog";
 export { ItemEditor } from "./item-editor";
 export { LoginForm } from "./login-form";
+export { NewPasswordFields, PasswordInput } from "./password-fields";
 export { MarkdownEditor } from "./markdown-editor";
 export { MenuEditor, type MenuItemV } from "./menu-editor";
 export { RelationsEditor } from "./relations-editor";

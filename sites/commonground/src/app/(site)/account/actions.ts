@@ -10,7 +10,13 @@ import { store } from "@/lib/content";
 export type ActionResult = { ok: boolean; error?: string; verifyUrl?: string };
 
 /** The members' actions (design/communities.md §4.1) bound to this site: one line each, as with the admin. */
+/** The repeat field of a new password (the form checks it too; this is for a post without JavaScript). */
+function repeatDiffers(formData: FormData): boolean {
+  return formData.has("confirm") && String(formData.get("password") ?? "") !== String(formData.get("confirm") ?? "");
+}
+
 export async function registerAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  if (repeatDiffers(formData)) return { ok: false, error: "De twee wachtwoorden zijn niet gelijk." };
   const h = await headers();
   const ip = (h.get("x-forwarded-for") ?? "").split(",")[0]!.trim() || undefined;
   const site = await store.getSiteConfig();
@@ -42,6 +48,7 @@ export async function forgotPasswordAction(_prev: ActionResult | null, formData:
 }
 
 export async function resetPasswordAction(_prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+  if (repeatDiffers(formData)) return { ok: false, error: "De twee wachtwoorden zijn niet gelijk." };
   return members.resetPasswordByToken(admin, String(formData.get("token") ?? ""), String(formData.get("password") ?? ""));
 }
 

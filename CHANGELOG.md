@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Wachtwoorden tonen en herhalen**: elk wachtwoordveld heeft een oogje om
+  te zien wat je typte, en een nieuw wachtwoord vraagt een herhaling die
+  meteen wordt vergeleken (de knop werkt pas als ze gelijk zijn; de server
+  controleert het ook). In de admin bij *Add user* en *Change my password*,
+  en bij inloggen; op de showcase bij registreren en wachtwoord herstellen.
+  `NewPasswordFields` en `PasswordInput` in `@imprint/runtime-admin/admin`.
 - **Statistieken exporteren**: *Afdrukken / PDF* (de admin print alleen het
   scherm, zonder menu's, met site en periode in de kop), *CSV (Excel)* van
   de zoektermen per periode, en het bezoekrapport los in een nieuw tabblad

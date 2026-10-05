@@ -8,6 +8,7 @@
     ".": "./src/index.ts",
     "./layout": "./src/layout.ts",
     "./admin": "./src/admin/index.ts",
+    "./password-fields": "./src/admin/password-fields.tsx",
     "./forms": "./src/forms.ts",
     "./admin-server": "./src/admin-server/index.ts",
     "./media-ingest": "./src/admin-server/media.ts",

@@ -231,6 +231,7 @@
 .cg-form { display: grid; gap: 16px; margin-top: 24px; }
 .cg-form label { display: grid; gap: 6px; font-weight: 700; }
 .cg-form label small { font-weight: 400; color: var(--cg-ink-soft); }
+.cg-form label > span { display: contents; }
 .cg-form input { padding: 10px 12px; border: 1px solid #8a94a3; border-radius: 4px; background: var(--background); color: var(--cg-ink); font: inherit; font-weight: 400; }
 .cg-form button[type="submit"] { justify-self: start; padding: 10px 20px; border: 0; border-radius: 4px; background: var(--cg-navy); color: var(--cg-on-accent); font: inherit; font-weight: 700; cursor: pointer; }
 .cg-form button[type="submit"]:disabled { opacity: .6; }

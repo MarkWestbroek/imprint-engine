@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
+import { NewPasswordFields, PasswordInput } from "@imprint/runtime-admin/password-fields";
 import type { ActionResult } from "@/app/(site)/account/actions";
 
 type FormAction = (prev: ActionResult | null, formData: FormData) => Promise<ActionResult>;
@@ -42,11 +43,7 @@ export function RegisterForm({ action }: { action: FormAction }) {
         E-mailadres
         <input name="email" type="email" required autoComplete="email" {...email} />
       </label>
-      <label>
-        Wachtwoord
-        <input name="password" type="password" required minLength={12} autoComplete="new-password" />
-        <small>Minstens 12 tekens.</small>
-      </label>
+      <NewPasswordFields minLength={12} hint="Minstens 12 tekens." errorClassName="cg-error" />
       {/* The honeypot: hidden for people, filled in by bots. */}
       <label className="cg-hp" aria-hidden="true">
         Website
@@ -75,7 +72,7 @@ export function LoginForm({ action, next }: { action: FormAction; next: string }
       </label>
       <label>
         Wachtwoord
-        <input name="password" type="password" required autoComplete="current-password" />
+        <PasswordInput name="password" required autoComplete="current-password" />
       </label>
       {state?.error && <p className="cg-error">{state.error}</p>}
       <button type="submit" disabled={pending}>
@@ -131,11 +128,7 @@ export function ResetForm({ action, token }: { action: FormAction; token: string
   return (
     <form action={submit} className="cg-form">
       <input type="hidden" name="token" value={token} />
-      <label>
-        Nieuw wachtwoord
-        <input name="password" type="password" required minLength={12} autoComplete="new-password" />
-        <small>Minstens 12 tekens.</small>
-      </label>
+      <NewPasswordFields label="Nieuw wachtwoord" confirmLabel="Herhaal nieuw wachtwoord" minLength={12} hint="Minstens 12 tekens." errorClassName="cg-error" />
       {state?.error && (
         <p className="cg-error">
           {state.error} <Link href="/account/forgot">Nieuwe link aanvragen</Link>

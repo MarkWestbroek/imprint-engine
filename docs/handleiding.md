@@ -733,6 +733,15 @@ Tags: `klank/pad`, `techniek/fm` uit een taglijst (maak de lijsten
 *klank*, *techniek* en *stemmen* aan onder Media → taglijsten), of losse
 woorden.
 
+## Wachtwoorden invullen
+
+Achter elk wachtwoordveld staat een oogje: klik erop om te zien wat je
+typte, nog een keer om het weer te verbergen. Een nieuw wachtwoord vul je
+twee keer in (bij een gebruiker toevoegen, je eigen wachtwoord wijzigen,
+registreren en herstellen); zijn ze niet gelijk, dan staat dat er meteen
+onder en gaat het formulier niet weg. Bij *Add user* mag je het wachtwoord
+leeg laten: dan maakt de admin er een en toont het één keer.
+
 ## Statistieken
 
 Onder **Overzicht → Statistieken** in de admin staat wat bezoekers doen:

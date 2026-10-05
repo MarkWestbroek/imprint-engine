@@ -30,6 +30,9 @@ export async function createUser(admin: AdminContext, _prev: UserActionResult | 
     const name = String(formData.get("name") ?? "").trim();
     const role = RoleType.parse(String(formData.get("role") ?? "editor"));
     const given = String(formData.get("password") ?? "");
+    if (given && formData.has("confirm") && given !== String(formData.get("confirm") ?? "")) {
+      return { ok: false, error: "The two passwords differ." };
+    }
     const password = given || generatePassword();
 
     await admin.imprint.users!.create(name, password, role);

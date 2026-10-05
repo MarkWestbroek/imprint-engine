@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { PasswordInput } from "./password-fields";
 import type { ActionResult, FormAction } from "./types";
 
 /** The sign-in form; `action` is the site's login action (name + password → session cookie). */
@@ -29,9 +30,8 @@ export function LoginForm({ action }: { action: FormAction }) {
         <span className="block text-xs font-medium uppercase tracking-wide text-muted">
           password
         </span>
-        <input
+        <PasswordInput
           name="password"
-          type="password"
           autoComplete="current-password"
           className="mt-1 w-full rounded-md border border-line bg-background px-2.5 py-1.5 text-sm focus:border-accent focus:outline-none"
         />
