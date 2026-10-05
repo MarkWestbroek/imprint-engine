@@ -313,7 +313,7 @@ en de admin toont het onder Statistieken.
 
 Eenmalig: `sudo apt install goaccess`, de `log`-blokken in
 `/etc/caddy/Caddyfile` (daarna `sudo caddy validate --config
-/etc/caddy/Caddyfile && sudo systemctl reload caddy`), en in de crontab van
+/etc/caddy/Caddyfile && sudo systemctl reload caddy`). Let op: `caddy validate` als root maakt de logbestanden aan als root, en dan schrijft Caddy er stil niets in: daarna `sudo chown caddy:caddy /var/log/caddy/*.log` en nog een reload. En in de crontab van
 de deploy-gebruiker:
 
 ```
