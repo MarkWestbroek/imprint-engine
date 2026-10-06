@@ -48,6 +48,9 @@ ENV NEXT_OUTPUT=standalone
 # Een secret telt niet mee in de cache-sleutel, en de content in de database
 # al helemaal niet: BUILD_ID (deploy.sh: tijdstempel) dwingt een verse build af.
 ARG BUILD_ID=dev
+# Omnium render-API (v3model-widget): de SSG-build rendert de diagrammen al.
+ARG OMNIUM_URL=
+ENV OMNIUM_URL=$OMNIUM_URL
 RUN --mount=type=secret,id=database_url,required=false \
     echo "build $BUILD_ID"; \
     if [ -s /run/secrets/database_url ]; then export DATABASE_URL="$(cat /run/secrets/database_url)"; fi; \

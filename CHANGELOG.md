@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Omnium-diagrammen op de VPS**: `deploy/vps/compose.yml` geeft
+  `OMNIUM_URL` (standaard `https://app.omnium-ide.nl`) aan build en runtime
+  van elke site; de Dockerfile neemt hem als build-arg mee, zodat de SSG de
+  diagrammen al rendert. `OMNIUM_URL=` in `.env` zet het uit.
 - **Wachtwoorden tonen en herhalen**: elk wachtwoordveld heeft een oogje om
   te zien wat je typte, en een nieuw wachtwoord vraagt een herhaling die
   meteen wordt vergeleken (de knop werkt pas als ze gelijk zijn; de server

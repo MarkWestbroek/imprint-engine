@@ -17,6 +17,11 @@
 
 name: imprint
 
+# Omnium render-API voor de v3model-widget (design/opdracht-omnium-render-api.md):
+# build (SSG rendert de pagina's) én runtime. OMNIUM_URL= (leeg) in .env zet
+# hem uit; dan tekent de widget geplakte modelcode zelf.
+x-omnium-url: &omnium_url "${OMNIUM_URL-https://app.omnium-ide.nl}"
+
 x-site: &site
   restart: unless-stopped
   # The visits report (stats.sh) is mounted per site at /data/stats.
@@ -77,12 +82,13 @@ services:
     image: imprint/musicbrain:${MUSICBRAIN_TAG:-latest}
     build:
       context: ../..
-      args: { SITE: musicbrain, BUILD_ID: "${BUILD_ID:-dev}" }
+      args: { SITE: musicbrain, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
       network: host
       secrets: [database_url]
     environment:
       STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://musicbrain:${MUSICBRAIN_DB_PASSWORD}@postgres:5432/musicbrain
+      OMNIUM_URL: *omnium_url
       SESSION_SECRET: ${MUSICBRAIN_SESSION_SECRET:?MUSICBRAIN_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${MUSICBRAIN_INGEST_TOKEN:-}
       # Extra origins for /api/media and /api/patches next to editor.musicbrain.nl (comma-separated; e.g. the editor's dev server).
@@ -104,12 +110,13 @@ services:
     image: imprint/imprint:${IMPRINT_TAG:-latest}
     build:
       context: ../..
-      args: { SITE: imprint, BUILD_ID: "${BUILD_ID:-dev}" }
+      args: { SITE: imprint, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
       network: host
       secrets: [database_url]
     environment:
       STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://imprint:${IMPRINT_DB_PASSWORD}@postgres:5432/imprint
+      OMNIUM_URL: *omnium_url
       SESSION_SECRET: ${IMPRINT_SESSION_SECRET:?IMPRINT_SESSION_SECRET ontbreekt in .env}
       INGEST_TOKEN: ${IMPRINT_INGEST_TOKEN:-}
       # Eigen MinIO-bucket (design/beeldbibliotheek.md §8); leeg = assets op het volume hieronder.
@@ -131,12 +138,13 @@ services:
     image: imprint/commonground:${COMMONGROUND_TAG:-latest}
     build:
       context: ../..
-      args: { SITE: commonground, BUILD_ID: "${BUILD_ID:-dev}" }
+      args: { SITE: commonground, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
       network: host
       secrets: [database_url]
     environment:
       STATS_REPORT_DIR: /data/stats
       DATABASE_URL: postgres://commonground:${COMMONGROUND_DB_PASSWORD}@postgres:5432/commonground
+      OMNIUM_URL: *omnium_url
       SESSION_SECRET: ${COMMONGROUND_SESSION_SECRET:-}
       ASSET_ROOT: /data/assets
       # Members' verification mail (design/mail.md); empty = no mail.

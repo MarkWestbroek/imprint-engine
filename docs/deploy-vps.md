@@ -48,6 +48,13 @@ flowchart LR
 | Uploads (AssetStore) | named volume per site, `/data/assets` | een upload |
 | Secrets | `deploy/vps/.env` op de VPS | met de hand |
 
+**Omnium (diagrammen).** De `v3model`-widget haalt zijn SVG bij de
+render-API van Omnium op dezelfde VPS. `compose.yml` geeft `OMNIUM_URL` aan
+build (de SSG rendert de diagrammen al) én runtime, standaard
+`https://app.omnium-ide.nl` (zonder auth). `OMNIUM_URL=` (leeg) in `.env`
+schakelt hem uit. Niet `127.0.0.1:8083` gebruiken: dat bereikt de build
+(`network: host`), maar niet de site-containers op `imprint_net`.
+
 **Waarom geen "kern als container, widgets en CSS als losse bestanden"?** De
 compositie van een imprint is buildtime: viewers zijn React server components
 die via `transpilePackages` worden meegecompileerd, de catalogus wordt
