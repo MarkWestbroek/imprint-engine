@@ -1,5 +1,7 @@
-import { definePlugin, type ImprintPlugin } from "@imprint/runtime-admin";
+import { definePlugin, type ImprintPlugin, type PluginAction } from "@imprint/runtime-admin";
 import { patchesContentTypes } from "./content-types";
+import { moderationActions } from "./moderation-actions";
+import { patchesScreen } from "./moderation";
 import { patchesPublicRoute, type PatchesOptions } from "./public";
 
 /**
@@ -19,7 +21,10 @@ export function patchesPlugin(opts: PatchesOptions = {}): ImprintPlugin {
     name: "patches",
     version: "0.12.0",
     contentTypes: patchesContentTypes,
-    menu: [{ group: "content", section: "Patches", items: [{ href: "/admin/patch", label: "Patches" }] }],
+    menu: [{ group: "content", section: "Patches", items: [{ href: "/admin/patches", label: "Beoordelen" }, { href: "/admin/patch", label: "Patches" }] }],
+    // `/admin/patches`: the moderator's view (proposals with their demo, and the buttons to move them on).
+    screen: patchesScreen(opts),
+    actions: moderationActions as unknown as Record<string, PluginAction>,
     publicRoute: patchesPublicRoute(opts),
   });
 }

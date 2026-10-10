@@ -1170,6 +1170,12 @@ niet van elkaar afwijken.
   `PublicRouteResult.item`, zodat annotaties eronder kunnen; de demo rendert
   de site via `demo` (MusicBrain: `TakeDemo` → de take-widget), lazy
   geïmporteerd zodat `imprint.config.ts` React-vrij blijft voor scripts.
+  Beoordelen: de plugin claimt `/admin/patches` met `screen`
+  (moderation.tsx, kaarten met de `Demo` van de publieke pagina) en
+  `actions` `moderate/answered/reject` (moderation-actions.ts): alleen met
+  een redactiesessie, `permit(update)` als bij elke schrijfactie, het schema
+  bewaakt "centraal = CC0"; een CC BY-patch van een ander wordt niet
+  stilzwijgend CC0.
 - **Berichten van leden** (plugin-groups): `PostForm` (client, gedeeld door
   de tijdlijn en de berichtpagina) laadt de Markdown-editor van de engine
   lui (`next/dynamic`), zodat publieke pagina's licht blijven; de editor

@@ -95,7 +95,7 @@ function ListView({ pool, patches }: { pool: Pool; patches: Patch[] }) {
   );
 }
 
-async function Demo({ group, assets, opts }: { group: string; assets: AssetRecord[]; opts: PatchesOptions }) {
+export async function Demo({ group, assets, opts }: { group: string; assets: AssetRecord[]; opts: PatchesOptions }) {
   const audio = assets.find((a) => a.file.kind === "audio");
   if (!audio) return <p className="text-sm text-muted">Demo “{group}”: geen opname gevonden (of niet voor jou zichtbaar).</p>;
   if (opts.demo) return <>{await opts.demo(audio, group)}</>;

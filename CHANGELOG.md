@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Patches beoordelen** (MusicBrain-admin, `/admin/patches`): per pool
+  (voorstellen eerst, met aantallen) een kaart per patch met het front, de
+  demo om te beluisteren (de take-widget met pianorol), wat hij nodig heeft,
+  downloads, "Open in de editor" en knoppen: *Naar centraal*, *Naar het
+  lab*, *Beantwoord*, *Terug naar voorstel*, *Afwijzen* (met bevestiging; de
+  geschiedenis houdt hem). De licentie blijft van de inzender: naar centraal
+  (CC0) kan een CC BY-patch alleen als de inzender zelf beoordeelt, die hem
+  dan bewust CC0 maakt. Plugin-acties `moderate/answered/reject` via de
+  PDP.
 - **Omnium-diagrammen op de VPS**: `deploy/vps/compose.yml` geeft
   `OMNIUM_URL` (standaard `https://app.omnium-ide.nl`) aan build en runtime
   van elke site; de Dockerfile neemt hem als build-arg mee, zodat de SSG de

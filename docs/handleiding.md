@@ -724,6 +724,15 @@ je op de patchpagina zelf (als redactie zie je ook voorstellen). Naar
 Een **vraag** ("lukt niet, wie helpt?") heeft een vraagtekst en een vinkje
 *beantwoord*.
 
+**Beoordelen** doe je onder *Content → Patches → Beoordelen*: per pool
+(eerst de voorstellen) een kaart met het front, de demo om te beluisteren,
+wat de patch nodig heeft en de downloads. Daaronder de knoppen *Naar
+centraal*, *Naar het lab*, *Beantwoord* (bij vragen), *Terug naar voorstel*
+en *Afwijzen* (twee keer klikken; onder Geschiedenis terug te halen).
+Centraal is CC0: koos de inzender CC BY, dan kan de patch naar het lab, of
+de inzender kiest eerst CC0. Je eigen patch kun je bij het verplaatsen
+naar centraal meteen CC0 maken.
+
 **Privé** is een vijfde pool: patches die je vanuit de editor voor jezelf
 bewaart, zonder ze voor te stellen. Alleen jij (en de redactie) ziet ze. Met
 één statuswijziging vanuit de editor worden ze alsnog een voorstel of een
