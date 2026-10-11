@@ -610,7 +610,7 @@ andere sites, met een paar dingen van commonground.nl:
 De site `omnium` (omnium.imprint-engine.nl) vertelt in het Nederlands wat
 Omnium is en hoe ver het staat. Alles is content: de startpagina is de
 pagina `home`, het menu is het menu `main`, en de andere pagina's
-(Waarom Omnium, Canoniek model, Modelleren, Register, Samenwerken, Stand
+(Waarom Omnium, Canoniek model, Modelleren, Register, Samenwerken, Diagrammen, Stand
 van zaken, Over) bewerk je in de studio. De teksten zijn een concept;
 plaatshouders staan in gele vakken. Schermafbeeldingen van de Studio
 gebruik je met een pad als `/shots/uml-overzicht.png` in een Image-widget.

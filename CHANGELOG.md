@@ -9,8 +9,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 - **Omnium-site** (`sites/omnium`, omnium.imprint-engine.nl, lokaal poort
   3500): een Nederlandstalige informatiesite over Omnium, licht en
   ingetogen, met de Omnium-merkgradient. Alles uit de store (startpagina
-  `home`, menu `main`, acht pagina's: Waarom Omnium, Canoniek model,
-  Modelleren, Register, Samenwerken met de formatentabel, Stand van zaken,
+  `home`, menu `main`, negen pagina's: Waarom Omnium, Canoniek model,
+  Modelleren, Register, Samenwerken met de formatentabel, Diagrammen, Stand van zaken,
   Over); beginteksten als concept in `content/`, seed met
   `--only=site,page,menu`. Op `noindex` tot de teksten zijn nagelopen.
 - **Patches beoordelen** (MusicBrain-admin, `/admin/patches`): per pool
