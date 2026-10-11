@@ -58,8 +58,8 @@
                 "type": "callout",
                 "config": {
                   "title": "Contact",
-                  "markdown": "Plaatshouder: hoe je contact opneemt, volgt.",
-                  "tone": "warning"
+                  "markdown": "Paratmos BV  \nMonarchvlinderlaan 74  \n3544 DA Utrecht",
+                  "tone": "muted"
                 }
               }
             ]
