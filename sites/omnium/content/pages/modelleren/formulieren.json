@@ -87,9 +87,11 @@
               {
                 "type": "callout",
                 "config": {
-                  "title": "Probeer het zelf",
-                  "markdown": "Hier komt een voorbeeldformulier uit Omnium: *Houd mij op de hoogte*, met zoveel mogelijk soorten widgets, waaronder een kaart. Invullen is vrijwillig en kan anoniem. Zie ook het [privacystatement](/privacy).",
-                  "tone": "info"
+                  "title": "Bekijk de vormen",
+                  "markdown": "In de **vormenbibliotheek** van Omnium staan alle vormen naast elkaar: 31 vormen voor 8 soorten invoer, van keuzelijst en schuif tot de kaart van Nederland. Onder elke vorm zie je wat er werkelijk wordt opgeslagen, want een vorm verandert nooit de gegevens. Een voorbeeldformulier om zelf in te vullen volgt.",
+                  "tone": "info",
+                  "buttonLabel": "Naar de vormenbibliotheek",
+                  "buttonUrl": "https://app.omnium-ide.nl/viz/react/vormen.html"
                 }
               }
             ]
