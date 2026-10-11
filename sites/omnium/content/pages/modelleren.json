@@ -59,7 +59,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Elementen in verschillende modellen zijn met elkaar verbonden. Je ziet waar een begrip uit het canonieke model terugkomt, in een proces, een API, een formulier of het databaseschema, en wat een wijziging raakt.",
+                  "markdown": "Elementen in verschillende modellen zijn met elkaar verbonden. Je ziet waar een begrip uit het canonieke model terugkomt, in een proces, een API, een formulier of het databaseschema, en wat een wijziging raakt. Die kruisverbanden leg je nu vast in een koppelingenmatrix; de trace van een transformatie automatisch bewaren is in opbouw.",
                   "title": "Lineage en traceerbaarheid"
                 }
               }

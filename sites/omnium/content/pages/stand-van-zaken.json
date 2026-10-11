@@ -69,13 +69,13 @@
                     ],
                     [
                       "Transformaties als regelsets",
-                      "te controleren",
-                      "Van profiel naar profiel."
+                      "werkt",
+                      "O.a. OpenAPI → canoniek, Mermaid ↔ use case, import van BPMN, DMN en ArchiMate."
                     ],
                     [
                       "Lineage tussen modellen",
-                      "te controleren",
-                      ""
+                      "werkt (handmatig)",
+                      "Kruisverbanden in een koppelingenmatrix; de trace automatisch bewaren bij transformaties is in opbouw."
                     ],
                     [
                       "Database en API genereren",
@@ -118,9 +118,14 @@
                       "Documentsjablonen, Markdown-export."
                     ],
                     [
-                      "Koppeling met git",
+                      "EA-model lezen uit git",
+                      "werkt",
+                      ""
+                    ],
+                    [
+                      "Documentatie exporteren naar git",
                       "te controleren",
-                      "Modellen lezen, documentatie exporteren."
+                      ""
                     ],
                     [
                       "Diagrammen inbedden (render-API)",
