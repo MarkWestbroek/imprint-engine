@@ -965,6 +965,24 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       bewerkscherm (nu: luisteren op de patchpagina); rol `contributor` →
       direct naar experimenteel (één PDP-regel); basisset-export voor de
       editor-build.
+      - [ ] **Een patch bijwerken via de API** (11-10, vraag van het
+        basisset-script): `PATCH /api/patches/<slug>` met de inhoudelijke
+        velden, scope `patch:propose`, auteur blijft de eigenaar. Eén patch
+        houdt één slug, dus bijwerken raakt identiteit, URL noch historie.
+        **Een inhoudelijke wijziging zet de patch terug op `voorstel`**, ook
+        vanuit `centraal`: zo geldt het redactionele oordeel per inhoud en
+        niet eenmalig bij de eerste goedkeuring. Zonder dit loopt de pool uit
+        de pas met de editor-code, want de slug-dedup maakt van een gewijzigde
+        seed een `naam-2`. Besloten: **géén pool zetten via de API** — een
+        script publiceert nooit zelf in de centrale set. _(S–M)_
+      - [ ] **Versies in het moderatiescherm**: een oudere versie kunnen
+        terugluisteren (elke versie wijst naar haar eigen asset), en als die
+        de moeite blijkt: **afsplitsen** = kopiëren naar een eigen patch met
+        eigen slug en `derivedFrom` (de stamboom staat er al), waarna het
+        origineel met `restoreVersion` terug naar de staat vóór de wijziging
+        gaat. Kopiëren en niet verplaatsen, want historie vervalsen we niet.
+        Let op: een kopie erft de `mmb-<id>`-tag, dus het basisset-script moet
+        dan op slug matchen in plaats van op tag. _(M)_
 - [ ] **Communities, Imprint als alternatief voor Pleio?** Verkenning in
       [design/communities.md](design/communities.md): leden, groepen met drie
       zichtbaarheidsniveaus, discussies, mail, evenementen, bitemporele
