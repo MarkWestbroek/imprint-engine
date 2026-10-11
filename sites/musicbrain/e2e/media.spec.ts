@@ -1,3 +1,4 @@
+import type { Page } from "@playwright/test";
 import exifr from "exifr";
 import sharp from "sharp";
 
@@ -29,6 +30,19 @@ async function cameraPhoto(): Promise<Buffer> {
     .toBuffer();
 }
 
+/**
+ * The media library with the test photo open in the sidebar. Under `next dev`
+ * a click can land before the page hydrates, so it is repeated until the
+ * editor shows; `.first()` because a retry of this serial group uploads it again.
+ */
+async function openStrand(page: Page) {
+  await page.goto("/admin/asset");
+  await expect(async () => {
+    await page.getByRole("button", { name: /e2e strand/ }).first().click();
+    await expect(page.getByLabel("Alt text")).toBeVisible({ timeout: 2_000 });
+  }).toPass();
+}
+
 test.describe("media library", () => {
   test("upload a photo: variants made, camera data read, location dropped by default", async ({ page }) => {
     await page.goto("/admin/asset");
@@ -45,8 +59,7 @@ test.describe("media library", () => {
   });
 
   test("describe it, file it in a folder, and cap the public size", async ({ page }) => {
-    await page.goto("/admin/asset");
-    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await openStrand(page);
     await page.getByLabel("Alt text").fill("Een strand bij laag water");
     await page.getByLabel("Folder", { exact: true }).fill("e2e/fotos");
     await page.getByLabel("Public up to").selectOption("800");
@@ -64,12 +77,14 @@ test.describe("media library", () => {
   });
 
   test("a focal point: click the picture, save, and it stays", async ({ page }) => {
-    await page.goto("/admin/asset");
-    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await openStrand(page);
     const img = page.getByTestId("focus-image");
-    const box = (await img.boundingBox())!;
-    await img.click({ position: { x: box.width * 0.25, y: box.height * 0.5 } });
-    await expect(page.getByTestId("focal-point")).toContainText("Focal point 25% · 50%");
+    // Under `next dev` the picture may still be loading or the page hydrating: click until it registers.
+    await expect(async () => {
+      const box = (await img.boundingBox())!;
+      await img.click({ position: { x: box.width * 0.25, y: box.height * 0.5 } });
+      await expect(page.getByTestId("focal-point")).toContainText("Focal point 25% · 50%", { timeout: 2_000 });
+    }).toPass();
     await page.getByRole("button", { name: "Save", exact: true }).click();
     await expect(page.getByText("Saved ✓")).toBeVisible();
     await page.reload();
@@ -220,8 +235,7 @@ test.describe("media library", () => {
     await expect(img).toHaveAttribute("srcset", /w400\..+ 400w, .+w800\..+ 800w$/);
     await expect(img).toHaveAttribute("width", "800");
 
-    await page.goto("/admin/asset");
-    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await openStrand(page);
     await expect(page.getByRole("list", { name: "Used in" })).toContainText("E2E Picked");
   });
 
@@ -263,8 +277,7 @@ test.describe("media library", () => {
   });
 
   test("delete: gone from the library, kept in History", async ({ page }) => {
-    await page.goto("/admin/asset");
-    await page.getByRole("button", { name: /e2e strand/ }).click();
+    await openStrand(page);
     await page.getByRole("button", { name: "Delete", exact: true }).click();
     await page.getByRole("dialog").getByRole("button", { name: "Delete" }).click(); // the confirm dialog
     await expect(page.getByRole("button", { name: /e2e strand/ })).toHaveCount(0);
