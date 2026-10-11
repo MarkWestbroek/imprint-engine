@@ -87,9 +87,9 @@
               {
                 "type": "callout",
                 "config": {
-                  "title": "Concept",
-                  "markdown": "Schermafbeeldingen van het portfolioformulier volgen.",
-                  "tone": "warning"
+                  "title": "Probeer het zelf",
+                  "markdown": "Hier komt een voorbeeldformulier uit Omnium: *Houd mij op de hoogte*, met zoveel mogelijk soorten widgets, waaronder een kaart. Invullen is vrijwillig en kan anoniem. Zie ook het [privacystatement](/privacy).",
+                  "tone": "info"
                 }
               }
             ]

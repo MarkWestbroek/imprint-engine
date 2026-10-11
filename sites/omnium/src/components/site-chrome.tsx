@@ -60,7 +60,8 @@ export function SiteFooter() {
         </Link>
         <p>Een modelwerkbank voor één canoniek model en een bitemporeel register. Proof of concept, in actieve ontwikkeling.</p>
         <p className="om-footer-small">
-          Een initiatief van Paratmos · gemaakt met <a href="https://imprint-engine.nl">Imprint</a>
+          Een initiatief van Paratmos · <Link href="/privacy">Privacy</Link> · gemaakt met{" "}
+          <a href="https://imprint-engine.nl">Imprint</a>
         </p>
       </div>
     </footer>

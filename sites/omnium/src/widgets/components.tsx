@@ -29,4 +29,5 @@ export const widgetComponents: WidgetViewers = {
   people: standardViewers.people,
   testimonial: standardViewers.testimonial,
   pricing: standardViewers.pricing,
+  embed: standardViewers.embed,
 };

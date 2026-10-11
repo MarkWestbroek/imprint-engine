@@ -34,6 +34,8 @@ export const widgetCatalog = [
   standardWidgets.people,
   standardWidgets.testimonial,
   standardWidgets.pricing,
+  // The example form from Omnium, in an iframe (/modelleren/formulieren).
+  standardWidgets.embed,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(
