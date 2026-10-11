@@ -738,7 +738,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 - [ ] **Omnium-site live zetten** (11-10-2026): de site staat op
       omnium.imprint-engine.nl (noindex). Voor livegang: teksten bijstellen,
-      plaatshouders invullen (geschiedenis, Paratmos, Mark, licentie,
+      plaatshouders invullen (geschiedenis, Paratmos, Mark,
       contact), de formatentabel en de statussen "te controleren" nalopen,
       eventueel een link naar een publieke Studio; dan `robots` in
       `sites/omnium/src/app/layout.tsx` weg en een eigen domein kiezen.
