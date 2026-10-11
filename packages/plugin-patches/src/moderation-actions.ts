@@ -1,9 +1,8 @@
-import { revalidatePath } from "next/cache";
 import { permit } from "@imprint/content-core";
 import type { AdminContext } from "@imprint/runtime-admin";
 import { subjectFor } from "@imprint/runtime-admin/admin-server";
-import { labHref, patchHref, patchesHref, questionsHref } from "./href";
 import { getPatch } from "./patches";
+import { touchPatch } from "./revalidate";
 import { Pool, PatchSchema, type Patch } from "./schemas";
 
 /**
@@ -16,16 +15,6 @@ import { Pool, PatchSchema, type Patch } from "./schemas";
  */
 
 export type ModerateResult = { ok: boolean; error?: string };
-
-function touched(slug: string) {
-  for (const path of [patchesHref(), labHref(), questionsHref(), patchHref(slug), `/members${patchHref(slug)}`, "/admin/patches"]) {
-    try {
-      revalidatePath(path);
-    } catch {
-      // no Next.js request context (tests)
-    }
-  }
-}
 
 async function editable(admin: AdminContext, slug: string): Promise<{ patch: Patch; by: string } | ModerateResult> {
   const session = await admin.auth.editingSession();
@@ -45,7 +34,7 @@ async function save(admin: AdminContext, patch: Patch, next: Partial<Patch>, by:
   const parsed = PatchSchema.safeParse({ ...patch, ...next });
   if (!parsed.success) return { ok: false, error: parsed.error.issues[0]?.message ?? "Ongeldige patch." };
   await admin.imprint.writableStore!.putItem("patch", patch.slug, parsed.data, { lang: "en", by });
-  touched(patch.slug);
+  touchPatch(patch.slug);
   return { ok: true };
 }
 
@@ -77,7 +66,7 @@ export async function reject(admin: AdminContext, slug: string): Promise<Moderat
   const got = await editable(admin, slug);
   if ("ok" in got) return got;
   await admin.imprint.writableStore!.deleteItem("patch", slug, "en");
-  touched(slug);
+  touchPatch(slug);
   return { ok: true };
 }
 

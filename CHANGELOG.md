@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Een patch bijwerken via de API** (`PATCH /api/patches/<slug>` met de
+  inhoudelijke velden, scope `patch:propose`): de inzender stuurt een nieuwe
+  versie van zijn eigen patch in op dezelfde slug — zelfde identiteit, zelfde
+  URL, een versie erbij in de geschiedenis. **Een inhoudelijke wijziging zet
+  de patch terug op `voorstel`**, ook vanuit `centraal` of het lab, zodat
+  moderatie per inhoud geldt en niet eenmalig per patch; `prive` en `vraag`
+  houden hun pool. Velden die niet meekomen blijven staan, een body die niets
+  verandert schrijft niets (een seed-script mag twee keer draaien), CC0 kan
+  niet worden teruggenomen en een pool zetten kan de API nog steeds niet —
+  dat blijft *Beoordelen*. `kind` (promoveren) en inhoudelijke velden in één
+  call is een 400.
 - **Omnium-site** (`sites/omnium`, omnium.imprint-engine.nl, lokaal poort
   3500): een Nederlandstalige informatiesite over Omnium, licht en
   ingetogen, met de Omnium-merkgradient. Alles uit de store (startpagina

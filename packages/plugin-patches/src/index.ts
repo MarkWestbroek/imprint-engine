@@ -33,5 +33,5 @@ export { patchesApi, patchesApiItem } from "./api";
 export { patchesContentTypes } from "./content-types";
 export { labHref, patchHref, patchesHref, questionsHref } from "./href";
 export { derivedPatches, getPatch, listPatches, takeAssets } from "./patches";
-export { License, PatchFormSchema, PatchInput, PatchPromote, PatchSchema, Pool, Requires, poolAccess, type Patch } from "./schemas";
+export { JUDGED_POOLS, License, PatchFormSchema, PatchInput, PatchPromote, PatchSchema, PatchUpdate, Pool, Requires, poolAccess, type Patch } from "./schemas";
 export type { PatchesOptions } from "./public";

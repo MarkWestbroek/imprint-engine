@@ -974,16 +974,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       bewerkscherm (nu: luisteren op de patchpagina); rol `contributor` →
       direct naar experimenteel (één PDP-regel); basisset-export voor de
       editor-build.
-      - [ ] **Een patch bijwerken via de API** (11-10, vraag van het
-        basisset-script): `PATCH /api/patches/<slug>` met de inhoudelijke
-        velden, scope `patch:propose`, auteur blijft de eigenaar. Eén patch
-        houdt één slug, dus bijwerken raakt identiteit, URL noch historie.
-        **Een inhoudelijke wijziging zet de patch terug op `voorstel`**, ook
-        vanuit `centraal`: zo geldt het redactionele oordeel per inhoud en
-        niet eenmalig bij de eerste goedkeuring. Zonder dit loopt de pool uit
-        de pas met de editor-code, want de slug-dedup maakt van een gewijzigde
-        seed een `naam-2`. Besloten: **géén pool zetten via de API** — een
-        script publiceert nooit zelf in de centrale set. _(S–M)_
+      - [x] ~~**Een patch bijwerken via de API**~~ (11-10): `PATCH
+        /api/patches/<slug>` met de inhoudelijke velden, scope
+        `patch:propose`, auteur blijft de eigenaar; dezelfde slug, dus een
+        versie erbij en geen `naam-2`. Een inhoudelijke wijziging zet de
+        patch terug op `voorstel` (ook vanuit `centraal`), een body die niets
+        verandert schrijft niets, CC0 kan niet terug. Géén pool zetten via de
+        API — dat bleef moderatie. Open: het basisset-script moet nu eerst
+        `GET ?slug=` doen en dan bijwerken in plaats van opnieuw insturen
+        (MusicBrain-kant).
       - [ ] **Versies in het moderatiescherm**: een oudere versie kunnen
         terugluisteren (elke versie wijst naar haar eigen asset), en als die
         de moeite blijkt: **afsplitsen** = kopiëren naar een eigen patch met

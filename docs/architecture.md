@@ -1176,6 +1176,25 @@ niet van elkaar afwijken.
   een redactiesessie, `permit(update)` als bij elke schrijfactie, het schema
   bewaakt "centraal = CC0"; een CC BY-patch van een ander wordt niet
   stilzwijgend CC0.
+  Bijwerken (11-10): `PATCH /api/patches/<slug>` neemt óf `kind` (promoveren
+  van `prive`) óf `PatchUpdate` (de inhoudelijke velden) — beide in één call
+  is een 400, want welke pool zou winnen? Eén patch is één slug, dus
+  bijwerken raakt identiteit, URL noch historie; het is een versie erbij.
+  De regel die dat veilig maakt: **een inhoudelijke wijziging zet de patch
+  terug op `voorstel`** (`JUDGED_POOLS` = experimenteel, centraal), zodat één
+  goedkeuring nooit inhoud blijft dekken die daarna stil veranderde; `prive`
+  en `vraag` houden hun pool. `PatchUpdate` staat voluit in schemas.ts in
+  plaats van `PatchInput.partial()`: zod past een default óók onder
+  `optional()` toe, dus een partial zou `tags` legen bij een body met alleen
+  een titel — een test houdt de velden van de twee gelijk. Afwezig is
+  "ongewijzigd", een body die niets verandert schrijft niets (een
+  seed-script mag twee keer draaien), CC0 kan niet terug naar CC BY en een
+  patch kan niet van zichzelf afgeleid zijn. De PEP vraagt `permit(update,
+  {proposal: true})`: de schrijfactie eindigt in `voorstel`, dus het ís een
+  voorstel — de auteur mag, een ander niet (een privé-patch van een ander
+  geeft 404, niet 403). Verversen gaat voor alle paden tegelijk
+  (`revalidate.ts`, gedeeld met de moderatie-acties), want een poolwisseling
+  haalt de patch uit de ene lijst en zet hem in de andere.
 - **Berichten van leden** (plugin-groups): `PostForm` (client, gedeeld door
   de tijdlijn en de berichtpagina) laadt de Markdown-editor van de engine
   lui (`next/dynamic`), zodat publieke pagina's licht blijven; de editor

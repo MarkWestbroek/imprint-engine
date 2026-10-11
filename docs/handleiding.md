@@ -750,6 +750,18 @@ bewaart, zonder ze voor te stellen. Alleen jij (en de redactie) ziet ze. Met
 één statuswijziging vanuit de editor worden ze alsnog een voorstel of een
 vraag.
 
+**Een patch bijwerken**: de inzender kan vanuit de editor een nieuwe versie
+van zijn eigen patch insturen — dezelfde patch, dezelfde pagina, dezelfde
+link; onder *Geschiedenis* staan alle versies naast elkaar. Wat hij niet
+meestuurt blijft staan, dus een nieuwe beschrijving laat de tags met rust.
+Belangrijk: **een inhoudelijke wijziging zet de patch terug op `voorstel`**,
+ook een patch die al in `centraal` of in het lab stond. Hij verdwijnt dus
+even uit de openbare lijsten en komt opnieuw langs *Beoordelen* — zo geldt
+je oordeel voor de inhoud die er nu staat, en niet voor een naam die ooit
+goedgekeurd werd. Verandert er niets, dan gebeurt er niets (een script mag
+dus twee keer draaien). Een pool kan de editor nooit zelf zetten, en CC0
+kan niemand terugnemen.
+
 Tags: `klank/pad`, `techniek/fm` uit een taglijst (maak de lijsten
 *klank*, *techniek* en *stemmen* aan onder Media → taglijsten), of losse
 woorden.

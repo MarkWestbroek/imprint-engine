@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { patchSlug } from "../src/href";
-import { PatchInput, PatchSchema } from "../src/schemas";
+import { PatchInput, PatchSchema, PatchUpdate } from "../src/schemas";
 
 const base = {
   slug: "warm-pad",
@@ -52,4 +52,15 @@ test("the front is an optional asset reference, in the input and the item", () =
   assert.equal(PatchInput.safeParse({ title: "Warm pad", file: "asset:x", front: "https://elders/front.svg", requires: base.requires }).success, false);
   const item = PatchSchema.parse({ ...base, pool: "experimenteel", front: "asset:warm-pad-front" });
   assert.equal(item.front, "asset:warm-pad-front");
+});
+
+test("PatchUpdate edits the same fields as PatchInput, and fills nothing in by itself", () => {
+  // Spelled out instead of PatchInput.partial(), so keep the two in step.
+  assert.deepEqual(Object.keys(PatchUpdate.shape).sort(), Object.keys(PatchInput.shape).filter((k) => k !== "kind").sort());
+  assert.equal("pool" in PatchUpdate.shape, false);
+  assert.equal("author" in PatchUpdate.shape, false);
+  // A default under optional() would empty tags and reset the licence of a patch that only gets a new title.
+  assert.deepEqual(PatchUpdate.parse({ title: "Warm pad II" }), { title: "Warm pad II" });
+  assert.deepEqual(PatchUpdate.parse({}), {});
+  assert.equal(PatchUpdate.safeParse({ tags: null }).success, false);
 });

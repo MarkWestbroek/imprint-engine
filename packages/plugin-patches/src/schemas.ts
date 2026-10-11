@@ -107,3 +107,32 @@ export const PatchPromote = z.object({
   question: z.string().optional(),
 });
 export type PatchPromote = z.infer<typeof PatchPromote>;
+
+/**
+ * `PATCH /api/patches/<slug>` with content fields: the author changes their own
+ * patch in place — same slug, same identity, one more version in the history.
+ * Every field is optional, and spelled out instead of `PatchInput.partial()`:
+ * zod applies a default even under `optional()`, so a partial of the input
+ * would empty `tags` and reset the licence for a body that only carries a
+ * title. Absent means "unchanged" (a `null` is refused); removing an optional
+ * field is the admin's work, not the API's. No pool and no author here either —
+ * a content change sends the patch back to `voorstel` (api.ts). A test keeps
+ * these fields in step with `PatchInput`.
+ */
+export const PatchUpdate = z.object({
+  title: z.string().min(1).max(160).optional(),
+  description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  license: License.optional(),
+  file: z.string().regex(/^asset:[a-z0-9-]+$/).optional(),
+  syx: z.string().regex(/^asset:[a-z0-9-]+$/).optional(),
+  front: z.string().regex(/^asset:[a-z0-9-]+$/).optional(),
+  takes: z.array(z.string().regex(/^[a-z0-9][a-z0-9-]*$/)).optional(),
+  requires: Requires.optional(),
+  derivedFrom: z.string().regex(/^[a-z0-9-]+$/).optional(),
+  question: z.string().optional(),
+});
+export type PatchUpdate = z.infer<typeof PatchUpdate>;
+
+/** The pools where a patch has been judged: a content change there asks for a new judgement. */
+export const JUDGED_POOLS: Pool[] = ["experimenteel", "centraal"];
