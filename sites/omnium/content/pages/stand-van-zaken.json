@@ -54,11 +54,26 @@
                     ],
                     [
                       "Eigen modeltaal ontwerpen",
-                      "te controleren",
-                      "Profiel-ontwerper (M0–M3)."
+                      "werkt",
+                      "Profiel-ontwerper in de Studio (M0–M3)."
                     ],
                     [
-                      "Afgeleide velden en relaties (CEL)",
+                      "Afgeleide velden (CEL)",
+                      "werkt",
+                      ""
+                    ],
+                    [
+                      "Afgeleide relaties",
+                      "in opbouw",
+                      ""
+                    ],
+                    [
+                      "Transformaties als regelsets",
+                      "te controleren",
+                      "Van profiel naar profiel."
+                    ],
+                    [
+                      "Lineage tussen modellen",
                       "te controleren",
                       ""
                     ],
@@ -84,18 +99,33 @@
                     ],
                     [
                       "Meerdere gebruikers, live (projectsynchronisatie)",
-                      "te controleren",
+                      "werkt",
                       ""
                     ],
                     [
-                      "Toegangsregels, export naar ODRL",
-                      "te controleren",
+                      "Toegangsregels als model",
+                      "werkt",
+                      ""
+                    ],
+                    [
+                      "Export van toegangsregels naar ODRL",
+                      "in opbouw",
                       ""
                     ],
                     [
                       "Documenten genereren uit modellen",
-                      "te controleren",
+                      "in opbouw",
                       "Documentsjablonen, Markdown-export."
+                    ],
+                    [
+                      "Koppeling met git",
+                      "te controleren",
+                      "Modellen lezen, documentatie exporteren."
+                    ],
+                    [
+                      "Diagrammen inbedden (render-API)",
+                      "werkt",
+                      "Zie Diagrammen."
                     ],
                     [
                       "Import en export",

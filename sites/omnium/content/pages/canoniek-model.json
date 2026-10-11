@@ -59,7 +59,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Afgeleide velden en relaties beschrijf je in het model zelf, met **CEL** (Common Expression Language: een kleine, veilige taal voor expressies). Een leeftijd die volgt uit de geboortedatum, of een relatie die volgt uit een adres, staat dan op één plek en niet verspreid door de code van elke toepassing.",
+                  "markdown": "Afgeleide velden en relaties beschrijf je in het model zelf, met **CEL** (Common Expression Language: een kleine, veilige taal voor expressies). Een leeftijd die volgt uit de geboortedatum, of een relatie die volgt uit een adres, staat dan op één plek en niet verspreid door de code van elke toepassing. Afgeleide velden werken; afgeleide relaties zijn in opbouw.",
                   "title": "Rekenregels in het model"
                 }
               }

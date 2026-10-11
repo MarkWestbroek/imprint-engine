@@ -43,8 +43,24 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Een afleiding is in Omnium geen verborgen stuk code, maar een **regelset**: een lezer haalt de bron op, de regelset beschrijft de vertaling, een toepasser maakt het resultaat. Tussen bron en resultaat blijven verwijzingen bestaan, zodat je kunt zien waar iets vandaan komt.",
+                  "markdown": "Een afleiding is in Omnium geen verborgen stuk code, maar een leesbare **regelset**, van profiel naar profiel: OpenAPI naar canoniek, canoniek naar GraphQL, Mermaid naar use case. Een lezer haalt de bron op, de regelset beschrijft de vertaling, een toepasser maakt het resultaat.",
                   "title": "Transformaties"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Elementen in verschillende modellen zijn met elkaar verbonden. Je ziet waar een begrip uit het canonieke model terugkomt, in een proces, een API, een formulier of het databaseschema, en wat een wijziging raakt.",
+                  "title": "Lineage en traceerbaarheid"
                 }
               }
             ]

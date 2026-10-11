@@ -74,7 +74,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Deze site is gemaakt met [Imprint](https://imprint-engine.nl), een publicatiemotor voor sites met een eigen gezicht. Imprint gebruikt het contentmodel van Omnium; deze site is daar zelf een voorbeeld van.",
+                  "markdown": "Deze site is gemaakt met [Imprint](https://imprint-engine.nl), een publicatiemotor voor sites met een eigen gezicht. Imprint haalt diagrammen uit Omnium; zie [Diagrammen](/diagrammen).",
                   "title": "Over deze site"
                 }
               }

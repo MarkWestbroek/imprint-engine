@@ -1,0 +1,85 @@
+{
+  "slug": "diagrammen",
+  "title": "Diagrammen in je eigen site",
+  "description": "Een diagram uit Omnium als SVG in je eigen website, live of vastgezet op een moment.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Diagrammen in je *eigen* site",
+                  "subtitle": "Een diagram uit Omnium als SVG in een webpagina: in Imprint of in elk ander CMS.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Via de **diagram-API** (de render-API) vraag je een diagram uit een model op als pure SVG. Omnium tekent; het CMS hoeft niets van modellen te weten. Elk systeem dat een URL of een SVG kan opnemen, kan een Omnium-diagram tonen.",
+                  "title": "Omnium tekent"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Standaard wordt het diagram bij het tonen uit het actuele model gehaald: wijzigt het model, dan wijzigt de pagina mee. Wil je juist een vaste stand, bijvoorbeeld bij een besluit of een publicatie, dan zet je het diagram vast op een moment (*asOf*). Dat is dezelfde tijdreis als in het register.",
+                  "title": "Live of vastgezet"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "[Imprint](https://imprint-engine.nl), waarmee deze site is gemaakt, gebruikt dit al: een diagram is daar een widget waarin je het model, de weergave en eventueel het moment kiest. De redacteur ziet het diagram in de editor zoals de bezoeker het ziet.",
+                  "title": "In Imprint"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Voorbeeld volgt",
+                  "markdown": "Hier komt een diagram van het voorbeelddomein np-loc, live uit Omnium, zodra dat model publiek beschikbaar is.",
+                  "tone": "info"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

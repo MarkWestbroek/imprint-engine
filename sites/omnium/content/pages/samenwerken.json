@@ -66,6 +66,34 @@
       {
         "cells": [
           {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Documentatie wordt met **sjablonen** uit het model gegenereerd en geëxporteerd, onder meer als Markdown. Zo hoeft ze niet apart te worden bijgehouden en loopt ze niet achter op het model. Dit is in opbouw.",
+                  "title": "Documentatie uit het model"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Omnium leest modellen uit **git**, bijvoorbeeld een Sparx EA-bestand, en exporteert documentatie naar git. Zo sluit het aan op de manier waarop teams al met versiebeheer werken.",
+                  "title": "Koppeling met git"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
             "span": 3,
             "widgets": [
               {
@@ -195,7 +223,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Wie wat mag zien en wijzigen, beschrijf je in Omnium ook als model: **toegangsregels** in dezelfde werkbank, met een export naar ODRL (de W3C-standaard voor gebruiksrechten). Zo is het toegangsbeleid net zo goed te bespreken en te herleiden als het gegevensmodel zelf.",
+                  "markdown": "Wie wat mag zien en wijzigen, beschrijf je in Omnium ook als model: **toegangsregels** in dezelfde werkbank, met een export naar ODRL (de W3C-standaard voor gebruiksrechten; die export is in opbouw). Zo is het toegangsbeleid net zo goed te bespreken en te herleiden als het gegevensmodel zelf.",
                   "title": "Toegang als model"
                 }
               }
