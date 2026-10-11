@@ -7,7 +7,7 @@ import { store } from "@/lib/content";
 /**
  * Every page from the store (Postgres with DATABASE_URL, content/ without),
  * rendered through the engine renderer with this site's widgets. `home` is
- * served on /; `_view/*` templates are no pages.
+ * served on /; `_view/*` templates are no pages; an alias redirects.
  */
 
 type Props = { params: Promise<{ slug: string[] }> };
@@ -25,7 +25,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ContentPage({ params }: Props) {
   const slug = (await params).slug.map(decodeURIComponent).join("/");
   if (slug === "home") permanentRedirect("/");
-  const page = isInternal(slug) ? null : await store.getPage(slug, await readOpts());
+  const opts = await readOpts();
+  // Old addresses from the site config's aliases (`"waarom": ""` → /): a page that moved keeps its link.
+  const aliases = (await store.getSiteConfig(opts)).aliases;
+  const first = slug.split("/")[0]!;
+  if (first in aliases) permanentRedirect(`/${[aliases[first], ...slug.split("/").slice(1)].filter(Boolean).join("/")}`);
+  const page = isInternal(slug) ? null : await store.getPage(slug, opts);
   if (!page) notFound();
   return <PageView page={page} />;
 }

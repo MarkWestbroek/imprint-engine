@@ -1,6 +1,6 @@
 {
   "slug": "stand-van-zaken",
-  "title": "Stand van zaken",
+  "title": "Plannen",
   "description": "Wat werkt, wat in opbouw is en wat gepland staat. Stand oktober 2026.",
   "publishedAt": "2026-10-11",
   "body": "",
@@ -14,7 +14,7 @@
               {
                 "type": "hero",
                 "config": {
-                  "title": "Stand van *zaken*",
+                  "title": "Wat werkt, en wat *komt*",
                   "subtitle": "Omnium is een breed proof of concept. Hier staat wat werkt, wat in opbouw is en wat gepland staat. Stand: oktober 2026.",
                   "variant": "open"
                 }
@@ -130,7 +130,7 @@
                     [
                       "Diagrammen inbedden (render-API)",
                       "werkt",
-                      "Zie Diagrammen."
+                      "Zie Transformeren."
                     ],
                     [
                       "Formulieren vanuit het canonieke model",

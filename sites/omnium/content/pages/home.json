@@ -17,8 +17,8 @@
                   "title": "Eén canoniek model, en daaruit een *register*.",
                   "subtitle": "Omnium is een modelwerkbank waarin je met anderen één canoniek model onderhoudt, en waaruit een bitemporeel register — database én API — wordt gegenereerd.",
                   "variant": "open",
-                  "buttonLabel": "Waarom Omnium",
-                  "buttonUrl": "/waarom"
+                  "buttonLabel": "Begin bij het model",
+                  "buttonUrl": "/modelleren"
                 }
               }
             ]
@@ -75,7 +75,7 @@
                       "icon": "⇢",
                       "title": "Modelgedreven (MDA)",
                       "markdown": "Uit dat model ontstaan formulieren, API's, databaseschema en code — niet andersom.",
-                      "href": "/modelleren"
+                      "href": "/transformeren"
                     },
                     {
                       "icon": "◷",
@@ -88,6 +88,95 @@
                       "title": "Samenwerken",
                       "markdown": "Dit soort oplossingen maak je niet alleen: één live model, open uitwisseling.",
                       "href": "/samenwerken"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Omnium brengt vier punten samen: een **canoniek model**, **modelgedreven ontwikkelen**, **bitemporele registratie** en **samenwerken**. Het zijn de thema's waarop Mark Westbroek in zijn loopbaan steeds de nadruk heeft gelegd.\n\nIn de praktijk blijven ze los van elkaar. Het model staat in een modelleertool, de database wordt met de hand gebouwd, de historie is een bijzaak en samenwerken gaat via bestanden die heen en weer gaan. Elke stap is een vertaling, en bij elke vertaling gaat betekenis verloren.\n\nOmnium onderzoekt wat er gebeurt als je de vier in één werkbank combineert: het model is de bron, de rest wordt afgeleid, tijd zit er vanaf het begin in, en iedereen werkt aan hetzelfde model.",
+                  "title": "Waarom Omnium"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Plaatshouder",
+                  "markdown": "Hier komen de geschiedenis van Omnium, de rol van **Paratmos** en de achtergrond van **Mark Westbroek**. De tekst volgt van Mark.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "In het kort",
+                  "columns": 2,
+                  "items": [
+                    {
+                      "title": "Common Ground-proof",
+                      "markdown": "Gegevens bij de bron, één gedeelde betekenis, open standaarden en API's."
+                    },
+                    {
+                      "title": "Bitemporele registers",
+                      "markdown": "Elk register onthoudt wat gold én wat wanneer bekend was.",
+                      "href": "/register"
+                    },
+                    {
+                      "title": "Eén framework voor registers",
+                      "markdown": "Alle registers komen uit hetzelfde framework en werken daardoor op dezelfde manier."
+                    },
+                    {
+                      "title": "Mede gebaseerd op UBB",
+                      "markdown": "*(toelichting volgt)*"
+                    },
+                    {
+                      "title": "Open source",
+                      "markdown": "Onder de EUPL, de open-sourcelicentie van de Europese Unie."
+                    },
+                    {
+                      "title": "Modelgedreven (MDA)",
+                      "markdown": "Database, API en formulieren volgen uit het model.",
+                      "href": "/transformeren"
+                    },
+                    {
+                      "title": "CQRS",
+                      "markdown": "Schrijven en lezen zijn gescheiden (Command Query Responsibility Segregation)."
+                    },
+                    {
+                      "title": "Beproefde techniek",
+                      "markdown": "Gebouwd op Go en PostgreSQL, met het oog op snelheid."
+                    },
+                    {
+                      "title": "Snel naar productie",
+                      "markdown": "Database en API worden niet met de hand gebouwd, dus een werkend register staat er in korte tijd."
+                    },
+                    {
+                      "title": "Overzichtelijke dashboards",
+                      "markdown": "De gegevens inzien en beheren zonder eigen bouwwerk."
                     }
                   ]
                 }

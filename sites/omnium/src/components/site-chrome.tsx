@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Menu as MenuIcon } from "lucide-react";
 import type { Menu } from "@imprint/content-core";
 import { OmniumMark } from "@/components/logo";
+import { NavLinks } from "@/components/nav-links";
 
 /**
  * The Omnium chrome: mark and name on the left, the "main" menu from the store
@@ -9,12 +10,17 @@ import { OmniumMark } from "@/components/logo";
  * gradient is the only flourish.
  */
 
-export type NavItem = { href: string; label: string };
+/** A menu item; `children` are the pages under it (not shown, but they mark it as the one you are in). */
+export type NavItem = { href: string; label: string; children: string[] };
+
+type MenuItem = Menu["items"][number];
+const hrefOf = (item: MenuItem) => (item.page !== undefined ? `/${item.page === "home" ? "" : item.page}` : (item.url ?? "/"));
 
 export function menuToNav(menu: Menu | null): NavItem[] {
   return (menu?.items ?? []).map((item) => ({
-    href: item.page !== undefined ? `/${item.page === "home" ? "" : item.page}` : (item.url ?? "/"),
+    href: hrefOf(item),
     label: item.label,
+    children: (item.children ?? []).map(hrefOf),
   }));
 }
 
@@ -27,22 +33,14 @@ export function SiteHeader({ nav }: { nav: NavItem[] }) {
           <span>Omnium</span>
         </Link>
         <nav aria-label="Hoofdmenu" className="om-nav">
-          {nav.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
+          <NavLinks nav={nav} />
         </nav>
         <details className="om-mobile-menu">
           <summary aria-label="Menu openen">
             <MenuIcon size={22} />
           </summary>
           <div>
-            {nav.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
+            <NavLinks nav={nav} />
           </div>
         </details>
       </div>

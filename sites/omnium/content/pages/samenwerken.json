@@ -31,7 +31,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Een project in Omnium is één model, op één plek. Werken meerdere mensen eraan, dan zien ze elkaars wijzigingen terwijl ze werken (**projectsynchronisatie**). Er gaan geen kopieën heen en weer die later met de hand moeten worden samengevoegd.",
+                  "markdown": "Een project in Omnium is één model, op één plek. Werken meerdere mensen aan het model, dan zien ze elkaars wijzigingen praktisch real-time (**projectsynchronisatie**), ook in hetzelfde diagram. Er gaan geen kopieën heen en weer die later met de hand moeten worden samengevoegd.",
                   "title": "Eén centraal model"
                 }
               }
@@ -69,10 +69,11 @@
             "span": 1,
             "widgets": [
               {
-                "type": "text",
+                "type": "callout",
                 "config": {
-                  "markdown": "Documentatie wordt met **sjablonen** uit het model gegenereerd en geëxporteerd, onder meer als Markdown. Zo hoeft ze niet apart te worden bijgehouden en loopt ze niet achter op het model. Dit is in opbouw.",
-                  "title": "Documentatie uit het model"
+                  "title": "Filmpje volgt",
+                  "markdown": "Twee schermen naast elkaar, twee mensen in hetzelfde diagram: wat de een verandert, ziet de ander meteen.",
+                  "tone": "info"
                 }
               }
             ]

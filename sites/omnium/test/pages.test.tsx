@@ -22,10 +22,11 @@ async function renderHtml(element: ReactElement): Promise<string> {
 }
 
 describe("Omnium site: the starting content", () => {
-  it("has a home page and a page behind every menu item", async () => {
+  it("has a home page and a page behind every menu item and the pages under it", async () => {
     const menu = await store.getMenu("main");
-    assert.ok(menu && menu.items.length >= 7, "the main menu");
-    for (const slug of ["home", ...menu.items.map((i) => i.page!)]) {
+    assert.ok(menu && menu.items.length >= 5, "the main menu");
+    const pages = menu.items.flatMap((i) => [i.page!, ...(i.children ?? []).map((c) => c.page!)]);
+    for (const slug of ["home", ...pages]) {
       assert.ok(await store.getPage(slug), `page ${slug}`);
     }
   });

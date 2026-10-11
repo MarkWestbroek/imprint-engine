@@ -70,20 +70,7 @@
       {
         "cells": [
           {
-            "span": 3,
-            "widgets": [
-              {
-                "type": "image",
-                "config": {
-                  "src": "/shots/api.png",
-                  "alt": "De gegenereerde API van het register",
-                  "caption": "De API die uit het model wordt gegenereerd."
-                }
-              }
-            ]
-          },
-          {
-            "span": 2,
+            "span": 1,
             "widgets": [
               {
                 "type": "table",

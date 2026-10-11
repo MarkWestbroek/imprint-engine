@@ -2,31 +2,39 @@
   "name": "main",
   "items": [
     {
-      "label": "Waarom Omnium",
-      "page": "waarom"
-    },
-    {
-      "label": "Canoniek model",
-      "page": "canoniek-model"
-    },
-    {
       "label": "Modelleren",
-      "page": "modelleren"
+      "page": "modelleren",
+      "children": [
+        {
+          "label": "Canoniek model",
+          "page": "canoniek-model"
+        },
+        {
+          "label": "Formulieren en widgets",
+          "page": "modelleren/formulieren"
+        }
+      ]
     },
     {
-      "label": "Register",
-      "page": "register"
+      "label": "Transformeren",
+      "page": "transformeren",
+      "children": [
+        {
+          "label": "Bitemporeel register",
+          "page": "register"
+        },
+        {
+          "label": "Diagrammen in je eigen site",
+          "page": "diagrammen"
+        }
+      ]
     },
     {
       "label": "Samenwerken",
       "page": "samenwerken"
     },
     {
-      "label": "Diagrammen",
-      "page": "diagrammen"
-    },
-    {
-      "label": "Stand van zaken",
+      "label": "Plannen",
       "page": "stand-van-zaken"
     },
     {

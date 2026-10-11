@@ -63,6 +63,11 @@
 .om-mark { width: 32px; height: 32px; flex: none; }
 .om-nav { display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 15px; font-weight: 500; color: var(--muted); }
 .om-nav a:hover { color: var(--foreground); }
+.om-nav a { position: relative; padding: 4px 0; }
+/* The section you are in: dark text and the brand gradient underneath. */
+.om-nav a.is-active { color: var(--foreground); font-weight: 600; }
+.om-nav a.is-active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -2px; height: 2px; border-radius: 1px; background: var(--om-gradient); }
+.om-mobile-menu div a.is-active { background: var(--surface); color: var(--foreground); font-weight: 600; }
 .om-mobile-menu { display: none; position: relative; }
 .om-mobile-menu summary { display: grid; place-items: center; cursor: pointer; list-style: none; }
 .om-mobile-menu summary::-webkit-details-marker { display: none; }

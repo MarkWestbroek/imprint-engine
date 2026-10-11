@@ -5,6 +5,8 @@
   "baseUrl": "https://omnium.imprint-engine.nl",
   "defaultLocale": "nl",
   "links": {},
-  "aliases": {},
+  "aliases": {
+    "waarom": ""
+  },
   "releaseSources": {}
 }

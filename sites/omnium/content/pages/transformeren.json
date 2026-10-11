@@ -1,0 +1,101 @@
+{
+  "slug": "transformeren",
+  "title": "Transformeren",
+  "description": "Van het model naar register, API, diagram en document: modelgedreven (MDA), met leesbare regelsets.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Van model naar *resultaat*",
+                  "subtitle": "MDA (model-driven architecture) betekent: uit het model ontstaan database, API, formulieren en documenten — niet andersom.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "columns": 2,
+                  "items": [
+                    {
+                      "icon": "◷",
+                      "title": "Bitemporeel register",
+                      "markdown": "Uit het canonieke model een database en API die onthouden wat gold én wat wanneer bekend was.",
+                      "href": "/register"
+                    },
+                    {
+                      "icon": "◇",
+                      "title": "Diagrammen in je eigen site",
+                      "markdown": "Een diagram uit het model als SVG in een webpagina, live of vastgezet op een moment.",
+                      "href": "/diagrammen"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een afleiding is in Omnium geen verborgen stuk code, maar een leesbare **regelset**, van profiel naar profiel: OpenAPI naar canoniek, canoniek naar GraphQL, Mermaid naar use case en terug. Een lezer haalt de bron op, de regelset beschrijft de vertaling, een toepasser maakt het resultaat. Ook de import van BPMN, DMN en ArchiMate werkt zo.",
+                  "title": "Transformaties als regelsets"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Elementen in verschillende modellen zijn met elkaar verbonden. Je ziet waar een begrip uit het canonieke model terugkomt, in een proces, een API, een formulier of het databaseschema, en wat een wijziging raakt. Die kruisverbanden leg je nu vast in een koppelingenmatrix; de trace van een transformatie automatisch bewaren is in opbouw.",
+                  "title": "Lineage en traceerbaarheid"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Documentatie wordt met **sjablonen** uit het model gegenereerd en geëxporteerd, onder meer als Markdown. Zo hoeft ze niet apart te worden bijgehouden en loopt ze niet achter op het model. Dit is in opbouw.",
+                  "title": "Documentatie uit het model"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
