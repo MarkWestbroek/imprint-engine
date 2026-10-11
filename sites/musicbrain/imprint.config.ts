@@ -30,6 +30,8 @@ export default defineImprint({
     // the demo is the site's take widget, loaded lazily so Node scripts importing this config stay React-free.
     patchesPlugin({
       editorUrl: "https://editor.musicbrain.nl/",
+      // The firmware's modules are published as components "sw-<type>" (publish_software.py).
+      moduleComponent: (type) => `sw-${type}`,
       demo: async (audio) => createElement((await import("./src/components/take-demo")).TakeDemo, { audio }),
     }),
   ],

@@ -17,6 +17,8 @@ import { LICENSE_LABELS, type Patch, type Pool } from "./schemas";
 export type PatchesOptions = {
   /** The editor that opens a patch: `<editorUrl>?patch=<slug>&mode=play|edit`. */
   editorUrl?: string;
+  /** The component page of a module type (`ladder` → `sw-ladder`); a module with a page gets a link under "Requires". */
+  moduleComponent?: (moduleType: string) => string;
   /** Render a take group's demo (the site's take widget); receives the audio asset and its group. */
   demo?: (audio: AssetRecord, group: string) => ReactNode | Promise<ReactNode>;
 };
@@ -110,7 +112,7 @@ export async function Demo({ group, assets, opts }: { group: string; assets: Ass
   );
 }
 
-async function PatchView({ patch, parent, children, demos, opts }: { patch: Patch; parent: Patch | null; children: Patch[]; demos: { group: string; assets: AssetRecord[] }[]; opts: PatchesOptions }) {
+async function PatchView({ patch, parent, children, demos, modules, opts }: { patch: Patch; parent: Patch | null; children: Patch[]; demos: { group: string; assets: AssetRecord[] }[]; modules: { type: string; href: string | null }[]; opts: PatchesOptions }) {
   const back = LISTS.find((l) => l.pool === patch.pool) ?? LISTS[0]!;
   const file = assetRefUrl(patch.file);
   const syx = patch.syx ? assetRefUrl(patch.syx) : null;
@@ -191,7 +193,22 @@ async function PatchView({ patch, parent, children, demos, opts }: { patch: Patc
           <dt className="text-muted">Firmware contract</dt>
           <dd>{patch.requires.firmwareContract}</dd>
           <dt className="text-muted">Modules</dt>
-          <dd>{patch.requires.moduleTypes.length > 0 ? patch.requires.moduleTypes.join(", ") : "—"}</dd>
+          <dd>
+            {modules.length > 0
+              ? modules.map((m, i) => (
+                  <span key={m.type}>
+                    {i > 0 && ", "}
+                    {m.href ? (
+                      <Link href={m.href} className="underline">
+                        {m.type}
+                      </Link>
+                    ) : (
+                      m.type
+                    )}
+                  </span>
+                ))
+              : "—"}
+          </dd>
         </dl>
       </section>
       {(parent || children.length > 0) && (
@@ -244,8 +261,14 @@ export function patchesPublicRoute(opts: PatchesOptions = {}) {
     const parent = patch.derivedFrom ? await getPatch(reader, patch.derivedFrom) : null;
     const children = await derivedPatches(reader, patch.slug);
     const demos = await Promise.all(patch.takes.map(async (group) => ({ group, assets: await takeAssets(reader, group) })));
+    const modules = await Promise.all(
+      patch.requires.moduleTypes.map(async (type) => {
+        const slug = opts.moduleComponent?.(type);
+        return { type, href: slug && (await imprint.store.getComponent(slug)) ? `/components/${slug}` : null };
+      })
+    );
     return {
-      render: <PatchView patch={patch} parent={parent} children={children} demos={demos} opts={opts} />,
+      render: <PatchView patch={patch} parent={parent} children={children} demos={demos} modules={modules} opts={opts} />,
       metadata: { title: patch.title, description: (patch.description || patch.question || "").slice(0, 160) },
       item: { type: "patch", slug: patch.slug },
     };

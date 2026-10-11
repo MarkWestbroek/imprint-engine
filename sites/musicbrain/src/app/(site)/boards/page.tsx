@@ -3,6 +3,7 @@ import Link from "next/link";
 import { store } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
 import { displayVersion } from "@/lib/format";
+import { isModule } from "@/lib/modules";
 
 export const metadata: Metadata = {
   title: "Boards",
@@ -18,7 +19,9 @@ export default async function BoardsPage() {
   ]);
   const componentName = new Map(components.map((c) => [c.slug, c.name]));
 
-  const sorted = [...specs].sort(
+  // The firmware's modules have their own index (/modules).
+  const componentKind = new Map(components.map((c) => [c.slug, c.kind]));
+  const sorted = [...specs].filter((s) => !isModule(s.component, s.kind ?? componentKind.get(s.component))).sort(
     (a, b) =>
       a.component.localeCompare(b.component) ||
       b.version.localeCompare(a.version, undefined, { numeric: true })

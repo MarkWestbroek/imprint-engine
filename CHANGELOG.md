@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **/modules** (MusicBrain): overzicht van de firmwaremodules (componenten
+  `kind: software` met slug `sw-…`), als panelen naast elkaar; ze staan niet
+  meer tussen de boards. Op een patchpagina linkt "Requires → Modules" naar
+  de modulepagina (`moduleComponent` in de patches-plugin).
 - **Patchpagina's in het Engels, met "▶ Play"** (MusicBrain): de publieke
   patchweergave sprak Nederlands op een Engelse site; nu Engels. Naast "Open
   in the editor" (`?patch=<slug>&mode=edit`) een knop "Play"
