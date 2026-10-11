@@ -117,7 +117,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Elke modeltaal is in Omnium een **profiel**: een beschrijving van de elementen en regels van die taal. Een nieuwe notatie toevoegen is dus een profiel schrijven, geen nieuw programmeerwerk. De Studio heeft daarvoor een profiel-ontwerper, zodat je zelf een modeltaal kunt beschrijven (in termen van de metaniveaus M0 tot M3).",
+                  "markdown": "Elke modeltaal is in Omnium een **profiel**: een beschrijving van de elementen en regels van die taal. Een nieuwe notatie toevoegen is dus een profiel schrijven, geen nieuw programmeerwerk. De Studio heeft daarvoor een profiel-ontwerper, zodat je zelf een modeltaal kunt beschrijven.\n\nDat volgt de vier metaniveaus van de [MOF](https://www.omg.org/mof/) (Meta Object Facility) van de OMG, dezelfde standaardenfamilie als UML en XMI. M0 zijn de gegevens zelf, M1 het model, M2 de modeltaal (in Omnium: het profiel) en M3 de taal waarin modeltalen worden beschreven.",
                   "title": "Een eigen modeltaal"
                 }
               }
