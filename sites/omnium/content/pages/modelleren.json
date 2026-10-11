@@ -105,7 +105,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Om compleet te zijn, kent Omnium vrijwel alle gangbare manieren van modelleren. Stand oktober 2026:\n\ncanoniek UML · UML (klassen, objecten, composite structure, component en deployment, activiteiten, sequentie, communicatie, state machine, use case) · MIM 1.2 · SysML · ERD · ArchiMate · BPMN · CMMN · DMN (DRD) · business- en requirementsmodel · formulier · OpenAPI 3.1 · GraphQL · XSD · WSDL · toegangsregel · een aanvullingsprofiel voor Enterprise Architect.",
+                  "markdown": "Om compleet te zijn, kent Omnium vrijwel alle gangbare manieren van modelleren. Stand oktober 2026:\n\ncanoniek UML · UML (klassen, objecten, composite structure, component en deployment, activiteiten, sequentie, communicatie, state machine, use case) · MIM 1.2 · SysML · ERD · ArchiMate · BPMN · CMMN · DMN (DRD) · business- en requirementsmodel · formulier · OpenAPI 3.1 · GraphQL · XSD · WSDL · toegangsregel.\n\nDaardoor leest Omnium ook een model uit Sparx Enterprise Architect in met al zijn diagramtypen.",
                   "title": "Modeltalen"
                 }
               }
