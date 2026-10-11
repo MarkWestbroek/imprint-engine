@@ -420,6 +420,7 @@ OMNIUM_SESSION_SECRET=%s
 ' "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" >> .env
 set -a; . ./.env; set +a
 docker compose exec -T postgres psql -U postgres -c "CREATE ROLE omnium LOGIN PASSWORD '$OMNIUM_DB_PASSWORD'" -c "CREATE DATABASE omnium OWNER omnium"
+docker compose build tools   # migrate/seed draaien in het tools-image; alleen een volle deploy bouwt dat opnieuw
 ./deploy.sh migrate omnium
 ./deploy.sh seed omnium --only=site,page,menu
 SITES=omnium ./deploy.sh
