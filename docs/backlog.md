@@ -740,7 +740,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       omnium.imprint-engine.nl (noindex). Voor livegang: teksten bijstellen,
       plaatshouders invullen (geschiedenis, Paratmos, Mark,
       contact), de formatentabel en de statussen "te controleren" nalopen,
-      eventueel een link naar een publieke Studio; dan `robots` in
+      eventueel een link naar een publieke Studio. AI via Fundament: pas
+      linken (https://docs.fundament.projects.digilab.network/) als vaststaat
+      dat Omnium hun lokale LLM mag gebruiken. Bij livegang: `robots` in
       `sites/omnium/src/app/layout.tsx` weg en een eigen domein kiezen.
 
 - [ ] **Resterende `npm audit`-meldingen** (29-09-2026, na de security-updates):
