@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Softwaremodules naast hun tekst** (MusicBrain, componentpagina's met
+  `kind: software`): het smalle modulepaneel staat links, de eerste sectie
+  (Overview) ernaast; op telefoonbreedte onder elkaar. Geen ingest-veld
+  nodig. Het onderschrift van /releases belooft niet langer een voeding uit
+  GitHub.
 - **Een patch bijwerken via de API** (`PATCH /api/patches/<slug>` met de
   inhoudelijke velden, scope `patch:propose`): de inzender stuurt een nieuwe
   versie van zijn eigen patch in op dezelfde slug — zelfde identiteit, zelfde

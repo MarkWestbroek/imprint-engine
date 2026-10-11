@@ -17,8 +17,7 @@ export default async function ReleasesPage() {
     <div className="max-w-3xl">
       <h1 className="text-3xl font-semibold tracking-tight">Releases</h1>
       <p className="mt-2 text-muted">
-        Every release of the firmware, editor and simulator. Fed from GitHub —
-        this list never goes stale.
+        Every release of the firmware, editor and simulator.
       </p>
 
       <div className="mt-8 space-y-6">

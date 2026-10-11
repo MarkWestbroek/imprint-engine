@@ -8,14 +8,19 @@ import { BoardSpecMedia } from "@/components/board-spec-media";
  * (BoardSpecMedia: static overview, plus an interactive hover view when the
  * spec has points, D4/D10). The dense connector table and pinout grid sit in
  * collapsed <details> so the default view stays calm; `compact` (product page)
- * trims to just the render + connectors.
+ * trims to just the render + connectors. Software modules (kind "software")
+ * are narrow, tall panels: there the first section sits beside the picture
+ * instead of under it, and on a phone they stack again.
  */
 export function BoardSpecView({
   spec,
   compact = false,
+  kind,
 }: {
   spec: BoardSpec;
   compact?: boolean;
+  /** The component's kind, when the spec does not carry one. */
+  kind?: string;
 }) {
   const derived = boardSpecToBoardConfig(spec);
   const pinouts = Object.entries(spec.assets.pinouts);
@@ -32,9 +37,20 @@ export function BoardSpecView({
         }
       : undefined;
 
+  const media = <BoardSpecMedia overview={spec.assets.overview} board={derived} model3d={model3d} />;
+  const beside = !compact && (spec.kind ?? kind) === "software" && spec.sections.length > 0;
+  const sections = beside ? spec.sections.slice(1) : spec.sections;
+
   return (
     <div className="space-y-4">
-      <BoardSpecMedia overview={spec.assets.overview} board={derived} model3d={model3d} />
+      {beside ? (
+        <div className="grid items-start gap-6 sm:grid-cols-[auto_minmax(0,1fr)]">
+          <div className="max-w-[16rem]">{media}</div>
+          <SpecSection section={spec.sections[0]!} />
+        </div>
+      ) : (
+        media
+      )}
 
       {spec.connectors.length > 0 && (
         <details className="rounded-lg border border-line px-3 py-2">
@@ -78,13 +94,16 @@ export function BoardSpecView({
         </details>
       )}
 
-      {!compact &&
-        spec.sections.map((s, i) => (
-          <section key={i}>
-            {s.heading && <h3 className="mb-1 text-base font-semibold">{s.heading}</h3>}
-            <Markdown>{s.markdown}</Markdown>
-          </section>
-        ))}
+      {!compact && sections.map((s, i) => <SpecSection key={i} section={s} />)}
     </div>
+  );
+}
+
+function SpecSection({ section }: { section: BoardSpec["sections"][number] }) {
+  return (
+    <section>
+      {section.heading && <h3 className="mb-1 text-base font-semibold">{section.heading}</h3>}
+      <Markdown>{section.markdown}</Markdown>
+    </section>
   );
 }

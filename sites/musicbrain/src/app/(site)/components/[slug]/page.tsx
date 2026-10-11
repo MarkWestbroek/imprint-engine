@@ -178,7 +178,7 @@ export default async function ComponentPage({ params }: Props) {
             </Link>
           </header>
           <div className="mt-4">
-            <BoardSpecView spec={pinnedSpec.spec} />
+            <BoardSpecView spec={pinnedSpec.spec} kind={component.kind} />
           </div>
         </section>
       )}
@@ -200,7 +200,7 @@ export default async function ComponentPage({ params }: Props) {
                       {kindLabel(spec?.kind ?? component.kind)} {version}
                     </h3>
                     <div className="mt-4">
-                      <BoardSpecView spec={spec} />
+                      <BoardSpecView spec={spec} kind={component.kind} />
                     </div>
                   </section>
                 ) : null
@@ -215,7 +215,7 @@ export default async function ComponentPage({ params }: Props) {
                   {kindLabel(spec?.kind ?? component.kind)} {version}
                 </h2>
                 <div className="mt-4">
-                  <BoardSpecView spec={spec} />
+                  <BoardSpecView spec={spec} kind={component.kind} />
                 </div>
               </section>
             ) : null
