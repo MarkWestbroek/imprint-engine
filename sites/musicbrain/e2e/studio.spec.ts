@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 
 import { authFile } from "./env";
-import { expect, test } from "./test";
+import { expect, openNewPage, test } from "./test";
 
 test.use({ storageState: authFile("editor") });
 
@@ -58,7 +58,7 @@ test.describe("studio", () => {
   });
 
   test("composes a new page: settings, a row, a hero widget, save", async ({ page }) => {
-    await page.goto("/admin/page/edit");
+    await openNewPage(page);
     await page.getByLabel("slug", { exact: true }).fill(SLUG);
     await page.getByLabel("title", { exact: true }).fill("E2E Studio");
     await synced(page);

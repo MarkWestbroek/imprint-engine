@@ -37,3 +37,14 @@ export const test = base.extend<{ pageErrors: string[] }>({
 });
 
 export { expect };
+
+/**
+ * The studio on a new, empty page. The draft of "a new page" lives on the
+ * server per user, so a test that broke off halfway leaves its rows there;
+ * "Undo changes" empties it first, so the next test starts from nothing.
+ */
+export async function openNewPage(page: import("@playwright/test").Page) {
+  await page.goto("/admin/page/edit");
+  await page.getByRole("button", { name: "Undo changes" }).click();
+  await expect(page.getByRole("button", { name: "＋ Add row" })).toBeVisible();
+}

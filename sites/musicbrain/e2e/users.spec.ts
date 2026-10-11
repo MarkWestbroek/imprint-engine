@@ -28,6 +28,7 @@ test.describe("user management", () => {
     await form.getByLabel("username").fill(NEW_USER);
     await form.getByLabel("role").selectOption("editor");
     await form.getByLabel("password (optional)").fill(PASSWORD);
+    await form.getByLabel("repeat password").fill(PASSWORD);
     await form.getByRole("button", { name: "Add user" }).click();
     await expect(row(page, NEW_USER)).toBeVisible();
 
@@ -42,11 +43,13 @@ test.describe("user management", () => {
     const form = page.locator("form", { has: page.getByRole("heading", { name: "Add user" }) });
     await form.getByLabel("username").fill("e2e-short");
     await form.getByLabel("password (optional)").fill("short");
+    await form.getByLabel("repeat password").fill("short");
     await form.getByRole("button", { name: "Add user" }).click();
     await expect(form.getByText(/at least 12 characters/)).toBeVisible();
 
     await form.getByLabel("username").fill(NEW_USER);
     await form.getByLabel("password (optional)").fill(PASSWORD);
+    await form.getByLabel("repeat password").fill(PASSWORD);
     await form.getByRole("button", { name: "Add user" }).click();
     await expect(form.getByText(/already exists/)).toBeVisible();
   });

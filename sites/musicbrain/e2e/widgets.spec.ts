@@ -1,7 +1,7 @@
 import type { Page } from "@playwright/test";
 
 import { authFile } from "./env";
-import { expect, test } from "./test";
+import { expect, openNewPage, test } from "./test";
 
 test.use({ storageState: authFile("editor") });
 
@@ -23,12 +23,13 @@ async function synced(page: Page) {
 
 async function addWidget(page: Page, label: string) {
   await page.getByRole("button", { name: "＋ Add widget" }).first().click();
-  await page.getByRole("button", { name: label, exact: true }).click();
+  // By its visible text: the markdown toolbar has icon buttons labelled "Image", "Quote", "Divider".
+  await page.locator("button", { hasText: new RegExp(`^${label}$`) }).click();
 }
 
 test.describe("standard widgets", () => {
   test("compose code, mermaid, tabs and a TOC in the studio", async ({ page }) => {
-    await page.goto("/admin/page/edit");
+    await openNewPage(page);
     await page.getByLabel("slug", { exact: true }).fill(SLUG);
     await page.getByLabel("title", { exact: true }).fill("E2E Widgets");
     await synced(page);

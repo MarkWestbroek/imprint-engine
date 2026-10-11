@@ -12,7 +12,7 @@ test.use({ storageState: authFile("editor") });
  */
 test.describe.configure({ mode: "serial" });
 
-const ORIGINAL = "Any pre-amp to any power amp to any cab.";
+const ORIGINAL = "Amp and cab switching for studios — architecture and safety requirements, not yet a verified design.";
 const FIRST = "e2e: first edited tagline";
 const SECOND = "e2e: second edited tagline";
 

@@ -42,9 +42,14 @@ function run(cwd: string, command: string, args: string[]): void {
 
 async function resetDatabase(): Promise<void> {
   const db = await mysql.createConnection(DATABASE_URL);
-  for (const table of ["content_items", "users", "api_tokens", "__drizzle_migrations"]) {
-    await db.query(`DROP TABLE IF EXISTS \`${table}\``);
+  // Every table, not a fixed list: each migration adds some, and a leftover
+  // table makes the next run's migration fail. env.ts only allows *_e2e.
+  const [rows] = await db.query("SELECT table_name AS name FROM information_schema.tables WHERE table_schema = DATABASE()");
+  await db.query("SET FOREIGN_KEY_CHECKS = 0");
+  for (const { name } of rows as { name: string }[]) {
+    await db.query(`DROP TABLE IF EXISTS \`${name}\``);
   }
+  await db.query("SET FOREIGN_KEY_CHECKS = 1");
   await db.end();
 }
 

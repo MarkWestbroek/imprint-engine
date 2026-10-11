@@ -2,7 +2,7 @@ import exifr from "exifr";
 import sharp from "sharp";
 
 import { authFile } from "./env";
-import { expect, test } from "./test";
+import { expect, openNewPage, test } from "./test";
 
 test.use({ storageState: authFile("editor") });
 
@@ -190,14 +190,15 @@ test.describe("media library", () => {
   });
 
   test("pick it in a widget: the page shows the public size with the library's alt; the library knows where it is used", async ({ page }) => {
-    await page.goto("/admin/page/edit");
+    await openNewPage(page);
     await page.getByLabel("slug", { exact: true }).fill("e2e-picked");
     await page.getByLabel("title", { exact: true }).fill("E2E Picked");
     await page.waitForTimeout(600);
     await expect(page.getByText("syncing…")).toHaveCount(0);
     await page.getByRole("button", { name: "＋ Add row" }).click();
     await page.getByRole("button", { name: "＋ Add widget" }).click();
-    await page.getByRole("button", { name: "Image", exact: true }).click();
+    // By its visible text: the markdown toolbar of the page settings has an icon button labelled "Image" too.
+    await page.locator("button", { hasText: /^Image$/ }).click();
     // The new widget's editor is in the sidebar (not the page settings, which have an image field too).
     await expect(page.getByRole("heading", { name: /^Image/ })).toBeVisible();
 
@@ -225,7 +226,7 @@ test.describe("media library", () => {
   });
 
   test("the text editor: type, insert a library image, and the page shows it", async ({ page }) => {
-    await page.goto("/admin/page/edit");
+    await openNewPage(page);
     await page.getByLabel("slug", { exact: true }).fill("e2e-richtext");
     await page.getByLabel("title", { exact: true }).fill("E2E Rich text");
     await page.waitForTimeout(600);
@@ -241,7 +242,7 @@ test.describe("media library", () => {
     await page.keyboard.type("Aan zee");
     await page.getByRole("button", { name: "Bold" }).click();
     await page.keyboard.press("Enter");
-    await page.getByRole("button", { name: "Image from the library" }).click();
+    await page.getByRole("button", { name: "Image", exact: true }).click();
     await page.getByRole("dialog", { name: "Choose from the media library" }).getByRole("button", { name: /e2e strand/ }).click();
     await expect(text.locator("img")).toHaveAttribute("data-asset", "e2e-strand");
 
