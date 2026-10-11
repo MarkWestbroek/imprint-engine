@@ -1,0 +1,101 @@
+{
+  "slug": "modelleren/formulieren",
+  "title": "Formulieren en widgets",
+  "description": "Formulieren vanuit het canonieke model, met widgets die een op de gebruiker toegespitste weergave en bediening van de gegevens zijn.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Formulieren met *widgets*",
+                  "subtitle": "Een formulier in Omnium is meer dan een rij invoervelden: het bestaat uit widgets die de gegevens uit het model tonen én bewerkbaar maken.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een formulier definieer je vanuit het canonieke model. Waar een gewoon invoerveld niet volstaat, gebruik je een **widget**: een onderdeel dat de gegevens op een voor de gebruiker passende manier laat zien en laat bewerken. Een adres op een kaart, een keuze uit een referentielijst, een verwijzing naar een standaard.\n\nVoor architecten: een widget is de *view* én de *controller* uit MVC (model-view-controller). Het *model* is het canonieke model, de widget is de toegespitste weergave en bediening daarvan.",
+                  "title": "Weergave en bediening in één"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Formulieren zijn niet de enige plek waar gegevens verschijnen. In **weergavesjablonen**, die gegevens alleen tonen, gebruik je hetzelfde widget, dan passief. Zo ziet een kaart met gemeenten er in het formulier en op de overzichtspagina hetzelfde uit, en hoef je de weergave maar één keer te maken.",
+                  "title": "Hetzelfde widget voor tonen"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Het aanmeldformulier voor het Common Ground-portfolio is een toepassing van het uitgangspunt van Omnium: **model, register, API**. Het formulier volgt uit het model, de aanmeldingen komen in een gegenereerd register, en de API maakt ze bruikbaar voor anderen.\n\nIn het formulier kies je gemeenten op een kaart, vul je keuzelijsten in en verwijs je naar standaarden. Het zijn widgets bovenop hetzelfde model: wie het model aanpast, ziet het formulier meeveranderen.",
+                  "title": "Voorbeeld: aanmelden voor het Common Ground-portfolio"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "In het fysieke domein, waar gegevens een plek in de ruimte hebben, wil je die gegevens zien en niet alleen lezen: op een kaart, in een tekening, in samenhang. Vaak komen ze uit meerdere bronnen.\n\nWidgets maken het mogelijk om die bronnen in één weergave te combineren, en in één editor te bewerken, terwijl elk gegeven zijn eigen bron en betekenis houdt. Hier telt de combinatie van canoniek model, bitemporeel register en een weergave op maat het zwaarst.",
+                  "title": "Toepassing: het fysieke domein"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Concept",
+                  "markdown": "Schermafbeeldingen van het portfolioformulier volgen.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
