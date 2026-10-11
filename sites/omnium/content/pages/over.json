@@ -44,9 +44,9 @@
               {
                 "type": "callout",
                 "config": {
-                  "title": "Licentie en open source",
-                  "markdown": "Plaatshouder: hoe Omnium beschikbaar komt en onder welke licentie, volgt.",
-                  "tone": "warning"
+                  "title": "Open source",
+                  "markdown": "Omnium is open source, onder de **EUPL**. Samenwerken is doel en speerpunt: iedereen is uitgenodigd om bij te dragen.",
+                  "tone": "accent"
                 }
               }
             ]

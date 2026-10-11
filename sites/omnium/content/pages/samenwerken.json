@@ -223,8 +223,36 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Wie wat mag zien en wijzigen, beschrijf je in Omnium ook als model: **toegangsregels** in dezelfde werkbank, met een export naar ODRL (de W3C-standaard voor gebruiksrechten; die export is in opbouw). Zo is het toegangsbeleid net zo goed te bespreken en te herleiden als het gegevensmodel zelf.",
+                  "markdown": "Wie wat mag zien en wijzigen, beschrijf je in Omnium ook als model: **toegangsregels** in dezelfde werkbank, met een visuele weergave. Zo is het toegangsbeleid net zo goed te bespreken en te herleiden als het gegevensmodel zelf.\n\nVia een export naar ODRL (de W3C-standaard voor gebruiksrechten) sluit dit aan op **FTV**, de Federatieve Toegangsverlening van de overheid. Die export is in opbouw.",
                   "title": "Toegang als model"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Samenwerken is voor Omnium niet alleen een functie, maar ook het doel. Omnium is **open source**, onder de EUPL (de open-sourcelicentie van de Europese Unie), en iedereen is uitgenodigd om bij te dragen: met modellen, profielen, transformaties of code.",
+                  "title": "Iedereen kan bijdragen"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Voor het beheer van requirements kies je zelf hoe:\n\n1. **Koppel je eigen tool.**\n2. **Gebruik een open-sourcetool** naar keuze.\n3. **Maak een klein contentmodel in Imprint** en houd daar zelf backlog, kanbanbord en releaselog bij, zoals MusicBrain dat doet.\n\nEerlijk is eerlijk: de backlog van Omnium zelf staat nu nog als Markdown in git.",
+                  "title": "Requirements bijhouden"
                 }
               }
             ]

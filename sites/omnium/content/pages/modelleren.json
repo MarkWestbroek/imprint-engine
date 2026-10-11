@@ -124,6 +124,34 @@
             ]
           }
         ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Formulieren definieer je vanuit het canonieke model, met een visuele weergave van hoe het formulier eruitziet. De velden zijn de gegevenselementen uit het model, dus een formulier spreekt dezelfde taal als de API en de database. Conditionele blokken, die alleen verschijnen als een eerder antwoord dat vraagt, staan gepland.",
+                  "title": "Formulieren"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Omnium krijgt AI-ondersteuning bij het modelleren. Het plan is daarvoor een soeverein taalmodel te gebruiken, via **Fundament**, de Nederlandse overheidscloud, zodat modellen en gegevens niet buiten die omgeving komen. Dit is in voorbereiding.",
+                  "title": "AI-ondersteuning"
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   }

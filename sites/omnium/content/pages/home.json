@@ -121,7 +121,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Voor informatie-architecten, modelleurs en ontwikkelaars die met gegevens werken die lang mee moeten en door meerdere partijen worden gebruikt. De overheid ligt voor de hand: Omnium kent de modelleerafspraken MIM 1.2 en past bij het werken volgens Common Ground, waar gegevens bij de bron blijven en de betekenis gedeeld moet zijn.",
+                  "markdown": "Voor elk ontwikkelteam dat met gegevens werkt die lang mee moeten en door meerdere partijen worden gebruikt: informatie-architecten, modelleurs en ontwikkelaars. De overheid ligt voor de hand, omdat Omnium bitemporele registers genereert en de modelleerafspraken MIM 1.2 kent. Maar de aanpak is niet aan de overheid gebonden.",
                   "title": "Voor wie"
                 }
               }

@@ -133,6 +133,26 @@
                       "Zie Diagrammen."
                     ],
                     [
+                      "Formulieren vanuit het canonieke model",
+                      "werkt",
+                      "Met visuele weergave."
+                    ],
+                    [
+                      "Conditionele blokken in formulieren",
+                      "gepland",
+                      ""
+                    ],
+                    [
+                      "Aansluiting op FTV via ODRL",
+                      "in opbouw",
+                      ""
+                    ],
+                    [
+                      "AI-ondersteuning (soeverein model via Fundament)",
+                      "in voorbereiding",
+                      ""
+                    ],
+                    [
                       "Import en export",
                       "deels",
                       "Per formaat, zie Samenwerken."
