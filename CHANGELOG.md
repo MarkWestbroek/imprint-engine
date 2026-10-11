@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Patchpagina's in het Engels, met "▶ Play"** (MusicBrain): de publieke
+  patchweergave sprak Nederlands op een Engelse site; nu Engels. Naast "Open
+  in the editor" (`?patch=<slug>&mode=edit`) een knop "Play"
+  (`&mode=play`, het contract van de editor); in /admin/patches "Spelen".
+  De patch-API zet `charset=utf-8` in het Content-Type (PowerShell 5.1 las
+  é als Ã©).
 - **Softwaremodules naast hun tekst** (MusicBrain, componentpagina's met
   `kind: software`): het smalle modulepaneel staat links, de eerste sectie
   (Overview) ernaast; op telefoonbreedte onder elkaar. Geen ingest-veld

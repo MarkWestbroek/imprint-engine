@@ -35,8 +35,12 @@ function corsHeaders(admin: AdminContext, req: Request): Record<string, string> 
   return corsHeadersFor(admin.imprint.media.cors, req, { methods: "GET, POST, PATCH, OPTIONS", headers: "Authorization, Content-Type" });
 }
 
+// An explicit charset: JSON is UTF-8 by definition, but some clients (PowerShell 5.1) read it as Latin-1 without one.
 const json = (admin: AdminContext, req: Request, body: unknown, status = 200) =>
-  Response.json(body, { status, headers: { ...corsHeaders(admin, req), "Cache-Control": "no-store" } });
+  Response.json(body, {
+    status,
+    headers: { ...corsHeaders(admin, req), "Cache-Control": "no-store", "Content-Type": "application/json; charset=utf-8" },
+  });
 
 async function grantOf(admin: AdminContext, req: Request): Promise<TokenGrant | null> {
   const m = /^Bearer\s+(\S+)$/i.exec(req.headers.get("authorization") ?? "");

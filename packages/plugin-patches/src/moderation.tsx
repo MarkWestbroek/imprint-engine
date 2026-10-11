@@ -112,9 +112,14 @@ async function Card({ patch, opts, call, me, store }: { patch: Patch; opts: Patc
         </dl>
         <p className="flex flex-wrap gap-x-4 gap-y-1">
           {opts.editorUrl && (
-            <a href={`${opts.editorUrl}?patch=${encodeURIComponent(patch.slug)}`} target="_blank" rel="noreferrer" className={link}>
-              Open in de editor
-            </a>
+            <>
+              <a href={`${opts.editorUrl}?patch=${encodeURIComponent(patch.slug)}&mode=play`} target="_blank" rel="noreferrer" className={link}>
+                Spelen
+              </a>
+              <a href={`${opts.editorUrl}?patch=${encodeURIComponent(patch.slug)}&mode=edit`} target="_blank" rel="noreferrer" className={link}>
+                Open in de editor
+              </a>
+            </>
           )}
           {file && (
             <a href={file} download className={link}>

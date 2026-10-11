@@ -736,6 +736,8 @@ je op de patchpagina zelf (als redactie zie je ook voorstellen). Naar
 Een **vraag** ("lukt niet, wie helpt?") heeft een vraagtekst en een vinkje
 *beantwoord*.
 
+Op een patchpagina opent **▶ Play** de patch meteen in de speelmodus van de editor, **Open in the editor** in de bewerkmodus.
+
 **Beoordelen** doe je onder *Content → Patches → Beoordelen*: per pool
 (eerst de voorstellen) een kaart met het front, de demo om te beluisteren,
 wat de patch nodig heeft en de downloads. Daaronder de knoppen *Naar
