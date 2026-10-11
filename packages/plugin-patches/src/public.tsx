@@ -112,7 +112,7 @@ export async function Demo({ group, assets, opts }: { group: string; assets: Ass
   );
 }
 
-async function PatchView({ patch, parent, children, demos, modules, opts }: { patch: Patch; parent: Patch | null; children: Patch[]; demos: { group: string; assets: AssetRecord[] }[]; modules: { type: string; href: string | null }[]; opts: PatchesOptions }) {
+async function PatchView({ patch, parent, children, demos, modules, opts }: { patch: Patch; parent: Patch | null; children: Patch[]; demos: { group: string; assets: AssetRecord[] }[]; modules: { type: string; href: string | null; name: string }[]; opts: PatchesOptions }) {
   const back = LISTS.find((l) => l.pool === patch.pool) ?? LISTS[0]!;
   const file = assetRefUrl(patch.file);
   const syx = patch.syx ? assetRefUrl(patch.syx) : null;
@@ -200,7 +200,7 @@ async function PatchView({ patch, parent, children, demos, modules, opts }: { pa
                     {i > 0 && ", "}
                     {m.href ? (
                       <Link href={m.href} className="underline">
-                        {m.type}
+                        {m.name}
                       </Link>
                     ) : (
                       m.type
@@ -264,7 +264,8 @@ export function patchesPublicRoute(opts: PatchesOptions = {}) {
     const modules = await Promise.all(
       patch.requires.moduleTypes.map(async (type) => {
         const slug = opts.moduleComponent?.(type);
-        return { type, href: slug && (await imprint.store.getComponent(slug)) ? `/components/${slug}` : null };
+        const component = slug ? await imprint.store.getComponent(slug) : null;
+        return { type, href: component ? `/components/${component.slug}` : null, name: component?.name ?? type };
       })
     );
     return {
