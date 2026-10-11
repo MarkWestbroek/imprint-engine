@@ -1454,6 +1454,15 @@ flowchart LR
     R --> S["commonground.imprint-engine.nl"]
 ```
 
+Een vierde site, `sites/omnium`, is een **informatiesite over Omnium**
+(Nederlands): dezelfde opzet als de showcase in klein, zonder plugins. De
+startpagina is de pagina `home`, het menu de `menu` `main`, alle andere
+pagina's lopen via `src/app/(site)/[...slug]`; de chrome (`(site)/layout.tsx`)
+en de studio-chrome lezen hetzelfde menu. De beginteksten staan in
+`content/` en gaan met `db:seed --site=omnium --only=site,page,menu` de
+database in; Studio-schermafbeeldingen staan als `public/shots/*.png` en
+worden met een gewoon pad in de image-widget gebruikt.
+
 Stappen voor een nieuwe site:
 
 1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,

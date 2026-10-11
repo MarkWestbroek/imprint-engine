@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="Omnium Studio">
+  <defs>
+    <linearGradient id="om-ring" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.5" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="om-hub" x1="18" y1="18" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a5b4fc"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <radialGradient id="om-glow" cx="24" cy="24" r="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- soft halo -->
+  <circle cx="24" cy="24" r="22" fill="url(#om-glow)"/>
+
+  <!-- spokes: hub -> facets -->
+  <g stroke="url(#om-ring)" stroke-width="1.1" opacity="0.35" stroke-linecap="round">
+    <line x1="24" y1="24" x2="24"    y2="6"/>
+    <line x1="24" y1="24" x2="39.59" y2="15"/>
+    <line x1="24" y1="24" x2="39.59" y2="33"/>
+    <line x1="24" y1="24" x2="24"    y2="42"/>
+    <line x1="24" y1="24" x2="8.41"  y2="33"/>
+    <line x1="24" y1="24" x2="8.41"  y2="15"/>
+  </g>
+
+  <!-- orbit ring (the "O") -->
+  <circle cx="24" cy="24" r="18" fill="none" stroke="url(#om-ring)" stroke-width="3"/>
+
+  <!-- facet nodes (the six domains), each its own hue in the spectrum -->
+  <circle cx="24"    cy="6"  r="3.4" fill="#3b82f6"/>  <!-- gegevensstructuur -->
+  <circle cx="39.59" cy="15" r="3.4" fill="#6366f1"/>  <!-- procesflow -->
+  <circle cx="39.59" cy="33" r="3.4" fill="#8b5cf6"/>  <!-- regels -->
+  <circle cx="24"    cy="42" r="3.4" fill="#22d3ee"/>  <!-- connectiviteit -->
+  <circle cx="8.41"  cy="33" r="3.4" fill="#0ea5e9"/>  <!-- gebruikers/rollen -->
+  <circle cx="8.41"  cy="15" r="3.4" fill="#38bdf8"/>  <!-- basisgegevens -->
+
+  <!-- central hub (the integrated platform / IDE) -->
+  <rect x="19.5" y="19.5" width="9" height="9" rx="2.2" transform="rotate(45 24 24)" fill="url(#om-hub)"/>
+</svg>

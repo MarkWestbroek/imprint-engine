@@ -1,0 +1,137 @@
+{
+  "slug": "stand-van-zaken",
+  "title": "Stand van zaken",
+  "description": "Wat werkt, wat in opbouw is en wat gepland staat. Stand oktober 2026.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Stand van *zaken*",
+                  "subtitle": "Omnium is een breed proof of concept. Hier staat wat werkt, wat in opbouw is en wat gepland staat. Stand: oktober 2026.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "headers": [
+                    "Onderdeel",
+                    "Status",
+                    "Toelichting"
+                  ],
+                  "rows": [
+                    [
+                      "Studio in de browser",
+                      "werkt",
+                      "Modelleren in de browser, met diagrammen."
+                    ],
+                    [
+                      "Canoniek model in UML",
+                      "werkt",
+                      "Met het voorbeelddomein np-loc."
+                    ],
+                    [
+                      "Modeltalen als profielen",
+                      "werkt",
+                      "Ruim twintig profielen, zie Modelleren."
+                    ],
+                    [
+                      "Eigen modeltaal ontwerpen",
+                      "te controleren",
+                      "Profiel-ontwerper (M0–M3)."
+                    ],
+                    [
+                      "Afgeleide velden en relaties (CEL)",
+                      "te controleren",
+                      ""
+                    ],
+                    [
+                      "Database en API genereren",
+                      "werkt",
+                      "Het bitemporele register."
+                    ],
+                    [
+                      "Formeel tijdreizen via REST",
+                      "werkt",
+                      ""
+                    ],
+                    [
+                      "Materieel tijdreizen, generiek",
+                      "gepland",
+                      "Vervolgwerk."
+                    ],
+                    [
+                      "Volledige tijdreis via GraphQL",
+                      "gepland",
+                      "Vervolgwerk."
+                    ],
+                    [
+                      "Meerdere gebruikers, live (projectsynchronisatie)",
+                      "te controleren",
+                      ""
+                    ],
+                    [
+                      "Toegangsregels, export naar ODRL",
+                      "te controleren",
+                      ""
+                    ],
+                    [
+                      "Documenten genereren uit modellen",
+                      "te controleren",
+                      "Documentsjablonen, Markdown-export."
+                    ],
+                    [
+                      "Import en export",
+                      "deels",
+                      "Per formaat, zie Samenwerken."
+                    ],
+                    [
+                      "XSD, WSDL, Bizzdesign, code lezen",
+                      "gepland",
+                      ""
+                    ]
+                  ],
+                  "striped": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Concept",
+                  "markdown": "De statussen zijn opgesteld uit de broncode. Waar *te controleren* staat, volgt de juiste status nog. Een link naar een werkende Studio komt hier zodra die publiek is.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

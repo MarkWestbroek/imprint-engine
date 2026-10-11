@@ -1,0 +1,208 @@
+{
+  "slug": "samenwerken",
+  "title": "Samenwerken",
+  "description": "Eén centraal model, meerdere gebruikers, in de browser, met open uitwisseling.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Samen aan *één* model",
+                  "subtitle": "Dit soort oplossingen maak je niet alleen. Omnium is gebouwd om met meerdere mensen aan hetzelfde model te werken.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een project in Omnium is één model, op één plek. Werken meerdere mensen eraan, dan zien ze elkaars wijzigingen terwijl ze werken (**projectsynchronisatie**). Er gaan geen kopieën heen en weer die later met de hand moeten worden samengevoegd.",
+                  "title": "Eén centraal model"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Omnium draait in de browser, als dienst in de cloud. Er is niets te installeren: wie de link heeft en toegang krijgt, kan meekijken of meewerken.",
+                  "title": "Toegankelijk"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Wat je maakt, is van jou. Het eigen formaat is een gewone map met JSON-bestanden, die ook zonder server werkt. Daarnaast lees en schrijf je de gangbare formaten (zie de tabel).",
+                  "title": "Open uitwisseling"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 3,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "headers": [
+                    "Formaat",
+                    "Import",
+                    "Export",
+                    "Status"
+                  ],
+                  "rows": [
+                    [
+                      "Eigen formaat (JSON-map)",
+                      "✓",
+                      "✓",
+                      "werkt, ook zonder server"
+                    ],
+                    [
+                      "Sparx Enterprise Architect (.qea)",
+                      "✓",
+                      "—",
+                      "werkt (samenvoegen op GUID)"
+                    ],
+                    [
+                      "XMI",
+                      "—",
+                      "✓",
+                      "te controleren"
+                    ],
+                    [
+                      "ArchiMate Exchange Format",
+                      "✓",
+                      "gepland",
+                      ""
+                    ],
+                    [
+                      "Mermaid",
+                      "✓",
+                      "✓",
+                      "werkt (use case, flowchart)"
+                    ],
+                    [
+                      "PlantUML",
+                      "",
+                      "",
+                      "te controleren"
+                    ],
+                    [
+                      "BPMN 2.0 XML (met diagram)",
+                      "✓",
+                      "",
+                      "werkt"
+                    ],
+                    [
+                      "DMN XML (met diagram)",
+                      "✓",
+                      "",
+                      "werkt"
+                    ],
+                    [
+                      "OpenAPI (OAS 3.1)",
+                      "✓",
+                      "",
+                      "werkt (components.schemas)"
+                    ],
+                    [
+                      "GraphQL",
+                      "",
+                      "✓",
+                      "werkt"
+                    ],
+                    [
+                      "RDF / Turtle",
+                      "—",
+                      "✓",
+                      "werkt"
+                    ],
+                    [
+                      "Markdown-overzicht en documenten",
+                      "—",
+                      "✓",
+                      "werkt"
+                    ],
+                    [
+                      "XSD",
+                      "gepland",
+                      "gepland",
+                      "profiel bestaat"
+                    ],
+                    [
+                      "WSDL",
+                      "gepland",
+                      "gepland",
+                      "profiel bestaat"
+                    ],
+                    [
+                      "Code lezen en maken",
+                      "gepland",
+                      "gepland",
+                      "registercode wordt al gegenereerd"
+                    ],
+                    [
+                      "Bizzdesign",
+                      "gepland",
+                      "gepland",
+                      ""
+                    ]
+                  ],
+                  "striped": true,
+                  "title": "Uitwisselingsformaten"
+                }
+              }
+            ]
+          },
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Concept",
+                  "markdown": "Deze tabel is opgesteld uit de broncode en wordt nog nagelopen voordat de site live gaat.",
+                  "tone": "warning"
+                }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Wie wat mag zien en wijzigen, beschrijf je in Omnium ook als model: **toegangsregels** in dezelfde werkbank, met een export naar ODRL (de W3C-standaard voor gebruiksrechten). Zo is het toegangsbeleid net zo goed te bespreken en te herleiden als het gegevensmodel zelf.",
+                  "title": "Toegang als model"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -92,6 +92,30 @@ commonground.imprint-engine.nl {
 	reverse_proxy 127.0.0.1:3400
 }
 
+# Informatiesite over Omnium (Nederlands); concept, nog op noindex.
+omnium.imprint-engine.nl {
+	import veilig
+	log {
+		output file /var/log/caddy/omnium.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+			mode 0644
+		}
+		format filter {
+			request>remote_ip ip_mask 24 48
+			request>client_ip ip_mask 24 48
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+			request>uri query {
+				delete token
+			}
+		}
+	}
+	reverse_proxy 127.0.0.1:3500
+}
+
 # Het tijdelijke adres van de productsite (19 september 2026) stuurt door.
 imprint.musicbrain.nl {
 	redir https://imprint-engine.nl{uri} permanent

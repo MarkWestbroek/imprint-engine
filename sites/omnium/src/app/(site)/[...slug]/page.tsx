@@ -1,0 +1,31 @@
+import type { Metadata } from "next";
+import { notFound, permanentRedirect } from "next/navigation";
+import { readOpts } from "@imprint/runtime-admin";
+import { isInternal, PageView } from "@/components/page-view";
+import { store } from "@/lib/content";
+
+/**
+ * Every page from the store (Postgres with DATABASE_URL, content/ without),
+ * rendered through the engine renderer with this site's widgets. `home` is
+ * served on /; `_view/*` templates are no pages.
+ */
+
+type Props = { params: Promise<{ slug: string[] }> };
+
+export async function generateStaticParams() {
+  const pages = await store.listPages();
+  return pages.filter((p) => !isInternal(p.slug) && p.slug !== "home").map((p) => ({ slug: p.slug.split("/") }));
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const page = await store.getPage((await params).slug.join("/"));
+  return page ? { title: page.title, description: page.description } : {};
+}
+
+export default async function ContentPage({ params }: Props) {
+  const slug = (await params).slug.map(decodeURIComponent).join("/");
+  if (slug === "home") permanentRedirect("/");
+  const page = isInternal(slug) ? null : await store.getPage(slug, await readOpts());
+  if (!page) notFound();
+  return <PageView page={page} />;
+}

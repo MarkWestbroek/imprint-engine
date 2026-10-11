@@ -1,0 +1,87 @@
+{
+  "slug": "over",
+  "title": "Over",
+  "description": "Over Omnium, Paratmos en Mark Westbroek.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Over *Omnium*",
+                  "subtitle": "Een initiatief van Paratmos.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Paratmos en Mark Westbroek",
+                  "markdown": "Plaatshouder: de tekst over Paratmos en Mark volgt.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Licentie en open source",
+                  "markdown": "Plaatshouder: hoe Omnium beschikbaar komt en onder welke licentie, volgt.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Contact",
+                  "markdown": "Plaatshouder: hoe je contact opneemt, volgt.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Deze site is gemaakt met [Imprint](https://imprint-engine.nl), een publicatiemotor voor sites met een eigen gezicht. Imprint gebruikt het contentmodel van Omnium; deze site is daar zelf een voorbeeld van.",
+                  "title": "Over deze site"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "slug": "home",
+  "title": "Omnium",
+  "description": "Omnium is een modelwerkbank waarin je met anderen één canoniek model onderhoudt, en waaruit een bitemporeel register wordt gegenereerd.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Eén canoniek model, en daaruit een *register*.",
+                  "subtitle": "Omnium is een modelwerkbank waarin je met anderen één canoniek model onderhoudt, en waaruit een bitemporeel register — database én API — wordt gegenereerd.",
+                  "variant": "open",
+                  "buttonLabel": "Waarom Omnium",
+                  "buttonUrl": "/waarom"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Gegevens hebben een betekenis die losstaat van het scherm waarop je ze invult, het bericht waarin ze reizen en de tabel waarin ze worden opgeslagen. Omnium legt die betekenis vast in één model, en leidt de rest daaruit af: formulieren, API's, een databaseschema. Het register dat zo ontstaat, houdt bij wat er gold en wanneer dat bekend was.\n\nDat model maak je niet alleen. Omnium draait in de browser, meerdere mensen werken tegelijk aan hetzelfde model, en wat je maakt kun je in open formaten meenemen."
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Stand van zaken",
+                  "markdown": "Omnium is een proof of concept in actieve ontwikkeling. Bij elk onderdeel staat eerlijk wat al werkt, wat in opbouw is en wat gepland staat.",
+                  "tone": "info",
+                  "buttonLabel": "Wat werkt er al?",
+                  "buttonUrl": "/stand-van-zaken"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "columns": 4,
+                  "items": [
+                    {
+                      "icon": "◇",
+                      "title": "Canoniek model",
+                      "markdown": "Eén gedeeld model van de betekenis van gegevens, los van applicatie of notatie.",
+                      "href": "/canoniek-model"
+                    },
+                    {
+                      "icon": "⇢",
+                      "title": "Modelgedreven (MDA)",
+                      "markdown": "Uit dat model ontstaan formulieren, API's, databaseschema en code — niet andersom.",
+                      "href": "/modelleren"
+                    },
+                    {
+                      "icon": "◷",
+                      "title": "Bitemporeel",
+                      "markdown": "Het gegenereerde register onthoudt wat gold én wat wanneer bekend was.",
+                      "href": "/register"
+                    },
+                    {
+                      "icon": "⁂",
+                      "title": "Samenwerken",
+                      "markdown": "Dit soort oplossingen maak je niet alleen: één live model, open uitwisseling.",
+                      "href": "/samenwerken"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "image",
+                "config": {
+                  "src": "/shots/uml-overzicht.png",
+                  "alt": "De Omnium Studio met een UML-klassendiagram",
+                  "caption": "De Studio met het canonieke model van het voorbeelddomein np-loc: natuurlijke personen en locaties."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Voor informatie-architecten, modelleurs en ontwikkelaars die met gegevens werken die lang mee moeten en door meerdere partijen worden gebruikt. De overheid ligt voor de hand: Omnium kent de modelleerafspraken MIM 1.2 en past bij het werken volgens Common Ground, waar gegevens bij de bron blijven en de betekenis gedeeld moet zijn.",
+                  "title": "Voor wie"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Deze site is gemaakt met [Imprint](https://imprint-engine.nl), een publicatiemotor die het contentmodel van Omnium gebruikt. De teksten zijn een concept en worden nog bijgesteld.",
+                  "title": "Over deze site"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

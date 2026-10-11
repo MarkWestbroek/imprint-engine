@@ -605,6 +605,18 @@ andere sites, met een paar dingen van commonground.nl:
   is de widget **Glossary** in een pagina (`termen`, en `afkortingen` met de
   tag `afkorting`): kaarten met een zoekveld dat filtert terwijl je typt.
 
+## De Omnium-site
+
+De site `omnium` (omnium.imprint-engine.nl) vertelt in het Nederlands wat
+Omnium is en hoe ver het staat. Alles is content: de startpagina is de
+pagina `home`, het menu is het menu `main`, en de andere pagina's
+(Waarom Omnium, Canoniek model, Modelleren, Register, Samenwerken, Stand
+van zaken, Over) bewerk je in de studio. De teksten zijn een concept;
+plaatshouders staan in gele vakken. Schermafbeeldingen van de Studio
+gebruik je met een pad als `/shots/uml-overzicht.png` in een Image-widget.
+Zolang de teksten concept zijn, vragen de pagina's zoekmachines om ze niet
+op te nemen.
+
 ## Berichten schrijven als lid
 
 Als lid van een community schrijf je op de community-pagina een **update**

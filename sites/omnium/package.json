@@ -1,0 +1,33 @@
+{
+  "name": "omnium",
+  "version": "0.14.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3500",
+    "build": "next build",
+    "start": "next start --port 3500",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "@imprint/runtime-admin": "*",
+    "@imprint/widgets-standard": "*",
+    "lucide-react": "^0.468.0",
+    "next": "^16.3.7",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^16.3.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

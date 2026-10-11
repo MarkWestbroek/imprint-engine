@@ -1,0 +1,33 @@
+{
+  "name": "main",
+  "items": [
+    {
+      "label": "Waarom Omnium",
+      "page": "waarom"
+    },
+    {
+      "label": "Canoniek model",
+      "page": "canoniek-model"
+    },
+    {
+      "label": "Modelleren",
+      "page": "modelleren"
+    },
+    {
+      "label": "Register",
+      "page": "register"
+    },
+    {
+      "label": "Samenwerken",
+      "page": "samenwerken"
+    },
+    {
+      "label": "Stand van zaken",
+      "page": "stand-van-zaken"
+    },
+    {
+      "label": "Over",
+      "page": "over"
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "slug": "waarom",
+  "title": "Waarom Omnium",
+  "description": "De aanleiding en geschiedenis van Omnium: vier thema's die in bestaande tools los van elkaar blijven.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Waarom *Omnium*",
+                  "subtitle": "Vier thema's die in de gangbare tools los van elkaar blijven, in één werkbank.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Omnium brengt vier punten samen: een **canoniek model**, **modelgedreven ontwikkelen**, **bitemporele registratie** en **samenwerken**. Het zijn de thema's waarop Mark Westbroek in zijn loopbaan steeds de nadruk heeft gelegd.\n\nIn de praktijk blijven ze los van elkaar. Het model staat in een modelleertool, de database wordt met de hand gebouwd, de historie is een bijzaak en samenwerken gaat via bestanden die heen en weer gaan. Elke stap is een vertaling, en bij elke vertaling gaat betekenis verloren.\n\nOmnium onderzoekt wat er gebeurt als je de vier in één werkbank combineert: het model is de bron, de rest wordt afgeleid, tijd zit er vanaf het begin in, en iedereen werkt aan hetzelfde model.",
+                  "title": "Aanleiding"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Plaatshouder",
+                  "markdown": "Hier komen de geschiedenis van Omnium, de rol van **Paratmos** en de achtergrond van **Mark Westbroek**. De tekst volgt van Mark.",
+                  "tone": "warning"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "columns": 4,
+                  "items": [
+                    {
+                      "icon": "◇",
+                      "title": "Canoniek model",
+                      "markdown": "Eén gedeeld model van de betekenis van gegevens, los van applicatie of notatie.",
+                      "href": "/canoniek-model"
+                    },
+                    {
+                      "icon": "⇢",
+                      "title": "Modelgedreven (MDA)",
+                      "markdown": "Uit dat model ontstaan formulieren, API's, databaseschema en code — niet andersom.",
+                      "href": "/modelleren"
+                    },
+                    {
+                      "icon": "◷",
+                      "title": "Bitemporeel",
+                      "markdown": "Het gegenereerde register onthoudt wat gold én wat wanneer bekend was.",
+                      "href": "/register"
+                    },
+                    {
+                      "icon": "⁂",
+                      "title": "Samenwerken",
+                      "markdown": "Dit soort oplossingen maak je niet alleen: één live model, open uitwisseling.",
+                      "href": "/samenwerken"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

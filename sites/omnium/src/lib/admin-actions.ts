@@ -1,0 +1,44 @@
+import type { AdminActions } from "@imprint/runtime-admin/admin-server";
+import {
+  deleteAssetAction,
+  deleteItemAction,
+  deleteTaglistAction,
+  editTagAction,
+  loginAction,
+  logoutAction,
+  restoreVersionAction,
+  saveAssetAction,
+  saveItemAction,
+  saveRelationsAction,
+  saveTaglistAction,
+} from "@/app/admin/actions";
+import {
+  changeOwnPasswordAction,
+  createTokenAction,
+  revokeTokenAction,
+  createUserAction,
+  deleteUserAction,
+  resetPasswordAction,
+  setRoleAction,
+} from "@/app/admin/users/actions";
+import { draftOpAction, resetDraftAction, savePageDraftAction } from "@/app/admin/studio-actions";
+
+/** This site's "use server" wrappers, handed to the shared screens (a module of its own: no import cycle). */
+export const adminActions: AdminActions = {
+  login: loginAction,
+  logout: logoutAction,
+  saveItem: saveItemAction,
+  deleteItem: deleteItemAction,
+  restoreVersion: restoreVersionAction,
+  saveRelations: saveRelationsAction,
+  users: {
+    createUser: createUserAction,
+    setRole: setRoleAction,
+    resetPassword: resetPasswordAction,
+    deleteUser: deleteUserAction,
+  },
+  changeOwnPassword: changeOwnPasswordAction,
+  tokens: { create: createTokenAction, revoke: revokeTokenAction },
+  studio: { draftOp: draftOpAction, resetDraft: resetDraftAction, savePageDraft: savePageDraftAction },
+  media: { saveAsset: saveAssetAction, deleteAsset: deleteAssetAction, saveTaglist: saveTaglistAction, editTag: editTagAction, deleteTaglist: deleteTaglistAction },
+};

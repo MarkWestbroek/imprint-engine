@@ -1,0 +1,102 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer en de standaardwidgets, met classes
+ * die buiten deze site-map staan; Tailwind moet ze dus expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+
+/*
+ * Omnium-huisstijl, ingetogen: wit en inkt, met de merkgradient
+ * (#60a5fa → #6366f1 → #22d3ee) als enige versiering: in het logo, een dunne
+ * band onder de kop en de accentkleur van knoppen en links (indigo).
+ */
+:root {
+	--background: #ffffff;
+	--surface: #f5f6fa;
+	--border: #dfe2ea;
+	--foreground: #161826;
+	--muted: #5b6075;
+	--accent: #4f46e5;
+	--accent-strong: #3730a3;
+	--accent-2: #0891b2;
+	--om-gradient: linear-gradient(110deg, #60a5fa 0%, #6366f1 45%, #22d3ee 100%);
+	--om-width: 1120px;
+	color-scheme: light;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3). */
+@theme inline {
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
+}
+
+/* In Tailwinds base-laag, zodat utilities (zoals de tekstkleur van widgetknoppen) winnen. */
+@layer base {
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; }
+	body {
+		margin: 0;
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 17px;
+		line-height: 1.6;
+		-webkit-font-smoothing: antialiased;
+	}
+	a { color: inherit; text-decoration: none; }
+}
+
+.om-container { max-width: var(--om-width); margin: 0 auto; padding: 0 clamp(20px, 4vw, 40px); }
+
+/* Kop: merk links, menu rechts, een dunne gradientband eronder. */
+.om-header { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--background) 92%, transparent); backdrop-filter: blur(10px); }
+.om-header::after { content: ""; display: block; height: 2px; background: var(--om-gradient); }
+.om-header-row { height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.om-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 20px; letter-spacing: -0.3px; }
+.om-mark { width: 32px; height: 32px; flex: none; }
+.om-nav { display: flex; flex-wrap: wrap; gap: 4px 22px; font-size: 15px; font-weight: 500; color: var(--muted); }
+.om-nav a:hover { color: var(--foreground); }
+.om-mobile-menu { display: none; position: relative; }
+.om-mobile-menu summary { display: grid; place-items: center; cursor: pointer; list-style: none; }
+.om-mobile-menu summary::-webkit-details-marker { display: none; }
+.om-mobile-menu div { position: absolute; top: 34px; right: 0; width: 240px; padding: 8px; border: 1px solid var(--border); border-radius: 10px; background: var(--background); box-shadow: 0 12px 30px #1618261f; }
+.om-mobile-menu div a { display: block; padding: 10px 12px; font-size: 15px; border-radius: 6px; }
+.om-mobile-menu div a:hover { background: var(--surface); }
+@media (max-width: 1000px) {
+	.om-nav { display: none; }
+	.om-mobile-menu { display: block; }
+}
+
+/* De pagina: de widgets doen de opmaak, hier alleen ruimte en leesbaarheid. */
+.om-main { padding: 48px 0 96px; }
+.om-page h1 { font-size: clamp(32px, 4vw, 46px); line-height: 1.12; letter-spacing: -0.02em; font-weight: 700; margin: 0 0 24px; }
+.om-page h2 { letter-spacing: -0.01em; }
+.om-page img { border-radius: 10px; }
+
+.eyebrow { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--muted); }
+.markdown { line-height: 1.7; }
+.markdown > * + * { margin-top: 1em; }
+.markdown h2 { font-size: 24px; font-weight: 700; margin-top: 1.6em; }
+.markdown h3 { font-size: 19px; font-weight: 700; margin-top: 1.4em; }
+.markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown code { font-size: .9em; padding: .1em .35em; border-radius: 4px; background: var(--surface); }
+.markdown table { border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+.markdown blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); }
+
+/* Voet: rustig, op de oppervlaktekleur. */
+.om-footer { border-top: 1px solid var(--border); background: var(--surface); padding: 40px 0; font-size: 14px; color: var(--muted); }
+.om-footer-row { display: grid; gap: 10px; }
+.om-footer .om-brand { color: var(--foreground); font-size: 17px; }
+.om-footer .om-mark { width: 26px; height: 26px; }
+.om-footer p { margin: 0; max-width: 620px; }
+.om-footer-small a { text-decoration: underline; text-underline-offset: 3px; }

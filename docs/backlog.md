@@ -736,6 +736,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 6. Deploy & beheer
 
+- [ ] **Omnium-site live zetten** (11-10-2026): de site staat op
+      omnium.imprint-engine.nl (noindex). Voor livegang: teksten bijstellen,
+      plaatshouders invullen (geschiedenis, Paratmos, Mark, licentie,
+      contact), de formatentabel en de statussen "te controleren" nalopen,
+      eventueel een link naar een publieke Studio; dan `robots` in
+      `sites/omnium/src/app/layout.tsx` weg en een eigen domein kiezen.
+
 - [ ] **Resterende `npm audit`-meldingen** (29-09-2026, na de security-updates):
       `esbuild` ≤0.24 via `@esbuild-kit` onder `drizzle-kit` (alleen dev/migraties;
       `--force` zou drizzle-kit naar 0.18 downgraden) en `lodash-es` via `mermaid`

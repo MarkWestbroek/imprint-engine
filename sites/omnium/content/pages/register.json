@@ -1,0 +1,123 @@
+{
+  "slug": "register",
+  "title": "Van model naar bitemporeel register",
+  "description": "Uit het canonieke model genereert Omnium een bitemporele database en API.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Van model naar *bitemporeel* register",
+                  "subtitle": "Uit het canonieke model genereert Omnium een database en een API die onthouden wat gold én wat wanneer bekend was.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een bitemporeel register houdt twee tijdlijnen bij:\n\n- **Materiële tijd**: wanneer iets in de werkelijkheid geldig was. Iemand woont vanaf 1 maart op een nieuw adres.\n- **Formele tijd**: wanneer het register dat wist. De verhuizing werd op 20 maart doorgegeven.\n\nMet alleen de eerste tijdlijn weet je niet meer wat je op 10 maart kon weten. Met beide kun je elke beslissing achteraf verklaren.",
+                  "title": "Twee tijdlijnen"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Schrijven gebeurt in **registraties**: elke wijziging is een vastgelegd moment, niet een overschreven waarde. Correcties en ongedaanmakingen blijven zichtbaar, zodat er een volledig spoor is van wat er wanneer is veranderd.\n\nDaardoor kun je **tijdreizen**: opvragen wat er op een eerder moment bekend was.",
+                  "title": "Registraties"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Elke entiteit krijgt in de gegenereerde database een vaste kern met haar identiteit (de *hub*) en daarnaast de opeenvolgende versies van haar gegevens (de *_Data*), elk met hun formele en materiële tijd. De identiteit verandert nooit, de gegevens krijgen er versies bij. Zo blijft een verwijzing naar een persoon geldig, ook als alles aan die persoon verandert.",
+                  "title": "Hoe het is opgebouwd"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 3,
+            "widgets": [
+              {
+                "type": "image",
+                "config": {
+                  "src": "/shots/api.png",
+                  "alt": "De gegenereerde API van het register",
+                  "caption": "De API die uit het model wordt gegenereerd."
+                }
+              }
+            ]
+          },
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "headers": [
+                    "Onderdeel",
+                    "Status"
+                  ],
+                  "rows": [
+                    [
+                      "Database en API genereren uit het canonieke model",
+                      "werkt"
+                    ],
+                    [
+                      "Formeel tijdreizen via REST",
+                      "werkt"
+                    ],
+                    [
+                      "Materieel tijdreizen, generiek",
+                      "gepland"
+                    ],
+                    [
+                      "Volledige tijdreis via GraphQL",
+                      "gepland"
+                    ]
+                  ],
+                  "striped": true,
+                  "title": "Status"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

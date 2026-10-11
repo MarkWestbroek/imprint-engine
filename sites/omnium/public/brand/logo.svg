@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 48" role="img" aria-label="Omnium Studio">
+  <defs>
+    <linearGradient id="om-ring" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#60a5fa"/>
+      <stop offset="0.5" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <linearGradient id="om-hub" x1="18" y1="18" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a5b4fc"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <linearGradient id="om-word" x1="56" y1="0" x2="240" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e4e4ea"/>
+      <stop offset="1" stop-color="#bcd3ff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- mark -->
+  <g>
+    <circle cx="24" cy="24" r="18" fill="none" stroke="url(#om-ring)" stroke-width="3"/>
+    <circle cx="24"    cy="6"  r="3.4" fill="#3b82f6"/>
+    <circle cx="39.59" cy="15" r="3.4" fill="#6366f1"/>
+    <circle cx="39.59" cy="33" r="3.4" fill="#8b5cf6"/>
+    <circle cx="24"    cy="42" r="3.4" fill="#22d3ee"/>
+    <circle cx="8.41"  cy="33" r="3.4" fill="#0ea5e9"/>
+    <circle cx="8.41"  cy="15" r="3.4" fill="#38bdf8"/>
+    <rect x="19.5" y="19.5" width="9" height="9" rx="2.2" transform="rotate(45 24 24)" fill="url(#om-hub)"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="49" y="32" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="24" letter-spacing="-0.4">
+    <tspan font-weight="700" fill="url(#om-word)">Omnium</tspan><tspan font-weight="300" fill="#9aa6c4" dx="3">Studio</tspan>
+  </text>
+</svg>

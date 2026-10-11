@@ -7,6 +7,7 @@
 #
 #   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
 #   commonground → 127.0.0.1:3400    (showcase; 3200/3300: volksgebouw/psycholog)
+#   omnium     → 127.0.0.1:3500      (informatiesite over Omnium)
 #   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
 #   minio      → alleen imprint_net (API :9000); console 127.0.0.1:9011
 #
@@ -41,6 +42,7 @@ services:
       IMPRINT_DB_PASSWORD: ${IMPRINT_DB_PASSWORD:?IMPRINT_DB_PASSWORD ontbreekt in .env}
       # Leeg mag: dan maakt pg-init.sh die database niet aan (bestaand volume: zie docs/deploy-vps.md).
       COMMONGROUND_DB_PASSWORD: ${COMMONGROUND_DB_PASSWORD:-}
+      OMNIUM_DB_PASSWORD: ${OMNIUM_DB_PASSWORD:-}
     ports:
       - "127.0.0.1:${PG_PORT:-5434}:5432"
     volumes:
@@ -161,6 +163,28 @@ services:
       - commonground_assets:/data/assets
       - /srv/imprint-stats/commonground:/data/stats:ro
 
+  # Nederlandstalige informatiesite over Omnium (omnium.imprint-engine.nl).
+  # Pagina's en menu uit de store; beginteksten via `./deploy.sh seed omnium --only=site,page,menu`.
+  omnium:
+    <<: *site
+    image: imprint/omnium:${OMNIUM_SITE_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: omnium, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
+      network: host
+      secrets: [database_url]
+    environment:
+      STATS_REPORT_DIR: /data/stats
+      DATABASE_URL: postgres://omnium:${OMNIUM_DB_PASSWORD}@postgres:5432/omnium
+      OMNIUM_URL: *omnium_url
+      SESSION_SECRET: ${OMNIUM_SESSION_SECRET:-}
+      ASSET_ROOT: /data/assets
+    ports:
+      - "127.0.0.1:${OMNIUM_SITE_PORT:-3500}:3000"
+    volumes:
+      - omnium_assets:/data/assets
+      - /srv/imprint-stats/omnium:/data/stats:ro
+
   # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
   # productiedatabase. Draait alleen op verzoek:
   #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
@@ -188,6 +212,7 @@ volumes:
   musicbrain_assets:
   imprint_assets:
   commonground_assets:
+  omnium_assets:
 
 networks:
   imprint_net:

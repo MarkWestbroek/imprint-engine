@@ -411,6 +411,20 @@ mailbox bij Quickhost, poort 465) en herstart de site (`SITES=commonground
 ./deploy.sh`). Zonder die vier zegt registreren dat mail niet is ingesteld.
 De tabellen voor leden komen met de gewone migratie in `deploy.sh`.
 
+**De Omnium-site** (`omnium`, poort 3500, `omnium.imprint-engine.nl`): zelfde
+stappen, met de seed in plaats van de Pleio-import:
+
+```bash
+printf 'OMNIUM_DB_PASSWORD=%s
+OMNIUM_SESSION_SECRET=%s
+' "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" >> .env
+set -a; . ./.env; set +a
+docker compose exec -T postgres psql -U postgres -c "CREATE ROLE omnium LOGIN PASSWORD '$OMNIUM_DB_PASSWORD'" -c "CREATE DATABASE omnium OWNER omnium"
+./deploy.sh migrate omnium
+./deploy.sh seed omnium --only=site,page,menu
+SITES=omnium ./deploy.sh
+```
+
 Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
 en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
 

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 228 48" role="img" aria-label="Omnium Studio">
+  <!-- Light variant: full-colour mark + dark wordmark, for light/white backgrounds. -->
+  <defs>
+    <linearGradient id="oml-ring" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3b82f6"/>
+      <stop offset="0.5" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="oml-hub" x1="18" y1="18" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+
+  <!-- mark -->
+  <circle cx="24" cy="24" r="18" fill="none" stroke="url(#oml-ring)" stroke-width="3"/>
+  <circle cx="24"    cy="6"  r="3.4" fill="#2563eb"/>
+  <circle cx="39.59" cy="15" r="3.4" fill="#4f46e5"/>
+  <circle cx="39.59" cy="33" r="3.4" fill="#7c3aed"/>
+  <circle cx="24"    cy="42" r="3.4" fill="#0891b2"/>
+  <circle cx="8.41"  cy="33" r="3.4" fill="#0284c7"/>
+  <circle cx="8.41"  cy="15" r="3.4" fill="#0ea5e9"/>
+  <rect x="19.5" y="19.5" width="9" height="9" rx="2.2" transform="rotate(45 24 24)" fill="url(#oml-hub)"/>
+
+  <!-- wordmark -->
+  <text x="49" y="32" font-family="Inter, 'Segoe UI', system-ui, sans-serif" font-size="24" letter-spacing="-0.4">
+    <tspan font-weight="700" fill="#1f2937">Omnium</tspan><tspan font-weight="300" fill="#64748b" dx="3">Studio</tspan>
+  </text>
+</svg>

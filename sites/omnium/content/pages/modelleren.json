@@ -1,0 +1,114 @@
+{
+  "slug": "modelleren",
+  "title": "Modelleren (MDA)",
+  "description": "Omnium beschrijft de hele keten van canoniek model tot code, en leidt daaruit af wat afgeleid kan worden.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Modelleren, *modelgedreven*",
+                  "subtitle": "MDA (model-driven architecture) betekent: uit het model ontstaan formulieren, API's, databaseschema en code — niet andersom.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 3,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Vanwege het modelgedreven karakter beschrijft Omnium niet alleen het canonieke model, maar de hele keten eromheen. Overal worden dezelfde begrippen gebruikt.\n\n- Uit het canonieke model ontstaan **schermen en formulieren**.\n- **Gebruikers en use cases** beschrijven hun flows in termen van het canonieke model.\n- **Processen** (BPMN) en **beslisregels** (DMN) gebruiken dezelfde begrippen.\n- **Sequentiediagrammen** leggen de koppeling naar code en API's.\n- **API's** (OpenAPI, GraphQL) en het **databaseschema** worden afgeleid uit het canonieke model.",
+                  "title": "De hele keten"
+                }
+              }
+            ]
+          },
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een afleiding is in Omnium geen verborgen stuk code, maar een **regelset**: een lezer haalt de bron op, de regelset beschrijft de vertaling, een toepasser maakt het resultaat. Tussen bron en resultaat blijven verwijzingen bestaan, zodat je kunt zien waar iets vandaan komt.",
+                  "title": "Transformaties"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "image",
+                "config": {
+                  "src": "/shots/bpmn.png",
+                  "alt": "Een BPMN-procesmodel in Omnium",
+                  "caption": "Een proces in BPMN, met de begrippen uit het canonieke model."
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "image",
+                "config": {
+                  "src": "/shots/dmn.png",
+                  "alt": "Een DMN-beslismodel in Omnium",
+                  "caption": "Beslisregels in DMN."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 3,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Om compleet te zijn, kent Omnium vrijwel alle gangbare manieren van modelleren. Stand oktober 2026:\n\ncanoniek UML · UML (klassen, objecten, composite structure, component en deployment, activiteiten, sequentie, communicatie, state machine, use case) · MIM 1.2 · SysML · ERD · ArchiMate · BPMN · CMMN · DMN (DRD) · business- en requirementsmodel · formulier · OpenAPI 3.1 · GraphQL · XSD · WSDL · toegangsregel · een aanvullingsprofiel voor Enterprise Architect.",
+                  "title": "Modeltalen"
+                }
+              }
+            ]
+          },
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Elke modeltaal is in Omnium een **profiel**: een beschrijving van de elementen en regels van die taal. Een nieuwe notatie toevoegen is dus een profiel schrijven, geen nieuw programmeerwerk. De Studio heeft daarvoor een profiel-ontwerper, zodat je zelf een modeltaal kunt beschrijven (in termen van de metaniveaus M0 tot M3).",
+                  "title": "Een eigen modeltaal"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

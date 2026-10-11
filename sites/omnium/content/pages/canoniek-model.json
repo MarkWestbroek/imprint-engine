@@ -1,0 +1,92 @@
+{
+  "slug": "canoniek-model",
+  "title": "Canoniek model",
+  "description": "Eén gedeeld model van de betekenis van gegevens, los van applicatie of notatie.",
+  "publishedAt": "2026-10-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Het *canonieke* model",
+                  "subtitle": "Eén gedeeld model van de betekenis van gegevens, los van applicatie of notatie.",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Een canoniek model beschrijft wat gegevens betekenen: welke **entiteiten** er zijn, welke **gegevenselementen** ze hebben, hoe ze met elkaar **samenhangen** en hoe ze in de **tijd** veranderen. Het zegt niets over schermen, berichten of opslag. Die komen later, als afleiding.",
+                  "title": "Wat het is"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Alle andere modellen in Omnium verwijzen naar het canonieke model: een formulier, een API, een proces, een databaseschema. Verandert een begrip, dan zie je waar het doorwerkt, en de afgeleide onderdelen volgen. Er is één plek waar de betekenis staat, in plaats van tien kopieën die uit elkaar groeien.",
+                  "title": "Waarom het centraal staat"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Afgeleide velden en relaties beschrijf je in het model zelf, met **CEL** (Common Expression Language: een kleine, veilige taal voor expressies). Een leeftijd die volgt uit de geboortedatum, of een relatie die volgt uit een adres, staat dan op één plek en niet verspreid door de code van elke toepassing.",
+                  "title": "Rekenregels in het model"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "mediatext",
+                "config": {
+                  "title": "Voorbeeld: np-loc",
+                  "src": "/shots/uml-detail.png",
+                  "alt": "Detail van het UML-model van np-loc",
+                  "imageSide": "right",
+                  "imageWidth": "half",
+                  "markdown": "Op deze site komt steeds hetzelfde voorbeelddomein terug: **np-loc**, natuurlijke personen en locaties. Klein genoeg om te overzien, rijk genoeg voor wat er in de praktijk speelt: een persoon verhuist, een adres verandert, een correctie komt later binnen."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
