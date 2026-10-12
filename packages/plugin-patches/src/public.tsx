@@ -24,7 +24,7 @@ export type PatchesOptions = {
 };
 
 /** The public pages are in English (MusicBrain); the admin's moderation screen keeps POOL_LABELS. */
-const POOL_LABELS_EN: Record<Pool, string> = { prive: "private", voorstel: "proposal", experimenteel: "lab", centraal: "standard set", vraag: "question" };
+const POOL_LABELS_EN: Record<Pool, string> = { prive: "private", voorstel: "proposal", experimenteel: "lab", centraal: "standard set", vraag: "question", afgewezen: "rejected" };
 
 const LISTS: { pool: Pool; href: () => string; title: string; intro: string }[] = [
   { pool: "centraal", href: patchesHref, title: "Patches", intro: "The standard set that comes with the editor: listen, download, or open it in the editor." },

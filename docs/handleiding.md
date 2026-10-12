@@ -753,7 +753,7 @@ Op een patchpagina opent **▶ Play** de patch meteen in de speelmodus van de ed
 (eerst de voorstellen) een kaart met het front, de demo om te beluisteren,
 wat de patch nodig heeft en de downloads. Daaronder de knoppen *Naar
 centraal*, *Naar het lab*, *Beantwoord* (bij vragen), *Terug naar voorstel*
-en *Afwijzen* (twee keer klikken; onder Geschiedenis terug te halen).
+en *Afwijzen*. Bij afwijzen geef je een reden op; de inzender ziet die (ook via de API). De patch gaat naar het tabblad *Afgewezen* en blijft daar, zodat hij niet opnieuw wordt ingestuurd; *Terug naar voorstel* zet hem terug.
 Centraal is CC0: koos de inzender CC BY, dan kan de patch naar het lab, of
 de inzender kiest eerst CC0. Je eigen patch kun je bij het verplaatsen
 naar centraal meteen CC0 maken.

@@ -87,7 +87,10 @@ export default async function ComponentPage({ params }: Props) {
       b.date.localeCompare(a.date)
   )[0];
   const pinnedSpec = bestPin ? specs.find((s) => s.version === bestPin.version) : undefined;
-  const otherSpecs = pinnedSpec ? specs.filter((s) => s !== pinnedSpec) : specs;
+  // One version up front: the pinned one, else the newest. The rest, newest first, folded away.
+  const newestFirst = [...specs].sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
+  const mainSpec = pinnedSpec ?? newestFirst[0];
+  const otherSpecs = newestFirst.filter((s) => s !== mainSpec);
 
   const fallback = (
     <article className="max-w-3xl space-y-8">
@@ -179,64 +182,50 @@ export default async function ComponentPage({ params }: Props) {
         </section>
       )}
 
-      {pinnedSpec?.spec && bestPin && (
+      {mainSpec?.spec && (
         <section>
           <header className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h2 className="text-xl font-semibold tracking-tight">
-              {kindLabel(pinnedSpec.spec?.kind ?? component.kind)} {pinnedSpec.version}
+              {kindLabel(mainSpec.spec.kind ?? component.kind)} {mainSpec.version}
             </h2>
-            <Link
-              href={`/releases/${bestPin.releaseSlug}`}
-              className="rounded-full border border-accent px-2.5 py-0.5 font-mono text-xs text-accent hover:bg-accent/10"
-            >
-              pinned by {bestPin.project} {displayVersion(bestPin.releaseVersion)} ·{" "}
-              {bestPin.channel}
-            </Link>
+            {bestPin && mainSpec === pinnedSpec && (
+              <Link
+                href={`/releases/${bestPin.releaseSlug}`}
+                className="rounded-full border border-accent px-2.5 py-0.5 font-mono text-xs text-accent hover:bg-accent/10"
+              >
+                pinned by {bestPin.project} {displayVersion(bestPin.releaseVersion)} ·{" "}
+                {bestPin.channel}
+              </Link>
+            )}
           </header>
           <div className="mt-4">
-            <BoardSpecView spec={pinnedSpec.spec} kind={component.kind} />
+            <BoardSpecView spec={mainSpec.spec} kind={component.kind} />
           </div>
         </section>
       )}
 
-      {otherSpecs.length > 0 &&
-        (pinnedSpec ? (
-          <details className="group">
-            <summary className="cursor-pointer text-xl font-semibold tracking-tight text-muted transition-colors hover:text-foreground">
-              Other versions ({otherSpecs.length})
-              <span className="ml-2 font-mono text-sm">
-                {otherSpecs.map((s) => s.version).join(", ")}
-              </span>
-            </summary>
-            <div className="mt-4 space-y-8">
-              {otherSpecs.map(({ version, spec }) =>
-                spec ? (
-                  <section key={version}>
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      {kindLabel(spec?.kind ?? component.kind)} {version}
-                    </h3>
-                    <div className="mt-4">
-                      <BoardSpecView spec={spec} kind={component.kind} />
-                    </div>
-                  </section>
-                ) : null
-              )}
-            </div>
-          </details>
-        ) : (
-          otherSpecs.map(({ version, spec }) =>
-            spec ? (
-              <section key={version}>
-                <h2 className="text-xl font-semibold tracking-tight">
-                  {kindLabel(spec?.kind ?? component.kind)} {version}
-                </h2>
-                <div className="mt-4">
-                  <BoardSpecView spec={spec} kind={component.kind} />
-                </div>
-              </section>
-            ) : null
-          )
-        ))}
+      {otherSpecs.length > 0 && (
+        <details className="group">
+          <summary className="cursor-pointer text-xl font-semibold tracking-tight text-muted transition-colors hover:text-foreground">
+            {pinnedSpec ? "Other versions" : "Earlier versions"} ({otherSpecs.length})
+            <span className="ml-2 font-mono text-sm">{otherSpecs.map((s) => s.version).join(", ")}</span>
+          </summary>
+          <div className="mt-4 space-y-8">
+            {otherSpecs.map(({ version, spec }) =>
+              spec ? (
+                <section key={version}>
+                  <h3 className="text-lg font-semibold tracking-tight">
+                    {kindLabel(spec.kind ?? component.kind)} {version}
+                  </h3>
+                  <div className="mt-4">
+                    <BoardSpecView spec={spec} kind={component.kind} />
+                  </div>
+                </section>
+              ) : null
+            )}
+          </div>
+        </details>
+      )}
     </article>
   );
 

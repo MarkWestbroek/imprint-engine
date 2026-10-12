@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
+  verwijderd maar gaat naar de pool `afgewezen` (privé: alleen de inzender
+  ziet hem), met `rejection` {reden, datum, door}. Zo ziet een script dat de
+  basisset instuurt via `GET /api/patches` dat hij is afgewezen, en stuurt
+  hem niet opnieuw. Een update van de inzender laat hem afgewezen; "Terug naar
+  voorstel" in /admin/patches (nieuw tabblad Afgewezen) zet hem terug.
+- **Componentpagina's tonen één versie** (MusicBrain): de vastgepinde, anders
+  de nieuwste; eerdere versies ingeklapt, nieuwste eerst.
 - **Families en tags voor componenten** (`family`, `tags` in het
   componentschema); **/modules** (MusicBrain) groepeert per familie, in een
   vaste volgorde, met tag-chips (meerdere = allemaal), een zoekveld en A–Z;

@@ -17,6 +17,7 @@ const TABS: { pool: Pool; label: string }[] = [
   { pool: "vraag", label: "Vragen" },
   { pool: "experimenteel", label: "Lab" },
   { pool: "centraal", label: "Centraal" },
+  { pool: "afgewezen", label: "Afgewezen" },
 ];
 
 export function patchesScreen(opts: PatchesOptions) {
@@ -88,6 +89,15 @@ async function Card({ patch, opts, call, me, store }: { patch: Patch; opts: Patc
               </li>
             ))}
           </ul>
+        )}
+        {patch.pool === "afgewezen" && patch.rejection && (
+          <p className="rounded-md border border-red-400/40 bg-background p-3 text-sm">
+            <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted">
+              Afgewezen · {patch.rejection.at}
+              {patch.rejection.by && ` · ${patch.rejection.by}`}
+            </span>
+            {patch.rejection.reason || <span className="text-muted">Geen reden opgegeven.</span>}
+          </p>
         )}
         {patch.pool === "vraag" && patch.question && (
           <div className="rounded-md border border-line bg-background p-3 text-sm">

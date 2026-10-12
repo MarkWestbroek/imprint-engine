@@ -21,6 +21,7 @@ export function ModerateButtons({ slug, pool, license, own, answered, call }: Pr
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirming, setConfirming] = useState<"reject" | "cc0" | null>(null);
+  const [reason, setReason] = useState("");
 
   const run = async (action: string, ...args: unknown[]) => {
     setBusy(true);
@@ -76,9 +77,9 @@ export function ModerateButtons({ slug, pool, license, own, answered, call }: Pr
             Terug naar voorstel
           </button>
         )}
-        {confirming === "reject" ? (
+        {pool === "afgewezen" ? null : confirming === "reject" ? (
           <>
-            <button type="button" disabled={busy} className={`${btn} border-red-400 text-red-500`} onClick={() => run("reject")}>
+            <button type="button" disabled={busy} className={`${btn} border-red-400 text-red-500`} onClick={() => run("reject", reason)}>
               Ja, afwijzen
             </button>
             <button type="button" className={btn} onClick={() => setConfirming(null)}>
@@ -92,7 +93,19 @@ export function ModerateButtons({ slug, pool, license, own, answered, call }: Pr
         )}
       </div>
       {cc0Needed && !own && pool !== "centraal" && <p className="text-xs text-muted">Naar centraal kan pas als de inzender CC0 kiest; de centrale set is vrij van voorwaarden.</p>}
-      {confirming === "reject" && <p className="text-xs text-muted">De patch verdwijnt uit alle pools; onder Geschiedenis is hij terug te halen.</p>}
+      {confirming === "reject" && (
+        <label className="block text-xs text-muted">
+          Reden (de inzender ziet hem, ook via de API)
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            rows={2}
+            className="mt-1 block w-full rounded-md border border-line bg-background px-2 py-1 text-sm text-foreground"
+            placeholder="Bijv.: lijkt te veel op een patch die er al is"
+          />
+          <span className="mt-1 block">De patch gaat naar Afgewezen en blijft daar; met Terug naar voorstel zet je hem terug.</span>
+        </label>
+      )}
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>
   );

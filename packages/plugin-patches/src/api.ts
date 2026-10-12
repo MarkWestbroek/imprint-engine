@@ -75,6 +75,8 @@ function wire(req: Request, p: Patch) {
     derivedFrom: p.derivedFrom,
     question: p.question,
     answered: p.answered,
+    // Pool `afgewezen` (only its author sees it): why, so a script does not send it again.
+    rejection: p.rejection,
     publishedAt: p.publishedAt,
     url: new URL(patchHref(p.slug), publicOrigin(req)).toString(),
     fileUrl: abs(p.file),

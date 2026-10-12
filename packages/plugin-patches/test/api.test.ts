@@ -3,7 +3,7 @@ import { beforeEach, describe, it } from "node:test";
 import { ContentTypeRegistry, coreContentTypeDefinitions, guardReads, inProcessPdp, type AuthzenSubject } from "@imprint/content-core";
 import { createMemoryDb, MemoryContentStore } from "@imprint/content-core/memory-store";
 import type { AdminContext } from "@imprint/runtime-admin";
-import { patchesApiItem } from "../src/api";
+import { patchesApi, patchesApiItem } from "../src/api";
 import { patchesContentTypes } from "../src/content-types";
 import { PatchSchema, type Patch } from "../src/schemas";
 
@@ -142,5 +142,26 @@ describe("updating a patch on its own slug", () => {
     // The old promote body still works, question text and all.
     const promoted = await send({ kind: "question", question: "Waarom klinkt dit dof?" });
     assert.deepEqual([promoted.status, promoted.body.pool], [200, "vraag"]);
+  });
+});
+
+describe("a rejected patch", () => {
+  const list = async (token?: string) => {
+    const req = new Request("https://musicbrain.nl/api/patches", { headers: token ? { authorization: `Bearer ${token}` } : {} });
+    return ((await (await patchesApi(admin, req)).json()) as { patches: { slug: string; pool: string; rejection?: { reason: string } }[] }).patches;
+  };
+
+  it("stays, in the pool afgewezen with its reason, for its author only: a script that resubmits sees it", async () => {
+    await put(patchItem({ pool: "afgewezen", rejection: { reason: "Lijkt te veel op Warm pad 2", at: "2026-10-12", by: "mark" } }));
+    const own = (await list("imp_ada")).find((p) => p.slug === "warm-pad");
+    assert.deepEqual([own?.pool, own?.rejection?.reason], ["afgewezen", "Lijkt te veel op Warm pad 2"]);
+    assert.equal((await list("imp_bo")).some((p) => p.slug === "warm-pad"), false, "someone else does not see it");
+    assert.equal((await list()).some((p) => p.slug === "warm-pad"), false, "nor does a visitor");
+  });
+
+  it("an update by its author leaves it rejected: only the moderators send it back", async () => {
+    await put(patchItem({ pool: "afgewezen", rejection: { reason: "", at: "2026-10-12", by: "mark" } }));
+    const res = await send({ description: "Nu met minder galm." });
+    assert.deepEqual([res.status, res.body.pool, res.body.requeued], [200, "afgewezen", false]);
   });
 });

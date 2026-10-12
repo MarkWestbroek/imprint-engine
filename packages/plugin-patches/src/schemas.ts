@@ -9,9 +9,10 @@ import { Access, assetSrc, Locale } from "@imprint/content-core";
  * staff; the rest is public. That link is part of the schema (`access` is
  * derived, never typed), so the admin cannot set the two apart.
  */
-export const Pool = z.enum(["prive", "voorstel", "experimenteel", "centraal", "vraag"]);
+/** `afgewezen`: rejected by the moderators; it stays (with its reason) so a script that resubmits sees it. */
+export const Pool = z.enum(["prive", "voorstel", "experimenteel", "centraal", "vraag", "afgewezen"]);
 export type Pool = z.infer<typeof Pool>;
-export const POOL_LABELS: Record<Pool, string> = { prive: "privé", voorstel: "voorstel", experimenteel: "experimenteel", centraal: "centraal", vraag: "vraag" };
+export const POOL_LABELS: Record<Pool, string> = { prive: "privé", voorstel: "voorstel", experimenteel: "experimenteel", centraal: "centraal", vraag: "vraag", afgewezen: "afgewezen" };
 
 export const License = z.enum(["CC-BY-4.0", "CC0"]);
 export type License = z.infer<typeof License>;
@@ -30,8 +31,8 @@ export const Requires = z.object({
 });
 export type Requires = z.infer<typeof Requires>;
 
-/** A proposal and a private patch are private; everything else public. */
-export const poolAccess = (pool: string): "private" | "public" => (pool === "voorstel" || pool === "prive" ? "private" : "public");
+/** A proposal, a private and a rejected patch are private (its author still sees it); everything else public. */
+export const poolAccess = (pool: string): "private" | "public" => (pool === "voorstel" || pool === "prive" || pool === "afgewezen" ? "private" : "public");
 
 const PatchBase = z.object({
   slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -62,6 +63,10 @@ const PatchBase = z.object({
   question: z.string().optional(),
   answered: z.boolean().default(false),
   license: License.default("CC-BY-4.0"),
+  /** Pool `afgewezen`: why, when and by whom (the author sees it through the API). */
+  rejection: z
+    .object({ reason: z.string().default(""), at: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), by: z.string().default("") })
+    .optional(),
   /** ISO date of the first version. */
   publishedAt: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });

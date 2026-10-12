@@ -51,7 +51,8 @@ export async function moderate(admin: AdminContext, slug: string, pool: string, 
     }
     return save(admin, patch, { pool: "centraal", license: "CC0" }, by);
   }
-  return save(admin, patch, { pool: target.data }, by);
+  // Back from the rejected pool: the reason goes with it (History keeps it).
+  return save(admin, patch, { pool: target.data, rejection: target.data === "afgewezen" ? patch.rejection : undefined }, by);
 }
 
 /** A question answered (or not any more). */
@@ -61,13 +62,16 @@ export async function answered(admin: AdminContext, slug: string, value: boolean
   return save(admin, got.patch, { answered: !!value }, got.by);
 }
 
-/** Reject: the patch leaves every pool (a tombstone; History brings it back). */
-export async function reject(admin: AdminContext, slug: string): Promise<ModerateResult> {
+/**
+ * Reject: the patch goes to the pool `afgewezen`, with the reason. It is not
+ * deleted, so its author (and a script that resubmits the standard set) sees
+ * it through the API instead of sending it again; "Terug naar voorstel" undoes it.
+ */
+export async function reject(admin: AdminContext, slug: string, reason = ""): Promise<ModerateResult> {
   const got = await editable(admin, slug);
   if ("ok" in got) return got;
-  await admin.imprint.writableStore!.deleteItem("patch", slug, "en");
-  touchPatch(slug);
-  return { ok: true };
+  const rejection = { reason: String(reason).trim().slice(0, 2000), at: new Date().toISOString().slice(0, 10), by: got.by };
+  return save(admin, got.patch, { pool: "afgewezen", rejection }, got.by);
 }
 
 export const moderationActions = { moderate, answered, reject };
