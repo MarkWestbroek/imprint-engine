@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { store } from "@/lib/content";
 import { readOpts } from "@/lib/preview";
 import { displayVersion } from "@/lib/format";
 import { isModule } from "@/lib/modules";
+import { ModulesBrowser, type ModuleCard } from "@/components/modules-browser";
 
 export const metadata: Metadata = {
   title: "Modules",
@@ -11,10 +11,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * Index of the firmware's modules (lib/modules.ts): their narrow panels side
- * by side, the newest version of each. The boards keep their own index on /boards.
+ * Index of the firmware's modules (lib/modules.ts), the newest version of
+ * each, grouped by family with tags to filter on (ModulesBrowser). The boards
+ * keep their own index on /boards.
  */
-
 export default async function ModulesPage() {
   const opts = await readOpts();
   const [specs, components] = await Promise.all([store.listBoardSpecs(opts), store.listComponents(opts)]);
@@ -26,9 +26,19 @@ export default async function ModulesPage() {
     const seen = newest.get(spec.component);
     if (!seen || spec.version.localeCompare(seen.version, undefined, { numeric: true }) > 0) newest.set(spec.component, spec);
   }
-  const modules = [...newest.values()].sort((a, b) =>
-    (byComponent.get(a.component)?.name ?? a.component).localeCompare(byComponent.get(b.component)?.name ?? b.component)
-  );
+  const cards: ModuleCard[] = [...newest.values()].map((spec) => {
+    const component = byComponent.get(spec.component);
+    const image = spec.assets.renderTop ?? spec.assets.overview;
+    return {
+      slug: spec.component,
+      name: component?.name ?? spec.component,
+      description: component?.description ?? "",
+      version: displayVersion(spec.version),
+      ...(image ? { image } : {}),
+      family: component?.family ?? "",
+      tags: component?.tags ?? [],
+    };
+  });
 
   return (
     <div>
@@ -37,33 +47,7 @@ export default async function ModulesPage() {
         The software modules of the firmware. Each one runs on the Brain and in the editor&apos;s simulator alike;
         its page has the controls, the ports, how it works and patches to try it with.
       </p>
-
-      <div className="mt-8 grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-5">
-        {modules.map((spec) => {
-          const component = byComponent.get(spec.component);
-          const image = spec.assets.renderTop ?? spec.assets.overview;
-          return (
-            <Link
-              key={spec.component}
-              href={`/components/${spec.component}`}
-              className="group flex flex-col rounded-xl border border-line bg-surface p-3 transition-colors hover:border-accent"
-            >
-              {image && (
-                <div className="mb-3 flex h-56 items-center justify-center">
-                  {/* Panels are narrow and tall; contain keeps each one whole. */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={image} alt={`${component?.name ?? spec.component} panel`} className="max-h-full max-w-full object-contain" loading="lazy" />
-                </div>
-              )}
-              <h2 className="font-semibold group-hover:text-accent">{component?.name ?? spec.component}</h2>
-              {component?.description && <p className="mt-1 line-clamp-2 text-sm text-muted">{component.description}</p>}
-              <p className="mt-auto pt-2 font-mono text-xs text-muted">{displayVersion(spec.version)}</p>
-            </Link>
-          );
-        })}
-      </div>
-
-      {modules.length === 0 && <p className="mt-8 text-muted">No modules published yet.</p>}
+      {cards.length > 0 ? <ModulesBrowser modules={cards} /> : <p className="mt-8 text-muted">No modules published yet.</p>}
     </div>
   );
 }

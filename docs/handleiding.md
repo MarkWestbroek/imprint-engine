@@ -715,6 +715,17 @@ Alle reacties staan ook in de admin onder **Annotations**, voor moderatie.
 Technisch zijn reacties en kanttekeningen *annotaties* (W3C Web
 Annotation): één model, met of zonder passage.
 
+## Modules (MusicBrain)
+
+De firmwaremodules (componenten van het soort *software* met een slug die
+met `sw-` begint) staan op **/modules**, gegroepeerd per **familie**, met
+**tags** om op te filteren. Beide zijn velden van de component (*Content →
+Components*): `family` is één naam ("Filters & shapers"), `tags` een lijst in
+kleine letters met streepjes ("mutable-instruments"). Meestal zet het
+publicatiescript van de firmware ze; je kunt ze ook in het formulier
+aanpassen. De volgorde van de families staat in de site
+(`src/lib/modules.ts`).
+
 ## De patch-pool (MusicBrain)
 
 Patches uit de editor staan op de site als content: onder **Patches** in de

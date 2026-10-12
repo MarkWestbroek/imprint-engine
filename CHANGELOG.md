@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Families en tags voor componenten** (`family`, `tags` in het
+  componentschema); **/modules** (MusicBrain) groepeert per familie, in een
+  vaste volgorde, met tag-chips (meerdere = allemaal), een zoekveld en A–Z;
+  het filter staat in de URL. Op een modulepagina linken familie en tags
+  terug naar het gefilterde overzicht.
 
 ## [0.15.0] - 2026-10-12
 - **Omnium-site: eenvoudiger menu** (Modelleren, Transformeren, Samenwerken,

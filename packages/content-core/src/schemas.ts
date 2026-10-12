@@ -311,6 +311,13 @@ export const ComponentSchema = z.object({
   phase: z.string().default(""),
   /** Optional documentation: a page slug, or inline markdown. */
   docs: z.string().optional(),
+  /**
+   * The group it belongs to, one per component (e.g. "Filters & shapers" for a
+   * firmware module); a site can order an overview by it. Free string.
+   */
+  family: z.string().default(""),
+  /** Free tags to filter on, lower case with dashes ("mutable-instruments"). */
+  tags: z.array(z.string()).default([]),
 });
 export type Component = z.infer<typeof ComponentSchema>;
 
