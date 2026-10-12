@@ -105,3 +105,12 @@
 .om-footer .om-mark { width: 26px; height: 26px; }
 .om-footer p { margin: 0; max-width: 620px; }
 .om-footer-small a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* De animatie "dienstverlening" (src/components/service-story.tsx). */
+.service-story { margin: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--background); }
+.service-story svg { display: block; }
+.service-story-controls { display: flex; align-items: center; gap: 14px; padding: 10px 16px; border-top: 1px solid var(--border); background: var(--surface); }
+.service-story-controls > button { width: 34px; height: 34px; border-radius: 999px; border: 1px solid var(--border); background: var(--background); font-size: 13px; cursor: pointer; }
+.service-story-dots { display: flex; flex-wrap: wrap; gap: 6px; }
+.service-story-dots button { width: 10px; height: 10px; padding: 0; border-radius: 999px; border: 0; background: var(--border); cursor: pointer; }
+.service-story-dots button[aria-current="step"] { background: var(--accent); }

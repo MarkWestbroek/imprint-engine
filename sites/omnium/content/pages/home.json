@@ -28,6 +28,19 @@
       {
         "cells": [
           {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "dienstverlening",
+                "config": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
             "span": 2,
             "widgets": [
               {

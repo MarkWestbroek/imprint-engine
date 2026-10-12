@@ -1,5 +1,15 @@
 import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
+import { z } from "zod";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
+
+/** This site's own widget: the service-delivery animation (src/components/service-story.tsx). */
+const serviceStory = {
+  name: "dienstverlening",
+  label: "Animatie: dienstverlening",
+  version: "1.0.0",
+  help: "Eén gegeven door het hele dienstverleningsproces, in drie lagen. Speelt vanzelf; geen instellingen.",
+  configSchema: z.object({}),
+};
 
 /**
  * The widgets this site offers (architecture.md §3): a deliberate, small
@@ -36,6 +46,7 @@ export const widgetCatalog = [
   standardWidgets.pricing,
   // The example form from Omnium, in an iframe (/modelleren/formulieren).
   standardWidgets.embed,
+  serviceStory,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

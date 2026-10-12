@@ -1,5 +1,6 @@
 import type { WidgetViewers } from "@imprint/runtime-admin";
 import { standardViewers } from "@imprint/widgets-standard/viewers";
+import { ServiceStory } from "@/components/service-story";
 
 /** Widget type name → viewer, for every widget in ./registry.ts. */
 export const widgetComponents: WidgetViewers = {
@@ -30,4 +31,5 @@ export const widgetComponents: WidgetViewers = {
   testimonial: standardViewers.testimonial,
   pricing: standardViewers.pricing,
   embed: standardViewers.embed,
+  dienstverlening: () => <ServiceStory />,
 };

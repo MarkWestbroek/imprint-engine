@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Omnium-site: animatie "dienstverlening"** op de voorpagina (eigen widget
+  `dienstverlening`): één gegeven door het hele proces (informeer, vul in,
+  dien in, behandel, beschik, volg, lever) in drie lagen (werkelijkheid,
+  gegevens, data), met dezelfde chips in steeds een ander jasje en een
+  contrast met losse, gemapte schema's. Speelt vanzelf, met pauze en
+  scènepunten; bij "minder beweging" wacht hij op een klik. `?story=<s>`
+  houdt één moment vast.
 - **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
   verwijderd maar gaat naar de pool `afgewezen` (privé: alleen de inzender
   ziet hem), met `rejection` {reden, datum, door}. Zo ziet een script dat de
