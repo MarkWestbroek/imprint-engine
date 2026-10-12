@@ -296,7 +296,7 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
         </div>
       </div>
       <figcaption className="service-story-credits">
-        Muziek: MusicBrain.
+        Muziek: © 2026 MusicBrain.
         {look === "foto" && (
           <>
             {" "}
