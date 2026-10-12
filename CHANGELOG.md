@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+
+## [0.15.0] - 2026-10-12
 - **Omnium-site: eenvoudiger menu** (Modelleren, Transformeren, Samenwerken,
   Plannen, Over): het onderdeel waar je bent is gemarkeerd, ook op de
   pagina's eronder (de `children` van het menu-item). "Waarom Omnium" staat
