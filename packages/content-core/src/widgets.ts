@@ -16,6 +16,11 @@ export const WidgetInstanceSchema = z.object({
   type: z.string().min(1),
   /** Type-specific config; validated against the registered config schema. */
   config: z.unknown().default({}),
+  /**
+   * A note for the editors (markdown): how it was made, what to watch out
+   * for. Kept with the page and its history, never rendered on the site.
+   */
+  note: z.string().optional(),
 });
 export type WidgetInstance = z.infer<typeof WidgetInstanceSchema>;
 

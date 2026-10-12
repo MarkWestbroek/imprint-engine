@@ -296,6 +296,15 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
         </div>
       </div>
       <figcaption className="service-story-credits">
+        <details className="service-story-about">
+          <summary>Over de muziek</summary>
+          <p>
+            De muziek is gemaakt met de eigen synthesizermodules van MusicBrain, dezelfde die in de editor draaien, en
+            gespeeld vanuit een script. Hij gaat van mineur naar majeur, ontspoort bij &ldquo;zo gaat het nu&rdquo; en
+            wordt helder bij &ldquo;één canoniek model&rdquo;. De belletjes en tikjes vallen op de momenten van het
+            verhaal; het volst klinkt hij als de traplift er staat.
+          </p>
+        </details>
         Muziek: © 2026 MusicBrain.
         {look === "foto" && (
           <>

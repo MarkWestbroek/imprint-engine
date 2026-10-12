@@ -32,6 +32,13 @@ describe("applyOp", () => {
     assert.equal(d.body, "x");
   });
 
+  it("widget-note keeps a note for the editors beside the config; an empty note is removed", () => {
+    const noted = applyOp(draft(), { kind: "widget-note", path: { r: 0, c: 0, w: 1 }, note: "Hoe dit gemaakt is." });
+    assert.deepEqual(noted.rows[0]!.cells[0]!.widgets[1], { type: "b", config: { name: "b" }, note: "Hoe dit gemaakt is." });
+    const cleared = applyOp(noted, { kind: "widget-note", path: { r: 0, c: 0, w: 1 }, note: "  " });
+    assert.equal("note" in cleared.rows[0]!.cells[0]!.widgets[1]!, false);
+  });
+
   it("widget-add appends an empty-config widget; widget-config replaces the config", () => {
     let d = applyOp(draft(), { kind: "widget-add", r: 1, c: 0, type: "hero" });
     assert.deepEqual(d.rows[1].cells[0].widgets, [{ type: "hero", config: {} }]);

@@ -230,6 +230,12 @@ zien, inclusief header en footer.
   geldt voor elk item van dat type. Kies "Preview as …" om met een echt
   voorbeeld-item te ontwerpen.
 
+
+**Notitie voor de redactie.** Onder de instellingen van een widget staat
+*Note for editors*: ruimte voor wat collega's moeten weten (hoe iets gemaakt
+is, waar je op moet letten). De notitie wordt met de pagina bewaard en staat
+in de geschiedenis, maar komt nooit op de site.
+
 ## Planning-borden
 
 Onder **Planning** maak je kanban-borden. Een bord hoort bij een product en

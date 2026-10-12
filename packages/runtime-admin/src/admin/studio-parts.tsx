@@ -311,6 +311,7 @@ export function StudioSidebar() {
           path={sel}
           type={widget.type}
           config={(widget.config ?? {}) as Record<string, unknown>}
+          note={(widget as { note?: string }).note ?? ""}
           def={widgetSchemas.find((d) => d.name === widget.type)}
         />
       ) : sel ? (
@@ -331,11 +332,14 @@ function WidgetPane({
   path,
   type,
   config,
+  note,
   def,
 }: {
   path: WidgetPath;
   type: string;
   config: Record<string, unknown>;
+  /** The editors' note on this widget (never on the site). */
+  note: string;
   def?: WidgetSchemaDef;
 }) {
   const { dispatch, setSel, editor: Editor } = useStudio();
@@ -345,6 +349,8 @@ function WidgetPane({
     path,
     config: value,
   }));
+  const [localNote, setLocalNote] = useState(note);
+  useDebouncedOp(localNote, note, (value) => ({ kind: "widget-note", path, note: value }));
 
   return (
     <div>
@@ -382,6 +388,16 @@ function WidgetPane({
           onChange={setLocal}
         />
       )}
+      <label className="mt-4 block border-t border-line pt-3 text-xs text-muted">
+        Note for editors (never shown on the site)
+        <textarea
+          value={localNote}
+          onChange={(e) => setLocalNote(e.target.value)}
+          rows={localNote ? 6 : 2}
+          placeholder="How it was made, what to watch out for…"
+          className="mt-1 block w-full rounded-md border border-line bg-background px-2 py-1 text-sm text-foreground"
+        />
+      </label>
       <div className="mt-4 flex gap-2 border-t border-line pt-3 text-xs">
         <Mini label="↑" title="Move up" onClick={() => moveSel(dispatch, setSel, path, "up")} />
         <Mini label="↓" title="Move down" onClick={() => moveSel(dispatch, setSel, path, "down")} />

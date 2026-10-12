@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Notitie bij een widget** (engine): elke widget kan een `note` hebben,
+  alleen voor de redactie. In de studio staat die onder de instellingen
+  ("Note for editors"); hij hoort bij de pagina en haar historie maar komt
+  nooit op de site (op `WidgetInstanceSchema`, de studio-op `widget-note`).
+  Eerste gebruik: hoe de muziek bij de Omnium-animatie gemaakt is; een
+  ingekorte versie staat zichtbaar onder "Over de muziek".
 - **Omnium-site: animatie "dienstverlening"** op de voorpagina (eigen widget
   `dienstverlening`): één gegeven door het hele proces (informeer, beslis, vul in,
   dien in, behandel, beschik, volg, lever) in drie lagen (werkelijkheid,

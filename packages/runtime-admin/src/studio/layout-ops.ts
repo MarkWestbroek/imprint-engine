@@ -19,6 +19,7 @@ export type DraftOp =
   | { kind: "meta"; patch: Record<string, unknown> }
   | { kind: "body"; body: string }
   | { kind: "widget-config"; path: WidgetPath; config: unknown }
+  | { kind: "widget-note"; path: WidgetPath; note: string }
   | { kind: "widget-add"; r: number; c: number; type: string }
   | { kind: "widget-move"; path: WidgetPath; dir: "up" | "down" | "left" | "right" }
   | { kind: "widget-delete"; path: WidgetPath }
@@ -48,6 +49,15 @@ export function applyOp(draft: PageDraft, op: DraftOp): PageDraft {
     case "widget-config": {
       const widget = rows[op.path.r]?.cells[op.path.c]?.widgets[op.path.w];
       if (widget) widget.config = op.config;
+      break;
+    }
+
+    case "widget-note": {
+      const widget = rows[op.path.r]?.cells[op.path.c]?.widgets[op.path.w];
+      if (widget) {
+        if (op.note.trim()) widget.note = op.note;
+        else delete widget.note;
+      }
       break;
     }
 

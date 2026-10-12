@@ -34,7 +34,8 @@
                 "type": "dienstverlening",
                 "config": {
                   "stijl": "foto"
-                }
+                },
+                "note": "**Muziek** (© 2026 MusicBrain, gemaakt in de chat MUSIC-CREATION, oktober 2026)\n\nHoe het gemaakt is: volledig met MusicBrain's eigen modules (de wasm uit de editor), gespeeld vanuit een script.\n\n- **Klank:** Plaits voor de pad (VA+VCF) en een bijna-sinusbas (FM). Rings modaal voor de pulserende sequencer en de bellen, Rings FM-voice voor de inharmonische plinks, Clouds voor het rommelige stuk, en de eigen plaatreverb.\n- **Verloop:** van D-mineur gaat het naar D-groot. Het ontspoort op 30–36 s, wordt helder op 36 en is het volst op 67–75. Er zit geen melodie in die gaat irriteren als hij loopt.\n- **Momenten:** de belletjes en tikjes vallen op de momenten die Imprint opgaf (14, 20, 24,5–26, 40/42/43,6/45,2, 48, 51, 55, 61, 77–79, 82–85, 88).\n- **Lus:** de muziek klinkt vanaf 90,5 s uit tot stilte op 96,6 s. Hij loopt dus netjes rond, maar is niet naadloos.\n\nBestanden: `public/werkelijkheid/omnium-dienstverlening.mp3` en `.ogg` (97 s, −18 LUFS)."
               }
             ]
           }

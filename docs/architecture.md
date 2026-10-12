@@ -256,7 +256,7 @@ classDiagram
     class PageLayout
     class LayoutRow
     class LayoutCell { span }
-    class Widget { type, config }
+    class Widget { type, config, note? }
     class WidgetType { name, configSchema }
     class User { name, hashedPassword, role }
 
@@ -274,6 +274,10 @@ classDiagram
     Widget --> WidgetType : /type
     User --> Page : ContentUser (v2, nog niet afgedwongen)
 ```
+
+`Widget.note` is een notitie voor de redactie (markdown): de studio bewerkt hem
+met de op `widget-note`, de pagina en haar historie bewaren hem, en de renderer
+toont hem nooit.
 
 Verschillen met het oorspronkelijke UML:
 
