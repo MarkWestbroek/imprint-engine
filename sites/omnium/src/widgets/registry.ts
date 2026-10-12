@@ -7,8 +7,11 @@ const serviceStory = {
   name: "dienstverlening",
   label: "Animatie: dienstverlening",
   version: "1.0.0",
-  help: "Eén gegeven door het hele dienstverleningsproces, in drie lagen. Speelt vanzelf; geen instellingen.",
-  configSchema: z.object({}),
+  help: "Eén gegeven door het hele dienstverleningsproces, in drie lagen. Speelt vanzelf; de bezoeker kan wisselen tussen tekening en foto's.",
+  configSchema: z.object({
+    /** How the reality layer starts: a drawing, or photos of the real places. */
+    stijl: z.enum(["tekening", "foto"]).default("tekening"),
+  }),
 };
 
 /**

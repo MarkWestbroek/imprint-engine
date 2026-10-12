@@ -32,7 +32,9 @@
             "widgets": [
               {
                 "type": "dienstverlening",
-                "config": {}
+                "config": {
+                  "stijl": "foto"
+                }
               }
             ]
           }

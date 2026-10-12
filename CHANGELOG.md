@@ -12,7 +12,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   gegevens, data), met dezelfde chips in steeds een ander jasje en een
   contrast met losse, gemapte schema's. Speelt vanzelf, met pauze en
   scènepunten; bij "minder beweging" wacht hij op een klik. `?story=<s>`
-  houdt één moment vast.
+  houdt één moment vast. Twee stijlen voor de werkelijkheid: een tekening of
+  foto's van de echte plekken (thuis, gemeente, leverancier, CAK), te wisselen
+  in de animatie (`stijl` in de widget, de voorpagina begint met foto's).
+  Na de levering blijft de data: bewaard voor vragen, gedeeld met
+  ketenpartner CAK (eigen bijdrage), en na de bewaartermijn naar het e-depot.
 - **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
   verwijderd maar gaat naar de pool `afgewezen` (privé: alleen de inzender
   ziet hem), met `rejection` {reden, datum, door}. Zo ziet een script dat de

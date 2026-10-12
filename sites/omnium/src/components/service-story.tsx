@@ -8,8 +8,13 @@ import { useEffect, useRef, useState } from "react";
  * token like pollen and stay the same chips throughout; only the jacket
  * around them (form, request, case file, letter, portal, order) changes. A
  * short contrast shows today's practice: a schema per phase, mapped again
- * each time. Plays by itself; a pause button and the scene dots give control,
- * and with reduced motion it waits for a click (WCAG 2.2.2).
+ * each time. After the delivery the data stays (for questions, for the chain
+ * partner CAK) and finally goes to the archive, a digital e-depot.
+ *
+ * Two looks for the reality layer: a drawing, or real photographs of the
+ * places (home, town hall, supplier, CAK); a switch shows either. Plays by
+ * itself; a pause button and the scene dots give control, and with reduced
+ * motion it waits for a click (WCAG 2.2.2).
  *
  * One timeline (seconds) drives everything: each frame derives positions and
  * opacities from `t`, so a still of any scene is just a moment in time.
@@ -32,9 +37,14 @@ const SCENES: Scene[] = [
   { at: 48, until: 55, verb: "beschik", caption: "De beschikking is dezelfde data in briefvorm. Een nieuwe zaak vraagt de traplift aan." },
   { at: 55, until: 61, verb: "volg", caption: "In het klantportaal: dezelfde gegevens, in een ander jasje." },
   { at: 61, until: 67, verb: "lever", caption: "Adres en nummers gaan mee naar de leverancier." },
-  { at: 67, until: 77, caption: "De traplift staat er. De toestand van het systeem — gemeente en inwoners — is verbeterd." },
+  { at: 67, until: 75, caption: "De traplift staat er: de data is weer werkelijkheid geworden." },
+  { at: 75, until: 82, verb: "deel", caption: "De gegevens blijven bewaard, voor vragen en inzicht. Ketenpartner CAK krijgt wat nodig is om de eigen bijdrage te innen." },
+  { at: 82, until: 88, verb: "archiveer", caption: "Na de bewaartermijn gaat het dossier naar het archief: tegenwoordig een digitaal e-depot." },
+  { at: 88, until: 94, caption: "De toestand van het systeem — gemeente en inwoners — is verbeterd." },
 ];
-const LOOP = 81;
+const LOOP = 97;
+
+export type StoryLook = "tekening" | "foto";
 
 /**
  * The decision (12–17 s) is a pause in the data story: the rest of the
@@ -60,7 +70,7 @@ const lerp = (a: number, b: number, p: number) => a + (b - a) * p;
 /** Fade in at a, out at b (with a short ramp). */
 const span = (t: number, a: number, b: number, ramp = 0.6) => Math.min(seg(t, a, a + ramp), 1 - seg(t, b - ramp, b));
 
-type Jacket = "form" | "request" | "file" | "letter" | "portal" | "order";
+type Jacket = "form" | "request" | "file" | "letter" | "portal" | "order" | "dossier";
 // Where the token stands in each phase (data layer), and which jacket it wears.
 const STATIONS: { at: number; x: number; jacket: Jacket }[] = [
   { at: 19, x: 260, jacket: "request" },
@@ -70,7 +80,7 @@ const STATIONS: { at: number; x: number; jacket: Jacket }[] = [
   { at: 56, x: 940, jacket: "order" },
 ];
 
-function tokenState(t: number) {
+function tokenState(t: number): { x: number; y: number; show: number; scale?: number } {
   // Born on the form (gegevens), sinks into data, travels right, rises to werkelijkheid.
   if (t < 15) return { x: 260, y: 250, show: 0 };
   if (t < 19) return { x: 260, y: 250, show: seg(t, 15, 16) };
@@ -83,33 +93,42 @@ function tokenState(t: number) {
     }
     return { x, y: 420, show: 1 };
   }
-  // Data becomes reality again: the token rises to the stairs and dissolves.
-  return { x: lerp(940, 640, seg(t, 62, 65)), y: lerp(420, 160, seg(t, 62, 65)), show: 1 - seg(t, 64.5, 66) };
+  // The data stays when reality changes (a copy rises, see Ghost); then the dossier, the chain partner, the archive.
+  if (t < 70) return { x: 940, y: 420, show: 1 };
+  if (t < 77) return { x: lerp(940, 640, seg(t, 70, 71.5)), y: 420, show: 1 };
+  const p = seg(t, 77, 79);
+  return { x: lerp(640, 232, p), y: lerp(420, 472, p), show: 1 - seg(t, 80, 81), scale: lerp(1, 0.45, p) };
 }
 
 function jacketAt(t: number): Jacket | null {
   if (t >= 12 && t < 19) return "form";
+  if (t >= 70 && t < 77) return "dossier";
   if (t >= 62) return null;
   let j: Jacket | null = null;
   for (const s of STATIONS) if (t >= s.at) j = s.jacket;
   return j;
 }
 
-export function ServiceStory() {
+export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryLook }) {
   const [t, setT] = useState(0);
+  const [look, setLook] = useState<StoryLook>(initialLook);
   const [playing, setPlaying] = useState(false);
   const start = useRef<number | null>(null);
   const base = useRef(0);
 
-  // Autoplay, unless the visitor asked for less motion. `?story=<seconds>` holds one moment (stills).
+  // Autoplay, unless the visitor asked for less motion. `?story=<seconds>` holds one moment (stills), `?look=foto` picks the look.
   useEffect(() => {
-    const hold = new URLSearchParams(window.location.search).get("story");
+    /* eslint-disable react-hooks/set-state-in-effect -- the URL and the media query are only known in the browser */
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("look") === "foto" || q.get("look") === "tekening") setLook(q.get("look") as StoryLook);
+    const hold = q.get("story");
     if (hold !== null) {
       base.current = Number(hold) || 0;
       setT(base.current);
       return;
     }
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   useEffect(() => {
@@ -157,13 +176,16 @@ export function ServiceStory() {
         </defs>
 
         <Layers t={st} />
-        <Reality t={st} done={done} />
-        <Decision t={t} />
+        {look === "foto" ? <Places t={st} /> : <Reality t={st} done={done} />}
+        <Decision t={t} look={look} />
         <WebInfo t={st} />
-        <Drops t={st} />
+        <Drops t={st} look={look} />
+        <Partner t={st} />
+        <Archive t={st} />
+        <Ghost t={st} look={look} />
 
         {/* The token with its jacket and its pollen. */}
-        <g opacity={tok.show * (1 - 0.75 * contrast)} transform={`translate(${tok.x} ${tok.y})`}>
+        <g opacity={tok.show * (1 - 0.75 * contrast)} transform={`translate(${tok.x} ${tok.y}) scale(${tok.scale ?? 1})`}>
           {jacket && <JacketShape kind={jacket} t={st} />}
           <Pollen t={st} />
           <circle r="16" fill="url(#ss-grad)" />
@@ -198,6 +220,13 @@ export function ServiceStory() {
         <button type="button" onClick={() => setPlaying((p) => !p)} aria-label={playing ? "Pauzeer de animatie" : "Speel de animatie af"}>
           {playing ? "❚❚" : "▶"}
         </button>
+        <div className="service-story-look" role="group" aria-label="Werkelijkheid als">
+          {(["tekening", "foto"] as const).map((l) => (
+            <button key={l} type="button" aria-pressed={look === l} onClick={() => setLook(l)}>
+              {l === "tekening" ? "Tekening" : "Foto's"}
+            </button>
+          ))}
+        </div>
         <div className="service-story-dots" role="group" aria-label="Scènes">
           {SCENES.map((s, i) => (
             <button
@@ -210,6 +239,12 @@ export function ServiceStory() {
           ))}
         </div>
       </div>
+      {look === "foto" && (
+        <figcaption className="service-story-credits">
+          Foto&apos;s via Wikimedia Commons: woonhuis Bingelrade, IJsbrand Heins / RCE (CC BY-SA 4.0); gemeentehuis Wierden,
+          Okido (CC BY-SA 3.0); traplift op de rail, Mind meal (CC BY 2.0); traplift in huis, Bcm924 (CC BY-SA 4.0). CAK: foto CAK.
+        </figcaption>
+      )}
     </figure>
   );
 }
@@ -256,27 +291,164 @@ function Reality({ t, done }: { t: number; done: number }) {
           ✓ geholpen
         </text>
       )}
+      <g opacity={0.45 + 0.55 * span(t, 69.5, 83)}>
+        <path d="M1030 196 V86 H1150 V196 M1030 112 H1150 M1030 138 H1150 M1030 164 H1150 M1070 86 V196 M1110 86 V196" />
+        <text x="1090" y="74" textAnchor="middle" fontSize="16" fontWeight="700" fill="#7c4a1e" stroke="none">
+          CAK
+        </text>
+      </g>
     </g>
   );
 }
 
 /** The decision: the resident chooses to apply. Still reality — a choice, not yet a fact on file. */
-function Decision({ t }: { t: number }) {
+function Decision({ t, look }: { t: number; look: StoryLook }) {
   const o = span(t, DECIDE.at + 0.2, DECIDE.until);
   if (o <= 0) return null;
   const yes = seg(t, DECIDE.at + 2.2, DECIDE.at + 2.8);
   return (
     <g opacity={o}>
-      <path d="M528 128 q-6 -16 10 -22" fill="none" stroke="#7c4a1e" strokeWidth="2" strokeDasharray="3 4" />
-      <g transform="translate(330 46)">
-        <rect width="200" height="58" rx="29" fill="#fff" stroke="#7c4a1e" strokeWidth="2" />
-        <text x="100" y={yes > 0.5 ? 26 : 35} textAnchor="middle" fontSize="16" fill="#7c4a1e">
+      {look === "tekening" && <path d="M528 128 q-6 -16 10 -22" fill="none" stroke="#7c4a1e" strokeWidth="2" strokeDasharray="3 4" />}
+      <g transform={look === "foto" ? "translate(330 44)" : "translate(330 46)"}>
+        <rect width="150" height="58" rx="29" fill="#fff" stroke="#7c4a1e" strokeWidth="2" />
+        <text x="75" y={yes > 0.5 ? 26 : 35} textAnchor="middle" fontSize="15" fill="#7c4a1e">
           Wmo aanvragen?
         </text>
-        <text x="100" y="45" textAnchor="middle" fontSize="15" fontWeight="700" fill="#059669" opacity={yes}>
+        <text x="75" y="45" textAnchor="middle" fontSize="14" fontWeight="700" fill="#059669" opacity={yes}>
           Ja, dat doe ik.
         </text>
       </g>
+    </g>
+  );
+}
+
+/**
+ * The reality layer as real places, each above the data it belongs to: the
+ * home, the town hall, the supplier, the chain partner. The place where the
+ * story is, is lit; the others wait, greyed. At the end the home shows the
+ * stairlift.
+ */
+const PLACES = [
+  { id: "thuis", label: "Thuis", x: 140, src: "/werkelijkheid/thuis.jpg" },
+  { id: "gemeente", label: "Gemeente", x: 490, src: "/werkelijkheid/gemeente.jpg" },
+  { id: "leverancier", label: "Leverancier", x: 760, src: "/werkelijkheid/leverancier.jpg" },
+  { id: "cak", label: "CAK · ketenpartner", x: 1000, src: "/werkelijkheid/cak.jpg" },
+] as const;
+
+function placeAt(t: number): string {
+  if (t < 19 || (t >= 62 && t < 70) || t >= 83) return "thuis";
+  if (t < 56) return "gemeente";
+  if (t < 62) return "leverancier";
+  return "cak";
+}
+
+function Places({ t }: { t: number }) {
+  const here = placeAt(t);
+  const after = seg(t, 63, 64.5);
+  return (
+    <g>
+      <defs>
+        <filter id="ss-grey">
+          <feColorMatrix type="saturate" values="0.15" />
+        </filter>
+        {PLACES.map((p) => (
+          <clipPath key={p.id} id={`ss-clip-${p.id}`}>
+            <rect x={p.x} y="36" width="180" height="152" rx="10" />
+          </clipPath>
+        ))}
+      </defs>
+      {PLACES.map((p) => {
+        const on = p.id === here;
+        return (
+          <g key={p.id} opacity={on ? 1 : 0.5} filter={on ? undefined : "url(#ss-grey)"}>
+            <g clipPath={`url(#ss-clip-${p.id})`}>
+              <image href={p.src} x={p.x} y="36" width="180" height="152" preserveAspectRatio="xMidYMid slice" />
+              {p.id === "thuis" && (
+                <image href="/werkelijkheid/traplift.jpg" x={p.x} y="36" width="180" height="152" preserveAspectRatio="xMidYMid slice" opacity={after} />
+              )}
+            </g>
+            <rect x={p.x} y="36" width="180" height="152" rx="10" fill="none" stroke={on ? "#4f46e5" : "#c7b9a3"} strokeWidth={on ? 3 : 1} />
+            <rect x={p.x + 8} y="160" width={p.label.length * 7.4 + 16} height="22" rx="11" fill="#fff" opacity="0.92" />
+            <text x={p.x + 16} y="175" fontSize="12" fontWeight="700" fill="#161826">
+              {p.label}
+            </text>
+          </g>
+        );
+      })}
+      {after > 0 && (
+        <text x="332" y="120" fontSize="17" fill="#7c4a1e" opacity={after}>
+          ✓ geholpen
+        </text>
+      )}
+    </g>
+  );
+}
+
+/** When reality changes, the data does not leave: a copy of the facts rises and becomes reality. */
+function Ghost({ t, look }: { t: number; look: StoryLook }) {
+  if (t < 62 || t > 66) return null;
+  const p = seg(t, 62, 65);
+  const to = look === "foto" ? { x: 230, y: 110 } : { x: 640, y: 160 };
+  return (
+    <g transform={`translate(${lerp(940, to.x, p)} ${lerp(420, to.y, p)})`} opacity={(1 - seg(t, 64.5, 66)) * 0.8}>
+      {CHIPS.map((c, i) => (
+        <rect key={c.label} x="28" y={-48 + i * 22} width="104" height="18" rx="9" fill={c.color} opacity="0.7" />
+      ))}
+      <circle r="16" fill="url(#ss-grad)" opacity="0.6" />
+    </g>
+  );
+}
+
+/** The chain partner's own system: what it needs, no more. */
+function Partner({ t }: { t: number }) {
+  const o = span(t, 69.5, 83);
+  if (o <= 0) return null;
+  const sent = [
+    { label: "Naam", color: "#6366f1" },
+    { label: "Adres", color: "#0891b2" },
+    { label: "Eigen bijdrage", color: "#64748b" },
+  ];
+  return (
+    <g opacity={o}>
+      <rect x="1010" y="380" width="170" height="120" rx="10" fill="#fff" stroke="#4f46e5" strokeWidth="2" />
+      <text x="1022" y="372" fontSize="13" fontWeight="700" fill="#161826">
+        CAK · eigen bijdrage
+      </text>
+      {sent.map((c, i) => {
+        const p = seg(t, 72 + i * 0.5, 73.5 + i * 0.5);
+        const x = lerp(668, 1028, p);
+        const y = lerp(372 + i * 22, 398 + i * 30, p);
+        return (
+          <g key={c.label} transform={`translate(${x} ${y})`} opacity={p > 0 ? 1 : 0}>
+            <rect width="130" height="20" rx="10" fill={c.color} />
+            <text x="65" y="14" textAnchor="middle" fontSize="11" fontWeight="600" fill="#fff">
+              {c.label}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
+
+/** The archive: today a digital e-depot, in the data layer. */
+function Archive({ t }: { t: number }) {
+  const o = seg(t, 76, 77.5) * (1 - seg(t, 91, 92));
+  if (o <= 0) return null;
+  const glow = span(t, 80, 84, 0.8);
+  return (
+    <g opacity={o} transform="translate(40 430)">
+      <rect width="270" height="86" rx="10" fill="#f5f6fa" stroke={glow > 0 ? "#4f46e5" : "#9aa0b4"} strokeWidth={1 + glow * 2} />
+      <path d="M18 26 h22 v18 h-22 z M22 26 v-6 a7 7 0 0 1 14 0 v6" fill="none" stroke="#5b6075" strokeWidth="2" />
+      <text x="52" y="32" fontSize="13" fontWeight="700" fill="#161826">
+        e-Depot · archief
+      </text>
+      <text x="52" y="50" fontSize="11" fill="#5b6075">
+        na de bewaartermijn
+      </text>
+      <text x="18" y="74" fontSize="11" fill="#5b6075" opacity={seg(t, 81, 82)}>
+        dossier 0147 + 0148 gearchiveerd
+      </text>
     </g>
   );
 }
@@ -299,13 +471,14 @@ function WebInfo({ t }: { t: number }) {
 }
 
 /** Scene 3: reality comes down as facts. */
-function Drops({ t }: { t: number }) {
+function Drops({ t, look }: { t: number; look: StoryLook }) {
   if (t < 12 || t > 17) return null;
+  const from = look === "foto" ? { x: 230, y: 186 } : { x: 560, y: 196 };
   return (
     <g>
       {CHIPS.map((c, i) => {
         const p = seg(t, 12.2 + i * 0.35, 13.4 + i * 0.35);
-        return <circle key={c.label} cx={lerp(560, 280 + i * 4, p)} cy={lerp(196, 250, p)} r="5" fill={c.color} opacity={p > 0 && p < 1 ? 1 : 0} />;
+        return <circle key={c.label} cx={lerp(from.x, 280 + i * 4, p)} cy={lerp(from.y, 250, p)} r="5" fill={c.color} opacity={p > 0 && p < 1 ? 1 : 0} />;
       })}
     </g>
   );
@@ -318,7 +491,7 @@ function Pollen({ t }: { t: number }) {
       {CHIPS.map((c, i) => {
         const born = seg(t, 13.4 + i * 0.35, 14 + i * 0.35);
         const flash = t > 19.5 && t < 21 ? 0.6 + 0.4 * Math.abs(Math.sin((t - 19.5) * 6)) : 1;
-        const dissolve = 1 - seg(t, 62.3 + i * 0.25, 63.8 + i * 0.25);
+        const dissolve = 1;
         return (
           <g key={c.label} transform={`translate(28 ${-48 + i * 22})`} opacity={born * flash * dissolve}>
             <rect width="104" height="18" rx="9" fill={c.color} />
@@ -345,6 +518,7 @@ function JacketShape({ kind, t }: { kind: Jacket; t: number }) {
     letter: "Beschikking",
     portal: "Mijn gemeente",
     order: "Order · leverancier",
+    dossier: "Dossier · bewaard",
   };
   const stroke = "#4f46e5";
   return (
@@ -359,7 +533,7 @@ function JacketShape({ kind, t }: { kind: Jacket; t: number }) {
           <circle cx={x + 32} cy={y - 4} r="3" fill="#c7cbe0" />
         </g>
       )}
-      {(kind === "form" || kind === "request" || kind === "order") && (
+      {(kind === "form" || kind === "request" || kind === "order" || kind === "dossier") && (
         <rect x={x} y={y} width={w} height={h} rx="8" fill="#fff" stroke={kind === "form" ? "#9aa0b4" : stroke} strokeWidth="2" strokeDasharray={kind === "form" ? "6 5" : undefined} />
       )}
       <text x={x + 10} y={y - (kind === "portal" ? 20 : 8)} fontSize="13" fontWeight="700" fill="#161826">

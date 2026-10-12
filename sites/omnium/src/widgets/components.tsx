@@ -31,5 +31,5 @@ export const widgetComponents: WidgetViewers = {
   testimonial: standardViewers.testimonial,
   pricing: standardViewers.pricing,
   embed: standardViewers.embed,
-  dienstverlening: () => <ServiceStory />,
+  dienstverlening: ({ config }) => <ServiceStory look={(config as { stijl?: "tekening" | "foto" }).stijl ?? "tekening"} />,
 };
