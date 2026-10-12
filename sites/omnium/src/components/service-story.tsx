@@ -112,6 +112,9 @@ function jacketAt(t: number): Jacket | null {
 export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryLook }) {
   const [t, setT] = useState(0);
   const [look, setLook] = useState<StoryLook>(initialLook);
+  // Music (MusicBrain, 97 s = the timeline): off until the visitor turns it on; browsers do not autoplay sound.
+  const [sound, setSound] = useState(false);
+  const audio = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const start = useRef<number | null>(null);
   const base = useRef(0);
@@ -145,6 +148,18 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [playing]);
+
+  // The music follows the timeline: same second, resynced when it drifts or the visitor jumps.
+  useEffect(() => {
+    const a = audio.current;
+    if (!a) return;
+    if (sound && playing) {
+      if (a.paused) {
+        a.currentTime = t;
+        a.play().catch(() => setSound(false));
+      } else if (Math.abs(a.currentTime - t) > 0.35) a.currentTime = t;
+    } else if (!a.paused) a.pause();
+  }, [t, sound, playing]);
 
   const jump = (to: number) => {
     base.current = to;
@@ -220,6 +235,13 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
         <button type="button" onClick={() => setPlaying((p) => !p)} aria-label={playing ? "Pauzeer de animatie" : "Speel de animatie af"}>
           {playing ? "❚❚" : "▶"}
         </button>
+        <button type="button" onClick={() => setSound((v) => !v)} aria-pressed={sound} aria-label={sound ? "Zet de muziek uit" : "Zet de muziek aan"}>
+          {sound ? "🔊" : "🔈"}
+        </button>
+        <audio ref={audio} preload="none">
+          <source src="/werkelijkheid/omnium-dienstverlening.ogg" type="audio/ogg" />
+          <source src="/werkelijkheid/omnium-dienstverlening.mp3" type="audio/mpeg" />
+        </audio>
         <div className="service-story-look" role="group" aria-label="Werkelijkheid als">
           {(["tekening", "foto"] as const).map((l) => (
             <button key={l} type="button" aria-pressed={look === l} onClick={() => setLook(l)}>
@@ -239,12 +261,16 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
           ))}
         </div>
       </div>
-      {look === "foto" && (
-        <figcaption className="service-story-credits">
-          Foto&apos;s via Wikimedia Commons: woonhuis Bingelrade, IJsbrand Heins / RCE (CC BY-SA 4.0); gemeentehuis Wierden,
+      <figcaption className="service-story-credits">
+        Muziek: MusicBrain.
+        {look === "foto" && (
+          <>
+            {" "}
+            Foto&apos;s via Wikimedia Commons: woonhuis Bingelrade, IJsbrand Heins / RCE (CC BY-SA 4.0); gemeentehuis Wierden,
           Okido (CC BY-SA 3.0); traplift op de rail, Mind meal (CC BY 2.0); traplift in huis, Bcm924 (CC BY-SA 4.0). CAK: foto CAK.
-        </figcaption>
-      )}
+          </>
+        )}
+      </figcaption>
     </figure>
   );
 }

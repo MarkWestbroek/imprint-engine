@@ -17,6 +17,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   in de animatie (`stijl` in de widget, de voorpagina begint met foto's).
   Na de levering blijft de data: bewaard voor vragen, gedeeld met
   ketenpartner CAK (eigen bijdrage), en na de bewaartermijn naar het e-depot.
+  Muziek van MusicBrain (97 s, de tijdlijn gelijk): standaard uit, een
+  knop 🔈 zet hem aan; hij volgt de animatie, ook bij een sprong naar een scène.
 - **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
   verwijderd maar gaat naar de pool `afgewezen` (privé: alleen de inzender
   ziet hem), met `rejection` {reden, datum, door}. Zo ziet een script dat de
