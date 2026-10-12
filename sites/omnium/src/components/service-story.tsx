@@ -23,17 +23,26 @@ type Scene = { at: number; until: number; verb?: string; caption: string };
 const SCENES: Scene[] = [
   { at: 0, until: 6, caption: "Werkelijkheid: iemand komt de trap niet meer op." },
   { at: 6, until: 12, verb: "informeer", caption: "Op de website staat de Wmo. Dat is informatie, maar nog niet over iemand." },
-  { at: 12, until: 19, verb: "vul in", caption: "De werkelijkheid slaat neer als gegevens op het formulier." },
-  { at: 19, until: 25, verb: "dien in", caption: "Ingediend zijn dezelfde gegevens een aanvraag." },
-  { at: 25, until: 31, caption: "Zo gaat het nu: elke fase een eigen schema, en de gegevens worden telkens opnieuw gemapt." },
-  { at: 31, until: 35, caption: "Met één canoniek model blijft het één geheel." },
-  { at: 35, until: 43, verb: "behandel", caption: "Een medewerker opent de werkmap. Contactmomenten, zoals het keukentafelgesprek, komen erbij." },
-  { at: 43, until: 50, verb: "beschik", caption: "De beschikking is dezelfde data in briefvorm. Een nieuwe zaak vraagt de traplift aan." },
-  { at: 50, until: 56, verb: "volg", caption: "In het klantportaal: dezelfde gegevens, in een ander jasje." },
-  { at: 56, until: 62, verb: "lever", caption: "Adres en nummers gaan mee naar de leverancier." },
-  { at: 62, until: 72, caption: "De traplift staat er. De toestand van het systeem — gemeente en inwoners — is verbeterd." },
+  { at: 12, until: 17, verb: "beslis", caption: "De inwoner besluit de Wmo aan te vragen. Nog steeds werkelijkheid: een keuze, nog geen gegeven." },
+  { at: 17, until: 24, verb: "vul in", caption: "De werkelijkheid slaat neer als gegevens op het formulier." },
+  { at: 24, until: 30, verb: "dien in", caption: "Ingediend zijn dezelfde gegevens een aanvraag." },
+  { at: 30, until: 36, caption: "Zo gaat het nu: elke fase een eigen schema, en de gegevens worden telkens opnieuw gemapt." },
+  { at: 36, until: 40, caption: "Met één canoniek model blijft het één geheel." },
+  { at: 40, until: 48, verb: "behandel", caption: "Een medewerker opent de werkmap. Contactmomenten, zoals het keukentafelgesprek, komen erbij." },
+  { at: 48, until: 55, verb: "beschik", caption: "De beschikking is dezelfde data in briefvorm. Een nieuwe zaak vraagt de traplift aan." },
+  { at: 55, until: 61, verb: "volg", caption: "In het klantportaal: dezelfde gegevens, in een ander jasje." },
+  { at: 61, until: 67, verb: "lever", caption: "Adres en nummers gaan mee naar de leverancier." },
+  { at: 67, until: 77, caption: "De traplift staat er. De toestand van het systeem — gemeente en inwoners — is verbeterd." },
 ];
-const LOOP = 76;
+const LOOP = 81;
+
+/**
+ * The decision (12–17 s) is a pause in the data story: the rest of the
+ * timeline was drawn without it, so it reads `story(t)`, which holds at 12
+ * during the decision and runs 5 s behind after it.
+ */
+const DECIDE = { at: 12, until: 17 } as const;
+const story = (t: number) => (t < DECIDE.at ? t : t < DECIDE.until ? DECIDE.at : t - (DECIDE.until - DECIDE.at));
 
 const CHIPS = [
   { label: "Naam", color: "#6366f1" },
@@ -126,11 +135,12 @@ export function ServiceStory() {
 
   let scene = SCENES[0]!;
   for (const s of SCENES) if (t >= s.at) scene = s;
-  const tok = tokenState(t);
-  const jacket = jacketAt(t);
-  const contrast = span(t, 25, 31);
-  const reunite = span(t, 31, 35);
-  const done = seg(t, 64, 67);
+  const st = story(t);
+  const tok = tokenState(st);
+  const jacket = jacketAt(st);
+  const contrast = span(st, 25, 31);
+  const reunite = span(st, 31, 35);
+  const done = seg(st, 64, 67);
 
   return (
     <figure className="service-story" aria-label="Animatie: één gegeven door het hele dienstverleningsproces">
@@ -146,18 +156,19 @@ export function ServiceStory() {
           </pattern>
         </defs>
 
-        <Layers t={t} />
-        <Reality t={t} done={done} />
-        <WebInfo t={t} />
-        <Drops t={t} />
+        <Layers t={st} />
+        <Reality t={st} done={done} />
+        <Decision t={t} />
+        <WebInfo t={st} />
+        <Drops t={st} />
 
         {/* The token with its jacket and its pollen. */}
         <g opacity={tok.show * (1 - 0.75 * contrast)} transform={`translate(${tok.x} ${tok.y})`}>
-          {jacket && <JacketShape kind={jacket} t={t} />}
-          <Pollen t={t} />
+          {jacket && <JacketShape kind={jacket} t={st} />}
+          <Pollen t={st} />
           <circle r="16" fill="url(#ss-grad)" />
           <circle r="16" fill="none" stroke="#fff" strokeWidth="3" />
-          {jacket === "file" && <Contacts t={t} />}
+          {jacket === "file" && <Contacts t={st} />}
         </g>
 
         <Contrast p={contrast} />
@@ -249,6 +260,27 @@ function Reality({ t, done }: { t: number; done: number }) {
   );
 }
 
+/** The decision: the resident chooses to apply. Still reality — a choice, not yet a fact on file. */
+function Decision({ t }: { t: number }) {
+  const o = span(t, DECIDE.at + 0.2, DECIDE.until);
+  if (o <= 0) return null;
+  const yes = seg(t, DECIDE.at + 2.2, DECIDE.at + 2.8);
+  return (
+    <g opacity={o}>
+      <path d="M528 128 q-6 -16 10 -22" fill="none" stroke="#7c4a1e" strokeWidth="2" strokeDasharray="3 4" />
+      <g transform="translate(330 46)">
+        <rect width="200" height="58" rx="29" fill="#fff" stroke="#7c4a1e" strokeWidth="2" />
+        <text x="100" y={yes > 0.5 ? 26 : 35} textAnchor="middle" fontSize="16" fill="#7c4a1e">
+          Wmo aanvragen?
+        </text>
+        <text x="100" y="45" textAnchor="middle" fontSize="15" fontWeight="700" fill="#059669" opacity={yes}>
+          Ja, dat doe ik.
+        </text>
+      </g>
+    </g>
+  );
+}
+
 /** Scene 2: the regulation on the website — data, but about nobody yet. */
 function WebInfo({ t }: { t: number }) {
   const o = span(t, 6.3, 19);
@@ -273,7 +305,7 @@ function Drops({ t }: { t: number }) {
     <g>
       {CHIPS.map((c, i) => {
         const p = seg(t, 12.2 + i * 0.35, 13.4 + i * 0.35);
-        return <circle key={c.label} cx={lerp(560, 280 + i * 4, p)} cy={lerp(196, 250, p)} r="5" fill={c.color} opacity={p < 1 ? 1 : 0} />;
+        return <circle key={c.label} cx={lerp(560, 280 + i * 4, p)} cy={lerp(196, 250, p)} r="5" fill={c.color} opacity={p > 0 && p < 1 ? 1 : 0} />;
       })}
     </g>
   );

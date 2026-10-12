@@ -7,7 +7,7 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 
 ## [Unreleased]
 - **Omnium-site: animatie "dienstverlening"** op de voorpagina (eigen widget
-  `dienstverlening`): één gegeven door het hele proces (informeer, vul in,
+  `dienstverlening`): één gegeven door het hele proces (informeer, beslis, vul in,
   dien in, behandel, beschik, volg, lever) in drie lagen (werkelijkheid,
   gegevens, data), met dezelfde chips in steeds een ander jasje en een
   contrast met losse, gemapte schema's. Speelt vanzelf, met pauze en
