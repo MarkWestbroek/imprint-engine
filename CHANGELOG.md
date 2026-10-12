@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Omnium-site: eenvoudiger menu** (Modelleren, Transformeren, Samenwerken,
+  Plannen, Over): het onderdeel waar je bent is gemarkeerd, ook op de
+  pagina's eronder (de `children` van het menu-item). "Waarom Omnium" staat
+  op de voorpagina met "In het kort"; `/waarom` stuurt door via de aliassen
+  van de siteconfig. Nieuwe pagina Transformeren; privacystatement (Paratmos
+  BV), de vormenbibliotheek op Formulieren.
+- **CI weer groen** (voor het eerst sinds 31 augustus): de typecheck maakt
+  eerst de Next-types (`next typegen`); de browsertests bij met de admin
+  (herhaal wachtwoord, knop Image, widgets kiezen op tekst, een nieuwe
+  pagina begint met Undo changes); de e2e-reset leegt de hele testdatabase.
 - **/modules** (MusicBrain): overzicht van de firmwaremodules (componenten
   `kind: software` met slug `sw-…`), als panelen naast elkaar; ze staan niet
   meer tussen de boards. Op een patchpagina linkt "Requires → Modules" naar
