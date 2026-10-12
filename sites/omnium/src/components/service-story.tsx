@@ -38,7 +38,7 @@ const SCENES: Scene[] = [
   { at: 55, until: 61, verb: "volg", caption: "In het klantportaal: dezelfde gegevens, in een ander jasje." },
   { at: 61, until: 67, verb: "lever", caption: "Adres en nummers gaan mee naar de leverancier." },
   { at: 67, until: 75, caption: "De traplift staat er: de data is weer werkelijkheid geworden." },
-  { at: 75, until: 82, verb: "deel", caption: "De gegevens blijven bewaard, voor vragen en inzicht. Ketenpartner CAK krijgt wat nodig is om de eigen bijdrage te innen." },
+  { at: 75, until: 82, verb: "deel", caption: "Het dossier blijft bewaard. Het CAK krijgt naam, adres en voorziening, en stuurt de eigen bijdrage terug." },
   { at: 82, until: 88, verb: "archiveer", caption: "Na de bewaartermijn gaat het dossier naar het archief: tegenwoordig een digitaal e-depot." },
   { at: 88, until: 94, caption: "De toestand van het systeem — gemeente en inwoners — is verbeterd." },
 ];
@@ -203,6 +203,7 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
         <g opacity={tok.show * (1 - 0.75 * contrast)} transform={`translate(${tok.x} ${tok.y}) scale(${tok.scale ?? 1})`}>
           {jacket && <JacketShape kind={jacket} t={st} />}
           <Pollen t={st} />
+          <Returned t={st} />
           <circle r="16" fill="url(#ss-grad)" />
           <circle r="16" fill="none" stroke="#fff" strokeWidth="3" />
           {jacket === "file" && <Contacts t={st} />}
@@ -429,21 +430,25 @@ function Ghost({ t, look }: { t: number; look: StoryLook }) {
 function Partner({ t }: { t: number }) {
   const o = span(t, 69.5, 83);
   if (o <= 0) return null;
+  // What the municipality sends: the person, the address, the provision (on 72, 73 and 74: the music's three notes).
   const sent = [
     { label: "Naam", color: "#6366f1" },
     { label: "Adres", color: "#0891b2" },
-    { label: "Eigen bijdrage", color: "#64748b" },
+    { label: "Traplift", color: "#d97706" },
   ];
+  // What comes back: the contribution the CAK decides (from income data that come from elsewhere).
+  const back = seg(t, 75, 76.6);
+  const made = seg(t, 74.4, 75);
   return (
     <g opacity={o}>
-      <rect x="1010" y="380" width="170" height="120" rx="10" fill="#fff" stroke="#4f46e5" strokeWidth="2" />
+      <rect x="1010" y="380" width="170" height="130" rx="10" fill="#fff" stroke="#4f46e5" strokeWidth="2" />
       <text x="1022" y="372" fontSize="13" fontWeight="700" fill="#161826">
-        CAK · eigen bijdrage
+        CAK · ketenpartner
       </text>
       {sent.map((c, i) => {
-        const p = seg(t, 72 + i * 0.5, 73.5 + i * 0.5);
+        const p = seg(t, 72 + i, 73.2 + i);
         const x = lerp(668, 1028, p);
-        const y = lerp(372 + i * 22, 398 + i * 30, p);
+        const y = lerp(372 + i * 22, 392 + i * 26, p);
         return (
           <g key={c.label} transform={`translate(${x} ${y})`} opacity={p > 0 ? 1 : 0}>
             <rect width="130" height="20" rx="10" fill={c.color} />
@@ -453,6 +458,27 @@ function Partner({ t }: { t: number }) {
           </g>
         );
       })}
+      {made > 0 && back < 1 && (
+        <g transform={`translate(${lerp(1028, 668, back)} ${lerp(474, 484, back)})`} opacity={made}>
+          <rect width="130" height="20" rx="10" fill="#64748b" />
+          <text x="65" y="14" textAnchor="middle" fontSize="11" fontWeight="600" fill="#fff">
+            ← Eigen bijdrage
+          </text>
+        </g>
+      )}
+    </g>
+  );
+}
+
+/** The contribution the CAK sent back: a sixth chip on the dossier, into the archive with it. */
+function Returned({ t }: { t: number }) {
+  if (t < 76.6) return null;
+  return (
+    <g transform="translate(28 62)">
+      <rect width="104" height="18" rx="9" fill="#64748b" />
+      <text x="52" y="13" textAnchor="middle" fontSize="10" fontWeight="600" fill="#fff">
+        Eigen bijdrage
+      </text>
     </g>
   );
 }
@@ -536,7 +562,7 @@ function JacketShape({ kind, t }: { kind: Jacket; t: number }) {
   const x = -34;
   const y = -78;
   const w = 182;
-  const h = 150;
+  const h = kind === "dossier" ? 166 : 150;
   const title: Record<Jacket, string> = {
     form: "Aanvraagformulier",
     request: "Aanvraag · ingediend",

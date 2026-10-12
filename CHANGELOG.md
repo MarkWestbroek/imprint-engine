@@ -16,7 +16,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   foto's van de echte plekken (thuis, gemeente, leverancier, CAK), te wisselen
   in de animatie (`stijl` in de widget, de voorpagina begint met foto's).
   Na de levering blijft de data: bewaard voor vragen, gedeeld met
-  ketenpartner CAK (eigen bijdrage), en na de bewaartermijn naar het e-depot.
+  ketenpartner CAK (naam, adres en voorziening erheen; de eigen bijdrage komt
+  terug), en na de bewaartermijn naar het e-depot.
   Muziek van MusicBrain (97 s, de tijdlijn gelijk): standaard uit, een
   knop 🔈 zet hem aan; hij volgt de animatie, ook bij een sprong naar een scène.
 - **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
