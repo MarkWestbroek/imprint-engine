@@ -617,6 +617,12 @@ gebruik je met een pad als `/shots/uml-overzicht.png` in een Image-widget.
 Zolang de teksten concept zijn, vragen de pagina's zoekmachines om ze niet
 op te nemen.
 
+Op de voorpagina staat de animatie *dienstverlening* (widget
+`dienstverlening`, instelling `stijl`: tekening of foto's). Bezoekers wisselen
+zelf van stijl, zetten de muziek aan met 🔈 en zetten hem met ⛶ op volledig
+scherm om te presenteren: spatie pauzeert, ← → gaan naar de vorige of
+volgende scène, Esc sluit.
+
 ## Berichten schrijven als lid
 
 Als lid van een community schrijf je op de community-pagina een **update**

@@ -20,6 +20,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   terug), en na de bewaartermijn naar het e-depot.
   Muziek van MusicBrain (97 s, de tijdlijn gelijk): standaard uit, een
   knop 🔈 zet hem aan; hij volgt de animatie, ook bij een sprong naar een scène.
+  Volledig scherm (⛶) voor presentaties: spatie pauzeert, ← → stappen door
+  de scènes, Esc sluit.
 - **Afwijzen met reden** (patches): een afgewezen patch wordt niet meer
   verwijderd maar gaat naar de pool `afgewezen` (privé: alleen de inzender
   ziet hem), met `rejection` {reden, datum, door}. Zo ziet een script dat de

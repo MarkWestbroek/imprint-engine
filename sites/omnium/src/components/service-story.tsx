@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 /**
  * "Eén gegeven, vele jasjes": public service as one token through its phases,
@@ -115,6 +115,22 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
   // Music (MusicBrain, 97 s = the timeline): off until the visitor turns it on; browsers do not autoplay sound.
   const [sound, setSound] = useState(false);
   const audio = useRef<HTMLAudioElement>(null);
+  // Fullscreen, for presenting: the figure itself fills the screen; space pauses, ← → step through the scenes.
+  const figure = useRef<HTMLElement>(null);
+  const [full, setFull] = useState(false);
+  useEffect(() => {
+    const onChange = () => {
+      const on = document.fullscreenElement === figure.current;
+      setFull(on);
+      if (on) figure.current?.focus(); // so space and the arrows work straight away
+    };
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
+  const toggleFull = () => {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void figure.current?.requestFullscreen?.();
+  };
   const [playing, setPlaying] = useState(false);
   const start = useRef<number | null>(null);
   const base = useRef(0);
@@ -169,6 +185,14 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
 
   let scene = SCENES[0]!;
   for (const s of SCENES) if (t >= s.at) scene = s;
+  const index = SCENES.indexOf(scene);
+  const onKey = (e: KeyboardEvent) => {
+    if (e.key === " ") setPlaying((p) => !p);
+    else if (e.key === "ArrowRight") jump(SCENES[(index + 1) % SCENES.length]!.at + 1);
+    else if (e.key === "ArrowLeft") jump(SCENES[Math.max(0, index - 1)]!.at + 1);
+    else return;
+    e.preventDefault();
+  };
   const st = story(t);
   const tok = tokenState(st);
   const jacket = jacketAt(st);
@@ -177,7 +201,13 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
   const done = seg(st, 64, 67);
 
   return (
-    <figure className="service-story" aria-label="Animatie: één gegeven door het hele dienstverleningsproces">
+    <figure
+      ref={figure}
+      className={`service-story${full ? " is-full" : ""}`}
+      aria-label="Animatie: één gegeven door het hele dienstverleningsproces"
+      tabIndex={full ? 0 : undefined}
+      onKeyDown={full ? onKey : undefined}
+    >
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="ss-caption" className="w-full h-auto">
         <defs>
           <linearGradient id="ss-grad" x1="0" y1="0" x2="1" y2="1">
@@ -243,6 +273,9 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
           <source src="/werkelijkheid/omnium-dienstverlening.ogg" type="audio/ogg" />
           <source src="/werkelijkheid/omnium-dienstverlening.mp3" type="audio/mpeg" />
         </audio>
+        <button type="button" onClick={toggleFull} aria-pressed={full} aria-label={full ? "Volledig scherm verlaten" : "Volledig scherm (presentatie)"} title="Volledig scherm: spatie = pauze, ← → = scène">
+          {full ? "✕" : "⛶"}
+        </button>
         <div className="service-story-look" role="group" aria-label="Werkelijkheid als">
           {(["tekening", "foto"] as const).map((l) => (
             <button key={l} type="button" aria-pressed={look === l} onClick={() => setLook(l)}>
@@ -257,7 +290,7 @@ export function ServiceStory({ look: initialLook = "tekening" }: { look?: StoryL
               type="button"
               aria-label={`Scène ${i + 1}: ${s.verb ?? s.caption.split(":")[0]}`}
               aria-current={s === scene ? "step" : undefined}
-              onClick={() => jump(s.at + 0.01)}
+              onClick={() => jump(s.at + 1)}
             />
           ))}
         </div>
