@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Omnium-site: /register klopt weer** ("Hoe het is opgebouwd"): een entiteit
+  is alleen een identiteit; hub + _Data horen bij gegevenselementen en
+  relaties, de formele tijd zit in de registratie (ONTWERP_DATA_PATTERN.md).
+  Nieuw script `content:sync-widget`: één blok uit `content/` naar de database,
+  zonder de rest van de pagina (en de bewerkingen van de redactie) te raken.
 - **Fix: de mediabibliotheek en de admin-dialogen bovenop** (engine): ze
   gaan via een portal naar `<body>`. De sticky zijbalk van de studio maakte een
   eigen stapellaag, waarin de dialoog opgesloten zat; op de Omnium-site

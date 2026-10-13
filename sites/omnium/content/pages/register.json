@@ -59,7 +59,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "Elke entiteit krijgt in de gegenereerde database een vaste kern met haar identiteit (de *hub*) en daarnaast de opeenvolgende versies van haar gegevens (de *_Data*), elk met hun formele en materiële tijd. De identiteit verandert nooit, de gegevens krijgen er versies bij. Zo blijft een verwijzing naar een persoon geldig, ook als alles aan die persoon verandert.",
+                  "markdown": "Een entiteit is in de gegenereerde database alleen een identiteit: een vast nummer, zonder gegevens. Is ze materieel, dan krijgt ze daarnaast een begin en einde van haar geldigheid. De gegevens zelf zitten in de gegevenselementen en relaties eronder. Die bestaan elk uit een *hub* — het vaste anker van de koppeling met de entiteit, zonder inhoud — met daaronder de opeenvolgende versies van de inhoud (de *_Data*). Is het gegeven materieel, dan staan begin en einde van de geldigheid op de hub. De formele tijd (wanneer iets is vastgelegd) staat niet in deze tabellen maar in de registratie en haar wijzigingen; opvoer en afvoer op een record zijn daarvan afgeleid. Zo blijft een verwijzing naar een persoon geldig, ook als alles aan die persoon verandert: de identiteit verandert nooit, de gegevens krijgen er versies bij.",
                   "title": "Hoe het is opgebouwd"
                 }
               }
