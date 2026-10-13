@@ -39,7 +39,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   scènepunten; bij "minder beweging" wacht hij op een klik. `?story=<s>`
   houdt één moment vast. Twee stijlen voor de werkelijkheid: een tekening of
   foto's van de echte plekken (thuis, gemeente, leverancier, CAK), te wisselen
-  in de animatie (`stijl` in de widget, de voorpagina begint met foto's).
+  in de animatie (`stijl` in de widget, de voorpagina begint met foto's);
+  ook de tekening heeft de vier plekken, en de plek van het verhaal licht op.
   Na de levering blijft de data: bewaard voor vragen, gedeeld met
   ketenpartner CAK (naam, adres en voorziening erheen; de eigen bijdrage komt
   terug), en na de bewaartermijn naar het e-depot.

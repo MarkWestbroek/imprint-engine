@@ -339,32 +339,64 @@ function Layers({ t }: { t: number }) {
 
 /** A house with stairs; the person below, and at the end upstairs on a stairlift. */
 function Reality({ t, done }: { t: number; done: number }) {
+  // The same four places as the photos, drawn; the one the story is at is lit, the others wait.
+  const here = placeAt(t);
+  const lit = (id: string) => (id === here ? 1 : 0.35);
   const px = lerp(520, 676, done);
   const py = lerp(176, 86, done);
+  const label = (x: number, text: string) => (
+    <text x={x} y="207" textAnchor="middle" fontSize="12" fontWeight="700" fill="#7c4a1e" stroke="none">
+      {text}
+    </text>
+  );
   return (
     <g stroke="#7c4a1e" strokeWidth="3" fill="none" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M470 196 V96 L600 40 L730 96 V196 Z" fill="#fff8ee" />
-      <path d="M560 196 h24 v-18 h24 v-18 h24 v-18 h24 v-18 h24 v-18" />
-      {done > 0 && <path d="M560 186 L690 96" stroke="#d97706" strokeWidth="5" opacity={done} />}
-      <g transform={`translate(${px} ${py})`}>
-        <circle cy="-26" r="8" fill="#fff8ee" />
-        <path d="M0 -18 V4 M-10 -8 H10 M0 4 L-8 18 M0 4 L8 18" />
+      {/* Thuis: the house with its stairs (drawn at 470–730, moved left). */}
+      <g opacity={lit("thuis")} transform="translate(-350 0)">
+        <path d="M470 196 V96 L600 40 L730 96 V196 Z" fill="#fff8ee" />
+        <path d="M560 196 h24 v-18 h24 v-18 h24 v-18 h24 v-18 h24 v-18" />
+        {done > 0 && <path d="M560 186 L690 96" stroke="#d97706" strokeWidth="5" opacity={done} />}
+        <g transform={`translate(${px} ${py})`}>
+          <circle cy="-26" r="8" fill="#fff8ee" />
+          <path d="M0 -18 V4 M-10 -8 H10 M0 4 L-8 18 M0 4 L8 18" />
+        </g>
+        {t < 12 && (
+          <text x="500" y="150" fontSize="28" fill="#7c4a1e" stroke="none" opacity={span(t, 1, 12)}>
+            ?
+          </text>
+        )}
+        {label(600, "Thuis")}
       </g>
-      {t < 12 && (
-        <text x="500" y="150" fontSize="28" fill="#7c4a1e" stroke="none" opacity={span(t, 1, 12)}>
-          ?
-        </text>
-      )}
       {done > 0 && (
-        <text x="760" y="120" fontSize="18" fill="#7c4a1e" stroke="none" opacity={done}>
+        <text x="392" y="150" fontSize="17" fill="#7c4a1e" stroke="none" opacity={done}>
           ✓ geholpen
         </text>
       )}
-      <g opacity={0.45 + 0.55 * span(t, 69.5, 83)}>
-        <path d="M1030 196 V86 H1150 V196 M1030 112 H1150 M1030 138 H1150 M1030 164 H1150 M1070 86 V196 M1110 86 V196" />
+      {/* Gemeente: a town hall with a pediment, columns and a flag. */}
+      <g opacity={lit("gemeente")}>
+        <path d="M570 196 H710 M580 196 V116 H700 V196 M572 116 L640 78 L708 116 Z" fill="#fff8ee" />
+        <path d="M600 126 V188 M620 126 V188 M640 126 V188 M660 126 V188 M680 126 V188" />
+        <path d="M640 78 V46 M640 48 h22 l-6 7 l6 7 h-22" strokeWidth="2" />
+        {label(640, "Gemeente")}
+      </g>
+      {/* Leverancier: the van that brings and fits the stairlift. */}
+      <g opacity={lit("leverancier")}>
+        <path d="M770 184 V128 H880 L912 156 H934 V184 Z" fill="#fff8ee" />
+        <path d="M886 134 L908 154 H886 Z" strokeWidth="2" />
+        <circle cx="800" cy="186" r="10" fill="#fff8ee" />
+        <circle cx="906" cy="186" r="10" fill="#fff8ee" />
+        <text x="824" y="162" textAnchor="middle" fontSize="13" fill="#7c4a1e" stroke="none">
+          traplift
+        </text>
+        {label(852, "Leverancier")}
+      </g>
+      {/* CAK: the chain partner's office. */}
+      <g opacity={lit("cak")}>
+        <path d="M1030 196 V86 H1150 V196 M1030 112 H1150 M1030 138 H1150 M1030 164 H1150 M1070 86 V196 M1110 86 V196" fill="#fff8ee" />
         <text x="1090" y="74" textAnchor="middle" fontSize="16" fontWeight="700" fill="#7c4a1e" stroke="none">
           CAK
         </text>
+        {label(1090, "Ketenpartner")}
       </g>
     </g>
   );
@@ -377,8 +409,8 @@ function Decision({ t, look }: { t: number; look: StoryLook }) {
   const yes = seg(t, DECIDE.at + 2.2, DECIDE.at + 2.8);
   return (
     <g opacity={o}>
-      {look === "tekening" && <path d="M528 128 q-6 -16 10 -22" fill="none" stroke="#7c4a1e" strokeWidth="2" strokeDasharray="3 4" />}
-      <g transform={look === "foto" ? "translate(330 44)" : "translate(330 46)"}>
+      {look === "tekening" && <path d="M182 124 Q300 64 404 70" fill="none" stroke="#7c4a1e" strokeWidth="2" strokeDasharray="3 4" />}
+      <g transform={look === "foto" ? "translate(330 44)" : "translate(404 40)"}>
         <rect width="150" height="58" rx="29" fill="#fff" stroke="#7c4a1e" strokeWidth="2" />
         <text x="75" y={yes > 0.5 ? 26 : 35} textAnchor="middle" fontSize="15" fill="#7c4a1e">
           Wmo aanvragen?
@@ -457,7 +489,7 @@ function Places({ t }: { t: number }) {
 function Ghost({ t, look }: { t: number; look: StoryLook }) {
   if (t < 62 || t > 66) return null;
   const p = seg(t, 62, 65);
-  const to = look === "foto" ? { x: 230, y: 110 } : { x: 640, y: 160 };
+  const to = look === "foto" ? { x: 230, y: 110 } : { x: 290, y: 160 };
   return (
     <g transform={`translate(${lerp(940, to.x, p)} ${lerp(420, to.y, p)})`} opacity={(1 - seg(t, 64.5, 66)) * 0.8}>
       {CHIPS.map((c, i) => (
@@ -567,7 +599,7 @@ function WebInfo({ t }: { t: number }) {
 /** Scene 3: reality comes down as facts. */
 function Drops({ t, look }: { t: number; look: StoryLook }) {
   if (t < 12 || t > 17) return null;
-  const from = look === "foto" ? { x: 230, y: 186 } : { x: 560, y: 196 };
+  const from = look === "foto" ? { x: 230, y: 186 } : { x: 210, y: 196 };
   return (
     <g>
       {CHIPS.map((c, i) => {
