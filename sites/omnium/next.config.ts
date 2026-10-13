@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     "@imprint/extension-api",
     "@imprint/runtime-admin",
     "@imprint/widgets-standard",
+    "@imprint/plugin-presentations",
   ],
   // Loaded by Node from node_modules, not bundled: the database drivers
   // (native/dynamic require) and exifr, which imports fs/zlib dynamically

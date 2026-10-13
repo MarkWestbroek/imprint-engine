@@ -1486,6 +1486,18 @@ en de studio-chrome lezen hetzelfde menu. De beginteksten staan in
 database in; Studio-schermafbeeldingen staan als `public/shots/*.png` en
 worden met een gewoon pad in de image-widget gebruikt.
 
+**Presentaties** (`@imprint/plugin-presentations`): het contenttype
+`presentation` bewaart per slide de html (één `<section>` op een vast canvas
+van 1920×1080, alleen inline stijlen) en apart de notities. De widget leest
+het deck server-side en geeft alleen de html door aan de speler
+(`deck-player.tsx`, client: schalen met een ResizeObserver, hash, toetsen,
+volledig scherm); de notities verlaten de server dus nooit. `sanitizeSlide`
+(allow-list van elementen en attributen, geen scripts/handlers/`javascript:`/
+`data:`/`url()`) draait bij de import en bij elke weergave. `importDeck`
+vertaalt het Slides-formaat (Claude-artifact) en wordt per site aangeroepen
+(Omnium: `scripts/import-deck.ts`, maakt desgewenst een pagina en een
+menulink als die nog niet bestaan).
+
 Stappen voor een nieuwe site:
 
 1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,

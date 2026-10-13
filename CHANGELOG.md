@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Presentaties** (nieuwe plugin `@imprint/plugin-presentations`): het
+  contenttype `presentation` (slides als vast 1920×1080-canvas met inline
+  stijlen; de sprekersnotities apart, nooit in de html) en de widget
+  `presentation`: geschaald, vorige/volgende, ← → en spatie, `#<slide>` in de
+  URL, volledig scherm. `importDeck` leest het Slides-formaat (deck.json +
+  slides/<id>.html): notities eruit, `<x-icon>` wordt Lucide-SVG, `<x-shape>`
+  SVG of vorm, `/_blob`-beelden de eigen paden; de html wordt bij import én
+  bij weergave gesaneerd (allow-list). Op de Omnium-site: /presentatie met
+  "Bitemporeel modelgedreven register" (18 slides), onder Transformeren
+  (`npm run presentation:import --workspace=omnium`).
 - **Omnium-site: /register klopt weer** ("Hoe het is opgebouwd"): een entiteit
   is alleen een identiteit; hub + _Data horen bij gegevenselementen en
   relaties, de formele tijd zit in de registratie (ONTWERP_DATA_PATTERN.md).

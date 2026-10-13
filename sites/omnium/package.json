@@ -9,11 +9,13 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\"",
-    "content:sync-widget": "tsx --tsconfig tsconfig.test.json scripts/sync-widget.ts"
+    "content:sync-widget": "tsx --tsconfig tsconfig.test.json scripts/sync-widget.ts",
+    "presentation:import": "tsx --tsconfig tsconfig.test.json scripts/import-deck.ts"
   },
   "dependencies": {
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
+    "@imprint/plugin-presentations": "*",
     "@imprint/runtime-admin": "*",
     "@imprint/widgets-standard": "*",
     "lucide-react": "^0.468.0",

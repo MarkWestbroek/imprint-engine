@@ -629,6 +629,15 @@ zelf van stijl, zetten de muziek aan met 🔈 en zetten hem met ⛶ op volledig
 scherm om te presenteren: spatie pauzeert, ← → gaan naar de vorige of
 volgende scène, Esc sluit.
 
+**Presentaties** staan onder *Content → Presentations*: per presentatie de
+titel, de hoofdstukken en de slides, elk met hun html en de
+sprekersnotities. De notities zie je alleen in de admin; de site toont ze
+nooit. Op een pagina toon je een presentatie met de widget *Presentation*
+(kies het deck bij `deck`): bezoekers bladeren met ← → of de knoppen, en ⛶
+zet hem op volledig scherm. Een slide heeft zijn eigen adres
+(`/presentatie#studio`). Een deck uit Claude (Slides) komt binnen met het
+importscript; de beelden moeten dan als bestand in de site staan.
+
 ## Berichten schrijven als lid
 
 Als lid van een community schrijf je op de community-pagina een **update**

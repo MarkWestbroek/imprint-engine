@@ -28,6 +28,7 @@ COPY packages/plugin-wiki/package.json packages/plugin-wiki/
 COPY packages/plugin-patches/package.json packages/plugin-patches/
 COPY packages/plugin-glossary/package.json packages/plugin-glossary/
 COPY packages/plugin-groups/package.json packages/plugin-groups/
+COPY packages/plugin-presentations/package.json packages/plugin-presentations/
 COPY packages/plugin-blog/package.json packages/plugin-blog/
 COPY packages/plugin-events/package.json packages/plugin-events/
 COPY packages/plugin-annotations/package.json packages/plugin-annotations/

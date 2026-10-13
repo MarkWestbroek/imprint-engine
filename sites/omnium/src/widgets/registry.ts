@@ -1,6 +1,7 @@
 import { WidgetTypeRegistry, type WidgetTypeDef } from "@imprint/content-core";
 import { z } from "zod";
 import { standardWidgets } from "@imprint/widgets-standard/schemas";
+import { presentationWidgets } from "@imprint/plugin-presentations";
 
 /** This site's own widget: the service-delivery animation (src/components/service-story.tsx). */
 const serviceStory = {
@@ -50,6 +51,7 @@ export const widgetCatalog = [
   // The example form from Omnium, in an iframe (/modelleren/formulieren).
   standardWidgets.embed,
   serviceStory,
+  ...presentationWidgets,
 ] as const;
 
 export const widgetRegistry = widgetCatalog.reduce(

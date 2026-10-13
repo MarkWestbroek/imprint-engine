@@ -1,5 +1,6 @@
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
+import { presentationsPlugin } from "@imprint/plugin-presentations";
 import { widgetRegistry } from "@/widgets/registry";
 
 /**
@@ -16,6 +17,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // Slide decks (Content → Presentations), shown with the widget `presentation`.
+  plugins: [presentationsPlugin()],
   // An information site: pages and their chrome, nothing more.
   contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],
   // Unset locally (engine default: .assets/); the container points these at a volume.
