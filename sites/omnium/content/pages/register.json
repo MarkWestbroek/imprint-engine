@@ -104,6 +104,25 @@
             ]
           }
         ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "De presentatie",
+                  "markdown": "Het hele verhaal in achttien slides: van één canoniek model naar een werkend, tijdreisbaar register met congruente API's.",
+                  "tone": "info",
+                  "buttonLabel": "Bekijk de presentatie",
+                  "buttonUrl": "/presentatie"
+                }
+              }
+            ]
+          }
+        ]
       }
     ]
   }

@@ -12,13 +12,14 @@ loadEnv({ quiet: true });
  * One block from content/ into the database, nothing else: a correction made
  * in the repository reaches the live page without overwriting what the
  * editors changed elsewhere on it. The block is found by its title, on both
- * sides; its config is replaced (its editors' note stays). Through the
+ * sides; its config is replaced (its editors' note stays). A block the
+ * database page does not have yet is added as a new row at the end. Through the
  * WritableContentStore, so the page gets a new version in its history.
  *
  *   npm run content:sync-widget --workspace=omnium -- register "Hoe het is opgebouwd"
  */
 type Widget = { type: string; config: { title?: string } & Record<string, unknown>; note?: string };
-type Layout = { rows: { cells: { widgets: Widget[] }[] }[] };
+type Layout = { rows: { cells: { span?: number; widgets: Widget[] }[] }[] };
 
 /** Equal regardless of key order (the store may write the fields in another order). */
 const sorted = (v: unknown): unknown =>
@@ -44,6 +45,12 @@ async function main() {
     if (!record) throw new Error(`No page "${slug}" in the database.`);
     const doc = structuredClone(record.data) as { layout: Layout };
     const target = find(doc.layout, title);
+    if (target.length === 0) {
+      doc.layout.rows.push({ cells: [{ span: 1, widgets: [{ type: source[0]!.type, config: source[0]!.config }] }] });
+      await opened.store.putItem("page", slug, doc, { by: "sync-widget" });
+      console.log(`"${title}" on ${slug}: added at the end (new version)`);
+      return;
+    }
     if (target.length !== 1) throw new Error(`Database page "${slug}": ${target.length} blocks titled "${title}" (expected 1); change it in the studio.`);
     if (same(target[0]!.config, source[0]!.config)) {
       console.log(`"${title}" on ${slug}: already the same`);
