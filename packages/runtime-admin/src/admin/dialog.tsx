@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * Eigen bevestig/vraag-dialoog voor de admin, in plaats van de ouderwetse
@@ -117,7 +118,8 @@ export function DialogHost() {
   const left = Math.max(12, Math.min(pending.x - 40, window.innerWidth - PANEL_W - 12));
   const top = Math.max(12, Math.min(pending.y + 12, window.innerHeight - 190));
 
-  return (
+  // Portal to <body>: the studio's sticky sidebar is a stacking context that would trap a fixed overlay.
+  return createPortal(
     <div className="fixed inset-0 z-50" onPointerDown={() => close(null)}>
       <div
         ref={panel}
@@ -166,6 +168,7 @@ export function DialogHost() {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

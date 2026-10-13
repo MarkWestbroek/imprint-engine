@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Fix: de mediabibliotheek en de admin-dialogen bovenop** (engine): ze
+  gaan via een portal naar `<body>`. De sticky zijbalk van de studio maakte een
+  eigen stapellaag, waarin de dialoog opgesloten zat; op de Omnium-site
+  (canvas met `isolate`) kwam de pagina eroverheen.
 - **Notitie bij een widget** (engine): elke widget kan een `note` hebben,
   alleen voor de redactie. In de studio staat die onder de instellingen
   ("Note for editors"); hij hoort bij de pagina en haar historie maar komt

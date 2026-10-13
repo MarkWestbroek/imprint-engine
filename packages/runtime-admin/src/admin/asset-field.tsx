@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * The asset picker (design/beeldbibliotheek.md §3): any image or file field in
@@ -231,7 +232,8 @@ export function AssetPicker({
     }
   }
 
-  return (
+  // Portal to <body>: the studio's sticky sidebar is a stacking context that would trap a fixed overlay.
+  return createPortal(
     <div className="fixed inset-0 z-50 grid place-items-center bg-foreground/40 p-4" onClick={onClose}>
       <div
         ref={dialog}
@@ -300,6 +302,7 @@ export function AssetPicker({
           )}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
