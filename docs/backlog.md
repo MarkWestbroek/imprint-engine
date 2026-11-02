@@ -275,6 +275,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 ---
 
 ## 3. Contentmodel, API & opslag
+- [ ] **Inrichtings-UI op het Omnium-register** (2-11-2026, vraag Mark via
+      INRICHTEN_VIZ): `@imprint/plugin-omnium` (client, widgets omnium-lijst/
+      -detail/-formulier/-keten, route `/inrichting/<pad>/<id>` met
+      `_view`-templates) en een besloten `sites/inrichting`, op Fundament.
+      Ontwerp: [design/omnium-inrichting.md](design/omnium-inrichting.md);
+      wacht op Marks akkoord en de open punten daar (§7).
+
 
 - [ ] **Engine en instanties werkelijk scheiden** — voer het
       [architectuurrevisievoorstel](design/engine-instance-plugin-architectuur.md)
