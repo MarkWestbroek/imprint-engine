@@ -8,6 +8,9 @@
 > `docs/PUBLICATIE_TEMPLATES.md`, `docs/API_REFERENCE.md`,
 > `docs/AUTH_DEVELOPER_GUIDE.md`, `docs/TRANSFORMATIES.md` §11 en het plan
 > `docs/plans/2026-10-22 Omnium op Fundament — inrichting van e-diensten`.
+> Het schermontwerp van INRICHTEN_VIZ staat in de Fundament-repo:
+> `docs/inrichtings-ui-ontwerp.md` (§4 schermen, §5 wat het register nodig
+> heeft); de aanvullingen daaruit zijn hieronder verwerkt.
 
 ## 1. Wat het moet doen
 
@@ -68,6 +71,15 @@ nooit in de browser.
   - `GET /full/<pad>?page=&size=` (antwoord `{<meervoud>: [...], page, size,
     has_more, total_count}`, size tot 2000);
   - `GET /full/<pad>/<id>`;
+  - de sleutel van de lijst in het antwoord is het meervoud **met spatie**
+    (`{"lijst definities": [...]}`): de client neemt de enige array-sleutel,
+    niet de padnaam;
+  - relaties lopen via relatie-entiteiten (`ArtefactEdienstversie`,
+    `UitrolEdienstversie`, `UitrolOmgeving`, `ArtefactDoelcomponent`,
+    `EdienstversieEdienst`). "De artefacten van deze versie" is daarom een
+    filter over een relatie; de client gebruikt daarvoor
+    `GET /api/volgorde/<pad>?via=<relatie>&doel=<id>[&na=<afhankelijkheid>]`,
+    dat ze meteen in uitrolvolgorde geeft;
   - tijdreizen: `peiltijdstip` (formele tijd) en `geldigOp` (materiële tijd),
     gevuld uit Imprints as-of-voorvertoning (`readOptions.asOf`), zodat
     "Tijdreizen" in de admin ook het register laat terugreizen.
@@ -99,6 +111,12 @@ definities, uit hetzelfde register.
 - **FormulierDefinitie** (`/full/formulier_definities`): `layout_json`, een
   boom van `formulier`, `groep`, `rij`, `veld` (pad `ENT.rol.veld`, widget,
   label), `conditioneel` en `lijst`.
+- **Nog geen definities**: in het register op Fundament staan (2-11) nul
+  lijst-, weergave- en formulierdefinities. Elke widget heeft daarom een
+  **automatische weergave** als terugval: kolommen en velden uit het model
+  (`/api/viz/schema`), de gegevenselementen van het eerste niveau, de
+  weergavenaam van relaties. Zodra er definities zijn (via replay), nemen die
+  het over.
 - **Welke bij een type hoort**: zoals Omnium's eigen client het doet — de
   actuele `Meta` met `doeltype` = de typenaam, `status` = actief en
   `is_standaard`; een widget kan een andere kiezen met `definitie` (id of
@@ -108,15 +126,37 @@ definities, uit hetzelfde register.
 
 | Widget | Doet | Config |
 |---|---|---|
-| `omnium-lijst` | rendert een type als tabel volgens zijn LijstDefinitie; rijen linken door (§3.4); kolommen sorteren en filteren | `pad`, `definitie?`, `filter?` (vaste voorwaarde, bv. de e-dienst van het onderwerp) |
+| `omnium-lijst` | rendert als tabel volgens de LijstDefinitie (of automatisch): **een type**, **de records die via een relatie aan het onderwerp hangen** (volgorde-endpoint), of **een meervoudig gegevenselement van het onderwerp** — zoals de traceregels van een artefact (`herkomsten`: bronGE, regel, doelPad, actie) en de resultaten van een uitrol (artefact, actie, doelUrl, doelVersie, payloadHash); rijen linken door (§3.4); sorteren en filteren | `pad` of `via`+`relatie` of `veldpad` (GE van het onderwerp), `definitie?` |
 | `omnium-detail` | rendert één record met het detailsjabloon van zijn WeergaveDefinitie (Markdown, `{{veldpad}}`); zonder sjabloon de velden als definitielijst | `pad?`, `id?` (anders het onderwerp) |
 | `omnium-formulier` | rendert één record **alleen-lezen** in de vorm van zijn FormulierDefinitie (groepen, rijen, lijsten; condities toegepast) | `pad?`, `id?`, `definitie?` |
 | `omnium-keten` | de keten van een e-dienst als diagram: EDienst → versies → artefacten → uitrollen → componenten, met status | `id?` (anders het onderwerp) |
-| `json-boom` | inklapbare JSON-weergave, voor de inhoud van een artefact | `veldpad` in het onderwerp, of `json` — generiek, dus in `widgets-standard` |
+| `omnium-inhoud` | de inhoud van een artefact, in de weergave die bij zijn **artefactsoort** hoort: objecttype en zaaktype als JSON-boom, BPMN (en later DMN) met een viewer, een Open Formulieren-definitie als formuliervoorbeeld | `veldpad?` (anders de inhoud van het onderwerp) |
+| `json-boom` | inklapbare JSON-weergave; de basis onder `omnium-inhoud` | generiek, dus in `widgets-standard` |
+| `bpmn-viewer` | BPMN-XML als diagram (bpmn-js NavigatedViewer, client-eiland; Omnium's Inhoud Editor gebruikt dezelfde, sinds 1f4f59e5, bpmn-js 17.11.1) | `xml` of `veldpad` |
 
 Bestaande widgets die meedoen: `v3model` voor het canonieke model (via de
-render-API), `mermaid`, `embed` (bv. een Open Formulieren-preview). Een
-BPMN/DMN-viewer is een latere widget (bpmn-js, als client-eiland).
+render-API), `mermaid`, `embed` (bv. een Open Formulieren-preview).
+
+Aandachtspunten:
+
+- **Canoniek model**: een e-dienstversie noemt haar bronmodel nu als tekst
+  plus hash (`bronmodelVersie`), niet als modelnaam en -versie in Omnium. Tot
+  er een koppeling is, krijgt `v3model` per template vaste config; het
+  gebruikte deel van het model volgt uit de `bronGE`'s van de traceregels.
+  De render-API geeft nog 400 bij entiteiten uit meerdere domeinen, terwijl
+  juist dat nodig is om de GPK-aanvraag naast de generieke Aanvraag te
+  tekenen (wens aan de render-API, §7).
+- **Keten**: `omnium-keten` bedenkt de koppelingen niet opnieuw maar volgt de
+  regels uit de Fundament-repo (`scripts/inrichting-export.ps1`): plaatshouders
+  `${OBJECTTYPE_URL:<id>}` gaan naar Open Object, `catalogue` (bijlagen) naar
+  de Documenten-API van Open Zaak; de tekening en de modi *inrichten* en
+  *aanvraag* naar `visualisatie/inrichting.html`.
+- **Transformaties**: zolang ze geen records zijn, staan `regelsetId`,
+  `regelsetVersie` en `schrijverId` in de herkomst van elk artefact
+  (bv. `canoniek-naar-objecttype` 0.4.0); de tab Transformaties groepeert de
+  artefacten van een versie daarop.
+- **Uitrol**: per resultaat de actie (aangemaakt, nieuwe versie, ongewijzigd)
+  als status, en `doelUrl` als link naar het object in de component.
 
 **Sorteren en filteren**: `/full` kent geen `q`, `filter` of `sort`
 (alleen de platte route `GET /<pad>` heeft `?q=`, `?filter.<kolom>=`,
@@ -165,6 +205,9 @@ publiek, met eigen leden; de inrichting is een werkplek.
 - Inloggen in de site met Imprint-accounts (sessiecookie, rollen); de hele
   site alleen voor ingelogden, de PDP van Imprint beslist wie welke pagina
   ziet.
+- Stand op Fundament (2-11): auth staat aan; records geven 401 zonder login,
+  definities 200 (`LEESTOEGANG=documenten`). De scripts loggen nu in als
+  admin; **dat wachtwoord hoort niet in de site**.
 - De site leest het register met **één technisch account**: een persoonlijk
   API-token (`Authorization: Bearer omt_…`) van een register-gebruiker met
   de rol *lezer*, als geheim in de site (`OMNIUM_REGISTER_TOKEN`). Omnium kent
@@ -202,9 +245,8 @@ Voor Mark:
 1. Akkoord met de opzet: plugin-omnium + sites/inrichting, eerst alleen-lezen?
 2. Het technische leesaccount in het register: welke gebruiker, en mag het
    een persoonlijk token zijn tot er serviceaccounts zijn?
-3. Staat `AUTH_ENABLED` aan op `omnium.fundament.common-ground-lab.nl`, en
-   welke `LEESTOEGANG`? (Met `documenten` blijven definities en
-   referentielijsten open, records niet.)
+3. ~~Staat auth aan?~~ Ja, met `LEESTOEGANG=documenten` (2-11). Nodig: een
+   leesaccount met de rol *lezer* en een token (`omt_…`) voor de site.
 4. Gemeente/omgeving: eerst alleen cg-test, of meteen kiesbaar?
 5. Waar draait de site op Fundament (namespace, domein, database)?
 
@@ -214,7 +256,11 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 - een endpoint "standaarddefinitie voor doeltype" (nu bepaalt elke client
   het zelf);
 - problem+json ook op de leesroutes;
-- serviceaccounts naast persoonlijke tokens.
+- serviceaccounts naast persoonlijke tokens;
+- lijst-, weergave- en formulierdefinities voor de inrichtingstypen (replay);
+- de e-dienstversie met een echte verwijzing naar het bronmodel (naam en
+  versie in Omnium);
+- de render-API: een diagram met entiteiten uit meerdere domeinen.
 
 ## 8. Fasering
 
@@ -224,10 +270,12 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
    `cg-test`).
 2. **sites/inrichting**: besloten site, huisstijl, overzicht en templates
    voor de vijf hoofdtypen; lokaal tegen het register (token).
-3. **`omnium-formulier`** (alleen-lezen, `layout_json`), **`omnium-keten`**,
-   **`json-boom`** (widgets-standard).
+3. **`omnium-inhoud`** met **`json-boom`** (widgets-standard) en
+   **`bpmn-viewer`** — processen en regels zijn een vast onderdeel, dus niet
+   "later" — plus **`omnium-formulier`** (alleen-lezen, `layout_json`) en
+   **`omnium-keten`** (regels uit de Fundament-repo).
 4. **Fundament**: Helm-chart, uitrol, eerste account.
-5. Later: BPMN/DMN-viewer; schrijven via het register (formulier bewerkbaar,
+5. Later: DMN-viewer; schrijven via het register (formulier bewerkbaar,
    `/registratie/`); OIDC (fase B).
 
 Niet in dit ontwerp: het register zelf wijzigen, Omnium's Studio vervangen,
