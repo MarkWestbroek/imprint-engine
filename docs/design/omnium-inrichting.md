@@ -37,7 +37,7 @@ flowchart LR
       V["_view/omnium-&lt;pad&gt;<br/>(template per type)"]
     end
     subgraph Plugin["@imprint/plugin-omnium"]
-      R["route /inrichting/&lt;pad&gt;/&lt;id&gt;"]
+      R["route /inrichting/&lt;pad&gt;/&lt;sleutel&gt;"]
       W["widgets: omnium-lijst,<br/>omnium-formulier, omnium-detail,<br/>omnium-keten"]
       C["OmniumClient<br/>(server-side, token)"]
     end
@@ -168,7 +168,8 @@ browser. Groeit het, dan vraagt het register filter en sort op `/full` (§7).
 
 De plugin claimt via `publicRoute` het voorvoegsel (standaard `inrichting`):
 
-- `/inrichting/<pad>/<id>` → haalt het record (`/full/<pad>/<id>`) en rendert
+- `/inrichting/<pad>/<sleutel>` → zoekt het record op zijn stabiele sleutel
+  (hieronder), haalt het (`/full/<pad>/<id>`) en rendert
   de templatepagina **`_view/omnium-<pad>`** met het record als onderwerp
   (`subject`), met de bestaande engine-`DefaultView`. Het onderwerp gaat al
   naar elke widget; `omnium-detail`, `omnium-formulier`, `omnium-keten` en
@@ -179,6 +180,23 @@ De plugin claimt via `publicRoute` het voorvoegsel (standaard `inrichting`):
 
 Geen querystrings (`?id=3`): een parameter in het pad houdt de pagina's en de
 templates eenvoudig, en de route is per definitie dynamisch.
+
+**Stabiele sleutels, geen id's.** De id's van het register overleven een nieuwe
+eerste vulling niet: bij het vervangen van de cg-test-nodes op 3-11 ging de
+database verloren, en een nieuwe vulling nummert alles opnieuw. URL's, templates
+en widgetconfig noemen daarom nooit een id:
+
+- De plugin kent per pad de sleutelkolom (`identifier`, `code`). Welke dat per
+  type is, en of hij per type uniek is, moet nog worden nagelopen tegen
+  `docs/inrichting-domein-v3.json` in de Fundament-repo.
+- Sleutel naar id gaat via de platte route (`GET /<pad>?filter.<kolom>=`); geen
+  of meer dan één treffer is een nette 404 of foutmelding, geen willekeurig
+  record. Of die filter exact matcht, moet nog worden nagegaan.
+- Doorlinken vanuit een rij (bv. `artefact_id` in `uitrol_resultaten`) gebruikt
+  ook de sleutel van het doelrecord: de id blijft binnen de client.
+- Heeft een type geen eigen sleutel (mogelijk uitrollen), dan is zijn URL
+  alleen geldig zolang de vulling meegaat, of wordt hij samengesteld uit
+  sleutels van zijn relaties; dat kiezen we per type.
 
 ## 4. `sites/inrichting`
 
@@ -245,10 +263,14 @@ Voor Mark:
 1. Akkoord met de opzet: plugin-omnium + sites/inrichting, eerst alleen-lezen?
 2. Het technische leesaccount in het register: welke gebruiker, en mag het
    een persoonlijk token zijn tot er serviceaccounts zijn?
-3. ~~Staat auth aan?~~ Ja, met `LEESTOEGANG=documenten` (2-11). Nodig: een
-   leesaccount met de rol *lezer* en een token (`omt_…`) voor de site.
+3. ~~Staat auth aan?~~ Ja, met `LEESTOEGANG=documenten` (stand 2-11, vóór het
+   verlies van de database). Nodig: een leesaccount met de rol *lezer* en een
+   token (`omt_…`) voor de site; na herstel opnieuw aan te maken en na te gaan.
 4. Gemeente/omgeving: eerst alleen cg-test, of meteen kiesbaar?
 5. Waar draait de site op Fundament (namespace, domein, database)?
+6. Herstel van het register: op 3-11 zijn alle cg-test-nodes vervangen en is de
+   database weg; het herstel wacht op jouw besluit (via FUNDAMENT). Fase 1 kan
+   zonder register, fase 2 niet.
 
 Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
@@ -266,10 +288,14 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
 1. **plugin-omnium, lezen**: client (full, tijdreizen, actueel, fouten),
    definities ophalen, widgets `omnium-lijst` en `omnium-detail`, de route
-   met `_view`-templates; tests tegen een vastgelegde respons (fixture
-   `cg-test`).
+   met `_view`-templates; tests tegen een fixture. De enige recente
+   momentopname (Fundament-repo,
+   `backups/register-resten-20261104/inrichting-register-export-20261029.json`)
+   is de eigen exportvorm, niet de `/full`-respons: de fixture wordt daaruit
+   afgeleid en de vorm controleren we tegen het register zodra dat terug is.
 2. **sites/inrichting**: besloten site, huisstijl, overzicht en templates
-   voor de vijf hoofdtypen; lokaal tegen het register (token).
+   voor de vijf hoofdtypen; lokaal tegen het register (token), dus pas als dat
+   weer draait.
 3. **`omnium-inhoud`** met **`json-boom`** (widgets-standard) en
    **`bpmn-viewer`** — processen en regels zijn een vast onderdeel, dus niet
    "later" — plus **`omnium-formulier`** (alleen-lezen, `layout_json`) en
