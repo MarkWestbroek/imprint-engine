@@ -37,7 +37,7 @@ flowchart LR
       V["_view/omnium-&lt;pad&gt;<br/>(template per type)"]
     end
     subgraph Plugin["@imprint/plugin-omnium"]
-      R["route /inrichting/&lt;pad&gt;/&lt;sleutel&gt;"]
+      R["route /inrichting/… op stabiele sleutel"]
       W["widgets: omnium-lijst,<br/>omnium-formulier, omnium-detail,<br/>omnium-keten"]
       C["OmniumClient<br/>(server-side, token)"]
     end
@@ -168,8 +168,8 @@ browser. Groeit het, dan vraagt het register filter en sort op `/full` (§7).
 
 De plugin claimt via `publicRoute` het voorvoegsel (standaard `inrichting`):
 
-- `/inrichting/<pad>/<sleutel>` → zoekt het record op zijn stabiele sleutel
-  (hieronder), haalt het (`/full/<pad>/<id>`) en rendert
+- `/inrichting/…` → herleidt de stabiele sleutel in het pad (hieronder) tot een
+  record, haalt het (`/full/<pad>/<id>`) en rendert
   de templatepagina **`_view/omnium-<pad>`** met het record als onderwerp
   (`subject`), met de bestaande engine-`DefaultView`. Het onderwerp gaat al
   naar elke widget; `omnium-detail`, `omnium-formulier`, `omnium-keten` en
@@ -184,19 +184,39 @@ templates eenvoudig, en de route is per definitie dynamisch.
 **Stabiele sleutels, geen id's.** De id's van het register overleven een nieuwe
 eerste vulling niet: bij het vervangen van de cg-test-nodes op 3-11 ging de
 database verloren, en een nieuwe vulling nummert alles opnieuw. URL's, templates
-en widgetconfig noemen daarom nooit een id:
+en widgetconfig noemen daarom geen id. Slechts een deel van de typen heeft een
+eigen sleutel (bron: `docs/inrichting-domein-v3.json` en de export van 29-10 in
+de Fundament-repo; of het register "uniek" ook afdwingt, is nog niet getest):
 
-- De plugin kent per pad de sleutelkolom (`identifier`, `code`). Welke dat per
-  type is, en of hij per type uniek is, moet nog worden nagelopen tegen
-  `docs/inrichting-domein-v3.json` in de Fundament-repo.
-- Sleutel naar id gaat via de platte route (`GET /<pad>?filter.<kolom>=`); geen
-  of meer dan één treffer is een nette 404 of foutmelding, geen willekeurig
-  record. Of die filter exact matcht, moet nog worden nagegaan.
-- Doorlinken vanuit een rij (bv. `artefact_id` in `uitrol_resultaten`) gebruikt
-  ook de sleutel van het doelrecord: de id blijft binnen de client.
-- Heeft een type geen eigen sleutel (mogelijk uitrollen), dan is zijn URL
-  alleen geldig zolang de vulling meegaat, of wordt hij samengesteld uit
-  sleutels van zijn relaties; dat kiezen we per type.
+| Type | Sleutel | Route onder `/inrichting` | Let op |
+|---|---|---|---|
+| componenten | `ComponentNaam.naam` | `/componenten/<naam>` | korte namen (gzac, openzaak) |
+| ediensten | `EdienstNaam.naam` | `/ediensten/<naam>` | vrije tekst met spaties en haakjes, dus URL-gecodeerd; **hernoemen breekt de link** |
+| edienstversies | e-dienst + `versienummer` | `/ediensten/<naam>/versies/<versienummer>` | het nummer alleen is niet uniek; de e-dienst loopt via `EdienstversieEdienst` |
+| artefacten | soortcode + doelcomponent + `identifier` | `/artefacten/<soortcode>/<component>/<identifier>` | `identifier` alleen is niet uniek; van de soort de `code`, want de id van de referentielijst verschilt per instantie; de component loopt via `ArtefactDoelcomponent` |
+| uitrollen | geen; `gestartOp` is praktisch uniek, niet gegarandeerd | `/ediensten/<naam>/versies/<versienummer>/uitrollen/<gestartOp>` | een uitrol is een gebeurtenis en komt na een nieuwe vulling niet terug: deze links gelden alleen binnen dit register |
+
+De route is dus niet overal `<pad>/<sleutel>`: de plugin kent per type zijn
+routevorm en hoe die naar een id wordt herleid. De template blijft
+`_view/omnium-<pad>`.
+
+**Sleutel naar id** kan niet met één filter:
+
+- `?filter.<kolom>=` op de platte route is een **bevat-zoekopdracht**
+  (`ILIKE '%waarde%'`, hoofdletterongevoelig, `%` en `_` lijken als jokerteken te
+  werken; `handlers/core_handlers.go` in Omnium). `filter.versienummer=0.1` vindt
+  ook `0.1.0` en `10.1.2`. De client controleert elke treffer daarom zelf exact,
+  over alle pagina's van het antwoord. Geen exacte treffer is een 404, meer dan
+  één een zichtbare fout, nooit een willekeurig record.
+- Samengestelde sleutels lopen via relaties, dus dat zijn meerdere stappen (eerst
+  de e-dienst of component, dan via `/api/volgorde` of de lijst), of de lijst
+  ophalen en in de client matchen.
+- Nog na te gaan: welke kolommen de platte route toelaat (een onbekende geeft
+  400), dus of velden uit de gegevenselementen filterbaar zijn. Zo niet, dan is
+  ophalen en matchen de enige weg.
+
+Doorlinken vanuit een rij (bv. `artefact_id` in `uitrol_resultaten`) bouwt de URL
+uit de sleutel van het doelrecord; de id blijft binnen de client.
 
 ## 4. `sites/inrichting`
 
@@ -271,10 +291,15 @@ Voor Mark:
 6. Herstel van het register: op 3-11 zijn alle cg-test-nodes vervangen en is de
    database weg; het herstel wacht op jouw besluit (via FUNDAMENT). Fase 1 kan
    zonder register, fase 2 niet.
+7. Modelwens (voorstel van INRICHTEN_VIZ, nog niet met je besproken): een stabiel
+   `code`-veld op EDienst en een uuid op Uitrol. Dan overleven links een
+   hernoeming en een nieuwe vulling, en vervalt de omweg via naam en `gestartOp`.
+   Een nieuwe vulling is hét moment om dat te doen.
 
 Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
 - filter, sortering en `q` op `/full/<pad>` (nu alleen op de platte route);
+- een exact filter naast de bevat-zoekopdracht, met jokertekens ge-escaped;
 - een endpoint "standaarddefinitie voor doeltype" (nu bepaalt elke client
   het zelf);
 - problem+json ook op de leesroutes;
