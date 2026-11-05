@@ -372,7 +372,10 @@ Voor Mark:
 
 1. ~~Akkoord met de opzet?~~ Ja (5-11).
 2. ~~Leesaccount?~~ Een gebruiker met de rol *lezer* en een persoonlijk token
-   tot er serviceaccounts zijn (5-11); gevraagd aan INRICHTEN_VIZ.
+   tot er serviceaccounts zijn (5-11). Account via een uitnodiging, het token
+   (max. 365 dagen) rechtstreeks in Secret `omnium-lezer`; INRICHTEN_VIZ legt
+   het aan Mark voor. De client meldt een 401 van het register zichtbaar
+   ("leestoken verlopen of ingetrokken") in plaats van lege lijsten te tonen.
 3. ~~Staat auth aan?~~ Ja, ook na de herbouw (5-11): records geven 401 zonder
    login, definities 200. Nodig: een leesaccount met de rol *lezer* en een
    token (`omt_…`) voor de site.

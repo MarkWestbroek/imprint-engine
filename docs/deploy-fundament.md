@@ -42,7 +42,7 @@ flowchart LR
 | `base/service.yaml`, `base/httproute.yaml` | service en route op de gateway |
 | `base/bucket.yaml` | ObjectBucketClaim; Rook maakt een ConfigMap en Secret `imprint` met host en sleutels |
 | `tools/migrate-job.yaml` | `npm run db:migrate:pg` met het tools-image |
-| `inrichting/` | namespace, hostnaam, images, `OMNIUM_REGISTER_URL` en `OMNIUM_URL` (binnen het cluster) |
+| `inrichting/` | namespace, hostnaam, images, `OMNIUM_REGISTER_URL` en `OMNIUM_URL` (binnen het cluster), het token uit Secret `omnium-lezer` |
 | `inrichting/db/database.yaml` | de database `inrichting` in `pg-main` |
 
 Geen geheimen in git. De Secret `imprint-env` maak je met de hand.
@@ -78,9 +78,21 @@ Stap 1–3 raken gedeelde objecten en gaan via FUNDAMENT.
    ```sh
    kubectl -n tnt-cg--inrichting create secret generic imprint-env \
      --from-literal=DATABASE_URL="postgres://inrichting:$PG_PW@pg-main-rw.tnt-cg--db.svc.cluster.local:5432/inrichting" \
-     --from-literal=SESSION_SECRET="$(openssl rand -hex 32)" \
-     --from-literal=OMNIUM_REGISTER_TOKEN="$OMT_TOKEN"
+     --from-literal=SESSION_SECRET="$(openssl rand -hex 32)"
    ```
+
+   Het leestoken van het register staat in een eigen Secret `omnium-lezer`
+   (sleutel `OMNIUM_REGISTER_TOKEN`). Dat wordt aangemaakt bij het uitrollen:
+   - een gebruiker met de rol *lezer*, via een uitnodiging die iemand één keer
+     accepteert;
+   - een token via `POST /api/auth/tokens`, met de login van die gebruiker.
+
+   Het token is **maximaal 365 dagen** geldig: zet de vervaldatum in de agenda
+   en vervang alleen dit Secret, met daarna `kubectl rollout restart`. Het
+   register gaat intern via `http://omnium-api.tnt-cg--omnium.svc.cluster.local:8080`
+   (`/full/…` direct onder de root; `/api/…` alleen voor auth, render en
+   volgorde). `tnt-cg--omnium` heeft geen NetworkPolicy (5-11), dus verkeer uit
+   een andere namespace komt erdoor.
 
 6. **Migreren**: `kubectl apply -k deploy/k8s/inrichting/tools`, dan
    `kubectl -n tnt-cg--inrichting logs job/imprint-migrate -f`.

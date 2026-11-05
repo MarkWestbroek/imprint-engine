@@ -13,8 +13,8 @@ configMapGenerator:
   - name: imprint-config
     options: { disableNameSuffixHash: true }
     literals:
-      # Het register binnen het cluster: geen omweg via de gateway. Pad en
-      # poort van omnium-api nagaan zodra plugin-omnium er is.
+      # Het register binnen het cluster, geen omweg via de gateway; /full/…
+      # direct onder de root, /api/… voor auth, render en volgorde.
       - OMNIUM_REGISTER_URL=http://omnium-api.tnt-cg--omnium.svc.cluster.local:8080
       # Render-API (v3model, Studio-diagrammen)
       - OMNIUM_URL=http://omnium-render-svc.tnt-cg--omnium.svc.cluster.local:8095
