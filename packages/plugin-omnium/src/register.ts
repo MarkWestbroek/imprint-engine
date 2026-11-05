@@ -25,43 +25,58 @@ export function currentVersion(hub: Hub): Version | undefined {
   return best;
 }
 
-type Moment = { datum?: string; opvoer?: string; afvoer?: string };
+type Bound = { datum?: string; opvoer?: string; afvoer?: string };
 
-/** The live entry of an `aanvang`/`einde` list (latest opvoer, not withdrawn), as a time. */
-function bound(list: unknown): number | undefined {
+/** The live `datum` of an `aanvang`/`einde` list (latest opvoer, not withdrawn). */
+function bound(list: unknown): string | undefined {
   if (!Array.isArray(list)) return undefined;
-  let best: Moment | undefined;
-  for (const m of list as Moment[]) {
+  let best: Bound | undefined;
+  for (const m of list as Bound[]) {
     if (!m?.datum || !m.opvoer || m.afvoer) continue;
     if (!best || time(m) >= time(best)) best = m;
   }
-  return best?.datum ? Date.parse(best.datum) : undefined;
+  return best?.datum;
+}
+
+/**
+ * A moment in material time: an instant, and the calendar day it falls on in
+ * the Netherlands. A `datum` without a time (day precision) is compared by
+ * day, a datum with a time by instant.
+ */
+export type MaterialMoment = { at: number; day: string };
+
+const DAY = new Intl.DateTimeFormat("sv-SE", { timeZone: "Europe/Amsterdam", year: "numeric", month: "2-digit", day: "2-digit" });
+const isDay = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
+
+/** The moment `geldigOp` names (a date: that whole day), else now. */
+export function momentOf(geldigOp?: string): MaterialMoment {
+  if (geldigOp && isDay(geldigOp)) return { day: geldigOp, at: Date.parse(`${geldigOp}T21:59:59.999Z`) };
+  const at = (geldigOp && Date.parse(geldigOp)) || Date.now();
+  return { at, day: DAY.format(at) };
 }
 
 /**
  * Material time: a hub of a materieel GE holds from its `aanvang` until its
- * `einde` (an uitrol's "bezig" ends where "geslaagd" begins). `/full` returns
- * every occurrence; this keeps those valid at `at`.
+ * `einde`. With day precision (a date) the einde day is the last day it holds
+ * (a drawing redrawn on the 6th ends on the 5th and begins on the 6th); with
+ * a time, the einde is the first instant it no longer holds (an uitrol's
+ * "bezig" ends where "geslaagd" begins). `/full` returns every occurrence;
+ * this keeps those valid at the moment.
  */
-export function validAt(hub: Hub, at: number): boolean {
+export function validAt(hub: Hub, m: MaterialMoment): boolean {
   const from = bound(hub.aanvang);
   const until = bound(hub.einde);
-  return (from === undefined || from <= at) && (until === undefined || at < until);
+  const started = !from || (isDay(from) ? from <= m.day : Date.parse(from) <= m.at);
+  const ended = until !== undefined && (isDay(until) ? m.day > until : m.at >= Date.parse(until));
+  return started && !ended;
 }
 
-/** The moment `geldigOp` names (a date counts to its end), else now. */
-export function momentOf(geldigOp?: string): number {
-  if (!geldigOp) return Date.now();
-  if (/^\d{4}-\d{2}-\d{2}$/.test(geldigOp)) return Date.parse(`${geldigOp}T23:59:59.999Z`);
-  return Date.parse(geldigOp) || Date.now();
-}
-
-/** A record with only the hubs valid at `at` (material time); the rest of the record as is. */
-export function asAt<T extends FullRecord>(record: T, at: number): T {
+/** A record with only the hubs valid at the moment (material time); the rest of the record as is. */
+export function asAt<T extends FullRecord>(record: T, m: MaterialMoment): T {
   const out: Record<string, unknown> = { ...record };
   for (const [k, v] of Object.entries(record)) {
     if (Array.isArray(v) && v.some((h) => h && typeof h === "object" && ("einde" in h || "aanvang" in h))) {
-      out[k] = (v as Hub[]).filter((h) => validAt(h, at));
+      out[k] = (v as Hub[]).filter((h) => validAt(h, m));
     }
   }
   return out as T;

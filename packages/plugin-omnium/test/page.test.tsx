@@ -99,6 +99,18 @@ test("a drawing renders inline, sanitised; a generated artefact links to its sou
   assert.match(form, /href="\/inrichting\/ediensten\/gehandicaptenparkeerkaart-aanvragen\/versies\/0.1.0\/bronnen\/logisch-model\/[^"]*"[^>]*>Logisch model GPK</);
 });
 
+test("a form links to its live page: the host of the uitrol, the slug of the form (else the identifier)", async () => {
+  const form = await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement);
+  assert.match(form, /href="https:\/\/formulieren.example\/gpk-aanvraag\/"/);
+});
+
+test("a JSON payload is a tree you can fold open, not a wall of text", async () => {
+  const page = (await html((await omniumPage({ path: ["artefacten", "zaaktype", "openzaak", "aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(page, /Payload \(JSON, \d+ tekens\)/);
+  assert.match(page, /<details open=""[^>]*><summary[^>]*><span class="text-muted">\{1\}<\/span><\/summary>/);
+  assert.match(page, /<span class="text-muted">omschrijving: <\/span>/);
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

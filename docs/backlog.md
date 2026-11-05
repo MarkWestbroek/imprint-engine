@@ -295,8 +295,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] `full/artefacten` bevat alle payloads (SVG's van 150 kB); een
             lijst haalt ze nu elke keer op. Vragen om een lichtere route of
             veldkeuze in het register, of per verzoek cachen.
-      - [ ] `omnium-inhoud` voor bronnen in Studio-JSON en het edienstmodel
-            (als boom), en bpmn-js/dmn-js voor gegenereerde XML.
+      - [x] JSON als boom (6-11); live-link voor formulieren.
+      - [ ] bpmn-js/dmn-js voor gegenereerde BPMN/DMN-XML; live-links voor
+            andere soorten (zaaktype in Open Zaak, objecttype).
+      - [ ] Componentversies: het model kent `ComponentVersie` en
+            `OmgevingComponentversie`, maar het register heeft er nog geen
+            (6-11). Vullen is aan FUNDAMENT/INRICHTEN_VIZ; daarna een kolom en
+            pagina in de plugin.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

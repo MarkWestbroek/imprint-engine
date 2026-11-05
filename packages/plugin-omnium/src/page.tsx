@@ -101,8 +101,17 @@ async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetCo
     artefacten: richting === "gegenereerd" ? [{ title: "Traceregels", veld: "artefact_traceregels" }] : [],
     uitrollen: [{ title: "Resultaten", veld: "uitrol_resultaten" }],
   };
+  const live = subject.pad === "artefacten" ? await i.liveUrl(subject.record).catch(() => undefined) : undefined;
   return (
     <div className="space-y-8">
+      {live && (
+        <p className="rounded-xl border border-line bg-surface p-4 text-sm">
+          Live:{" "}
+          <a href={live} className="font-medium text-accent underline-offset-2 hover:underline" rel="noopener noreferrer" target="_blank">
+            {live}
+          </a>
+        </p>
+      )}
       {richting && richting !== "gegenereerd" && <OmniumTekening config={{ title: "Tekening" }} subject={subject} ctx={ctx} />}
       <OmniumDetail
         config={{

@@ -671,6 +671,9 @@ toont wat het register nu weet.
     `uitrol_resultaten`). Met *richting* toon je alleen de **resultaten**
     (`gegenereerd`) of de **bronnen** (`bron`, elk met links naar zijn
     tekeningen).
+- **Live**: bij een formulier staat een link naar het formulier zoals
+  inwoners het zien, in Open Formulieren.
+- **JSON** (een formulierdefinitie, het e-dienstmodel) klap je open als boom.
 - **Bronnen en tekeningen** horen bij een versie:
   `/inrichting/ediensten/<code>/versies/<nummer>/bronnen/<soort>/<identifier>`.
   Een resultaat linkt naar de bron waaruit het is gemaakt.

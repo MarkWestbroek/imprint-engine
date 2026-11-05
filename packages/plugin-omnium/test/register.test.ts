@@ -4,7 +4,7 @@ import path from "node:path";
 import { test } from "node:test";
 import { OmniumRegister, OmniumRegisterError, registerProblem } from "../src/client";
 import { AmbiguousKey, Inrichting } from "../src/inrichting";
-import { currentVersion, ge, geRows, humanize, relation, targetId, type FullRecord } from "../src/register";
+import { currentVersion, ge, geRows, humanize, momentOf, relation, targetId, validAt, type FullRecord } from "../src/register";
 
 const dir = path.join(import.meta.dirname, "fixture", "full");
 const fixture = (pad: string) => JSON.parse(readFileSync(path.join(dir, `${pad}.json`), "utf8")) as FullRecord[];
@@ -131,6 +131,17 @@ test("material time: an uitrol is bezig until its einde, then geslaagd (both hub
   assert.deepEqual(geRows(u, "uitrol_verlopen").map((v) => v.status), ["geslaagd"]);
   const then = new Inrichting(register(), "/inrichting", { geldigOp: "2026-11-05T10:00:02Z" });
   assert.equal(ge((await then.list("uitrollen"))[0], "uitrol_verlopen")?.status, "bezig");
+});
+
+test("material time by day: a drawing redrawn on the 6th ends on the 5th (inclusive) and begins on the 6th, in Dutch days", () => {
+  const oud = { aanvang: undefined, einde: [{ datum: "2026-11-05", opvoer: "2026-11-05T23:15:50Z" }], data: [] };
+  const nieuw = { aanvang: [{ datum: "2026-11-06", opvoer: "2026-11-05T23:15:50Z" }], data: [] };
+  // 6 Nov 00:30 in Amsterdam is still 5 Nov in UTC: the Dutch day counts.
+  const vroeg = momentOf("2026-11-05T23:30:00Z");
+  assert.equal(vroeg.day, "2026-11-06");
+  assert.deepEqual([validAt(oud, vroeg), validAt(nieuw, vroeg)], [false, true]);
+  const gisteren = momentOf("2026-11-05");
+  assert.deepEqual([validAt(oud, gisteren), validAt(nieuw, gisteren)], [true, false]);
 });
 
 test("humanize: field names as labels", () => {

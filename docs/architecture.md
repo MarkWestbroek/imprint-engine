@@ -1552,6 +1552,15 @@ flowchart LR
     hun versie.
   - Een tekening is SVG van de render-service. De widget `omnium-tekening`
     zet die inline na `sanitizeSvg` (allow-list, uit `widgets-standard`).
+- **Datums van materiële tijd**: een `aanvang` of `einde` zonder tijd is een
+  kalenderdag. De vergelijking gebeurt per Nederlandse dag
+  (`Europe/Amsterdam`), en de einddag telt mee. Met een tijd erbij vergelijkt
+  `validAt()` instanten, en is het einde exclusief.
+- **Live adres**: `liveUrl()` geeft voor een formulier
+  `<host van de laatste uitrol-doelUrl>/<slug>/`. De slug komt uit
+  `forms.json` in de payload, anders uit de identifier.
+- **JSON** toont `json-tree.tsx`: `<details>` per object of array, op de
+  server, met hoogstens 5000 onderdelen.
 - **Referentielijsten**: velden die naar een referentielijst wijzen
   (`soort`, `formaat`) toont de detailweergave met de code van het item
   waarnaar ze wijzen, niet met het id.

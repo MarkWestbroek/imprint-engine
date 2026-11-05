@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: datums, live formulieren en JSON.**
+  - Fix: een begin- of einddatum zonder tijd telt als **Nederlandse
+    kalenderdag**, met de einddag erbij. Een opnieuw getekende tekening viel
+    eerst die nacht weg ("geen SVG die veilig getoond kan worden").
+  - Een formulier linkt naar het **live formulier** in Open Formulieren: de
+    host komt uit de laatste uitrol, de slug uit de definitie. Dat staat op de
+    artefactpagina en in de kolom Live van Resultaten.
+  - JSON-inhoud (formulierdefinitie, e-dienstmodel, Studio-bron) is een
+    **inklapbare boom** in plaats van een lap tekst.
 - **Inrichting: bronnen en tekeningen, openbare uitleg.**
   - Een versie toont nu **Resultaten** en **Bronnen** apart, met per bron
     links naar de tekeningen.

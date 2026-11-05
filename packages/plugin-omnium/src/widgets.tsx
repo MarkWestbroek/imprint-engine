@@ -6,6 +6,7 @@ import { inrichtingOf, isOmniumSubject } from "./context";
 import { own, REF_FIELDS, RELATION_TARGET, type Inrichting, type Pad } from "./inrichting";
 import { currentHubs, currentVersion, display, ge, geRows, humanize, refId, relation, TECHNICAL, type FullRecord, type Version } from "./register";
 import { sanitizeSvg } from "@imprint/widgets-standard/svg-sanitize";
+import { JsonTree, parseJsonish } from "./json-tree";
 import { OmniumDetailConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
 
 /**
@@ -52,6 +53,13 @@ const COLUMNS: Record<Pad, Column[]> = {
     { label: "Soort", cell: async (r, i) => text(await i.soortcode(r)) },
     { label: "Component", cell: async (r, i) => text(i.componentNaam(await i.componentOfArtefact(r))) },
     { label: "Versie", cell: (r) => text(ge(r, "artefact_identificaties")?.versienummer) },
+    {
+      label: "Live",
+      cell: async (r, i) => {
+        const live = await i.liveUrl(r).catch(() => undefined);
+        return live ? <a href={live} className="underline-offset-2 hover:underline" rel="noopener noreferrer" target="_blank">openen</a> : "";
+      },
+    },
   ],
   uitrollen: [
     { ...titleLink("uitrollen"), label: "Gestart" },
@@ -147,6 +155,20 @@ function Value({ name, value }: { name: string; value: unknown }) {
       <a href={s} className="break-all underline-offset-2 hover:underline" rel="noopener noreferrer">
         {s}
       </a>
+    );
+  }
+  // JSON (a payload, a nested value): as a tree, folded.
+  const json = value && typeof value === "object" ? value : s.length > 160 ? parseJsonish(s) : undefined;
+  if (json) {
+    return (
+      <details>
+        <summary className="cursor-pointer text-muted">
+          {humanize(name)} (JSON, {s.length} tekens)
+        </summary>
+        <div className="mt-2">
+          <JsonTree value={json} />
+        </div>
+      </details>
     );
   }
   if (s.length > 160) {

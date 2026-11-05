@@ -138,6 +138,44 @@ export class Inrichting {
     return relation(a, "artefact_bronnen", own("artefacten")).map((l) => ({ id: l.id, rol: str(l.velden.rol) ?? "bron", bronHash: str(l.velden.bronHash) }));
   }
 
+  /** Where the latest uitrol put this artefact (`uitrol_resultaten.doelUrl`), newest `tijdstip` first. */
+  async doelUrl(a: FullRecord): Promise<string | undefined> {
+    let best: { url: string; t: string } | undefined;
+    for (const u of await this.list("uitrollen")) {
+      for (const l of relation(u, "uitrol_resultaten", own("uitrollen"))) {
+        const url = str(l.velden.doelUrl);
+        const t = str(l.velden.tijdstip) ?? "";
+        if (l.id === a.id && url && (!best || t >= best.t)) best = { url, t };
+      }
+    }
+    return best?.url;
+  }
+
+  /**
+   * The live page of an artefact, where there is one: an Open Formulieren form
+   * is at `<host>/<slug>/`, the host taken from where the uitrol put it (the
+   * API URL), the slug from the form definition (else its identifier).
+   */
+  async liveUrl(a: FullRecord): Promise<string | undefined> {
+    if ((await this.soortcode(a)) !== "formulier") return undefined;
+    const doel = await this.doelUrl(a);
+    if (!doel) return undefined;
+    let slug: string | undefined;
+    try {
+      const payload = ge(a, "artefact_inhouden")?.payload;
+      const forms = (typeof payload === "string" ? JSON.parse(payload) : payload)?.["forms.json"];
+      slug = str((Array.isArray(forms) ? forms[0] : forms)?.slug);
+    } catch {
+      // Not JSON: fall back to the identifier.
+    }
+    slug ??= this.identifier(a);
+    try {
+      return slug ? `${new URL(doel).origin}/${encodeURIComponent(slug)}/` : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
   /** The drawings of a source: the artefacts that point at it with rol weergave-van (the source has no key back). */
   async weergavenVan(bron: FullRecord): Promise<FullRecord[]> {
     return (await this.list("artefacten")).filter((a) => this.bronnenVan(a).some((b) => b.id === bron.id && b.rol === "weergave-van"));
