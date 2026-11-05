@@ -370,14 +370,18 @@ backups heeft.
 
 Voor Mark:
 
-1. Akkoord met de opzet: plugin-omnium + sites/inrichting, eerst alleen-lezen?
-2. Het technische leesaccount in het register: welke gebruiker, en mag het
-   een persoonlijk token zijn tot er serviceaccounts zijn?
+1. ~~Akkoord met de opzet?~~ Ja (5-11).
+2. ~~Leesaccount?~~ Een gebruiker met de rol *lezer* en een persoonlijk token
+   tot er serviceaccounts zijn (5-11); gevraagd aan INRICHTEN_VIZ.
 3. ~~Staat auth aan?~~ Ja, ook na de herbouw (5-11): records geven 401 zonder
    login, definities 200. Nodig: een leesaccount met de rol *lezer* en een
    token (`omt_…`) voor de site.
 4. Gemeente/omgeving: eerst alleen cg-test, of meteen kiesbaar?
-5. Waar draait de site op Fundament (namespace, domein, database)?
+5. ~~Waar op Fundament?~~ `tnt-cg--inrichting`,
+   `inrichting.fundament.common-ground-lab.nl`, database `inrichting` in
+   `pg-main` (5-11); gevraagd aan FUNDAMENT. Backups: dagelijkse `pg_dump` per
+   database naar een bucket, 30 dagen; `inrichting` en de uploadbucket moeten
+   aan die lijst worden toegevoegd.
 6. Modelwens (voorstel van INRICHTEN_VIZ, nog niet met je besproken): een stabiel
    `code`-veld op EDienst en een uuid op Uitrol. Dan overleven links een
    hernoeming en een nieuwe vulling, en vervalt de omweg via naam en `gestartOp`.
