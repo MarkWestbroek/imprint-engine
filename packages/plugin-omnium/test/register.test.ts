@@ -39,7 +39,9 @@ test("current values: the live version with the latest opvoer; withdrawn hubs an
   assert.equal(ge(v2, "edienstversie_nummers")?.versienummer, "0.1.0");
   assert.equal(currentVersion({ data: [{ opvoer: "2026-01-01T00:00:00Z", afvoer: "2026-01-02T00:00:00Z" }] }), undefined);
   const a3 = fixture("artefacten")[2]!;
-  assert.deepEqual(geRows(a3, "artefact_traceregels").map((r) => r.bronGE), ["Aanvraag.kenteken", "Aanvraag.geboortedatum"]);
+  const bron = geRows(a3, "artefact_traceregels").map((r) => r.bronGE);
+  assert.deepEqual(bron.slice(0, 2), ["Aanvraag.kenteken", "Aanvraag.geboortedatum"]);
+  assert.ok(!bron.includes("Aanvraag.oud")); // withdrawn
 });
 
 test("relations: the target id, a self-relation by its doel_ column, the relation's own fields", () => {

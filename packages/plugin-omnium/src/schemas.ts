@@ -37,6 +37,11 @@ export const OmniumDetailConfig = z.object({
 });
 export type OmniumDetailConfig = z.infer<typeof OmniumDetailConfig>;
 
+export const OmniumFormulierConfig = z.object({
+  title: z.string().optional(),
+});
+export type OmniumFormulierConfig = z.infer<typeof OmniumFormulierConfig>;
+
 export const OmniumTekeningConfig = z.object({
   title: z.string().optional(),
 });
@@ -57,6 +62,13 @@ export const omniumWidgets = [
     version: "1.0.0",
     help: "The page's register record: its gegevenselementen and relations, as the register holds them now (or at the chosen moment).",
     configSchema: OmniumDetailConfig,
+  },
+  {
+    name: "omnium-formulier",
+    label: "Omnium: formulier",
+    version: "1.0.0",
+    help: "An Open Formulieren form of the page's artefact as an overview: per step the questions, where each comes from in the model and where it goes in the objecttype, plus the logic.",
+    configSchema: OmniumFormulierConfig,
   },
   {
     name: "omnium-tekening",

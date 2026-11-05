@@ -7,7 +7,8 @@ import { own, REF_FIELDS, RELATION_TARGET, type Inrichting, type Pad } from "./i
 import { currentHubs, currentVersion, display, ge, geRows, humanize, refId, relation, TECHNICAL, type FullRecord, type Version } from "./register";
 import { sanitizeSvg } from "@imprint/widgets-standard/svg-sanitize";
 import { JsonTree, parseJsonish } from "./json-tree";
-import { OmniumDetailConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
+import { OpenFormulier, type Trace } from "./formulier";
+import { OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
 
 /**
  * The viewers of omnium-lijst and omnium-detail (server components). They read
@@ -358,7 +359,31 @@ export async function OmniumTekening({ config: raw, subject }: { config: unknown
   }
 }
 
+export async function OmniumFormulier({ config: raw, subject }: { config: unknown; subject?: unknown; ctx: WidgetContext }) {
+  const config = OmniumFormulierConfig.parse(raw ?? {});
+  if (!isOmniumSubject(subject) || subject.pad !== "artefacten") {
+    return <WidgetFrame title={config.title}><Note>Deze widget toont een formulier-artefact; zet hem op de template _view/omnium-artefacten.</Note></WidgetFrame>;
+  }
+  const i = inrichtingOf(subject)!;
+  try {
+    if ((await i.soortcode(subject.record)) !== "formulier") return null;
+    const raw = ge(subject.record, "artefact_inhouden")?.payload;
+    const payload = typeof raw === "string" ? parseJsonish(raw) : raw;
+    const traces = new Map<string, Trace>(
+      geRows(subject.record, "artefact_traceregels").map((t) => [String(t.doelPad ?? ""), { bronGE: t.bronGE as string | undefined, regel: t.regel as string | undefined }])
+    );
+    return (
+      <WidgetFrame title={config.title}>
+        <OpenFormulier payload={payload} traces={traces} />
+      </WidgetFrame>
+    );
+  } catch (err) {
+    return <WidgetFrame title={config.title}><Note>{registerProblem(err)}</Note></WidgetFrame>;
+  }
+}
+
 export const omniumViewers: WidgetViewers = {
+  "omnium-formulier": OmniumFormulier as WidgetViewers[string],
   "omnium-tekening": OmniumTekening as WidgetViewers[string],
   "omnium-lijst": OmniumLijst as WidgetViewers[string],
   "omnium-detail": OmniumDetail as WidgetViewers[string],

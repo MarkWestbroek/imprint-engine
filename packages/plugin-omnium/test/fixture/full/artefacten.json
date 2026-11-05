@@ -239,6 +239,57 @@
      }
     ],
     "afvoer": "2026-11-05T09:00:00Z"
+   },
+   {
+    "artefact_id": 3,
+    "rel_id": 10,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 10,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "bronGE": "Gpk.Kaart.soort",
+      "regel": "Enum → keuzerondjes",
+      "doelPad": "/formDefinitions.json/0/configuration/components/0",
+      "actie": "aangemaakt"
+     }
+    ]
+   },
+   {
+    "artefact_id": 3,
+    "rel_id": 11,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 11,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "bronGE": "Gpk.Kaart.kenteken",
+      "regel": "Overig → tekstveld",
+      "doelPad": "/formDefinitions.json/0/configuration/components/1",
+      "actie": "aangemaakt"
+     }
+    ]
+   },
+   {
+    "artefact_id": 3,
+    "rel_id": 12,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 12,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "bronGE": "Aanvraag.Status.status",
+      "regel": "Registratie: vaste waarde (e-dienstmodel)",
+      "doelPad": "/forms.json/0/registration_backends/0/options/variables_mapping/0",
+      "actie": "aangemaakt"
+     }
+    ]
    }
   ],
   "artefact_afhankelijkheden": [
@@ -274,6 +325,24 @@
       "opvoer": "2026-11-06T08:00:00Z",
       "rol": "bron",
       "bronHash": "sha256:bron"
+     }
+    ]
+   }
+  ],
+  "artefact_inhouden": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "formaat": 1,
+      "payload": "{\"_meta.json\": {\"of_release\": \"4.0.3\"}, \"forms.json\": [{\"name\": \"GPK aanvragen\", \"slug\": \"gpk-aanvraag\", \"login_required\": true, \"auth_backends\": [{\"backend\": \"digid\"}], \"registration_backends\": [{\"key\": \"objects_api\", \"name\": \"Open Object\", \"backend\": \"objects_api\", \"options\": {\"objecttype\": \"${OBJECTTYPE_URL:gpk}\", \"variables_mapping\": [{\"variable_key\": \"vast_status\", \"target_path\": [\"data\", \"status\"]}, {\"variable_key\": \"soort\", \"target_path\": [\"data\", \"kaart\", \"soort\"]}, {\"variable_key\": \"kenteken\", \"target_path\": [\"data\", \"kaart\", \"kenteken\"]}]}}]}], \"formSteps.json\": [{\"index\": 0, \"slug\": \"soort-kaart\", \"form_definition\": \"http://openforms/api/v2/form-definitions/def-1\"}], \"formDefinitions.json\": [{\"uuid\": \"def-1\", \"name\": \"Soort kaart\", \"configuration\": {\"components\": [{\"key\": \"soort\", \"type\": \"radio\", \"label\": \"Welke kaart vraagt u aan?\", \"values\": [{\"label\": \"Bestuurder\", \"value\": \"bestuurder\"}, {\"label\": \"Passagier\", \"value\": \"passagier\"}], \"validate\": {\"required\": true}}, {\"key\": \"kenteken\", \"type\": \"textfield\", \"label\": \"Kenteken\", \"validate\": {\"maxLength\": 11}, \"conditional\": {\"show\": true, \"when\": \"soort\", \"eq\": \"bestuurder\"}}]}}], \"formLogic.json\": [{\"description\": \"Bij afronden: ingediendOp = now\", \"json_logic_trigger\": {\"!!\": [{\"var\": \"kenteken\"}]}, \"actions\": [{\"variable\": \"ingediendOp\", \"action\": {\"type\": \"variable\"}}]}], \"formVariables.json\": [{\"key\": \"vast_status\", \"name\": \"vast_status\", \"initial_value\": \"ingediend\"}]}",
+      "payloadHash": "sha256:form"
      }
     ]
    }

@@ -1559,6 +1559,15 @@ flowchart LR
 - **Live adres**: `liveUrl()` geeft voor een formulier
   `<host van de laatste uitrol-doelUrl>/<slug>/`. De slug komt uit
   `forms.json` in de payload, anders uit de identifier.
+- **Formulieren** toont `formulier.tsx` (`OpenFormulier`): de
+  Form.io-components per stap, met de traceregels erbij.
+  - Elke traceregel heeft als `doelPad` een JSON-pointer in de payload. De
+    weergave rekent voor elk veld zijn pointer uit, en zo vindt hij de regel.
+  - `variables_mapping` koppelt de sleutel van een veld aan het pad in het
+    objecttype.
+  - Er bestaat geen Studio-bron voor het formulier (OMNIUM-UI, 6-11). De
+    export komt uit het e-dienstmodel plus het logisch model; in de traceregel
+    is `bronElementId` het element-id in het logisch model.
 - **JSON** toont `json-tree.tsx`: `<details>` per object of array, op de
   server, met hoogstens 5000 onderdelen.
 - **Referentielijsten**: velden die naar een referentielijst wijzen

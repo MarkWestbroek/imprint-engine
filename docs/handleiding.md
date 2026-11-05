@@ -673,6 +673,10 @@ toont wat het register nu weet.
     tekeningen).
 - **Live**: bij een formulier staat een link naar het formulier zoals
   inwoners het zien, in Open Formulieren.
+- **Formulier**: op de pagina van een formulier staat per stap een tabel met
+  de vragen. Per vraag zie je wanneer hij verschijnt, uit welk deel van het
+  model hij komt en waar het antwoord in het objecttype terechtkomt. Daaronder
+  staan de vaste waarden en de logica. De widget heet *Omnium: formulier*.
 - **JSON** (een formulierdefinitie, het e-dienstmodel) klap je open als boom.
 - **Bronnen en tekeningen** horen bij een versie:
   `/inrichting/ediensten/<code>/versies/<nummer>/bronnen/<soort>/<identifier>`.

@@ -328,6 +328,19 @@ lijst hieronder:
 - De titel in de SVG is "Model — <diagram>": de kop komt dus uit het register.
 - FUNDAMENT rolt de versie uit op cg-test.
 
+**Formulierweergave** (6-11, gebouwd als `omnium-formulier`):
+
+- Een eigen overzicht van de Open Formulieren-export, op de server, met de
+  herkomst per veld uit de traceregels.
+- Niet `formio.js`: dat is een zware client-bibliotheek, en het lijkt niet op
+  de SDK van Open Formulieren. Het live formulier is de link.
+- Uit de Studio valt niets te hergebruiken (OMNIUM-UI): de formulier-editor
+  werkt op een FormulierDefinitie van het register, niet op de export.
+- Een "formulierdefinitie-bron" bestaat nog niet; de export komt uit het
+  e-dienstmodel en het logisch model.
+- Een mogelijke volgende stap: via `bronElementId` het veld laten oplichten in
+  de tekening van het logisch model (`data-element-id`).
+
 Eerdere stand (INRICHTEN_VIZ, 5-11):
 
 - `richting` op ArtefactSoort: `bron`, `gegenereerd` of `weergave`. Leeg telt

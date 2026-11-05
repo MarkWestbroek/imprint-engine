@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: formulieren als overzicht** (widget `omnium-formulier`).
+  - Een Open Formulieren-export toont per stap de vragen: soort, verplicht,
+    keuzes, wanneer een vraag verschijnt, patroon en lengte.
+  - Per vraag staat het model-element waar hij vandaan komt (traceregel op
+    het JSON-pad) en het pad in het objecttype (`variables_mapping`).
+  - Daaronder de vaste waarden en de logica.
+  - Alleen lezen en op de server, zonder Form.io-code. Het formulier zoals een
+    inwoner het ziet, is de live-link.
 - **Inrichting: datums, live formulieren en JSON.**
   - Fix: een begin- of einddatum zonder tijd telt als **Nederlandse
     kalenderdag**, met de einddag erbij. Een opnieuw getekende tekening viel

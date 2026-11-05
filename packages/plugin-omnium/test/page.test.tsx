@@ -111,6 +111,18 @@ test("a JSON payload is a tree you can fold open, not a wall of text", async () 
   assert.match(page, /<span class="text-muted">omschrijving: <\/span>/);
 });
 
+test("a form: per step the questions, where each comes from in the model and goes in the objecttype", async () => {
+  const out = (await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(out, /Stap 1: Soort kaart/);
+  assert.match(out, /Welke kaart vraagt u aan\?<\/span><\/td><td[^>]*><code[^>]*>soort<\/code><\/td><td[^>]*>keuzerondjes<\/td><td[^>]*>ja<\/td><td[^>]*>Bestuurder, Passagier/);
+  assert.match(out, /alleen als soort = bestuurder/);
+  assert.match(out, /<code class="text-xs">Gpk.Kaart.kenteken<\/code>/);
+  assert.match(out, /<code class="text-xs">data.kaart.kenteken<\/code>/);
+  assert.match(out, /Ook naar het objecttype/);
+  assert.match(out, /vast_status/);
+  assert.match(out, /Bij afronden: ingediendOp = now/);
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";
