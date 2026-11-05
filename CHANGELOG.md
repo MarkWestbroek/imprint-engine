@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: kolommen en breedte.**
+  - Tabellen uit het register hebben versleepbare kolommen; dubbelklik op de
+    rand zet een kolom terug.
+  - Codes staan in dezelfde grootte als de tekst eromheen.
+  - De kop heeft een breedte-knop (normaal 1200px, breed 1600px, volledig),
+    die per browser wordt onthouden.
 - **Inrichting: formulieren als overzicht** (widget `omnium-formulier`).
   - Een Open Formulieren-export toont per stap de vragen: soort, verplicht,
     keuzes, wanneer een vraag verschijnt, patroon en lengte.

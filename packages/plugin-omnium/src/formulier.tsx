@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ResizableTable } from "./resizable-table";
 
 /**
  * An Open Formulieren form (the export the transformation writes: forms.json,
@@ -104,7 +105,7 @@ function Source({ t }: { t?: Trace }) {
   if (!t?.bronGE) return <Muted>—</Muted>;
   return (
     <span title={t.regel}>
-      <code className="text-xs">{t.bronGE}</code>
+      <code className="break-all text-[0.9em]">{t.bronGE}</code>
     </span>
   );
 }
@@ -154,7 +155,7 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
           {options.objecttype ? (
             <>
               {" "}
-              → objecttype <code className="text-xs">{s(options.objecttype)}</code>
+              → objecttype <code className="break-all text-[0.9em]">{s(options.objecttype)}</code>
             </>
           ) : null}
         </dd>
@@ -177,7 +178,7 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
               Stap {n + 1}: {s(def.name) || s(step.slug)}
             </h3>
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse">
+              <ResizableTable className="w-full border-collapse">
                 <thead>
                   <tr className="border-b border-line text-left text-muted">
                     <Th>Vraag</Th>
@@ -199,7 +200,7 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
                           <span style={{ paddingLeft: `${depth * 1.25}rem` }}>{s(c.label) || <Muted>(zonder label)</Muted>}</span>
                         </Td>
                         <Td>
-                          <code className="text-xs">{s(c.key)}</code>
+                          <code className="break-all text-[0.9em]">{s(c.key)}</code>
                         </Td>
                         <Td>{TYPES[s(c.type)] ?? s(c.type)}</Td>
                         <Td>{obj(c.validate).required ? "ja" : <Muted>nee</Muted>}</Td>
@@ -207,12 +208,12 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
                         <Td>
                           <Source t={traces.get(pointer)} />
                         </Td>
-                        <Td>{to ? <code className="text-xs">{to.path}</code> : <Muted>—</Muted>}</Td>
+                        <Td>{to ? <code className="break-all text-[0.9em]">{to.path}</code> : <Muted>—</Muted>}</Td>
                       </tr>
                     );
                   })}
                 </tbody>
-              </table>
+              </ResizableTable>
             </div>
           </section>
         );
@@ -223,7 +224,7 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
           <h3 className="mb-2 font-semibold">Ook naar het objecttype</h3>
           <p className="mb-2 text-muted">Waarden die niet uit een vraag komen: vaste waarden, de inlog, het afronden.</p>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            <ResizableTable className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-line text-left text-muted">
                   <Th>Variabele</Th>
@@ -243,20 +244,20 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
                   return (
                     <tr key={key + n} className="border-b border-line/60">
                       <Td>
-                        <code className="text-xs">{key}</code>
+                        <code className="break-all text-[0.9em]">{key}</code>
                       </Td>
-                      <Td>{value ? <code className="text-xs">{value}</code> : <Muted>{t?.regel ?? "—"}</Muted>}</Td>
+                      <Td>{value ? <code className="break-all text-[0.9em]">{value}</code> : <Muted>{t?.regel ?? "—"}</Muted>}</Td>
                       <Td>
                         <Source t={t} />
                       </Td>
                       <Td>
-                        <code className="text-xs">{arr<unknown>(m.target_path).map(s).join(".")}</code>
+                        <code className="break-all text-[0.9em]">{arr<unknown>(m.target_path).map(s).join(".")}</code>
                       </Td>
                     </tr>
                   );
                 })}
               </tbody>
-            </table>
+            </ResizableTable>
           </div>
         </section>
       )}

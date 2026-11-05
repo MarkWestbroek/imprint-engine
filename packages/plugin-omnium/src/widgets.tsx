@@ -7,6 +7,7 @@ import { own, REF_FIELDS, RELATION_TARGET, type Inrichting, type Pad } from "./i
 import { currentHubs, currentVersion, display, ge, geRows, humanize, refId, relation, TECHNICAL, type FullRecord, type Version } from "./register";
 import { sanitizeSvg } from "@imprint/widgets-standard/svg-sanitize";
 import { JsonTree, parseJsonish } from "./json-tree";
+import { ResizableTable } from "./resizable-table";
 import { OpenFormulier, type Trace } from "./formulier";
 import { OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
 
@@ -108,7 +109,7 @@ const BRON_COLUMNS: Column[] = [
 function Table({ head, rows }: { head: string[]; rows: Cell[][] }) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full border-collapse text-sm">
+      <ResizableTable className="w-full border-collapse text-sm">
         <thead>
           <tr className="border-b border-line text-left text-muted">
             {head.map((h) => (
@@ -129,7 +130,7 @@ function Table({ head, rows }: { head: string[]; rows: Cell[][] }) {
             </tr>
           ))}
         </tbody>
-      </table>
+      </ResizableTable>
     </div>
   );
 }

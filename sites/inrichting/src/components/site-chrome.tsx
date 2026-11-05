@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Menu as MenuIcon } from "lucide-react";
 import type { Menu } from "@imprint/content-core";
 import { NavLinks } from "@/components/nav-links";
+import { WidthToggle } from "@/components/width-toggle";
 
 /**
  * The Inrichting chrome: a sober workplace header (name, the "main" menu from
@@ -35,6 +36,7 @@ export function SiteHeader({ nav, user }: { nav: NavItem[]; user?: string }) {
           <NavLinks nav={nav} />
           <Link href="/admin">{user ? `Beheer (${user})` : "Inloggen"}</Link>
         </nav>
+        <WidthToggle />
         <details className="ir-mobile-menu">
           <summary aria-label="Menu openen">
             <MenuIcon size={22} />

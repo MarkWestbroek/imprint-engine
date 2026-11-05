@@ -116,8 +116,8 @@ test("a form: per step the questions, where each comes from in the model and goe
   assert.match(out, /Stap 1: Soort kaart/);
   assert.match(out, /Welke kaart vraagt u aan\?<\/span><\/td><td[^>]*><code[^>]*>soort<\/code><\/td><td[^>]*>keuzerondjes<\/td><td[^>]*>ja<\/td><td[^>]*>Bestuurder, Passagier/);
   assert.match(out, /alleen als soort = bestuurder/);
-  assert.match(out, /<code class="text-xs">Gpk.Kaart.kenteken<\/code>/);
-  assert.match(out, /<code class="text-xs">data.kaart.kenteken<\/code>/);
+  assert.match(out, /<code class="[^"]*">Gpk.Kaart.kenteken<\/code>/);
+  assert.match(out, /<code class="[^"]*">data.kaart.kenteken<\/code>/);
   assert.match(out, /Ook naar het objecttype/);
   assert.match(out, /vast_status/);
   assert.match(out, /Bij afronden: ingediendOp = now/);

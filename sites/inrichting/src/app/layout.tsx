@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { WidthInit } from "@/components/width-toggle";
 import { store } from "@/lib/content";
 import "./globals.css";
 
@@ -21,8 +22,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl">
-      <body className={sans.variable}>{children}</body>
+    // WidthInit sets data-breedte on <html> before hydration (no jump); React
+    // did not render that attribute, hence suppressHydrationWarning.
+    <html lang="nl" suppressHydrationWarning>
+      <body className={sans.variable}>
+        <WidthInit />
+        {children}
+      </body>
     </html>
   );
 }
