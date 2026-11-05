@@ -43,23 +43,26 @@ flowchart LR
 | `base/bucket.yaml` | ObjectBucketClaim; Rook maakt een ConfigMap en Secret `imprint` met host en sleutels |
 | `tools/migrate-job.yaml` | `npm run db:migrate:pg` met het tools-image |
 | `inrichting/` | namespace, hostnaam, images, `OMNIUM_REGISTER_URL` en `OMNIUM_URL` (binnen het cluster), het token uit Secret `omnium-lezer` |
-| `inrichting/db/database.yaml` | de database `inrichting` in `pg-main` |
 
 Geen geheimen in git. De Secret `imprint-env` maak je met de hand.
 
 ## Eerste keer
 
-Stap 1–3 raken gedeelde objecten en gaan via FUNDAMENT.
+Stap 1–3 raken gedeelde objecten en staan in de **Fundament-repo** (commit
+f41e8e7); FUNDAMENT voert ze uit. Bij een herstel of reset van het cluster
+komen ze ook daar vandaan, dus niet dubbel bijhouden in deze repo.
 
-1. **Namespace** `tnt-cg--inrichting`, op de manier waarop Fundament tenants
-   aanmaakt.
-2. **Database:**
-   - de rol `inrichting` in `pg-main` (`spec.managed.roles`, `passwordSecret`
-     `pg-inrichting`, type basic-auth, in `tnt-cg--db`);
-   - daarna `kubectl apply -f deploy/k8s/inrichting/db/database.yaml`.
-3. **Hostnaam** `inrichting.fundament.common-ground-lab.nl` in de `dnsNames` van
-   Certificate `fundament` (`tnt-cg--test`). Zoals bij de andere hostnamen is
-   er een acme-solver-route bij nodig.
+1. **Namespace**: `functl namespace create --project=<cg> inrichting` →
+   `tnt-cg--inrichting`.
+2. **Database**: rol `inrichting` in `pg-main` (`spec.managed.roles`,
+   `passwordSecret` `pg-inrichting`, met een willekeurig wachtwoord van
+   `ensure-db-secrets.ps1`); de `Database` `inrichting` in
+   `k8s/30-postgres/databases.yaml`. Daarna haalt `apply-db-grants.ps1`
+   CONNECT voor PUBLIC weg, zodat de rol alleen bij zijn eigen database kan
+   (dat script draait Mark).
+3. **Hostnaam**: `inrichting.fundament.common-ground-lab.nl` in Certificate
+   `fundament`, met een acme-solver-route en de redirect naar https. DNS hoeft
+   niet: `*.fundament` wijst al naar de gateway.
 4. **Images bouwen en pushen** vanuit de root van de repo. De site rendert per
    verzoek, dus de build heeft geen database nodig:
 
@@ -76,6 +79,7 @@ Stap 1–3 raken gedeelde objecten en gaan via FUNDAMENT.
    shellhistorie of in git komen:
 
    ```sh
+   PG_PW=$(kubectl -n tnt-cg--db get secret pg-inrichting -o jsonpath='{.data.password}' | base64 -d)
    kubectl -n tnt-cg--inrichting create secret generic imprint-env \
      --from-literal=DATABASE_URL="postgres://inrichting:$PG_PW@pg-main-rw.tnt-cg--db.svc.cluster.local:5432/inrichting" \
      --from-literal=SESSION_SECRET="$(openssl rand -hex 32)"
@@ -96,7 +100,10 @@ Stap 1–3 raken gedeelde objecten en gaan via FUNDAMENT.
 
 6. **Migreren**: `kubectl apply -k deploy/k8s/inrichting/tools`, dan
    `kubectl -n tnt-cg--inrichting logs job/imprint-migrate -f`.
-7. **Site**: `kubectl apply -k deploy/k8s/inrichting`.
+7. **Site**: `kubectl apply -k deploy/k8s/inrichting`. Meld FUNDAMENT zodra de
+   ObjectBucketClaim `imprint` *Bound* is
+   (`kubectl -n tnt-cg--inrichting get obc imprint`): pas dan kan de backup de
+   bucket meenemen (`ensure-backup-secret.ps1 -AlleenBronnen`).
 8. **Eerste admin**, met het tools-image:
 
    ```sh
@@ -110,6 +117,15 @@ Stap 1–3 raken gedeelde objecten en gaan via FUNDAMENT.
 - **Nieuwe versie:** image bouwen en pushen, de tag in de kustomization
   ophogen, eerst de migratie-Job (delete + apply), dan `kubectl apply -k`.
 - **Controleren voordat je toepast:** `kubectl diff -k deploy/k8s/inrichting`.
-- **Backups:** de database zit in `pg-main`, dus valt onder de backups van
-  FUNDAMENT. Ga na of die er zijn: de registerdatabase ging op 3-11 verloren.
-  `npm run backup` werkt ook via een port-forward naar `pg-main-rw`.
+- **Backups** (FUNDAMENT): elke nacht om 02:00 UTC een `pg_dump` van
+  `inrichting` en een spiegel van de bucket (map `s3-imprint`) naar MinIO op de
+  VPS, buiten het cluster (`s3.common-ground-lab.nl`, bucket `cg-backup`).
+  Dumps blijven 30 dagen bewaard. Herstel tot op de minuut is er niet: bij een
+  nodevervanging ben je hooguit een dag kwijt.
+  - Die backupbucket heeft een **harde grens van 3 GiB**, voor alle
+    toepassingen samen. Houd uploads klein, en meld het bij FUNDAMENT als je
+    meer verwacht.
+  - `npm run backup` werkt ook via een port-forward naar `pg-main-rw`.
+- **Reset van het cluster**: Fundament reset de clusters nog voor het fieldlab.
+  Daarna moet alles opnieuw: eerst stap 1–3 (FUNDAMENT, volgens hun RUNBOOK),
+  dan stap 5–8 hier. De inhoud van de site komt dan uit de backup.

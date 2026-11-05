@@ -362,9 +362,11 @@ server-side dry-run tegen het cluster gecontroleerd; runbook in
   met de hand maakt;
 - de image bouwt zonder database (de site rendert per verzoek), dus ook in CI.
 
-Nog te doen bij FUNDAMENT, want het raakt gedeelde objecten: de namespace, de
-rol in `pg-main`, de hostnaam in het certificaat. En de vraag of `pg-main`
-backups heeft.
+De gedeelde objecten (namespace, rol en database in `pg-main`, hostnaam in het
+certificaat, de backup) staan klaar in de Fundament-repo (f41e8e7) en wachten
+op Marks akkoord in de sessie van FUNDAMENT. De backup gaat elke nacht naar
+MinIO buiten het cluster (30 dagen, maximaal 3 GiB voor alles samen); voor het
+fieldlab wordt het cluster nog een keer gereset.
 
 ## 7. Open punten
 

@@ -283,7 +283,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       wacht op Marks akkoord en de open punten daar (§7).
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
-      - [ ] Namespace, rol in `pg-main` en hostnaam in het certificaat (FUNDAMENT).
+      - [ ] Namespace, rol in `pg-main` en hostnaam in het certificaat:
+            klaargezet in de Fundament-repo (f41e8e7), wacht op Marks ja bij FUNDAMENT.
 
 
 - [ ] **Engine en instanties werkelijk scheiden** — voer het
