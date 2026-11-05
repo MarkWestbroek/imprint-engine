@@ -1,0 +1,65 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefactsoort_gegevens": [
+   {
+    "artefactsoort_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefactsoort_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "code": "objecttype",
+      "omschrijving": "Objecttype (JSON Schema)"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefactsoort_gegevens": [
+   {
+    "artefactsoort_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefactsoort_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "code": "zaaktype",
+      "omschrijving": "Zaaktype"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefactsoort_gegevens": [
+   {
+    "artefactsoort_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefactsoort_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "code": "formulier",
+      "omschrijving": "Open Formulieren-definitie"
+     }
+    ]
+   }
+  ]
+ }
+]

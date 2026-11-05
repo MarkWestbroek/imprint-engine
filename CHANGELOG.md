@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Omnium-register, alleen lezen** (nieuwe plugin `@imprint/plugin-omnium`,
+  fase 1 van design/omnium-inrichting.md):
+  - client op `/full`, met tijdreizen en zichtbare fouten (een 401 is geen
+    lege lijst);
+  - de inrichtingstypen met stabiele sleutels in de URL, zonder id's, exact
+    vergeleken en met een fout als een sleutel niet uniek is;
+  - de widgets `omnium-lijst` en `omnium-detail` voor studio-templates
+    `_view/omnium-<pad>`;
+  - `omniumPage()` voor de route van de site;
+  - tests tegen een synthetische fixture in `/full`-vorm.
 - **Deploy op Fundament (Kubernetes)**: kustomize-manifesten in `deploy/k8s/`
   (een basis per site plus een overlay voor `inrichting`): Deployment,
   HTTPRoute op de gedeelde gateway, Ceph-bucket voor uploads, database in

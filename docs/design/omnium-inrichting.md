@@ -411,7 +411,8 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
 ## 8. Fasering
 
-1. **plugin-omnium, lezen**: client (full, tijdreizen, actueel, fouten),
+1. **plugin-omnium, lezen** (gebouwd 5-11; lijstdefinities volgen nog, het
+   register heeft er nog geen): client (full, tijdreizen, actueel, fouten),
    definities ophalen, widgets `omnium-lijst` en `omnium-detail`, de route
    met `_view`-templates; tests tegen een fixture: een vastgelegde `/full`-respons van het
    herbouwde register. De `/full`-sleutels zijn na de herbouw alleen

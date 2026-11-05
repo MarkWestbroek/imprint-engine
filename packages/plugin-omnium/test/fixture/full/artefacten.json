@@ -1,0 +1,263 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefact_identificaties": [
+   {
+    "artefact_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "soort": 1,
+      "identifier": "aanvraag",
+      "naam": "Objecttype Aanvraag",
+      "versienummer": "1"
+     }
+    ]
+   }
+  ],
+  "artefact_edienstversies": [
+   {
+    "artefact_id": 1,
+    "rel_id": 1,
+    "edienstversie_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 1,
+      "rel_id": 1,
+      "edienstversie_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_doelcomponenten": [
+   {
+    "artefact_id": 1,
+    "rel_id": 1,
+    "component_id": 3,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 1,
+      "rel_id": 1,
+      "component_id": 3,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefact_identificaties": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "soort": 2,
+      "identifier": "aanvraag",
+      "naam": "Zaaktype Aanvraag",
+      "versienummer": "1"
+     }
+    ]
+   }
+  ],
+  "artefact_edienstversies": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "edienstversie_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "edienstversie_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_doelcomponenten": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "component_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "component_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_inhouden": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "formaat": "json",
+      "payload": "{\"omschrijving\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
+      "payloadHash": "sha256:aa"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefact_identificaties": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "soort": 3,
+      "identifier": "gpk-aanvraag",
+      "naam": "Formulier GPK-aanvraag",
+      "versienummer": "1"
+     }
+    ]
+   }
+  ],
+  "artefact_edienstversies": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "edienstversie_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "edienstversie_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_doelcomponenten": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "component_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "component_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_traceregels": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "bronGE": "Aanvraag.kenteken",
+      "regel": "veld",
+      "doelPad": "components[0]",
+      "actie": "aangemaakt"
+     }
+    ]
+   },
+   {
+    "artefact_id": 3,
+    "rel_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "bronGE": "Aanvraag.geboortedatum",
+      "regel": "veld",
+      "doelPad": "components[1]",
+      "actie": "aangemaakt"
+     }
+    ]
+   },
+   {
+    "artefact_id": 3,
+    "rel_id": 3,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 3,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "bronGE": "Aanvraag.oud",
+      "regel": "veld",
+      "doelPad": "components[9]",
+      "actie": "aangemaakt"
+     }
+    ],
+    "afvoer": "2026-11-05T09:00:00Z"
+   }
+  ],
+  "artefact_afhankelijkheden": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "doel_artefact_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "doel_artefact_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "reden": "gebruikt objecttype"
+     }
+    ]
+   }
+  ]
+ }
+]

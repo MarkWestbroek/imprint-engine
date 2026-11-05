@@ -1504,6 +1504,42 @@ vertaalt het Slides-formaat (Claude-artifact) en wordt per site aangeroepen
 (Omnium: `scripts/import-deck.ts`, maakt desgewenst een pagina en een
 menulink als die nog niet bestaan).
 
+**Het Omnium-register** (`@imprint/plugin-omnium`, alleen lezen; ontwerp in
+[design/omnium-inrichting.md](design/omnium-inrichting.md)): de enige plugin
+met een **externe bron**. Imprint bewaart geen kopie; de site leest bij elk
+verzoek het register.
+
+```mermaid
+flowchart LR
+    R["route /inrichting/[...path]<br/>(site)"] --> P["omniumPage()"]
+    P --> I["Inrichting<br/>(per verzoek, React cache)"]
+    I --> C["OmniumRegister<br/>GET /full/&lt;pad&gt;, Bearer omt_…"]
+    P --> D["DefaultView _view/omnium-&lt;pad&gt;<br/>of de ingebouwde weergave"]
+    D --> W["omnium-lijst · omnium-detail"]
+    W --> I
+```
+
+- `client.ts`:
+  - haalt alle pagina's op en neemt de enige array uit het antwoord, want het
+    meervoud kan een spatie hebben;
+  - geeft `peiltijdstip` en `geldigOp` mee;
+  - zet elke fout om in een `OmniumRegisterError` met de status. Een 401 wordt
+    een zichtbare melding, nooit een lege lijst.
+- `register.ts`: de vorm van een `/full`-record. Elk gegevenselement en elke
+  relatie is een array van hubs, met de versies onder `data`. Geldig is wat
+  niet is afgevoerd, en bij meerdere versies telt de laatste `opvoer`. Het doel
+  van een relatie is de `_id`-kolom die niet van de eigenaar is (`doel_…` gaat
+  voor).
+- `inrichting.ts`: de typen en hun **stabiele sleutels**. Id's overleven een
+  nieuwe vulling van het register niet, dus URL's bevatten nooit een id.
+  Sleutels worden exact vergeleken over de hele lijst, in de client, want het
+  filter van het register is een ILIKE op id-kolommen. Een sleutel die niet
+  uniek is, geeft een fout (`AmbiguousKey`).
+- De route staat in de **site**, omdat de site de viewers samenstelt:
+  `omniumPage({ path, viewers, ctx })` geeft de render, of null voor een 404.
+- Tests (`npm test --workspace=@imprint/plugin-omnium`) draaien tegen een
+  synthetische fixture in `/full`-vorm.
+
 Stappen voor een nieuwe site:
 
 1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,

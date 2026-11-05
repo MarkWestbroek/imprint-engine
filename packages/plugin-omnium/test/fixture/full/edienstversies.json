@@ -1,0 +1,154 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "edienstversie_nummers": [
+   {
+    "edienstversie_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "versienummer": "0.2.0",
+      "bronmodelVersie": "aanvraag@abc123"
+     }
+    ]
+   }
+  ],
+  "edienstversie_statussen": [
+   {
+    "edienstversie_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "status": "concept"
+     }
+    ]
+   }
+  ],
+  "edienstversie_ediensten": [
+   {
+    "edienstversie_id": 1,
+    "rel_id": 1,
+    "edienst_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 1,
+      "rel_id": 1,
+      "edienst_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "edienstversie_nummers": [
+   {
+    "edienstversie_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "versienummer": "0.0.1",
+      "opvoer": "2026-11-05T08:00:00Z",
+      "afvoer": "2026-11-05T09:00:00Z"
+     },
+     {
+      "edienstversie_id": 2,
+      "rel_id": 1,
+      "versie": 2,
+      "versienummer": "0.1.0",
+      "opvoer": "2026-11-05T09:00:00Z"
+     }
+    ]
+   }
+  ],
+  "edienstversie_statussen": [
+   {
+    "edienstversie_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "status": "vrijgegeven"
+     }
+    ]
+   }
+  ],
+  "edienstversie_ediensten": [
+   {
+    "edienstversie_id": 2,
+    "rel_id": 1,
+    "edienst_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 2,
+      "rel_id": 1,
+      "edienst_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "edienstversie_nummers": [
+   {
+    "edienstversie_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "versienummer": "0.1.0"
+     }
+    ]
+   }
+  ],
+  "edienstversie_ediensten": [
+   {
+    "edienstversie_id": 3,
+    "rel_id": 1,
+    "edienst_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 3,
+      "rel_id": 1,
+      "edienst_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ }
+]

@@ -638,6 +638,35 @@ zet hem op volledig scherm. Een slide heeft zijn eigen adres
 (`/presentatie#studio`). Een deck uit Claude (Slides) komt binnen met het
 importscript; de beelden moeten dan als bestand in de site staan.
 
+## De inrichting (Omnium-register)
+
+Een site met de plugin **Omnium** laat de inrichting van e-diensten zien uit
+het Omnium-register: e-diensten, hun versies, artefacten, uitrollen en
+componenten. Je **leest** hier alleen. Wijzigen gebeurt in Omnium; Imprint
+toont wat het register nu weet.
+
+- **Adressen** gebruiken namen, geen nummers, en blijven daardoor geldig als
+  het register opnieuw wordt gevuld:
+  - `/inrichting/ediensten/<naam>`, met daaronder
+    `/versies/<versienummer>/uitrollen/<starttijd>`;
+  - `/inrichting/artefacten/<soort>/<component>/<identifier>`;
+  - `/inrichting/componenten/<naam>`.
+- **Opbouw per soort pagina**: maak in de studio een pagina met de slug
+  `_view/omnium-ediensten` (of `-edienstversies`, `-artefacten`, `-uitrollen`,
+  `-componenten`). Alle pagina's van die soort gebruiken dan die opbouw. Zonder
+  zo'n pagina zie je een ingebouwde weergave.
+- **Widgets**:
+  - *Omnium: gegevens* toont alle gegevens van het record op de pagina;
+  - *Omnium: lijst* toont een tabel met alle records van een soort, of alleen
+    de records die bij deze pagina horen (de *koppeling*, bv.
+    `artefact_edienstversies` voor de artefacten van een versie), of een lijst
+    binnen het record (*veld*, bv. `artefact_traceregels` of
+    `uitrol_resultaten`).
+- **Ziet je een melding dat het register het leestoken weigert?** Dan is het
+  token verlopen (na hoogstens een jaar) of ingetrokken. De lijsten zijn dan
+  niet leeg: ze zijn onleesbaar. Laat het token vernieuwen
+  ([deploy-fundament.md](deploy-fundament.md)).
+
 ## Berichten schrijven als lid
 
 Als lid van een community schrijf je op de community-pagina een **update**

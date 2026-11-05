@@ -1,0 +1,34 @@
+{
+  "name": "@imprint/plugin-omnium",
+  "version": "0.15.0",
+  "private": true,
+  "description": "Plugin: the Omnium register (inrichting van e-diensten) read-only — a client for /full with time travel, stable keys instead of ids in URLs, and widgets omnium-lijst and omnium-detail for _view/omnium-<pad> templates.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./register": "./src/register.ts",
+    "./client": "./src/client.ts",
+    "./inrichting": "./src/inrichting.ts",
+    "./schemas": "./src/schemas.ts",
+    "./page": "./src/page.tsx"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "@imprint/runtime-admin": "*",
+    "zod": "^4.1.5"
+  },
+  "peerDependencies": {
+    "next": "^16",
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}

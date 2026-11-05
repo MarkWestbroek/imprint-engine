@@ -1,0 +1,5 @@
+{
+  "//": "Only for the test runner (tsx): the JSX settings of this package also for the engine packages a render test pulls in (see sites/musicbrain/tsconfig.test.json).",
+  "extends": "./tsconfig.json",
+  "include": ["src", "test", "../runtime-admin/src/**/*.ts", "../runtime-admin/src/**/*.tsx"]
+}

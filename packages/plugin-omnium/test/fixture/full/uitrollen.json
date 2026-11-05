@@ -1,0 +1,78 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "uitrol_verlopen": [
+   {
+    "uitrol_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "gestartOp": "2026-11-05T10:00:00Z",
+      "status": "geslaagd",
+      "uitgevoerdDoor": "inrichting-script"
+     }
+    ]
+   }
+  ],
+  "uitrol_edienstversies": [
+   {
+    "uitrol_id": 1,
+    "rel_id": 1,
+    "edienstversie_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 1,
+      "edienstversie_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "uitrol_resultaten": [
+   {
+    "uitrol_id": 1,
+    "rel_id": 1,
+    "artefact_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 1,
+      "artefact_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "actie": "aangemaakt",
+      "doelUrl": "https://openzaak.example/zaaktypen/1",
+      "doelVersie": "1"
+     }
+    ]
+   },
+   {
+    "uitrol_id": 1,
+    "rel_id": 2,
+    "artefact_id": 3,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 2,
+      "artefact_id": 3,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "actie": "ongewijzigd",
+      "doelUrl": "https://formulieren.example/forms/7"
+     }
+    ]
+   }
+  ]
+ }
+]

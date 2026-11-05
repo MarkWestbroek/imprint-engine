@@ -1,0 +1,118 @@
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { DefaultView, type WidgetContext, type WidgetViewers } from "@imprint/runtime-admin";
+import { registerProblem } from "./client";
+import { inrichtingFor, type OmniumSubject } from "./context";
+import { AmbiguousKey, INRICHTING_TYPES, type Pad } from "./inrichting";
+import { OmniumDetail, OmniumLijst } from "./widgets";
+
+/**
+ * A register record as a page: `/inrichting/<key path>` → the record, rendered
+ * with the studio template `_view/omnium-<pad>` (DefaultView, the record as
+ * subject), or the built-in view below when there is none. The route file
+ * lives in the site, because the site composes the viewers:
+ *
+ *   const page = await omniumPage({ path, viewers: widgetComponents, ctx: await widgetContext() });
+ *   if (!page) notFound();
+ *   return page.render;
+ */
+
+export type OmniumPage = { title: string; render: ReactNode };
+
+/** "_view/omnium-ediensten": the template a type's pages render with. */
+export const omniumViewType = (pad: Pad) => `omnium-${pad}`;
+
+export async function omniumPage({
+  path,
+  viewers,
+  ctx,
+  prefix = "/inrichting",
+  peiltijdstip,
+  geldigOp,
+}: {
+  path: string[];
+  viewers: WidgetViewers;
+  ctx: WidgetContext;
+  prefix?: string;
+  peiltijdstip?: string;
+  geldigOp?: string;
+}): Promise<OmniumPage | null> {
+  const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
+  if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
+  let located;
+  try {
+    located = await i.locate(path);
+  } catch (err) {
+    if (err instanceof AmbiguousKey) {
+      return problem(`Meer dan één record (${err.count}) hoort bij dit adres; de sleutel is in het register niet uniek.`);
+    }
+    return problem(registerProblem(err));
+  }
+  if (!located) return null;
+
+  const subject: OmniumSubject = { ...located, omnium: true, prefix, at: { peiltijdstip, geldigOp } };
+  const header = (
+    <header className="mb-6">
+      <nav className="text-sm text-muted" aria-label="Kruimelpad">
+        <Link href={prefix} className="hover:underline">Inrichting</Link>
+        {located.crumbs.map((c) => (
+          <span key={c.href}>
+            {" › "}
+            <Link href={c.href} className="hover:underline">{c.label}</Link>
+          </span>
+        ))}
+      </nav>
+      <p className="mt-3 text-xs uppercase tracking-wide text-muted">{INRICHTING_TYPES[located.pad].label}</p>
+      <h1 className="text-3xl font-semibold tracking-tight">{located.title}</h1>
+      {peiltijdstip && <p className="mt-1 text-sm text-muted">Zoals het register het op {peiltijdstip} vastlegde.</p>}
+    </header>
+  );
+  return {
+    title: located.title,
+    render: (
+      <article>
+        {header}
+        <DefaultView
+          type={omniumViewType(located.pad)}
+          subject={subject}
+          title=""
+          viewers={viewers}
+          ctx={ctx}
+          fallback={<BuiltIn subject={subject} ctx={ctx} />}
+        />
+      </article>
+    ),
+  };
+}
+
+/** Without a template: the record, and what hangs under it. */
+async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetContext }) {
+  const lists: Partial<Record<Pad, { title: string; pad?: Pad; koppeling?: string; veld?: string }[]>> = {
+    ediensten: [{ title: "Versies", pad: "edienstversies", koppeling: "edienstversie_ediensten" }],
+    edienstversies: [
+      { title: "Artefacten", pad: "artefacten", koppeling: "artefact_edienstversies" },
+      { title: "Uitrollen", pad: "uitrollen", koppeling: "uitrol_edienstversies" },
+    ],
+    artefacten: [{ title: "Traceregels", veld: "artefact_traceregels" }],
+    uitrollen: [{ title: "Resultaten", veld: "uitrol_resultaten" }],
+  };
+  return (
+    <div className="space-y-8">
+      <OmniumDetail config={{ title: "Gegevens", verberg: "uitrol_resultaten,artefact_traceregels" }} subject={subject} ctx={ctx} />
+      {(lists[subject.pad] ?? []).map((l) => (
+        <OmniumLijst key={l.title} config={l} subject={subject} ctx={ctx} />
+      ))}
+    </div>
+  );
+}
+
+function problem(message: string): OmniumPage {
+  return {
+    title: "Register niet beschikbaar",
+    render: (
+      <div role="alert" className="rounded-xl border border-line bg-surface p-5 text-sm">
+        {message}
+      </div>
+    ),
+  };
+}

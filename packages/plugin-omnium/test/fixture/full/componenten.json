@@ -1,0 +1,84 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "component_namen": [
+   {
+    "component_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "component_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "naam": "openzaak",
+      "weergavenaam": "Open Zaak",
+      "leverancier": "Maykin"
+     }
+    ]
+   }
+  ],
+  "component_lagen": [
+   {
+    "component_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "component_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "laag": "4-5 proces"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "component_namen": [
+   {
+    "component_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "component_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "naam": "openformulieren",
+      "weergavenaam": "Open Formulieren",
+      "leverancier": "Maykin"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "component_namen": [
+   {
+    "component_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "component_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "naam": "openobject",
+      "weergavenaam": "Open Object",
+      "leverancier": "Maykin"
+     }
+    ]
+   }
+  ]
+ }
+]

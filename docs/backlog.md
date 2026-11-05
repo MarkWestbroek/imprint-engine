@@ -281,6 +281,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       `_view`-templates) en een besloten `sites/inrichting`, op Fundament.
       Ontwerp: [design/omnium-inrichting.md](design/omnium-inrichting.md);
       wacht op Marks akkoord en de open punten daar (§7).
+      - [x] Fase 1 (5-11): `@imprint/plugin-omnium`. Client, sleutels, widgets
+            `omnium-lijst`/`omnium-detail`, `omniumPage()`, tests op een
+            synthetische fixture. Open: lijstdefinities volgen (het register
+            heeft er nog geen), een voorbeeldrecord voor templates in de
+            studio, de fixture vervangen door een vastgelegd antwoord.
+      - [ ] Fase 2: `sites/inrichting` (besloten, NL Design System, route
+            `/inrichting/[...path]`), uitrollen op Fundament.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

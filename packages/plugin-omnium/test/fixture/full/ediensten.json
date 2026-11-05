@@ -1,0 +1,46 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "edienst_namen": [
+   {
+    "edienst_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienst_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "naam": "Aanvraag (voorbeeld)",
+      "omschrijving": "Generieke aanvraag",
+      "eigenaar": "cg-test"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "edienst_namen": [
+   {
+    "edienst_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "edienst_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "naam": "Gehandicaptenparkeerkaart aanvragen",
+      "omschrijving": "GPK",
+      "eigenaar": "cg-test"
+     }
+    ]
+   }
+  ]
+ }
+]
