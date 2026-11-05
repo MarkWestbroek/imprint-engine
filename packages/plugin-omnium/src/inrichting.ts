@@ -176,6 +176,36 @@ export class Inrichting {
     }
   }
 
+  /**
+   * From a traceregel of this artefact to the element in a drawing of one of
+   * its sources: `bronElementId` when the transformation filled it (BPMN, DMN,
+   * proceskoppeling), else the gegevenselement or entity the `bronGE` names
+   * (`Entity.GE.veld` → `Entity_GE`, else `Entity`), as the render service
+   * names them in `data-element-id`. Returns a function, so a table of
+   * traceregels looks the drawings up once.
+   */
+  async elementLink(a: FullRecord): Promise<(t: Record<string, unknown>) => string | undefined> {
+    const drawings: { href: string; ids: Set<string> }[] = [];
+    for (const b of this.bronnenVan(a).filter((x) => x.rol === "bron")) {
+      const bron = await this.byId("artefacten", b.id);
+      if (!bron) continue;
+      for (const t of await this.weergavenVan(bron)) {
+        const href = await this.href("artefacten", t);
+        const svg = ge(t, "artefact_inhouden")?.payload;
+        if (href && typeof svg === "string") drawings.push({ href, ids: new Set(Array.from(svg.matchAll(/data-element-id="([^"]+)"/g), (m) => m[1]!)) });
+      }
+    }
+    return (t) => {
+      const parts = (str(t.bronGE) ?? "").split(".");
+      const wanted = [str(t.bronElementId), parts.length >= 2 ? `${parts[0]}_${parts[1]}` : undefined, parts[0]].filter((x): x is string => Boolean(x));
+      for (const id of wanted) {
+        const d = drawings.find((x) => x.ids.has(id));
+        if (d) return `${d.href}?element=${encodeURIComponent(id)}`;
+      }
+      return undefined;
+    };
+  }
+
   /** The drawings of a source: the artefacts that point at it with rol weergave-van (the source has no key back). */
   async weergavenVan(bron: FullRecord): Promise<FullRecord[]> {
     return (await this.list("artefacten")).filter((a) => this.bronnenVan(a).some((b) => b.id === bron.id && b.rol === "weergave-van"));

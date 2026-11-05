@@ -14,7 +14,7 @@ export const inrichtingFor = cache((prefix: string, peiltijdstip?: string, geldi
 });
 
 /** What a `_view/omnium-<pad>` template gets as subject. */
-export type OmniumSubject = Located & { omnium: true; prefix: string; at: ReadMoment };
+export type OmniumSubject = Located & { omnium: true; prefix: string; at: ReadMoment; element?: string };
 
 export function isOmniumSubject(s: unknown): s is OmniumSubject {
   return Boolean(s && typeof s === "object" && (s as { omnium?: unknown }).omnium === true);

@@ -17,7 +17,7 @@ import { ResizableTable } from "./resizable-table";
 
 type Obj = Record<string, unknown>;
 type Component = Obj & { key?: string; type?: string; label?: string; components?: Component[]; columns?: { components?: Component[] }[] };
-export type Trace = { bronGE?: string; regel?: string };
+export type Trace = { bronGE?: string; regel?: string; /** The element in a drawing of the logical model. */ href?: string };
 
 const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const obj = (v: unknown): Obj => (v && typeof v === "object" && !Array.isArray(v) ? (v as Obj) : {});
@@ -103,9 +103,16 @@ const Muted = ({ children }: { children: ReactNode }) => <span className="text-m
 
 function Source({ t }: { t?: Trace }) {
   if (!t?.bronGE) return <Muted>—</Muted>;
+  const code = <code className="break-all text-[0.9em]">{t.bronGE}</code>;
   return (
-    <span title={t.regel}>
-      <code className="break-all text-[0.9em]">{t.bronGE}</code>
+    <span title={t.href ? `${t.regel ?? ""} — toon in het logisch model` : t.regel}>
+      {t.href ? (
+        <a href={t.href} className="underline decoration-dotted underline-offset-2 hover:decoration-solid">
+          {code}
+        </a>
+      ) : (
+        code
+      )}
     </span>
   );
 }

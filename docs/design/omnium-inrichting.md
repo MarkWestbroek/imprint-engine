@@ -338,8 +338,11 @@ lijst hieronder:
   werkt op een FormulierDefinitie van het register, niet op de export.
 - Een "formulierdefinitie-bron" bestaat nog niet; de export komt uit het
   e-dienstmodel en het logisch model.
-- Een mogelijke volgende stap: via `bronElementId` het veld laten oplichten in
-  de tekening van het logisch model (`data-element-id`).
+- Gebouwd (6-11): een veld licht op in de tekening van het logisch model,
+  via `bronElementId` of via het gegevenselement uit `bronGE`. Hetzelfde geldt
+  voor de traceregels van BPMN, DMN en de taakkoppelingen.
+- De andere richting (klik op een element in de tekening en zie welke velden
+  en artefacten eruit komen) is een volgende stap.
 
 Eerdere stand (INRICHTEN_VIZ, 5-11):
 

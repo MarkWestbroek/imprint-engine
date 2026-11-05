@@ -32,6 +32,8 @@ const ATTRIBUTES = new Set([
   "markerUnits", "refX", "refY", "orient",
   "offset", "stop-color", "stop-opacity", "gradientUnits", "gradientTransform",
   "href", "target", "tabindex", "focusable",
+  // The element id the Omnium render service puts on every drawn element (inert data; plugin-omnium highlights by it).
+  "data-element-id",
 ]);
 
 /** Elements that may carry a link (`href`). */

@@ -673,6 +673,10 @@ toont wat het register nu weet.
     tekeningen).
 - **Live**: bij een formulier staat een link naar het formulier zoals
   inwoners het zien, in Open Formulieren.
+- **In de tekening**: klik bij een formuliervraag op het model-element, of in
+  de traceregels op "bekijk". Je komt in de tekening van de bron (het logisch
+  model, of de BPMN of DMN), waar dat element oplicht en in beeld is
+  gezoomd. "Hele tekening" toont alles weer.
 - **Formulier**: op de pagina van een formulier staat per stap een tabel met
   de vragen. Per vraag zie je wanneer hij verschijnt, uit welk deel van het
   model hij komt en waar het antwoord in het objecttype terechtkomt. Daaronder

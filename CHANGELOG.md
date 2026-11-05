@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: oplichten in de tekening.**
+  - Een formulierveld en een traceregel linken naar hun element in de
+    tekening van de bron: het logisch model, of de BPMN of DMN. Daar licht het
+    element op en zoomt de tekening erop in, met een link naar de hele
+    tekening.
+  - Dat gaat via `bronElementId`, of via het gegevenselement uit `bronGE`.
+    Op cg-test linkt zo 25 van de 33 traceregels van het GPK-formulier.
+  - `sanitizeSvg` laat `data-element-id` nu staan.
 - **Inrichting: kolommen en breedte.**
   - Tabellen uit het register hebben versleepbare kolommen; dubbelklik op de
     rand zet een kolom terug.

@@ -440,7 +440,7 @@
       "versie": 1,
       "opvoer": "2026-11-06T08:00:00Z",
       "formaat": 2,
-      "payload": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\" data-render-versie=\"0.3.0\"><script>alert(1)</script><rect width=\"10\" height=\"10\" fill=\"#eee\"/><text x=\"1\" y=\"5\">Overzicht</text></svg>",
+      "payload": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\" data-render-versie=\"0.3.0\"><script>alert(1)</script><rect width=\"10\" height=\"10\" fill=\"#eee\"/><g transform=\"translate(2 2)\" data-element-id=\"Gpk_Kaart\"><rect x=\"1\" y=\"1\" width=\"4\" height=\"4\" fill=\"#dbeafe\"/></g><text x=\"1\" y=\"5\">Overzicht</text></svg>",
       "payloadHash": "sha256:svg"
      }
     ]

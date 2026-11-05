@@ -1568,6 +1568,14 @@ flowchart LR
   - Er bestaat geen Studio-bron voor het formulier (OMNIUM-UI, 6-11). De
     export komt uit het e-dienstmodel plus het logisch model; in de traceregel
     is `bronElementId` het element-id in het logisch model.
+- **Oplichten**: `elementLink()` zoekt bij een traceregel het element in een
+  tekening van de bronnen van het artefact, en daarmee
+  `<tekening>?element=<id>`.
+  - Als id dient `bronElementId`, anders `Entity_GE` of `Entity` uit
+    `bronGE`. Zo noemt de render-service ze in `data-element-id`.
+  - De tekening zet een `<style>` voor dat ene id; alleen ids die in de
+    tekening voorkomen, met `[\w:.-]`, dus er komt geen injectie in de CSS.
+  - `zoomTo()` zet de viewBox op het vak van het element, met ruimte eromheen.
 - **JSON** toont `json-tree.tsx`: `<details>` per object of array, op de
   server, met hoogstens 5000 onderdelen.
 - **Referentielijsten**: velden die naar een referentielijst wijzen

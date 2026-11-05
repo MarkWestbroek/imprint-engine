@@ -123,6 +123,21 @@ test("a form: per step the questions, where each comes from in the model and goe
   assert.match(out, /Bij afronden: ingediendOp = now/);
 });
 
+test("a form field links to its element in the drawing of the logical model, which lights it up", async () => {
+  const form = (await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  const href = "/inrichting/ediensten/gehandicaptenparkeerkaart-aanvragen/versies/0.1.0/bronnen/diagram-weergave/gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht?element=Gpk_Kaart";
+  assert.ok(form.includes(`href="${href.replace("?", "?")}"`), "link from the field to the element");
+  const path = ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0", "bronnen", "diagram-weergave", "gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht"];
+  const lit = (await html((await omniumPage({ path, viewers: omniumViewers, ctx: ctx(), element: "Gpk_Kaart" }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(lit, /data-element-id="Gpk_Kaart"/); // kept by the sanitiser
+  assert.match(lit, /\[data-element-id="Gpk_Kaart"\] rect/);
+  assert.match(lit, /viewBox="-298 -178 604 364"/); // zoomed: the element's box at (2,2), 4×4, with room around it
+  assert.match(lit, /Uitgelicht en ingezoomd: Gpk_Kaart/);
+  // Not an id from the drawing, or not a plain id: no style rule at all.
+  const odd = await html((await omniumPage({ path, viewers: omniumViewers, ctx: ctx(), element: '"]{}body{display:none' }))!.render as ReactElement);
+  assert.doesNotMatch(odd, /<style>/);
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

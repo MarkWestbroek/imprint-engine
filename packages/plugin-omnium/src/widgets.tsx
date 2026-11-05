@@ -240,7 +240,16 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
           : <Note>{config.leeg}</Note>;
       } else {
         const rows = geRows(on.record, config.veld);
-        body = rows.length ? fieldTable(rows) : <Note>{config.leeg}</Note>;
+        if (rows.length && config.veld === "artefact_traceregels" && on.pad === "artefacten") {
+          const link = await i.elementLink(on.record);
+          const cells = rows.map((r) => {
+            const href = link(r);
+            return href ? <Link href={href} className="underline-offset-2 hover:underline">bekijk</Link> : "";
+          });
+          body = cells.some(Boolean) ? fieldTable(rows, { label: "In de tekening", cells }) : fieldTable(rows);
+        } else {
+          body = rows.length ? fieldTable(rows) : <Note>{config.leeg}</Note>;
+        }
       }
     } else {
       body = <Note>Kies een type (pad) of een lijst binnen het record (veld).</Note>;
@@ -308,15 +317,46 @@ export async function OmniumDetail({ config: raw, subject }: { config: unknown; 
   }
 }
 
-/** One drawing from the register, sanitised (allow-list) before it goes inline. */
-function Svg({ payload }: { payload: unknown }) {
-  const svg = typeof payload === "string" ? sanitizeSvg(payload) : null;
-  if (!svg) return <Note>Deze tekening is geen SVG die veilig getoond kan worden.</Note>;
+/** An element id as the render service writes it; anything else is never put in a style rule. */
+const ELEMENT_ID = /^[\w:.-]{1,200}$/;
+
+/**
+ * Zoom in on one element: the render service places every element as
+ * `<g transform="translate(x y)" data-element-id="…">` at the top level, with
+ * its box as the first `<rect>`. The viewBox becomes that box with room around
+ * it, so the element is readable even in a drawing ten thousand units wide.
+ */
+function zoomTo(svg: string, id: string): string {
+  const tag = new RegExp(`<g\\b[^>]*data-element-id="${id.replace(/[.]/g, "\\.")}"[^>]*>`).exec(svg);
+  const at = tag && /translate\(\s*(-?[\d.]+)[ ,]+(-?[\d.]+)\s*\)/.exec(tag[0]);
+  if (!tag || !at) return svg;
+  const after = svg.slice(tag.index + tag[0].length, tag.index + tag[0].length + 400);
+  const box = /^<rect\b[^>]*\bwidth="([\d.]+)"[^>]*\bheight="([\d.]+)"/.exec(after);
+  const [x, y] = [Number(at[1]), Number(at[2])];
+  const [w, h] = box ? [Number(box[1]), Number(box[2])] : [60, 60];
+  const pad = Math.max(w, h, 200) * 1.5;
+  const view = `${x - pad} ${y - pad * 0.6} ${w + 2 * pad} ${h + 1.2 * pad}`;
+  return svg.replace(/(<svg\b[^>]*?\bviewBox=")[^"]*(")/, `$1${view}$2`);
+}
+
+/** One drawing from the register, sanitised (allow-list) before it goes inline; `element` is lit up and zoomed to. */
+function Svg({ payload, element }: { payload: unknown; element?: string }) {
+  const clean = typeof payload === "string" ? sanitizeSvg(payload) : null;
+  if (!clean) return <Note>Deze tekening is geen SVG die veilig getoond kan worden.</Note>;
+  const lit = element && ELEMENT_ID.test(element) && clean.includes(`data-element-id="${element}"`) ? element : undefined;
+  const svg = lit ? zoomTo(clean, lit) : clean;
+  const shapes = ["rect", "circle", "ellipse", "polygon", "path"].map((s) => `.omnium-svg [data-element-id="${lit}"] ${s}`).join(", ");
   return (
-    <div
-      className="overflow-auto rounded-lg border border-line bg-white p-2 [&_svg]:h-auto [&_svg]:max-w-full"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <>
+      {lit && (
+        <style>{`${shapes} { stroke: #e11d48 !important; stroke-width: 4px !important; }
+.omnium-svg [data-element-id="${lit}"] > rect:first-of-type { fill: #fff1c2 !important; }`}</style>
+      )}
+      <div
+        className="omnium-svg overflow-auto rounded-lg border border-line bg-white p-2 [&_svg]:h-auto [&_svg]:max-w-full"
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+    </>
   );
 }
 
@@ -348,7 +388,17 @@ export async function OmniumTekening({ config: raw, subject }: { config: unknown
                   <Link href={t.href} className="underline-offset-2 hover:underline">{t.title}</Link>
                 </figcaption>
               ) : null}
-              <Svg payload={t.payload} />
+              <Svg payload={t.payload} element={subject.element} />
+              {subject.element && t.payload && !String(t.payload).includes(`data-element-id="${subject.element}"`) ? (
+                <p className="text-xs text-muted">“{subject.element}” staat niet in deze tekening.</p>
+              ) : subject.element ? (
+                <p className="text-xs text-muted">
+                  Uitgelicht en ingezoomd: {subject.element} ·{" "}
+                  <Link href={subject.href} className="underline-offset-2 hover:underline">
+                    hele tekening
+                  </Link>
+                </p>
+              ) : null}
               {t.versie ? <p className="text-xs text-muted">Getekend door render {display(t.versie)}</p> : null}
             </figure>
           ))}
@@ -370,8 +420,12 @@ export async function OmniumFormulier({ config: raw, subject }: { config: unknow
     if ((await i.soortcode(subject.record)) !== "formulier") return null;
     const raw = ge(subject.record, "artefact_inhouden")?.payload;
     const payload = typeof raw === "string" ? parseJsonish(raw) : raw;
+    const link = await i.elementLink(subject.record);
     const traces = new Map<string, Trace>(
-      geRows(subject.record, "artefact_traceregels").map((t) => [String(t.doelPad ?? ""), { bronGE: t.bronGE as string | undefined, regel: t.regel as string | undefined }])
+      geRows(subject.record, "artefact_traceregels").map((t) => [
+        String(t.doelPad ?? ""),
+        { bronGE: t.bronGE as string | undefined, regel: t.regel as string | undefined, href: link(t) },
+      ])
     );
     return (
       <WidgetFrame title={config.title}>

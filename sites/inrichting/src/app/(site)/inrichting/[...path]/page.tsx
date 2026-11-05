@@ -8,17 +8,25 @@ import { widgetComponents } from "@/widgets/components";
  * A record of the Omnium register by its stable key (design/omnium-inrichting.md
  * §3.4), rendered with the studio template `_view/omnium-<pad>` or the
  * plugin's built-in view. `?peiltijdstip=` (RFC 3339) and `?geldigOp=` (a
- * date) show the register as it was.
+ * date) show the register as it was; on a drawing, `?element=` lights up one
+ * element (a form field links there from its traceregel).
  */
 
 type Props = {
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string }>;
+  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string }>;
 };
 
 async function load({ params, searchParams }: Props) {
   const [{ path }, q] = await Promise.all([params, searchParams]);
-  return omniumPage({ path, viewers: widgetComponents, ctx: await widgetContext(), peiltijdstip: q.peiltijdstip, geldigOp: q.geldigOp });
+  return omniumPage({
+    path,
+    viewers: widgetComponents,
+    ctx: await widgetContext(),
+    peiltijdstip: q.peiltijdstip,
+    geldigOp: q.geldigOp,
+    element: q.element,
+  });
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
