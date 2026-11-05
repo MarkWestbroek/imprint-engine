@@ -7,10 +7,10 @@ De eerste is de inrichtings-UI op het Omnium-register
 `inrichting.fundament.common-ground-lab.nl`. De manifesten staan in
 [`deploy/k8s/`](../deploy/k8s/) (kustomize, ingebouwd in `kubectl`).
 
-> **Stand (5-11-2026):** de manifesten zijn klaar en met een server-side
-> dry-run tegen het cluster gecontroleerd. Er draait nog niets: `sites/inrichting`
-> bestaat nog niet (wacht op Marks akkoord), en de namespace, de database-rol
-> en de hostnaam in het certificaat moeten door FUNDAMENT worden geregeld.
+> **Stand (5-11-2026):** namespace, database en rol, en de hostnaam in het
+> certificaat staan op cg-test (FUNDAMENT). De backup van de database loopt vanaf
+> de nacht van 5 op 6-11. Nog niet uitgerold: `sites/inrichting` (in aanbouw),
+> het leestoken `omnium-lezer` (Mark), en `apply-db-grants.ps1` (Mark).
 
 ## Hoe het cluster het doet (gezien bij Omnium)
 
@@ -81,9 +81,14 @@ komen ze ook daar vandaan, dus niet dubbel bijhouden in deze repo.
    ```sh
    PG_PW=$(kubectl -n tnt-cg--db get secret pg-inrichting -o jsonpath='{.data.password}' | base64 -d)
    kubectl -n tnt-cg--inrichting create secret generic imprint-env \
-     --from-literal=DATABASE_URL="postgres://inrichting:$PG_PW@pg-main-rw.tnt-cg--db.svc.cluster.local:5432/inrichting" \
+     --from-literal=DATABASE_URL="postgres://inrichting:$PG_PW@pg-main-rw.tnt-cg--db.svc.cluster.local:5432/inrichting?sslmode=require&uselibpqcompat=true" \
      --from-literal=SESSION_SECRET="$(openssl rand -hex 32)"
    ```
+
+   `pg-main` wil TLS. In `pg` 8 betekent een kale `sslmode=require` hetzelfde als
+   *verify-full*, en dat faalt op het eigen CA-certificaat van CloudNativePG.
+   `uselibpqcompat=true` geeft de betekenis van libpq: versleuteld, zonder
+   controle van het certificaat. De andere componenten werken ook zo.
 
    Het leestoken van het register staat in een eigen Secret `omnium-lezer`
    (sleutel `OMNIUM_REGISTER_TOKEN`). Dat wordt aangemaakt bij het uitrollen:
