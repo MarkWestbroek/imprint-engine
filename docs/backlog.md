@@ -285,7 +285,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             `omnium-lijst`/`omnium-detail`, `omniumPage()`, tests op een
             synthetische fixture. Open: lijstdefinities volgen (het register
             heeft er nog geen), een voorbeeldrecord voor templates in de
-            studio, de fixture vervangen door een vastgelegd antwoord.
+            studio. Vorm en sleutels op 5-11 tegen het echte register gecontroleerd
+            (40 records, alle adressen uniek).
       - [ ] Fase 2: `sites/inrichting` (besloten, NL Design System, route
             `/inrichting/[...path]`), uitrollen op Fundament.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
