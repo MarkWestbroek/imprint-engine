@@ -86,10 +86,11 @@ test("keys: every record has a stable path, and the path leads back to it", asyn
       assert.equal(back?.record.id, r.id);
     }
   }
-  assert.ok(hrefs.includes("/inrichting/ediensten/Gehandicaptenparkeerkaart%20aanvragen/versies/0.1.0"));
+  assert.ok(hrefs.includes("/inrichting/ediensten/gehandicaptenparkeerkaart-aanvragen/versies/0.1.0")); // the code, once there
+
   assert.ok(hrefs.includes("/inrichting/ediensten/Aanvraag%20(voorbeeld)/versies/0.1.0"));
   assert.ok(hrefs.includes("/inrichting/artefacten/zaaktype/openzaak/aanvraag"));
-  assert.ok(hrefs.includes("/inrichting/ediensten/Gehandicaptenparkeerkaart%20aanvragen/versies/0.1.0/uitrollen/2026-11-05T10%3A00%3A00Z"));
+  assert.ok(hrefs.includes("/inrichting/ediensten/gehandicaptenparkeerkaart-aanvragen/versies/0.1.0/uitrollen/7d4c2a10-5b1e-4c8e-9f0a-2b6c3d4e5f60"));
 });
 
 test("locate: decoded or encoded segments, exact matches only, crumbs up the tree", async () => {
@@ -104,6 +105,13 @@ test("locate: decoded or encoded segments, exact matches only, crumbs up the tre
   assert.equal(await i.locate(["ediensten", "Aanvraag (voorbeeld)", "versies", "0.1"]), null);
   assert.equal(await i.locate(["ediensten", "Aanvraag (voorbeeld)", "versies", "0.0.1"]), null); // withdrawn number
   assert.equal(await i.locate(["onbekend", "x"]), null);
+});
+
+test("locate: an old link (by name, by start time) still finds a record that now has a code and a uuid", async () => {
+  const i = new Inrichting(register());
+  const old = await i.locate(["ediensten", "Gehandicaptenparkeerkaart aanvragen", "versies", "0.1.0", "uitrollen", "2026-11-05T10:00:00Z"]);
+  assert.equal(old?.record.id, 1);
+  assert.equal(old?.pad, "uitrollen");
 });
 
 test("locate: a key that is not unique is an error, never a random record", async () => {

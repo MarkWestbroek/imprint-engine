@@ -37,7 +37,8 @@
       "opvoer": "2026-11-05T08:00:00Z",
       "naam": "Gehandicaptenparkeerkaart aanvragen",
       "omschrijving": "GPK",
-      "eigenaar": "cg-test"
+      "eigenaar": "cg-test",
+      "code": "gehandicaptenparkeerkaart-aanvragen"
      }
     ]
    }

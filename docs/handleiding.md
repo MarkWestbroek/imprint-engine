@@ -647,7 +647,8 @@ toont wat het register nu weet.
 
 - **Adressen** gebruiken namen, geen nummers, en blijven daardoor geldig als
   het register opnieuw wordt gevuld:
-  - `/inrichting/ediensten/<naam>`, met daaronder
+  - `/inrichting/ediensten/<code>` (zolang een e-dienst nog geen code heeft:
+    zijn naam; een oude link op naam blijft werken), met daaronder
     `/versies/<versienummer>/uitrollen/<starttijd>`;
   - `/inrichting/artefacten/<soort>/<component>/<identifier>`;
   - `/inrichting/componenten/<naam>`.

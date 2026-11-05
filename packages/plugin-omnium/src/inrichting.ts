@@ -10,6 +10,11 @@ import { ge, ownIdKey, refId, relation, type FullRecord } from "./register";
  *   ediensten/<naam>
  *   ediensten/<naam>/versies/<versienummer>
  *   ediensten/<naam>/versies/<versienummer>/uitrollen/<gestartOp>
+ *
+ * Once the model has them (Mark, 5-11-2026), `EdienstNaam.code` takes the
+ * place of the name and `UitrolVerloop.uuid` that of `gestartOp`; both are
+ * optional at first, so a record without one keeps the old key, and an old
+ * link (by name, by start time) still finds its record.
  *   artefacten/<soortcode>/<component>/<identifier>
  *
  * Only Component and EDienst have a key of their own; a version, an artefact
@@ -40,6 +45,8 @@ export const RELATION_TARGET: Record<string, Pad> = {
   uitrol_edienstversies: "edienstversies",
   uitrol_omgevingen: "omgevingen",
   uitrol_resultaten: "artefacten",
+  // Bronnen (model change 5-11-2026, expected key): generated → source, SVG → source.
+  artefact_bronnen: "artefacten",
   artefactsoort_standaarddoelcomponenten: "componenten",
 };
 export const PADS = Object.keys(INRICHTING_TYPES) as Pad[];
@@ -92,6 +99,15 @@ export class Inrichting {
   edienstNaam = (e: FullRecord | undefined) => str(ge(e, "edienst_namen")?.naam);
   versienummer = (v: FullRecord | undefined) => str(ge(v, "edienstversie_nummers")?.versienummer);
   gestartOp = (u: FullRecord | undefined) => str(ge(u, "uitrol_verlopen")?.gestartOp);
+  /** The URL key: the code when there is one, else the name. */
+  edienstSleutel = (e: FullRecord | undefined) => str(ge(e, "edienst_namen")?.code) || this.edienstNaam(e);
+  /** The URL key: the uuid when there is one, else the start time. */
+  uitrolSleutel = (u: FullRecord | undefined) => str(ge(u, "uitrol_verlopen")?.uuid) || this.gestartOp(u);
+  /** By key, else by the older key (name, start time): links made before the code or uuid keep working. */
+  private byKey<T extends FullRecord>(rows: T[], key: (r: T) => string | undefined, old: (r: T) => string | undefined, want: string): T[] {
+    const hit = rows.filter((r) => key(r) === want);
+    return hit.length ? hit : rows.filter((r) => old(r) === want);
+  }
   identifier = (a: FullRecord | undefined) => str(ge(a, "artefact_identificaties")?.identifier);
 
   edienstOf = async (v: FullRecord) => this.byId("ediensten", relation(v, "edienstversie_ediensten", own("edienstversies"))[0]?.id);
@@ -110,17 +126,17 @@ export class Inrichting {
       case "componenten":
         return seg(this.componentNaam(r)) ? ["componenten", this.componentNaam(r)!] : undefined;
       case "ediensten":
-        return seg(this.edienstNaam(r)) ? ["ediensten", this.edienstNaam(r)!] : undefined;
+        return seg(this.edienstSleutel(r)) ? ["ediensten", this.edienstSleutel(r)!] : undefined;
       case "edienstversies": {
         const e = await this.edienstOf(r);
-        const naam = this.edienstNaam(e);
+        const naam = this.edienstSleutel(e);
         const nr = this.versienummer(r);
         return naam && nr ? ["ediensten", naam, "versies", nr] : undefined;
       }
       case "uitrollen": {
         const v = await this.versieOfUitrol(r);
         const base = v && (await this.keyPath("edienstversies", v));
-        const t = this.gestartOp(r);
+        const t = this.uitrolSleutel(r);
         return base && t ? [...base, "uitrollen", t] : undefined;
       }
       case "artefacten": {
@@ -168,7 +184,7 @@ export class Inrichting {
     if (head === "componenten" && p.length === 2) {
       found = { pad: "componenten", candidates: (await this.list("componenten")).filter((c) => this.componentNaam(c) === p[1]) };
     } else if (head === "ediensten" && p.length === 2) {
-      found = { pad: "ediensten", candidates: (await this.list("ediensten")).filter((e) => this.edienstNaam(e) === p[1]) };
+      found = { pad: "ediensten", candidates: this.byKey(await this.list("ediensten"), this.edienstSleutel, this.edienstNaam, p[1]!) };
     } else if (head === "ediensten" && p.length === 4 && p[2] === "versies") {
       found = { pad: "edienstversies", candidates: await this.versies(p[1]!, p[3]!) };
     } else if (head === "ediensten" && p.length === 6 && p[2] === "versies" && p[4] === "uitrollen") {
@@ -177,8 +193,11 @@ export class Inrichting {
       const uitrollen = await this.list("uitrollen");
       found = {
         pad: "uitrollen",
-        candidates: uitrollen.filter(
-          (u) => this.gestartOp(u) === p[5] && ids.has(relation(u, "uitrol_edienstversies", own("uitrollen"))[0]?.id ?? -1)
+        candidates: this.byKey(
+          uitrollen.filter((u) => ids.has(relation(u, "uitrol_edienstversies", own("uitrollen"))[0]?.id ?? -1)),
+          this.uitrolSleutel,
+          this.gestartOp,
+          p[5]!
         ),
       };
     } else if (head === "artefacten" && p.length === 4) {
@@ -204,7 +223,7 @@ export class Inrichting {
   }
 
   private async versies(edienst: string, nr: string): Promise<FullRecord[]> {
-    const ediensten = (await this.list("ediensten")).filter((e) => this.edienstNaam(e) === edienst);
+    const ediensten = this.byKey(await this.list("ediensten"), this.edienstSleutel, this.edienstNaam, edienst);
     if (ediensten.length !== 1) return [];
     const eid = ediensten[0]!.id;
     return (await this.list("edienstversies")).filter(

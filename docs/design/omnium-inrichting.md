@@ -196,10 +196,10 @@ de Fundament-repo; of het register "uniek" ook afdwingt, is nog niet getest):
 | Type | Sleutel | Route onder `/inrichting` | Let op |
 |---|---|---|---|
 | componenten | `ComponentNaam.naam` | `/componenten/<naam>` | korte namen (gzac, openzaak) |
-| ediensten | `EdienstNaam.naam` | `/ediensten/<naam>` | vrije tekst met spaties en haakjes, dus URL-gecodeerd; **hernoemen breekt de link** |
+| ediensten | `EdienstNaam.code`, zonder code `EdienstNaam.naam` | `/ediensten/<code>` | de code komt er (besluit 5-11). De naam is vrije tekst die kan wijzigen; een oude link op naam blijft werken |
 | edienstversies | e-dienst + `versienummer` | `/ediensten/<naam>/versies/<versienummer>` | het nummer alleen is niet uniek; de e-dienst loopt via `EdienstversieEdienst` |
 | artefacten | soortcode + doelcomponent + `identifier` | `/artefacten/<soortcode>/<component>/<identifier>` | `identifier` alleen is niet uniek; van de soort de `code`, want de id van de referentielijst verschilt per instantie; de component loopt via `ArtefactDoelcomponent` |
-| uitrollen | geen; `gestartOp` is praktisch uniek, niet gegarandeerd | `/ediensten/<naam>/versies/<versienummer>/uitrollen/<gestartOp>` | een uitrol is een gebeurtenis en komt na een nieuwe vulling niet terug: deze links gelden alleen binnen dit register |
+| uitrollen | `UitrolVerloop.uuid`, zonder uuid `gestartOp` | `/ediensten/<code>/versies/<versienummer>/uitrollen/<uuid>` | een uitrol is een gebeurtenis en komt na een nieuwe vulling niet terug: deze links gelden alleen binnen dit register |
 
 De route is dus niet overal `<pad>/<sleutel>`: de plugin kent per type zijn
 routevorm en hoe die naar een id wordt herleid. De template blijft
@@ -284,8 +284,29 @@ Drie backends, elk met een eigen rol:
   de snapshot in het register de enige historische bron. Een bron die niet door
   een transformatie ging, staat er niet in.
 
+Uitwerking in het model (INRICHTEN_VIZ, 5-11; nog niet doorgevoerd):
+
+- `richting` op ArtefactSoort: `bron`, `gegenereerd` of `weergave`. Leeg telt
+  als gegenereerd.
+- Soorten met richting bron: `logisch-model`, `bpmn-bron`, `dmn-bron`,
+  `cmmn-bron` en `formulierdefinitie-bron`. Met richting weergave:
+  `diagram-weergave`, de SVG.
+- Formaten: `omnium-studio-json` en `svg`.
+- **Niet** `ArtefactAfhankelijkheid`, want die blijft voor de uitrolvolgorde.
+  Wel een nieuwe relatie `ArtefactBron` (Artefact → Artefact, meervoudig, met
+  veld `rol`: `bron` of `weergave-van`). In `/full` wordt dat naar verwachting
+  `artefact_bronnen`; nagaan na de bouw.
+- De SVG is een eigen artefact. De render-versie staat in
+  `ArtefactHerkomst.regelsetVersie`, met `schrijverId` `render-svc`.
+- Traceregels krijgen `bronElementId` naast `bronGE`.
+- Sub-e-diensten: relatie `EdienstOnderdeelVan`.
+- Beschikbaar na een nieuwe schema-versie op cg-test (FUNDAMENT) en een
+  aangepaste export (TRANSFORMATIES); tot dan is de tab Bronnen leeg.
+
 Gevolgen voor Imprint:
 
+- De tab Resultaten toont alleen richting gegenereerd; de tab Bronnen toont
+  elke bron met zijn weergave(n).
 - De pagina van een e-dienstversie krijgt een tab **Bronnen** naast Artefacten
   (`omnium-lijst` op artefacten met `richting=bron`), met per gegenereerd
   artefact een link naar zijn bron.
@@ -387,14 +408,13 @@ Voor Mark:
    `pg-main` (5-11); gevraagd aan FUNDAMENT. Backups: dagelijkse `pg_dump` per
    database naar een bucket, 30 dagen; `inrichting` en de uploadbucket moeten
    aan die lijst worden toegevoegd.
-6. Modelwens (voorstel van INRICHTEN_VIZ, nog niet met je besproken): een stabiel
-   `code`-veld op EDienst en een uuid op Uitrol. Dan overleven links een
-   hernoeming en een nieuwe vulling, en vervalt de omweg via naam en `gestartOp`.
-   De herbouw is al gebeurd, dus dit wordt een gewone modelwijziging waarbij de
-   bestaande records worden ingevuld.
-7. Bronnen in het register (§3.5): akkoord met bronnen als artefacten, een
-   snapshot per e-dienstmap bij elke transformatie en SVG als afgeleide
-   weergave?
+6. ~~Modelwens code/uuid?~~ Ja (Mark, 5-11): `EdienstNaam.code` en
+   `UitrolVerloop.uuid`, eerst optioneel. De plugin gebruikt ze al als sleutel
+   zodra ze er zijn. Zonder code of uuid valt hij terug op naam en `gestartOp`,
+   en oude links blijven werken.
+7. ~~Bronnen in het register?~~ Ja (Mark, 5-11), net als render 0.2.0 naar
+   Fundament. Het modelvoorstel staat in de Fundament-repo
+   (`docs/inrichtingsmodel-wijziging-bronnen.md`); zie §3.5.
 
 Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
