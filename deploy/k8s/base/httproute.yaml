@@ -1,0 +1,14 @@
+# Op de gedeelde gateway van het cluster, zoals Omnium (tnt-cg--omnium).
+# De hostnaam zet de overlay; hij moet ook in het certificaat van de gateway
+# staan (runbook, bij FUNDAMENT).
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: imprint
+spec:
+  parentRefs:
+    - { group: gateway.networking.k8s.io, kind: Gateway, name: web, namespace: tnt-cg--test, sectionName: https }
+  hostnames: [imprint.example] # overlay
+  rules:
+    - matches: [{ path: { type: PathPrefix, value: / } }]
+      backendRefs: [{ name: imprint, port: 80 }]

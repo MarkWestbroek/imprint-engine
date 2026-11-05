@@ -1394,6 +1394,12 @@ flowchart LR
   Runbook en afwegingen: [deploy-vps.md](deploy-vps.md). Tot september 2026
   was productie Plesk (Passenger → `server.js`, MariaDB); die host heeft
   Node.js uitgezet.
+- **Fundament** (Kubernetes, cg-test): een tweede doel voor sites die per
+  verzoek renderen (eerst de inrichtings-UI). Kustomize in `deploy/k8s/`
+  (`base/` per site gelijk, een overlay per site): HTTPRoute op de gedeelde
+  gateway, database in het CloudNativePG-cluster `pg-main`, uploads in een
+  Ceph-bucket, migraties als Job met het tools-image. Runbook:
+  [deploy-fundament.md](deploy-fundament.md).
 
 - **Code en schema** reizen via git: `db:generate` maakt van een wijziging
   in [db-schema.ts](../packages/content-core/src/db-schema.ts) een

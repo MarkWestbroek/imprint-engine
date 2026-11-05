@@ -1,0 +1,16 @@
+# Eén Imprint-site op een Kubernetes-cluster (Fundament), los van welke site:
+# de overlay (bv. ../inrichting) kiest namespace, hostnaam en image.
+# Zie docs/deploy-fundament.md. Geen geheimen in git: de Secret `imprint-env`
+# maak je met de hand (runbook), de bucket-sleutels maakt Rook zelf.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - deployment.yaml
+  - service.yaml
+  - httproute.yaml
+  - bucket.yaml
+labels:
+  - pairs:
+      app.kubernetes.io/name: imprint
+      app.kubernetes.io/part-of: imprint
+    includeSelectors: true

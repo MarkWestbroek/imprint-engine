@@ -1,0 +1,13 @@
+# Eigen database in het gedeelde CloudNativePG-cluster pg-main (tnt-cg--db),
+# zoals omnium en openzaak. De rol `inrichting` hoort in pg-main zelf
+# (spec.managed.roles, met passwordSecret pg-inrichting): dat is een wijziging
+# aan een gedeeld object, dus via FUNDAMENT — zie docs/deploy-fundament.md.
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: inrichting
+  namespace: tnt-cg--db
+spec:
+  cluster: { name: pg-main }
+  name: inrichting
+  owner: inrichting

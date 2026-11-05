@@ -346,21 +346,25 @@ alleen een lokale login) en aan de registerkant het subject uit het token.
 
 ## 6. Op Fundament (Kubernetes)
 
-Wat er al is: één image per site uit de root-`Dockerfile` (build-arg `SITE`,
-Next standalone) en het tools-image voor migraties en scripts. Nodig:
+Voorbereid (5-11): manifesten in `deploy/k8s/` (kustomize), met een
+server-side dry-run tegen het cluster gecontroleerd; runbook in
+[../deploy-fundament.md](../deploy-fundament.md). Ze volgen hoe Omnium er draait:
 
-- **Postgres** voor de site (accounts, pagina's, versies): beheerd of in het
-  cluster, een eigen database.
-- **Geheimen**: `DATABASE_URL`, `SESSION_SECRET`, `OMNIUM_REGISTER_URL`,
-  `OMNIUM_REGISTER_TOKEN`, eventueel `OMNIUM_URL` (render-API) en
-  `ASSET_S3_*` (anders een PVC voor `ASSET_ROOT`).
-- **Jobs**: migraties (`npm run db:migrate:pg`) en het eerste account
-  (`npm run user -- add …`) met het tools-image.
-- **Ingress** met TLS in plaats van Caddy; geen GoAccess, geen `deploy.sh`.
-- **Manifesten of een Helm-chart** in `deploy/k8s/` (bestaan nog niet).
-- **Build**: omdat de site per verzoek rendert, bouwt een gewone CI-build
-  zonder database (anders dan op de VPS, waar de SSG-build de database leest).
-- Sessies staan in een cookie: meerdere replica's kunnen.
+- namespace `tnt-cg--inrichting`, hostnaam
+  `inrichting.fundament.common-ground-lab.nl` (werktitels);
+- een HTTPRoute op de gedeelde Gateway `web`, TLS uit het gedeelde certificaat;
+- een eigen database in het CloudNativePG-cluster `pg-main` (`tnt-cg--db`);
+- uploads in een Ceph-bucket (ObjectBucketClaim), niet op een node-lokaal
+  volume;
+- het register en de render-API binnen het cluster (`omnium-api`,
+  `omnium-render-svc`), geen omweg via de gateway;
+- migraties als Job met het tools-image; geheimen alleen in een Secret die je
+  met de hand maakt;
+- de image bouwt zonder database (de site rendert per verzoek), dus ook in CI.
+
+Nog te doen bij FUNDAMENT, want het raakt gedeelde objecten: de namespace, de
+rol in `pg-main`, de hostnaam in het certificaat. En de vraag of `pg-main`
+backups heeft.
 
 ## 7. Open punten
 

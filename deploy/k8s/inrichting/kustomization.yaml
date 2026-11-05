@@ -1,0 +1,26 @@
+# sites/inrichting op Fundament (cg-test): de inrichtings-UI op het
+# Omnium-register (docs/design/omnium-inrichting.md). Werktitels; de
+# namespace, de database en de hostnaam in het certificaat regelt FUNDAMENT.
+#   kubectl apply -k deploy/k8s/inrichting
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: tnt-cg--inrichting
+resources:
+  - ../base
+images:
+  - { name: imprint-site, newName: docker.io/markwestbroek/imprint-inrichting, newTag: "0.15.0" }
+configMapGenerator:
+  - name: imprint-config
+    options: { disableNameSuffixHash: true }
+    literals:
+      # Het register binnen het cluster: geen omweg via de gateway. Pad en
+      # poort van omnium-api nagaan zodra plugin-omnium er is.
+      - OMNIUM_REGISTER_URL=http://omnium-api.tnt-cg--omnium.svc.cluster.local:8080
+      # Render-API (v3model, Studio-diagrammen)
+      - OMNIUM_URL=http://omnium-render-svc.tnt-cg--omnium.svc.cluster.local:8095
+patches:
+  - target: { kind: HTTPRoute, name: imprint }
+    patch: |-
+      - op: replace
+        path: /spec/hostnames
+        value: [inrichting.fundament.common-ground-lab.nl]

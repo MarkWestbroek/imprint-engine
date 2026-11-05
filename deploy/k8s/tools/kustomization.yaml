@@ -1,0 +1,8 @@
+# Eenmalige taken met het tools-image (target tools van de root-Dockerfile):
+# migraties. Apart van de site, want een Job is na afloop onveranderlijk:
+#   kubectl -n <ns> delete job imprint-migrate --ignore-not-found
+#   kubectl apply -k deploy/k8s/<site>/tools
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - migrate-job.yaml

@@ -1,0 +1,56 @@
+# De Next standalone-server van één site (root-Dockerfile, target runner).
+# Pagina's renderen per verzoek (force-dynamic), dus de image bouwt zonder
+# database en kan in CI gebouwd worden. Uploads gaan naar de bucket
+# (bucket.yaml), niet naar een volume: zo overleeft de site een vervangen
+# node en kunnen er meer replica's draaien (sessies staan in een cookie).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: imprint
+spec:
+  replicas: 1
+  template:
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000 # `node` in de image
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: site
+          image: imprint-site # overlay: images
+          ports:
+            - { name: http, containerPort: 3000 }
+          envFrom:
+            - configMapRef: { name: imprint-config }
+            # DATABASE_URL, SESSION_SECRET, OMNIUM_REGISTER_TOKEN — runbook
+            - secretRef: { name: imprint-env }
+          env:
+            # Bucket van Rook (ObjectBucketClaim `imprint`): ConfigMap en Secret
+            # met dezelfde naam, gemaakt door de provisioner.
+            - name: BUCKET_HOST
+              valueFrom: { configMapKeyRef: { name: imprint, key: BUCKET_HOST } }
+            - name: BUCKET_PORT
+              valueFrom: { configMapKeyRef: { name: imprint, key: BUCKET_PORT } }
+            - name: ASSET_S3_ENDPOINT
+              value: http://$(BUCKET_HOST):$(BUCKET_PORT)
+            - name: ASSET_S3_BUCKET
+              valueFrom: { configMapKeyRef: { name: imprint, key: BUCKET_NAME } }
+            - name: ASSET_S3_ACCESS_KEY
+              valueFrom: { secretKeyRef: { name: imprint, key: AWS_ACCESS_KEY_ID } }
+            - name: ASSET_S3_SECRET_KEY
+              valueFrom: { secretKeyRef: { name: imprint, key: AWS_SECRET_ACCESS_KEY } }
+          readinessProbe:
+            httpGet: { path: /, port: http }
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: { path: /, port: http }
+            initialDelaySeconds: 20
+            periodSeconds: 30
+            failureThreshold: 4
+          resources:
+            requests: { cpu: 50m, memory: 192Mi }
+            limits: { memory: 512Mi }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }

@@ -1,0 +1,8 @@
+# Uploads (beeldbibliotheek) in Ceph-objectopslag, zoals omnium-bucket.
+apiVersion: objectbucket.io/v1alpha1
+kind: ObjectBucketClaim
+metadata:
+  name: imprint
+spec:
+  generateBucketName: imprint
+  storageClassName: cephobj-cg
