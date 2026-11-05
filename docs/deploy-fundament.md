@@ -117,7 +117,9 @@ komen ze ook daar vandaan, dus niet dubbel bijhouden in deze repo.
 7. **Site**: `kubectl apply -k deploy/k8s/inrichting`. Meld FUNDAMENT zodra de
    ObjectBucketClaim `imprint` *Bound* is
    (`kubectl -n tnt-cg--inrichting get obc imprint`): pas dan kan de backup de
-   bucket meenemen (`ensure-backup-secret.ps1 -AlleenBronnen`).
+   bucket meenemen (`ensure-backup-secret.ps1 -AlleenBronnen`). Ook na een reset:
+   de bucket krijgt dan een nieuwe naam. Sinds 5-11 gaan database en bucket
+   (map `s3-imprint`) elke nacht mee; de eerste handmatige run is geslaagd.
 8. **Eerste admin**, met het tools-image:
 
    ```sh
