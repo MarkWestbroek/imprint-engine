@@ -4,4 +4,4 @@ namespace: tnt-cg--inrichting
 resources:
   - ../../tools
 images:
-  - { name: imprint-tools, newName: docker.io/markwestbroek/imprint-tools, newTag: "0.15.0" }
+  - { name: imprint-tools, newName: docker.io/markwestbroek/imprint-tools, newTag: "0.15.0-75fbde1" }
