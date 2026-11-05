@@ -14,9 +14,42 @@
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
       "gestartOp": "2026-11-05T10:00:00Z",
+      "status": "bezig",
+      "uitgevoerdDoor": "inrichting-script"
+     }
+    ],
+    "einde": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "datum": "2026-11-05T10:00:05Z",
+      "opvoer": "2026-11-05T10:00:05Z"
+     }
+    ]
+   },
+   {
+    "uitrol_id": 1,
+    "rel_id": 2,
+    "opvoer": "2026-11-05T10:00:05Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T10:00:05Z",
+      "gestartOp": "2026-11-05T10:00:00Z",
       "status": "geslaagd",
-      "uitgevoerdDoor": "inrichting-script",
-      "uuid": "7d4c2a10-5b1e-4c8e-9f0a-2b6c3d4e5f60"
+      "uitgevoerdDoor": "inrichting-script"
+     }
+    ],
+    "aanvang": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 2,
+      "versie": 1,
+      "datum": "2026-11-05T10:00:05Z",
+      "opvoer": "2026-11-05T10:00:05Z"
      }
     ]
    }
@@ -71,6 +104,22 @@
       "opvoer": "2026-11-05T08:00:00Z",
       "actie": "ongewijzigd",
       "doelUrl": "https://formulieren.example/forms/7"
+     }
+    ]
+   }
+  ],
+  "uitrol_identificaties": [
+   {
+    "uitrol_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "uitrol_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "uuid": "7d4c2a10-5b1e-4c8e-9f0a-2b6c3d4e5f60",
+      "opvoer": "2026-11-05T08:00:00Z"
      }
     ]
    }

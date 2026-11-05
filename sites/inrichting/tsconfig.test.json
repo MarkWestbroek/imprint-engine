@@ -1,0 +1,12 @@
+{
+  "//": "Only for the test runner (tsx): the site settings, extended to the engine packages the site renders with. Without this, tsx applies the site's JSX settings to files inside this folder only, and package .tsx files fail with 'React is not defined'. Next and tsc keep using tsconfig.json.",
+  "extends": "./tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.mts",
+    "../../packages/*/src/**/*.ts",
+    "../../packages/*/src/**/*.tsx"
+  ]
+}

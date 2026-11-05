@@ -1,0 +1,6 @@
+{
+  "name": "main",
+  "items": [
+    { "label": "Overzicht", "page": "home" }
+  ]
+}

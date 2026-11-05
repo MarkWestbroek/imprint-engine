@@ -25,6 +25,48 @@ export function currentVersion(hub: Hub): Version | undefined {
   return best;
 }
 
+type Moment = { datum?: string; opvoer?: string; afvoer?: string };
+
+/** The live entry of an `aanvang`/`einde` list (latest opvoer, not withdrawn), as a time. */
+function bound(list: unknown): number | undefined {
+  if (!Array.isArray(list)) return undefined;
+  let best: Moment | undefined;
+  for (const m of list as Moment[]) {
+    if (!m?.datum || !m.opvoer || m.afvoer) continue;
+    if (!best || time(m) >= time(best)) best = m;
+  }
+  return best?.datum ? Date.parse(best.datum) : undefined;
+}
+
+/**
+ * Material time: a hub of a materieel GE holds from its `aanvang` until its
+ * `einde` (an uitrol's "bezig" ends where "geslaagd" begins). `/full` returns
+ * every occurrence; this keeps those valid at `at`.
+ */
+export function validAt(hub: Hub, at: number): boolean {
+  const from = bound(hub.aanvang);
+  const until = bound(hub.einde);
+  return (from === undefined || from <= at) && (until === undefined || at < until);
+}
+
+/** The moment `geldigOp` names (a date counts to its end), else now. */
+export function momentOf(geldigOp?: string): number {
+  if (!geldigOp) return Date.now();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(geldigOp)) return Date.parse(`${geldigOp}T23:59:59.999Z`);
+  return Date.parse(geldigOp) || Date.now();
+}
+
+/** A record with only the hubs valid at `at` (material time); the rest of the record as is. */
+export function asAt<T extends FullRecord>(record: T, at: number): T {
+  const out: Record<string, unknown> = { ...record };
+  for (const [k, v] of Object.entries(record)) {
+    if (Array.isArray(v) && v.some((h) => h && typeof h === "object" && ("einde" in h || "aanvang" in h))) {
+      out[k] = (v as Hub[]).filter((h) => validAt(h, at));
+    }
+  }
+  return out as T;
+}
+
 /** The hubs of a GE or relation that are still there. */
 export function currentHubs(record: Record<string, unknown> | undefined, key: string): Hub[] {
   const hubs = record?.[key];

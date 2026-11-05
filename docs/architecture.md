@@ -1539,6 +1539,24 @@ flowchart LR
   `omniumPage({ path, viewers, ctx })` geeft de render, of null voor een 404.
 - Tests (`npm test --workspace=@imprint/plugin-omnium`) draaien tegen een
   synthetische fixture in `/full`-vorm.
+- **Materiële tijd**: `/full` geeft van een materieel gegevenselement alle
+  voorkomens terug, elk met `aanvang` en `einde`. Een uitrol heeft zo een hub
+  "bezig" met een einde en een hub "geslaagd" die daar begint. `Inrichting`
+  houdt bij het laden alleen de hubs die nu gelden, of op `geldigOp`.
+- **Referentielijsten**: velden die naar een referentielijst wijzen
+  (`soort`, `formaat`) toont de detailweergave met de code van het item
+  waarnaar ze wijzen, niet met het id.
+
+Een vijfde site, `sites/inrichting`, is de **besloten werkplek** op dit
+register (poort 3600):
+
+- De `(site)`-layout eist een sessie, met elke rol; zonder sessie gaat de
+  bezoeker naar `/admin`. Alles is `force-dynamic`, dus de build heeft geen
+  database nodig.
+- `app/(site)/inrichting/[...path]` roept `omniumPage()` aan, met de viewers
+  van de site.
+- Het overzicht is de pagina `home`, met de widgets `omnium-lijst`.
+- De site draait op Fundament: [deploy-fundament.md](deploy-fundament.md).
 
 Stappen voor een nieuwe site:
 

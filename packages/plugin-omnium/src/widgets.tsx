@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { WidgetFrame, type WidgetContext, type WidgetViewers } from "@imprint/runtime-admin";
 import { registerProblem } from "./client";
 import { inrichtingOf, isOmniumSubject } from "./context";
-import { own, RELATION_TARGET, type Inrichting, type Pad } from "./inrichting";
-import { currentHubs, currentVersion, display, ge, geRows, humanize, relation, TECHNICAL, type FullRecord, type Version } from "./register";
+import { own, REF_FIELDS, RELATION_TARGET, type Inrichting, type Pad } from "./inrichting";
+import { currentHubs, currentVersion, display, ge, geRows, humanize, refId, relation, TECHNICAL, type FullRecord, type Version } from "./register";
 import { OmniumDetailConfig, OmniumLijstConfig } from "./schemas";
 
 /**
@@ -65,6 +65,10 @@ const COLUMNS: Record<Pad, Column[]> = {
   artefactsoorten: [
     titleLink("artefactsoorten"),
     { label: "Omschrijving", cell: (r) => text(ge(r, "artefactsoort_gegevens")?.omschrijving) },
+  ],
+  artefactformaten: [
+    titleLink("artefactformaten"),
+    { label: "Mediatype", cell: (r) => text(ge(r, "artefactformaat_gegevens")?.mediatype) },
   ],
 };
 
@@ -130,6 +134,18 @@ function Value({ name, value }: { name: string; value: unknown }) {
     );
   }
   return <span className="break-words">{s}</span>;
+}
+
+/** A row with its `$ref` fields (soort, formaat) shown as the code of the item they point to. */
+async function withRefs(i: Inrichting, row: Version): Promise<Version> {
+  const out: Version = { ...row };
+  for (const [field, pad] of Object.entries(REF_FIELDS)) {
+    const id = refId(row[field]);
+    if (id === undefined) continue;
+    const item = await i.byId(pad, id).catch(() => undefined);
+    if (item) out[field] = await i.title(pad, item);
+  }
+  return out;
 }
 
 async function relationLinks(i: Inrichting, owner: Pad, record: FullRecord, key: string) {
@@ -206,7 +222,7 @@ export async function OmniumDetail({ config: raw, subject }: { config: unknown; 
           );
         } else {
           const hubs = currentHubs(subject.record, key);
-          const rows = hubs.map(currentVersion).filter((v): v is Version => v !== undefined);
+          const rows = await Promise.all(hubs.map(currentVersion).filter((v): v is Version => v !== undefined).map((v) => withRefs(i, v)));
           if (!rows.length) return null;
           body =
             rows.length > 1 ? (

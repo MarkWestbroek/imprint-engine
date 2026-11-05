@@ -1,0 +1,13 @@
+{
+  "slug": "home",
+  "title": "Inrichting",
+  "description": "De inrichting van e-diensten: e-diensten, versies, artefacten, uitrollen en componenten, uit het Omnium-register.",
+  "body": "",
+  "layout": {
+    "rows": [
+      { "cells": [{ "span": 1, "widgets": [{ "type": "text", "config": { "markdown": "Wat er per e-dienst is ingericht, waaruit het gemaakt is en waar het staat. De gegevens komen rechtstreeks uit het **Omnium-register**; hier wijzig je niets." } }] }] },
+      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "E-diensten", "pad": "ediensten" } }] }] },
+      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "Componenten", "pad": "componenten" } }] }] }
+    ]
+  }
+}

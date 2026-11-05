@@ -284,7 +284,29 @@ Drie backends, elk met een eigen rol:
   de snapshot in het register de enige historische bron. Een bron die niet door
   een transformatie ging, staat er niet in.
 
-Uitwerking in het model (INRICHTEN_VIZ, 5-11; nog niet doorgevoerd):
+Uitwerking in het model: versie 3, akkoord Mark (Fundament-repo,
+`docs/inrichtingsmodel-wijziging-bronnen.md`, 5bebba5). Nog niet doorgevoerd;
+de exacte `/full`-sleutels volgen na de nieuwe schema-versie. Aanvullend op de
+lijst hieronder:
+
+- **Uuid van een uitrol**: op een eigen gegevenselement
+  `UitrolIdentificatie`; de plugin verwacht `uitrol_identificaties`.
+- **ArtefactBron**: `rol` is een enum (`bron`, `weergave-van`), en `bronHash`
+  is de payloadHash van de bronversie die is gebruikt. Een artefact heeft vaak
+  meer dan één bron.
+- **Eén bronartefact per profiel** in de e-dienstmap, plus de bronsoort
+  `edienstmodel`. Dat is geen Studio-JSON en heeft geen tekening: toon het als
+  boom.
+- **Gedeelde bronnen** staan één keer in het register, bij de e-dienst die
+  eigenaar is. De tab Bronnen volgt daarom `ArtefactBron` vanuit de artefacten
+  van de versie, niet alleen `ArtefactEdienstversie`: GPK toont ook bronnen van
+  Aanvraag.
+- **Beslistabel**: die staat in de dmn-bron (op het element decision), maar
+  niet in de tekening.
+- **Bronnen zonder verwijzing**: een cmmn-bron of formulierdefinitie-bron kan
+  bestaan zonder dat een artefact ernaar verwijst.
+
+Eerdere stand (INRICHTEN_VIZ, 5-11):
 
 - `richting` op ArtefactSoort: `bron`, `gegenereerd` of `weergave`. Leeg telt
   als gegenereerd.

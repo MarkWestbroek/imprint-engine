@@ -1,0 +1,96 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer, de standaardwidgets en de
+ * registerwidgets, met classes buiten deze site-map; Tailwind moet ze dus
+ * expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+@source "../../../../packages/plugin-omnium/src";
+
+/*
+ * Inrichting: een sobere werkplek. Wit en inkt, één blauwe accentkleur voor
+ * links en knoppen, tabellen goed leesbaar. Geen overheidshuisstijl.
+ */
+:root {
+	--background: #ffffff;
+	--surface: #f4f6f8;
+	--border: #d9dee5;
+	--foreground: #1a1f29;
+	--muted: #586274;
+	--accent: #1d5fa8;
+	--accent-strong: #154a85;
+	--accent-2: #0f766e;
+	--ir-width: 1200px;
+	color-scheme: light;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3). */
+@theme inline {
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
+}
+
+@layer base {
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 16px;
+		line-height: 1.55;
+		-webkit-font-smoothing: antialiased;
+	}
+	a { color: inherit; text-decoration: none; }
+}
+
+.ir-container { max-width: var(--ir-width); margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px); }
+
+/* Kop: naam links, menu rechts. */
+.ir-header { position: sticky; top: 0; z-index: 20; background: var(--background); border-bottom: 1px solid var(--border); }
+.ir-header-row { height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.ir-brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 18px; }
+.ir-mark { width: 14px; height: 14px; border-radius: 3px; background: var(--accent); flex: none; }
+.ir-nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; font-weight: 500; color: var(--muted); }
+.ir-nav a { padding: 4px 0; }
+.ir-nav a:hover, .ir-nav a.is-active { color: var(--foreground); }
+.ir-nav a.is-active { box-shadow: inset 0 -2px 0 var(--accent); }
+.ir-mobile-menu { display: none; position: relative; }
+.ir-mobile-menu summary { display: grid; place-items: center; cursor: pointer; list-style: none; }
+.ir-mobile-menu summary::-webkit-details-marker { display: none; }
+.ir-mobile-menu div { position: absolute; top: 34px; right: 0; width: 220px; padding: 8px; border: 1px solid var(--border); border-radius: 8px; background: var(--background); box-shadow: 0 10px 24px #1a1f291f; }
+.ir-mobile-menu div a { display: block; padding: 8px 10px; border-radius: 6px; }
+.ir-mobile-menu div a:hover { background: var(--surface); }
+@media (max-width: 760px) {
+	.ir-nav { display: none; }
+	.ir-mobile-menu { display: block; }
+}
+
+/* De pagina. */
+.ir-main { padding: 32px 0 80px; }
+.ir-page h1 { font-size: clamp(26px, 3vw, 34px); line-height: 1.2; font-weight: 700; margin: 0 0 20px; }
+.ir-page a:not([class]) { color: var(--accent); }
+.ir-page table a { color: var(--accent); }
+
+.eyebrow { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
+.markdown { line-height: 1.65; }
+.markdown > * + * { margin-top: 1em; }
+.markdown h2 { font-size: 22px; font-weight: 700; margin-top: 1.5em; }
+.markdown h3 { font-size: 18px; font-weight: 700; margin-top: 1.3em; }
+.markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown code { font-size: .9em; padding: .1em .35em; border-radius: 4px; background: var(--surface); }
+
+/* Voet. */
+.ir-footer { border-top: 1px solid var(--border); background: var(--surface); padding: 28px 0; font-size: 14px; color: var(--muted); }
+.ir-footer-row { display: grid; gap: 6px; }
+.ir-footer p { margin: 0; max-width: 720px; }
+.ir-footer-small a { text-decoration: underline; text-underline-offset: 3px; }

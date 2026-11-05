@@ -6,6 +6,16 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Site `inrichting`** (fase 2 van design/omnium-inrichting.md): een besloten
+  werkplek op het Omnium-register.
+  - Elke pagina vraagt een sessie.
+  - Het overzicht toont e-diensten en componenten.
+  - Elk register-record heeft een pagina onder `/inrichting/…`, ook in de
+    stand van een eerder moment.
+  - De site draait op Fundament.
+  - `plugin-omnium` volgt nu de materiële tijd: van een uitrol toont hij de
+    status die nu geldt, niet ook de beëindigde.
+  - Soort en formaat staan er als code, niet als id.
 - **Omnium-register, alleen lezen** (nieuwe plugin `@imprint/plugin-omnium`,
   fase 1 van design/omnium-inrichting.md):
   - client op `/full`, met tijdreizen en zichtbare fouten (een 401 is geen

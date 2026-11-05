@@ -37,6 +37,7 @@ COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
 COPY sites/commonground/package.json sites/commonground/
 COPY sites/omnium/package.json sites/omnium/
+COPY sites/inrichting/package.json sites/inrichting/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund
 COPY . .
 

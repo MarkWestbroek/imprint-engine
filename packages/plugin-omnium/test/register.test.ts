@@ -125,6 +125,14 @@ test("locate: a key that is not unique is an error, never a random record", asyn
   await assert.rejects(i.locate(["ediensten", "Aanvraag (voorbeeld)"]), AmbiguousKey);
 });
 
+test("material time: an uitrol is bezig until its einde, then geslaagd (both hubs come back from /full)", async () => {
+  const now = new Inrichting(register());
+  const [u] = await now.list("uitrollen");
+  assert.deepEqual(geRows(u, "uitrol_verlopen").map((v) => v.status), ["geslaagd"]);
+  const then = new Inrichting(register(), "/inrichting", { geldigOp: "2026-11-05T10:00:02Z" });
+  assert.equal(ge((await then.list("uitrollen"))[0], "uitrol_verlopen")?.status, "bezig");
+});
+
 test("humanize: field names as labels", () => {
   assert.equal(humanize("doelVersieRange"), "Doel versie range");
   assert.equal(humanize("artefact_traceregels"), "Artefact traceregels");

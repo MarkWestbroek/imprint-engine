@@ -287,8 +287,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             heeft er nog geen), een voorbeeldrecord voor templates in de
             studio. Vorm en sleutels op 5-11 tegen het echte register gecontroleerd
             (40 records, alle adressen uniek).
-      - [ ] Fase 2: `sites/inrichting` (besloten, NL Design System, route
-            `/inrichting/[...path]`), uitrollen op Fundament.
+      - [x] Fase 2: `sites/inrichting` (besloten, route `/inrichting/[...path]`),
+            lokaal getest tegen het echte register (5-11).
+      - [ ] NL Design System-huisstijl (nu een eigen, sobere stijl).
+      - [ ] Tab Bronnen zodra het model (versie 3) en de export er zijn.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

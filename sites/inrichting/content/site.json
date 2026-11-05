@@ -1,0 +1,10 @@
+{
+  "name": "Inrichting",
+  "tagline": "De inrichting van e-diensten, uit het Omnium-register",
+  "motto": "wat is waaruit gemaakt, en waar staat het",
+  "baseUrl": "https://inrichting.fundament.common-ground-lab.nl",
+  "defaultLocale": "nl",
+  "links": {},
+  "aliases": {},
+  "releaseSources": {}
+}

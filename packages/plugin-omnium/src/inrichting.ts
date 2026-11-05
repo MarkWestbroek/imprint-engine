@@ -1,5 +1,5 @@
 import type { OmniumRegister, ReadMoment } from "./client";
-import { ge, ownIdKey, refId, relation, type FullRecord } from "./register";
+import { asAt, ge, momentOf, ownIdKey, refId, relation, type FullRecord } from "./register";
 
 /**
  * The inrichting domain (design/omnium-inrichting.md §3.4): which types there
@@ -12,7 +12,7 @@ import { ge, ownIdKey, refId, relation, type FullRecord } from "./register";
  *   ediensten/<naam>/versies/<versienummer>/uitrollen/<gestartOp>
  *
  * Once the model has them (Mark, 5-11-2026), `EdienstNaam.code` takes the
- * place of the name and `UitrolVerloop.uuid` that of `gestartOp`; both are
+ * place of the name and `UitrolIdentificatie.uuid` (json key expected: uitrol_identificaties) that of `gestartOp`; both are
  * optional at first, so a record without one keeps the old key, and an old
  * link (by name, by start time) still finds its record.
  *   artefacten/<soortcode>/<component>/<identifier>
@@ -31,6 +31,7 @@ export const INRICHTING_TYPES = {
   uitrollen: { typenaam: "Uitrol", label: "Uitrol", meervoud: "Uitrollen" },
   omgevingen: { typenaam: "Omgeving", label: "Omgeving", meervoud: "Omgevingen" },
   artefactsoorten: { typenaam: "ArtefactSoort", label: "Artefactsoort", meervoud: "Artefactsoorten" },
+  artefactformaten: { typenaam: "ArtefactFormaat", label: "Artefactformaat", meervoud: "Artefactformaten" },
 } as const;
 
 export type Pad = keyof typeof INRICHTING_TYPES;
@@ -51,6 +52,9 @@ export const RELATION_TARGET: Record<string, Pad> = {
 };
 export const PADS = Object.keys(INRICHTING_TYPES) as Pad[];
 export const isPad = (p: string): p is Pad => Object.hasOwn(INRICHTING_TYPES, p);
+
+/** Fields that hold a referentielijst id (`$ref`), and the list whose title stands for it. */
+export const REF_FIELDS: Record<string, Pad> = { soort: "artefactsoorten", formaat: "artefactformaten" };
 
 /** Ids of the owner type, for reading its relations. */
 export const own = (pad: Pad) => ownIdKey(INRICHTING_TYPES[pad].typenaam);
@@ -83,7 +87,8 @@ export class Inrichting {
   list(pad: Pad): Promise<FullRecord[]> {
     let p = this.lists.get(pad);
     if (!p) {
-      p = this.register.list(pad, this.at);
+      const at = momentOf(this.at.geldigOp);
+      p = this.register.list(pad, this.at).then((rows) => rows.map((r) => asAt(r, at)));
       this.lists.set(pad, p);
     }
     return p;
@@ -102,7 +107,7 @@ export class Inrichting {
   /** The URL key: the code when there is one, else the name. */
   edienstSleutel = (e: FullRecord | undefined) => str(ge(e, "edienst_namen")?.code) || this.edienstNaam(e);
   /** The URL key: the uuid when there is one, else the start time. */
-  uitrolSleutel = (u: FullRecord | undefined) => str(ge(u, "uitrol_verlopen")?.uuid) || this.gestartOp(u);
+  uitrolSleutel = (u: FullRecord | undefined) => str(ge(u, "uitrol_identificaties")?.uuid) || this.gestartOp(u);
   /** By key, else by the older key (name, start time): links made before the code or uuid keep working. */
   private byKey<T extends FullRecord>(rows: T[], key: (r: T) => string | undefined, old: (r: T) => string | undefined, want: string): T[] {
     const hit = rows.filter((r) => key(r) === want);
@@ -172,6 +177,8 @@ export class Inrichting {
         return str(ge(r, "omgeving_namen")?.naam) ?? `Omgeving ${r.id}`;
       case "artefactsoorten":
         return str(ge(r, "artefactsoort_gegevens")?.code) ?? `Artefactsoort ${r.id}`;
+      case "artefactformaten":
+        return str(ge(r, "artefactformaat_gegevens")?.code) ?? `Artefactformaat ${r.id}`;
     }
   }
 
