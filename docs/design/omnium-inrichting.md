@@ -111,8 +111,9 @@ definities, uit hetzelfde register.
 - **FormulierDefinitie** (`/full/formulier_definities`): `layout_json`, een
   boom van `formulier`, `groep`, `rij`, `veld` (pad `ENT.rol.veld`, widget,
   label), `conditioneel` en `lijst`.
-- **Nog geen definities**: in het register op Fundament staan (2-11) nul
-  lijst-, weergave- en formulierdefinities. Elke widget heeft daarom een
+- **Nog geen definities**: in het register op Fundament stonden op 2-11 nul
+  lijst-, weergave- en formulierdefinities, en na de herbouw van 5-11 zijn de
+  antwoorden zo klein (75 en 79 bytes) dat ze vermoedelijk nog leeg zijn. Elke widget heeft daarom een
   **automatische weergave** als terugval: kolommen en velden uit het model
   (`/api/viz/schema`), de gegevenselementen van het eerste niveau, de
   weergavenaam van relaties. Zodra er definities zijn (via replay), nemen die
@@ -182,8 +183,10 @@ Geen querystrings (`?id=3`): een parameter in het pad houdt de pagina's en de
 templates eenvoudig, en de route is per definitie dynamisch.
 
 **Stabiele sleutels, geen id's.** De id's van het register overleven een nieuwe
-eerste vulling niet: bij het vervangen van de cg-test-nodes op 3-11 ging de
-database verloren, en een nieuwe vulling nummert alles opnieuw. URL's, templates
+eerste vulling niet. Bij het vervangen van de cg-test-nodes op 3-11 ging de
+database verloren; de herbouw van 5-11 nummerde alles opnieuw (de GPK-versie was
+3 en is nu 2, de artefacten waren 2-13 en zijn nu 1-12) en de historie van vóór
+3-11 is weg. URL's, templates
 en widgetconfig noemen daarom geen id. Slechts een deel van de typen heeft een
 eigen sleutel (bron: `docs/inrichting-domein-v3.json` en de export van 29-10 in
 de Fundament-repo; of het register "uniek" ook afdwingt, is nog niet getest):
@@ -283,18 +286,16 @@ Voor Mark:
 1. Akkoord met de opzet: plugin-omnium + sites/inrichting, eerst alleen-lezen?
 2. Het technische leesaccount in het register: welke gebruiker, en mag het
    een persoonlijk token zijn tot er serviceaccounts zijn?
-3. ~~Staat auth aan?~~ Ja, met `LEESTOEGANG=documenten` (stand 2-11, vóór het
-   verlies van de database). Nodig: een leesaccount met de rol *lezer* en een
-   token (`omt_…`) voor de site; na herstel opnieuw aan te maken en na te gaan.
+3. ~~Staat auth aan?~~ Ja, ook na de herbouw (5-11): records geven 401 zonder
+   login, definities 200. Nodig: een leesaccount met de rol *lezer* en een
+   token (`omt_…`) voor de site.
 4. Gemeente/omgeving: eerst alleen cg-test, of meteen kiesbaar?
 5. Waar draait de site op Fundament (namespace, domein, database)?
-6. Herstel van het register: op 3-11 zijn alle cg-test-nodes vervangen en is de
-   database weg; het herstel wacht op jouw besluit (via FUNDAMENT). Fase 1 kan
-   zonder register, fase 2 niet.
-7. Modelwens (voorstel van INRICHTEN_VIZ, nog niet met je besproken): een stabiel
+6. Modelwens (voorstel van INRICHTEN_VIZ, nog niet met je besproken): een stabiel
    `code`-veld op EDienst en een uuid op Uitrol. Dan overleven links een
    hernoeming en een nieuwe vulling, en vervalt de omweg via naam en `gestartOp`.
-   Een nieuwe vulling is hét moment om dat te doen.
+   De herbouw is al gebeurd, dus dit wordt een gewone modelwijziging waarbij de
+   bestaande records worden ingevuld.
 
 Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
@@ -313,14 +314,14 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
 1. **plugin-omnium, lezen**: client (full, tijdreizen, actueel, fouten),
    definities ophalen, widgets `omnium-lijst` en `omnium-detail`, de route
-   met `_view`-templates; tests tegen een fixture. De enige recente
-   momentopname (Fundament-repo,
-   `backups/register-resten-20261104/inrichting-register-export-20261029.json`)
-   is de eigen exportvorm, niet de `/full`-respons: de fixture wordt daaruit
-   afgeleid en de vorm controleren we tegen het register zodra dat terug is.
+   met `_view`-templates; tests tegen een fixture: een vastgelegde `/full`-respons van het
+   herbouwde register. De `/full`-sleutels zijn na de herbouw alleen
+   steekproefsgewijs gezien (bij een artefact o.a. `artefact_identificaties`,
+   `artefact_inhouden`, `artefact_herkomsten`, `artefact_traceregels`,
+   `artefact_edienstversies`, `artefact_doelcomponenten`); de rest bij het
+   vastleggen controleren tegen de nieuwe schema-versie.
 2. **sites/inrichting**: besloten site, huisstijl, overzicht en templates
-   voor de vijf hoofdtypen; lokaal tegen het register (token), dus pas als dat
-   weer draait.
+   voor de vijf hoofdtypen; lokaal tegen het register (token).
 3. **`omnium-inhoud`** met **`json-boom`** (widgets-standard) en
    **`bpmn-viewer`** — processen en regels zijn een vast onderdeel, dus niet
    "later" — plus **`omnium-formulier`** (alleen-lezen, `layout_json`) en
