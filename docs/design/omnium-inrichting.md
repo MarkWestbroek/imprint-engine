@@ -144,9 +144,11 @@ Aandachtspunten:
   plus hash (`bronmodelVersie`), niet als modelnaam en -versie in Omnium. Tot
   er een koppeling is, krijgt `v3model` per template vaste config; het
   gebruikte deel van het model volgt uit de `bronGE`'s van de traceregels.
-  De render-API geeft nog 400 bij entiteiten uit meerdere domeinen, terwijl
-  juist dat nodig is om de GPK-aanvraag naast de generieke Aanvraag te
-  tekenen (wens aan de render-API, §7).
+  Over domeinen heen tekenen kan (`taal=v3`): met een `diagram` dat
+  entiteiten uit beide domeinen bevat, of met `domein`, waarbij buren uit een
+  ander domein als gestippelde stomp verschijnen. Zonder een van beide geeft
+  een model met meer domeinen 400. Zo staat de GPK-aanvraag naast de generieke
+  Aanvraag.
 - **Keten**: `omnium-keten` bedenkt de koppelingen niet opnieuw maar volgt de
   regels uit de Fundament-repo (`scripts/inrichting-export.ps1`): plaatshouders
   `${OBJECTTYPE_URL:<id>}` gaan naar Open Object, `catalogue` (bijlagen) naar
@@ -249,17 +251,35 @@ Drie backends, elk met een eigen rol:
   `bronGE` in een traceregel wijst naar een element-id in die bron.
 - **Sub-e-diensten**: relatie EDienst → EDienst ("onderdeel van").
 - **Snapshot bij elke transformatie**, per e-dienstmap (niet het hele
-  project), met een hash over die deelverzameling: is de bron ongewijzigd, dan
+  project), als **Studio-projectexport** (`{formaat, project, profielen}`), met een hash over die deelverzameling: is de bron ongewijzigd, dan
   wordt het bestaande bronartefact hergebruikt. De export van de stap
   "Inrichtingsartefacten" neemt de bronbestanden op en
   `scripts/omnium-registreer-artefact.ps1` (Fundament-repo) registreert ze vóór
   de gegenereerde.
-- **Diagrammen als SVG**, gerenderd door de Omnium-backend tijdens de
-  transformatie (reproduceerbaar uit de vastgelegde bron), vastgelegd als eigen
-  artefact (formaat SVG, afhankelijkheid "weergave van" de bron); de JSON blijft
+- **Diagrammen als SVG**, gerenderd door de render-API tijdens de transformatie,
+  uit dezelfde snapshot (bron-JSON en SVG hebben dus één oorsprong). Vastgelegd
+  als eigen artefact (formaat SVG, afhankelijkheid "weergave van" de bron),
+  **met de render-versie erbij**: dezelfde invoer geeft byte-gelijke SVG
+  (stabiele id's via `idPrefix`), maar de tekening verandert per render-release,
+  en zonder versie lijkt een nieuwe tekening een gewijzigde bron. De JSON blijft
   de waarheid. Nog na te gaan: of `ArtefactInhoud` meervoudig mag, dan kan de
-  SVG ook als tweede inhoud van het bronartefact. Nu tekent de render-API
-  alleen V3-klassemodellen; BPMN, DMN, CMMN en formulieren volgen.
+  SVG ook als tweede inhoud van het bronartefact.
+- **Stand van de render-API** (5-11, `bitemp_register_v06/docs/RENDER_API.md`):
+  - `taal=v3` (op Fundament): V3-klassemodellen, via modelnaam
+    (`GET /api/models/{naam}/diagram.svg`) of meegestuurde JSON
+    (`POST /api/render/svg`).
+  - `taal=studio` (render 0.2.0, alleen lokaal, nog geen image op Fundament): alle
+    25 Studio-profielen, waaronder canoniek-uml, BPMN, DMN-DRD, CMMN en
+    formulier. Alleen `POST` met een Studio-projectexport of één profiel, plus
+    `diagram` (id of naam); een GET op een project bestaat niet (projecten zijn
+    privé).
+  - Het DMN-profiel tekent de **DRD** (beslissingsgraaf), geen beslistabel: een
+    beslistabel als bron krijgt geen SVG en wordt een tabel of JSON-boom.
+  - **Nog niet bekeken**: BPMN-, DMN-, CMMN- en formuliertekeningen (een deel
+    van de vormen valt terug op zeven basisvormen, tekst kan buiten een vak
+    lopen; OMNIUM-UI werkt eraan), en `taal=studio` over pakketten heen.
+  - Er hoeft dus niets nieuws gebouwd te worden; wel nodig zijn een image van
+    render 0.2.0 op Fundament en een kwaliteitscheck van die tekeningen.
 - **Kanttekening**: zolang het Omnium-project geen fijnmazige historie heeft, is
   de snapshot in het register de enige historische bron. Een bron die niet door
   een transformatie ging, staat er niet in.
@@ -270,8 +290,9 @@ Gevolgen voor Imprint:
   (`omnium-lijst` op artefacten met `richting=bron`), met per gegenereerd
   artefact een link naar zijn bron.
 - `omnium-inhoud` toont een bron in **Omnium-JSON** via de SVG-weergave (bpmn-js
-  kan Omnium's eigen formaat niet lezen) en de JSON als boom eronder;
-  gegenereerde BPMN/DMN in XML blijft via bpmn-js/dmn-js lopen.
+  kan Omnium's eigen formaat niet lezen) en de JSON als boom eronder; een
+  beslistabel als tabel. Gegenereerde BPMN 2.0- en DMN-XML leest de render-API
+  niet: die blijft via bpmn-js en een DMN-viewer lopen.
 
 Wie wat doet:
 
@@ -279,7 +300,7 @@ Wie wat doet:
 |---|---|
 | Inrichtingsmodel (soorten, `richting`, `ArtefactBron`, EDienst → EDienst) | TRANSFORMATIES en Mark |
 | Snapshot per e-dienstmap in de transformatie | TRANSFORMATIES / Omnium |
-| SVG renderen op de backend (BPMN, DMN, CMMN, formulieren) | RENDER-API |
+| SVG renderen (`taal=studio`): image op Fundament, kwaliteit van BPMN/DMN/CMMN/formulier | RENDER-API, OMNIUM-UI |
 | Registratiescript met bronbestanden | INRICHTEN_VIZ (Fundament-repo) |
 | Tab Bronnen, weergave in `omnium-inhoud` | Imprint (deze notitie) |
 
@@ -373,7 +394,7 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 - lijst-, weergave- en formulierdefinities voor de inrichtingstypen (replay);
 - de e-dienstversie met een echte verwijzing naar het bronmodel (naam en
   versie in Omnium);
-- de render-API: een diagram met entiteiten uit meerdere domeinen.
+- de render-API: `taal=studio` (render 0.2.0) als image op Fundament.
 
 ## 8. Fasering
 
