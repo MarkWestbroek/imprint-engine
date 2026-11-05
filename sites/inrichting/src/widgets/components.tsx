@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { WidgetViewers } from "@imprint/runtime-admin";
 import { standardViewers } from "@imprint/widgets-standard/viewers";
 import { omniumViewers } from "@imprint/plugin-omnium";
@@ -22,3 +23,17 @@ export const widgetComponents: WidgetViewers = {
   image: standardViewers.image,
   embed: standardViewers.embed,
 };
+
+/** In place of a register widget on a public page: the register is only shown after signing in. */
+function SignInFirst() {
+  return (
+    <p className="rounded-xl border border-line bg-surface p-5 text-sm text-muted">
+      Deze gegevens komen uit het Omnium-register en zijn zichtbaar na <Link href="/admin" className="underline">inloggen</Link>.
+    </p>
+  );
+}
+
+/** The viewers for a visitor without a session: everything except the register widgets. */
+export const publicWidgetComponents: WidgetViewers = Object.fromEntries(
+  Object.entries(widgetComponents).map(([name, viewer]) => [name, name.startsWith("omnium-") ? SignInFirst : viewer])
+);

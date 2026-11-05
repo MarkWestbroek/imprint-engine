@@ -5,7 +5,8 @@ import { registerProblem } from "./client";
 import { inrichtingOf, isOmniumSubject } from "./context";
 import { own, REF_FIELDS, RELATION_TARGET, type Inrichting, type Pad } from "./inrichting";
 import { currentHubs, currentVersion, display, ge, geRows, humanize, refId, relation, TECHNICAL, type FullRecord, type Version } from "./register";
-import { OmniumDetailConfig, OmniumLijstConfig } from "./schemas";
+import { sanitizeSvg } from "@imprint/widgets-standard/svg-sanitize";
+import { OmniumDetailConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
 
 /**
  * The viewers of omnium-lijst and omnium-detail (server components). They read
@@ -71,6 +72,29 @@ const COLUMNS: Record<Pad, Column[]> = {
     { label: "Mediatype", cell: (r) => text(ge(r, "artefactformaat_gegevens")?.mediatype) },
   ],
 };
+
+/** A source: name, kind, and links to its drawings. */
+const BRON_COLUMNS: Column[] = [
+  titleLink("artefacten"),
+  { label: "Soort", cell: async (r, i) => text(await i.soortcode(r)) },
+  {
+    label: "Tekeningen",
+    cell: async (r, i) => {
+      const tekeningen = await i.weergavenVan(r);
+      if (!tekeningen.length) return <span className="text-muted">—</span>;
+      const links = await Promise.all(
+        tekeningen.map(async (t) => ({ href: await i.href("artefacten", t), title: await i.title("artefacten", t) }))
+      );
+      return (
+        <ul className="space-y-0.5">
+          {links.map((l, n) => (
+            <li key={n}>{l.href ? <Link href={l.href} className="underline-offset-2 hover:underline">{l.title}</Link> : l.title}</li>
+          ))}
+        </ul>
+      );
+    },
+  },
+];
 
 function Table({ head, rows }: { head: string[]; rows: Cell[][] }) {
   return (
@@ -174,9 +198,13 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
         if (!on) return <WidgetFrame title={config.title}><Note>De koppeling “{config.koppeling}” werkt alleen op een inrichtingspagina.</Note></WidgetFrame>;
         records = records.filter((r) => relation(r, config.koppeling, own(config.pad!)).some((l) => l.id === on.record.id));
       }
+      if (config.richting && config.pad === "artefacten") {
+        const keep = await Promise.all(records.map(async (r) => (await i.richting(r)) === config.richting));
+        records = records.filter((_, n) => keep[n]);
+      }
       const titled = await Promise.all(records.map(async (r) => ({ r, t: await i.title(config.pad!, r) })));
       titled.sort((a, b) => a.t.localeCompare(b.t, "nl"));
-      const cols = COLUMNS[config.pad];
+      const cols = config.pad === "artefacten" && config.richting === "bron" ? BRON_COLUMNS : COLUMNS[config.pad];
       const rows = await Promise.all(titled.map(({ r }) => Promise.all(cols.map((c) => c.cell(r, i)))));
       body = rows.length ? <Table head={cols.map((c) => c.label)} rows={rows} /> : <Note>{config.leeg}</Note>;
     } else if (config.veld) {
@@ -256,7 +284,60 @@ export async function OmniumDetail({ config: raw, subject }: { config: unknown; 
   }
 }
 
+/** One drawing from the register, sanitised (allow-list) before it goes inline. */
+function Svg({ payload }: { payload: unknown }) {
+  const svg = typeof payload === "string" ? sanitizeSvg(payload) : null;
+  if (!svg) return <Note>Deze tekening is geen SVG die veilig getoond kan worden.</Note>;
+  return (
+    <div
+      className="overflow-auto rounded-lg border border-line bg-white p-2 [&_svg]:h-auto [&_svg]:max-w-full"
+      dangerouslySetInnerHTML={{ __html: svg }}
+    />
+  );
+}
+
+export async function OmniumTekening({ config: raw, subject }: { config: unknown; subject?: unknown; ctx: WidgetContext }) {
+  const config = OmniumTekeningConfig.parse(raw ?? {});
+  if (!isOmniumSubject(subject) || subject.pad !== "artefacten") {
+    return <WidgetFrame title={config.title}><Note>Deze widget toont de tekeningen van een artefact; zet hem op de template _view/omnium-artefacten.</Note></WidgetFrame>;
+  }
+  const i = inrichtingOf(subject)!;
+  try {
+    const richting = await i.richting(subject.record);
+    const tekeningen = richting === "weergave" ? [subject.record] : await i.weergavenVan(subject.record);
+    if (!tekeningen.length) return null;
+    const items = await Promise.all(
+      tekeningen.map(async (t) => ({
+        title: await i.title("artefacten", t),
+        href: t === subject.record ? undefined : await i.href("artefacten", t),
+        payload: ge(t, "artefact_inhouden")?.payload,
+        versie: ge(t, "artefact_herkomsten")?.regelsetVersie,
+      }))
+    );
+    return (
+      <WidgetFrame title={config.title}>
+        <div className="space-y-6">
+          {items.map((t, n) => (
+            <figure key={n} className="space-y-2">
+              {t.href ? (
+                <figcaption className="text-sm font-semibold">
+                  <Link href={t.href} className="underline-offset-2 hover:underline">{t.title}</Link>
+                </figcaption>
+              ) : null}
+              <Svg payload={t.payload} />
+              {t.versie ? <p className="text-xs text-muted">Getekend door render {display(t.versie)}</p> : null}
+            </figure>
+          ))}
+        </div>
+      </WidgetFrame>
+    );
+  } catch (err) {
+    return <WidgetFrame title={config.title}><Note>{registerProblem(err)}</Note></WidgetFrame>;
+  }
+}
+
 export const omniumViewers: WidgetViewers = {
+  "omnium-tekening": OmniumTekening as WidgetViewers[string],
   "omnium-lijst": OmniumLijst as WidgetViewers[string],
   "omnium-detail": OmniumDetail as WidgetViewers[string],
 };

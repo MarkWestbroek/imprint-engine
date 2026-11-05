@@ -1,20 +1,21 @@
-import { redirect } from "next/navigation";
 import { readOpts } from "@imprint/runtime-admin";
 import { menuToNav, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { auth } from "@/lib/admin";
 import { store } from "@/lib/content";
 
-// A closed workplace: every page reads the session cookie, so nothing is prerendered.
+// The header shows who is signed in, so every page reads the session cookie; nothing is prerendered.
 export const dynamic = "force-dynamic";
 
-/** Signed in or not at all: without a session, to the login of the admin. */
+/**
+ * The explanation pages are public; everything from the register sits under
+ * /inrichting, behind the login (app/(site)/inrichting/layout.tsx). On a public
+ * page the register widgets render only for a signed-in visitor (PageView).
+ */
 export default async function SiteLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const session = await auth.getSession();
-  if (!session) redirect("/admin");
-  const menu = await store.getMenu("main", await readOpts());
+  const [session, menu] = await Promise.all([auth.getSession(), store.getMenu("main", await readOpts())]);
   return (
     <>
-      <SiteHeader nav={menuToNav(menu)} user={session.name} />
+      <SiteHeader nav={menuToNav(menu)} user={session?.name} />
       <main className="ir-main">
         <article className="ir-container ir-page">{children}</article>
       </main>

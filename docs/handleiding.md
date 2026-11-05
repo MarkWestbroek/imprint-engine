@@ -642,7 +642,11 @@ importscript; de beelden moeten dan als bestand in de site staan.
 
 Een site met de plugin **Omnium** laat de inrichting van e-diensten zien uit
 het Omnium-register: e-diensten, hun versies, artefacten, uitrollen en
-componenten. Je **leest** hier alleen. Wijzigen gebeurt in Omnium; Imprint
+componenten. Op de inrichtingssite
+(https://inrichting.fundament.common-ground-lab.nl) is de **uitleg openbaar**:
+de pagina `home` en andere gewone pagina's. Alles onder **`/inrichting`** staat
+achter de login. Zet je een registerwidget op een openbare pagina, dan ziet een
+bezoeker zonder login daar alleen "zichtbaar na inloggen". Je **leest** hier alleen. Wijzigen gebeurt in Omnium; Imprint
 toont wat het register nu weet.
 
 - **Adressen** gebruiken namen, geen nummers, en blijven daardoor geldig als
@@ -658,11 +662,18 @@ toont wat het register nu weet.
   zo'n pagina zie je een ingebouwde weergave.
 - **Widgets**:
   - *Omnium: gegevens* toont alle gegevens van het record op de pagina;
+  - *Omnium: tekening* toont de tekening van een tekening-artefact, of alle
+    tekeningen van een bron (logisch model, BPMN, DMN);
   - *Omnium: lijst* toont een tabel met alle records van een soort, of alleen
     de records die bij deze pagina horen (de *koppeling*, bv.
     `artefact_edienstversies` voor de artefacten van een versie), of een lijst
     binnen het record (*veld*, bv. `artefact_traceregels` of
-    `uitrol_resultaten`).
+    `uitrol_resultaten`). Met *richting* toon je alleen de **resultaten**
+    (`gegenereerd`) of de **bronnen** (`bron`, elk met links naar zijn
+    tekeningen).
+- **Bronnen en tekeningen** horen bij een versie:
+  `/inrichting/ediensten/<code>/versies/<nummer>/bronnen/<soort>/<identifier>`.
+  Een resultaat linkt naar de bron waaruit het is gemaakt.
 - **Ziet je een melding dat het register het leestoken weigert?** Dan is het
   token verlopen (na hoogstens een jaar) of ingetrokken. De lijsten zijn dan
   niet leeg: ze zijn onleesbaar. Laat het token vernieuwen

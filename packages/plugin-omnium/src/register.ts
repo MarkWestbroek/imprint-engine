@@ -73,13 +73,17 @@ export function currentHubs(record: Record<string, unknown> | undefined, key: st
   return Array.isArray(hubs) ? (hubs as Hub[]).filter((h) => h && !h.afvoer) : [];
 }
 
-/** An enkelvoudig GE: the current version of its (first) current hub. */
+/**
+ * An enkelvoudig GE: the current version of its current hub. A new
+ * occurrence (an opvoer on the element) is a new hub; the latest counts.
+ */
 export function ge(record: Record<string, unknown> | undefined, key: string): Version | undefined {
+  let best: Version | undefined;
   for (const hub of currentHubs(record, key)) {
     const v = currentVersion(hub);
-    if (v) return v;
+    if (v && (!best || time(v) >= time(best))) best = v;
   }
-  return undefined;
+  return best;
 }
 
 /** A meervoudig GE: the current version of each current hub. */

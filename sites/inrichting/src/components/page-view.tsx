@@ -1,12 +1,14 @@
 import { Markdown, PageRenderer } from "@imprint/runtime-admin";
 import type { Page } from "@imprint/content-core";
+import { auth } from "@/lib/admin";
 import { widgetContext } from "@/lib/widget-context";
-import { widgetComponents } from "@/widgets/components";
+import { publicWidgetComponents, widgetComponents } from "@/widgets/components";
 
 /**
  * One page from the store: its widget layout through the engine renderer, or
  * its title and Markdown body. No page title above a page that opens with its
- * own hero, nor on the home page.
+ * own hero, nor on the home page. Without a session the register widgets
+ * stay empty: the register's data is for signed-in readers only.
  */
 export async function PageView({ page }: { page: Page }) {
   if (page.layout) {
@@ -15,7 +17,7 @@ export async function PageView({ page }: { page: Page }) {
     return (
       <PageRenderer
         page={{ ...page, title: untitled ? "" : page.title, layout: page.layout }}
-        viewers={widgetComponents}
+        viewers={(await auth.getSession()) ? widgetComponents : publicWidgetComponents}
         ctx={await widgetContext()}
       />
     );

@@ -33,7 +33,7 @@ export function SiteHeader({ nav, user }: { nav: NavItem[]; user?: string }) {
         </Link>
         <nav aria-label="Hoofdmenu" className="ir-nav">
           <NavLinks nav={nav} />
-          <Link href="/admin">Beheer{user ? ` (${user})` : ""}</Link>
+          <Link href="/admin">{user ? `Beheer (${user})` : "Inloggen"}</Link>
         </nav>
         <details className="ir-mobile-menu">
           <summary aria-label="Menu openen">
@@ -41,7 +41,7 @@ export function SiteHeader({ nav, user }: { nav: NavItem[]; user?: string }) {
           </summary>
           <div>
             <NavLinks nav={nav} />
-            <Link href="/admin">Beheer</Link>
+            <Link href="/admin">{user ? "Beheer" : "Inloggen"}</Link>
           </div>
         </details>
       </div>

@@ -290,7 +290,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] Fase 2: `sites/inrichting` (besloten, route `/inrichting/[...path]`),
             lokaal getest tegen het echte register (5-11).
       - [ ] NL Design System-huisstijl (nu een eigen, sobere stijl).
-      - [ ] Tab Bronnen zodra het model (versie 3) en de export er zijn.
+      - [x] Tab Bronnen en tekeningen (6-11), openbare uitleg met de
+            inrichting achter de login.
+      - [ ] `full/artefacten` bevat alle payloads (SVG's van 150 kB); een
+            lijst haalt ze nu elke keer op. Vragen om een lichtere route of
+            veldkeuze in het register, of per verzoek cachen.
+      - [ ] `omnium-inhoud` voor bronnen in Studio-JSON en het edienstmodel
+            (als boom), en bpmn-js/dmn-js voor gegenereerde XML.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

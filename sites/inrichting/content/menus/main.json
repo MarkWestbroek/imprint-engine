@@ -1,6 +1,7 @@
 {
   "name": "main",
   "items": [
-    { "label": "Overzicht", "page": "home" }
+    { "label": "Uitleg", "page": "home" },
+    { "label": "Inrichting", "url": "/inrichting" }
   ]
 }

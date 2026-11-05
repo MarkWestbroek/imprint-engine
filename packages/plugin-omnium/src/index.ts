@@ -22,8 +22,8 @@ export function omniumPlugin(): ImprintPlugin {
   });
 }
 
-export { omniumWidgets, OmniumDetailConfig, OmniumLijstConfig } from "./schemas";
-export { omniumViewers, OmniumDetail, OmniumLijst } from "./widgets";
+export { omniumWidgets, OmniumDetailConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
+export { omniumViewers, OmniumDetail, OmniumLijst, OmniumTekening } from "./widgets";
 export { omniumPage, omniumViewType } from "./page";
 export { OmniumRegister, OmniumRegisterError, registerConfigFromEnv, registerProblem, type ReadMoment } from "./client";
 export { Inrichting, AmbiguousKey, INRICHTING_TYPES, PADS, type Pad, type Located } from "./inrichting";

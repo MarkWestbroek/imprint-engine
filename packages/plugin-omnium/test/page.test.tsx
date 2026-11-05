@@ -71,6 +71,34 @@ test("an e-dienstversie lists its artefacts and uitrollen; a withdrawn tracerege
   assert.doesNotMatch(a, /Aanvraag\.oud/);
 });
 
+test("sources: under the version (no component), with their drawings; results without them", async () => {
+  const v = await html(
+    (await omniumPage({ path: ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0"], viewers: omniumViewers, ctx: ctx() }))!
+      .render as ReactElement
+  );
+  const bronnen = v.slice(v.indexOf(">Bronnen<"));
+  const resultaten = v.slice(v.indexOf(">Resultaten<"), v.indexOf(">Bronnen<"));
+  assert.match(bronnen, /href="\/inrichting\/ediensten\/gehandicaptenparkeerkaart-aanvragen\/versies\/0.1.0\/bronnen\/logisch-model\/gehandicaptenparkeerkaart-aanvragen"/);
+  assert.match(bronnen, /bronnen\/diagram-weergave\/gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht"[^>]*>Overzicht</);
+  assert.doesNotMatch(resultaten, /Logisch model GPK|Overzicht/);
+});
+
+test("a drawing renders inline, sanitised; a generated artefact links to its source", async () => {
+  const t = await html(
+    (await omniumPage({
+      path: ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0", "bronnen", "diagram-weergave", "gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht"],
+      viewers: omniumViewers,
+      ctx: ctx(),
+    }))!.render as ReactElement
+  );
+  assert.match(t, /<svg[^>]*viewBox="0 0 10 10"/);
+  assert.doesNotMatch(t, /<script>alert|data-render-versie/);
+  assert.match(t, /Getekend door render (<!-- -->)?0.3.0/);
+  assert.doesNotMatch(t, /Payload \(/); // the SVG text is not shown again as data
+  const form = await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement);
+  assert.match(form, /href="\/inrichting\/ediensten\/gehandicaptenparkeerkaart-aanvragen\/versies\/0.1.0\/bronnen\/logisch-model\/[^"]*"[^>]*>Logisch model GPK</);
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

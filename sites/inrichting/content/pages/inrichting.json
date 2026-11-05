@@ -1,0 +1,12 @@
+{
+  "slug": "inrichting",
+  "title": "Inrichting",
+  "description": "De e-diensten en componenten uit het Omnium-register.",
+  "body": "",
+  "layout": {
+    "rows": [
+      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "E-diensten", "pad": "ediensten" } }] }] },
+      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "Componenten", "pad": "componenten" } }] }] }
+    ]
+  }
+}

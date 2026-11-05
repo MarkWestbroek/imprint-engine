@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: bronnen en tekeningen, openbare uitleg.**
+  - Een versie toont nu **Resultaten** en **Bronnen** apart, met per bron
+    links naar de tekeningen.
+  - Een tekening (SVG van de render-service) staat geschoond op de pagina,
+    en een resultaat linkt naar zijn bron.
+  - Nieuwe widget `omnium-tekening`.
+  - Op de site is de uitleg openbaar en staat de inrichting achter de login
+    onder `/inrichting`; registerwidgets op openbare pagina's tonen zonder
+    login niets.
 - **Site `inrichting`** (fase 2 van design/omnium-inrichting.md): een besloten
   werkplek op het Omnium-register.
   - Elke pagina vraagt een sessie.

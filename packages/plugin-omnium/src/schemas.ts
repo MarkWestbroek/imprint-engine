@@ -24,6 +24,8 @@ export const OmniumLijstConfig = z.object({
    * fields (`uitrol_resultaten`, linking to the artefact).
    */
   veld: z.string().default(""),
+  /** With `pad: artefacten`: only results (`gegenereerd`), sources (`bron`, each with its drawings) or drawings (`weergave`). */
+  richting: z.enum(["", "gegenereerd", "bron", "weergave"]).default(""),
   leeg: z.string().default("Niets gevonden."),
 });
 export type OmniumLijstConfig = z.infer<typeof OmniumLijstConfig>;
@@ -34,6 +36,11 @@ export const OmniumDetailConfig = z.object({
   verberg: z.string().default(""),
 });
 export type OmniumDetailConfig = z.infer<typeof OmniumDetailConfig>;
+
+export const OmniumTekeningConfig = z.object({
+  title: z.string().optional(),
+});
+export type OmniumTekeningConfig = z.infer<typeof OmniumTekeningConfig>;
 
 /** For the site's catalogue (`src/widgets/registry.ts`). */
 export const omniumWidgets = [
@@ -50,5 +57,12 @@ export const omniumWidgets = [
     version: "1.0.0",
     help: "The page's register record: its gegevenselementen and relations, as the register holds them now (or at the chosen moment).",
     configSchema: OmniumDetailConfig,
+  },
+  {
+    name: "omnium-tekening",
+    label: "Omnium: tekening",
+    version: "1.0.0",
+    help: "The drawings (SVG from the render service) of the page's artefact: a drawing itself, or every drawing of a source (logical model, BPMN, DMN).",
+    configSchema: OmniumTekeningConfig,
   },
 ] as const;

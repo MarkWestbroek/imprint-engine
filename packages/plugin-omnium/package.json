@@ -2,7 +2,7 @@
   "name": "@imprint/plugin-omnium",
   "version": "0.15.0",
   "private": true,
-  "description": "Plugin: the Omnium register (inrichting van e-diensten) read-only — a client for /full with time travel, stable keys instead of ids in URLs, and widgets omnium-lijst and omnium-detail for _view/omnium-<pad> templates.",
+  "description": "Plugin: the Omnium register (inrichting van e-diensten) read-only \u2014 a client for /full with time travel, stable keys instead of ids in URLs, and widgets omnium-lijst and omnium-detail for _view/omnium-<pad> templates.",
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
@@ -20,6 +20,7 @@
     "@imprint/content-core": "*",
     "@imprint/extension-api": "*",
     "@imprint/runtime-admin": "*",
+    "@imprint/widgets-standard": "*",
     "zod": "^4.1.5"
   },
   "peerDependencies": {

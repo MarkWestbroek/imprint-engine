@@ -1,13 +1,63 @@
 {
   "slug": "home",
-  "title": "Inrichting",
-  "description": "De inrichting van e-diensten: e-diensten, versies, artefacten, uitrollen en componenten, uit het Omnium-register.",
+  "title": "Inrichting van e-diensten",
+  "description": "Hoe e-diensten op Common Ground-componenten worden ingericht: van model, via transformatie, naar uitrol, met de herkomst van elk onderdeel.",
   "body": "",
   "layout": {
     "rows": [
-      { "cells": [{ "span": 1, "widgets": [{ "type": "text", "config": { "markdown": "Wat er per e-dienst is ingericht, waaruit het gemaakt is en waar het staat. De gegevens komen rechtstreeks uit het **Omnium-register**; hier wijzig je niets." } }] }] },
-      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "E-diensten", "pad": "ediensten" } }] }] },
-      { "cells": [{ "span": 1, "widgets": [{ "type": "omnium-lijst", "config": { "title": "Componenten", "pad": "componenten" } }] }] }
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Inrichting van *e-diensten*",
+                  "subtitle": "Wat er per e-dienst is ingericht, waaruit het is gemaakt en waar het staat: van model tot uitrol op de Common Ground-componenten.",
+                  "buttonLabel": "Naar de inrichting",
+                  "buttonUrl": "/inrichting",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## Wat is dit?\n\nEen e-dienst, zoals *Gehandicaptenparkeerkaart aanvragen*, is meer dan een formulier. Er horen een zaaktype bij, een objecttype, processen, beslisregels en een dossier in de behandelapplicatie. Al die onderdelen moeten in de juiste componenten staan: Open Formulieren, Open Zaak, Open Object, GZAC.\n\nDie onderdelen worden niet met de hand ingericht. Ze komen uit één **model** van de e-dienst, gemaakt in [Omnium](https://omnium.imprint-engine.nl). Een **transformatie** maakt er de onderdelen van, en een **uitrol** zet ze in de componenten. Het **Omnium-register** houdt bij wat er is gemaakt, waaruit, en waar het staat. Deze site laat dat zien.\n\n## Wat je hier ziet\n\n- **E-diensten en hun versies**: per versie de onderdelen, de bronnen en de uitrollen.\n- **Resultaten**: de gemaakte onderdelen, zoals een zaaktype, formulier of proces. Per onderdeel zie je waaruit het is gemaakt (de traceregels) en naar welke component het gaat.\n- **Bronnen**: het model zelf, zoals het logisch model, BPMN en DMN, met hun tekeningen.\n- **Uitrollen**: wanneer welke versie waar is uitgerold, met per onderdeel de uitkomst (aangemaakt, nieuwe versie of ongewijzigd) en een link naar het object in de component.\n- **Componenten**: de Common Ground-componenten waar de onderdelen in staan.\n\nOok **terugkijken** kan: hoe het register er op een eerder moment uitzag. Het register is bitemporeel en vergeet niets.\n\n## Toegang\n\nDe gegevens van de inrichting zijn alleen zichtbaar na inloggen; het register stelt dat ook als eis. Je kunt hier alleen kijken. Wijzigen gebeurt in Omnium.\n\nDit is een werkplek van het Common Ground-lab, op Fundament."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Meer weten over Omnium?",
+                  "markdown": "Het model, de transformaties en het register komen uit Omnium, een modelwerkbank voor één canoniek model en een bitemporeel register.",
+                  "tone": "info",
+                  "buttonLabel": "Naar omnium.imprint-engine.nl",
+                  "buttonUrl": "https://omnium.imprint-engine.nl"
+                }
+              }
+            ]
+          }
+        ]
+      }
     ]
   }
 }

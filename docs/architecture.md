@@ -1543,16 +1543,30 @@ flowchart LR
   voorkomens terug, elk met `aanvang` en `einde`. Een uitrol heeft zo een hub
   "bezig" met een einde en een hub "geslaagd" die daar begint. `Inrichting`
   houdt bij het laden alleen de hubs die nu gelden, of op `geldigOp`.
+- **Bronnen** (model v3): de richting staat op de artefactsoort (`bron`,
+  `gegenereerd` of `weergave`; leeg telt als gegenereerd).
+  - `artefact_bronnen` wijst van een resultaat naar zijn bron (rol `bron`) en
+    van een tekening naar haar bron (rol `weergave-van`). De weg terug, van
+    bron naar tekening, zoekt `weergavenVan()` op.
+  - Bronnen en tekeningen hebben geen doelcomponent en krijgen een adres onder
+    hun versie.
+  - Een tekening is SVG van de render-service. De widget `omnium-tekening`
+    zet die inline na `sanitizeSvg` (allow-list, uit `widgets-standard`).
 - **Referentielijsten**: velden die naar een referentielijst wijzen
   (`soort`, `formaat`) toont de detailweergave met de code van het item
   waarnaar ze wijzen, niet met het id.
 
-Een vijfde site, `sites/inrichting`, is de **besloten werkplek** op dit
-register (poort 3600):
+Een vijfde site, `sites/inrichting`, is de **werkplek** op dit register
+(poort 3600):
 
-- De `(site)`-layout eist een sessie, met elke rol; zonder sessie gaat de
-  bezoeker naar `/admin`. Alles is `force-dynamic`, dus de build heeft geen
-  database nodig.
+- De uitlegpagina's zijn openbaar.
+- `app/(site)/inrichting/layout.tsx` eist voor alles onder `/inrichting` een
+  sessie, met elke rol; zonder sessie gaat de bezoeker naar `/admin`.
+- `PageView` geeft een bezoeker zonder sessie viewers waarin elke
+  `omnium-*`-widget is vervangen door "zichtbaar na inloggen"
+  (`publicWidgetComponents`). Een registerwidget op een openbare pagina lekt
+  dus niets.
+- Alles is `force-dynamic`, dus de build heeft geen database nodig.
 - `app/(site)/inrichting/[...path]` roept `omniumPage()` aan, met de viewers
   van de site.
 - Het overzicht is de pagina `home`, met de widgets `omnium-lijst`.

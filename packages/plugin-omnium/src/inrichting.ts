@@ -35,6 +35,7 @@ export const INRICHTING_TYPES = {
 } as const;
 
 export type Pad = keyof typeof INRICHTING_TYPES;
+export type Richting = "bron" | "gegenereerd" | "weergave";
 
 /** Where a relation (by json name) points, so a row or link can go to its page. */
 export const RELATION_TARGET: Record<string, Pad> = {
@@ -125,6 +126,23 @@ export class Inrichting {
     return str(ge(soort, "artefactsoort_gegevens")?.code);
   }
 
+  /** What an artefact is (model v3, 6-11-2026): a `bron`, a `weergave` of one (an SVG), or `gegenereerd` (also when empty). */
+  async richting(a: FullRecord): Promise<Richting> {
+    const soort = await this.byId("artefactsoorten", refId(ge(a, "artefact_identificaties")?.soort));
+    const r = str(ge(soort, "artefactsoort_gegevens")?.richting);
+    return r === "bron" || r === "weergave" ? r : "gegenereerd";
+  }
+
+  /** The sources an artefact was made from (`artefact_bronnen`, rol bron), or the source a drawing shows (rol weergave-van). */
+  bronnenVan(a: FullRecord): { id: number; rol: string; bronHash?: string }[] {
+    return relation(a, "artefact_bronnen", own("artefacten")).map((l) => ({ id: l.id, rol: str(l.velden.rol) ?? "bron", bronHash: str(l.velden.bronHash) }));
+  }
+
+  /** The drawings of a source: the artefacts that point at it with rol weergave-van (the source has no key back). */
+  async weergavenVan(bron: FullRecord): Promise<FullRecord[]> {
+    return (await this.list("artefacten")).filter((a) => this.bronnenVan(a).some((b) => b.id === bron.id && b.rol === "weergave-van"));
+  }
+
   /** The key path of a record (without prefix); undefined when a part is missing. */
   async keyPath(pad: Pad, r: FullRecord): Promise<string[] | undefined> {
     switch (pad) {
@@ -146,9 +164,16 @@ export class Inrichting {
       }
       case "artefacten": {
         const [soort, comp] = await Promise.all([this.soortcode(r), this.componentOfArtefact(r)]);
-        const naam = this.componentNaam(comp);
         const id = this.identifier(r);
-        return soort && naam && id ? ["artefacten", soort, naam, id] : undefined;
+        if (!soort || !id) return undefined;
+        // Rolled out to a component: by component. A source or a drawing has none: under its version.
+        if (comp) {
+          const naam = this.componentNaam(comp);
+          return naam ? ["artefacten", soort, naam, id] : undefined;
+        }
+        const v = await this.versieOfArtefact(r);
+        const base = v && (await this.keyPath("edienstversies", v));
+        return base ? [...base, "bronnen", soort, id] : undefined;
       }
       default:
         return undefined;
@@ -207,6 +232,14 @@ export class Inrichting {
           p[5]!
         ),
       };
+    } else if (head === "ediensten" && p.length === 7 && p[2] === "versies" && p[4] === "bronnen") {
+      const ids = new Set((await this.versies(p[1]!, p[3]!)).map((v) => v.id));
+      const candidates: FullRecord[] = [];
+      for (const a of await this.list("artefacten")) {
+        if (this.identifier(a) !== p[6] || !ids.has(relation(a, "artefact_edienstversies", own("artefacten"))[0]?.id ?? -1)) continue;
+        if ((await this.componentOfArtefact(a)) === undefined && (await this.soortcode(a)) === p[5]) candidates.push(a);
+      }
+      found = { pad: "artefacten", candidates };
     } else if (head === "artefacten" && p.length === 4) {
       const candidates: FullRecord[] = [];
       for (const a of await this.list("artefacten")) {
@@ -238,12 +271,13 @@ export class Inrichting {
     );
   }
 
-  /** The way up: e-dienst › versie › uitrol (labels from the path itself). */
+  /** The way up: e-dienst › versie (the e-dienst by its name, also when the path has its code). */
   private async crumbs(p: string[]): Promise<{ label: string; href: string }[]> {
     const at = (n: number) => `${this.prefix}/${p.slice(0, n).map(encodeURIComponent).join("/")}`;
     if (p[0] === "ediensten" && p.length >= 4) {
-      const out = [{ label: p[1]!, href: at(2) }];
-      if (p.length === 6) out.push({ label: `versie ${p[3]}`, href: at(4) });
+      const [e] = this.byKey(await this.list("ediensten"), this.edienstSleutel, this.edienstNaam, p[1]!);
+      const out = [{ label: this.edienstNaam(e) ?? p[1]!, href: at(2) }];
+      if (p.length >= 6) out.push({ label: `versie ${p[3]}`, href: at(4) });
       return out;
     }
     return [];

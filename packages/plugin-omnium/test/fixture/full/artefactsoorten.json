@@ -14,7 +14,8 @@
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
       "code": "objecttype",
-      "omschrijving": "Objecttype (JSON Schema)"
+      "omschrijving": "Objecttype (JSON Schema)",
+      "richting": "gegenereerd"
      }
     ]
    }
@@ -35,7 +36,8 @@
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
       "code": "zaaktype",
-      "omschrijving": "Zaaktype"
+      "omschrijving": "Zaaktype",
+      "richting": "gegenereerd"
      }
     ]
    }
@@ -56,7 +58,52 @@
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
       "code": "formulier",
-      "omschrijving": "Open Formulieren-definitie"
+      "omschrijving": "Open Formulieren-definitie",
+      "richting": "gegenereerd"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 4,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "artefactsoort_gegevens": [
+   {
+    "artefactsoort_id": 4,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefactsoort_id": 4,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "code": "logisch-model",
+      "omschrijving": "Logisch model (Studio)",
+      "richting": "bron"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 5,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "artefactsoort_gegevens": [
+   {
+    "artefactsoort_id": 5,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefactsoort_id": 5,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "code": "diagram-weergave",
+      "omschrijving": "Tekening (SVG)",
+      "richting": "weergave"
      }
     ]
    }

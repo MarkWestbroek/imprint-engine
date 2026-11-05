@@ -4,7 +4,7 @@ import { DefaultView, type WidgetContext, type WidgetViewers } from "@imprint/ru
 import { registerProblem } from "./client";
 import { inrichtingFor, type OmniumSubject } from "./context";
 import { AmbiguousKey, INRICHTING_TYPES, type Pad } from "./inrichting";
-import { OmniumDetail, OmniumLijst } from "./widgets";
+import { OmniumDetail, OmniumLijst, OmniumTekening } from "./widgets";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -87,18 +87,32 @@ export async function omniumPage({
 
 /** Without a template: the record, and what hangs under it. */
 async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetContext }) {
-  const lists: Partial<Record<Pad, { title: string; pad?: Pad; koppeling?: string; veld?: string }[]>> = {
+  const i = inrichtingFor(subject.prefix, subject.at.peiltijdstip, subject.at.geldigOp)!;
+  const richting = subject.pad === "artefacten" ? await i.richting(subject.record) : undefined;
+  type Lijst = { title: string; pad?: Pad; koppeling?: string; veld?: string; richting?: "gegenereerd" | "bron"; leeg?: string };
+  const lists: Partial<Record<Pad, Lijst[]>> = {
     ediensten: [{ title: "Versies", pad: "edienstversies", koppeling: "edienstversie_ediensten" }],
     edienstversies: [
-      { title: "Artefacten", pad: "artefacten", koppeling: "artefact_edienstversies" },
+      { title: "Resultaten", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "gegenereerd" },
+      { title: "Bronnen", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "bron", leeg: "Nog geen bronnen in het register." },
       { title: "Uitrollen", pad: "uitrollen", koppeling: "uitrol_edienstversies" },
     ],
-    artefacten: [{ title: "Traceregels", veld: "artefact_traceregels" }],
+    // Only a result has traceregels; a source or a drawing shows its drawing instead.
+    artefacten: richting === "gegenereerd" ? [{ title: "Traceregels", veld: "artefact_traceregels" }] : [],
     uitrollen: [{ title: "Resultaten", veld: "uitrol_resultaten" }],
   };
   return (
     <div className="space-y-8">
-      <OmniumDetail config={{ title: "Gegevens", verberg: "uitrol_resultaten,artefact_traceregels" }} subject={subject} ctx={ctx} />
+      {richting && richting !== "gegenereerd" && <OmniumTekening config={{ title: "Tekening" }} subject={subject} ctx={ctx} />}
+      <OmniumDetail
+        config={{
+          title: "Gegevens",
+          // A drawing's payload is the SVG above; a source's payload (Studio JSON) stays, folded.
+          verberg: richting === "weergave" ? "uitrol_resultaten,artefact_traceregels,artefact_inhouden" : "uitrol_resultaten,artefact_traceregels",
+        }}
+        subject={subject}
+        ctx={ctx}
+      />
       {(lists[subject.pad] ?? []).map((l) => (
         <OmniumLijst key={l.title} config={l} subject={subject} ctx={ctx} />
       ))}

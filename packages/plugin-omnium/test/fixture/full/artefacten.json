@@ -258,6 +258,179 @@
      }
     ]
    }
+  ],
+  "artefact_bronnen": [
+   {
+    "artefact_id": 3,
+    "rel_id": 1,
+    "doel_artefact_id": 4,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 3,
+      "rel_id": 1,
+      "doel_artefact_id": 4,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "rol": "bron",
+      "bronHash": "sha256:bron"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 4,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "artefact_identificaties": [
+   {
+    "artefact_id": 4,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 4,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "soort": 4,
+      "identifier": "gehandicaptenparkeerkaart-aanvragen",
+      "naam": "Logisch model GPK",
+      "versienummer": "1"
+     }
+    ]
+   }
+  ],
+  "artefact_inhouden": [
+   {
+    "artefact_id": 4,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 4,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "formaat": 1,
+      "payload": "{\"formaat\": \"omnium-studio-json\", \"versie\": 1, \"profielen\": {\"canoniek-uml\": {\"elements\": [], \"diagrams\": []}}}",
+      "payloadHash": "sha256:bron"
+     }
+    ]
+   }
+  ],
+  "artefact_edienstversies": [
+   {
+    "artefact_id": 4,
+    "rel_id": 1,
+    "edienstversie_id": 2,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 4,
+      "rel_id": 1,
+      "edienstversie_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 5,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "artefact_identificaties": [
+   {
+    "artefact_id": 5,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 5,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "soort": 5,
+      "identifier": "gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht",
+      "naam": "Overzicht",
+      "versienummer": "1"
+     }
+    ]
+   }
+  ],
+  "artefact_inhouden": [
+   {
+    "artefact_id": 5,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 5,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "formaat": 2,
+      "payload": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\" data-render-versie=\"0.3.0\"><script>alert(1)</script><rect width=\"10\" height=\"10\" fill=\"#eee\"/><text x=\"1\" y=\"5\">Overzicht</text></svg>",
+      "payloadHash": "sha256:svg"
+     }
+    ]
+   }
+  ],
+  "artefact_herkomsten": [
+   {
+    "artefact_id": 5,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 5,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "regelsetId": "render/studio",
+      "regelsetVersie": "0.3.0",
+      "schrijverId": "render-svc",
+      "bronmodelHash": "sha256:bron"
+     }
+    ]
+   }
+  ],
+  "artefact_edienstversies": [
+   {
+    "artefact_id": 5,
+    "rel_id": 1,
+    "edienstversie_id": 2,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 5,
+      "rel_id": 1,
+      "edienstversie_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_bronnen": [
+   {
+    "artefact_id": 5,
+    "rel_id": 1,
+    "doel_artefact_id": 4,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 5,
+      "rel_id": 1,
+      "doel_artefact_id": 4,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z",
+      "rol": "weergave-van",
+      "bronHash": "sha256:bron"
+     }
+    ]
+   }
   ]
  }
 ]

@@ -8,7 +8,8 @@
     "./schemas": "./src/schemas.ts",
     "./viewers": "./src/viewers.tsx",
     "./media": "./src/media-islands.tsx",
-    "./editors": "./src/editors.tsx"
+    "./editors": "./src/editors.tsx",
+    "./svg-sanitize": "./src/svg-sanitize.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
