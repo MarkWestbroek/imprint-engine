@@ -19,6 +19,16 @@ configMapGenerator:
       # Render-API (v3model, Studio-diagrammen)
       - OMNIUM_URL=http://omnium-render-svc.tnt-cg--omnium.svc.cluster.local:8095
 patches:
+  # Leestoken van het register (rol lezer, max. 365 dagen geldig): een eigen
+  # Secret, aangemaakt bij het uitrollen (FUNDAMENT/INRICHTEN_VIZ), zodat
+  # vernieuwen los staat van de rest van imprint-env.
+  - target: { kind: Deployment, name: imprint }
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: OMNIUM_REGISTER_TOKEN
+          valueFrom: { secretKeyRef: { name: omnium-lezer, key: OMNIUM_REGISTER_TOKEN } }
   - target: { kind: HTTPRoute, name: imprint }
     patch: |-
       - op: replace

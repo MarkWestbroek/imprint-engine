@@ -23,7 +23,7 @@ spec:
             - { name: http, containerPort: 3000 }
           envFrom:
             - configMapRef: { name: imprint-config }
-            # DATABASE_URL, SESSION_SECRET, OMNIUM_REGISTER_TOKEN — runbook
+            # DATABASE_URL, SESSION_SECRET — runbook
             - secretRef: { name: imprint-env }
           env:
             # Bucket van Rook (ObjectBucketClaim `imprint`): ConfigMap en Secret
