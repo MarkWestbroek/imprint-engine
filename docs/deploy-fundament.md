@@ -7,10 +7,11 @@ De eerste is de inrichtings-UI op het Omnium-register
 `inrichting.fundament.common-ground-lab.nl`. De manifesten staan in
 [`deploy/k8s/`](../deploy/k8s/) (kustomize, ingebouwd in `kubectl`).
 
-> **Stand (5-11-2026):** namespace, database en rol, en de hostnaam in het
-> certificaat staan op cg-test (FUNDAMENT). De backup van de database loopt vanaf
-> de nacht van 5 op 6-11. Nog niet uitgerold: `sites/inrichting` (in aanbouw),
-> het leestoken `omnium-lezer` (Mark), en `apply-db-grants.ps1` (Mark).
+> **Stand (5-11-2026):** de site draait op
+> https://inrichting.fundament.common-ground-lab.nl, met image
+> `0.15.0-75fbde1`. Migratie en beginteksten staan in de database. De pod leest
+> het register met `omnium-lezer`. De backup neemt de database mee, en ook de
+> bucket zodra FUNDAMENT `ensure-backup-secret.ps1` heeft gedraaid.
 
 ## Hoe het cluster het doet (gezien bij Omnium)
 
@@ -104,7 +105,15 @@ komen ze ook daar vandaan, dus niet dubbel bijhouden in deze repo.
    een andere namespace komt erdoor.
 
 6. **Migreren**: `kubectl apply -k deploy/k8s/inrichting/tools`, dan
-   `kubectl -n tnt-cg--inrichting logs job/imprint-migrate -f`.
+   `kubectl -n tnt-cg--inrichting logs job/imprint-migrate -f`. Alleen bij een
+   lege database daarna de beginteksten (site, pagina `home`, menu):
+
+   ```sh
+   kubectl -n tnt-cg--inrichting run imprint-seed --rm -i --restart=Never \
+     --image=markwestbroek/imprint-tools:<versie> \
+     --overrides='{"spec":{"containers":[{"name":"imprint-seed","image":"markwestbroek/imprint-tools:<versie>","command":["npm","run","db:seed","--","--site=inrichting","--only=site,page,menu"],"env":[{"name":"HOME","value":"/tmp"}],"envFrom":[{"secretRef":{"name":"imprint-env"}}]}]}}'
+   ```
+
 7. **Site**: `kubectl apply -k deploy/k8s/inrichting`. Meld FUNDAMENT zodra de
    ObjectBucketClaim `imprint` *Bound* is
    (`kubectl -n tnt-cg--inrichting get obc imprint`): pas dan kan de backup de

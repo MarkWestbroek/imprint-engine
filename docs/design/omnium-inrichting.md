@@ -306,6 +306,28 @@ lijst hieronder:
 - **Bronnen zonder verwijzing**: een cmmn-bron of formulierdefinitie-bron kan
   bestaan zonder dat een artefact ernaar verwijst.
 
+**Bronnen, versie 1** (bevestigd door Mark bij TRANSFORMATIES):
+
+- Per e-dienst vier bronnen: `edienstmodel`, `logisch-model`, `bpmn-bron` en
+  `dmn-bron`. De identifier is de code van de e-dienst.
+- Het logisch model toont de diagrammen van de e-dienst, met eigen en geleende
+  elementen; elk element draagt zijn domein, dus elk krijgt een eigen kleur.
+- Een artefact verwijst alleen naar bronnen van **zijn eigen** e-dienst.
+  Verwijzingen over e-diensten heen, en het canonieke model zelf als bron, zijn
+  uitgesteld.
+- De payload van een Studio-bron is één profiel:
+  `{diagramTypeId, elements, diagrams}`.
+
+**Render 0.3.0** (`markwestbroek/bitemp-render-svc:0.3.0`):
+
+- Tekent BPMN, DMN, CMMN en formulier. Bekeken op proefdiagrammen; echte
+  diagrammen uit een e-dienstmap zijn nog niet geprobeerd.
+- De render-versie staat als `data-render-versie` op het `<svg>`. De header
+  komt niet door de API.
+- Een diagram tekent alleen elementen uit zijn eigen profiel.
+- De titel in de SVG is "Model — <diagram>": de kop komt dus uit het register.
+- FUNDAMENT rolt de versie uit op cg-test.
+
 Eerdere stand (INRICHTEN_VIZ, 5-11):
 
 - `richting` op ArtefactSoort: `bron`, `gegenereerd` of `weergave`. Leeg telt

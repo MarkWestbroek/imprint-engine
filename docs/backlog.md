@@ -295,8 +295,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat
             (FUNDAMENT, 5-11).
-      - [ ] Leestoken `omnium-lezer` en `apply-db-grants.ps1` (Mark); de site
-            uitrollen en FUNDAMENT melden als de bucket *Bound* is.
+      - [x] Leestoken, grants, uitrol (5-11): de site draait op
+            https://inrichting.fundament.common-ground-lab.nl; FUNDAMENT
+            gemeld dat de bucket *Bound* is.
 
 
 - [ ] **Engine en instanties werkelijk scheiden** — voer het
