@@ -221,6 +221,68 @@ routevorm en hoe die naar een id wordt herleid. De template blijft
 Doorlinken vanuit een rij (bv. `artefact_id` in `uitrol_resultaten`) bouwt de URL
 uit de sleutel van het doelrecord; de id blijft binnen de client.
 
+### 3.5 Bronnen: waaruit is het gemaakt (voorstel)
+
+Mark modelleert per e-dienst (en sub-e-dienst) in een Omnium-project: logisch
+model, BPMN, DMN, CMMN en formulierdefinities. Nu kent het register alleen wat
+daaruit **gemaakt** is; de bron is tekst plus hash (`bronmodelVersie`). Voorstel
+(afgestemd met INRICHTEN_VIZ, 5-11; Mark beslist):
+
+Drie backends, elk met een eigen rol:
+
+| Backend | Rol |
+|---|---|
+| Omnium-project (Omnium-backend) | de werkplek: levend, meerdere gebruikers in sync, snapshots maar geen fijnmazige historie |
+| Inrichtingsregister | de vastgelegde stand: wat is waaruit gemaakt en waar uitgerold, bitemporeel |
+| Imprint-backend | alleen pagina's, templates en accounts van de inrichtings-UI; geen kopie van inrichtingsgegevens |
+
+- **Bronnen zijn artefacten**, geen apart type: Artefact heeft al identificatie,
+  inhoud met hash, de relatie naar de e-dienstversie en historie, en de widgets
+  werken dan ongewijzigd. In het model: `richting` (bron | gegenereerd) op
+  `ArtefactSoortGegevens`; nieuwe soorten `logisch-model`, `bpmn-bron`,
+  `dmn-bron`, `cmmn-bron`, `formulierdefinitie-bron` (de achtervoegsels
+  voorkomen botsing met de bestaande gegenereerde BPMN en DMN); formaten
+  Omnium-JSON en SVG.
+- **Herkomst naar de bron**: een relatie `ArtefactBron` (gegenereerd → bron,
+  meervoudig, met `rol`). `bronmodelHash` wordt controleerbaar tegen de
+  `payloadHash` van de bron, en `bronmodelVersie` als tekst kan op termijn weg.
+  `bronGE` in een traceregel wijst naar een element-id in die bron.
+- **Sub-e-diensten**: relatie EDienst → EDienst ("onderdeel van").
+- **Snapshot bij elke transformatie**, per e-dienstmap (niet het hele
+  project), met een hash over die deelverzameling: is de bron ongewijzigd, dan
+  wordt het bestaande bronartefact hergebruikt. De export van de stap
+  "Inrichtingsartefacten" neemt de bronbestanden op en
+  `scripts/omnium-registreer-artefact.ps1` (Fundament-repo) registreert ze vóór
+  de gegenereerde.
+- **Diagrammen als SVG**, gerenderd door de Omnium-backend tijdens de
+  transformatie (reproduceerbaar uit de vastgelegde bron), vastgelegd als eigen
+  artefact (formaat SVG, afhankelijkheid "weergave van" de bron); de JSON blijft
+  de waarheid. Nog na te gaan: of `ArtefactInhoud` meervoudig mag, dan kan de
+  SVG ook als tweede inhoud van het bronartefact. Nu tekent de render-API
+  alleen V3-klassemodellen; BPMN, DMN, CMMN en formulieren volgen.
+- **Kanttekening**: zolang het Omnium-project geen fijnmazige historie heeft, is
+  de snapshot in het register de enige historische bron. Een bron die niet door
+  een transformatie ging, staat er niet in.
+
+Gevolgen voor Imprint:
+
+- De pagina van een e-dienstversie krijgt een tab **Bronnen** naast Artefacten
+  (`omnium-lijst` op artefacten met `richting=bron`), met per gegenereerd
+  artefact een link naar zijn bron.
+- `omnium-inhoud` toont een bron in **Omnium-JSON** via de SVG-weergave (bpmn-js
+  kan Omnium's eigen formaat niet lezen) en de JSON als boom eronder;
+  gegenereerde BPMN/DMN in XML blijft via bpmn-js/dmn-js lopen.
+
+Wie wat doet:
+
+| Onderdeel | Bij |
+|---|---|
+| Inrichtingsmodel (soorten, `richting`, `ArtefactBron`, EDienst → EDienst) | TRANSFORMATIES en Mark |
+| Snapshot per e-dienstmap in de transformatie | TRANSFORMATIES / Omnium |
+| SVG renderen op de backend (BPMN, DMN, CMMN, formulieren) | RENDER-API |
+| Registratiescript met bronbestanden | INRICHTEN_VIZ (Fundament-repo) |
+| Tab Bronnen, weergave in `omnium-inhoud` | Imprint (deze notitie) |
+
 ## 4. `sites/inrichting`
 
 - Een nieuwe site, naast musicbrain, imprint, commonground en omnium:
@@ -296,6 +358,9 @@ Voor Mark:
    hernoeming en een nieuwe vulling, en vervalt de omweg via naam en `gestartOp`.
    De herbouw is al gebeurd, dus dit wordt een gewone modelwijziging waarbij de
    bestaande records worden ingevuld.
+7. Bronnen in het register (§3.5): akkoord met bronnen als artefacten, een
+   snapshot per e-dienstmap bij elke transformatie en SVG als afgeleide
+   weergave?
 
 Wensen aan het register (Omnium), geen voorwaarde voor fase A:
 
@@ -326,6 +391,8 @@ Wensen aan het register (Omnium), geen voorwaarde voor fase A:
    **`bpmn-viewer`** — processen en regels zijn een vast onderdeel, dus niet
    "later" — plus **`omnium-formulier`** (alleen-lezen, `layout_json`) en
    **`omnium-keten`** (regels uit de Fundament-repo).
+   Als §3.5 doorgaat: tab Bronnen en de SVG-weergave van bronnen; een
+   `dmn-viewer` voor gegenereerde DMN.
 4. **Fundament**: Helm-chart, uitrol, eerste account.
 5. Later: DMN-viewer; schrijven via het register (formulier bewerkbaar,
    `/registratie/`); OIDC (fase B).
