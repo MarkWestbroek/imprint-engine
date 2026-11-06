@@ -154,6 +154,18 @@ test("schema v3: soort and formaat as relations (the zaaktype) read like the old
   assert.ok(await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }));
 });
 
+test("component versions: what runs where now, also in the heading of a block of results", async () => {
+  const at = { geldigOp: "2026-11-06" };
+  const oz = (await html((await omniumPage({ path: ["componenten", "openzaak"], viewers: omniumViewers, ctx: ctx(), ...at }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  const versies = oz.slice(oz.indexOf(">Versies<"));
+  assert.match(versies, /<td[^>]*>1.31.0<\/td><td[^>]*>openzaak\/open-zaak:1.31.0<\/td><td[^>]*>—<\/td><td[^>]*><ul><li>cg-test <a[^>]*href="https:\/\/openzaak.example\/zaken\/api\/v1\/"/);
+  assert.match(versies, /<td[^>]*>1.30.0<\/td><td[^>]*>[^<]*<\/td><td[^>]*>—<\/td><td[^>]*><\/td>/); // ended on the 5th: runs nowhere
+  assert.doesNotMatch(versies, /4.0.3/); // another component's version
+  const v = (await html((await omniumPage({ path: ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0"], viewers: omniumViewers, ctx: ctx(), ...at }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(v, /Open Zaak<\/a><span[^>]*>1.31.0 \(cg-test\)<\/span>/);
+  assert.match(v, /Open Formulieren<\/a><span[^>]*>4.0.3 \(cg-test\)<\/span>/);
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

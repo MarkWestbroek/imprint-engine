@@ -1,0 +1,113 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "componentversie_nummers": [
+   {
+    "componentversie_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "versienummer": "1.31.0",
+      "imageReferentie": "openzaak/open-zaak:1.31.0",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "componentversie_componenten": [
+   {
+    "componentversie_id": 1,
+    "rel_id": 1,
+    "component_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "componentversie_nummers": [
+   {
+    "componentversie_id": 2,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "versienummer": "1.30.0",
+      "imageReferentie": "openzaak/open-zaak:1.30.0",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "componentversie_componenten": [
+   {
+    "componentversie_id": 2,
+    "rel_id": 1,
+    "component_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 2,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 3,
+  "opvoer": "2026-11-06T08:00:00Z",
+  "componentversie_nummers": [
+   {
+    "componentversie_id": 3,
+    "rel_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "versienummer": "4.0.3",
+      "imageReferentie": "openformulieren/open-forms:4.0.3",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "componentversie_componenten": [
+   {
+    "componentversie_id": 3,
+    "rel_id": 1,
+    "component_id": 2,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "componentversie_id": 3,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ }
+]

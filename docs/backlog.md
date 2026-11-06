@@ -298,10 +298,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] JSON als boom (6-11); live-link voor formulieren.
       - [ ] bpmn-js/dmn-js voor gegenereerde BPMN/DMN-XML; live-links voor
             andere soorten (zaaktype in Open Zaak, objecttype).
-      - [ ] Componentversies: het model kent `ComponentVersie` en
-            `OmgevingComponentversie`, maar het register heeft er nog geen
-            (6-11). Vullen is aan FUNDAMENT/INRICHTEN_VIZ; daarna een kolom en
-            pagina in de plugin.
+      - [x] Componentversies (6-11): FUNDAMENT vult ze uit de images in het
+            cluster (`scripts/omnium-componentversies.ps1`, opnieuw na een
+            upgrade); de plugin toont ze bij componenten en resultaten.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

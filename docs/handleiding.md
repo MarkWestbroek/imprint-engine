@@ -674,6 +674,10 @@ toont wat het register nu weet.
     in de volgorde van de keten.
 - **Live**: bij een formulier staat een link naar het formulier zoals
   inwoners het zien, in Open Formulieren.
+- **Wat draait waar**: bij de componenten, op de pagina van een component en
+  boven elk blok resultaten staat welke versie op welke omgeving draait (bv.
+  "1.31.0 (cg-test)"). Een vervangen versie blijft in de lijst staan, zonder
+  omgeving.
 - **In de tekening**: klik bij een formuliervraag op het model-element, of in
   de traceregels op "bekijk". Je komt in de tekening van de bron (het logisch
   model, of de BPMN of DMN), waar dat element oplicht en in beeld is

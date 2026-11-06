@@ -1568,6 +1568,11 @@ flowchart LR
   - Er bestaat geen Studio-bron voor het formulier (OMNIUM-UI, 6-11). De
     export komt uit het e-dienstmodel plus het logisch model; in de traceregel
     is `bronElementId` het element-id in het logisch model.
+- **Componentversies**: `component_versies` (type `ComponentVersie`) met
+  `componentversie_componenten` naar de component; een omgeving koppelt de
+  versies die er draaien via `omgeving_componentversies` (materieel: een
+  upgrade zet een einde op de oude koppeling). `draaitVan(component)` en
+  `omgevingenVan(versie)` lezen dat op het gekozen moment.
 - **Oplichten**: `elementLink()` zoekt bij een traceregel het element in een
   tekening van de bronnen van het artefact, en daarmee
   `<tekening>?element=<id>`.

@@ -30,6 +30,7 @@ export const INRICHTING_TYPES = {
   artefacten: { typenaam: "Artefact", label: "Artefact", meervoud: "Artefacten" },
   uitrollen: { typenaam: "Uitrol", label: "Uitrol", meervoud: "Uitrollen" },
   omgevingen: { typenaam: "Omgeving", label: "Omgeving", meervoud: "Omgevingen" },
+  component_versies: { typenaam: "ComponentVersie", label: "Componentversie", meervoud: "Componentversies" },
   artefactsoorten: { typenaam: "ArtefactSoort", label: "Artefactsoort", meervoud: "Artefactsoorten" },
   artefactformaten: { typenaam: "ArtefactFormaat", label: "Artefactformaat", meervoud: "Artefactformaten" },
 } as const;
@@ -54,6 +55,9 @@ export const RELATION_TARGET: Record<string, Pad> = {
   artefact_artefactsoorten: "artefactsoorten",
   artefact_artefactformaten: "artefactformaten",
   component_artefactsoorten: "artefactsoorten",
+  // What runs where (6-11-2026): an omgeving links component versions (materieel), a version its component.
+  omgeving_componentversies: "component_versies",
+  componentversie_componenten: "componenten",
 };
 export const PADS = Object.keys(INRICHTING_TYPES) as Pad[];
 export const isPad = (p: string): p is Pad => Object.hasOwn(INRICHTING_TYPES, p);
@@ -125,6 +129,31 @@ export class Inrichting {
   versieOfArtefact = async (a: FullRecord) => this.byId("edienstversies", relation(a, "artefact_edienstversies", own("artefacten"))[0]?.id);
   componentOfArtefact = async (a: FullRecord) =>
     this.byId("componenten", relation(a, "artefact_doelcomponenten", own("artefacten"))[0]?.id);
+  versienummerVan = (cv: FullRecord | undefined) => str(ge(cv, "componentversie_nummers")?.versienummer);
+  componentOfVersie = async (cv: FullRecord) =>
+    this.byId("componenten", relation(cv, "componentversie_componenten", own("component_versies"))[0]?.id);
+
+  /** The omgevingen where a component version runs now (`omgeving_componentversies` without einde), with its API root there. */
+  async omgevingenVan(cv: FullRecord): Promise<{ omgeving: FullRecord; apiRoot?: string }[]> {
+    return (await this.list("omgevingen").catch(() => [])).flatMap((o) =>
+      relation(o, "omgeving_componentversies", own("omgevingen"))
+        .filter((l) => l.id === cv.id)
+        .map((l) => ({ omgeving: o, apiRoot: str(l.velden.apiRoot) }))
+    );
+  }
+
+  /** What runs of a component now: per omgeving its version (empty when the register has none). */
+  async draaitVan(c: FullRecord): Promise<{ omgeving: string; versie?: string }[]> {
+    const out: { omgeving: string; versie?: string }[] = [];
+    for (const o of await this.list("omgevingen").catch(() => [])) {
+      for (const l of relation(o, "omgeving_componentversies", own("omgevingen"))) {
+        const cv = await this.byId("component_versies", l.id).catch(() => undefined);
+        if (cv && (await this.componentOfVersie(cv))?.id === c.id) out.push({ omgeving: await this.title("omgevingen", o), versie: this.versienummerVan(cv) });
+      }
+    }
+    return out;
+  }
+
   /** The artefactsoort: the relation (schema v3), else the `$ref` field `soort` (v2). */
   soortOf = async (a: FullRecord) =>
     this.byId(
@@ -276,6 +305,10 @@ export class Inrichting {
         return `Uitrol ${this.gestartOp(r) ?? `#${r.id}`}`;
       case "omgevingen":
         return str(ge(r, "omgeving_namen")?.naam) ?? `Omgeving ${r.id}`;
+      case "component_versies": {
+        const c = await this.componentOfVersie(r);
+        return `${c ? await this.title("componenten", c) : "Component"} ${this.versienummerVan(r) ?? `#${r.id}`}`;
+      }
       case "artefactsoorten":
         return str(ge(r, "artefactsoort_gegevens")?.code) ?? `Artefactsoort ${r.id}`;
       case "artefactformaten":

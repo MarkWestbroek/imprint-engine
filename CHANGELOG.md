@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: componentversies.** Wat draait waar: in de lijst van
+  componenten (kolom "Draait"), op de pagina van een component (de versies, met
+  image en de omgeving met API-root waar ze nu draaien), en in de kopregel van
+  elk blok resultaten, bv. "Open Zaak 1.31.0 (cg-test)". Uit
+  `component_versies` en de materiële koppeling `omgeving_componentversies`.
 - **Inrichting: klaar voor registerschema v3.** De soort en het formaat van een
   artefact komen uit de relaties `artefact_artefactsoorten` en
   `artefact_artefactformaten`, met het oude veld `soort` als terugval;

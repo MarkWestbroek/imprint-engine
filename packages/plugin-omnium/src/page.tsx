@@ -94,6 +94,7 @@ async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetCo
   const richting = subject.pad === "artefacten" ? await i.richting(subject.record) : undefined;
   type Lijst = { title: string; pad?: Pad; koppeling?: string; veld?: string; richting?: "gegenereerd" | "bron"; groepeer?: "component"; leeg?: string };
   const lists: Partial<Record<Pad, Lijst[]>> = {
+    componenten: [{ title: "Versies", pad: "component_versies", koppeling: "componentversie_componenten", leeg: "Nog geen versies in het register." }],
     ediensten: [{ title: "Versies", pad: "edienstversies", koppeling: "edienstversie_ediensten" }],
     edienstversies: [
       { title: "Resultaten", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "gegenereerd", groepeer: "component" },

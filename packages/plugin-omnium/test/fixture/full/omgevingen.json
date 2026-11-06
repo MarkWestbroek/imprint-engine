@@ -1,1 +1,107 @@
-[]
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-04T08:00:00Z",
+  "omgeving_namen": [
+   {
+    "omgeving_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-04T08:00:00Z",
+    "data": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "naam": "cg-test",
+      "soort": "test",
+      "basisUrl": "https://fundament.example",
+      "opvoer": "2026-11-04T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "omgeving_componentversies": [
+   {
+    "omgeving_id": 1,
+    "rel_id": 1,
+    "componentversie_id": 2,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "apiRoot": "https://openzaak.example/zaken/api/v1/",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ],
+    "aanvang": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "datum": "2026-11-01",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ],
+    "einde": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "datum": "2026-11-05",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   },
+   {
+    "omgeving_id": 1,
+    "rel_id": 2,
+    "componentversie_id": 1,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 2,
+      "versie": 1,
+      "apiRoot": "https://openzaak.example/zaken/api/v1/",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ],
+    "aanvang": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 2,
+      "versie": 1,
+      "datum": "2026-11-06",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   },
+   {
+    "omgeving_id": 1,
+    "rel_id": 3,
+    "componentversie_id": 3,
+    "opvoer": "2026-11-06T08:00:00Z",
+    "data": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 3,
+      "versie": 1,
+      "apiRoot": "https://formulieren.example/api/v2/",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ],
+    "aanvang": [
+     {
+      "omgeving_id": 1,
+      "rel_id": 3,
+      "versie": 1,
+      "datum": "2026-11-06",
+      "opvoer": "2026-11-06T08:00:00Z"
+     }
+    ]
+   }
+  ]
+ }
+]

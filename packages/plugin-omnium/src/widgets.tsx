@@ -39,6 +39,7 @@ const COLUMNS: Record<Pad, Column[]> = {
     { label: "Technische naam", cell: (r) => <code>{text(ge(r, "component_namen")?.naam)}</code> },
     { label: "Leverancier", cell: (r) => text(ge(r, "component_namen")?.leverancier) },
     { label: "Laag", cell: (r) => text(ge(r, "component_lagen")?.laag) },
+    { label: "Draait", cell: async (r, i) => text(draait(await i.draaitVan(r))) },
   ],
   ediensten: [
     titleLink("ediensten"),
@@ -67,6 +68,36 @@ const COLUMNS: Record<Pad, Column[]> = {
     { ...titleLink("uitrollen"), label: "Gestart" },
     { label: "Status", cell: (r) => text(ge(r, "uitrol_verlopen")?.status) },
     { label: "Door", cell: (r) => text(ge(r, "uitrol_verlopen")?.uitgevoerdDoor) },
+  ],
+  component_versies: [
+    { label: "Versie", cell: (r, i) => text(i.versienummerVan(r)) },
+    { label: "Image", cell: (r) => text(ge(r, "componentversie_nummers")?.imageReferentie) },
+    { label: "Uitgebracht", cell: (r) => text(ge(r, "componentversie_nummers")?.uitgebrachtOp) },
+    {
+      label: "Draait op",
+      cell: async (r, i) =>
+        (await i.omgevingenVan(r)).length ? (
+          <ul>
+            {await Promise.all(
+              (await i.omgevingenVan(r)).map(async (o, n) => (
+                <li key={n}>
+                  {await i.title("omgevingen", o.omgeving)}
+                  {o.apiRoot && (
+                    <>
+                      {" "}
+                      <a href={o.apiRoot} className="text-muted underline-offset-2 hover:underline" rel="noopener noreferrer" target="_blank">
+                        {o.apiRoot}
+                      </a>
+                    </>
+                  )}
+                </li>
+              ))
+            )}
+          </ul>
+        ) : (
+          ""
+        ),
+    },
   ],
   omgevingen: [
     titleLink("omgevingen"),
@@ -105,6 +136,9 @@ const BRON_COLUMNS: Column[] = [
     },
   },
 ];
+
+/** "1.31.0 (cg-test)", per omgeving. */
+const draait = (d: { omgeving: string; versie?: string }[]) => d.map((x) => `${x.versie ?? "?"} (${x.omgeving})`).join(", ");
 
 /** A row of cells, or a heading row that opens a group (`{ group }`). */
 type Row = Cell[] | { group: ReactNode };
@@ -271,7 +305,15 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
             last = k.code;
             const href = k.comp && (await i.href("componenten", k.comp));
             const label = k.comp ? await i.title("componenten", k.comp) : "Zonder component";
-            rows.push({ group: href ? <Link href={href} className="underline-offset-2 hover:underline">{label}</Link> : label });
+            const runs = k.comp ? draait(await i.draaitVan(k.comp)) : "";
+            rows.push({
+              group: (
+                <>
+                  {href ? <Link href={href} className="underline-offset-2 hover:underline">{label}</Link> : label}
+                  {runs && <span className="ml-2 font-normal text-muted">{runs}</span>}
+                </>
+              ),
+            });
           }
           rows.push(await Promise.all(cols.map((c) => c.cell(k.r, i))));
         }
