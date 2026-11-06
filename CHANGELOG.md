@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: resultaten per component**, in de volgorde van de keten: Open
+  Formulieren, Open Object, Open Zaak, GZAC. Elk blok heeft een kopregel, en
+  binnen een blok staan formulier, objecttype, zaaktype, BPMN en DMN vóór de
+  rest. In `omnium-lijst` is dat de optie `groepeer: component`.
 - **Inrichting: oplichten in de tekening.**
   - Een formulierveld en een traceregel linken naar hun element in de
     tekening van de bron: het logisch model, of de BPMN of DMN. Daar licht het

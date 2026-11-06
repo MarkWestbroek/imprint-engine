@@ -670,7 +670,8 @@ toont wat het register nu weet.
     binnen het record (*veld*, bv. `artefact_traceregels` of
     `uitrol_resultaten`). Met *richting* toon je alleen de **resultaten**
     (`gegenereerd`) of de **bronnen** (`bron`, elk met links naar zijn
-    tekeningen).
+    tekeningen). Met *groepeer: component* staan de resultaten per component,
+    in de volgorde van de keten.
 - **Live**: bij een formulier staat een link naar het formulier zoals
   inwoners het zien, in Open Formulieren.
 - **In de tekening**: klik bij een formuliervraag op het model-element, of in

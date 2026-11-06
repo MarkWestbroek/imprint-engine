@@ -26,6 +26,12 @@ export const OmniumLijstConfig = z.object({
   veld: z.string().default(""),
   /** With `pad: artefacten`: only results (`gegenereerd`), sources (`bron`, each with its drawings) or drawings (`weergave`). */
   richting: z.enum(["", "gegenereerd", "bron", "weergave"]).default(""),
+  /**
+   * With `pad: artefacten`: one block per target component, in the order of the
+   * chain (Open Formulieren, Open Object, Open Zaak, GZAC, then the rest), and
+   * within a block processes and decisions before the rest.
+   */
+  groepeer: z.enum(["", "component"]).default(""),
   leeg: z.string().default("Niets gevonden."),
 });
 export type OmniumLijstConfig = z.infer<typeof OmniumLijstConfig>;

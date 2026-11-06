@@ -106,7 +106,19 @@ const BRON_COLUMNS: Column[] = [
   },
 ];
 
-function Table({ head, rows }: { head: string[]; rows: Cell[][] }) {
+/** A row of cells, or a heading row that opens a group (`{ group }`). */
+type Row = Cell[] | { group: ReactNode };
+
+/** The chain from form to case handling: the order of the component blocks. */
+const COMPONENT_ORDER = ["openforms", "openformulieren", "openobject", "openzaak", "gzac"];
+/** Within a block: what a reader looks for first. */
+const SOORT_ORDER = ["formulier", "objecttype", "zaaktype", "bpmn", "dmn"];
+const rank = (list: string[], v: string | undefined) => {
+  const n = v ? list.indexOf(v) : -1;
+  return n < 0 ? list.length : n;
+};
+
+function Table({ head, rows }: { head: string[]; rows: Row[] }) {
   return (
     <div className="overflow-x-auto">
       <ResizableTable className="w-full border-collapse text-sm">
@@ -120,15 +132,23 @@ function Table({ head, rows }: { head: string[]; rows: Cell[][] }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, n) => (
-            <tr key={n} className="border-b border-line/60 align-top">
-              {row.map((cell, m) => (
-                <td key={m} className="py-2 pr-4">
-                  {cell}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {rows.map((row, n) =>
+            Array.isArray(row) ? (
+              <tr key={n} className="border-b border-line/60 align-top">
+                {row.map((cell, m) => (
+                  <td key={m} className="py-2 pr-4">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ) : (
+              <tr key={n} className="border-b border-line">
+                <th colSpan={head.length} scope="colgroup" className="bg-surface px-2 pb-1 pt-4 text-left font-semibold">
+                  {row.group}
+                </th>
+              </tr>
+            )
+          )}
         </tbody>
       </ResizableTable>
     </div>
@@ -229,6 +249,35 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
       const titled = await Promise.all(records.map(async (r) => ({ r, t: await i.title(config.pad!, r) })));
       titled.sort((a, b) => a.t.localeCompare(b.t, "nl"));
       const cols = config.pad === "artefacten" && config.richting === "bron" ? BRON_COLUMNS : COLUMNS[config.pad];
+      if (config.pad === "artefacten" && config.groepeer === "component" && titled.length) {
+        const keyed = await Promise.all(
+          titled.map(async ({ r, t }) => {
+            const comp = await i.componentOfArtefact(r);
+            return { r, t, code: i.componentNaam(comp), comp, soort: await i.soortcode(r) };
+          })
+        );
+        keyed.sort(
+          (a, b) =>
+            rank(COMPONENT_ORDER, a.code) - rank(COMPONENT_ORDER, b.code) ||
+            (a.code ?? "~").localeCompare(b.code ?? "~") ||
+            rank(SOORT_ORDER, a.soort) - rank(SOORT_ORDER, b.soort) ||
+            (a.soort ?? "").localeCompare(b.soort ?? "") ||
+            a.t.localeCompare(b.t, "nl")
+        );
+        const rows: Row[] = [];
+        let last: string | undefined | null = null;
+        for (const k of keyed) {
+          if (k.code !== last) {
+            last = k.code;
+            const href = k.comp && (await i.href("componenten", k.comp));
+            const label = k.comp ? await i.title("componenten", k.comp) : "Zonder component";
+            rows.push({ group: href ? <Link href={href} className="underline-offset-2 hover:underline">{label}</Link> : label });
+          }
+          rows.push(await Promise.all(cols.map((c) => c.cell(k.r, i))));
+        }
+        body = <Table head={cols.map((c) => c.label)} rows={rows} />;
+        return config.title ? <WidgetFrame title={config.title}>{body}</WidgetFrame> : <section>{body}</section>;
+      }
       const rows = await Promise.all(titled.map(({ r }) => Promise.all(cols.map((c) => c.cell(r, i)))));
       body = rows.length ? <Table head={cols.map((c) => c.label)} rows={rows} /> : <Note>{config.leeg}</Note>;
     } else if (config.veld) {

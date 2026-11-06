@@ -138,6 +138,14 @@ test("a form field links to its element in the drawing of the logical model, whi
   assert.doesNotMatch(odd, /<style>/);
 });
 
+test("results are grouped per component in the order of the chain", async () => {
+  const v = (await html((await omniumPage({ path: ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  const resultaten = v.slice(v.indexOf(">Resultaten<"), v.indexOf(">Bronnen<"));
+  const groups = [...resultaten.matchAll(/scope="colgroup"[^>]*>(?:<a[^>]*>)?([^<]+)/g)].map((m) => m[1]);
+  assert.deepEqual(groups, ["Open Formulieren", "Open Zaak"]); // openforms before openzaak
+  assert.ok(resultaten.indexOf("Formulier GPK-aanvraag") < resultaten.indexOf("Zaaktype Aanvraag"));
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

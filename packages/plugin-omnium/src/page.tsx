@@ -92,11 +92,11 @@ export async function omniumPage({
 async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetContext }) {
   const i = inrichtingFor(subject.prefix, subject.at.peiltijdstip, subject.at.geldigOp)!;
   const richting = subject.pad === "artefacten" ? await i.richting(subject.record) : undefined;
-  type Lijst = { title: string; pad?: Pad; koppeling?: string; veld?: string; richting?: "gegenereerd" | "bron"; leeg?: string };
+  type Lijst = { title: string; pad?: Pad; koppeling?: string; veld?: string; richting?: "gegenereerd" | "bron"; groepeer?: "component"; leeg?: string };
   const lists: Partial<Record<Pad, Lijst[]>> = {
     ediensten: [{ title: "Versies", pad: "edienstversies", koppeling: "edienstversie_ediensten" }],
     edienstversies: [
-      { title: "Resultaten", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "gegenereerd" },
+      { title: "Resultaten", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "gegenereerd", groepeer: "component" },
       { title: "Bronnen", pad: "artefacten", koppeling: "artefact_edienstversies", richting: "bron", leeg: "Nog geen bronnen in het register." },
       { title: "Uitrollen", pad: "uitrollen", koppeling: "uitrol_edienstversies" },
     ],
