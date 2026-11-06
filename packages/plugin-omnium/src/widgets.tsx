@@ -282,8 +282,8 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
       body = rows.length ? <Table head={cols.map((c) => c.label)} rows={rows} /> : <Note>{config.leeg}</Note>;
     } else if (config.veld) {
       if (!on) return <WidgetFrame title={config.title}><Note>“{config.veld}” is een lijst binnen een record: zet de widget op een inrichtingstemplate.</Note></WidgetFrame>;
-      if (RELATION_TARGET[config.veld]) {
-        const links = await relationLinks(i, on.pad, on.record, config.veld);
+      const links = RELATION_TARGET[config.veld] ? await relationLinks(i, on.pad, on.record, config.veld) : [];
+      if (links.length) {
         body = links.length
           ? fieldTable(links.map((l) => l.link.velden), { label: "Naar", cells: links.map((l) => l.cell) })
           : <Note>{config.leeg}</Note>;
@@ -321,9 +321,9 @@ export async function OmniumDetail({ config: raw, subject }: { config: unknown; 
     const sections = await Promise.all(
       keys.map(async (key) => {
         let body: ReactNode;
-        if (RELATION_TARGET[key]) {
-          const links = await relationLinks(i, subject.pad, subject.record, key);
-          if (!links.length) return null;
+        // A known relation shows as links; when it has none (or is still a GE in an older schema), as data.
+        const links = RELATION_TARGET[key] ? await relationLinks(i, subject.pad, subject.record, key) : [];
+        if (links.length) {
           const withFields = links.some((l) => Object.keys(l.link.velden).length > 0);
           body = withFields ? (
             fieldTable(links.map((l) => l.link.velden), { label: "Naar", cells: links.map((l) => l.cell) })

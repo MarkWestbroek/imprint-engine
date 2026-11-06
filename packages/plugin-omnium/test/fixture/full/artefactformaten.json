@@ -1,1 +1,23 @@
-[]
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-05T08:00:00Z",
+  "artefactformaat_gegevens": [
+   {
+    "artefactformaat_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefactformaat_id": 1,
+      "rel_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z",
+      "code": "json",
+      "mediatype": "application/json"
+     }
+    ]
+   }
+  ]
+ }
+]

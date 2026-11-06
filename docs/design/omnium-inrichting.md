@@ -198,7 +198,7 @@ de Fundament-repo; of het register "uniek" ook afdwingt, is nog niet getest):
 | componenten | `ComponentNaam.naam` | `/componenten/<naam>` | korte namen (gzac, openzaak) |
 | ediensten | `EdienstNaam.code`, zonder code `EdienstNaam.naam` | `/ediensten/<code>` | de code komt er (besluit 5-11). De naam is vrije tekst die kan wijzigen; een oude link op naam blijft werken |
 | edienstversies | e-dienst + `versienummer` | `/ediensten/<naam>/versies/<versienummer>` | het nummer alleen is niet uniek; de e-dienst loopt via `EdienstversieEdienst` |
-| artefacten | soortcode + doelcomponent + `identifier` | `/artefacten/<soortcode>/<component>/<identifier>` | `identifier` alleen is niet uniek; van de soort de `code`, want de id van de referentielijst verschilt per instantie; de component loopt via `ArtefactDoelcomponent` |
+| artefacten | soortcode + doelcomponent + `identifier` (soort: relatie `artefact_artefactsoorten` vanaf schema v3, daarvoor het veld `soort`) | `/artefacten/<soortcode>/<component>/<identifier>` | `identifier` alleen is niet uniek; van de soort de `code`, want de id van de referentielijst verschilt per instantie; de component loopt via `ArtefactDoelcomponent` |
 | uitrollen | `UitrolVerloop.uuid`, zonder uuid `gestartOp` | `/ediensten/<code>/versies/<versienummer>/uitrollen/<uuid>` | een uitrol is een gebeurtenis en komt na een nieuwe vulling niet terug: deze links gelden alleen binnen dit register |
 
 De route is dus niet overal `<pad>/<sleutel>`: de plugin kent per type zijn

@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: klaar voor registerschema v3.** De soort en het formaat van een
+  artefact komen uit de relaties `artefact_artefactsoorten` en
+  `artefact_artefactformaten`, met het oude veld `soort` als terugval;
+  `component_artefactsoorten` mag een relatie of een GE zijn. Een bekende
+  relatie zonder koppelingen valt terug op de gegevens.
 - **Inrichting: resultaten per component**, in de volgorde van de keten: Open
   Formulieren, Open Object, Open Zaak, GZAC. Elk blok heeft een kopregel, en
   binnen een blok staan formulier, objecttype, zaaktype, BPMN en DMN vóór de

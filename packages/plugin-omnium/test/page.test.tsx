@@ -146,6 +146,14 @@ test("results are grouped per component in the order of the chain", async () => 
   assert.ok(resultaten.indexOf("Formulier GPK-aanvraag") < resultaten.indexOf("Zaaktype Aanvraag"));
 });
 
+test("schema v3: soort and formaat as relations (the zaaktype) read like the old $ref fields", async () => {
+  const z = (await html((await omniumPage({ path: ["artefacten", "zaaktype", "openzaak", "aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(z, /Artefact artefactsoorten<\/h3><ul[^>]*><li>zaaktype</);
+  assert.match(z, /Artefact artefactformaten<\/h3><ul[^>]*><li>json</);
+  // v2 shape still works: the form keeps its soort in artefact_identificaties.
+  assert.ok(await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }));
+});
+
 test("unknown key: null (the site answers 404); refused token: a visible message", async () => {
   assert.equal(await omniumPage({ path: ["ediensten", "Bestaat niet"], viewers: omniumViewers, ctx: ctx() }), null);
   token = "omt_new";

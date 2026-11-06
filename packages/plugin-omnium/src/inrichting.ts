@@ -50,6 +50,10 @@ export const RELATION_TARGET: Record<string, Pad> = {
   // Bronnen (model change 5-11-2026, expected key): generated → source, SVG → source.
   artefact_bronnen: "artefacten",
   artefactsoort_standaarddoelcomponenten: "componenten",
+  // Schema v3 (6-11-2026): soort and formaat become relations instead of `$ref` fields.
+  artefact_artefactsoorten: "artefactsoorten",
+  artefact_artefactformaten: "artefactformaten",
+  component_artefactsoorten: "artefactsoorten",
 };
 export const PADS = Object.keys(INRICHTING_TYPES) as Pad[];
 export const isPad = (p: string): p is Pad => Object.hasOwn(INRICHTING_TYPES, p);
@@ -121,15 +125,19 @@ export class Inrichting {
   versieOfArtefact = async (a: FullRecord) => this.byId("edienstversies", relation(a, "artefact_edienstversies", own("artefacten"))[0]?.id);
   componentOfArtefact = async (a: FullRecord) =>
     this.byId("componenten", relation(a, "artefact_doelcomponenten", own("artefacten"))[0]?.id);
+  /** The artefactsoort: the relation (schema v3), else the `$ref` field `soort` (v2). */
+  soortOf = async (a: FullRecord) =>
+    this.byId(
+      "artefactsoorten",
+      relation(a, "artefact_artefactsoorten", own("artefacten"))[0]?.id ?? refId(ge(a, "artefact_identificaties")?.soort)
+    );
   async soortcode(a: FullRecord): Promise<string | undefined> {
-    const soort = await this.byId("artefactsoorten", refId(ge(a, "artefact_identificaties")?.soort));
-    return str(ge(soort, "artefactsoort_gegevens")?.code);
+    return str(ge(await this.soortOf(a), "artefactsoort_gegevens")?.code);
   }
 
   /** What an artefact is (model v3, 6-11-2026): a `bron`, a `weergave` of one (an SVG), or `gegenereerd` (also when empty). */
   async richting(a: FullRecord): Promise<Richting> {
-    const soort = await this.byId("artefactsoorten", refId(ge(a, "artefact_identificaties")?.soort));
-    const r = str(ge(soort, "artefactsoort_gegevens")?.richting);
+    const r = str(ge(await this.soortOf(a), "artefactsoort_gegevens")?.richting);
     return r === "bron" || r === "weergave" ? r : "gegenereerd";
   }
 

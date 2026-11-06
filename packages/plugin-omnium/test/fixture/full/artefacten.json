@@ -70,7 +70,6 @@
       "rel_id": 1,
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
-      "soort": 2,
       "identifier": "aanvraag",
       "naam": "Zaaktype Aanvraag",
       "versienummer": "1"
@@ -123,9 +122,42 @@
       "rel_id": 1,
       "versie": 1,
       "opvoer": "2026-11-05T08:00:00Z",
-      "formaat": "json",
       "payload": "{\"omschrijving\": \"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"}",
       "payloadHash": "sha256:aa"
+     }
+    ]
+   }
+  ],
+  "artefact_artefactsoorten": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "artefactsoort_id": 2,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "artefactsoort_id": 2,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
+     }
+    ]
+   }
+  ],
+  "artefact_artefactformaten": [
+   {
+    "artefact_id": 2,
+    "rel_id": 1,
+    "artefactformaat_id": 1,
+    "opvoer": "2026-11-05T08:00:00Z",
+    "data": [
+     {
+      "artefact_id": 2,
+      "rel_id": 1,
+      "artefactformaat_id": 1,
+      "versie": 1,
+      "opvoer": "2026-11-05T08:00:00Z"
      }
     ]
    }
