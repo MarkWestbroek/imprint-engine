@@ -7,9 +7,9 @@ De eerste is de inrichtings-UI op het Omnium-register
 `inrichting.fundament.common-ground-lab.nl`. De manifesten staan in
 [`deploy/k8s/`](../deploy/k8s/) (kustomize, ingebouwd in `kubectl`).
 
-> **Stand (5-11-2026):** de site draait op
+> **Stand (6-11-2026):** de site draait op
 > https://inrichting.fundament.common-ground-lab.nl, met image
-> `0.15.0-5a69c02`. Migratie en beginteksten staan in de database. De pod leest
+> `0.15.0-63d7f5b` (registerschema v3). Migratie en beginteksten staan in de database. De pod leest
 > het register met `omnium-lezer`. De backup neemt de database mee, en ook de
 > bucket zodra FUNDAMENT `ensure-backup-secret.ps1` heeft gedraaid.
 
