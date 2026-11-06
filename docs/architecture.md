@@ -1568,6 +1568,11 @@ flowchart LR
   - Er bestaat geen Studio-bron voor het formulier (OMNIUM-UI, 6-11). De
     export komt uit het e-dienstmodel plus het logisch model; in de traceregel
     is `bronElementId` het element-id in het logisch model.
+- **Beslistabel** (`beslistabel.tsx`): `fromBron()` zoekt in de Omnium-JSON
+  `profielen.*.elements.*.data.beslistabel`, `fromXml()` leest `decision` →
+  `decisionTable` uit DMN-XML (met regexen op lokale namen, entiteiten
+  gedecodeerd; geen XML-parser nodig). Beide geven dezelfde vorm, die
+  `BeslistabelView` toont; op cg-test geven bron en resultaat dezelfde regels.
 - **Componentversies**: `component_versies` (type `ComponentVersie`) met
   `componentversie_componenten` naar de component; een omgeving koppelt de
   versies die er draaien via `omgeving_componentversies` (materieel: een

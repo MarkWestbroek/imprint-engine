@@ -4,7 +4,7 @@ import { DefaultView, type WidgetContext, type WidgetViewers } from "@imprint/ru
 import { registerProblem } from "./client";
 import { inrichtingFor, type OmniumSubject } from "./context";
 import { AmbiguousKey, INRICHTING_TYPES, type Pad } from "./inrichting";
-import { OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
+import { OmniumBeslistabel, OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -117,6 +117,7 @@ async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetCo
         </p>
       )}
       {subject.pad === "artefacten" && <OmniumFormulier config={{ title: "Formulier" }} subject={subject} ctx={ctx} />}
+      {subject.pad === "artefacten" && <OmniumBeslistabel config={{ title: "Beslistabel" }} subject={subject} ctx={ctx} />}
       {richting && richting !== "gegenereerd" && <OmniumTekening config={{ title: "Tekening" }} subject={subject} ctx={ctx} />}
       <OmniumDetail
         config={{

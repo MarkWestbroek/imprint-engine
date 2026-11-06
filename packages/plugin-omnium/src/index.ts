@@ -22,9 +22,10 @@ export function omniumPlugin(): ImprintPlugin {
   });
 }
 
-export { omniumWidgets, OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
-export { omniumViewers, OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
+export { omniumWidgets, OmniumBeslistabelConfig, OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
+export { omniumViewers, OmniumBeslistabel, OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
 export { omniumPage, omniumViewType } from "./page";
 export { OmniumRegister, OmniumRegisterError, registerConfigFromEnv, registerProblem, type ReadMoment } from "./client";
 export { Inrichting, AmbiguousKey, INRICHTING_TYPES, PADS, type Pad, type Located } from "./inrichting";
 export { isOmniumSubject, type OmniumSubject } from "./context";
+export { fromBron, fromXml, BeslistabelView, type Beslistabel } from "./beslistabel";

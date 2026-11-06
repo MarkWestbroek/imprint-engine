@@ -674,6 +674,10 @@ toont wat het register nu weet.
     in de volgorde van de keten.
 - **Live**: bij een formulier staat een link naar het formulier zoals
   inwoners het zien, in Open Formulieren.
+- **Beslistabel**: op de pagina van een DMN (de bron en het resultaat voor
+  GZAC) staat de beslistabel als tabel: links de invoer, rechts van de dikke
+  lijn de uitkomst, per regel een rij met toelichting. Een streepje betekent
+  "elke waarde"; boven de tabel staat welke regel telt (de hit policy).
 - **Wat draait waar**: bij de componenten, op de pagina van een component en
   boven elk blok resultaten staat welke versie op welke omgeving draait (bv.
   "1.31.0 (cg-test)"). Een vervangen versie blijft in de lijst staan, zonder

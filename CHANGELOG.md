@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: beslistabel.** De pagina van een DMN toont de beslistabel als
+  tabel: per invoer een kolom (met expressie en, bij de bron, het veld waar hij
+  vandaan komt), dan de uitkomsten, een rij per regel met toelichting, en de
+  hit policy in woorden. Uit de dmn-bron (`data.beslistabel` op het element
+  decision) en uit de gegenereerde DMN-XML; widget `omnium-beslistabel`.
 - **Inrichting: componentversies.** Wat draait waar: in de lijst van
   componenten (kolom "Draait"), op de pagina van een component (de versies, met
   image en de omgeving met API-root waar ze nu draaien), en in de kopregel van

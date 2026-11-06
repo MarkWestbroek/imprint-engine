@@ -9,7 +9,8 @@ import { sanitizeSvg } from "@imprint/widgets-standard/svg-sanitize";
 import { JsonTree, parseJsonish } from "./json-tree";
 import { ResizableTable } from "./resizable-table";
 import { OpenFormulier, type Trace } from "./formulier";
-import { OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
+import { OmniumBeslistabelConfig, OmniumDetailConfig, OmniumFormulierConfig, OmniumLijstConfig, OmniumTekeningConfig } from "./schemas";
+import { BeslistabelView, fromBron, fromXml } from "./beslistabel";
 
 /**
  * The viewers of omnium-lijst and omnium-detail (server components). They read
@@ -501,6 +502,34 @@ export async function OmniumTekening({ config: raw, subject }: { config: unknown
   }
 }
 
+/** The decision tables of a DMN artefact: from the source (dmn-bron, JSON) or the result (dmn, XML). */
+export async function OmniumBeslistabel({ config: raw, subject }: { config: unknown; subject?: unknown; ctx: WidgetContext }) {
+  const config = OmniumBeslistabelConfig.parse(raw ?? {});
+  if (!isOmniumSubject(subject) || subject.pad !== "artefacten") {
+    return <WidgetFrame title={config.title}><Note>Deze widget toont een DMN-artefact; zet hem op de template _view/omnium-artefacten.</Note></WidgetFrame>;
+  }
+  const i = inrichtingOf(subject)!;
+  try {
+    const soort = await i.soortcode(subject.record);
+    if (soort !== "dmn" && soort !== "dmn-bron") return null;
+    const payload = ge(subject.record, "artefact_inhouden")?.payload;
+    const text = typeof payload === "string" ? payload : payload === undefined ? "" : JSON.stringify(payload);
+    const tabellen = text.trimStart().startsWith("<") ? fromXml(text) : fromBron(parseJsonish(text));
+    if (!tabellen.length) return null;
+    return (
+      <WidgetFrame title={config.title}>
+        <div className="space-y-8">
+          {tabellen.map((t, n) => (
+            <BeslistabelView key={n} tabel={t} />
+          ))}
+        </div>
+      </WidgetFrame>
+    );
+  } catch (err) {
+    return <WidgetFrame title={config.title}><Note>{registerProblem(err)}</Note></WidgetFrame>;
+  }
+}
+
 export async function OmniumFormulier({ config: raw, subject }: { config: unknown; subject?: unknown; ctx: WidgetContext }) {
   const config = OmniumFormulierConfig.parse(raw ?? {});
   if (!isOmniumSubject(subject) || subject.pad !== "artefacten") {
@@ -530,6 +559,7 @@ export async function OmniumFormulier({ config: raw, subject }: { config: unknow
 
 export const omniumViewers: WidgetViewers = {
   "omnium-formulier": OmniumFormulier as WidgetViewers[string],
+  "omnium-beslistabel": OmniumBeslistabel as WidgetViewers[string],
   "omnium-tekening": OmniumTekening as WidgetViewers[string],
   "omnium-lijst": OmniumLijst as WidgetViewers[string],
   "omnium-detail": OmniumDetail as WidgetViewers[string],

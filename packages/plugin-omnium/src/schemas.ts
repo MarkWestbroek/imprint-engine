@@ -48,6 +48,11 @@ export const OmniumFormulierConfig = z.object({
 });
 export type OmniumFormulierConfig = z.infer<typeof OmniumFormulierConfig>;
 
+export const OmniumBeslistabelConfig = z.object({
+  title: z.string().optional(),
+});
+export type OmniumBeslistabelConfig = z.infer<typeof OmniumBeslistabelConfig>;
+
 export const OmniumTekeningConfig = z.object({
   title: z.string().optional(),
 });
@@ -75,6 +80,13 @@ export const omniumWidgets = [
     version: "1.0.0",
     help: "An Open Formulieren form of the page's artefact as an overview: per step the questions, where each comes from in the model and where it goes in the objecttype, plus the logic.",
     configSchema: OmniumFormulierConfig,
+  },
+  {
+    name: "omnium-beslistabel",
+    label: "Omnium: beslistabel",
+    version: "1.0.0",
+    help: "The decision table(s) of the page's DMN artefact, as a table: inputs, outputs and one row per rule. From a dmn-bron (Omnium JSON) or a generated DMN (XML).",
+    configSchema: OmniumBeslistabelConfig,
   },
   {
     name: "omnium-tekening",
