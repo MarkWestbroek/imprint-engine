@@ -298,6 +298,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] JSON als boom (6-11); live-link voor formulieren.
       - [ ] bpmn-js/dmn-js voor gegenereerde BPMN/DMN-XML; live-links voor
             andere soorten (zaaktype in Open Zaak, objecttype).
+      - [ ] Versie-eisen per component naast "Draait" (Mark 8-11: bouwen
+            zodra TRANSFORMATIES echte bereiken levert; nu alles `*`). Doorsnede
+            van `artefact_identificaties.doelVersieRange` per doelcomponent,
+            plus `EdienstversieComponentvereiste.versieRange`; rood als de
+            draaiende versie er niet aan voldoet. Niet opslaan, afleiden.
       - [x] Componentversies (6-11): FUNDAMENT vult ze uit de images in het
             cluster (`scripts/omnium-componentversies.ps1`, opnieuw na een
             upgrade); de plugin toont ze bij componenten en resultaten.
