@@ -267,3 +267,12 @@ footer > a:last-child { justify-self: end; display: flex; gap: 5px; align-items:
 .markdown ul { list-style: disc; padding-left: 1.3em; }
 .markdown ol { list-style: decimal; padding-left: 1.3em; }
 .markdown code { font-size: .9em; padding: .1em .35em; background: var(--paper-deep); }
+.markdown pre { overflow-x: auto; padding: 16px 18px; background: var(--paper-deep); border: 1px solid var(--line); }
+.markdown pre code { padding: 0; background: none; }
+.markdown hr { margin: 2.4em 0; border: 0; border-top: 1px solid var(--line); }
+.markdown table { width: 100%; border-collapse: collapse; font-size: 15px; }
+.markdown th, .markdown td { padding: 8px 12px 8px 0; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.markdown h2 { margin-top: 1.8em; font-size: 32px; }
+.markdown h3 { margin-top: 1.4em; font-size: 22px; }
+.assistant-note { display: grid; gap: 18px; justify-items: start; margin-bottom: 56px; padding: 24px 28px; border: 1px solid var(--ink); background: var(--paper-deep); line-height: 1.6; }
+.assistant-note p { margin: 0; max-width: 720px; }

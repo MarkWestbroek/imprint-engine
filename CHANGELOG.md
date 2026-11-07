@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Productsite: /voor-opdrachtgevers.** Wat Imprint kan, wat maatwerk is en
+  wat niet kan, met een sjabloon voor de eisen; geschreven voor opdrachtgevers
+  en hun AI-assistent (in een Claude-project te zetten). Eén bron:
+  `sites/imprint/public/voor-opdrachtgevers.md`, ook los te downloaden; een
+  test bewaakt dat elke standaardwidget erin staat.
 - **Inrichting: beslistabel.** De pagina van een DMN toont de beslistabel als
   tabel: per invoer een kolom (met expressie en, bij de bron, het veld waar hij
   vandaan komt), dan de uitkomsten, een rij per regel met toelichting, en de

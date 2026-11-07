@@ -6,6 +6,7 @@ const navigation = [
   { href: "/mogelijkheden", label: "Mogelijkheden" },
   { href: "/praktijk", label: "In de praktijk" },
   { href: "/merk", label: "Merkvoorstellen" },
+  { href: "/voor-opdrachtgevers", label: "Website laten bouwen" },
 ];
 
 export function SiteHeader() {
