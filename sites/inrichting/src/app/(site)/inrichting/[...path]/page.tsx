@@ -14,7 +14,7 @@ import { widgetComponents } from "@/widgets/components";
 
 type Props = {
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string }>;
+  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string }>;
 };
 
 async function load({ params, searchParams }: Props) {
@@ -26,6 +26,7 @@ async function load({ params, searchParams }: Props) {
     peiltijdstip: q.peiltijdstip,
     geldigOp: q.geldigOp,
     element: q.element,
+    veld: q.veld,
   });
 }
 

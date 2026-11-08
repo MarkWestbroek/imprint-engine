@@ -30,6 +30,7 @@ export async function omniumPage({
   peiltijdstip,
   geldigOp,
   element,
+  veld,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -39,6 +40,8 @@ export async function omniumPage({
   geldigOp?: string;
   /** A drawing: the element to highlight (`data-element-id`). */
   element?: string;
+  /** With `element`: one field of it (the text with `data-dc-veld`), lit up too. */
+  veld?: string;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -53,7 +56,7 @@ export async function omniumPage({
   }
   if (!located) return null;
 
-  const subject: OmniumSubject = { ...located, omnium: true, prefix, at: { peiltijdstip, geldigOp }, element };
+  const subject: OmniumSubject = { ...located, omnium: true, prefix, at: { peiltijdstip, geldigOp }, element, veld };
   const header = (
     <header className="mb-6">
       <nav className="text-sm text-muted" aria-label="Kruimelpad">

@@ -1586,6 +1586,12 @@ flowchart LR
   - De tekening zet een `<style>` voor dat ene id; alleen ids die in de
     tekening voorkomen, met `[\w:.-]`, dus er komt geen injectie in de CSS.
   - `zoomTo()` zet de viewBox op het vak van het element, met ruimte eromheen.
+  - Bij meer tekeningen kiest `elementLink()` de kleinste waarin het element
+    staat.
+  - Bij een gegevenselement gaat ook het veld mee (`&veld=`, het derde deel
+    van `bronGE`). `markField()` zet een `<rect>` voor de `<text data-dc-veld>`
+    met die naam, alleen binnen dat element.
+  - De rest dimt via CSS: `:not(:has(…))`.
 - **JSON** toont `json-tree.tsx`: `<details>` per object of array, op de
   server, met hoogstens 5000 onderdelen.
 - **Referentielijsten**: velden die naar een referentielijst wijzen

@@ -232,12 +232,17 @@ export class Inrichting {
         if (href && typeof svg === "string") drawings.push({ href, ids: new Set(Array.from(svg.matchAll(/data-element-id="([^"]+)"/g), (m) => m[1]!)) });
       }
     }
+    // The smallest drawing that has the element: a domain diagram of a few blocks reads better than an overview of 87.
+    drawings.sort((x, y) => x.ids.size - y.ids.size);
     return (t) => {
       const parts = (str(t.bronGE) ?? "").split(".");
-      const wanted = [str(t.bronElementId), parts.length >= 2 ? `${parts[0]}_${parts[1]}` : undefined, parts[0]].filter((x): x is string => Boolean(x));
+      const ge = parts.length >= 2 ? `${parts[0]}_${parts[1]}` : undefined;
+      const wanted = [str(t.bronElementId), ge, parts[0]].filter((x): x is string => Boolean(x));
       for (const id of wanted) {
         const d = drawings.find((x) => x.ids.has(id));
-        if (d) return `${d.href}?element=${encodeURIComponent(id)}`;
+        // On a gegevenselement also the field (Entity.GE.veld), lit up within its block.
+        const veld = id === ge && parts[2] ? `&veld=${encodeURIComponent(parts[2])}` : "";
+        if (d) return `${d.href}?element=${encodeURIComponent(id)}${veld}`;
       }
       return undefined;
     };

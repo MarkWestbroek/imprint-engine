@@ -683,9 +683,11 @@ toont wat het register nu weet.
   "1.31.0 (cg-test)"). Een vervangen versie blijft in de lijst staan, zonder
   omgeving.
 - **In de tekening**: klik bij een formuliervraag op het model-element, of in
-  de traceregels op "bekijk". Je komt in de tekening van de bron (het logisch
-  model, of de BPMN of DMN), waar dat element oplicht en in beeld is
-  gezoomd. "Hele tekening" toont alles weer.
+  de traceregels op "bekijk". Je komt in de kleinste tekening van de bron
+  waarin dat element staat (het logisch model, of de BPMN of DMN).
+  - Het element krijgt een rode rand en is in beeld gezoomd; de rest wordt
+    lichter.
+  - Het veld zelf krijgt een gele balk. "Hele tekening" toont alles weer.
 - **Formulier**: op de pagina van een formulier staat per stap een tabel met
   de vragen. Per vraag zie je wanneer hij verschijnt, uit welk deel van het
   model hij komt en waar het antwoord in het objecttype terechtkomt. Daaronder

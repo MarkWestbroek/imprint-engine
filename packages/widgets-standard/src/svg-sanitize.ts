@@ -34,6 +34,8 @@ const ATTRIBUTES = new Set([
   "href", "target", "tabindex", "focusable",
   // The element id the Omnium render service puts on every drawn element (inert data; plugin-omnium highlights by it).
   "data-element-id",
+  // Which field of an element a text is (`velden:N`); plugin-omnium lights up one field.
+  "data-dc-veld",
 ]);
 
 /** Elements that may carry a link (`href`). */

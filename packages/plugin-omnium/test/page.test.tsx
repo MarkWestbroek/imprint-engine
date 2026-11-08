@@ -126,13 +126,20 @@ test("a form: per step the questions, where each comes from in the model and goe
 test("a form field links to its element in the drawing of the logical model, which lights it up", async () => {
   const form = (await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
   const href = "/inrichting/ediensten/gehandicaptenparkeerkaart-aanvragen/versies/0.1.0/bronnen/diagram-weergave/gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht?element=Gpk_Kaart";
-  assert.ok(form.includes(`href="${href.replace("?", "?")}"`), "link from the field to the element");
+  assert.ok(form.includes(`href="${href}&amp;veld=soort"`), "link from the field to the element and the field in it");
   const path = ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0", "bronnen", "diagram-weergave", "gehandicaptenparkeerkaart-aanvragen.logisch-model.overzicht"];
   const lit = (await html((await omniumPage({ path, viewers: omniumViewers, ctx: ctx(), element: "Gpk_Kaart" }))!.render as ReactElement)).replaceAll("<!-- -->", "");
   assert.match(lit, /data-element-id="Gpk_Kaart"/); // kept by the sanitiser
   assert.match(lit, /\[data-element-id="Gpk_Kaart"\] rect/);
   assert.match(lit, /viewBox="-298 -178 604 364"/); // zoomed: the element's box at (2,2), 4×4, with room around it
   assert.match(lit, /Uitgelicht en ingezoomd: Gpk_Kaart/);
+  assert.match(lit, /:not\(:has\(\[data-element-id="Gpk_Kaart"\]\)\) \{ opacity: \.3; \}/); // the rest dimmed
+  // The field: a yellow bar just before its text, in this element only (not the "soort" of the other block).
+  const veld = (await html((await omniumPage({ path, viewers: omniumViewers, ctx: ctx(), element: "Gpk_Kaart", veld: "kenteken" }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  assert.match(veld, /<rect class="omnium-veld"[^>]*\/><text[^>]*data-dc-veld="velden:1"[^>]*>kenteken</);
+  assert.equal(veld.match(/omnium-veld"/g)?.length, 1);
+  assert.match(veld, /class="omnium-veld" x="3" y="[^"]*" width="0"/); // the block's width (4) minus the margins, not its stroke-width
+  assert.match(veld, /Uitgelicht en ingezoomd: Gpk_Kaart, veld kenteken/);
   // Not an id from the drawing, or not a plain id: no style rule at all.
   const odd = await html((await omniumPage({ path, viewers: omniumViewers, ctx: ctx(), element: '"]{}body{display:none' }))!.render as ReactElement);
   assert.doesNotMatch(odd, /<style>/);

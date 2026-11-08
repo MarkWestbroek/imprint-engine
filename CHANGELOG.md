@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: oplichten van het veld.**
+  - Een formulierveld opent nu de kleinste tekening waarin zijn
+    gegevenselement staat. Een domeindiagram gaat zo voor het grote overzicht.
+  - Het veld zelf krijgt een gele balk, en de rest van de tekening wordt
+    lichter.
+  - Inzoomen nam de breedte van een blok soms uit `stroke-width`; dat is
+    hersteld.
+  - `sanitizeSvg` laat `data-dc-veld` staan.
 - **Productsite: /voor-opdrachtgevers.** Wat Imprint kan, wat maatwerk is en
   wat niet kan, met een sjabloon voor de eisen; geschreven voor opdrachtgevers
   en hun AI-assistent (in een Claude-project te zetten). Eén bron:

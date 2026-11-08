@@ -423,7 +423,7 @@ function zoomTo(svg: string, id: string): string {
   const at = tag && /translate\(\s*(-?[\d.]+)[ ,]+(-?[\d.]+)\s*\)/.exec(tag[0]);
   if (!tag || !at) return svg;
   const after = svg.slice(tag.index + tag[0].length, tag.index + tag[0].length + 400);
-  const box = /^<rect\b[^>]*\bwidth="([\d.]+)"[^>]*\bheight="([\d.]+)"/.exec(after);
+  const box = /^<rect\b[^>]*\swidth="([\d.]+)"[^>]*\sheight="([\d.]+)"/.exec(after);
   const [x, y] = [Number(at[1]), Number(at[2])];
   const [w, h] = box ? [Number(box[1]), Number(box[2])] : [60, 60];
   const pad = Math.max(w, h, 200) * 1.5;
@@ -431,18 +431,48 @@ function zoomTo(svg: string, id: string): string {
   return svg.replace(/(<svg\b[^>]*?\bviewBox=")[^"]*(")/, `$1${view}$2`);
 }
 
-/** One drawing from the register, sanitised (allow-list) before it goes inline; `element` is lit up and zoomed to. */
-function Svg({ payload, element }: { payload: unknown; element?: string }) {
+/**
+ * A yellow bar behind one field of the lit element: the `<text data-dc-veld>`
+ * whose text is `veld`, inside that element's group. The bar is a `<rect>` we
+ * write ourselves (numbers from the drawing), put just before the text.
+ */
+export function markField(svg: string, id: string, veld: string): string {
+  const start = svg.indexOf(`data-element-id="${id}"`);
+  if (start < 0) return svg;
+  const box = /<rect\b[^>]*\swidth="([\d.]+)"/.exec(svg.slice(start, start + 400));
+  const re = /<text\b([^>]*\bdata-dc-veld="[^"]*"[^>]*)>([^<]*)<\/text>/g;
+  // Only within this element: up to the next drawn element.
+  const next = svg.indexOf("data-element-id=", start + 20);
+  const end = next < 0 ? svg.length : next;
+  re.lastIndex = start;
+  for (let m = re.exec(svg); m && m.index < end; m = re.exec(svg)) {
+    if (m[2]!.trim() !== veld) continue;
+    const y = Number(/\by="(-?[\d.]+)"/.exec(m[1]!)?.[1]);
+    const size = Number(/\bfont-size="([\d.]+)"/.exec(m[1]!)?.[1] ?? 11);
+    if (!Number.isFinite(y)) return svg;
+    const width = box ? Number(box[1]) - 4 : 200;
+    const bar = `<rect class="omnium-veld" x="3" y="${y - size - 1}" width="${width}" height="${size + 6}" rx="3" fill="#fde047"/>`;
+    return svg.slice(0, m.index) + bar + svg.slice(m.index);
+  }
+  return svg;
+}
+
+/** One drawing from the register, sanitised (allow-list) before it goes inline; `element` is lit up and zoomed to, the rest dimmed. */
+function Svg({ payload, element, veld }: { payload: unknown; element?: string; veld?: string }) {
   const clean = typeof payload === "string" ? sanitizeSvg(payload) : null;
   if (!clean) return <Note>Deze tekening is geen SVG die veilig getoond kan worden.</Note>;
   const lit = element && ELEMENT_ID.test(element) && clean.includes(`data-element-id="${element}"`) ? element : undefined;
-  const svg = lit ? zoomTo(clean, lit) : clean;
-  const shapes = ["rect", "circle", "ellipse", "polygon", "path"].map((s) => `.omnium-svg [data-element-id="${lit}"] ${s}`).join(", ");
+  let svg = lit ? zoomTo(clean, lit) : clean;
+  if (lit && veld && ELEMENT_ID.test(veld)) svg = markField(svg, lit, veld);
+  const on = `[data-element-id="${lit}"]`;
+  const shapes = ["rect", "circle", "ellipse", "polygon", "path"].map((s) => `.omnium-svg ${on} ${s}:not(.omnium-veld)`).join(", ");
   return (
     <>
       {lit && (
         <style>{`${shapes} { stroke: #e11d48 !important; stroke-width: 4px !important; }
-.omnium-svg [data-element-id="${lit}"] > rect:first-of-type { fill: #fff1c2 !important; }`}</style>
+.omnium-svg ${on} > rect:first-of-type { fill: #fff1c2 !important; }
+.omnium-svg [data-element-id]:not(${on}):not(:has(${on})) { opacity: .3; }
+.omnium-svg ${on} [data-element-id] { opacity: 1; }`}</style>
       )}
       <div
         className="omnium-svg overflow-auto rounded-lg border border-line bg-white p-2 [&_svg]:h-auto [&_svg]:max-w-full"
@@ -480,12 +510,13 @@ export async function OmniumTekening({ config: raw, subject }: { config: unknown
                   <Link href={t.href} className="underline-offset-2 hover:underline">{t.title}</Link>
                 </figcaption>
               ) : null}
-              <Svg payload={t.payload} element={subject.element} />
+              <Svg payload={t.payload} element={subject.element} veld={subject.veld} />
               {subject.element && t.payload && !String(t.payload).includes(`data-element-id="${subject.element}"`) ? (
                 <p className="text-xs text-muted">“{subject.element}” staat niet in deze tekening.</p>
               ) : subject.element ? (
                 <p className="text-xs text-muted">
-                  Uitgelicht en ingezoomd: {subject.element} ·{" "}
+                  Uitgelicht en ingezoomd: {subject.element}
+                  {subject.veld ? `, veld ${subject.veld}` : ""} ·{" "}
                   <Link href={subject.href} className="underline-offset-2 hover:underline">
                     hele tekening
                   </Link>
