@@ -252,7 +252,10 @@ export class Inrichting {
       for (const id of wanted) {
         const d = drawings.findIndex((x) => x.ids.has(id));
         if (d < 0) continue;
-        const veld = id === ge && parts[2] ? parts[2] : undefined;
+        // The field: on a hit by name the third part of bronGE; on a hit by bronElementId (the Studio
+        // id of the GE, which survives a rename of the entity, TRANSFORMATIES 8-11-2026) the last
+        // part, also over a relation path (Aanvraag.AanvraagPartij.Partij.PartijNatuurlijkPersoon.bsn).
+        const veld = id === ge && parts[2] ? parts[2] : id === str(t.bronElementId) && parts.length >= 3 ? parts.at(-1) : undefined;
         return { d, id, veld, href: `${drawings[d]!.href}?element=${encodeURIComponent(id)}${veld ? `&veld=${encodeURIComponent(veld)}` : ""}` };
       }
       return undefined;

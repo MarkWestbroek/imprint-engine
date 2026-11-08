@@ -1607,6 +1607,11 @@ flowchart LR
   `<tekening>?element=<id>`.
   - Als id dient `bronElementId`, anders `Entity_GE` of `Entity` uit
     `bronGE`. Zo noemt de render-service ze in `data-element-id`.
+  - `bronElementId` is het Studio-id van het GE (`<entiteit-id>_<GE-id>`).
+    Het blijft gelijk als een entiteit een andere naam krijgt; `bronGE`
+    bevat de namen en verandert dan wel mee. Bij een treffer via
+    `bronElementId` is het veld het laatste deel van `bronGE`, ook bij een
+    pad over een relatie.
   - De tekening zet een `<style>` voor dat ene id; alleen ids die in de
     tekening voorkomen, met `[\w:.-]`, dus er komt geen injectie in de CSS.
   - `zoomTo()` zet de viewBox op het vak van het element, met ruimte eromheen.

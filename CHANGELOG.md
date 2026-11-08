@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: veldmarkering ook na het hernoemen van een entiteit.** Een
+  modellink gaat via het Studio-id (`bronElementId`), dat bij een andere
+  naam gelijk blijft. Het veld komt uit het laatste deel van `bronGE`, ook
+  bij een pad over een relatie.
 - **Inrichting: zoomen in het tekeningvenster, en het venster verplaatsen of
   van maat veranderen.** Zoom met het muiswiel of met − en +, en sleep de
   tekening om te schuiven. *Element* en *hele tekening* gaan terug naar een

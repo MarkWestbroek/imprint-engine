@@ -174,3 +174,15 @@ test("material time: a corrected einde (the old occurrence withdrawn), as a list
   assert.equal(validAt({ einde: [{ datum: "2026-11-08", versie: 1 }, { datum: "2026-11-07", versie: 2 }] }, today), false); // highest versie
   assert.equal(validAt({ einde: { datum: "2026-11-08" } }, today), true);
 });
+
+test("elementFinder: by bronElementId (the Studio id, kept on a rename) the field is the last part of bronGE", async () => {
+  const i = new Inrichting(register());
+  const form = (await i.list("artefacten")).find((a) => i.identifier(a) === "gpk-aanvraag")!;
+  const { find } = await i.elementFinder(form);
+  // The entity was renamed: bronGE no longer matches the drawing, bronElementId does.
+  assert.deepEqual(find({ bronElementId: "Gpk_Kaart", bronGE: "Gpkaanvraag.Kaart.soort" })?.veld, "soort");
+  assert.deepEqual(find({ bronElementId: "Gpk_Kaart", bronGE: "Aanvraag.AanvraagKaart.Gpk.Kaart.kenteken" })?.veld, "kenteken"); // over a relation
+  assert.equal(find({ bronElementId: "Gpk_Kaart", bronGE: "Gpk.Kaart" })?.veld, undefined); // the GE itself, no field
+  assert.equal(find({ bronGE: "Gpk.Kaart.soort" })?.veld, "soort"); // by name, as before
+  assert.equal(find({ bronElementId: "Gpk_Kaart", bronGE: "Gpkaanvraag.Kaart.soort" })?.id, "Gpk_Kaart");
+});
