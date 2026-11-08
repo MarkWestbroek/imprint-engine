@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: beëindigde artefacten verdwijnen.** Een artefact met een
+  `einde` (zoals de oude Overzicht-tekeningen) staat na die dag niet meer in
+  de lijsten, en het tekeningvenster kiest er niet meer uit. De historie
+  blijft: met een eerdere peildatum is het er nog.
 - **Inrichting: de tekening als venster boven het formulier.**
   - "Uit het model" opent de tekening in een zwevend venster: ingezoomd,
     met het element en het veld opgelicht. Esc of een klik ernaast sluit

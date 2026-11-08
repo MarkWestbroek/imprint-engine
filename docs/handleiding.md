@@ -696,6 +696,8 @@ toont wat het register nu weet.
   - Het element krijgt een rode rand en is in beeld gezoomd; de rest wordt
     lichter.
   - Het veld zelf krijgt een gele balk. "Hele tekening" toont alles weer.
+  - Een tekening die beëindigd is (een einddatum in het register) telt na
+    die dag niet meer mee en staat ook niet meer in de lijsten.
 - **Formulier**: op de pagina van een formulier staat per stap een tabel met
   de vragen. Per vraag zie je wanneer hij verschijnt, uit welk deel van het
   model hij komt en waar het antwoord in het objecttype terechtkomt. Daaronder

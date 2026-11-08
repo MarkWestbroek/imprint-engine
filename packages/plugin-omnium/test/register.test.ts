@@ -150,3 +150,13 @@ test("humanize: field names as labels", () => {
   assert.equal(humanize("doelVersieRange"), "Doel versie range");
   assert.equal(humanize("artefact_traceregels"), "Artefact traceregels");
 });
+
+test("material time on the record itself: an ended artefact drops out of the lists, but not on a day it still held", async () => {
+  const rows = fixture("artefacten");
+  const ended = { ...rows[0]!, id: 99, einde: [{ artefact_id: 99, datum: "2026-11-08", opvoer: "2026-11-08T10:00:00Z", versie: 1 }] };
+  const fetch: typeof globalThis.fetch = async () => new Response(JSON.stringify({ artefacten: [...rows, ended], has_more: false }));
+  const ids = async (geldigOp: string) => (await new Inrichting(register(fetch), "/inrichting", { geldigOp }).list("artefacten")).map((a) => a.id);
+  assert.ok(!(await ids("2026-11-09")).includes(99));
+  assert.ok((await ids("2026-11-08")).includes(99)); // a day-precision einde is the last day it holds
+  assert.equal(await new Inrichting(register(fetch), "/inrichting", { geldigOp: "2026-11-09" }).byId("artefacten", 99), undefined);
+});

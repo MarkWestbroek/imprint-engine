@@ -1,5 +1,5 @@
 import type { OmniumRegister, ReadMoment } from "./client";
-import { asAt, ge, momentOf, ownIdKey, refId, relation, type FullRecord } from "./register";
+import { asAt, ge, momentOf, ownIdKey, refId, relation, validAt, type FullRecord } from "./register";
 
 /**
  * The inrichting domain (design/omnium-inrichting.md §3.4): which types there
@@ -97,7 +97,9 @@ export class Inrichting {
     let p = this.lists.get(pad);
     if (!p) {
       const at = momentOf(this.at.geldigOp);
-      p = this.register.list(pad, this.at).then((rows) => rows.map((r) => asAt(r, at)));
+      // A record with its own aanvang/einde (an ended drawing, FUNDAMENT 8-11-2026) holds only
+      // within them, like its hubs; ended is not withdrawn, so `geldigOp` still finds it.
+      p = this.register.list(pad, this.at).then((rows) => rows.filter((r) => validAt(r, at)).map((r) => asAt(r, at)));
       this.lists.set(pad, p);
     }
     return p;
