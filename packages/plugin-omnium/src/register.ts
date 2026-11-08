@@ -25,15 +25,19 @@ export function currentVersion(hub: Hub): Version | undefined {
   return best;
 }
 
-type Bound = { datum?: string; opvoer?: string; afvoer?: string };
+type Bound = { datum?: string; opvoer?: string; afvoer?: string; versie?: number };
 
-/** The live `datum` of an `aanvang`/`einde` list (latest opvoer, not withdrawn). */
+/**
+ * The live `datum` of an `aanvang`/`einde`: a list or a single object. A
+ * corrected einde is a new occurrence, the old one gets an afvoer (FUNDAMENT,
+ * 8-11-2026); of the live ones the latest opvoer wins, then the highest versie.
+ */
 function bound(list: unknown): string | undefined {
-  if (!Array.isArray(list)) return undefined;
+  const all = Array.isArray(list) ? list : list && typeof list === "object" ? [list] : [];
   let best: Bound | undefined;
-  for (const m of list as Bound[]) {
-    if (!m?.datum || !m.opvoer || m.afvoer) continue;
-    if (!best || time(m) >= time(best)) best = m;
+  for (const m of all as Bound[]) {
+    if (!m?.datum || m.afvoer) continue;
+    if (!best || time(m) > time(best) || (time(m) === time(best) && (m.versie ?? 0) >= (best.versie ?? 0))) best = m;
   }
   return best?.datum;
 }

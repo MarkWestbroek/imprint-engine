@@ -160,3 +160,17 @@ test("material time on the record itself: an ended artefact drops out of the lis
   assert.ok((await ids("2026-11-08")).includes(99)); // a day-precision einde is the last day it holds
   assert.equal(await new Inrichting(register(fetch), "/inrichting", { geldigOp: "2026-11-09" }).byId("artefacten", 99), undefined);
 });
+
+test("material time: a corrected einde (the old occurrence withdrawn), as a list or a single object", () => {
+  const today = momentOf("2026-11-08");
+  const corrected = {
+    einde: [
+      { datum: "2026-11-08", versie: 1, opvoer: "2026-11-08T10:00:00Z", afvoer: "2026-11-08T12:00:35Z" },
+      { datum: "2026-11-07", versie: 2, opvoer: "2026-11-08T12:00:35Z" },
+    ],
+  };
+  assert.equal(validAt(corrected, today), false);
+  assert.equal(validAt({ einde: { datum: "2026-11-07", versie: 1 } }, today), false); // a single object, no opvoer
+  assert.equal(validAt({ einde: [{ datum: "2026-11-08", versie: 1 }, { datum: "2026-11-07", versie: 2 }] }, today), false); // highest versie
+  assert.equal(validAt({ einde: { datum: "2026-11-08" } }, today), true);
+});

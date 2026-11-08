@@ -1547,6 +1547,9 @@ flowchart LR
     tekening). `Inrichting.list()` laat zo'n record dan weg buiten die
     periode. Beëindigd is niet afgevoerd: op een eerdere `geldigOp` is het er
     nog.
+  - `aanvang`/`einde` kan een lijst of één object zijn. Een gecorrigeerd
+    einde is een nieuw voorkomen en het oude krijgt een afvoer. Van de
+    levende voorkomens telt de laatste `opvoer`, daarna de hoogste `versie`.
 - **Bronnen** (model v3): de richting staat op de artefactsoort (`bron`,
   `gegenereerd` of `weergave`; leeg telt als gegenereerd).
   - `artefact_bronnen` wijst van een resultaat naar zijn bron (rol `bron`) en
