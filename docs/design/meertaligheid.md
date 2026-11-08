@@ -144,7 +144,7 @@ Pools.
 
 ## 7. Keuzes voor Mark
 
-**A. Welke talen in de code?** Voorstel: `nl`, `en` en `pl` nu; een vierde
+**A. Welke talen in de code?** *Besloten 8-11-2026: nl, en en pl.* Voorstel was: `nl`, `en` en `pl` nu; een vierde
 taal is dan één catalogusbestand per package. De Poolse teksten vertaalt
 Claude; iemand die Pools spreekt kijkt ze na voor de oplevering.
 
