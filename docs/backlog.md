@@ -759,8 +759,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       geen gezicht: geen taal-switcher op de site, geen NL-content, en in de
       admin geen taalkeuze-flow (vertaling maken = zelfde slug met
       `lang: nl` opslaan, maar geen knop "vertaal dit item"). Ook nog open:
-      `hreflang`/URL-strategie. **Ontwerp ligt klaar** (beheer-flow, fasering):
-      [design/meertaligheid.md](design/meertaligheid.md). _(should; L)_
+      `hreflang`/URL-strategie. **Ontwerp herzien (8-11-2026)**, vier lagen:
+      basistaal per site, vaste teksten (catalogus nl/en/pl), beheeromgeving
+      per gebruiker, meer talen naast elkaar:
+      [design/meertaligheid.md](design/meertaligheid.md). Aanleiding: een
+      eentalig Poolse site. Wacht op Marks keuzes (§7 daar). _(should; L)_
+      - [ ] Stap A: `locales` + basistaal in lezen/schrijven, `<html lang>`,
+            waarschuwing in de studio. _(S)_
+      - [ ] Stap B: catalogi in widgets-standard, plugins en site-chrome;
+            `formatDate`. _(M)_
+      - [ ] Stap C: beheeromgeving vertaald, taal per gebruiker. _(L)_
+      - [ ] Stap D: vertalingen per item, `/en/`-prefix, `hreflang`. _(M+M+S)_
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_
 - [ ] **W11** Community: links + GitHub Discussions embed. _(should; S)_
 - [ ] **W12** Privacy-vriendelijke analytics (Plausible/Umami). _(should; S)_
