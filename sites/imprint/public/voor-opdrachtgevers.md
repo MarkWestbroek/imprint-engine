@@ -31,6 +31,10 @@ Imprint) bouwen de site daarna. Houd je aan deze regels:
    techniek), zodat we er in vragen en in de code naar kunnen verwijzen.
 6. **Lever het resultaat als één markdownblok** volgens het sjabloon, klaar om
    te kopiëren.
+7. **Spreek de taal van je gebruiker** en schrijf het sjabloon in die taal.
+   De namen van widgets (Hero, Cards, …) blijven Engels: zo heten ze in de
+   studio. Vraag altijd in welke taal of talen de site moet zijn, en welke
+   taal de redacteuren lezen (zie "Taal").
 
 ---
 
@@ -147,10 +151,24 @@ catalogus staan.
 - **E-mail** van de site: bevestigingen, wachtwoordherstel, een dagelijkse
   samenvatting van meldingen.
 - **Hosting door ons**: eigen domeinnaam met HTTPS, database met dagelijkse
-  backup.
+  backup (servers in de EU).
 - **Eigen contenttypen** zijn mogelijk (bijvoorbeeld "Producten",
   "Projecten", "Recepten") met een formulier dat vanzelf uit de velden volgt.
   Dat is wel bouwwerk (zie Maatwerk).
+
+---
+
+## Taal
+
+- **Een site in één taal, welke dan ook (ook Pools), kan.** Alle inhoud typt
+  de redactie zelf: pagina's, menu's, berichten, de naam van de site.
+- **Vaste teksten in de code** (knoppen als "vorige/volgende", datums,
+  inlog- en zoekpagina's) staan nu in het Engels of Nederlands. Voor een
+  andere taal vertalen wij die; dat is klein maatwerk.
+- **De beheeromgeving is Engelstalig** (met hier en daar Nederlands).
+  Redacteuren die geen Engels lezen, hebben het daar lastig. Een vertaalde
+  beheeromgeving is groter maatwerk; vraag ernaar als het nodig is.
+- **Meerdere talen naast elkaar** (taalkeuze, adressen per taal) is maatwerk.
 
 ---
 
@@ -162,10 +180,12 @@ catalogus staan.
 | Een eigen contenttype (bv. "Projecten" met eigen velden en overzicht) | schema + weergave + overzichtspagina | middel |
 | Een nieuwe widget die er nog niet is | schema + weergave | klein tot middel |
 | Een vaste pagina met een bijzondere opbouw (bv. een configurator) | code in de site | middel tot groot |
-| **Webshop met betalen** (iDEAL, kaart via Mollie) | producten, winkelmand, Mollie-checkout, bestellingen, mails | groot; we hebben het eerder gebouwd met Mollie |
+| **Webshop met betalen** (iDEAL, BLIK, Przelewy24, kaart via Mollie) | producten, winkelmand, Mollie-checkout, bestellingen, mails | groot; we hebben het eerder gebouwd met Mollie |
 | Betaalde toegang tot inhoud (bv. video's of foto's kopen) | idem, plus toegang per klant | groot |
 | Contactformulier of inschrijfformulier | formulier + mail of opslag | klein |
 | Koppeling met een ander systeem (agenda, CRM, nieuwsbrief) | API-koppeling | per geval |
+| Vaste teksten van de site in een andere taal (bv. Pools) | vertaling van knoppen, datums, inlog- en zoekpagina's | klein |
+| Beheeromgeving in een andere taal dan Engels | vertaling van de hele admin | groot |
 | Volledig meertalige site (taalkeuze, adressen per taal) | de opslag kent talen, de site nog geen taalwissel | middel |
 | Inhoud overnemen van een oude site | script per bron | per geval |
 
@@ -196,6 +216,8 @@ Vul dit in en stuur het naar je contactpersoon bij Imprint.
 - Domeinnaam (al in bezit?):
 - Gewenste opleverdatum, en waarom die datum:
 - Bestaande site die vervangen wordt (adres):
+- Taal of talen van de site:
+- Welke taal lezen de redacteuren (voor de beheeromgeving)?
 
 ## 3. Pagina's
 Per pagina: adres, doel, en de opbouw in rijen → vakken → widgets.

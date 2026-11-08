@@ -10,7 +10,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   wat niet kan, met een sjabloon voor de eisen; geschreven voor opdrachtgevers
   en hun AI-assistent (in een Claude-project te zetten). Eén bron:
   `sites/imprint/public/voor-opdrachtgevers.md`, ook los te downloaden; een
-  test bewaakt dat elke standaardwidget erin staat.
+  test bewaakt dat elke standaardwidget erin staat. Ook in het Engels en Pools
+  (`.en.md`, `.pl.md`), met een hoofdstuk over taal.
 - **Inrichting: beslistabel.** De pagina van een DMN toont de beslistabel als
   tabel: per invoer een kolom (met expressie en, bij de bron, het veld waar hij
   vandaan komt), dan de uitkomsten, een rij per regel met toelichting, en de

@@ -276,3 +276,4 @@ footer > a:last-child { justify-self: end; display: flex; gap: 5px; align-items:
 .markdown h3 { margin-top: 1.4em; font-size: 22px; }
 .assistant-note { display: grid; gap: 18px; justify-items: start; margin-bottom: 56px; padding: 24px 28px; border: 1px solid var(--ink); background: var(--paper-deep); line-height: 1.6; }
 .assistant-note p { margin: 0; max-width: 720px; }
+.assistant-downloads { display: flex; flex-wrap: wrap; gap: 10px; }

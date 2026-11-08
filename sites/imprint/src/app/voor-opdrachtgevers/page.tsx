@@ -20,6 +20,12 @@ export const metadata: Metadata = {
 };
 
 const FILE = "/voor-opdrachtgevers.md";
+/** The same document in three languages; the AI assistant answers in its user's language anyway. */
+const DOWNLOADS = [
+  { href: FILE, lang: "nl", label: "Nederlands" },
+  { href: "/voor-opdrachtgevers.en.md", lang: "en", label: "English" },
+  { href: "/voor-opdrachtgevers.pl.md", lang: "pl", label: "Polski" },
+];
 
 export default function VoorOpdrachtgeversPage() {
   const source = readFileSync(path.join(process.cwd(), "public", FILE), "utf8");
@@ -43,11 +49,15 @@ export default function VoorOpdrachtgeversPage() {
             <p>
               <strong>Werk je met Claude?</strong> Download dit document en zet het in een <em>Project</em> bij de
               projectkennis. Dan kent elk gesprek in dat project de mogelijkheden van Imprint, en helpt Claude je het
-              sjabloon onderaan in te vullen. Met een andere assistent: plak het document aan het begin van het gesprek.
+              sjabloon onderaan in te vullen. Met een andere assistent: plak het document aan het begin van het gesprek. Ook in het Engels en Pools.
             </p>
-            <a className="button button-dark" href={FILE} download>
-              <Download size={16} /> voor-opdrachtgevers.md
-            </a>
+            <div className="assistant-downloads">
+              {DOWNLOADS.map((d) => (
+                <a key={d.href} className="button button-dark" href={d.href} download hrefLang={d.lang}>
+                  <Download size={16} /> {d.label}
+                </a>
+              ))}
+            </div>
           </aside>
           <article className="markdown">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
