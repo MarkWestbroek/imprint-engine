@@ -8,7 +8,7 @@ namespace: tnt-cg--inrichting
 resources:
   - ../base
 images:
-  - { name: imprint-site, newName: docker.io/markwestbroek/imprint-inrichting, newTag: "0.15.0-33540be" }
+  - { name: imprint-site, newName: docker.io/markwestbroek/imprint-inrichting, newTag: "0.15.0-f316dca" }
 configMapGenerator:
   - name: imprint-config
     options: { disableNameSuffixHash: true }
