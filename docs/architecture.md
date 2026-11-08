@@ -1578,6 +1578,15 @@ flowchart LR
   versies die er draaien via `omgeving_componentversies` (materieel: een
   upgrade zet een einde op de oude koppeling). `draaitVan(component)` en
   `omgevingenVan(versie)` lezen dat op het gekozen moment.
+- **Venster bij het formulier** (`diagram-dialog.tsx`, client).
+  - `OmniumFormulier` zet de tekeningen waar een veld naar wijst één keer in
+    de pagina, gesaneerd, in een `<dialog>`.
+  - `elementFinder()` geeft per traceregel de tekening, het element en het
+    veld; elke vraag krijgt een `id`.
+  - In de browser licht het venster op en zoomt het in op de echte box
+    (`getBoundingClientRect` terug door `getScreenCTM`).
+  - Een klik op `text[data-dc-veld]` zoekt `element|veld` in de rijkaart en
+    springt naar die rij.
 - **Oplichten**: `elementLink()` zoekt bij een traceregel het element in een
   tekening van de bronnen van het artefact, en daarmee
   `<tekening>?element=<id>`.

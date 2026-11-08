@@ -571,16 +571,34 @@ export async function OmniumFormulier({ config: raw, subject }: { config: unknow
     if ((await i.soortcode(subject.record)) !== "formulier") return null;
     const raw = ge(subject.record, "artefact_inhouden")?.payload;
     const payload = typeof raw === "string" ? parseJsonish(raw) : raw;
-    const link = await i.elementLink(subject.record);
+    const finder = await i.elementFinder(subject.record);
+    const used = new Map<number, number>(); // drawing index in the finder → index in the window
     const traces = new Map<string, Trace>(
-      geRows(subject.record, "artefact_traceregels").map((t) => [
-        String(t.doelPad ?? ""),
-        { bronGE: t.bronGE as string | undefined, regel: t.regel as string | undefined, href: link(t) },
-      ])
+      geRows(subject.record, "artefact_traceregels").map((t) => {
+        const at = finder.find(t);
+        if (at && !used.has(at.d)) used.set(at.d, used.size);
+        return [
+          String(t.doelPad ?? ""),
+          {
+            bronGE: t.bronGE as string | undefined,
+            regel: t.regel as string | undefined,
+            href: at?.href,
+            at: at && { d: used.get(at.d)!, id: at.id, veld: at.veld },
+          },
+        ];
+      })
+    );
+    // Only the drawings a field points into go in the page, sanitised like everywhere else.
+    const drawings = await Promise.all(
+      [...used.keys()].map(async (d) => ({
+        title: await i.title("artefacten", finder.drawings[d]!.record),
+        href: finder.drawings[d]!.href,
+        svg: sanitizeSvg(finder.drawings[d]!.svg) ?? "",
+      }))
     );
     return (
       <WidgetFrame title={config.title}>
-        <OpenFormulier payload={payload} traces={traces} />
+        <OpenFormulier payload={payload} traces={traces} drawings={drawings} />
       </WidgetFrame>
     );
   } catch (err) {

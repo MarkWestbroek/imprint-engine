@@ -682,6 +682,14 @@ toont wat het register nu weet.
   boven elk blok resultaten staat welke versie op welke omgeving draait (bv.
   "1.31.0 (cg-test)"). Een vervangen versie blijft in de lijst staan, zonder
   omgeving.
+- **Tekening bij het formulier**: op de pagina van een formulier opent een
+  klik in de kolom *Uit het model* de tekening in een venster boven het
+  formulier, ingezoomd op het veld. Esc (of een klik naast het venster)
+  sluit het.
+  - Klik je in de tekening op een ander veld, dan spring je naar de vraag
+    die daaruit komt. Heeft dat veld geen vraag in dit formulier, dan staat
+    dat erboven.
+  - *Hele tekening* zoomt uit; *als pagina* opent de losse pagina.
 - **In de tekening**: klik bij een formuliervraag op het model-element, of in
   de traceregels op "bekijk". Je komt in de kleinste tekening van de bron
   waarin dat element staat (het logisch model, of de BPMN of DMN).

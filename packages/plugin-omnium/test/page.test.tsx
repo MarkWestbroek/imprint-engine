@@ -145,6 +145,22 @@ test("a form field links to its element in the drawing of the logical model, whi
   assert.doesNotMatch(odd, /<style>/);
 });
 
+test("a form carries its drawing in a window: once, sanitised, with an id on every question row", async () => {
+  const form = (await html((await omniumPage({ path: ["artefacten", "formulier", "openformulieren", "gpk-aanvraag"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
+  const dialog = form.slice(form.indexOf("<dialog"), form.indexOf("</dialog>"));
+  assert.ok(dialog.length > 0, "a <dialog>");
+  assert.equal(form.match(/<dialog/g)?.length, 1);
+  assert.match(dialog, /data-element-id="Gpk_Kaart"/);
+  assert.match(dialog, /data-dc-veld="velden:0"/); // kept by the sanitiser: the window lights up fields by it
+  assert.doesNotMatch(dialog, /<script>alert/);
+  assert.match(dialog, /Esc sluit/);
+  const ids = [...form.matchAll(/<tr id="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(new Set(ids).size, ids.length, "row ids are unique");
+  assert.match(form, /<tr id="vraag-1-formDefinitions-json-\d+-configuration-components-\d+"/);
+  // The link stays a link to the drawing page (a new tab, or no JavaScript).
+  assert.match(form, /<a href="[^"]*overzicht\?element=Gpk_Kaart&amp;veld=soort"/);
+});
+
 test("results are grouped per component in the order of the chain", async () => {
   const v = (await html((await omniumPage({ path: ["ediensten", "gehandicaptenparkeerkaart-aanvragen", "versies", "0.1.0"], viewers: omniumViewers, ctx: ctx() }))!.render as ReactElement)).replaceAll("<!-- -->", "");
   const resultaten = v.slice(v.indexOf(">Resultaten<"), v.indexOf(">Bronnen<"));

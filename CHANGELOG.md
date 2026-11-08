@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: de tekening als venster boven het formulier.**
+  - "Uit het model" opent de tekening in een zwevend venster: ingezoomd,
+    met het element en het veld opgelicht. Esc of een klik ernaast sluit
+    het.
+  - Een klik op een ander veld in de tekening springt naar de vraag die
+    eruit komt (de rij licht even geel op), of meldt dat er geen is.
+  - Openen in een nieuw tabblad geeft nog steeds de losse pagina.
 - **Inrichting: oplichten van het veld.**
   - Een formulierveld opent nu de kleinste tekening waarin zijn
     gegevenselement staat. Een domeindiagram gaat zo voor het grote overzicht.

@@ -221,32 +221,49 @@ export class Inrichting {
    * names them in `data-element-id`. Returns a function, so a table of
    * traceregels looks the drawings up once.
    */
-  async elementLink(a: FullRecord): Promise<(t: Record<string, unknown>) => string | undefined> {
-    const drawings: { href: string; ids: Set<string> }[] = [];
+  /**
+   * The drawings of an artefact's sources (rol bron → their weergaven),
+   * smallest first, and per traceregel the element in one of them: by
+   * `bronElementId`, else `Entity_GE` or `Entity` from `bronGE`; on a
+   * gegevenselement also its field (the third part of `bronGE`).
+   */
+  async elementFinder(a: FullRecord): Promise<{
+    drawings: { record: FullRecord; href: string; ids: Set<string>; svg: string }[];
+    find: (t: Record<string, unknown>) => { d: number; id: string; veld?: string; href: string } | undefined;
+  }> {
+    const drawings: { record: FullRecord; href: string; ids: Set<string>; svg: string }[] = [];
     for (const b of this.bronnenVan(a).filter((x) => x.rol === "bron")) {
       const bron = await this.byId("artefacten", b.id);
       if (!bron) continue;
       for (const t of await this.weergavenVan(bron)) {
         const href = await this.href("artefacten", t);
         const svg = ge(t, "artefact_inhouden")?.payload;
-        if (href && typeof svg === "string") drawings.push({ href, ids: new Set(Array.from(svg.matchAll(/data-element-id="([^"]+)"/g), (m) => m[1]!)) });
+        if (href && typeof svg === "string") drawings.push({ record: t, href, svg, ids: new Set(Array.from(svg.matchAll(/data-element-id="([^"]+)"/g), (m) => m[1]!)) });
       }
     }
     // The smallest drawing that has the element: a domain diagram of a few blocks reads better than an overview of 87.
     drawings.sort((x, y) => x.ids.size - y.ids.size);
-    return (t) => {
+    const find = (t: Record<string, unknown>) => {
       const parts = (str(t.bronGE) ?? "").split(".");
       const ge = parts.length >= 2 ? `${parts[0]}_${parts[1]}` : undefined;
       const wanted = [str(t.bronElementId), ge, parts[0]].filter((x): x is string => Boolean(x));
       for (const id of wanted) {
-        const d = drawings.find((x) => x.ids.has(id));
-        // On a gegevenselement also the field (Entity.GE.veld), lit up within its block.
-        const veld = id === ge && parts[2] ? `&veld=${encodeURIComponent(parts[2])}` : "";
-        if (d) return `${d.href}?element=${encodeURIComponent(id)}${veld}`;
+        const d = drawings.findIndex((x) => x.ids.has(id));
+        if (d < 0) continue;
+        const veld = id === ge && parts[2] ? parts[2] : undefined;
+        return { d, id, veld, href: `${drawings[d]!.href}?element=${encodeURIComponent(id)}${veld ? `&veld=${encodeURIComponent(veld)}` : ""}` };
       }
       return undefined;
     };
+    return { drawings, find };
   }
+
+  /** Per traceregel a link to its element in a drawing of the sources (see `elementFinder`). */
+  async elementLink(a: FullRecord): Promise<(t: Record<string, unknown>) => string | undefined> {
+    const { find } = await this.elementFinder(a);
+    return (t) => find(t)?.href;
+  }
+
 
   /** The drawings of a source: the artefacts that point at it with rol weergave-van (the source has no key back). */
   async weergavenVan(bron: FullRecord): Promise<FullRecord[]> {

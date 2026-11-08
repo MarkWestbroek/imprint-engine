@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ResizableTable } from "./resizable-table";
+import { DiagramDialog, DiagramLink, type Drawing } from "./diagram-dialog";
 
 /**
  * An Open Formulieren form (the export the transformation writes: forms.json,
@@ -17,7 +18,17 @@ import { ResizableTable } from "./resizable-table";
 
 type Obj = Record<string, unknown>;
 type Component = Obj & { key?: string; type?: string; label?: string; components?: Component[]; columns?: { components?: Component[] }[] };
-export type Trace = { bronGE?: string; regel?: string; /** The element in a drawing of the logical model. */ href?: string };
+export type Trace = {
+  bronGE?: string;
+  regel?: string;
+  /** The element in a drawing of the logical model (a page; the window opens instead). */
+  href?: string;
+  /** The same element for the window: drawing index, element id, field. */
+  at?: { d: number; id: string; veld?: string };
+};
+
+/** An id for a form row, from its JSON pointer (the window jumps there). */
+const rowId = (step: number, pointer: string) => `vraag-${step + 1}${pointer.replace(/[^\w-]+/g, "-")}`;
 
 const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
 const obj = (v: unknown): Obj => (v && typeof v === "object" && !Array.isArray(v) ? (v as Obj) : {});
@@ -106,7 +117,11 @@ function Source({ t }: { t?: Trace }) {
   const code = <code className="break-all text-[0.9em]">{t.bronGE}</code>;
   return (
     <span title={t.href ? `${t.regel ?? ""} — toon in het logisch model` : t.regel}>
-      {t.href ? (
+      {t.href && t.at ? (
+        <DiagramLink href={t.href} {...t.at}>
+          {code}
+        </DiagramLink>
+      ) : t.href ? (
         <a href={t.href} className="underline decoration-dotted underline-offset-2 hover:decoration-solid">
           {code}
         </a>
@@ -117,7 +132,7 @@ function Source({ t }: { t?: Trace }) {
   );
 }
 
-export function OpenFormulier({ payload, traces }: { payload: unknown; traces: Map<string, Trace> }) {
+export function OpenFormulier({ payload, traces, drawings = [] }: { payload: unknown; traces: Map<string, Trace>; drawings?: Drawing[] }) {
   const p = obj(payload);
   const form = obj(arr<Obj>(p["forms.json"])[0]);
   const steps = arr<Obj>(p["formSteps.json"]).sort((a, b) => Number(a.index ?? 0) - Number(b.index ?? 0));
@@ -138,8 +153,18 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
     })
   );
   const fieldKeys = new Set<string>();
+  // A field in the drawing (element|veld) → the row of the question that comes from it.
+  const rows: Record<string, string> = {};
+  steps.forEach((step, n) => {
+    const di = definitionOf(step, defs, n);
+    for (const { pointer } of fields(arr<Component>(obj(obj(defs[di]).configuration).components), `/formDefinitions.json/${di}/configuration/components`)) {
+      const at = traces.get(pointer)?.at;
+      if (at?.veld) rows[`${at.id}|${at.veld}`] ??= rowId(n, pointer);
+    }
+  });
 
   return (
+    <DiagramDialog drawings={drawings} rows={rows}>
     <div className="space-y-8 text-sm">
       <dl className="grid grid-cols-[minmax(8rem,auto)_1fr] gap-x-6 gap-y-1">
         <dt className="text-muted">Naam</dt>
@@ -202,7 +227,7 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
                     const to = c.key ? target.get(c.key) : undefined;
                     const extra = [choices(c), condition(c), rules(c)].filter(Boolean).join(" · ");
                     return (
-                      <tr key={pointer} className="border-b border-line/60">
+                      <tr key={pointer} id={rowId(n, pointer)} tabIndex={-1} className="scroll-mt-24 border-b border-line/60 outline-none focus-visible:ring-2">
                         <Td>
                           <span style={{ paddingLeft: `${depth * 1.25}rem` }}>{s(c.label) || <Muted>(zonder label)</Muted>}</span>
                         </Td>
@@ -291,5 +316,6 @@ export function OpenFormulier({ payload, traces }: { payload: unknown; traces: M
         </section>
       )}
     </div>
+    </DiagramDialog>
   );
 }
