@@ -1594,6 +1594,14 @@ flowchart LR
     (`getBoundingClientRect` terug door `getScreenCTM`).
   - Een klik op `text[data-dc-veld]` zoekt `element|veld` in de rijkaart en
     springt naar die rij.
+  - Zoomen en schuiven veranderen alleen de `viewBox`. `zoomBy()` zoomt rond
+    een schermpunt via de inverse `getScreenCTM`. Het wiel loopt via een
+    native listener, omdat die niet passief mag zijn. Slepen boven 4 px is
+    schuiven en geldt dan niet als klik op een veld.
+  - Het venster heeft `position: fixed` met `left`/`top` die bij het slepen
+    aan de kop meeschuiven. De maat volgt `resize: both`. Een klik sluit
+    alleen buiten de rechthoek van het venster, want de resize-hoek hoort
+    ook bij de dialoog.
 - **Oplichten**: `elementLink()` zoekt bij een traceregel het element in een
   tekening van de bronnen van het artefact, en daarmee
   `<tekening>?element=<id>`.

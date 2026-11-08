@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: zoomen in het tekeningvenster, en het venster verplaatsen of
+  van maat veranderen.** Zoom met het muiswiel of met − en +, en sleep de
+  tekening om te schuiven. *Element* en *hele tekening* gaan terug naar een
+  vaste stand. Het venster versleep je aan de kop; met de hoek rechtsonder
+  maak je het groter of kleiner.
 - **Inrichting: beëindigde artefacten verdwijnen.** Een artefact met een
   `einde` (zoals de oude Overzicht-tekeningen) staat na die dag niet meer in
   de lijsten, en het tekeningvenster kiest er niet meer uit. De historie

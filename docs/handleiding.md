@@ -689,7 +689,12 @@ toont wat het register nu weet.
   - Klik je in de tekening op een ander veld, dan spring je naar de vraag
     die daaruit komt. Heeft dat veld geen vraag in dit formulier, dan staat
     dat erboven.
-  - *Hele tekening* zoomt uit; *als pagina* opent de losse pagina.
+  - Zoomen en schuiven gaat vrij: met het muiswiel zoom je rond de muis, en
+    door te slepen schuif je de tekening. Met de knoppen − en + (of de
+    toetsen − en +) zoom je ook. *Element* zoomt weer in op het veld, *hele
+    tekening* (of 0) toont alles. *Als pagina* opent de losse pagina.
+  - Het venster zelf versleep je aan de kop. Met de hoek rechtsonder maak je
+    het groter of kleiner. Opnieuw geopend staat het waar je het liet.
 - **In de tekening**: klik bij een formuliervraag op het model-element, of in
   de traceregels op "bekijk". Je komt in de kleinste tekening van de bron
   waarin dat element staat (het logisch model, of de BPMN of DMN).
