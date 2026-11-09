@@ -98,3 +98,12 @@ test("the version page links to its werkplaats", async () => {
   const p = await omniumPage({ path: base.slice(0, 4), viewers: omniumViewers, ctx: ctx() });
   assert.match(await html(p!.render as ReactElement), /href="\/inrichting\/ediensten\/gehandicaptenparkeerkaart-aanvragen\/versies\/0.1.0\/werkplaats"/);
 });
+
+test("werkplaats: the uitsnede shows what the e-dienstmodel chose and left out (its traceregels gekozen/weggelaten)", async () => {
+  const h = (await page("velden"))!.html;
+  const t = text(h);
+  assert.match(t, /Model van deze dienst 1 velden gekozen · 2 weggelaten/);
+  assert.match(h, /<s>geldigTot<\/s>/); // a left-out field of a used element, struck through
+  assert.match(h, /line-through[^"]*"[^>]*>[\s\S]{0,300}Ander/); // an element left out entirely
+  assert.match(t, /Doorgestreept: wel in het model, door deze dienst weggelaten/);
+});

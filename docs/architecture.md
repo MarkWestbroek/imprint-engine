@@ -1596,6 +1596,11 @@ flowchart LR
     traceregels, voor zover een tekening van het logisch model ze kent) en
     per modelveld welke artefacten eruit komen (`veldSleutel`: element plus
     laatste deel van `bronGE`).
+  - Gekozen en weggelaten: het e-dienstmodel (bronartefact) heeft per
+    modelveld en modelwaarde een traceregel met `actie` gekozen of
+    weggelaten en het Studio-id. `keuzes` houdt dat per element bij; de
+    uitsnede toont gekozen velden gewoon en weggelaten velden of elementen
+    doorgestreept.
   - De stappenbalk is afgeleid, niet opgeslagen: velden = formulier met
     traceregels, proces = BPMN of DMN, genereren = resultaten, uitrollen =
     een geslaagde uitrol. Stap 1 en 2 staan op "nog niet".

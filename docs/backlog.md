@@ -314,8 +314,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             - [x] Eigen formulierweergave uit een neutrale beschrijving
                   (formio via adapter, plus het contract `formulier-neutraal`
                   0.1 van TRANSFORMATIES), "deze keuze raakt" uit de traceregels.
-            - [ ] "Weggelaten" velden zodra het e-dienstmodel per GE de velden
-                  van het model noemt (TRANSFORMATIES).
+            - [x] "Weggelaten" velden (9-11): het e-dienstmodel heeft nu
+                  traceregels met actie gekozen/weggelaten (generatie
+                  2026-11-09a); de uitsnede streept weggelaten delen door.
             - [ ] Verschil tussen generaties zodra het register een generatie
                   aanwijsbaar maakt (generatielabel in ArtefactHerkomst).
             - [ ] Fase B (schrijven naar de Studio, branch), C (jobs), F

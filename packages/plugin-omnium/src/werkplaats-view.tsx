@@ -107,7 +107,7 @@ export async function WerkplaatsView({ subject, stap, vraag, ctx }: { subject: O
           <div className="grid gap-6 rounded-xl border border-line bg-surface p-4 lg:grid-cols-2">{right}</div>
         ) : (
           <div className="grid rounded-xl border border-line bg-surface lg:grid-cols-[1fr_1.25fr_1fr]">
-            <Pane title="Model van deze dienst" sub="uitsnede">
+            <Pane title="Model van deze dienst" sub={data.keuzes.size ? `${data.telling.gekozen} velden gekozen · ${data.telling.weggelaten} weggelaten` : "uitsnede"}>
               <Uitsnede data={data} tekeningen={tekeningen} />
             </Pane>
             <Pane title={titel}>{middle}</Pane>
@@ -172,29 +172,38 @@ function Stappenbalk({ data, base, stap }: { data: WerkplaatsData; base: string;
 
 /** The model elements this service uses, grouped by entity, with the fields; each opens the window. */
 function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Tekening[] }) {
-  if (!data.uitsnede.size) return <p className="text-sm text-muted">Geen traceregels met een modelelement (bronElementId) in het register.</p>;
+  // The elements: those the results read, and those the e-dienstmodel chose or left out (as far as a drawing has them).
+  const inModel = (id: string) => tekeningen.some((t) => t.ids.has(id));
+  const ids = [...new Set([...data.uitsnede.keys(), ...[...data.keuzes.keys()].filter(inModel)])];
+  if (!ids.length) return <p className="text-sm text-muted">Geen traceregels met een modelelement (bronElementId) in het register.</p>;
   // A gegevenselement `Entiteit_GE` under its entity; an entity or relation is a heading itself; generated
   // ids (`el_…`, `enum_…`, `dt_…`) under "Overig", by the name the drawing gives them.
-  type Item = { id: string; naam: string; velden: string[]; d: number; type: string };
-  const groups = new Map<string, { d: number; id?: string; type?: string; items: Item[] }>();
+  type Item = { id: string; naam: string; velden: string[]; weg: string[]; d: number; type: string; uit: boolean };
+  const groups = new Map<string, { d: number; id?: string; type?: string; uit?: boolean; weg?: string[]; items: Item[] }>();
   const group = (naam: string) => {
     if (!groups.has(naam)) groups.set(naam, { d: -1, items: [] });
     return groups.get(naam)!;
   };
-  for (const [id, velden] of data.uitsnede) {
+  for (const id of ids) {
+    const velden = data.uitsnede.get(id) ?? new Set<string>();
+    const k = data.keuzes.get(id);
+    // Left out entirely: nothing chosen and nothing reads it.
+    const uit = !data.uitsnede.has(id) && Boolean(k?.weggelaten.size);
     const d = tekeningen.findIndex((t) => t.ids.has(id));
     const type = tekeningen[d]?.ids.get(id) ?? "";
     const label = tekeningen[d]?.labels.get(id);
     const generated = /^(el|enum|dt|ref)_/.test(id);
     const [entiteit, ...rest] = id.split("_");
-    if (!generated && rest.length === 0) {
-      Object.assign(group(id), { d, id, type });
-      continue;
-    }
-    const naam = generated ? (label ?? id) : rest.join("_");
+    const naam = generated ? (label ?? id) : rest.join("_") || id;
     // A path over a relation can end in the element's own name; that is not a field of it.
     const own = new Set([naam, entiteit].map((x) => x?.toLowerCase()));
-    group(generated ? "Overig" : entiteit!).items.push({ id, naam, velden: [...velden].filter((v) => !own.has(v.toLowerCase())).sort(), d, type });
+    const veld = (v: string) => Boolean(v) && !own.has(v.toLowerCase());
+    const weg = [...(k?.weggelaten ?? [])].filter((v) => veld(v) && !velden.has(v)).sort();
+    if (!generated && rest.length === 0) {
+      Object.assign(group(id), { d, id, type, uit, weg });
+      continue;
+    }
+    group(generated ? "Overig" : entiteit!).items.push({ id, naam, velden: [...velden].filter(veld).sort(), weg, d, type, uit });
   }
   const perTekening = data.modelTekeningen
     .map((t, d) => ({ t, d, set: [...data.uitsnede.keys()].filter((id) => t.ids.has(id)) }))
@@ -204,7 +213,7 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
     <div className="space-y-3 text-sm">
       {[...groups].map(([naam, g]) => (
         <div key={naam} className="rounded-lg border border-line bg-white p-2.5">
-          <p className="font-medium">
+          <p className={`font-medium ${g.uit && !g.items.some((x) => !x.uit) ? "text-muted line-through" : ""}`}>
             {g.id && g.d >= 0 ? (
               <DiagramLink href={tekeningen[g.d]?.href ?? "#"} d={g.d} id={g.id}>
                 {naam}
@@ -214,15 +223,18 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
             )}
             {g.type && g.type !== "entiteit" && <Muted> · {g.type}</Muted>}
           </p>
+          {g.weg && g.weg.length > 0 && <Weg velden={g.weg} />}
           {g.items.length > 0 && (
             <ul className="mt-1 space-y-1">
               {g.items.map((x) => (
-                <li key={x.id}>
+                <li key={x.id} className={x.uit ? "text-muted" : ""}>
                   <DiagramLink href={tekeningen[x.d]?.href ?? "#"} d={x.d} id={x.id}>
-                    {x.naam}
+                    {x.uit ? <span className="line-through">{x.naam}</span> : x.naam}
                   </DiagramLink>
                   {x.type && x.type !== "gegevenselement" && <Muted> · {x.type}</Muted>}
+                  {x.uit && <Muted> · weggelaten</Muted>}
                   {x.velden.length > 0 && <span className="block text-xs text-muted">{x.velden.join(" · ")}</span>}
+                  {!x.uit && x.weg.length > 0 && <Weg velden={x.weg} />}
                 </li>
               ))}
             </ul>
@@ -237,11 +249,25 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
         ))}
       </div>
       <p className="text-xs text-muted">
-        Velden die het model wel heeft maar deze dienst niet gebruikt, komen hier zodra het e-dienstmodel ze per gegevenselement noemt.
+        {data.keuzes.size
+          ? "Doorgestreept: wel in het model, door deze dienst weggelaten (uit het e-dienstmodel)."
+          : "Velden die het model wel heeft maar deze dienst niet gebruikt, komen hier zodra het e-dienstmodel ze per gegevenselement noemt."}
       </p>
     </div>
   );
 }
+
+const Weg = ({ velden }: { velden: string[] }) => (
+  <span className="block text-xs text-muted">
+    <span className="sr-only">weggelaten: </span>
+    {velden.map((v, n) => (
+      <span key={v}>
+        {n > 0 && " · "}
+        <s>{v}</s>
+      </span>
+    ))}
+  </span>
+);
 
 const shortGE = (bronGE?: string) => bronGE?.split(".").slice(-2).join(".");
 

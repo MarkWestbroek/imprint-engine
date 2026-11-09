@@ -74,6 +74,10 @@ export type WerkplaatsData = {
   procesTekeningen: Tekening[];
   /** Per model element (in a drawing of the logical model) the fields used, from all results' traceregels. */
   uitsnede: Map<string, Set<string>>;
+  /** Per model element what the e-dienstmodel chose and left out (its traceregels: actie gekozen/weggelaten). */
+  keuzes: Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>;
+  /** Fields (regel modelveld) chosen and left out. */
+  telling: { gekozen: number; weggelaten: number };
   /** Per model field (`veldSleutel`) the results that come from it, with the traceregels. */
   raakt: Map<string, { artefact: Artefact; traces: Trace[] }[]>;
   uitrollen: FullRecord[];
@@ -192,6 +196,27 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     }
   }
 
+  // What the e-dienstmodel chose from the model, and what it left out (TRANSFORMATIES, generation 2026-11-09a):
+  // its traceregels with actie gekozen/weggelaten, regel modelveld (a field) or modelwaarde (an enum value).
+  const keuzes = new Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>();
+  const telling = { gekozen: 0, weggelaten: 0 };
+  for (const row of model ? geRows(model.record, "artefact_traceregels") : []) {
+    const t = traceOf(row);
+    const actie = s(row.actie);
+    if (!t.bronElementId || (actie !== "gekozen" && actie !== "weggelaten")) continue;
+    const veld = t.bronGE?.split(".").at(-1) ?? "";
+    const k = keuzes.get(t.bronElementId) ?? { gekozen: new Set<string>(), weggelaten: new Set<string>() };
+    k[actie].add(veld);
+    keuzes.set(t.bronElementId, k);
+    if (s(row.regel) === "modelveld") telling[actie]++;
+    // A chosen field belongs to the uitsnede, also when no result reads it yet.
+    if (actie === "gekozen" && inModel.has(t.bronElementId)) {
+      const set = uitsnede.get(t.bronElementId) ?? new Set<string>();
+      if (veld) set.add(veld);
+      uitsnede.set(t.bronElementId, set);
+    }
+  }
+
   const uitrollen: FullRecord[] = [];
   for (const u of await i.list("uitrollen")) if ((await i.versieOfUitrol(u))?.id === versie.id) uitrollen.push(u);
   const geslaagd = uitrollen.some((u) => s(ge(u, "uitrol_verlopen")?.status) === "geslaagd");
@@ -208,6 +233,8 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     modelTekeningen,
     procesTekeningen,
     uitsnede,
+    keuzes,
+    telling,
     raakt,
     uitrollen,
     stand: {

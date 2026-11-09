@@ -108,5 +108,27 @@
     ]
    }
   ]
+ },
+ {
+   "id": 6,
+   "opvoer": "2026-11-06T08:00:00Z",
+   "artefactsoort_gegevens": [
+     {
+       "artefactsoort_id": 6,
+       "rel_id": 1,
+       "opvoer": "2026-11-06T08:00:00Z",
+       "data": [
+         {
+           "artefactsoort_id": 6,
+           "rel_id": 1,
+           "versie": 1,
+           "opvoer": "2026-11-06T08:00:00Z",
+           "code": "edienstmodel",
+           "omschrijving": "E-dienstmodel",
+           "richting": "bron"
+         }
+       ]
+     }
+   ]
  }
 ]

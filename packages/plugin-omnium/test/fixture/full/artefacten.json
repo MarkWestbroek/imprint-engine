@@ -535,5 +535,119 @@
     ]
    }
   ]
+ },
+ {
+   "id": 6,
+   "opvoer": "2026-11-06T08:00:00Z",
+   "artefact_identificaties": [
+     {
+       "artefact_id": 6,
+       "rel_id": 1,
+       "opvoer": "2026-11-06T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 1,
+           "versie": 1,
+           "opvoer": "2026-11-06T08:00:00Z",
+           "soort": 6,
+           "identifier": "gehandicaptenparkeerkaart-aanvragen",
+           "naam": "E-dienstmodel Gehandicaptenparkeerkaart aanvragen",
+           "versienummer": "1"
+         }
+       ]
+     }
+   ],
+   "artefact_inhouden": [
+     {
+       "artefact_id": 6,
+       "rel_id": 1,
+       "opvoer": "2026-11-06T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 1,
+           "versie": 1,
+           "opvoer": "2026-11-06T08:00:00Z",
+           "formaat": 1,
+           "payload": "{\"edienst\":{\"code\":\"gehandicaptenparkeerkaart-aanvragen\"},\"artefacten\":[]}",
+           "payloadHash": "sha256:bron"
+         }
+       ]
+     }
+   ],
+   "artefact_edienstversies": [
+     {
+       "artefact_id": 6,
+       "rel_id": 1,
+       "edienstversie_id": 2,
+       "opvoer": "2026-11-06T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 1,
+           "edienstversie_id": 2,
+           "versie": 1,
+           "opvoer": "2026-11-06T08:00:00Z"
+         }
+       ]
+     }
+   ],
+   "artefact_traceregels": [
+     {
+       "artefact_id": 6,
+       "rel_id": 1,
+       "opvoer": "2026-11-09T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 1,
+           "versie": 1,
+           "opvoer": "2026-11-09T08:00:00Z",
+           "actie": "gekozen",
+           "regel": "modelveld",
+           "bronGE": "Gpk.Kaart.soort",
+           "bronElementId": "Gpk_Kaart",
+           "doelPad": "formulier"
+         }
+       ]
+     },
+     {
+       "artefact_id": 6,
+       "rel_id": 2,
+       "opvoer": "2026-11-09T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 2,
+           "versie": 1,
+           "opvoer": "2026-11-09T08:00:00Z",
+           "actie": "weggelaten",
+           "regel": "modelveld",
+           "bronGE": "Gpk.Kaart.geldigTot",
+           "bronElementId": "Gpk_Kaart",
+           "doelPad": "-"
+         }
+       ]
+     },
+     {
+       "artefact_id": 6,
+       "rel_id": 3,
+       "opvoer": "2026-11-09T08:00:00Z",
+       "data": [
+         {
+           "artefact_id": 6,
+           "rel_id": 3,
+           "versie": 1,
+           "opvoer": "2026-11-09T08:00:00Z",
+           "actie": "weggelaten",
+           "regel": "modelveld",
+           "bronGE": "Ander.x",
+           "bronElementId": "Ander",
+           "doelPad": "-"
+         }
+       ]
+     }
+   ]
  }
 ]

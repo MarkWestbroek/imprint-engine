@@ -11,7 +11,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   panelen: het model van de dienst, de stap en het effect. Het effect toont het
   formulier zoals de inwoner het ziet, de schermen van de behandelaar en wat
   een keuze raakt. Formulieren lopen via een neutrale beschrijving (formio of
-  het nieuwe `formulier-neutraal`), niet vastgepind op Open Formulieren.
+  het nieuwe `formulier-neutraal`), niet vastgepind op Open Formulieren. De
+  uitsnede toont ook wat de dienst uit het model weglaat (doorgestreept).
 - **Inrichting: veldmarkering ook na het hernoemen van een entiteit.** Een
   modellink gaat via het Studio-id (`bronElementId`), dat bij een andere
   naam gelijk blijft. Het veld komt uit het laatste deel van `bronGE`, ook

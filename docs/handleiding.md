@@ -707,7 +707,8 @@ toont wat het register nu weet.
   zeven stappen, met bovenaan de stappenbalk. Een groen vinkje betekent dat
   het register voor die stap al iets heeft. Elke stap heeft drie panelen:
   - **Model van deze dienst**: de delen van het model die deze dienst
-    gebruikt, met hun velden. Een klik opent de tekening; *Toon in diagram*
+    gebruikt, met hun velden. Doorgestreept is wat wel in het model staat
+    maar door deze dienst is weggelaten. Een klik opent de tekening; *Toon in diagram*
     licht alle delen tegelijk op.
   - **De stap** in het midden. Bij *Velden en vragen* staan de vragen per
     formulierstap, met verplicht, voorwaarde en het modelveld waar ze
