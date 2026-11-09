@@ -179,7 +179,7 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
   // A gegevenselement `Entiteit_GE` under its entity; an entity or relation is a heading itself; generated
   // ids (`el_…`, `enum_…`, `dt_…`) under "Overig", by the name the drawing gives them.
   type Item = { id: string; naam: string; velden: string[]; weg: string[]; d: number; type: string; uit: boolean };
-  const groups = new Map<string, { d: number; id?: string; type?: string; uit?: boolean; weg?: string[]; items: Item[] }>();
+  const groups = new Map<string, { d: number; id?: string; type?: string; uit?: boolean; velden?: string[]; weg?: string[]; items: Item[] }>();
   const group = (naam: string) => {
     if (!groups.has(naam)) groups.set(naam, { d: -1, items: [] });
     return groups.get(naam)!;
@@ -200,7 +200,8 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
     const veld = (v: string) => Boolean(v) && !own.has(v.toLowerCase());
     const weg = [...(k?.weggelaten ?? [])].filter((v) => veld(v) && !velden.has(v)).sort();
     if (!generated && rest.length === 0) {
-      Object.assign(group(id), { d, id, type, uit, weg });
+      // An entity or relation can carry fields of its own (AanvraagPartij.partijrol).
+      Object.assign(group(id), { d, id, type, uit, weg, velden: [...velden].filter(veld).sort() });
       continue;
     }
     group(generated ? "Overig" : entiteit!).items.push({ id, naam, velden: [...velden].filter(veld).sort(), weg, d, type, uit });
@@ -223,6 +224,7 @@ function Uitsnede({ data, tekeningen }: { data: WerkplaatsData; tekeningen: Teke
             )}
             {g.type && g.type !== "entiteit" && <Muted> · {g.type}</Muted>}
           </p>
+          {g.velden && g.velden.length > 0 && <span className="block text-xs text-muted">{g.velden.join(" · ")}</span>}
           {g.weg && g.weg.length > 0 && <Weg velden={g.weg} />}
           {g.items.length > 0 && (
             <ul className="mt-1 space-y-1">
