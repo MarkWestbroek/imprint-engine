@@ -283,6 +283,8 @@ export async function OmniumLijst({ config: raw, subject, ctx: _ctx }: { config:
       }
       const titled = await Promise.all(records.map(async (r) => ({ r, t: await i.title(config.pad!, r) })));
       titled.sort((a, b) => a.t.localeCompare(b.t, "nl"));
+      // Uitrollen: newest first (Mark 10-11-2026), by start time.
+      if (config.pad === "uitrollen") titled.sort((a, b) => (i.gestartOp(b.r) ?? "").localeCompare(i.gestartOp(a.r) ?? ""));
       const cols = config.pad === "artefacten" && config.richting === "bron" ? BRON_COLUMNS : COLUMNS[config.pad];
       if (config.pad === "artefacten" && config.groepeer === "component" && titled.length) {
         const keyed = await Promise.all(

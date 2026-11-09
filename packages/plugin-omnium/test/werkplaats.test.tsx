@@ -138,3 +138,22 @@ test("werkplaats step 6: results grouped by generation (ArtefactHerkomst.generat
     globalThis.fetch = real;
   }
 });
+
+test("uitrollen: newest first (Mark 10-11)", async () => {
+  const real = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    const res = await real(input, init);
+    if (!String(input).includes("/full/uitrollen")) return res;
+    const body = (await res.json()) as { uitrollen: Record<string, unknown>[] };
+    const later = JSON.parse(JSON.stringify(body.uitrollen[0]).replaceAll("2026-11-05T10:00:0", "2026-11-07T09:00:0"));
+    later.id = 99;
+    body.uitrollen.push(later);
+    return new Response(JSON.stringify(body));
+  }) as typeof fetch;
+  try {
+    const t = text((await page("uitrollen"))!.html);
+    assert.match(t, /Uitrol 2026-11-07T09:00:0\dZ[\s\S]*Uitrol 2026-11-05T10:00:00Z/);
+  } finally {
+    globalThis.fetch = real;
+  }
+});

@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: uitrollen met de nieuwste bovenaan**, in de werkplaats en op
+  de versiepagina.
 - **Inrichting: de werkplaats per dienst (Fase A, alleen-lezen).** Onder elke
   e-dienstversie staan zeven stappen met een afgeleide stappenbalk en drie
   panelen: het model van de dienst, de stap en het effect. Het effect toont het

@@ -722,7 +722,8 @@ toont wat het register nu weet.
   - *Proces en regels* toont de processen, hun tekeningen en de beslistabel;
     *Voorbeeld* het hele formulier en de behandelschermen naast elkaar;
     *Genereren* de artefacten per generatie en wat er sinds de vorige is
-    veranderd; *Uitrollen* waar het draait.
+    veranderd; *Uitrollen* de uitrollen (nieuwste bovenaan) en waar het
+    draait.
   - Nog alles alleen-lezen. *Basis kiezen* en *Specialiseren* kunnen nog
     niet: er is nog geen catalogus van bases en patronen.
   - Het formulier is een eigen weergave, geen ingebed Open Formulieren. Zo
