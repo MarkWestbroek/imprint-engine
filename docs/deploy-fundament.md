@@ -9,7 +9,7 @@ De eerste is de inrichtings-UI op het Omnium-register
 
 > **Stand (6-11-2026):** de site draait op
 > https://inrichting.fundament.common-ground-lab.nl, met image
-> `0.15.0-60ad2c6` (registerschema v6, werkplaats Fase A). Migratie en beginteksten staan in de database. De pod leest
+> `0.15.0-c30b1ce` (registerschema v7, werkplaats Fase A met generaties). Migratie en beginteksten staan in de database. De pod leest
 > het register met `omnium-lezer`. De backup neemt de database mee, en ook de
 > bucket zodra FUNDAMENT `ensure-backup-secret.ps1` heeft gedraaid.
 
