@@ -41,9 +41,19 @@ export function FormPreview({ form, highlight, compact = false }: { form: Neutra
           {form.steps.length > 1 ? `Stap ${step + 1}: ` : ""}
           {current.title}
         </legend>
-        {current.questions.filter((q) => visible(q, answers)).map((q) => (
-          <Field key={q.pointer} q={q} value={answers[q.key]} set={set} lit={q.key === highlight} compact={compact} />
-        ))}
+        {current.questions.map((q) =>
+          visible(q, answers) ? (
+            <Field key={q.pointer} q={q} value={answers[q.key]} set={set} lit={q.key === highlight} compact={compact} />
+          ) : (
+            // Hidden by its condition: still shown, greyed, with when it appears, so the preview is complete at rest.
+            <div key={q.pointer} className="opacity-50" aria-disabled>
+              <p className="ml-1.5 text-xs italic text-muted">{conditionText(q, form)}</p>
+              <div className="pointer-events-none">
+                <Field q={{ ...q, readOnly: true }} value={undefined} set={set} lit={q.key === highlight} compact={compact} />
+              </div>
+            </div>
+          )
+        )}
       </fieldset>
       {form.steps.length > 1 && (
         <div className="mt-3 flex justify-between">
@@ -62,6 +72,21 @@ export function FormPreview({ form, highlight, compact = false }: { form: Neutra
       )}
     </div>
   );
+}
+
+/** "verschijnt als soort = Bestuurder", in the words of the form (the choice's label, a checkbox as "aangevinkt"). */
+function conditionText(q: Question, form: NeutralForm): string {
+  const c = q.condition;
+  if (!c) return "";
+  const other = form.steps.flatMap((st) => st.questions).find((x) => x.key === c.key);
+  const wie = other?.label || c.key;
+  const wat =
+    other?.type === "checkbox"
+      ? c.eq === "true"
+        ? "is aangevinkt"
+        : "is niet aangevinkt"
+      : `= ${other?.choices.find((x) => x.value === c.eq)?.label ?? c.eq}`;
+  return `${c.show ? "Verschijnt als" : "Verdwijnt als"} “${wie}” ${wat}`;
 }
 
 const input = "mt-1 block w-full rounded border border-line bg-white px-2 py-1 disabled:bg-surface";

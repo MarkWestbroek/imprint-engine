@@ -13,6 +13,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   een keuze raakt. Formulieren lopen via een neutrale beschrijving (formio of
   het nieuwe `formulier-neutraal`), niet vastgepind op Open Formulieren. De
   uitsnede toont ook wat de dienst uit het model weglaat (doorgestreept).
+  Na Marks eerste ronde: een melding dat het nog alleen bekijken is, de
+  weggelaten modelvelden ook in het midden ("Niet in het formulier"), en
+  vragen met een voorwaarde staan in het voorbeeld grijs met wanneer ze
+  verschijnen.
 - **Inrichting: veldmarkering ook na het hernoemen van een entiteit.** Een
   modellink gaat via het Studio-id (`bronElementId`), dat bij een andere
   naam gelijk blijft. Het veld komt uit het laatste deel van `bronGE`, ook

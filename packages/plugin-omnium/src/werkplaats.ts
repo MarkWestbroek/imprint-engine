@@ -76,6 +76,8 @@ export type WerkplaatsData = {
   uitsnede: Map<string, Set<string>>;
   /** Per model element what the e-dienstmodel chose and left out (its traceregels: actie gekozen/weggelaten). */
   keuzes: Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>;
+  /** Per model element its fields (regel modelveld) left out: what could be added to the form later. */
+  weggelatenVelden: Map<string, string[]>;
   /** Fields (regel modelveld) chosen and left out. */
   telling: { gekozen: number; weggelaten: number };
   /** Per model field (`veldSleutel`) the results that come from it, with the traceregels. */
@@ -200,6 +202,7 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
   // its traceregels with actie gekozen/weggelaten, regel modelveld (a field) or modelwaarde (an enum value).
   const keuzes = new Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>();
   const telling = { gekozen: 0, weggelaten: 0 };
+  const weggelatenVelden = new Map<string, string[]>();
   for (const row of model ? geRows(model.record, "artefact_traceregels") : []) {
     const t = traceOf(row);
     const actie = s(row.actie);
@@ -208,7 +211,10 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     const k = keuzes.get(t.bronElementId) ?? { gekozen: new Set<string>(), weggelaten: new Set<string>() };
     k[actie].add(veld);
     keuzes.set(t.bronElementId, k);
-    if (s(row.regel) === "modelveld") telling[actie]++;
+    if (s(row.regel) === "modelveld") {
+      telling[actie]++;
+      if (actie === "weggelaten" && veld) weggelatenVelden.set(t.bronElementId, [...(weggelatenVelden.get(t.bronElementId) ?? []), veld]);
+    }
     // A chosen field belongs to the uitsnede, also when no result reads it yet.
     if (actie === "gekozen" && inModel.has(t.bronElementId)) {
       const set = uitsnede.get(t.bronElementId) ?? new Set<string>();
@@ -234,6 +240,7 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     procesTekeningen,
     uitsnede,
     keuzes,
+    weggelatenVelden,
     telling,
     raakt,
     uitrollen,

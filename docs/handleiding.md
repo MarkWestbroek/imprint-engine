@@ -712,9 +712,12 @@ toont wat het register nu weet.
     licht alle delen tegelijk op.
   - **De stap** in het midden. Bij *Velden en vragen* staan de vragen per
     formulierstap, met verplicht, voorwaarde en het modelveld waar ze
-    vandaan komen. Kies een vraag om te zien wat hij raakt.
+    vandaan komen. Klik op een vraag om te zien wat hij raakt. Onder
+    *Niet in het formulier* staan de velden die het model wel heeft maar
+    deze dienst (nog) niet vraagt.
   - **Effect**: het formulier zoals de inwoner het ziet (probeer de keuzes:
-    een voorwaarde werkt meteen), de schermen van de behandelaar, en
+    een voorwaarde werkt meteen; een vraag die nog niet verschijnt staat
+    grijs, met wanneer hij verschijnt), de schermen van de behandelaar, en
     *Deze keuze raakt*: alle artefacten die uit dat modelveld komen.
   - *Proces en regels* toont de processen, hun tekeningen en de beslistabel;
     *Voorbeeld* het hele formulier en de behandelschermen naast elkaar;

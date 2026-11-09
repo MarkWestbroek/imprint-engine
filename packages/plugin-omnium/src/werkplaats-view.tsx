@@ -103,6 +103,10 @@ export async function WerkplaatsView({ subject, stap, vraag, ctx }: { subject: O
     <DiagramDialog drawings={drawings} rows={rows}>
       <div className="space-y-4">
         <Stappenbalk data={data} base={base} stap={stap} />
+        <p role="note" className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          <strong>Alleen bekijken.</strong> Kiezen en wijzigen komt in een volgende versie; nu ligt de keuze vast in het
+          e-dienstmodel. Het model biedt meer dan deze dienst gebruikt: wat er nog bij kan, staat grijs.
+        </p>
         {stap === "voorbeeld" ? (
           <div className="grid gap-6 rounded-xl border border-line bg-surface p-4 lg:grid-cols-2">{right}</div>
         ) : (
@@ -348,7 +352,7 @@ function Velden({ data, base, vraag, waar, traceOf }: { data: WerkplaatsData; ba
   return (
     <div className="space-y-4 text-sm">
       <p className="text-muted">
-        {aantal} vragen in {list.length} stappen{stappen.length ? ", zoals het e-dienstmodel ze kiest" : ", uit het gegenereerde formulier"}. Kies een vraag om te zien wat hij raakt.
+        {aantal} vragen in {list.length} stappen{stappen.length ? ", zoals het e-dienstmodel ze kiest" : ", uit het gegenereerde formulier"}. Klik op een vraag om te zien wat hij raakt.
       </p>
       {list.map((st, k) => (
         <section key={k}>
@@ -390,6 +394,7 @@ function Velden({ data, base, vraag, waar, traceOf }: { data: WerkplaatsData; ba
           </ul>
         </section>
       ))}
+      <NietInFormulier data={data} />
       {(vast.length > 0 || inlog.length > 0) && (
         <section>
           <h3 className="mb-1 font-medium">Zonder vraag</h3>
@@ -408,6 +413,34 @@ function Velden({ data, base, vraag, waar, traceOf }: { data: WerkplaatsData; ba
         </section>
       )}
     </div>
+  );
+}
+
+/** The model fields the e-dienstmodel left out, per element: greyed, what the form could ask later. */
+function NietInFormulier({ data }: { data: WerkplaatsData }) {
+  if (!data.weggelatenVelden.size) return null;
+  const tekeningen = [...data.modelTekeningen, ...data.procesTekeningen];
+  const naam = (id: string) => {
+    const label = tekeningen.find((t) => t.labels.has(id))?.labels.get(id);
+    if (/^(el|enum|dt|ref)_/.test(id)) return label ?? id;
+    const [e, ...rest] = id.split("_");
+    return rest.length ? `${e} › ${rest.join("_")}` : id;
+  };
+  const list = [...data.weggelatenVelden].sort((a, b) => naam(a[0]).localeCompare(naam(b[0])));
+  return (
+    <section className="text-muted">
+      <h3 className="mb-1 font-medium">Niet in het formulier</h3>
+      <p className="mb-2 text-xs">
+        {list.reduce((n, [, v]) => n + v.length, 0)} velden staan wel in het model, maar dit e-dienstmodel laat ze weg. Die kunnen er later bij.
+      </p>
+      <ul className="space-y-1 rounded-lg border border-dashed border-line p-2 text-xs">
+        {list.map(([id, velden]) => (
+          <li key={id}>
+            <span className="text-foreground/60">{naam(id)}</span>: {[...new Set(velden)].sort().join(" · ")}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
 

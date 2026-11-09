@@ -107,3 +107,13 @@ test("werkplaats: the uitsnede shows what the e-dienstmodel chose and left out (
   assert.match(h, /line-through[^"]*"[^>]*>[\s\S]{0,300}Ander/); // an element left out entirely
   assert.match(t, /Doorgestreept: wel in het model, door deze dienst weggelaten/);
 });
+
+test("werkplaats (Mark 9-11): says it is view-only, lists what the model has but the form leaves out, and shows conditional questions greyed with when they appear", async () => {
+  const t = text((await page("velden"))!.html);
+  assert.match(t, /Alleen bekijken\. Kiezen en wijzigen komt in een volgende versie/);
+  assert.match(t, /Klik op een vraag om te zien wat hij raakt/);
+  assert.match(t, /Niet in het formulier 2 velden staan wel in het model/);
+  assert.match(t, /Ander : x Gpk › Kaart : geldigTot/); // sorted by name
+  // Kenteken only shows for a bestuurder: at rest it is there, greyed, with its condition.
+  assert.match(t, /Verschijnt als “Welke kaart vraagt u aan\?” = Bestuurder Kenteken/);
+});
