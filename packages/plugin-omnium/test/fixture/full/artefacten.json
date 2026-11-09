@@ -283,6 +283,7 @@
       "versie": 1,
       "opvoer": "2026-11-06T08:00:00Z",
       "bronGE": "Gpk.Kaart.soort",
+      "bronElementId": "Gpk_Kaart",
       "regel": "Enum → keuzerondjes",
       "doelPad": "/formDefinitions.json/0/configuration/components/0",
       "actie": "aangemaakt"
@@ -300,6 +301,7 @@
       "versie": 1,
       "opvoer": "2026-11-06T08:00:00Z",
       "bronGE": "Gpk.Kaart.kenteken",
+      "bronElementId": "Gpk_Kaart",
       "regel": "Overig → tekstveld",
       "doelPad": "/formDefinitions.json/0/configuration/components/1",
       "actie": "aangemaakt"

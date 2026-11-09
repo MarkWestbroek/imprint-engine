@@ -9,12 +9,13 @@ import { widgetComponents } from "@/widgets/components";
  * §3.4), rendered with the studio template `_view/omnium-<pad>` or the
  * plugin's built-in view. `?peiltijdstip=` (RFC 3339) and `?geldigOp=` (a
  * date) show the register as it was; on a drawing, `?element=` lights up one
- * element (a form field links there from its traceregel).
+ * element (a form field links there from its traceregel). Under a version,
+ * `/werkplaats/<stap>` is its werkplaats; `?vraag=` selects a question there.
  */
 
 type Props = {
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string }>;
+  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string; vraag?: string }>;
 };
 
 async function load({ params, searchParams }: Props) {
@@ -27,6 +28,7 @@ async function load({ params, searchParams }: Props) {
     geldigOp: q.geldigOp,
     element: q.element,
     veld: q.veld,
+    vraag: q.vraag,
   });
 }
 

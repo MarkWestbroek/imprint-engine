@@ -77,7 +77,15 @@ export class AmbiguousKey extends Error {
 }
 
 /** A record as the site addresses it. */
-export type Located = { pad: Pad; record: FullRecord; title: string; href: string; crumbs: { label: string; href: string }[] };
+export type Located = {
+  pad: Pad;
+  record: FullRecord;
+  title: string;
+  href: string;
+  crumbs: { label: string; href: string }[];
+  /** `/ediensten/<code>/versies/<nr>/werkplaats[/<stap>]`: the werkplaats of the version, at this step ("" = the default). */
+  werkplaats?: string;
+};
 
 /**
  * The register as the site walks it: the lists it needs, loaded once (per
@@ -355,6 +363,9 @@ export class Inrichting {
       found = { pad: "ediensten", candidates: this.byKey(await this.list("ediensten"), this.edienstSleutel, this.edienstNaam, p[1]!) };
     } else if (head === "ediensten" && p.length === 4 && p[2] === "versies") {
       found = { pad: "edienstversies", candidates: await this.versies(p[1]!, p[3]!) };
+    } else if (head === "ediensten" && (p.length === 5 || p.length === 6) && p[2] === "versies" && p[4] === "werkplaats") {
+      // The werkplaats of a version (werkplaats-plan §3); the step is checked by the page.
+      found = { pad: "edienstversies", candidates: await this.versies(p[1]!, p[3]!) };
     } else if (head === "ediensten" && p.length === 6 && p[2] === "versies" && p[4] === "uitrollen") {
       const versies = await this.versies(p[1]!, p[3]!);
       const ids = new Set(versies.map((v) => v.id));
@@ -395,6 +406,7 @@ export class Inrichting {
       title: await this.title(found.pad, record),
       href: `${this.prefix}/${p.map(encodeURIComponent).join("/")}`,
       crumbs: await this.crumbs(p),
+      ...(p[4] === "werkplaats" && found.pad === "edienstversies" ? { werkplaats: p[5] ?? "" } : {}),
     };
   }
 
@@ -413,7 +425,7 @@ export class Inrichting {
     if (p[0] === "ediensten" && p.length >= 4) {
       const [e] = this.byKey(await this.list("ediensten"), this.edienstSleutel, this.edienstNaam, p[1]!);
       const out = [{ label: this.edienstNaam(e) ?? p[1]!, href: at(2) }];
-      if (p.length >= 6) out.push({ label: `versie ${p[3]}`, href: at(4) });
+      if (p.length >= 5) out.push({ label: `versie ${p[3]}`, href: at(4) });
       return out;
     }
     return [];

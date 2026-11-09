@@ -29,3 +29,5 @@ export { OmniumRegister, OmniumRegisterError, registerConfigFromEnv, registerPro
 export { Inrichting, AmbiguousKey, INRICHTING_TYPES, PADS, type Pad, type Located } from "./inrichting";
 export { isOmniumSubject, type OmniumSubject } from "./context";
 export { fromBron, fromXml, BeslistabelView, type Beslistabel } from "./beslistabel";
+export { fromFormio, fromNeutraal, visible, type NeutralForm, type Question, type QuestionType } from "./neutral-form";
+export { werkplaatsData, STAPPEN, isStap, type Stap, type WerkplaatsData } from "./werkplaats";

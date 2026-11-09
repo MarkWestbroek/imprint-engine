@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: de werkplaats per dienst (Fase A, alleen-lezen).** Onder elke
+  e-dienstversie staan zeven stappen met een afgeleide stappenbalk en drie
+  panelen: het model van de dienst, de stap en het effect. Het effect toont het
+  formulier zoals de inwoner het ziet, de schermen van de behandelaar en wat
+  een keuze raakt. Formulieren lopen via een neutrale beschrijving (formio of
+  het nieuwe `formulier-neutraal`), niet vastgepind op Open Formulieren.
 - **Inrichting: veldmarkering ook na het hernoemen van een entiteit.** Een
   modellink gaat via het Studio-id (`bronElementId`), dat bij een andere
   naam gelijk blijft. Het veld komt uit het laatste deel van `bronGE`, ook

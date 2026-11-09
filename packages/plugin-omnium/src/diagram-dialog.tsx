@@ -31,7 +31,8 @@ import {
  */
 
 export type Drawing = { title: string; href: string; svg: string };
-type Target = { d: number; id: string; veld?: string };
+/** What to light up: one element (and its field), or with `set` a whole uitsnede (werkplaats). */
+type Target = { d: number; id: string; veld?: string; set?: string[] };
 type Open = (t: Target) => void;
 
 const Ctx = createContext<Open | null>(null);
@@ -59,16 +60,19 @@ const STYLE = `
 const ZOOM = "rounded border border-line px-2 py-0.5 leading-none text-muted hover:bg-surface hover:text-foreground";
 const SVGNS = "http://www.w3.org/2000/svg";
 
-/** Light up `id` (and its field `veld`) in `svg` and zoom to it; undo what an earlier call did. */
-function light(svg: SVGSVGElement, id: string, veld?: string) {
+/** Light up `id` (and its field `veld`), or every element of `set`, in `svg` and zoom to it; undo what an earlier call did. */
+function light(svg: SVGSVGElement, id: string, veld?: string, set?: string[]) {
   svg.querySelectorAll(".omnium-veld").forEach((r) => r.remove());
   svg.querySelectorAll("[data-lit]").forEach((e) => e.removeAttribute("data-lit"));
   const original = svg.dataset.viewbox ?? svg.getAttribute("viewBox") ?? "";
   svg.dataset.viewbox = original;
   svg.setAttribute("viewBox", original);
-  const el = Array.from(svg.querySelectorAll<SVGGraphicsElement>("[data-element-id]")).find((e) => e.getAttribute("data-element-id") === id);
+  const all = Array.from(svg.querySelectorAll<SVGGraphicsElement>("[data-element-id]"));
+  const want = new Set(set?.length ? set : [id]);
+  const lit = all.filter((e) => want.has(e.getAttribute("data-element-id") ?? ""));
+  const el = lit.find((e) => e.getAttribute("data-element-id") === id) ?? lit[0];
   if (!el) return false;
-  el.setAttribute("data-lit", "");
+  lit.forEach((e) => e.setAttribute("data-lit", ""));
   if (veld) {
     const text = Array.from(el.querySelectorAll<SVGTextElement>("text[data-dc-veld]")).find((t) => t.textContent?.trim() === veld);
     const box = el.querySelector(":scope > rect");
@@ -87,8 +91,14 @@ function light(svg: SVGSVGElement, id: string, veld?: string) {
   }
   // The element's box in the drawing's own units: from the screen back through the SVG's matrix.
   const m = svg.getScreenCTM()?.inverse();
-  const r = el.getBoundingClientRect();
-  if (!m || !r.width) return true;
+  const rects = lit.map((e) => e.getBoundingClientRect()).filter((x) => x.width);
+  if (!m || !rects.length) return true;
+  const r = {
+    left: Math.min(...rects.map((x) => x.left)),
+    top: Math.min(...rects.map((x) => x.top)),
+    right: Math.max(...rects.map((x) => x.right)),
+    bottom: Math.max(...rects.map((x) => x.bottom)),
+  };
   const a = new DOMPoint(r.left, r.top).matrixTransform(m);
   const b = new DOMPoint(r.right, r.bottom).matrixTransform(m);
   const [w, h] = [b.x - a.x, b.y - a.y];
@@ -157,7 +167,7 @@ export function DiagramDialog({ drawings, rows, children }: { drawings: Drawing[
       light(svg, "\u0000");
       return;
     }
-    const found = light(svg, target.id, target.veld);
+    const found = light(svg, target.id, target.veld, target.set);
     svg.parentElement?.classList.toggle("is-lit", found);
   }, [target, whole, refit]);
 
@@ -289,7 +299,7 @@ export function DiagramDialog({ drawings, rows, children }: { drawings: Drawing[
           <strong>{d?.title}</strong>
           {target && (
             <span className="text-muted">
-              {whole ? "hele tekening" : `${target.id}${target.veld ? `, veld ${target.veld}` : ""}`}
+              {whole ? "hele tekening" : target.set?.length ? `${target.set.length} elementen van deze dienst` : `${target.id}${target.veld ? `, veld ${target.veld}` : ""}`}
               {d && (
                 <>
                   {" · "}
@@ -344,17 +354,17 @@ export function DiagramDialog({ drawings, rows, children }: { drawings: Drawing[
 }
 
 /** A link to an element in a drawing that opens the window instead (a plain link without JavaScript, or in a new tab). */
-export function DiagramLink({ href, d, id, veld, title, children }: Target & { href: string; title?: string; children: ReactNode }) {
+export function DiagramLink({ href, d, id, veld, set, title, className, children }: Target & { href: string; title?: string; className?: string; children: ReactNode }) {
   const open = useContext(Ctx);
   return (
     <a
       href={href}
       title={title}
-      className="underline decoration-dotted underline-offset-2 hover:decoration-solid"
+      className={className ?? "underline decoration-dotted underline-offset-2 hover:decoration-solid"}
       onClick={(e) => {
         if (!open || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
         e.preventDefault();
-        open({ d, id, veld });
+        open({ d, id, veld, set });
       }}
     >
       {children}

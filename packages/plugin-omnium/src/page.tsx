@@ -3,8 +3,10 @@ import type { ReactNode } from "react";
 import { DefaultView, type WidgetContext, type WidgetViewers } from "@imprint/runtime-admin";
 import { registerProblem } from "./client";
 import { inrichtingFor, type OmniumSubject } from "./context";
-import { AmbiguousKey, INRICHTING_TYPES, type Pad } from "./inrichting";
+import { AmbiguousKey, INRICHTING_TYPES, type Located, type Pad } from "./inrichting";
 import { OmniumBeslistabel, OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
+import { EERSTE_STAP, isStap } from "./werkplaats";
+import { WerkplaatsView } from "./werkplaats-view";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -31,6 +33,7 @@ export async function omniumPage({
   geldigOp,
   element,
   veld,
+  vraag,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -42,6 +45,8 @@ export async function omniumPage({
   element?: string;
   /** With `element`: one field of it (the text with `data-dc-veld`), lit up too. */
   veld?: string;
+  /** In the werkplaats, step 3: the selected question (its key). */
+  vraag?: string;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -57,22 +62,20 @@ export async function omniumPage({
   if (!located) return null;
 
   const subject: OmniumSubject = { ...located, omnium: true, prefix, at: { peiltijdstip, geldigOp }, element, veld };
-  const header = (
-    <header className="mb-6">
-      <nav className="text-sm text-muted" aria-label="Kruimelpad">
-        <Link href={prefix} className="hover:underline">Inrichting</Link>
-        {located.crumbs.map((c) => (
-          <span key={c.href}>
-            {" › "}
-            <Link href={c.href} className="hover:underline">{c.label}</Link>
-          </span>
-        ))}
-      </nav>
-      <p className="mt-3 text-xs uppercase tracking-wide text-muted">{INRICHTING_TYPES[located.pad].label}</p>
-      <h1 className="text-3xl font-semibold tracking-tight">{located.title}</h1>
-      {peiltijdstip && <p className="mt-1 text-sm text-muted">Zoals het register het op {peiltijdstip} vastlegde.</p>}
-    </header>
-  );
+  if (located.werkplaats !== undefined) {
+    const stap = located.werkplaats || EERSTE_STAP;
+    if (!isStap(stap)) return null;
+    return {
+      title: `Werkplaats ${located.title}`,
+      render: (
+        <article>
+          <Header located={located} prefix={prefix} label="Werkplaats" peiltijdstip={peiltijdstip} />
+          <WerkplaatsView subject={subject} stap={stap} vraag={vraag} ctx={ctx} />
+        </article>
+      ),
+    };
+  }
+  const header = <Header located={located} prefix={prefix} label={INRICHTING_TYPES[located.pad].label} peiltijdstip={peiltijdstip} />;
   return {
     title: located.title,
     render: (
@@ -89,6 +92,25 @@ export async function omniumPage({
       </article>
     ),
   };
+}
+
+function Header({ located, prefix, label, peiltijdstip }: { located: Located; prefix: string; label: string; peiltijdstip?: string }) {
+  return (
+    <header className="mb-6">
+      <nav className="text-sm text-muted" aria-label="Kruimelpad">
+        <Link href={prefix} className="hover:underline">Inrichting</Link>
+        {located.crumbs.map((c) => (
+          <span key={c.href}>
+            {" › "}
+            <Link href={c.href} className="hover:underline">{c.label}</Link>
+          </span>
+        ))}
+      </nav>
+      <p className="mt-3 text-xs uppercase tracking-wide text-muted">{label}</p>
+      <h1 className="text-3xl font-semibold tracking-tight">{located.title}</h1>
+      {peiltijdstip && <p className="mt-1 text-sm text-muted">Zoals het register het op {peiltijdstip} vastlegde.</p>}
+    </header>
+  );
 }
 
 /** Without a template: the record, and what hangs under it. */
@@ -111,6 +133,14 @@ async function BuiltIn({ subject, ctx }: { subject: OmniumSubject; ctx: WidgetCo
   const live = subject.pad === "artefacten" ? await i.liveUrl(subject.record).catch(() => undefined) : undefined;
   return (
     <div className="space-y-8">
+      {subject.pad === "edienstversies" && (
+        <p className="rounded-xl border border-line bg-surface p-4 text-sm">
+          <Link href={`${subject.href}/werkplaats`} className="font-medium text-accent underline-offset-2 hover:underline">
+            Open de werkplaats →
+          </Link>{" "}
+          <span className="text-muted">model, stappen en effect van deze versie naast elkaar</span>
+        </p>
+      )}
       {live && (
         <p className="rounded-xl border border-line bg-surface p-4 text-sm">
           Live:{" "}

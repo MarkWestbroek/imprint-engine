@@ -306,6 +306,20 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] Componentversies (6-11): FUNDAMENT vult ze uit de images in het
             cluster (`scripts/omnium-componentversies.ps1`, opnieuw na een
             upgrade); de plugin toont ze bij componenten en resultaten.
+      - [ ] **Werkplaats per dienst** (Fundament `docs/werkplaats-plan.md`,
+            Mark akkoord 9-11). Fase A, de leesweergave:
+            - [x] Route `…/versies/<nr>/werkplaats/<stap>`, afgeleide
+                  stappenbalk, drie panelen; stap 3, 4, 5, 6 en 7 met inhoud
+                  uit het register, stap 1 en 2 als lege staat (9-11).
+            - [x] Eigen formulierweergave uit een neutrale beschrijving
+                  (formio via adapter, plus het contract `formulier-neutraal`
+                  0.1 van TRANSFORMATIES), "deze keuze raakt" uit de traceregels.
+            - [ ] "Weggelaten" velden zodra het e-dienstmodel per GE de velden
+                  van het model noemt (TRANSFORMATIES).
+            - [ ] Verschil tussen generaties zodra het register een generatie
+                  aanwijsbaar maakt (generatielabel in ArtefactHerkomst).
+            - [ ] Fase B (schrijven naar de Studio, branch), C (jobs), F
+                  (stamdata): zie het plan.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

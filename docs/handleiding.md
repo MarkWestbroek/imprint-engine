@@ -703,6 +703,25 @@ toont wat het register nu weet.
   - Het veld zelf krijgt een gele balk. "Hele tekening" toont alles weer.
   - Een tekening die beëindigd is (een einddatum in het register) telt na
     die dag niet meer mee en staat ook niet meer in de lijsten.
+- **Werkplaats** (bij een e-dienstversie: *Open de werkplaats*): de dienst in
+  zeven stappen, met bovenaan de stappenbalk. Een groen vinkje betekent dat
+  het register voor die stap al iets heeft. Elke stap heeft drie panelen:
+  - **Model van deze dienst**: de delen van het model die deze dienst
+    gebruikt, met hun velden. Een klik opent de tekening; *Toon in diagram*
+    licht alle delen tegelijk op.
+  - **De stap** in het midden. Bij *Velden en vragen* staan de vragen per
+    formulierstap, met verplicht, voorwaarde en het modelveld waar ze
+    vandaan komen. Kies een vraag om te zien wat hij raakt.
+  - **Effect**: het formulier zoals de inwoner het ziet (probeer de keuzes:
+    een voorwaarde werkt meteen), de schermen van de behandelaar, en
+    *Deze keuze raakt*: alle artefacten die uit dat modelveld komen.
+  - *Proces en regels* toont de processen, hun tekeningen en de beslistabel;
+    *Voorbeeld* het hele formulier en de behandelschermen naast elkaar;
+    *Genereren* en *Uitrollen* wat er gegenereerd is en waar het draait.
+  - Nog alles alleen-lezen. *Basis kiezen* en *Specialiseren* kunnen nog
+    niet: er is nog geen catalogus van bases en patronen.
+  - Het formulier is een eigen weergave, geen ingebed Open Formulieren. Zo
+    zie je wat er gegenereerd is, ook als het nog niet is uitgerold.
 - **Formulier**: op de pagina van een formulier staat per stap een tabel met
   de vragen. Per vraag zie je wanneer hij verschijnt, uit welk deel van het
   model hij komt en waar het antwoord in het objecttype terechtkomt. Daaronder

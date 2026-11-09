@@ -1585,6 +1585,28 @@ flowchart LR
   versies die er draaien via `omgeving_componentversies` (materieel: een
   upgrade zet een einde op de oude koppeling). `draaitVan(component)` en
   `omgevingenVan(versie)` lezen dat op het gekozen moment.
+- **Werkplaats** (werkplaatsplan Fase A; `werkplaats.ts`, `werkplaats-view.tsx`).
+  - Route onder de sleutelpaden: `locate()` herkent
+    `ediensten/<code>/versies/<nr>/werkplaats[/<stap>]` en geeft de versie
+    met `werkplaats: <stap>`; `omniumPage()` rendert dan `WerkplaatsView`
+    in plaats van de template. De gekozen vraag is `?vraag=<key>`.
+  - `werkplaatsData()` laadt alles één keer: de artefacten van de versie,
+    het formulier, het e-dienstmodel, de tekeningen (logisch model apart van
+    proces en beslissingen), de uitsnede (`bronElementId` uit alle
+    traceregels, voor zover een tekening van het logisch model ze kent) en
+    per modelveld welke artefacten eruit komen (`veldSleutel`: element plus
+    laatste deel van `bronGE`).
+  - De stappenbalk is afgeleid, niet opgeslagen: velden = formulier met
+    traceregels, proces = BPMN of DMN, genereren = resultaten, uitrollen =
+    een geslaagde uitrol. Stap 1 en 2 staan op "nog niet".
+  - Formulieren gaan via een neutrale vorm (`neutral-form.ts`):
+    `fromNeutraal()` leest het artefact `formulier-neutraal` (contract 0.1 van
+    TRANSFORMATIES), `fromFormio()` een Open Formulieren-export of een gewoon
+    Form.io-formulier (de GZAC-schermen). `FormPreview` (client) rendert die
+    vorm met werkende voorwaarden, zonder versturen. Inbedden kan niet: OF
+    stuurt `frame-ancestors 'none'`.
+  - Het tekeningvenster kan een verzameling oplichten (`set`), voor *Toon in
+    diagram*.
 - **Venster bij het formulier** (`diagram-dialog.tsx`, client).
   - `OmniumFormulier` zet de tekeningen waar een veld naar wijst één keer in
     de pagina, gesaneerd, in een `<dialog>`.

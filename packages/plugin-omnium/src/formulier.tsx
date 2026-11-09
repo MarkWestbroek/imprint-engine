@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ResizableTable } from "./resizable-table";
 import { DiagramDialog, DiagramLink, type Drawing } from "./diagram-dialog";
+import { arr, definitionOf, fields, obj, s } from "./neutral-form";
 
 /**
  * An Open Formulieren form (the export the transformation writes: forms.json,
@@ -29,10 +30,6 @@ export type Trace = {
 
 /** An id for a form row, from its JSON pointer (the window jumps there). */
 const rowId = (step: number, pointer: string) => `vraag-${step + 1}${pointer.replace(/[^\w-]+/g, "-")}`;
-
-const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
-const obj = (v: unknown): Obj => (v && typeof v === "object" && !Array.isArray(v) ? (v as Obj) : {});
-const s = (v: unknown) => (typeof v === "string" ? v : v === undefined || v === null ? "" : String(v));
 
 /** Form.io types in words. */
 const TYPES: Record<string, string> = {
@@ -63,21 +60,6 @@ const TYPES: Record<string, string> = {
   addressNL: "adres",
 };
 
-type Field = { pointer: string; depth: number; c: Component };
-
-/** The components of a definition, depth-first, each with its JSON pointer. */
-function fields(components: Component[], base: string, depth = 0): Field[] {
-  return components.flatMap((c, n) => {
-    const pointer = `${base}/${n}`;
-    const own: Field = { pointer, depth, c };
-    const children = fields(arr<Component>(c.components), `${pointer}/components`, depth + 1);
-    const cols = arr<{ components?: Component[] }>(c.columns).flatMap((col, k) =>
-      fields(arr<Component>(col.components), `${pointer}/columns/${k}/components`, depth + 1)
-    );
-    return [own, ...children, ...cols];
-  });
-}
-
 function condition(c: Component): string {
   const cond = obj(c.conditional);
   if (!cond.when) return "";
@@ -100,13 +82,6 @@ const choices = (c: Component) =>
     .map((v) => s(v.label) || s(v.value))
     .filter(Boolean)
     .join(", ");
-
-/** The step's definition: by the uuid at the end of its form_definition URL, else by position. */
-function definitionOf(step: Obj, defs: Obj[], n: number): number {
-  const url = s(step.form_definition);
-  const i = defs.findIndex((d) => s(d.uuid) && url.endsWith(s(d.uuid)));
-  return i >= 0 ? i : n;
-}
 
 const Th = ({ children }: { children: ReactNode }) => <th className="py-2 pr-4 font-medium">{children}</th>;
 const Td = ({ children }: { children: ReactNode }) => <td className="py-2 pr-4 align-top">{children}</td>;
