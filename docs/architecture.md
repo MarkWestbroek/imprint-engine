@@ -1601,6 +1601,11 @@ flowchart LR
     weggelaten en het Studio-id. `keuzes` houdt dat per element bij; de
     uitsnede toont gekozen velden gewoon en weggelaten velden of elementen
     doorgestreept.
+  - Generaties (registerschema 7): `ArtefactHerkomst` heeft `generatie`,
+    `studioProjectId` en `totVolgnummer`. Stap 6 groepeert de resultaten per
+    generatie (zonder label achteraan). Het verschil vergelijkt per artefact
+    `payloadHash` van de huidige en de vorige inhoudsversie; heeft de vorige
+    herkomst geen label, dan heet ze "vóór <label>".
   - De stappenbalk is afgeleid, niet opgeslagen: velden = formulier met
     traceregels, proces = BPMN of DMN, genereren = resultaten, uitrollen =
     een geslaagde uitrol. Stap 1 en 2 staan op "nog niet".

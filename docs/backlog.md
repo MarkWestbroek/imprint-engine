@@ -317,8 +317,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             - [x] "Weggelaten" velden (9-11): het e-dienstmodel heeft nu
                   traceregels met actie gekozen/weggelaten (generatie
                   2026-11-09a); de uitsnede streept weggelaten delen door.
-            - [ ] Verschil tussen generaties zodra het register een generatie
-                  aanwijsbaar maakt (generatielabel in ArtefactHerkomst).
+            - [x] Generaties (9-11, registerschema 7): stap 6 groepeert per
+                  `ArtefactHerkomst.generatie` en vergelijkt de inhoud met de
+                  vorige versie. Echt oud-tegen-nieuw per label vanaf de
+                  volgende generatie.
             - [ ] Fase B (schrijven naar de Studio, branch), C (jobs), F
                   (stamdata): zie het plan.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook

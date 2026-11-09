@@ -16,7 +16,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   Na Marks eerste ronde: een melding dat het nog alleen bekijken is, de
   weggelaten modelvelden ook in het midden ("Niet in het formulier"), en
   vragen met een voorwaarde staan in het voorbeeld grijs met wanneer ze
-  verschijnen.
+  verschijnen. Stap 6 groepeert per generatie (het nieuwe generatielabel in
+  het register) en toont welke artefacten sinds de vorige inhoud veranderd zijn.
 - **Inrichting: veldmarkering ook na het hernoemen van een entiteit.** Een
   modellink gaat via het Studio-id (`bronElementId`), dat bij een andere
   naam gelijk blijft. Het veld komt uit het laatste deel van `bronGE`, ook

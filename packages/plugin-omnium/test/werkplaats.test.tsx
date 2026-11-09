@@ -117,3 +117,24 @@ test("werkplaats (Mark 9-11): says it is view-only, lists what the model has but
   // Kenteken only shows for a bestuurder: at rest it is there, greyed, with its condition.
   assert.match(t, /Verschijnt als “Welke kaart vraagt u aan\?” = Bestuurder Kenteken/);
 });
+
+test("werkplaats step 6: results grouped by generation (ArtefactHerkomst.generatie), unlabeled last", async () => {
+  const real = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    const res = await real(input, init);
+    if (!String(input).includes("/full/artefacten")) return res;
+    const body = (await res.json()) as { artefacten: Record<string, unknown>[] };
+    const form = body.artefacten.find((a) => a.id === 3)!;
+    const v = { artefact_id: 3, rel_id: 9, versie: 1, opvoer: "2026-11-09T10:00:00Z", generatie: "2026-11-09a", totVolgnummer: 4473, regelsetId: "canoniek-naar-formulier" };
+    form.artefact_herkomsten = [{ artefact_id: 3, rel_id: 9, opvoer: v.opvoer, data: [v] }];
+    return new Response(JSON.stringify(body));
+  }) as typeof fetch;
+  try {
+    const t = text((await page("genereren"))!.html);
+    assert.match(t, /Generatie 2026-11-09a · 1 artefacten · uit de Studio tot op wijziging 4473 openformulieren Formulier GPK-aanvraag/);
+    assert.match(t, /Zonder generatielabel · 1 artefacten openzaak Zaaktype Aanvraag/);
+    assert.match(t, /Generatie 2026-11-09a is de eerste met een label/);
+  } finally {
+    globalThis.fetch = real;
+  }
+});

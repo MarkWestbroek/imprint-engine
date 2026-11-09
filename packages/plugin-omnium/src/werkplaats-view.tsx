@@ -485,17 +485,61 @@ function generaties(a: Artefact): { nu?: Record<string, unknown>; vorige?: Recor
   return { nu: versions[0], vorige: versions[1] };
 }
 
+/** The generation an artefact belongs to (ArtefactHerkomst.generatie, schema 7), and up to which Studio op it read. */
+const generatieVan = (a: Artefact) => {
+  const h = ge(a.record, "artefact_herkomsten");
+  return { label: typeof h?.generatie === "string" ? h.generatie : undefined, tot: h?.totVolgnummer as number | undefined };
+};
+
+/** The previous generation's label of an artefact: an earlier herkomst version, "vóór <label>" when it had none. */
+function vorigeGeneratie(a: Artefact): string | undefined {
+  const versions = currentHubs(a.record, "artefact_herkomsten")
+    .flatMap((h) => (Array.isArray(h.data) ? (h.data as Record<string, unknown>[]) : []))
+    .filter((v) => v.opvoer)
+    .sort((x, y) => String(y.opvoer).localeCompare(String(x.opvoer)));
+  const prev = versions[1];
+  if (!prev) return undefined;
+  return typeof prev.generatie === "string" ? prev.generatie : `vóór ${generatieVan(a).label ?? "het label"}`;
+}
+
 function Genereren({ data }: { data: WerkplaatsData }) {
-  const byComponent = new Map<string, Artefact[]>();
-  for (const a of data.resultaten) byComponent.set(a.component ?? "—", [...(byComponent.get(a.component ?? "—") ?? []), a]);
+  // Per generation (newest first), within it per component; artefacts without a label last.
+  const perGeneratie = new Map<string, Artefact[]>();
+  for (const a of data.resultaten) {
+    const g = generatieVan(a).label ?? "";
+    perGeneratie.set(g, [...(perGeneratie.get(g) ?? []), a]);
+  }
+  const generaties = [...perGeneratie].sort(([x], [y]) => (x === "" ? 1 : y === "" ? -1 : y.localeCompare(x)));
   return (
     <div className="space-y-4 text-sm">
       <p className="text-muted">
         {data.resultaten.length} artefacten gegenereerd. Genereren gaat nu nog met de hand (TRANSFORMATIES); als dienst komt het in Fase C.
       </p>
+      {generaties.map(([g, lijst]) => (
+        <section key={g || "zonder"} className="space-y-3">
+          <h3 className="font-medium">
+            {g ? `Generatie ${g}` : "Zonder generatielabel"}
+            <Muted>
+              {" "}
+              · {lijst.length} artefacten
+              {g && generatieVan(lijst[0]!).tot !== undefined ? ` · uit de Studio tot op wijziging ${generatieVan(lijst[0]!).tot}` : ""}
+            </Muted>
+          </h3>
+          <GenererenPerComponent list={lijst} />
+        </section>
+      ))}
+    </div>
+  );
+}
+
+function GenererenPerComponent({ list: all }: { list: Artefact[] }) {
+  const byComponent = new Map<string, Artefact[]>();
+  for (const a of all) byComponent.set(a.component ?? "—", [...(byComponent.get(a.component ?? "—") ?? []), a]);
+  return (
+    <>
       {[...byComponent].map(([c, list]) => (
         <section key={c}>
-          <h3 className="mb-1 font-medium">{c}</h3>
+          <h4 className="mb-1 text-xs uppercase tracking-wide text-muted">{c}</h4>
           <ul className="divide-y divide-line/60 rounded-lg border border-line bg-white">
             {list.map((a) => {
               const { nu } = generaties(a);
@@ -515,7 +559,7 @@ function Genereren({ data }: { data: WerkplaatsData }) {
           </ul>
         </section>
       ))}
-    </div>
+    </>
   );
 }
 
@@ -644,17 +688,29 @@ async function effect({
         return vorige && nu?.payloadHash !== vorige.payloadHash;
       });
       const metVorige = data.resultaten.filter((a) => generaties(a).vorige);
+      const labels = [...new Set(data.resultaten.map((a) => generatieVan(a).label).filter(Boolean))].sort().reverse();
+      const vorige = [...new Set(data.resultaten.map(vorigeGeneratie).filter(Boolean))];
       return (
         <div className="space-y-2 text-sm">
-          <h3 className="font-medium">Verschil met de vorige generatie</h3>
+          <h3 className="font-medium">
+            Verschil met de vorige generatie
+            {labels[0] && (
+              <Muted>
+                {" "}
+                · {labels[0]} tegen {vorige.length ? vorige.join(", ") : `de inhoud van vóór ${labels[0]}`}
+              </Muted>
+            )}
+          </h3>
           {metVorige.length === 0 ? (
             <p className="text-muted">
-              Het register heeft van deze artefacten nog geen vorige inhoud. Een aanwijsbare generatie (werkplaatsplan §5.6) maakt dit verschil per generatie.
+              {labels[0]
+                ? `Generatie ${labels[0]} is de eerste met een label, en de inhoud is sindsdien niet veranderd. Bij de volgende generatie staat hier wat er verschilt.`
+                : "Het register heeft van deze artefacten nog geen vorige inhoud en geen generatielabel."}
             </p>
           ) : (
             <>
               <p>
-                {gewijzigd.length} van {metVorige.length} artefacten veranderd.
+                {gewijzigd.length} van {metVorige.length} artefacten veranderd{gewijzigd.length === 0 ? " (alleen opnieuw vastgelegd)" : ""}.
               </p>
               <ul className="space-y-0.5">
                 {gewijzigd.map((a) => (
