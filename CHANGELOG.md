@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: proefbewerken van het formulier in de werkplaats** (Fase B,
+  laag 1). In stap 3 kun je vragen toevoegen uit het model, weglaten,
+  verplaatsen, verplicht maken, een voorwaarde zetten en labels en stappen
+  hernoemen. Het voorbeeld werkt meteen mee en de wijzigingen staan in een
+  lijst met ongedaan maken. Er wordt nog niets opgeslagen. Een veld dat het
+  model verplicht stelt, kun je niet weglaten.
 - **Inrichting: uitrollen met de nieuwste bovenaan**, in de werkplaats en op
   de versiepagina.
 - **Inrichting: de werkplaats per dienst (Fase A, alleen-lezen).** Onder elke

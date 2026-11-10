@@ -6,6 +6,7 @@ import type { OmniumSubject } from "./context";
 import { inrichtingOf } from "./context";
 import { DiagramDialog, DiagramLink, type Drawing } from "./diagram-dialog";
 import { FormPreview } from "./form-preview";
+import { FormEditor, type Beschikbaar } from "./form-editor";
 import { fromFormio, type NeutralForm, type Question } from "./neutral-form";
 import { currentHubs, ge, geRows } from "./register";
 import { Tabs } from "./tabs";
@@ -60,10 +61,54 @@ function Pane({ title, sub, children }: { title: string; sub?: ReactNode; childr
   );
 }
 
+/** The form to edit: each question with its source in the model (neutral `bron`, else the form's traceregel). */
+function bewerkbaar(data: WerkplaatsData): NeutralForm {
+  const form = data.form!;
+  return {
+    ...form,
+    steps: form.steps.map((st, n) => ({
+      ...st,
+      slug: st.slug || `stap-${n + 1}`,
+      questions: st.questions.map((q) => {
+        if (q.bron?.elementId) return q;
+        const t = data.formTraces.get(q.pointer);
+        const parts = t?.bronGE?.split(".") ?? [];
+        return t?.bronElementId ? { ...q, bron: { elementId: t.bronElementId, veld: parts.at(-1), pad: t.bronGE } } : q;
+      }),
+    })),
+  };
+}
+
+/** What can be added: the model fields this e-dienstmodel leaves out, with their provisional form. */
+function beschikbaar(data: WerkplaatsData): Beschikbaar[] {
+  const out: Beschikbaar[] = [];
+  for (const [elementId, namen] of data.weggelatenVelden) {
+    for (const naam of new Set(namen)) {
+      const mv = data.modelVelden.get(elementId)?.find((v) => v.veld === naam);
+      const entiteit = elementId.split("_")[0]!;
+      if (mv) out.push({ ...mv, entiteit, pad: `${entiteit}.${mv.ge}.${naam}` });
+    }
+  }
+  return out.sort((a, b) => `${a.entiteit}${a.ge}${a.veld}`.localeCompare(`${b.entiteit}${b.ge}${b.veld}`));
+}
+
 /** Where a model field sits in the window's drawings: the smallest drawing that has the element. */
 type Waar = (t: Trace | undefined) => { d: number; id: string; veld?: string } | undefined;
 
-export async function WerkplaatsView({ subject, stap, vraag, ctx }: { subject: OmniumSubject; stap: Stap; vraag?: string; ctx: WidgetContext }) {
+export async function WerkplaatsView({
+  subject,
+  stap,
+  vraag,
+  bewerk = false,
+  ctx,
+}: {
+  subject: OmniumSubject;
+  stap: Stap;
+  vraag?: string;
+  /** Step 3 in edit mode (Fase B, laag 1): in the browser only, nothing saved. */
+  bewerk?: boolean;
+  ctx: WidgetContext;
+}) {
   const i = inrichtingOf(subject)!;
   const data = await werkplaatsData(i, subject.record);
   const base = subject.href.replace(/\/werkplaats(\/.*)?$/, "/werkplaats");
@@ -103,11 +148,38 @@ export async function WerkplaatsView({ subject, stap, vraag, ctx }: { subject: O
     <DiagramDialog drawings={drawings} rows={rows}>
       <div className="space-y-4">
         <Stappenbalk data={data} base={base} stap={stap} />
-        <p role="note" className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-          <strong>Alleen bekijken.</strong> Kiezen en wijzigen komt in een volgende versie; nu ligt de keuze vast in het
-          e-dienstmodel. Het model biedt meer dan deze dienst gebruikt: wat er nog bij kan, staat grijs.
-        </p>
-        {stap === "voorbeeld" ? (
+        {bewerk && stap === "velden" ? (
+          <p role="note" className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm text-sky-900">
+            <strong>Proefbewerken.</strong> Je wijzigt een kopie in je browser: er wordt niets opgeslagen, en verlaat je de pagina, dan
+            is het weg. Opslaan in het model van deze dienst komt in de volgende versie.{" "}
+            <Link href={`${base}/velden`} className="underline-offset-2 hover:underline">
+              Stoppen met proefbewerken
+            </Link>
+          </p>
+        ) : (
+          <p role="note" className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            <strong>Alleen bekijken.</strong> Kiezen en wijzigen komt in een volgende versie; nu ligt de keuze vast in het
+            e-dienstmodel. Het model biedt meer dan deze dienst gebruikt: wat er nog bij kan, staat grijs.
+            {stap === "velden" && data.form && (
+              <>
+                {" "}
+                <Link href={`${base}/velden?bewerk=1`} className="font-medium underline-offset-2 hover:underline">
+                  Probeer het formulier te bewerken →
+                </Link>
+              </>
+            )}
+          </p>
+        )}
+        {bewerk && stap === "velden" && data.form ? (
+          <div className="grid rounded-xl border border-line bg-surface lg:grid-cols-[1fr_2.25fr]">
+            <Pane title="Model van deze dienst" sub={data.keuzes.size ? `${data.telling.gekozen} velden gekozen · ${data.telling.weggelaten} weggelaten` : "uitsnede"}>
+              <Uitsnede data={data} tekeningen={tekeningen} />
+            </Pane>
+            <div className="border-t border-line lg:border-l lg:border-t-0">
+              <FormEditor form={bewerkbaar(data)} velden={Object.fromEntries(data.modelVelden)} beschikbaar={beschikbaar(data)} />
+            </div>
+          </div>
+        ) : stap === "voorbeeld" ? (
           <div className="grid gap-6 rounded-xl border border-line bg-surface p-4 lg:grid-cols-2">{right}</div>
         ) : (
           <div className="grid rounded-xl border border-line bg-surface lg:grid-cols-[1fr_1.25fr_1fr]">

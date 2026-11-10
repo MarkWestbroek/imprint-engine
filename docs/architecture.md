@@ -1617,6 +1617,17 @@ flowchart LR
     stuurt `frame-ancestors 'none'`.
   - Het tekeningvenster kan een verzameling oplichten (`set`), voor *Toon in
     diagram*.
+  - Bewerken (Fase B, laag 1; `formulier-acties.ts`, `form-editor.tsx`): elke
+    wijziging is een `FormulierActie` (zod, een witte lijst van acht soorten),
+    met adressering op sleutels (stap-slug, vraag-key, `na`) zoals
+    TRANSFORMATIES ze vastlegde (werkplaatsplan §5.11). `pasToe()` past er één
+    toe op een neutraal formulier (puur, ook bruikbaar op de server).
+    `FormEditor` (client) houdt alleen de lijst acties bij: het formulier is
+    start + acties, ongedaan maken is de laatste weghalen. Het type van een
+    nieuwe vraag komt voorlopig uit het logisch model (`modelVelden()`:
+    `profielen.diagram05.elements[id].data.bron.velden`). Laag 2 stuurt
+    dezelfde acties naar server actions, die er één op per actie op de
+    branch van de dienst van maken.
 - **Venster bij het formulier** (`diagram-dialog.tsx`, client).
   - `OmniumFormulier` zet de tekeningen waar een veld naar wijst één keer in
     de pagina, gesaneerd, in een `<dialog>`.

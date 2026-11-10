@@ -157,3 +157,16 @@ test("uitrollen: newest first (Mark 10-11)", async () => {
     globalThis.fetch = real;
   }
 });
+
+test("werkplaats step 3, edit mode (laag 1): says nothing is saved, the questions get controls, the preview stays", async () => {
+  const view = (await page("velden"))!.html;
+  assert.match(view, /href="[^"]*\/werkplaats\/velden\?bewerk=1"/); // the way in
+  const p = await omniumPage({ path: [...base, "velden"], viewers: omniumViewers, ctx: ctx(), bewerk: true });
+  const h = (await html(p!.render as ReactElement)).replaceAll("<!-- -->", "");
+  const t = text(h);
+  assert.match(t, /Proefbewerken\. Je wijzigt een kopie in je browser: er wordt niets opgeslagen/);
+  assert.match(h, /aria-label="kenteken omhoog"/);
+  assert.match(h, /aria-label="soort weglaten"/);
+  assert.match(t, /Wijzigingen \(0\) Nog niets gewijzigd/);
+  assert.match(h, /type="radio"[^>]*value="bestuurder"/); // the preview
+});

@@ -47,6 +47,8 @@ export type Question = {
   pointer: string;
   /** Text without input (`content`): the HTML is not rendered, only its text. */
   text?: string;
+  /** Where it comes from in the model: the GE's Studio id, the field, the name path (neutral `bron`, or a traceregel). */
+  bron?: { elementId?: string; veld?: string; pad?: string };
 };
 
 export type FormStep = { title: string; slug?: string; questions: Question[] };
@@ -229,6 +231,7 @@ export function fromNeutraal(payload: unknown): NeutralForm | undefined {
           depth: 0,
           pointer: `/stappen/${n}/vragen/${k}`,
           text: v.hulptekst ? s(v.hulptekst) : undefined,
+          bron: v.bron ? { elementId: s(obj(v.bron).elementId) || undefined, pad: s(obj(v.bron).pad) || undefined, veld: s(obj(v.bron).pad).split(".").at(-1) || undefined } : undefined,
         };
       }),
     })),

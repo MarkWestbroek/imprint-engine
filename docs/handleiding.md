@@ -724,7 +724,15 @@ toont wat het register nu weet.
     *Genereren* de artefacten per generatie en wat er sinds de vorige is
     veranderd; *Uitrollen* de uitrollen (nieuwste bovenaan) en waar het
     draait.
-  - Nog alles alleen-lezen. *Basis kiezen* en *Specialiseren* kunnen nog
+  - **Proefbewerken** (stap 3, *Probeer het formulier te bewerken*): voeg
+    vragen toe uit het model (*+ vraag uit het model*), laat ze weg (✕),
+    verplaats ze (↑ ↓, *naar stap…*), zet *verplicht* of een voorwaarde,
+    wijzig een label (✎) of voeg een stap toe. Rechts zie je het formulier
+    meteen veranderen, met de lijst *Wijzigingen* (ongedaan maken, alles
+    terug). Er wordt niets opgeslagen: verlaat je de pagina, dan is het weg.
+    Een veld dat het model verplicht stelt, kun je niet weglaten of
+    optioneel maken.
+  - Verder is alles alleen-lezen. *Basis kiezen* en *Specialiseren* kunnen nog
     niet: er is nog geen catalogus van bases en patronen.
   - Het formulier is een eigen weergave, geen ingebed Open Formulieren. Zo
     zie je wat er gegenereerd is, ook als het nog niet is uitgerold.

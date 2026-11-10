@@ -15,7 +15,7 @@ import { widgetComponents } from "@/widgets/components";
 
 type Props = {
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string; vraag?: string }>;
+  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string; vraag?: string; bewerk?: string }>;
 };
 
 async function load({ params, searchParams }: Props) {
@@ -29,6 +29,7 @@ async function load({ params, searchParams }: Props) {
     element: q.element,
     veld: q.veld,
     vraag: q.vraag,
+    bewerk: q.bewerk === "1",
   });
 }
 

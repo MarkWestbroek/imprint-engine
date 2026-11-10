@@ -1,6 +1,7 @@
 import { ge, geRows, type FullRecord } from "./register";
 import type { Inrichting } from "./inrichting";
 import { fromFormio, fromNeutraal, obj, arr, s, type NeutralForm } from "./neutral-form";
+import { modelVelden as leesModelVelden, type ModelVeld } from "./formulier-acties";
 
 /**
  * The werkplaats of an e-dienstversie (werkplaats-plan §3, Fase A): what the
@@ -44,8 +45,6 @@ export type Artefact = {
 
 export type Trace = { bronGE?: string; bronElementId?: string; doelPad?: string; regel?: string };
 
-/** A field of the model: its element in the drawing and the field name (the last part of bronGE). */
-export type ModelVeld = { id: string; veld?: string; bronGE?: string };
 
 /** The key of a model field across artefacts: the element and the field, else the path by name. */
 export const veldSleutel = (t: Trace): string | undefined => {
@@ -78,6 +77,8 @@ export type WerkplaatsData = {
   keuzes: Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>;
   /** Per model element its fields (regel modelveld) left out: what could be added to the form later. */
   weggelatenVelden: Map<string, string[]>;
+  /** The fields of the logical model per element (type, choices, required): what a question can be made from. */
+  modelVelden: Map<string, ModelVeld[]>;
   /** Fields (regel modelveld) chosen and left out. */
   telling: { gekozen: number; weggelaten: number };
   /** Per model field (`veldSleutel`) the results that come from it, with the traceregels. */
@@ -241,6 +242,10 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     uitsnede,
     keuzes,
     weggelatenVelden,
+    modelVelden: (() => {
+      const lm = artefacten.find((a) => a.soort === "logisch-model");
+      return lm ? leesModelVelden(parse(ge(lm.record, "artefact_inhouden")?.payload)) : new Map<string, ModelVeld[]>();
+    })(),
     telling,
     raakt,
     uitrollen,

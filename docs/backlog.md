@@ -321,8 +321,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   `ArtefactHerkomst.generatie` en vergelijkt de inhoud met de
                   vorige versie. Echt oud-tegen-nieuw per label vanaf de
                   volgende generatie.
-            - [ ] Fase B (schrijven naar de Studio, branch), C (jobs), F
-                  (stamdata): zie het plan.
+            - [x] Fase B laag 1 (10-11): proefbewerken van het formulier in
+                  de browser, acties met schema, voorbeeld leeft mee.
+            - [ ] Fase B laag 2: de acties als server actions → ops op de
+                  branch (FormulierDefinitie + vijf toevoegingen, Mark 10-11),
+                  serviceaccount omnium-schrijver, namens, revisie.
+            - [ ] Fase C (jobs), F (stamdata): zie het plan.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.
       - [x] Namespace, rol en database in `pg-main`, hostnaam in het certificaat

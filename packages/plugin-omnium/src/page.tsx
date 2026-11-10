@@ -34,6 +34,7 @@ export async function omniumPage({
   element,
   veld,
   vraag,
+  bewerk,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -47,6 +48,8 @@ export async function omniumPage({
   veld?: string;
   /** In the werkplaats, step 3: the selected question (its key). */
   vraag?: string;
+  /** In the werkplaats, step 3: edit mode (in the browser only). */
+  bewerk?: boolean;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -70,7 +73,7 @@ export async function omniumPage({
       render: (
         <article>
           <Header located={located} prefix={prefix} label="Werkplaats" peiltijdstip={peiltijdstip} />
-          <WerkplaatsView subject={subject} stap={stap} vraag={vraag} ctx={ctx} />
+          <WerkplaatsView subject={subject} stap={stap} vraag={vraag} bewerk={bewerk} ctx={ctx} />
         </article>
       ),
     };
