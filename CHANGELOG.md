@@ -12,6 +12,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
     opslaan.
   - Elke wijziging wordt één bewerking, op naam van de redacteur.
   - Bewerken gaat daarna verder vanuit die eigen versie.
+  - Bestaat er voor die dienst al een open eigen versie (bijvoorbeeld in de
+    Studio gemaakt), dan wordt daarin opgeslagen.
+  - Het formulier wordt gelezen zoals Omnium het zelf samenstelt, zodra
+    Omnium dat kan; tot dan stelt de werkplaats het zelf samen.
   - Het model zelf verandert niet: samenvoegen gebeurt in de Studio.
   - Werkt pas als het schrijfaccount `omnium-schrijver` er is; tot dan blijft
     het proefbewerken.

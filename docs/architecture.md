@@ -1647,14 +1647,18 @@ flowchart LR
       Aangeboden worden alleen velden van het doeltype en de typen waarvan het
       erft (`eigenEntiteiten`, via `generalisatie`); een veld van een andere
       entiteit hoort niet bij deze aanvraag.
-    - Lezen: blob plus ops na `tot_volgnummer`, nagespeeld voor alleen de
-      element-ops van dat profiel (`speelNa`). Elke andere op op die store
-      wordt geweigerd ("open de Studio"). Dat is een tussenoplossing tot
-      Omnium gematerialiseerd leest (GET …/model/:profiel, gevraagd).
+    - Lezen: eerst gematerialiseerd, `GET …/model/formulierdiagram` (Omnium
+      naspeelt zelf; werkt vanaf render 0.4.2), de plaatsing uit de blob.
+      Antwoordt dat 404/502 ("sidecar"), of staat de map niet in de
+      blob-plaatsing, dan speelt de werkplaats zelf na: blob plus ops na
+      `tot_volgnummer`, alleen de element-ops van dat profiel (`speelNa`);
+      elke andere op wordt geweigerd ("open de Studio").
     - Branch: één per dienstversie. Bij de eerste keer opslaan maakt de
       werkplaats er een met `POST …/afsplitsen {naam, mapId}`, met de map van
       het formulierdiagram uit `structuur.plaatsing`. Daarna vindt hij hem
-      terug op ouder, naam en map. Het project komt uit
+      terug op ouder en naam. Omnium staat per ouder en map één open branch
+      toe: antwoordt `afsplitsen` 409 `branch_bestaat`, dan schrijft de
+      werkplaats in die branch (`projectId`). Het project komt uit
       `ArtefactHerkomst.studioProjectId`.
     - Schrijven: per actie één batch met `verwachtLaatsteVolgnummer` en
       `namens` (de Imprint-gebruiker). Bij een 409 leest hij opnieuw en

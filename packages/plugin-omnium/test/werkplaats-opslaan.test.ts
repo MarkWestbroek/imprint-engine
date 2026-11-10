@@ -60,6 +60,7 @@ function fakeStudio() {
   });
   const calls: string[] = [];
   let concurrent = false;
+  let materialiseer = false;
   const json = (status: number, body: unknown) => new Response(JSON.stringify(body), { status });
   const fetchFn = (async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(String(input));
@@ -72,6 +73,13 @@ function fakeStudio() {
     if (!p) return json(404, { error: "onbekend" });
     const laatste = () => p.ops.at(-1)?.volgnummer ?? (p.meta.tot_volgnummer as number);
     if (!sub) return json(200, { ...p.meta, inhoud: p.inhoud });
+    if (sub === "model") {
+      if (!materialiseer) return json(502, { reden: "sidecar" });
+      const prof = (p.inhoud.profielen as Record<string, { elements: Elementen; diagrams: Record<string, unknown> }>).formulierdiagram!;
+      const st = { elements: structuredClone(prof.elements), diagrams: structuredClone(prof.diagrams) as never, plaatsing: {} };
+      speelNa(st, p.ops);
+      return json(200, { ...st, laatsteVolgnummer: laatste(), nagespeeld: p.ops.length });
+    }
     if (sub === "ops" && method === "GET") {
       const vanaf = Number(url.searchParams.get("vanaf"));
       return json(200, { ops: p.ops.filter((o) => o.volgnummer > vanaf), laatste: laatste(), meer: false });
@@ -91,6 +99,11 @@ function fakeStudio() {
     }
     if (sub === "afsplitsen") {
       const body = JSON.parse(String(init!.body)) as { naam: string; mapId?: string };
+      const open = [...projecten.values()].find((q) => {
+        const h = q.meta.herkomst as { ouderProject: string; mapId?: string; gearchiveerd: boolean } | undefined;
+        return h && h.ouderProject === id && h.mapId === body.mapId && !h.gearchiveerd;
+      });
+      if (open) return json(409, { reden: "branch_bestaat", projectId: open.meta.id });
       const nieuw = `branch-${projecten.size}`;
       const meta = { id: nieuw, naam: body.naam, tot_volgnummer: 10, herkomst: { ouderProject: id, basisVolgnummer: laatste(), mapId: body.mapId, afgesplitstOp: "2026-11-10T09:00:00Z", gearchiveerd: false } };
       projecten.set(nieuw, { meta, inhoud: structuredClone(p.inhoud), ops: structuredClone(p.ops) });
@@ -103,6 +116,7 @@ function fakeStudio() {
     projecten,
     calls,
     concurrentOnce: () => (concurrent = true),
+    materialiseer: (aan: boolean) => (materialiseer = aan),
   };
 }
 
@@ -148,6 +162,35 @@ test("a 409 (someone else wrote) reads again and retries once; an action that no
   assert.match(!fout.ok ? fout.fout : "", /^1 van 2 wijzigingen opgeslagen; daarna: Vraag “bestaatNiet” staat niet/);
   const ongeldig = await slaWerkplaatsOp(i, v, [{ actie: "veldWissen" }], "mark", s.studio);
   assert.deepEqual(ongeldig, { ok: false, opgeslagen: 0, fout: "Wijziging 1 is niet geldig." });
+});
+
+test("afsplitsen answers 409 branch_bestaat (one open branch per map, made elsewhere under another name): write into that branch", async () => {
+  const s = fakeStudio();
+  const i = new Inrichting(new OmniumRegister({ baseUrl: "http://register.test", fetch: registerFetch }));
+  const v = await versie(i);
+  const hoofd = s.projecten.get("inrichten")!;
+  s.projecten.set("andere", {
+    meta: { id: "andere", naam: "Mark z'n schets", tot_volgnummer: 10, herkomst: { ouderProject: "inrichten", basisVolgnummer: 10, mapId: "map-gpk", afgesplitstOp: "2026-11-09T09:00:00Z", gearchiveerd: false } },
+    inhoud: structuredClone(hoofd.inhoud),
+    ops: [],
+  });
+  const r = await slaWerkplaatsOp(i, v, [{ actie: "labelWijzigen", vraag: "kenteken", label: "K" }], "mark", s.studio);
+  assert.deepEqual(r, { ok: true, opgeslagen: 1, branch: "Mark z'n schets", nieuweBranch: false });
+  assert.equal(s.projecten.get("andere")!.ops.length, 1);
+  assert.equal(s.projecten.size, 2);
+});
+
+test("the materialised read is used when the API has it (no op replay); 502 sidecar falls back to replaying", async () => {
+  const { leesFd } = await import("../src/studio-client");
+  const s = fakeStudio();
+  s.materialiseer(true);
+  const a = await leesFd(s.studio, "inrichten");
+  assert.equal(a.diagramId, "d1");
+  assert.equal(s.calls.some((c) => c.includes("/ops?")), false);
+  const t = fakeStudio();
+  const b = await leesFd(t.studio, "inrichten");
+  assert.deepEqual([b.diagramId, b.laatste], ["d1", 10]);
+  assert.equal(t.calls.some((c) => c.includes("/ops?")), true);
 });
 
 test("the edit page reads the branch's form when there is one", async () => {

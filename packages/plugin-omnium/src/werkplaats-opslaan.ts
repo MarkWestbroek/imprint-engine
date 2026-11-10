@@ -109,8 +109,15 @@ export async function slaWerkplaatsOp(i: Inrichting, versie: FullRecord, ruw: un
     let nieuweBranch = false;
     if (!branch) {
       const hoofd = await leesFd(studio, project);
-      branch = await studio.afsplitsen(project, { naam, mapId: mapVan(hoofd) });
-      nieuweBranch = true;
+      try {
+        branch = await studio.afsplitsen(project, { naam, mapId: mapVan(hoofd) });
+        nieuweBranch = true;
+      } catch (e) {
+        // One open branch per parent and map (Omnium API): someone made it already, perhaps in the Studio. Write there.
+        if (!(e instanceof StudioError && e.reden === "branch_bestaat" && e.projectId)) throw e;
+        const id = e.projectId;
+        branch = (await studio.projecten()).find((p) => p.id === id) ?? { id, naam: id };
+      }
     }
     branchId = branch.id;
     let stand = await leesFd(studio, branch.id);

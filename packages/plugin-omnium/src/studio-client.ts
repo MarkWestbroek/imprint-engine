@@ -29,7 +29,9 @@ export class StudioError extends Error {
     message: string,
     readonly status?: number,
     readonly reden?: string,
-    readonly laatste?: number
+    readonly laatste?: number,
+    /** With reden "branch_bestaat": the open branch that already exists for this parent and map. */
+    readonly projectId?: string
   ) {
     super(message);
   }
@@ -66,7 +68,8 @@ export class OmniumStudio {
               : `De Studio antwoordt ${res.status}${typeof body.error === "string" ? `: ${body.error}` : ""}.`,
         res.status,
         reden,
-        typeof body.laatsteVolgnummer === "number" ? body.laatsteVolgnummer : undefined
+        typeof body.laatsteVolgnummer === "number" ? body.laatsteVolgnummer : undefined,
+        typeof body.projectId === "string" ? body.projectId : undefined
       );
     }
     return body as T;
@@ -76,6 +79,11 @@ export class OmniumStudio {
   project = (id: string) => this.call<ProjectMeta & { inhoud: Record<string, unknown> }>(`/projecten/${encodeURIComponent(id)}`);
   ops = (id: string, vanaf: number) =>
     this.call<{ ops: OpRegel[]; laatste: number; meer: boolean; snapshotNodig?: boolean }>(`/projecten/${encodeURIComponent(id)}/ops?vanaf=${vanaf}&limiet=5000`);
+  /** The materialised profile (Omnium API, render ≥ 0.4.2): replayed server-side; 502 "sidecar" until the renderer can. */
+  model = (id: string, profiel: string) =>
+    this.call<{ elements?: Elementen; diagrams?: Record<string, Diagram>; laatsteVolgnummer: number; meldingen?: unknown[] }>(
+      `/projecten/${encodeURIComponent(id)}/model/${encodeURIComponent(profiel)}`
+    );
   afsplitsen = (id: string, body: { naam: string; mapId?: string }) =>
     this.call<ProjectMeta>(`/projecten/${encodeURIComponent(id)}/afsplitsen`, { method: "POST", body: JSON.stringify(body) });
   schrijf = (id: string, body: { clientId: string; ops: Operatie[]; verwachtLaatsteVolgnummer: number; namens?: string }) =>
@@ -184,8 +192,34 @@ export function speelNa(stand: { elements: Elementen; diagrams: Record<string, D
   }
 }
 
-/** The form profile of a project now: the blob, then the ops after it (reloading once when the log was compacted). */
+/** The form's diagram (the one holding the formulier root) and its node positions. */
+function fdStand(elements: Elementen, diagrams: Record<string, Diagram>, plaatsing: Record<string, string>, laatste: number): FdStand {
+  const root = Object.values(elements).find((e) => e.elementType === "formulier");
+  const diagramId = Object.entries(diagrams).find(([, d]) => (d.nodes ?? []).some((n) => n.elementId === root?.id))?.[0];
+  const posities: FdStand["posities"] = {};
+  for (const n of (diagramId && diagrams[diagramId]?.nodes) || []) if (n.position) posities[n.elementId] = n.position;
+  return { elements, diagramId, posities, plaatsing, laatste };
+}
+
+/**
+ * The form profile of a project now. First the materialised read (the API
+ * replays the log itself); the map placement comes from the blob's structuur.
+ * When that endpoint is not there yet (404, 502 "sidecar"), or the form's map
+ * is not in the blob's placement, replay here: the blob, then the ops after it.
+ */
 export async function leesFd(studio: OmniumStudio, projectId: string): Promise<FdStand> {
+  try {
+    const [m, p] = await Promise.all([studio.model(projectId, "formulierdiagram"), studio.project(projectId)]);
+    const plaatsing = { ...(((p.inhoud?.structuur ?? {}) as { plaatsing?: Record<string, string> }).plaatsing ?? {}) };
+    const stand = fdStand(m.elements ?? {}, m.diagrams ?? {}, plaatsing, m.laatsteVolgnummer);
+    if (!stand.diagramId || plaatsing[`formulierdiagram::${stand.diagramId}`]) return stand;
+  } catch (e) {
+    if (!(e instanceof StudioError) || (e.status !== 404 && e.status !== 501 && e.status !== 502 && e.status !== 503)) throw e;
+  }
+  return naspelen(studio, projectId);
+}
+
+async function naspelen(studio: OmniumStudio, projectId: string): Promise<FdStand> {
   for (let poging = 0; poging < 2; poging++) {
     const p = await studio.project(projectId);
     const profiel = ((p.inhoud?.profielen as Record<string, unknown>) ?? {}).formulierdiagram as { elements?: Elementen; diagrams?: Record<string, Diagram> } | undefined;
@@ -210,12 +244,7 @@ export async function leesFd(studio: OmniumStudio, projectId: string): Promise<F
       vanaf = page.ops.at(-1)!.volgnummer;
     }
     if (opnieuw) continue;
-    // The form's diagram: the one that holds the formulier root.
-    const root = Object.values(stand.elements).find((e) => e.elementType === "formulier");
-    const diagramId = Object.entries(stand.diagrams).find(([, d]) => (d.nodes ?? []).some((n) => n.elementId === root?.id))?.[0];
-    const posities: FdStand["posities"] = {};
-    for (const n of (diagramId && stand.diagrams[diagramId]?.nodes) || []) if (n.position) posities[n.elementId] = n.position;
-    return { elements: stand.elements, diagramId, posities, plaatsing: stand.plaatsing, laatste };
+    return fdStand(stand.elements, stand.diagrams, stand.plaatsing, laatste);
   }
   throw new StudioError("Het operatielog van het project werd tijdens het lezen opgeruimd; probeer het opnieuw.");
 }

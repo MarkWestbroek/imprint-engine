@@ -327,8 +327,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   dienstversie, getest met een nagebootste Studio.
             - [ ] Laag 2 live: wacht op account en Secret `omnium-schrijver`
                   (Mark), daarna een echte test op cg-test en Marks akkoord.
-            - [ ] Gematerialiseerd lezen via Omnium (GET …/model/:profiel,
-                  BACKEND + render-route OMNIUM-UI) in plaats van zelf naspelen.
+            - [x] Gematerialiseerd lezen via Omnium (GET …/model/:profiel,
+                  10-11): ingebouwd met terugval op zelf naspelen zolang
+                  render 0.4.2 er niet is. Ook 409 `branch_bestaat` bij
+                  afsplitsen wordt opgevangen.
+            - [ ] Zelf naspelen schrappen zodra render 0.4.2 op cg-test draait.
             - [x] Het veldpad van een nieuwe vraag (10-11): regel van
                   TRANSFORMATIES (eigenaar via compositie, rol = meervoud); alleen
                   velden van het doeltype en wat het erft worden aangeboden.
