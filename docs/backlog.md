@@ -325,8 +325,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   de browser, acties met schema, voorbeeld leeft mee.
             - [x] Fase B laag 2 gebouwd (10-11): opslaan in de branch van de
                   dienstversie, getest met een nagebootste Studio.
-            - [ ] Laag 2 live: wacht op account en Secret `omnium-schrijver`
-                  (Mark), daarna een echte test op cg-test en Marks akkoord.
+            - [x] Laag 2 echt getest (10-11): account en Secret
+                  `omnium-schrijver` staan; lokaal tegen de Studio op cg-test
+                  een wegwerpwijziging opgeslagen in de branch "Werkplaats
+                  Gehandicaptenparkeerkaart aanvragen 0.1.0" (hoofd onaangeroerd).
+            - [ ] Laag 2 live: Marks uitrolakkoord.
             - [x] Gematerialiseerd lezen via Omnium (GET …/model/:profiel,
                   10-11): ingebouwd met terugval op zelf naspelen zolang
                   render 0.4.2 er niet is. Ook 409 `branch_bestaat` bij

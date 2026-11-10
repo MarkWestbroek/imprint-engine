@@ -1649,7 +1649,8 @@ flowchart LR
       entiteit hoort niet bij deze aanvraag.
     - Lezen: eerst gematerialiseerd, `GET …/model/formulierdiagram` (Omnium
       speelt zelf na; api 0.25, render 0.4.2). De plaatsing komt uit de blob
-      plus de `patchStructuur`-ops daarna, want die kan achterlopen.
+      plus de structuur-ops daarna (`plaatsPerMap {mapId: [sleutels]}`, `"null"`
+      = uit de map; en `patchStructuur`), want de blob kan achterlopen.
       Antwoordt `/model` 404/502 ("sidecar"), dan speelt de werkplaats alles
       zelf na: blob plus ops na
       `tot_volgnummer`, alleen de element-ops van dat profiel (`speelNa`);

@@ -204,6 +204,13 @@ test("the materialised read is used when the API has it (no op replay); 502 side
   s.projecten.get("inrichten")!.ops.push({ volgnummer: 11, store: "structuur", op: "patchStructuur", args: [{ zetPlaatsing: { "formulierdiagram::d1": "map-nieuw" } }] });
   const a2 = await leesFd(s.studio, "inrichten");
   assert.deepEqual([a2.plaatsing["formulierdiagram::d1"], a2.laatste], ["map-nieuw", 11]);
+  // What the Studio really writes (cg-test): plaatsPerMap {mapId: [keys]}, "null" = taken out of its map.
+  s.projecten.get("inrichten")!.ops.push(
+    { volgnummer: 12, store: "structuur", op: "plaatsPerMap", args: [{ "map-2s": ["formulierdiagram::d1"] }] },
+    { volgnummer: 13, store: "structuur", op: "plaatsPerMap", args: [{ null: ["formulier::d1"] }] }
+  );
+  const a3 = await leesFd(s.studio, "inrichten");
+  assert.deepEqual([a3.plaatsing["formulierdiagram::d1"], a3.laatste], ["map-2s", 13]);
   const t = fakeStudio();
   const b = await leesFd(t.studio, "inrichten");
   assert.deepEqual([b.diagramId, b.laatste], ["d1", 10]);

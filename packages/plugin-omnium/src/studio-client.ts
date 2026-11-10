@@ -138,6 +138,15 @@ export function speelNa(stand: { elements: Elementen; diagrams: Record<string, D
       for (const k of p.wisPlaatsing ?? []) delete stand.plaatsing[k];
       continue;
     }
+    if (o.store === "structuur" && o.op === "plaatsPerMap") {
+      // What the Studio writes (cg-test 10-11): { mapId: [keys] }; "null" = no longer placed in a map.
+      for (const [mapId, keys] of Object.entries((o.args[0] ?? {}) as Record<string, string[]>))
+        for (const k of Array.isArray(keys) ? keys : []) {
+          if (mapId === "null") delete stand.plaatsing[k];
+          else stand.plaatsing[k] = mapId;
+        }
+      continue;
+    }
     if (o.store !== store) continue; // other profiles and stores cannot touch these elements
     const a = o.args as unknown[];
     switch (o.op) {
