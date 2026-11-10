@@ -211,12 +211,27 @@ export async function leesFd(studio: OmniumStudio, projectId: string): Promise<F
   try {
     const [m, p] = await Promise.all([studio.model(projectId, "formulierdiagram"), studio.project(projectId)]);
     const plaatsing = { ...(((p.inhoud?.structuur ?? {}) as { plaatsing?: Record<string, string> }).plaatsing ?? {}) };
-    const stand = fdStand(m.elements ?? {}, m.diagrams ?? {}, plaatsing, m.laatsteVolgnummer);
-    if (!stand.diagramId || plaatsing[`formulierdiagram::${stand.diagramId}`]) return stand;
+    // The blob's placement can lag behind: replay only the structure ops after it (BACKEND 10-11).
+    if (await structuurNa(studio, projectId, p.tot_volgnummer ?? 0, m.laatsteVolgnummer, plaatsing)) {
+      return fdStand(m.elements ?? {}, m.diagrams ?? {}, plaatsing, m.laatsteVolgnummer);
+    }
   } catch (e) {
     if (!(e instanceof StudioError) || (e.status !== 404 && e.status !== 501 && e.status !== 502 && e.status !== 503)) throw e;
   }
   return naspelen(studio, projectId);
+}
+
+/** The placement ops (`patchStructuur`) after the blob, up to `tot`; false when the log was compacted meanwhile. */
+async function structuurNa(studio: OmniumStudio, projectId: string, vanaf: number, tot: number, plaatsing: Record<string, string>): Promise<boolean> {
+  while (vanaf < tot) {
+    const page = await studio.ops(projectId, vanaf);
+    if (page.snapshotNodig) return false;
+    const binnen = page.ops.filter((o) => o.volgnummer <= tot);
+    speelNa({ elements: {}, diagrams: {}, plaatsing }, binnen.filter((o) => o.store === "structuur"));
+    if (!page.meer || !page.ops.length) break;
+    vanaf = page.ops.at(-1)!.volgnummer;
+  }
+  return true;
 }
 
 async function naspelen(studio: OmniumStudio, projectId: string): Promise<FdStand> {

@@ -1648,9 +1648,10 @@ flowchart LR
       erft (`eigenEntiteiten`, via `generalisatie`); een veld van een andere
       entiteit hoort niet bij deze aanvraag.
     - Lezen: eerst gematerialiseerd, `GET …/model/formulierdiagram` (Omnium
-      naspeelt zelf; werkt vanaf render 0.4.2), de plaatsing uit de blob.
-      Antwoordt dat 404/502 ("sidecar"), of staat de map niet in de
-      blob-plaatsing, dan speelt de werkplaats zelf na: blob plus ops na
+      speelt zelf na; api 0.25, render 0.4.2). De plaatsing komt uit de blob
+      plus de `patchStructuur`-ops daarna, want die kan achterlopen.
+      Antwoordt `/model` 404/502 ("sidecar"), dan speelt de werkplaats alles
+      zelf na: blob plus ops na
       `tot_volgnummer`, alleen de element-ops van dat profiel (`speelNa`);
       elke andere op wordt geweigerd ("open de Studio").
     - Branch: één per dienstversie. Bij de eerste keer opslaan maakt de

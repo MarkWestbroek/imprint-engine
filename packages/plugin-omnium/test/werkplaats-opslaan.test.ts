@@ -187,6 +187,10 @@ test("the materialised read is used when the API has it (no op replay); 502 side
   const a = await leesFd(s.studio, "inrichten");
   assert.equal(a.diagramId, "d1");
   assert.equal(s.calls.some((c) => c.includes("/ops?")), false);
+  // The blob's placement lags behind a structure op in the log: that op is replayed, the element ops are not.
+  s.projecten.get("inrichten")!.ops.push({ volgnummer: 11, store: "structuur", op: "patchStructuur", args: [{ zetPlaatsing: { "formulierdiagram::d1": "map-nieuw" } }] });
+  const a2 = await leesFd(s.studio, "inrichten");
+  assert.deepEqual([a2.plaatsing["formulierdiagram::d1"], a2.laatste], ["map-nieuw", 11]);
   const t = fakeStudio();
   const b = await leesFd(t.studio, "inrichten");
   assert.deepEqual([b.diagramId, b.laatste], ["d1", 10]);
