@@ -35,11 +35,29 @@ export async function branchNaam(i: Inrichting, versie: FullRecord): Promise<str
 /** The map of the form's diagram in the project (`structuur.plaatsing`, key "formulierdiagram::<diagram>"). */
 const mapVan = (stand: FdStand) => (stand.diagramId ? stand.plaatsing[`formulierdiagram::${stand.diagramId}`] : undefined);
 
-/** The dienstversie's branch: the newest open one of this project, with this map and name. */
+/**
+ * The dienstversie's branch: the open one of this project for the form's map,
+ * whatever its name (Omnium allows one per parent and map; it may have been
+ * made in the Studio). Without a known map: by name.
+ */
 export async function vindBranch(studio: OmniumStudio, hoofd: string, naam: string, mapId?: string): Promise<ProjectMeta | undefined> {
   return (await studio.projecten())
-    .filter((p) => p.herkomst && p.herkomst.ouderProject === hoofd && !p.herkomst.gearchiveerd && p.naam === naam && (!mapId || p.herkomst.mapId === mapId))
+    .filter((p) => p.herkomst && p.herkomst.ouderProject === hoofd && !p.herkomst.gearchiveerd && (mapId ? p.herkomst.mapId === mapId : p.naam === naam))
     .sort((a, b) => str(b.herkomst?.afgesplitstOp).localeCompare(str(a.herkomst?.afgesplitstOp)))[0];
+}
+
+/**
+ * A new question's field must be a field of this aanvraag in the logical model
+ * (the doeltype and what it inherits); its path is taken from the model, never
+ * from the browser. Returns the refusal, or undefined.
+ */
+export function controleerVeld(actie: FormulierActie, data: WerkplaatsData): string | undefined {
+  if (actie.actie !== "vraagToevoegen") return undefined;
+  const mv = data.modelVelden.get(actie.bron.elementId)?.find((v) => v.veld === actie.bron.veld);
+  if (!mv) return `“${actie.bron.veld}” staat niet in het logisch model.`;
+  if (!data.eigenEntiteiten.has(mv.eigenaar)) return `“${actie.bron.veld}” hoort niet bij deze aanvraag (een veld van ${mv.eigenaar}).`;
+  actie.bron.pad = mv.pad;
+  return undefined;
 }
 
 /** The form in the branch as a neutral form, types and choices taken from the generated form (by key) or the model. */
@@ -74,7 +92,7 @@ export async function leesWerkplaatsBranch(
   if (!project) return { kanOpslaan: false, fout: "Het register zegt niet uit welk Studio-project dit formulier komt (ArtefactHerkomst.studioProjectId)." };
   const studio = new OmniumStudio(cfg);
   try {
-    const b = await vindBranch(studio, project, await branchNaam(i, versie));
+    const b = await vindBranch(studio, project, await branchNaam(i, versie), mapVan(await leesFd(studio, project)));
     if (!b) return { kanOpslaan: true };
     const stand = await leesFd(studio, b.id);
     return { kanOpslaan: true, branch: { id: b.id, naam: b.naam, laatste: stand.laatste, form: formUitStand(stand, code, data) } };
@@ -101,14 +119,18 @@ export async function slaWerkplaatsOp(i: Inrichting, versie: FullRecord, ruw: un
   const data = await werkplaatsData(i, versie);
   const { project, code } = bronVan(i, data);
   if (!project) return { ok: false, opgeslagen: 0, fout: "Het register zegt niet uit welk Studio-project dit formulier komt." };
+  for (const [k, a] of acties.entries()) {
+    const fout = controleerVeld(a.data!, data);
+    if (fout) return { ok: false, opgeslagen: 0, fout: `Wijziging ${k + 1}: ${fout}` };
+  }
   const naam = await branchNaam(i, versie);
   let opgeslagen = 0;
   let branchId: string | undefined;
   try {
-    let branch = await vindBranch(studio, project, naam);
+    const hoofd = await leesFd(studio, project);
+    let branch = await vindBranch(studio, project, naam, mapVan(hoofd));
     let nieuweBranch = false;
     if (!branch) {
-      const hoofd = await leesFd(studio, project);
       try {
         branch = await studio.afsplitsen(project, { naam, mapId: mapVan(hoofd) });
         nieuweBranch = true;

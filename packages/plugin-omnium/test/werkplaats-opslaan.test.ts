@@ -164,7 +164,7 @@ test("a 409 (someone else wrote) reads again and retries once; an action that no
   assert.deepEqual(ongeldig, { ok: false, opgeslagen: 0, fout: "Wijziging 1 is niet geldig." });
 });
 
-test("afsplitsen answers 409 branch_bestaat (one open branch per map, made elsewhere under another name): write into that branch", async () => {
+test("a branch for the form's map made elsewhere (the Studio, another name) is found by parent and map: no second branch, written there", async () => {
   const s = fakeStudio();
   const i = new Inrichting(new OmniumRegister({ baseUrl: "http://register.test", fetch: registerFetch }));
   const v = await versie(i);
@@ -178,6 +178,19 @@ test("afsplitsen answers 409 branch_bestaat (one open branch per map, made elsew
   assert.deepEqual(r, { ok: true, opgeslagen: 1, branch: "Mark z'n schets", nieuweBranch: false });
   assert.equal(s.projecten.get("andere")!.ops.length, 1);
   assert.equal(s.projecten.size, 2);
+});
+
+test("a new question: the field must be one of this aanvraag in the logical model, the path comes from the model, not the browser", async () => {
+  const { controleerVeld } = await import("../src/werkplaats-opslaan");
+  const mv = (eigenaar: string) => ({ elementId: "Gpk_Kaart", ge: "GpkKaart", veld: "geldigTot", type: "date" as const, soort: "datum", choices: [], verplicht: false, eigenaar, pad: "Aanvraag.aanvraag_kaarten.geldigTot" });
+  const data = (eigenaar: string) => ({ modelVelden: new Map([["Gpk_Kaart", [mv(eigenaar)]]]), eigenEntiteiten: new Set(["A"]) }) as never;
+  const actie = () => ({ actie: "vraagToevoegen" as const, stap: "soort-kaart", na: null, vraag: "geldigTot", label: "Tot", type: "date" as const, bron: { elementId: "Gpk_Kaart", veld: "geldigTot", pad: "Iets.anders.geldigTot" } });
+  const a = actie();
+  assert.equal(controleerVeld(a, data("A")), undefined);
+  assert.equal(a.bron.pad, "Aanvraag.aanvraag_kaarten.geldigTot");
+  assert.match(controleerVeld(actie(), data("M"))!, /hoort niet bij deze aanvraag/);
+  assert.match(controleerVeld({ ...actie(), bron: { elementId: "Gpk_Kaart", veld: "bestaatNiet" } }, data("A"))!, /niet in het logisch model/);
+  assert.equal(controleerVeld({ actie: "labelWijzigen", vraag: "x", label: "y" }, data("A")), undefined);
 });
 
 test("the materialised read is used when the API has it (no op replay); 502 sidecar falls back to replaying", async () => {

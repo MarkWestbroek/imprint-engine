@@ -1657,9 +1657,14 @@ flowchart LR
     - Branch: één per dienstversie. Bij de eerste keer opslaan maakt de
       werkplaats er een met `POST …/afsplitsen {naam, mapId}`, met de map van
       het formulierdiagram uit `structuur.plaatsing`. Daarna vindt hij hem
-      terug op ouder en naam. Omnium staat per ouder en map één open branch
-      toe: antwoordt `afsplitsen` 409 `branch_bestaat`, dan schrijft de
-      werkplaats in die branch (`projectId`). Het project komt uit
+      terug op ouder en map, ongeacht de naam (ook een branch die in de Studio
+      is gemaakt); alleen zonder bekende map op naam. Omnium staat per ouder
+      en map één open branch toe: antwoordt `afsplitsen` toch 409
+      `branch_bestaat`, dan schrijft de werkplaats in die branch (`projectId`).
+    - Een nieuwe vraag controleert de server vóór het schrijven
+      (`controleerVeld`): het veld moet in het logisch model staan en bij het
+      doeltype of wat het erft horen; het veldpad komt uit het model, niet
+      uit de browser. Het project komt uit
       `ArtefactHerkomst.studioProjectId`.
     - Schrijven: per actie één batch met `verwachtLaatsteVolgnummer` en
       `namens` (de Imprint-gebruiker). Bij een 409 leest hij opnieuw en

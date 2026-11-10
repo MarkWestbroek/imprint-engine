@@ -14,6 +14,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   - Bewerken gaat daarna verder vanuit die eigen versie.
   - Bestaat er voor die dienst al een open eigen versie (bijvoorbeeld in de
     Studio gemaakt), dan wordt daarin opgeslagen.
+  - Een toegevoegde vraag moet een veld van de aanvraag zelf zijn; anders
+    weigert het opslaan, voordat er iets is geschreven.
   - Het formulier wordt gelezen zoals Omnium het zelf samenstelt, zodra
     Omnium dat kan; tot dan stelt de werkplaats het zelf samen.
   - Het model zelf verandert niet: samenvoegen gebeurt in de Studio.
