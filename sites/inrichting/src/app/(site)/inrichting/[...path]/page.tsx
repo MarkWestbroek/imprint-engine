@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { omniumPage } from "@imprint/plugin-omnium/page";
 import { widgetContext } from "@/lib/widget-context";
 import { widgetComponents } from "@/widgets/components";
+import { auth } from "@/lib/admin";
+import { slaWerkplaatsOp } from "../werkplaats-actions";
 
 /**
  * A record of the Omnium register by its stable key (design/omnium-inrichting.md
@@ -30,6 +32,8 @@ async function load({ params, searchParams }: Props) {
     veld: q.veld,
     vraag: q.vraag,
     bewerk: q.bewerk === "1",
+    // Saving from the werkplaats only for who may edit; a reader keeps the try-out.
+    werkplaatsOpslaan: q.bewerk === "1" && (await auth.editingSession()) ? slaWerkplaatsOp : undefined,
   });
 }
 

@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 import { ActieFout, beschrijf, nieuweSleutel, pasToe, type FormulierActie, type ModelVeld } from "./formulier-acties";
 import { FormPreview } from "./form-preview";
 import type { NeutralForm, Question } from "./neutral-form";
+import type { OpslaanResultaat } from "./werkplaats-opslaan";
 
 /**
  * The form of the werkplaats, editable in the browser (Fase B, laag 1, Mark
@@ -13,6 +15,15 @@ import type { NeutralForm, Question } from "./neutral-form";
  * sends the same actions to server actions.
  */
 
+/** The app router, or nothing when rendered outside it (the hook is always called, so the order of hooks holds). */
+function useRouterOfNiets() {
+  try {
+    return useRouter();
+  } catch {
+    return undefined;
+  }
+}
+
 export type Beschikbaar = ModelVeld & { entiteit: string; pad?: string };
 
 const btn = "rounded border border-line px-1.5 py-0.5 text-xs leading-none hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40";
@@ -21,7 +32,10 @@ export function FormEditor({
   form: start,
   velden: veldenObj,
   beschikbaar,
+  opslaan,
 }: {
+  /** Save the actions to the dienstversie's branch (laag 2); absent = try-out only. */
+  opslaan?: (acties: FormulierActie[]) => Promise<OpslaanResultaat>;
   form: NeutralForm;
   /** The model's fields per element (`modelVelden`), as a plain object for the client. */
   velden: Record<string, ModelVeld[]>;
@@ -32,6 +46,27 @@ export function FormEditor({
   const [acties, setActies] = useState<FormulierActie[]>([]);
   const [fout, setFout] = useState("");
   const [gekozen, setGekozen] = useState<string | undefined>();
+  const [melding, setMelding] = useState("");
+  const [bezig, startOpslaan] = useTransition();
+  const router = useRouterOfNiets();
+
+  function slaOp() {
+    if (!opslaan || !acties.length) return;
+    startOpslaan(async () => {
+      const r = await opslaan(acties);
+      // Saved actions leave the list (they are in the branch now, which the page reloads as its start); the rest stays.
+      setActies((list) => list.slice(r.opgeslagen));
+      if (r.ok) {
+        setFout("");
+        setMelding(`${r.opgeslagen} ${r.opgeslagen === 1 ? "wijziging" : "wijzigingen"} opgeslagen in “${r.branch}”${r.nieuweBranch ? " (nieuw aangemaakt)" : ""}. Nog niet gegenereerd.`);
+      } else {
+        setMelding("");
+        setFout(r.fout);
+      }
+      // The page reloads its start from the branch; outside the app router (a test, a static render) there is nothing to refresh.
+      if (r.opgeslagen) router?.refresh();
+    });
+  }
 
   // The form is the start plus the actions: undo is dropping the last one.
   const form = useMemo(() => acties.reduce((f, a) => pasToe(f, a, velden), start), [acties, start, velden]);
@@ -117,6 +152,11 @@ export function FormEditor({
           <h3 className="font-medium">
             Wijzigingen <span className="text-muted">({acties.length})</span>
           </h3>
+          {melding && (
+            <p role="status" className="mt-1 rounded border border-emerald-300 bg-emerald-50 px-2 py-1 text-xs text-emerald-900">
+              {melding}
+            </p>
+          )}
           {acties.length === 0 ? (
             <p className="mt-1 text-xs text-muted">Nog niets gewijzigd. Elke wijziging komt hier, en wordt straks één bewerking op het model van deze dienst.</p>
           ) : (
@@ -126,15 +166,29 @@ export function FormEditor({
                   <li key={n}>{beschrijf(a)}</li>
                 ))}
               </ol>
-              <div className="mt-2 flex gap-2">
-                <button type="button" className={btn} onClick={() => setActies((l) => l.slice(0, -1))}>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {opslaan && (
+                  <button
+                    type="button"
+                    className="rounded bg-foreground px-2 py-1 text-xs font-medium text-background disabled:opacity-50"
+                    disabled={bezig}
+                    onClick={slaOp}
+                  >
+                    {bezig ? "Opslaan…" : "Opslaan in de eigen versie"}
+                  </button>
+                )}
+                <button type="button" className={btn} disabled={bezig} onClick={() => setActies((l) => l.slice(0, -1))}>
                   Laatste ongedaan maken
                 </button>
-                <button type="button" className={btn} onClick={() => setActies([])}>
+                <button type="button" className={btn} disabled={bezig} onClick={() => setActies([])}>
                   Alles terug
                 </button>
               </div>
-              <p className="mt-2 text-xs text-muted">Niet opgeslagen: verlaat je de pagina, dan zijn deze wijzigingen weg.</p>
+              <p className="mt-2 text-xs text-muted">
+                {opslaan
+                  ? "Nog niet opgeslagen. Opslaan zet ze in de eigen versie (branch) van deze dienst, niet in het model zelf."
+                  : "Niet opgeslagen: verlaat je de pagina, dan zijn deze wijzigingen weg."}
+              </p>
             </>
           )}
         </section>

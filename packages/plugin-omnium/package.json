@@ -10,7 +10,8 @@
     "./client": "./src/client.ts",
     "./inrichting": "./src/inrichting.ts",
     "./schemas": "./src/schemas.ts",
-    "./page": "./src/page.tsx"
+    "./page": "./src/page.tsx",
+    "./werkplaats-opslaan": "./src/werkplaats-opslaan.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

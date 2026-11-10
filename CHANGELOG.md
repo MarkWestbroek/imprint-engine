@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: het werkplaatsformulier opslaan in de Studio** (Fase B, laag 2).
+  - Een redacteur slaat de wijzigingen op in een eigen versie (branch) van de
+    dienstversie in het Studio-project. Die versie ontstaat bij de eerste keer
+    opslaan.
+  - Elke wijziging wordt één bewerking, op naam van de redacteur.
+  - Bewerken gaat daarna verder vanuit die eigen versie.
+  - Het model zelf verandert niet: samenvoegen gebeurt in de Studio.
+  - Werkt pas als het schrijfaccount `omnium-schrijver` er is; tot dan blijft
+    het proefbewerken.
 - **Inrichting: proefbewerken van het formulier in de werkplaats** (Fase B,
   laag 1). In stap 3 kun je vragen toevoegen uit het model, weglaten,
   verplaatsen, verplicht maken, een voorwaarde zetten en labels en stappen

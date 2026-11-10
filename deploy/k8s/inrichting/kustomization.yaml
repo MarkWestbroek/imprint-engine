@@ -29,6 +29,16 @@ patches:
         value:
           name: OMNIUM_REGISTER_TOKEN
           valueFrom: { secretKeyRef: { name: omnium-lezer, key: OMNIUM_REGISTER_TOKEN } }
+      # Schrijftoken (account omnium-schrijver, rol modelleur, schrijven op Inrichten): de
+      # werkplaats slaat het formulier op in de branch van de dienstversie (Fase B, laag 2).
+      # Eigen Secret, los van het leestoken (afspraak FUNDAMENT/BACKEND 10-11); optional,
+      # zodat de site zonder hem gewoon alleen-lezen draait. Alleen de schrijfmodule
+      # (plugin-omnium/studio-client) leest hem, server-side.
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: OMNIUM_SCHRIJF_TOKEN
+          valueFrom: { secretKeyRef: { name: omnium-schrijver, key: OMNIUM_SCHRIJF_TOKEN, optional: true } }
   - target: { kind: HTTPRoute, name: imprint }
     patch: |-
       - op: replace

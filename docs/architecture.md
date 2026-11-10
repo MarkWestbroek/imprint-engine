@@ -1628,6 +1628,32 @@ flowchart LR
     `profielen.diagram05.elements[id].data.bron.velden`). Laag 2 stuurt
     dezelfde acties naar server actions, die er één op per actie op de
     branch van de dienst van maken.
+  - Opslaan (laag 2; `studio-formulier.ts`, `studio-client.ts`,
+    `werkplaats-opslaan.ts`):
+    - Het formulier staat in de Studio als FormulierDefinitie in profiel
+      `formulierdiagram`. Containers (formulier, stap, conditioneel, lijst)
+      zijn elementen, een vraag is een compartiment-rij, en een subcontainer
+      hangt aan een `bevat`-connector. Rijen en connectoren delen één
+      `volgorde` per ouder.
+    - `fdNaarNeutraal` leest dat als neutraal formulier. `actieNaarOps`
+      maakt van één actie één `patchElementen {zet, wis}` met hele elementen;
+      een nieuwe container krijgt `addElementToDiagram`, een weggehaalde
+      `deleteElement` (cascade). Een voorwaarde verwijst naar het veldpad
+      (`Ent.rol.veld`), niet naar de key.
+    - Lezen: blob plus ops na `tot_volgnummer`, nagespeeld voor alleen de
+      element-ops van dat profiel (`speelNa`). Elke andere op op die store
+      wordt geweigerd ("open de Studio"). Dat is een tussenoplossing tot
+      Omnium gematerialiseerd leest (GET …/model/:profiel, gevraagd).
+    - Branch: één per dienstversie. Bij de eerste keer opslaan maakt de
+      werkplaats er een met `POST …/afsplitsen {naam, mapId}`, met de map van
+      het formulierdiagram uit `structuur.plaatsing`. Daarna vindt hij hem
+      terug op ouder, naam en map. Het project komt uit
+      `ArtefactHerkomst.studioProjectId`.
+    - Schrijven: per actie één batch met `verwachtLaatsteVolgnummer` en
+      `namens` (de Imprint-gebruiker). Bij een 409 leest hij opnieuw en
+      probeert het één keer. Het token is `OMNIUM_SCHRIJF_TOKEN` (Secret
+      `omnium-schrijver`, optional) en wordt alleen server-side gelezen. De
+      server action van de site controleert `auth.editingSession()`.
 - **Venster bij het formulier** (`diagram-dialog.tsx`, client).
   - `OmniumFormulier` zet de tekeningen waar een veld naar wijst één keer in
     de pagina, gesaneerd, in een `<dialog>`.

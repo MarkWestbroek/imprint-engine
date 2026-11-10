@@ -7,6 +7,8 @@ import { inrichtingOf } from "./context";
 import { DiagramDialog, DiagramLink, type Drawing } from "./diagram-dialog";
 import { FormPreview } from "./form-preview";
 import { FormEditor, type Beschikbaar } from "./form-editor";
+import type { FormulierActie } from "./formulier-acties";
+import { leesWerkplaatsBranch, type OpslaanResultaat } from "./werkplaats-opslaan";
 import { fromFormio, type NeutralForm, type Question } from "./neutral-form";
 import { currentHubs, ge, geRows } from "./register";
 import { Tabs } from "./tabs";
@@ -100,17 +102,23 @@ export async function WerkplaatsView({
   stap,
   vraag,
   bewerk = false,
+  opslaan,
   ctx,
 }: {
   subject: OmniumSubject;
   stap: Stap;
   vraag?: string;
-  /** Step 3 in edit mode (Fase B, laag 1): in the browser only, nothing saved. */
+  /** Step 3 in edit mode: in the browser (laag 1), saved to the branch with `opslaan` (laag 2). */
   bewerk?: boolean;
+  /** The site's server action, bound to this version; absent (or a reader) = try-out only. */
+  opslaan?: (acties: FormulierActie[]) => Promise<OpslaanResultaat>;
   ctx: WidgetContext;
 }) {
   const i = inrichtingOf(subject)!;
   const data = await werkplaatsData(i, subject.record);
+  // In edit mode with saving: the branch's form is where editing continues (when there is one yet).
+  const branch = bewerk && stap === "velden" && opslaan ? await leesWerkplaatsBranch(i, subject.record, data) : undefined;
+  const kanOpslaan = Boolean(opslaan && branch?.kanOpslaan);
   const base = subject.href.replace(/\/werkplaats(\/.*)?$/, "/werkplaats");
   const versieHref = subject.href.replace(/\/werkplaats(\/.*)?$/, "");
 
@@ -148,10 +156,21 @@ export async function WerkplaatsView({
     <DiagramDialog drawings={drawings} rows={rows}>
       <div className="space-y-4">
         <Stappenbalk data={data} base={base} stap={stap} />
-        {bewerk && stap === "velden" ? (
+        {bewerk && stap === "velden" && kanOpslaan ? (
+          <p role="note" className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm text-sky-900">
+            <strong>Bewerken.</strong>{" "}
+            {branch?.branch
+              ? `Je werkt in de eigen versie “${branch.branch.naam}” van deze dienst (tot wijziging ${branch.branch.laatste}).`
+              : "Bij de eerste keer opslaan krijgt deze dienstversie een eigen versie (branch) in de Studio."}{" "}
+            Opslaan verandert het model zelf niet: samenvoegen gebeurt in de Studio, en wat je opslaat is nog niet gegenereerd.{" "}
+            <Link href={`${base}/velden`} className="underline-offset-2 hover:underline">
+              Stoppen met bewerken
+            </Link>
+          </p>
+        ) : bewerk && stap === "velden" ? (
           <p role="note" className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm text-sky-900">
             <strong>Proefbewerken.</strong> Je wijzigt een kopie in je browser: er wordt niets opgeslagen, en verlaat je de pagina, dan
-            is het weg. Opslaan in het model van deze dienst komt in de volgende versie.{" "}
+            is het weg.{branch?.fout ? ` Opslaan kan nu niet: ${branch.fout}` : opslaan ? "" : " Opslaan kan alleen een redacteur."}{" "}
             <Link href={`${base}/velden`} className="underline-offset-2 hover:underline">
               Stoppen met proefbewerken
             </Link>
@@ -176,7 +195,12 @@ export async function WerkplaatsView({
               <Uitsnede data={data} tekeningen={tekeningen} />
             </Pane>
             <div className="border-t border-line lg:border-l lg:border-t-0">
-              <FormEditor form={bewerkbaar(data)} velden={Object.fromEntries(data.modelVelden)} beschikbaar={beschikbaar(data)} />
+              <FormEditor
+                form={branch?.branch?.form ?? bewerkbaar(data)}
+                velden={Object.fromEntries(data.modelVelden)}
+                beschikbaar={beschikbaar(data)}
+                opslaan={kanOpslaan ? opslaan : undefined}
+              />
             </div>
           </div>
         ) : stap === "voorbeeld" ? (

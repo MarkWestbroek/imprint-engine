@@ -732,6 +732,14 @@ toont wat het register nu weet.
     terug). Er wordt niets opgeslagen: verlaat je de pagina, dan is het weg.
     Een veld dat het model verplicht stelt, kun je niet weglaten of
     optioneel maken.
+  - **Opslaan** (redacteur, zodra het schrijfaccount er is): *Opslaan in de
+    eigen versie* zet je wijzigingen in een eigen versie van deze
+    dienstversie in de Studio. De eerste keer maakt hij die versie aan.
+    Daarna bewerk je verder vanuit die versie; de melding bovenaan zegt
+    welke. Het model zelf verandert niet: wat je opslaat, voeg je in de
+    Studio samen (*Verschil met MAIN*), en het is nog niet gegenereerd.
+    Gaat een wijziging niet meer (iemand anders veranderde het formulier),
+    dan staat er hoeveel er wel zijn opgeslagen, en blijft de rest in de lijst.
   - Verder is alles alleen-lezen. *Basis kiezen* en *Specialiseren* kunnen nog
     niet: er is nog geen catalogus van bases en patronen.
   - Het formulier is een eigen weergave, geen ingebed Open Formulieren. Zo

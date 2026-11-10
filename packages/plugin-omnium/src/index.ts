@@ -31,3 +31,4 @@ export { isOmniumSubject, type OmniumSubject } from "./context";
 export { fromBron, fromXml, BeslistabelView, type Beslistabel } from "./beslistabel";
 export { fromFormio, fromNeutraal, visible, type NeutralForm, type Question, type QuestionType } from "./neutral-form";
 export { werkplaatsData, STAPPEN, isStap, type Stap, type WerkplaatsData } from "./werkplaats";
+export { FormulierActie, pasToe, beschrijf, type ModelVeld } from "./formulier-acties";

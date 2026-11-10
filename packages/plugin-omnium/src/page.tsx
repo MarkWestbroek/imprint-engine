@@ -7,6 +7,8 @@ import { AmbiguousKey, INRICHTING_TYPES, type Located, type Pad } from "./inrich
 import { OmniumBeslistabel, OmniumDetail, OmniumFormulier, OmniumLijst, OmniumTekening } from "./widgets";
 import { EERSTE_STAP, isStap } from "./werkplaats";
 import { WerkplaatsView } from "./werkplaats-view";
+import type { FormulierActie } from "./formulier-acties";
+import type { OpslaanResultaat } from "./werkplaats-opslaan";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -35,6 +37,7 @@ export async function omniumPage({
   veld,
   vraag,
   bewerk,
+  werkplaatsOpslaan,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -48,8 +51,13 @@ export async function omniumPage({
   veld?: string;
   /** In the werkplaats, step 3: the selected question (its key). */
   vraag?: string;
-  /** In the werkplaats, step 3: edit mode (in the browser only). */
+  /** In the werkplaats, step 3: edit mode. */
   bewerk?: boolean;
+  /**
+   * The site's server action that saves the werkplaats form (a one-line "use
+   * server" wrapper around `slaOpVoorPad`, checking the role); omit for readers.
+   */
+  werkplaatsOpslaan?: (pad: string[], acties: FormulierActie[]) => Promise<OpslaanResultaat>;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -73,7 +81,15 @@ export async function omniumPage({
       render: (
         <article>
           <Header located={located} prefix={prefix} label="Werkplaats" peiltijdstip={peiltijdstip} />
-          <WerkplaatsView subject={subject} stap={stap} vraag={vraag} bewerk={bewerk} ctx={ctx} />
+          <WerkplaatsView
+            subject={subject}
+            stap={stap}
+            vraag={vraag}
+            bewerk={bewerk}
+            // Bound to this version's key path, so the browser cannot aim it elsewhere.
+            opslaan={werkplaatsOpslaan?.bind(null, path.slice(0, 4))}
+            ctx={ctx}
+          />
         </article>
       ),
     };
