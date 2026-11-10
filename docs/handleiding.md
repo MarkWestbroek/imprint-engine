@@ -725,7 +725,8 @@ toont wat het register nu weet.
     veranderd; *Uitrollen* de uitrollen (nieuwste bovenaan) en waar het
     draait.
   - **Proefbewerken** (stap 3, *Probeer het formulier te bewerken*): voeg
-    vragen toe uit het model (*+ vraag uit het model*), laat ze weg (✕),
+    vragen toe uit het model (*+ vraag uit het model*: de velden van de
+    aanvraag zelf die nog niet gevraagd worden), laat ze weg (✕),
     verplaats ze (↑ ↓, *naar stap…*), zet *verplicht* of een voorwaarde,
     wijzig een label (✎) of voeg een stap toe. Rechts zie je het formulier
     meteen veranderen, met de lijst *Wijzigingen* (ongedaan maken, alles

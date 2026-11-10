@@ -7,6 +7,7 @@ import { inrichtingOf } from "./context";
 import { DiagramDialog, DiagramLink, type Drawing } from "./diagram-dialog";
 import { FormPreview } from "./form-preview";
 import { FormEditor, type Beschikbaar } from "./form-editor";
+import type { ModelVeld } from "./formulier-acties";
 import type { FormulierActie } from "./formulier-acties";
 import { leesWerkplaatsBranch, type OpslaanResultaat } from "./werkplaats-opslaan";
 import { fromFormio, type NeutralForm, type Question } from "./neutral-form";
@@ -81,15 +82,24 @@ function bewerkbaar(data: WerkplaatsData): NeutralForm {
   };
 }
 
-/** What can be added: the model fields this e-dienstmodel leaves out, with their provisional form. */
+/**
+ * What can be added: every field of the doeltype's own entities (itself and
+ * what it inherits from) that the form does not ask yet — whether the
+ * e-dienstmodel left it out or uses it elsewhere (the objecttype, the dossier).
+ * A field of another entity is not part of this aanvraag (TRANSFORMATIES 10-11).
+ * Without a known doeltype: the fields the e-dienstmodel left out.
+ */
 function beschikbaar(data: WerkplaatsData): Beschikbaar[] {
   const out: Beschikbaar[] = [];
-  for (const [elementId, namen] of data.weggelatenVelden) {
-    for (const naam of new Set(namen)) {
-      const mv = data.modelVelden.get(elementId)?.find((v) => v.veld === naam);
-      const entiteit = elementId.split("_")[0]!;
-      if (mv) out.push({ ...mv, entiteit, pad: `${entiteit}.${mv.ge}.${naam}` });
-    }
+  const add = (mv: ModelVeld) => out.push({ ...mv, entiteit: mv.pad.split(".")[0]! });
+  if (data.eigenEntiteiten.size) {
+    for (const velden of data.modelVelden.values()) for (const mv of velden) if (data.eigenEntiteiten.has(mv.eigenaar)) add(mv);
+  } else {
+    for (const [elementId, namen] of data.weggelatenVelden)
+      for (const naam of new Set(namen)) {
+        const mv = data.modelVelden.get(elementId)?.find((v) => v.veld === naam);
+        if (mv) add(mv);
+      }
   }
   return out.sort((a, b) => `${a.entiteit}${a.ge}${a.veld}`.localeCompare(`${b.entiteit}${b.ge}${b.veld}`));
 }

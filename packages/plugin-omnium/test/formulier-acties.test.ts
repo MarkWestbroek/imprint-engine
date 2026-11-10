@@ -98,3 +98,31 @@ test("actions are a whitelist: anything else fails the schema; each has a senten
   assert.equal(FormulierActie.safeParse({ actie: "labelWijzigen", vraag: "x", label: "" }).success, false);
   assert.equal(beschrijf({ actie: "vraagVerplaatsen", vraag: "kenteken", stap: "pasfoto", na: null }), "Vraag kenteken verplaatst naar stap pasfoto, als eerste");
 });
+
+test("the FD path of a model field (TRANSFORMATIES 10-11): owner by composition, rol = meervoud; inherited stays under its own owner; only the doeltype's own entities", async () => {
+  const { eigenEntiteiten } = await import("../src/formulier-acties");
+  const lm = {
+    profielen: {
+      diagram05: {
+        elements: {
+          GA: { naam: "Gehandicaptenparkeerkaartaanvraag", elementType: "entiteit", data: {} },
+          A: { naam: "Aanvraag", elementType: "entiteit", data: {} },
+          M: { naam: "MedischAdvies", elementType: "entiteit", data: {} },
+          GA_Kaart: { naam: "GpkAanvraagKaart", elementType: "gegevenselement", data: { meervoud: "gpkaanvraag_kaarten", bron: { velden: [{ naam: "geldigTot", type: "string", format: "date" }] } } },
+          A_Bijlage: { naam: "Aanvraagbijlage", elementType: "gegevenselement", data: { meervoud: "aanvraagbijlagen", bron: { meervoud: "bijlagen", velden: [{ naam: "documentUrl", type: "string" }] } } },
+          M_Gegevens: { naam: "MedischAdviesGegevens", elementType: "gegevenselement", data: { bron: { velden: [{ naam: "adviesdatum", type: "string" }] } } },
+          c1: { elementType: "compositie", source: "GA", target: "GA_Kaart" },
+          c2: { elementType: "compositie", source: "A", target: "A_Bijlage" },
+          c3: { elementType: "compositie", source: "M", target: "M_Gegevens" },
+          g1: { elementType: "generalisatie", source: "GA", target: "A" },
+        },
+      },
+    },
+  };
+  const v = modelVelden(lm);
+  assert.equal(v.get("GA_Kaart")![0]!.pad, "Gehandicaptenparkeerkaartaanvraag.gpkaanvraag_kaarten.geldigTot");
+  assert.equal(v.get("A_Bijlage")![0]!.pad, "Aanvraag.aanvraagbijlagen.documentUrl"); // inherited: under its own owner; data.meervoud first
+  assert.equal(v.get("M_Gegevens")![0]!.pad, "MedischAdvies.medischadviesgegevenss.adviesdatum"); // no meervoud: name lowercased + "s"
+  assert.deepEqual([...eigenEntiteiten(lm, "Gehandicaptenparkeerkaartaanvraag")].sort(), ["A", "GA"]);
+  assert.equal(v.get("M_Gegevens")![0]!.eigenaar, "M"); // not one of them: not offered
+});

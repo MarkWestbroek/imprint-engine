@@ -148,13 +148,13 @@ export type FdModel = { elements: Elementen; diagramId?: string; posities?: Reco
  * the role name is unknown, and the action is refused rather than guessed.
  */
 export function veldpadVoor(elements: Elementen, elementId: string, veld: string, pad?: string): string {
-  if (pad && pad.split(".").length >= 3) return pad;
+  if (pad && pad.split(".").length >= 2) return pad;
   for (const e of Object.values(elements))
     for (const r of rijenVan(e)) {
       const p = str(r.data?.veld);
       if (str(r.data?.elementId) === elementId && p.includes(".")) return `${p.split(".").slice(0, -1).join(".")}.${veld}`;
     }
-  throw new StudioFout(`Het pad van “${veld}” in het formulier is niet bekend (geen vraag op hetzelfde gegevenselement); voeg hem toe in de Studio.`);
+  throw new StudioFout(`“${veld}” hoort niet bij deze aanvraag: het veldpad in het model is niet bekend.`);
 }
 
 /** Work on a copy; collect the changed elements and the removed ids. */

@@ -51,6 +51,14 @@ export type ModelVeld = {
   choices: { value: string; label: string }[];
   /** Required in the model: a question from it cannot be left out or made optional (TRANSFORMATIES §5.11). */
   verplicht: boolean;
+  /** The entity the field belongs to (the GE's owner by composition, or the entity itself). */
+  eigenaar: string;
+  /**
+   * The field's path in a FormulierDefinitie (TRANSFORMATIES 10-11): `<owner>.<rol>.<veld>`
+   * for a GE (rol = the GE's meervoud, else its name lowercased + "s"), `<entity>.<veld>`
+   * for a field on the entity itself. An inherited GE stays under its own owner.
+   */
+  pad: string;
 };
 
 type Obj = Record<string, unknown>;
@@ -77,25 +85,53 @@ function vorm(v: Obj): { type: QuestionType; soort: string } {
   return { type: "text", soort: "tekst" };
 }
 
-/** The fields per model element, from the logical model's payload. */
+const elementenVan = (logischModel: unknown) => o(o(o(o(logischModel).profielen).diagram05).elements) as Record<string, Obj>;
+
+/** The fields per model element, from the logical model's payload, each with its FD path. */
 export function modelVelden(logischModel: unknown): Map<string, ModelVeld[]> {
-  const elements = o(o(o(o(logischModel).profielen).diagram05).elements);
+  const elements = elementenVan(logischModel);
+  const owner = new Map<string, string>(); // GE id → owner entity id (compositie: source owns target)
+  for (const e of Object.values(elements)) if (str(e.elementType) === "compositie" && e.source && e.target) owner.set(str(e.target), str(e.source));
   const out = new Map<string, ModelVeld[]>();
   for (const [elementId, e] of Object.entries(elements)) {
-    const bron = o(o(o(e).data).bron);
+    const data = o(e.data);
+    const bron = o(data.bron);
     if (!Array.isArray(bron.velden)) continue;
-    const ge = str(o(e).naam) || elementId.split("_").at(-1)!;
+    const naam = str(e.naam) || elementId.split("_").at(-1)!;
+    const eigenaarId = owner.get(elementId);
+    const isGe = str(e.elementType) === "gegevenselement" && Boolean(eigenaarId);
+    const rol = str(data.meervoud) || str(bron.meervoud) || `${naam.toLowerCase()}s`;
+    const prefix = isGe ? `${str(elements[eigenaarId!]?.naam) || eigenaarId}.${rol}` : naam;
     out.set(
       elementId,
       (bron.velden as Obj[]).map((v) => ({
         elementId,
-        ge,
+        ge: naam,
         veld: str(v.naam),
         ...vorm(v),
         choices: Array.isArray(v.enum) ? (v.enum as unknown[]).map((x) => ({ value: String(x), label: capital(String(x)) })) : [],
         verplicht: v.verplicht === true,
+        eigenaar: isGe ? eigenaarId! : elementId,
+        pad: `${prefix}.${str(v.naam)}`,
       }))
     );
+  }
+  return out;
+}
+
+/**
+ * The entities a form on this doeltype can ask about: the doeltype (by name or
+ * id) and what it inherits from (generalisatie: source specialises target). A
+ * field of another entity — over a relation — is not part of this aanvraag:
+ * the registration cannot write it (TRANSFORMATIES 10-11).
+ */
+export function eigenEntiteiten(logischModel: unknown, doeltype: string): Set<string> {
+  const elements = elementenVan(logischModel);
+  const start = Object.entries(elements).find(([id, e]) => str(e.elementType) === "entiteit" && (id === doeltype || str(e.naam) === doeltype))?.[0];
+  const out = new Set<string>();
+  for (let at = start; at && !out.has(at); ) {
+    out.add(at);
+    at = Object.values(elements).find((e) => str(e.elementType) === "generalisatie" && str(e.source) === at)?.target as string | undefined;
   }
   return out;
 }

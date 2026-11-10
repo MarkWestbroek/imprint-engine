@@ -1,7 +1,7 @@
 import { ge, geRows, type FullRecord } from "./register";
 import type { Inrichting } from "./inrichting";
 import { fromFormio, fromNeutraal, obj, arr, s, type NeutralForm } from "./neutral-form";
-import { modelVelden as leesModelVelden, type ModelVeld } from "./formulier-acties";
+import { eigenEntiteiten as leesEigenEntiteiten, modelVelden as leesModelVelden, type ModelVeld } from "./formulier-acties";
 
 /**
  * The werkplaats of an e-dienstversie (werkplaats-plan §3, Fase A): what the
@@ -77,8 +77,10 @@ export type WerkplaatsData = {
   keuzes: Map<string, { gekozen: Set<string>; weggelaten: Set<string> }>;
   /** Per model element its fields (regel modelveld) left out: what could be added to the form later. */
   weggelatenVelden: Map<string, string[]>;
-  /** The fields of the logical model per element (type, choices, required): what a question can be made from. */
+  /** The fields of the logical model per element (type, choices, required, FD path): what a question can be made from. */
   modelVelden: Map<string, ModelVeld[]>;
+  /** The entities this form's doeltype covers (itself and what it inherits from): only their fields can be asked. */
+  eigenEntiteiten: Set<string>;
   /** Fields (regel modelveld) chosen and left out. */
   telling: { gekozen: number; weggelaten: number };
   /** Per model field (`veldSleutel`) the results that come from it, with the traceregels. */
@@ -242,9 +244,15 @@ export async function werkplaatsData(i: Inrichting, versie: FullRecord): Promise
     uitsnede,
     keuzes,
     weggelatenVelden,
-    modelVelden: (() => {
+    ...(() => {
       const lm = artefacten.find((a) => a.soort === "logisch-model");
-      return lm ? leesModelVelden(parse(ge(lm.record, "artefact_inhouden")?.payload)) : new Map<string, ModelVeld[]>();
+      const payload = lm ? parse(ge(lm.record, "artefact_inhouden")?.payload) : undefined;
+      // The doeltype: what the e-dienstmodel's form is "bron" of (Gehandicaptenparkeerkaartaanvraag).
+      const formulierModel = arr<Record<string, unknown>>(edienstmodel?.artefacten).find((a) => a.soort === "formulier");
+      return {
+        modelVelden: payload ? leesModelVelden(payload) : new Map<string, ModelVeld[]>(),
+        eigenEntiteiten: payload ? leesEigenEntiteiten(payload, s(formulierModel?.bron)) : new Set<string>(),
+      };
     })(),
     telling,
     raakt,

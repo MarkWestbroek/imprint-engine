@@ -329,8 +329,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   (Mark), daarna een echte test op cg-test en Marks akkoord.
             - [ ] Gematerialiseerd lezen via Omnium (GET …/model/:profiel,
                   BACKEND + render-route OMNIUM-UI) in plaats van zelf naspelen.
-            - [ ] Het veldpad van een vraag op een gegevenselement dat nog
-                  niet in het formulier staat (rolnaam): regel van TRANSFORMATIES.
+            - [x] Het veldpad van een nieuwe vraag (10-11): regel van
+                  TRANSFORMATIES (eigenaar via compositie, rol = meervoud); alleen
+                  velden van het doeltype en wat het erft worden aangeboden.
             - [ ] Fase C (jobs), F (stamdata): zie het plan.
       - [x] Fundament voorbereid (5-11): `deploy/k8s/` + runbook
             [deploy-fundament.md](deploy-fundament.md), dry-run tegen het cluster.

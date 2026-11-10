@@ -1640,6 +1640,13 @@ flowchart LR
       een nieuwe container krijgt `addElementToDiagram`, een weggehaalde
       `deleteElement` (cascade). Een voorwaarde verwijst naar het veldpad
       (`Ent.rol.veld`), niet naar de key.
+    - Het veldpad van een nieuwe vraag komt uit het logisch model
+      (`modelVelden`): `<eigenaar>.<rol>.<veld>`, met de eigenaar via het
+      compositie-element en de rol als `meervoud` (anders de naam in kleine
+      letters plus "s"). Een geërfd gegevenselement houdt zijn eigen eigenaar.
+      Aangeboden worden alleen velden van het doeltype en de typen waarvan het
+      erft (`eigenEntiteiten`, via `generalisatie`); een veld van een andere
+      entiteit hoort niet bij deze aanvraag.
     - Lezen: blob plus ops na `tot_volgnummer`, nagespeeld voor alleen de
       element-ops van dat profiel (`speelNa`). Elke andere op op die store
       wordt geweigerd ("open de Studio"). Dat is een tussenoplossing tot
