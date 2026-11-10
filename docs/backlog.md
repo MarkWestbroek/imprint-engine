@@ -329,7 +329,7 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   `omnium-schrijver` staan; lokaal tegen de Studio op cg-test
                   een wegwerpwijziging opgeslagen in de branch "Werkplaats
                   Gehandicaptenparkeerkaart aanvragen 0.1.0" (hoofd onaangeroerd).
-            - [ ] Laag 2 live: Marks uitrolakkoord.
+            - [x] Laag 2 live op cg-test (10-11, image 0.15.0-cf280c0).
             - [x] Gematerialiseerd lezen via Omnium (GET …/model/:profiel,
                   10-11): ingebouwd met terugval op zelf naspelen zolang
                   render 0.4.2 er niet is. Ook 409 `branch_bestaat` bij
