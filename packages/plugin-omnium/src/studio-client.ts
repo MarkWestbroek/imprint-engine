@@ -139,10 +139,11 @@ export function speelNa(stand: { elements: Elementen; diagrams: Record<string, D
       continue;
     }
     if (o.store === "structuur" && o.op === "plaatsPerMap") {
-      // What the Studio writes (cg-test 10-11): { mapId: [keys] }; "null" = no longer placed in a map.
+      // The Studio's store (structuurKern.plaatsPerMap): only the keys named move; "null" or empty = out of its map.
+      // A plain object keeps the Studio's order (a moved key keeps its place, a new or returning one goes last).
       for (const [mapId, keys] of Object.entries((o.args[0] ?? {}) as Record<string, string[]>))
         for (const k of Array.isArray(keys) ? keys : []) {
-          if (mapId === "null") delete stand.plaatsing[k];
+          if (mapId === "null" || !mapId) delete stand.plaatsing[k];
           else stand.plaatsing[k] = mapId;
         }
       continue;
