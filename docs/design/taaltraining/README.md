@@ -70,6 +70,26 @@ mag niet in Imprint: content gaat altijd via `ContentStore`, en widgets lezen
 alleen via `WidgetContext`. Ze zijn bedoeld als referentie voor het gedrag,
 niet om zo over te nemen.
 
+## Naam en domeinen
+
+Elke doeltaal krijgt een domein met dezelfde uitdrukking in die taal. De naam is
+zo meteen de eerste zin die je leert.
+
+| Doeltaal | Domein | Uitdrukking | Status |
+| --- | --- | --- | --- |
+| Nederlands | langzaammaarzeker.nl | langzaam maar zeker | vrij (11-11-2026), eerst |
+| Pools | powolialedoprzodu.pl | powoli, ale do przodu | vrij (11-11-2026) |
+| Italiaans | vapianovalontano.it | chi va piano, va sano e va lontano | vrij (11-11-2026), geen prioriteit |
+
+- Tijdelijk draait het op **taal.imprint-engine.nl**.
+- Het domein bepaalt de standaard doeltaal (en de UI-taal). De steuntaal kies je
+  zelf en wordt onthouden. Het blijft één imprint, één container. Caddy krijgt
+  per domein een hostnaam.
+- Extra registraties: langzaam-maar-zeker.nl en powoli-ale-do-przodu.pl
+  (met streepjes, beter leesbaar), als redirect.
+- .it: registratie kan met woonplaats in de EU (identiteitsnummer verplicht).
+  De DNS moet binnen 30 dagen werken, anders verwijdert de registry het domein.
+
 ## Mogelijke inbouw in Imprint
 
 - **Contenttype `les`** met een zod-schema in content-core of in een plugin. De
