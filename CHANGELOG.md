@@ -6,6 +6,24 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: een nieuwe site en `plugin-taal`** (`sites/taal`, bedoeld
+  voor taal.imprint-engine.nl; nog niet uitgerold).
+  - Een Poolse site met het lespakket Nederlands. Het adres is
+    `/<taal van de site>/<pakket>/<les>`, bijvoorbeeld
+    `/pl/nederlands/dit-en-dat`.
+  - Nieuw contenttype *Lessen*: dialoog, brokken, oefeningen en een
+    ombouw-opdracht. De vijf lessen van fase 0 komen met een importscript uit
+    `sites/taal/lessen`.
+  - Twee widgets: *Lesson dialogue* (de dialoog als tabel, met per zin een
+    knop voor normaal en langzaam afspelen) en *Lesson exercises* (luister,
+    kies, typ, orden, zeg).
+  - *Zeg* luistert mee in Chrome, Edge en Safari. Waar dat niet kan, beoordeelt
+    de leerling zichzelf.
+  - Audio: onder *Taal → Audio* maakt de redactie per les de ontbrekende
+    opnamen via Azure tekst-naar-spraak. Een zin die al een opname heeft, ook
+    in een andere les, wordt niet opnieuw aangevraagd. Zonder opname leest de
+    browser de zin voor.
+  - De score per les blijft in de browser van de leerling.
 - **Inrichting: het werkplaatsformulier opslaan in de Studio** (Fase B, laag 2).
   - Een redacteur slaat de wijzigingen op in een eigen versie (branch) van de
     dienstversie in het Studio-project. Die versie ontstaat bij de eerste keer

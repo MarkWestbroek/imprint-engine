@@ -426,6 +426,38 @@ docker compose build tools   # migrate/seed draaien in het tools-image; alleen e
 SITES=omnium ./deploy.sh
 ```
 
+**De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; nog niet
+uitgerold). De service, het Caddy-blok en de Dockerfile-regels staan klaar.
+De opnamen gaan vanaf het begin naar een eigen bucket, dus er valt niets te
+verhuizen. Op de VPS:
+
+```bash
+cd /srv/imprint/deploy/vps
+# geheimen in .env, zonder ze te tonen
+printf 'TAAL_DB_PASSWORD=%s\nTAAL_SESSION_SECRET=%s\nTAAL_S3_SECRET_KEY=%s\n' \
+  "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" "$(openssl rand -hex 24)" >> .env
+# met de hand in .env: TAAL_S3_BUCKET=imprint-taal, TAAL_S3_ACCESS_KEY=imprint-taal,
+# TAAL_AZURE_TTS_KEY=<de sleutel uit Azure>, en SITES aanvullen met taal
+set -a; . ./.env; set +a
+docker compose exec -T postgres psql -U postgres -c "CREATE ROLE taal LOGIN PASSWORD '$TAAL_DB_PASSWORD'" -c "CREATE DATABASE taal OWNER taal"
+docker compose build tools           # het tools-image moet de nieuwe site en plugin kennen
+./deploy.sh migrate taal
+./deploy.sh seed taal --only=site,page,menu
+./deploy.sh import-lessen taal       # de vijf lessen uit sites/taal/lessen, via de store
+./deploy.sh user taal add <naam> admin
+./deploy.sh s3-setup taal            # bucket imprint-taal + gebruiker
+echo 'TAAL_S3_ENDPOINT=http://minio:9000' >> .env
+SITES=taal ./deploy.sh
+```
+
+Daarna het A-record `taal.imprint-engine.nl` naar de VPS, het Caddy-blok uit
+[Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
+`sudo systemctl reload caddy`. Audio: inloggen op `/admin`, Taal → Audio, per
+les *Genereer*. De sleutel staat alleen in `.env` op de VPS en komt via de
+compose-omgeving in de draaiende container, niet in de image. Een les
+gewijzigd in het bestand: `./deploy.sh import-lessen taal` en daarna
+`SITES=taal ./deploy.sh`; de opnamen van ongewijzigde zinnen blijven.
+
 Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
 en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
 

@@ -638,6 +638,73 @@ zet hem op volledig scherm. Een slide heeft zijn eigen adres
 (`/presentatie#studio`). Een deck uit Claude (Slides) komt binnen met het
 importscript; de beelden moeten dan als bestand in de site staan.
 
+## De taaltraining
+
+De site `taal` (straks taal.imprint-engine.nl) is een Poolse site waarop je
+Nederlands leert. Het adres zegt wat je ziet: `/pl/nederlands/dit-en-dat` is
+de les *Dit en dat* uit het pakket Nederlands, met de site in het Pools.
+Rechtsboven wissel je de taal van de site (PL of NL); je blijft op dezelfde les.
+
+**Wat de leerling ziet.** Een les heeft vier delen:
+
+- de dialoog, met per zin twee knoppen: ▶ speelt de zin af, 🐢 speelt hem
+  langzaam af. De vertaling staat ernaast;
+- de brokken: vaste stukjes om zo te gebruiken, ook met afspeelknoppen;
+- de ombouw-opdracht;
+- de oefeningen, één tegelijk: luisteren en kiezen, kiezen, vertalen en typen,
+  woorden op volgorde zetten, en hardop zeggen.
+
+Bij typen tellen hoofdletters, leestekens en accenten niet mee. Bij *zeg*
+luistert de browser mee (Chrome, Edge en Safari) en heeft de leerling drie
+pogingen. Kan de browser niet meeluisteren, of kiest de leerling *Zonder
+microfoon*, dan luistert hij naar het voorbeeld en beoordeelt hij zichzelf;
+de eindscore zegt hoeveel antwoorden zelf beoordeeld zijn. De score blijft in
+de browser van de leerling en staat daarna bij de les in het overzicht.
+
+Staat de site in het Nederlands (`/nl/nederlands`), dan vallen de vertalingen
+weg en blijven alleen de oefeningen *kies* en *orden* over. De andere vragen
+iets in het Pools.
+
+**Lessen bewerken.** Onder *Taal → Lessen* staat elke les. `id` is de sleutel
+(`nl-0-01`: taal, fase, nummer) en bepaalt de volgorde. `slug` is de naam in
+het adres. Dialoog, brokken en oefeningen zijn vakken met JSON, in dezelfde
+vorm als in de lesbestanden. Een oefening heeft een `type`:
+
+| type | velden |
+|---|---|
+| `luister` | `tekst` (wordt voorgelezen), `opties`, `antwoord` (nummer van de goede optie, vanaf 0) |
+| `kies` | `vraag`, `opties`, `antwoord` |
+| `typ` | `vraag`, `antwoorden` (alles wat goed is; het eerste is het voorbeeld) |
+| `orden` | `zin` |
+| `zeg` | `vraag`, `antwoorden`, `voorbeeld` (true = eerst laten horen) |
+
+Opslaan maakt een nieuwe versie; de oude vind je onder *History*.
+
+De vijf lessen van fase 0 staan ook als bestand in `sites/taal/lessen`. Het
+importscript zet ze in de database en overschrijft dan wat in de admin is
+gewijzigd. Kies dus per les één plek om te bewerken.
+
+**Audio maken.** Onder *Taal → Audio* staat per les hoeveel zinnen een opname
+hebben. De knop *Genereer* zegt vooraf hoeveel opnamen en tekens hij gaat
+aanvragen. Dat kost geld per teken, dus:
+
+- alleen wat ontbreekt wordt aangevraagd;
+- een zin die een andere les al heeft, wordt overgenomen;
+- na het wijzigen van een zin ontbreekt alleen die zin.
+
+Elke zin krijgt twee opnamen, normaal en langzaam. Zolang een opname
+ontbreekt, leest de browser de zin zelf voor; de knoppen werken dus altijd.
+Staat er *Wacht op de sleutel*, dan is op de server geen sleutel voor
+tekst-naar-spraak ingesteld.
+
+**Op een andere pagina.** De widgets *Lesson dialogue* en *Lesson exercises*
+tonen de dialoog of de oefeningen van één les op een gewone pagina. Vul bij
+`les` het id in. `ui` is de taal van de knoppen; leeg is de steuntaal van de
+les.
+
+De Poolse teksten zijn een eerste vertaling en moeten nog worden nagelezen.
+Tot dan vraagt de site zoekmachines om haar niet op te nemen.
+
 ## De inrichting (Omnium-register)
 
 Een site met de plugin **Omnium** laat de inrichting van e-diensten zien uit
