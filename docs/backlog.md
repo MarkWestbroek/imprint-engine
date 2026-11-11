@@ -938,6 +938,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 7. Open beslissingen (vragen aan Mark)
 
+- [ ] **Taaltraining als imprint?** Het ontwerp en een prototype staan in
+      [design/taaltraining](design/taaltraining/README.md): een lesplan in
+      fasen, vijf lessen NL met PL als steuntaal, TTS als build-stap en een
+      oefenwidget met spraakherkenning. Te beslissen: een eigen site of
+      `plugin-taal`, en waar de audio komt (beeldbibliotheek of asset). **L**
+
 - [ ] **Common Ground-showcase afmaken** (`sites/commonground`, 30-09):
       - [x] ~~DNS + Caddy~~ — live op https://commonground.imprint-engine.nl
             (30-09, VPS-poort 3400).
