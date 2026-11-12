@@ -943,9 +943,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       AssetStore en de les onthoudt hun adressen. Ontwerp in
       [design/taaltraining](design/taaltraining/README.md).
 - [ ] **Taaltraining afmaken** (`sites/taal`, 12-11):
-      - [ ] Uitrollen op taal.imprint-engine.nl: DNS, Caddy, database, bucket
-            (runbook in [deploy-vps.md](deploy-vps.md), "Een site erbij").
-      - [ ] Azure-sleutel: de echte aanroep en de stemmen
+      - [x] ~~Uitrollen~~ — live op https://taal.imprint-engine.nl (12-11,
+            VPS-poort 3700, bucket `imprint-taal`).
+      - [ ] De Caddyfile in het Bitemporal-repo bijwerken met het blok van
+            `taal` (de live Caddyfile heeft het al).
+      - [ ] Azure-sleutel in `.env` op de VPS (`TAAL_AZURE_TTS_KEY`), dan
+            `SITES=taal ./deploy.sh` en per les *Genereer*. De echte aanroep en de stemmen
             (`nl-NL-FennaNeural`) zijn nog niet tegen Azure getest, alleen
             tegen een nagebootste dienst.
       - [ ] De Poolse teksten laten nalezen door iemand die Pools spreekt

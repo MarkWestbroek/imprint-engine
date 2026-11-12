@@ -1,6 +1,6 @@
 # Taaltraining — ontwerp en prototype
 
-Status: **gebouwd (12-11-2026), nog niet uitgerold.** De taaltraining is de
+Status: **gebouwd en live op taal.imprint-engine.nl (12-11-2026)**, nog zonder opnamen. De taaltraining is de
 site `sites/taal` met `@imprint/plugin-taal`; hoe het in elkaar zit staat in
 [architecture.md](../../architecture.md) §7, wat de redactie ermee doet in de
 [handleiding](../../handleiding.md). Deze map bevat het lesplan en de
