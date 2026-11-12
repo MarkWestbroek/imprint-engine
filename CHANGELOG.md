@@ -6,8 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
-- **Taaltraining: een nieuwe site en `plugin-taal`** (`sites/taal`, bedoeld
-  voor taal.imprint-engine.nl; nog niet uitgerold).
+- **Taaltraining: een nieuwe site en `plugin-taal`** (`sites/taal`, live op
+  taal.imprint-engine.nl sinds 12-11).
   - Een Poolse site met het lespakket Nederlands. Het adres is
     `/<taal van de site>/<pakket>/<les>`, bijvoorbeeld
     `/pl/nederlands/dit-en-dat`.

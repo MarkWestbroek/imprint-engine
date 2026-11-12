@@ -426,8 +426,8 @@ docker compose build tools   # migrate/seed draaien in het tools-image; alleen e
 SITES=omnium ./deploy.sh
 ```
 
-**De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; nog niet
-uitgerold). De service, het Caddy-blok en de Dockerfile-regels staan klaar.
+**De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; live sinds
+12 november 2026, zo uitgerold).
 De opnamen gaan vanaf het begin naar een eigen bucket, dus er valt niets te
 verhuizen. Op de VPS:
 
@@ -469,6 +469,15 @@ en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
   `postgres`: tijdens een build bestaat het compose-netwerk niet.
 - **Docker zet `HOSTNAME` op de container-id** en de standalone-server bindt
   daarop; de image zet daarom `HOSTNAME=0.0.0.0`.
+- **Een nieuwe site herstart Postgres één keer**: de service `postgres` in
+  `compose.yml` krijgt er een `<SITE>_DB_PASSWORD` bij, dus de eerstvolgende
+  `deploy.sh` maakt de container opnieuw aan (gezien 12-11, bij `taal`). De
+  data staat op het volume en de sites verbinden vanzelf opnieuw, maar ze zijn
+  een paar seconden zonder database.
+- **`caddy validate` nooit met sudo op een config met een nieuw logbestand**:
+  het maakt dat bestand aan als root, en daarna mislukt de reload ("opening
+  log writer"). De oude config blijft dan draaien. Herstel:
+  `sudo chown caddy:caddy /var/log/caddy/<site>.log` en opnieuw herladen.
 - **Geheugen**: `next build` is het zwaarste wat deze machine doet (op Plesk
   gaf een dubbele build een OOM). Is de VPS krap, zet dan swap aan vóór de
   eerste build; het geheugengebruik op de VPS zelf is nog niet gemeten.
