@@ -1,0 +1,3 @@
+# Een eerste versie, nog niet nagelezen: niet opnemen (zie ook src/app/layout.tsx).
+User-agent: *
+Disallow: /

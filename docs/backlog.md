@@ -938,11 +938,36 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
 
 ## 7. Open beslissingen (vragen aan Mark)
 
-- [ ] **Taaltraining als imprint?** Het ontwerp en een prototype staan in
-      [design/taaltraining](design/taaltraining/README.md): een lesplan in
-      fasen, vijf lessen NL met PL als steuntaal, TTS als build-stap en een
-      oefenwidget met spraakherkenning. Te beslissen: een eigen site of
-      `plugin-taal`, en waar de audio komt (beeldbibliotheek of asset). **L**
+- [x] ~~**Taaltraining als imprint?**~~ — besloten en gebouwd (12-11): een
+      eigen site `sites/taal` met `plugin-taal`; de opnamen gaan via de
+      AssetStore en de les onthoudt hun adressen. Ontwerp in
+      [design/taaltraining](design/taaltraining/README.md).
+- [ ] **Taaltraining afmaken** (`sites/taal`, 12-11):
+      - [ ] Uitrollen op taal.imprint-engine.nl: DNS, Caddy, database, bucket
+            (runbook in [deploy-vps.md](deploy-vps.md), "Een site erbij").
+      - [ ] Azure-sleutel: de echte aanroep en de stemmen
+            (`nl-NL-FennaNeural`) zijn nog niet tegen Azure getest, alleen
+            tegen een nagebootste dienst.
+      - [ ] De Poolse teksten laten nalezen door iemand die Pools spreekt
+            (`plugin-taal/src/i18n.ts`, het menu, de pagina *O metodzie*).
+            Tot dan staat de site op noindex.
+      - [ ] De ombouw-opdracht en de vraag bij *kies* staan in het Nederlands;
+            een beginner leest dat nog niet. Per steuntaal een vertaling in
+            de les. **S**
+      - [ ] Oefeningen zonder steuntaal (Nederlands leren in het Nederlands):
+            nu blijven alleen *kies* en *orden* over. Varianten met plaatjes
+            of een omschrijving. **M**
+      - [ ] *Zeg* testen op iOS Safari en in Firefox (daar hoort de
+            zelfbeoordeling te verschijnen).
+      - [ ] Een formulier voor dialoog en oefeningen; nu zijn dat JSON-vakken
+            in het lesformulier. **M**
+      - [ ] De site slaat haar inhoud op als `en`, want de basistaal `pl`
+            bestaat nog niet ([meertaligheid.md](design/meertaligheid.md),
+            stap A). Daarna ook `<html lang>` per interfacetaal.
+      - [ ] Eigen domeinen (langzaammaarzeker.nl, powolialedoprzodu.pl): per
+            domein een standaardpakket. Nu kiest de siteconfig het pakket.
+      - [ ] Voortgang per gebruiker in plaats van per browser; uitspraak met
+            score per klank (Azure Pronunciation Assessment).
 
 - [ ] **Common Ground-showcase afmaken** (`sites/commonground`, 30-09):
       - [x] ~~DNS + Caddy~~ — live op https://commonground.imprint-engine.nl

@@ -1730,6 +1730,70 @@ Een vijfde site, `sites/inrichting`, is de **werkplek** op dit register
 - Het overzicht is de pagina `home`, met de widgets `omnium-lijst`.
 - De site draait op Fundament: [deploy-fundament.md](deploy-fundament.md).
 
+Een zesde site, `sites/taal`, is de **taaltraining** (poort 3700; ontwerp in
+[design/taaltraining](design/taaltraining/README.md)): een Poolse site met het
+lespakket Nederlands. De site zelf is dun: chrome, de startpagina die
+doorstuurt, en één catch-all die eerst de plugin vraagt. Alles van de lessen
+zit in `@imprint/plugin-taal`.
+
+```mermaid
+flowchart LR
+    F["sites/taal/lessen/*.md<br/>frontmatter + body"] -- "import-lessen.ts<br/>parseLes → importLes" --> ST[("store<br/>type les")]
+    ST -- "WidgetContext.writableStore<br/>(widgets)" --> W["lesdialoog · oefeningen"]
+    ST -- "publicRoute" --> R["/&lt;ui&gt;/&lt;pakket&gt;/&lt;les&gt;<br/>SSG"]
+    R --> LV["Lesdialoog + LesOefeningen<br/>(server)"]
+    W --> LV
+    LV -- "props: oefeningen, opnamen, teksten" --> CL["Speak · Oefeningen<br/>(client)"]
+    A["/admin/taal<br/>genereerAudio"] -- "alleen ontbrekende sleutels" --> AZ["Azure TTS"]
+    AZ -- mp3 --> AS[("AssetStore<br/>taal/tts/&lt;sleutel&gt;.mp3")]
+    A -- "putItem: les.audio[sleutel] = url" --> ST
+    CL -- "/api/assets/…, anders de browserstem" --> AS
+```
+
+- **Adres** (`href.ts`): `/<ui>/<pakket>/<les>`. `<ui>` is de taal van de
+  interface, `<pakket>` de taal die je leert, in die taal genoemd
+  (`nederlands`, `polski`). `taal` en `steuntaal` zijn velden van de les, niet
+  het `lang` van het item: een Poolse les is een andere les, geen vertaling.
+  De site geeft `ui` en het standaardpakket mee (`TAAL` in
+  `imprint.config.ts`); `taalStaticPaths()` levert alle adressen voor
+  `generateStaticParams`.
+- **Contenttype `les`** (`schemas.ts`): de frontmatter van een lesbestand,
+  plus `slug`, `ombouwen` (de body) en `audio`. De sleutel van het item is
+  `id` (`slugOf`). De oefeningen zijn een discriminated union op `type`.
+  `LesFormSchema` laat `audio` weg; het formulier bewaart velden die het niet
+  toont.
+- **Server en client**: de viewers (`les-view.tsx`, `widget.tsx`) lezen de les
+  via de `WidgetContext` en geven alleen platte props door. De clientdelen
+  (`speak.tsx`, `oefeningen.tsx`, `voortgang.tsx`) lezen niets van de server.
+  De vaste teksten komen per interfacetaal uit `i18n.ts` en gaan als prop mee.
+- **Welke oefeningen** (`oefeningenVoor`): is de interfacetaal de steuntaal
+  van de les, dan alle. Anders alleen `kies` en `orden`, want de rest vraagt
+  of antwoordt in de steuntaal.
+- **Vergelijken** (`tekst.ts`, puur): `norm()` haalt hoofdletters, leestekens
+  en accenten weg; `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
+  kleine fouten van de spraakherkenning.
+- **Zeg**: `SpeechRecognition` van de browser, alleen in een veilige context.
+  Of het kan, weet pas de browser; de component vraagt het in een effect en
+  toont anders de zelfbeoordeling. Die verschijnt ook bij een fout van de
+  microfoon en via *Zonder microfoon*.
+- **Opnamen** (`audio.ts`, `actions.ts`, `tts.ts`):
+  - `zinnen()` verzamelt wat afspeelbaar is: de dialoog en de brokken in de
+    doeltaal, en wat de oefeningen voorlezen. De vertalingen krijgen geen
+    opname.
+  - De sleutel van een opname is `sha1(stem|tempo|tekst)`, 16 tekens, zoals in
+    het prototype. Dezelfde zin in een andere les heeft dus dezelfde sleutel.
+  - `genereerAudio` vraagt alleen aan wat de les niet heeft en geen andere les
+    heeft. De bytes gaan met `AssetStore.put` naar `taal/tts/<sleutel>.mp3`,
+    het adres komt in `les.audio`, en de les krijgt één nieuwe versie. Bij een
+    fout halverwege blijft bewaard wat al gemaakt is.
+  - De server-viewer zet `les.audio` om in een kaart per zin (`audioKaart`).
+    `Speak` speelt het adres af, en valt terug op `speechSynthesis` als er
+    geen adres is of het bestand niet laadt.
+  - De sleutel van Azure komt uit de config (`tts: { key, region }`, in de
+    site uit `AZURE_TTS_KEY`). Zonder sleutel is `azureTts()` null en zegt de
+    knop dat. Een test geeft een eigen `synthesize` mee.
+- **Voortgang**: de score per les in `localStorage` (`taal-voortgang`).
+
 Stappen voor een nieuwe site:
 
 1. `sites/<naam>/` scaffolden (Next.js) met `@imprint/content-core`,

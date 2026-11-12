@@ -1,0 +1,13 @@
+{
+  "name": "main",
+  "items": [
+    {
+      "label": "Lekcje",
+      "url": "/pl/nederlands"
+    },
+    {
+      "label": "O metodzie",
+      "page": "o-metodzie"
+    }
+  ]
+}

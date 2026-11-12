@@ -8,6 +8,7 @@
 #   musicbrain → 127.0.0.1:3000      imprint → 127.0.0.1:3100
 #   commonground → 127.0.0.1:3400    (showcase; 3200/3300: volksgebouw/psycholog)
 #   omnium     → 127.0.0.1:3500      (informatiesite over Omnium)
+#   taal       → 127.0.0.1:3700      (taaltraining; 3600 is de werkplek op Fundament)
 #   postgres   → 127.0.0.1:5434      (Omnium gebruikt 5433)
 #   minio      → alleen imprint_net (API :9000); console 127.0.0.1:9011
 #
@@ -43,6 +44,7 @@ services:
       # Leeg mag: dan maakt pg-init.sh die database niet aan (bestaand volume: zie docs/deploy-vps.md).
       COMMONGROUND_DB_PASSWORD: ${COMMONGROUND_DB_PASSWORD:-}
       OMNIUM_DB_PASSWORD: ${OMNIUM_DB_PASSWORD:-}
+      TAAL_DB_PASSWORD: ${TAAL_DB_PASSWORD:-}
     ports:
       - "127.0.0.1:${PG_PORT:-5434}:5432"
     volumes:
@@ -185,6 +187,38 @@ services:
       - omnium_assets:/data/assets
       - /srv/imprint-stats/omnium:/data/stats:ro
 
+  # Taaltraining (taal.imprint-engine.nl, design/taaltraining): een Poolse site
+  # met het lespakket Nederlands. Lessen via `./deploy.sh import-lessen taal`,
+  # menu en pagina's via `./deploy.sh seed taal --only=site,page,menu`.
+  taal:
+    <<: *site
+    image: imprint/taal:${TAAL_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: taal, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
+      network: host
+      secrets: [database_url]
+    environment:
+      STATS_REPORT_DIR: /data/stats
+      DATABASE_URL: postgres://taal:${TAAL_DB_PASSWORD}@postgres:5432/taal
+      SESSION_SECRET: ${TAAL_SESSION_SECRET:-}
+      ASSET_ROOT: /data/assets
+      # Tekst-naar-spraak voor de opnamen (admin → Taal → Audio). Alleen hier,
+      # in de omgeving van de draaiende container: niet in de image, niet in de build.
+      # Leeg = geen opnamen maken; de browser leest dan zelf voor.
+      AZURE_TTS_KEY: ${TAAL_AZURE_TTS_KEY:-}
+      AZURE_TTS_REGION: ${TAAL_AZURE_TTS_REGION:-westeurope}
+      # Eigen MinIO-bucket voor de opnamen (design/beeldbibliotheek.md §8); leeg = op het volume hieronder.
+      ASSET_S3_ENDPOINT: ${TAAL_S3_ENDPOINT:-}
+      ASSET_S3_BUCKET: ${TAAL_S3_BUCKET:-}
+      ASSET_S3_ACCESS_KEY: ${TAAL_S3_ACCESS_KEY:-}
+      ASSET_S3_SECRET_KEY: ${TAAL_S3_SECRET_KEY:-}
+    ports:
+      - "127.0.0.1:${TAAL_PORT:-3700}:3000"
+    volumes:
+      - taal_assets:/data/assets
+      - /srv/imprint-stats/taal:/data/stats:ro
+
   # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
   # productiedatabase. Draait alleen op verzoek:
   #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
@@ -213,6 +247,7 @@ volumes:
   imprint_assets:
   commonground_assets:
   omnium_assets:
+  taal_assets:
 
 networks:
   imprint_net:

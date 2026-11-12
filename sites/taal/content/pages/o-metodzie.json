@@ -1,0 +1,26 @@
+{
+  "slug": "o-metodzie",
+  "title": "O metodzie",
+  "description": "Najpierw gotowe zwroty, potem gramatyka: jak działa ten kurs niderlandzkiego.",
+  "publishedAt": "2026-11-11",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Ten kurs nie zaczyna się od gramatyki ani od zdań, których nigdy nie użyjesz. Zaczyna się od gotowych zwrotów, które przydają się od razu: w sklepie, na targu, przy kasie.\n\n## Jak to działa\n\n- **Najpierw użyteczne, potem poprawne.** „Misschien dit?” ze śrubką w ręku to udane zdanie.\n- **Najpierw wzór, potem reguła.** W jednej lekcji pojawia się najwyżej jedna nowa reguła.\n- **Słuchaj i powtarzaj.** Każde zdanie możesz odtworzyć normalnie i powoli.\n- **Mów na głos.** W ćwiczeniach „powiedz” przeglądarka słucha i sprawdza, co mówisz.\n\n## Lekcja krok po kroku\n\n1. Posłuchaj dialogu i przeczytaj tłumaczenie.\n2. Powtórz zwroty na głos.\n3. Przebuduj dialog po swojemu.\n4. Zrób ćwiczenia. Wynik zostaje tylko w twojej przeglądarce.\n\n**Langzaam maar zeker** znaczy: powoli, ale do przodu."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

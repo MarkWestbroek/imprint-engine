@@ -1,0 +1,90 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer, de standaardwidgets en de lessen, met
+ * classes die buiten deze site-map staan; Tailwind moet ze dus expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+@source "../../../../packages/plugin-taal/src";
+
+/*
+ * Huisstijl van de taaltraining: rustig en warm, papierkleur met donkergroen
+ * als accent. Grote, goed leesbare tekst: een les lees je op een telefoon.
+ */
+:root {
+	--background: #fbf8f1;
+	--surface: #f1ece0;
+	--border: #d9d1bf;
+	--foreground: #1d2420;
+	--muted: #5c655f;
+	--accent: #1f5f4a;
+	--accent-strong: #154334;
+	--accent-2: #b4552d;
+	--tl-width: 880px;
+	color-scheme: light;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3). */
+@theme inline {
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
+}
+
+/* In Tailwinds base-laag, zodat utilities (zoals de tekstkleur van widgetknoppen) winnen. */
+@layer base {
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 18px;
+		line-height: 1.6;
+		-webkit-font-smoothing: antialiased;
+	}
+	a { color: inherit; text-decoration: none; }
+	button { cursor: pointer; }
+	button:disabled { cursor: default; }
+	:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+}
+
+.tl-container { max-width: var(--tl-width); margin: 0 auto; padding: 0 clamp(16px, 4vw, 32px); }
+
+/* Kop: naam links, menu en taalkeuze rechts. */
+.tl-header { border-bottom: 1px solid var(--border); background: var(--background); }
+.tl-header-row { min-height: 64px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; padding-top: 8px; padding-bottom: 8px; }
+.tl-brand { display: inline-flex; flex-direction: column; line-height: 1.2; font-weight: 700; font-size: 19px; color: var(--accent-strong); }
+.tl-brand small { font-weight: 400; font-size: 13px; color: var(--muted); }
+.tl-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; font-size: 16px; color: var(--muted); }
+.tl-nav a { padding: 4px 0; }
+.tl-nav a:hover, .tl-nav a.is-active { color: var(--foreground); }
+.tl-nav a.is-active { font-weight: 600; text-decoration: underline; text-underline-offset: 6px; text-decoration-color: var(--accent); }
+.tl-lang { display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--border); border-radius: 999px; font-size: 13px; font-weight: 600; }
+.tl-lang a { padding: 2px 10px; border-radius: 999px; }
+.tl-lang a[aria-current="true"] { background: var(--accent); color: var(--background); }
+
+.tl-main { padding: 36px 0 80px; }
+.tl-page h1 { margin: 0 0 20px; }
+
+.eyebrow { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--muted); }
+.markdown { line-height: 1.7; }
+.markdown > * + * { margin-top: 1em; }
+.markdown h2 { font-size: 24px; font-weight: 700; margin-top: 1.6em; }
+.markdown h3 { font-size: 19px; font-weight: 700; margin-top: 1.4em; }
+.markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown code { font-size: .9em; padding: .1em .35em; border-radius: 4px; background: var(--surface); }
+.markdown table { border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+.markdown blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); }
+
+.tl-footer { border-top: 1px solid var(--border); background: var(--surface); padding: 28px 0; font-size: 14px; color: var(--muted); }
+.tl-footer p { margin: 0; }
+.tl-footer a { text-decoration: underline; text-underline-offset: 3px; }

@@ -17,6 +17,9 @@
 #   ./deploy.sh import-pleio-files commonground [--dry-run] [--limit=N]
 #                                    de bestanden en beelden waar de inhoud naar linkt → bibliotheek,
 #                                    links → asset:; daarna bouwen (SITES=commonground ./deploy.sh)
+#   ./deploy.sh import-lessen taal [--dry-run]
+#                                    de lesbestanden (sites/taal/lessen) → database,
+#                                    via de store; daarna bouwen (SITES=taal ./deploy.sh)
 #   ./deploy.sh digest commonground  de dagelijkse mededelingen-mail versturen (cron;
 #                                    POST /api/digest met <SITE>_INGEST_TOKEN; --dry telt alleen)
 #   ./deploy.sh s3-setup musicbrain  bucket + gebruiker in de eigen MinIO (eenmalig;
@@ -78,6 +81,11 @@ case "${1:-}" in
       tools npm run import:pleio-files --workspace="$site" -- "$@"
     echo "Klaar. Bouw nu (SITES=$site ./deploy.sh)."
     exit 0 ;;
+  import-lessen)
+    site="${2:?gebruik: deploy.sh import-lessen <site> [--dry-run]}"; shift 2
+    tools "$site" npm run import:lessen --workspace="$site" -- "$@"
+    echo "Geïmporteerd. Bouw nu (SITES=$site ./deploy.sh)."
+    exit 0 ;;
   digest)
     site="${2:?gebruik: deploy.sh digest <site> [--dry]}"
     SITE="$(echo "$site" | tr '[:lower:]' '[:upper:]')"
@@ -131,7 +139,7 @@ echo "── bron: $(git describe --tags --always)"
 
 dc up -d --wait postgres
 # De eigen MinIO alleen als een site er zijn bestanden in heeft.
-if [ -n "${MUSICBRAIN_S3_ENDPOINT:-}${IMPRINT_S3_ENDPOINT:-}" ]; then dc up -d --wait minio; fi
+if [ -n "${MUSICBRAIN_S3_ENDPOINT:-}${IMPRINT_S3_ENDPOINT:-}${TAAL_S3_ENDPOINT:-}" ]; then dc up -d --wait minio; fi
 dc build tools
 
 for site in $SITES; do

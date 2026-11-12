@@ -1,9 +1,12 @@
 # Taaltraining — ontwerp en prototype
 
-Status: **idee / prototype**, nog niet ingebouwd. Deze map bevat het lesplan, de
-eerste vijf lessen (Nederlands, Pools als steuntaal) en losse React-prototypes
-voor afspelen, oefenen en spreken. Het doel: kijken of een taaltraining een
-imprint (site of plugin) kan worden.
+Status: **gebouwd (12-11-2026), nog niet uitgerold.** De taaltraining is de
+site `sites/taal` met `@imprint/plugin-taal`; hoe het in elkaar zit staat in
+[architecture.md](../../architecture.md) §7, wat de redactie ermee doet in de
+[handleiding](../../handleiding.md). Deze map bevat het lesplan en de
+React-prototypes waar de bouw van uitging. De vijf lessen staan nu in
+`sites/taal/lessen/` (de map `docs` komt niet in de image, en het importscript
+moet ze op de VPS kunnen lezen).
 
 Het volledige plan staat ook als document in Claude:
 [Taaltraining: natuurlijke opbouw](https://claude.ai/artifact/7Mjcfpgofp635nWEx1pMHv).
@@ -33,7 +36,7 @@ pas als je hem nodig hebt om iets te zeggen wat je al wilt zeggen.
 
 ## Lesformaat
 
-Eén les is één Markdown-bestand met frontmatter (`lessen/nl/fase-0/`):
+Eén les is één Markdown-bestand met frontmatter (`sites/taal/lessen/nl/fase-0/`):
 
 ```yaml
 id: nl-0-01
@@ -90,7 +93,20 @@ zo meteen de eerste zin die je leert.
 - .it: registratie kan met woonplaats in de EU (identiteitsnummer verplicht).
   De DNS moet binnen 30 dagen werken, anders verwijdert de registry het domein.
 
-## Mogelijke inbouw in Imprint
+## Het adres: taal van de site, dan het pakket
+
+Besloten op 12-11-2026: het eerste deel van het adres is de taal van de site
+(de interface, en daarmee de steuntaal), het tweede het lespakket (de taal die
+je leert): `/pl/nederlands/dit-en-dat`. De eerste versie is een Poolse site
+met het pakket Nederlands. Een domein kiest later alleen het standaardpakket.
+Met `/nl/nederlands` leer je Nederlands in het Nederlands; dan vallen de
+vertalingen weg en blijven de oefeningen over die geen steuntaal nodig hebben.
+
+Dit is geen laag 4 uit [meertaligheid.md](../meertaligheid.md): een Poolse les
+is een andere les, geen vertaling van een Nederlandse. `taal` en `steuntaal`
+zijn gewone velden van de les.
+
+## Mogelijke inbouw in Imprint (het oorspronkelijke voorstel)
 
 - **Contenttype `les`** met een zod-schema in content-core of in een plugin. De
   velden komen overeen met de frontmatter hierboven, zodat de admin het

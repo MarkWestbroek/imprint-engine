@@ -33,11 +33,13 @@ COPY packages/plugin-omnium/package.json packages/plugin-omnium/
 COPY packages/plugin-blog/package.json packages/plugin-blog/
 COPY packages/plugin-events/package.json packages/plugin-events/
 COPY packages/plugin-annotations/package.json packages/plugin-annotations/
+COPY packages/plugin-taal/package.json packages/plugin-taal/
 COPY sites/musicbrain/package.json sites/musicbrain/
 COPY sites/imprint/package.json sites/imprint/
 COPY sites/commonground/package.json sites/commonground/
 COPY sites/omnium/package.json sites/omnium/
 COPY sites/inrichting/package.json sites/inrichting/
+COPY sites/taal/package.json sites/taal/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund
 COPY . .
 
