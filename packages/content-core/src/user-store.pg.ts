@@ -1,9 +1,10 @@
 import { and, asc, count, desc, eq, gte, inArray, isNull, lt } from "drizzle-orm";
 
-import { apiTokens, attendances, emailTokens, invites, memberships, notifications, searchLog, users } from "./db-schema.pg";
+import { apiTokens, attendances, emailTokens, invites, memberValues, memberships, notifications, searchLog, users } from "./db-schema.pg";
 import {
   UserStore,
   type AttendanceRow,
+  type MemberValueRow,
   type NotificationRow,
   type SearchLogRow,
   type EmailTokenRow,
@@ -175,6 +176,40 @@ export class PgUserStore extends UserStore {
 
   protected async deleteAttendancesOf(userName: string): Promise<void> {
     await this.db.delete(attendances).where(eq(attendances.userName, userName));
+  }
+
+  // Member values
+  protected async selectMemberValues(userName: string, scope: string): Promise<MemberValueRow[]> {
+    return this.db
+      .select()
+      .from(memberValues)
+      .where(and(eq(memberValues.userName, userName), eq(memberValues.scope, scope)))
+      .orderBy(memberValues.key);
+  }
+
+  protected async selectMemberValue(userName: string, scope: string, key: string): Promise<MemberValueRow | null> {
+    const rows = await this.db
+      .select()
+      .from(memberValues)
+      .where(and(eq(memberValues.userName, userName), eq(memberValues.scope, scope), eq(memberValues.key, key)))
+      .limit(1);
+    return rows[0] ?? null;
+  }
+
+  protected async insertMemberValue(row: Omit<MemberValueRow, "id">): Promise<void> {
+    await this.db.insert(memberValues).values(row);
+  }
+
+  protected async updateMemberValue(id: number, patch: Pick<MemberValueRow, "value" | "updatedAt">): Promise<void> {
+    await this.db.update(memberValues).set(patch).where(eq(memberValues.id, id));
+  }
+
+  protected async deleteMemberValue(id: number): Promise<void> {
+    await this.db.delete(memberValues).where(eq(memberValues.id, id));
+  }
+
+  protected async deleteMemberValuesOf(userName: string): Promise<void> {
+    await this.db.delete(memberValues).where(eq(memberValues.userName, userName));
   }
 
   // Search log

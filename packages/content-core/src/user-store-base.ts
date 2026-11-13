@@ -83,6 +83,11 @@ const asAttendance = (row: AttendanceRow): Attendance => ({
   status: (ATTENDANCE_STATUSES as readonly string[]).includes(row.status) ? (row.status as AttendanceStatus) : "maybe",
 });
 
+/** A small value a plugin keeps per member (a preference, a score): JSON, at most `MEMBER_VALUE_MAX` characters. */
+export type MemberValueRow = { id: number; userName: string; scope: string; key: string; value: string; updatedAt: Date };
+export const MEMBER_VALUE_MAX = 2000;
+const MEMBER_VALUE_NAME = /^[A-Za-z0-9:_.-]+$/;
+
 /** One logged site search: the query, its hits, whether a machine typed it. */
 export type SearchLogRow = { id: number; query: string; hits: number; automated: number; at: Date };
 export type SearchTerm = { term: string; count: number; hits: number };
@@ -201,6 +206,13 @@ export abstract class UserStore {
   protected abstract updateAttendance(id: number, patch: Partial<Pick<AttendanceRow, "status" | "updatedAt">>): Promise<void>;
   protected abstract deleteAttendance(id: number): Promise<void>;
   protected abstract deleteAttendancesOf(userName: string): Promise<void>;
+  // Member values
+  protected abstract selectMemberValues(userName: string, scope: string): Promise<MemberValueRow[]>;
+  protected abstract selectMemberValue(userName: string, scope: string, key: string): Promise<MemberValueRow | null>;
+  protected abstract insertMemberValue(row: Omit<MemberValueRow, "id">): Promise<void>;
+  protected abstract updateMemberValue(id: number, patch: Pick<MemberValueRow, "value" | "updatedAt">): Promise<void>;
+  protected abstract deleteMemberValue(id: number): Promise<void>;
+  protected abstract deleteMemberValuesOf(userName: string): Promise<void>;
 
   // Search log
   protected abstract insertSearch(row: Omit<SearchLogRow, "id">): Promise<void>;
@@ -415,6 +427,37 @@ export abstract class UserStore {
     if (existing) await this.deleteAttendance(existing.id);
   }
 
+  // ---------- Member values: what a plugin keeps per member ----------
+
+  /** Everything a plugin (`scope`) keeps for this member, by key. */
+  async memberValues(userName: string, scope: string): Promise<Record<string, unknown>> {
+    const out: Record<string, unknown> = {};
+    for (const row of await this.selectMemberValues(userName, scope)) {
+      try {
+        out[row.key] = JSON.parse(row.value);
+      } catch {
+        // not JSON (written by hand): as if it was never kept
+      }
+    }
+    return out;
+  }
+
+  /** Keep a value (anything JSON, small); `undefined` or `null` forgets it. */
+  async setMemberValue(userName: string, scope: string, key: string, value: unknown, now = new Date()): Promise<void> {
+    await this.mustExist(userName);
+    if (!MEMBER_VALUE_NAME.test(scope) || scope.length > 32) throw new Error(`Invalid scope "${scope}"`);
+    if (!MEMBER_VALUE_NAME.test(key) || key.length > 128) throw new Error(`Invalid key "${key}"`);
+    const existing = await this.selectMemberValue(userName, scope, key);
+    if (value === undefined || value === null) {
+      if (existing) await this.deleteMemberValue(existing.id);
+      return;
+    }
+    const json = JSON.stringify(value);
+    if (json.length > MEMBER_VALUE_MAX) throw new Error(`Value too large (${json.length} > ${MEMBER_VALUE_MAX})`);
+    if (existing) await this.updateMemberValue(existing.id, { value: json, updatedAt: now });
+    else await this.insertMemberValue({ userName, scope, key, value: json, updatedAt: now });
+  }
+
   // ---------- Invites ----------
 
   /** An invitation link's code (only its hash is stored); whoever redeems it joins with `role`. */
@@ -506,6 +549,7 @@ export abstract class UserStore {
     await this.deleteEmailTokensOf(name);
     await this.deleteMembershipsOf(name);
     await this.deleteAttendancesOf(name);
+    await this.deleteMemberValuesOf(name);
     await this.deleteNotificationsOf(name);
     await this.deleteByName(name);
   }

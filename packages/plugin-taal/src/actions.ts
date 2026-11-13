@@ -3,6 +3,7 @@ import type { AdminContext } from "@imprint/runtime-admin";
 import { ontbrekend, opnamen, zinnen, STEMMEN, type Stemmen } from "./audio";
 import { getLes, listLessen } from "./lessen";
 import type { Les } from "./schemas";
+import { beste, isScore, isVorm, lesSleutel, SCOPE, type Stand, type Voortgang } from "./stand";
 import type { Synthesize } from "./tts";
 
 /**
@@ -29,6 +30,8 @@ export type AudioStatus = {
 export type AudioOverzicht = { kan: boolean; lessen: AudioStatus[] };
 
 export type AudioResult = { ok: boolean; error?: string; gemaakt?: number; hergebruikt?: number };
+
+export type LidResult = { ok: boolean; error?: string };
 
 export type TaalActionOptions = { synthesize: Synthesize | null; stemmen?: Stemmen; /** Pause between requests, in ms. */ pauze?: number };
 
@@ -109,5 +112,51 @@ export function taalActions(opts: TaalActionOptions) {
     return error ? { ok: false, error, gemaakt, hergebruikt } : { ok: true, gemaakt, hergebruikt };
   }
 
-  return { audioStatus, genereerAudio };
+  /**
+   * The learner's side: results and the choice of forms of whoever is signed
+   * in (any member, no role needed). Without a session the answer is "not
+   * signed in" and the browser keeps its own copy.
+   */
+  async function lid(admin: AdminContext) {
+    const users = admin.imprint.users;
+    const session = users ? await admin.auth.getSession() : null;
+    return users && session ? { users, naam: session.name } : null;
+  }
+
+  async function stand(admin: AdminContext): Promise<Stand> {
+    const wie = await lid(admin);
+    if (!wie) return { ingelogd: false };
+    const waarden = await wie.users.memberValues(wie.naam, SCOPE);
+    const voortgang: Voortgang = {};
+    for (const [sleutel, waarde] of Object.entries(waarden)) {
+      if (sleutel.startsWith("les:") && isScore(waarde)) voortgang[sleutel.slice(4)] = waarde;
+    }
+    return { ingelogd: true, naam: wie.naam, voortgang, vorm: isVorm(waarden.vorm) ? waarden.vorm : null };
+  }
+
+  /** Keep results (`{ "nl-0-01": { score, total, datum } }`): only of lessons that exist, and only when better than what is kept. */
+  async function bewaar(admin: AdminContext, scores: unknown): Promise<LidResult> {
+    const wie = await lid(admin);
+    const store = admin.imprint.writableStore;
+    if (!wie || !store) return { ok: false, error: "Niet ingelogd." };
+    if (!scores || typeof scores !== "object") return { ok: false, error: "Geen resultaten." };
+    const bestaat = new Set((await listLessen(store)).map((l) => l.id));
+    const bewaard = await wie.users.memberValues(wie.naam, SCOPE);
+    for (const [id, score] of Object.entries(scores)) {
+      if (!bestaat.has(id) || !isScore(score)) continue;
+      const oud = bewaard[lesSleutel(id)];
+      const nieuw = { score: score.score, total: score.total, datum: score.datum };
+      if (beste(isScore(oud) ? oud : undefined, nieuw) === nieuw) await wie.users.setMemberValue(wie.naam, SCOPE, lesSleutel(id), nieuw);
+    }
+    return { ok: true };
+  }
+
+  async function zetVorm(admin: AdminContext, vorm: unknown): Promise<LidResult> {
+    const wie = await lid(admin);
+    if (!wie) return { ok: false, error: "Niet ingelogd." };
+    await wie.users.setMemberValue(wie.naam, SCOPE, "vorm", isVorm(vorm) ? vorm : null);
+    return { ok: true };
+  }
+
+  return { audioStatus, genereerAudio, stand, bewaar, zetVorm };
 }

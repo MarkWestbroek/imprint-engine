@@ -161,6 +161,24 @@ export function userStoreContract(name: string, factory: () => Promise<UserStore
       assert.equal(await users.attendance("demo", "ed"), null);
     });
 
+    it("member values: per member and plugin, any small JSON, overwritten, forgotten with null", async () => {
+      const users = await factory();
+      assert.deepEqual(await users.memberValues("ann", "taal"), {});
+      await users.setMemberValue("ann", "taal", "les:nl-0-01", { score: 3, total: 5 });
+      await users.setMemberValue("ann", "taal", "vorm", "v");
+      await users.setMemberValue("ann", "wiki", "vorm", "x");
+      await users.setMemberValue("ed", "taal", "vorm", "m");
+      await users.setMemberValue("ann", "taal", "les:nl-0-01", { score: 5, total: 5 });
+      assert.deepEqual(await users.memberValues("ann", "taal"), { "les:nl-0-01": { score: 5, total: 5 }, vorm: "v" });
+      assert.deepEqual(await users.memberValues("ed", "taal"), { vorm: "m" });
+      await users.setMemberValue("ann", "taal", "vorm", null);
+      await users.setMemberValue("ann", "taal", "vorm", null); // gone already: no error
+      assert.deepEqual(Object.keys(await users.memberValues("ann", "taal")), ["les:nl-0-01"]);
+      await assert.rejects(users.setMemberValue("nobody", "taal", "vorm", "m"), /No such user/);
+      await assert.rejects(users.setMemberValue("ann", "taal", "a key", "m"), /Invalid key/);
+      await assert.rejects(users.setMemberValue("ann", "taal", "groot", "x".repeat(3000)), /too large/);
+    });
+
     it("notifications: per member, newest first, unread count, mark read, the digest's queue; they go with the user", async () => {
       const users = await factory();
       assert.equal(await users.unreadNotifications("ann"), 0);

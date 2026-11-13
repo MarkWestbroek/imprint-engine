@@ -964,8 +964,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             een vertaling in de les. **S**
       - [x] ~~Poolse vormen alleen mannelijk~~ — keuze *on/ona* in de
             browser, `Pracował{em|am}` in de les (13-11).
-      - [ ] Optioneel aanmelden: voortgang en de on/ona-keuze per lid, op
-            elk toestel; zonder account blijft alles werken. **M**
+      - [x] ~~Optioneel aanmelden, deel 1~~ — voortgang en de on/ona-keuze
+            per lid in het account (`member_values`), 13-11.
+      - [ ] Optioneel aanmelden, deel 2: registreren (e-mail met
+            bevestiging), inloggen, wachtwoord vergeten en een accountpagina
+            op de taalsite, in het Pools en Nederlands; het lid kan zijn
+            account zelf verwijderen; een korte privacytekst; SMTP voor de
+            taalsite op de VPS. **M**
+      - [ ] Wisselt op één browser het account, dan gaat de lokale voortgang
+            van de vorige leerling mee naar het nieuwe account. Bij uitloggen
+            de lokale stand wissen. **S**
       - [ ] Fasen een naam geven op het overzicht (nu "Etap 0" … "Etap 5"). **S**
       - [ ] Oefeningen zonder steuntaal (Nederlands leren in het Nederlands):
             nu blijven alleen *kies* en *orden* over. Varianten met plaatjes

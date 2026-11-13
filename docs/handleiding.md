@@ -693,6 +693,13 @@ keuze staan beide vormen er ("Pracowałem/am"). De keuze blijft in de browser
 bewaard. In een les schrijf je zo'n zin als `Pracował{em|am}`: eerst de
 mannelijke, dan de vrouwelijke uitgang.
 
+**Voortgang.** Het overzicht toont per les het beste resultaat. Dat staat in
+de browser van de leerling. Wie ingelogd is, heeft het ook in zijn account:
+op een ander toestel staat het er dan weer, samen met de keuze *on/ona*. Wat
+al in de browser stond, gaat bij het inloggen mee naar het account.
+(Registreren en inloggen voor leerlingen komen nog; nu geldt dit voor wie via
+`/admin` is ingelogd.)
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`. Het

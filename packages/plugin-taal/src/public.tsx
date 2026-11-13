@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { WritableContentStore } from "@imprint/content-core";
-import { Markdown, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
+import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
 import type { Stemmen } from "./audio";
 import { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal } from "./href";
 import { kentVormen, teksten, UI_TALEN } from "./i18n";
+import { Leerling } from "./leerling";
 import { Lesdialoog, LesOefeningen } from "./les-view";
 import { listLessen, oefeningenVoor, perFase, tekstVoor } from "./lessen";
 import type { Les } from "./schemas";
@@ -19,7 +20,8 @@ import { LesScore } from "./voortgang";
  *   /<ui>/<pakket>/<les>     one lesson: dialogue, chunks, rebuild, exercises
  *
  * `<ui>` is the interface language, `<pakket>` the language taught (href.ts).
- * All public and without a session, so the site prerenders them.
+ * All public and without a session, so the site prerenders them; who is
+ * looking is asked in the browser (leerling.tsx).
  */
 export type TaalRouteOptions = {
   /** The interface languages this site offers; default: all the plugin has texts for. */
@@ -29,10 +31,11 @@ export type TaalRouteOptions = {
   stemmen?: Stemmen;
 };
 
-function Overzicht({ ui, taal, lessen }: { ui: string; taal: string; lessen: Les[] }) {
+function Overzicht({ ui, taal, lessen, call }: { ui: string; taal: string; lessen: Les[]; call?: PluginCall }) {
   const t = teksten(ui);
   return (
     <div lang={ui} className="max-w-3xl">
+      <Leerling call={call} />
       <p className="eyebrow">{t.lessen}</p>
       <h1 className="text-3xl font-semibold tracking-tight">{t.pakket[taal] ?? taal}</h1>
       {kentVormen(ui) && (
@@ -70,12 +73,13 @@ function Overzicht({ ui, taal, lessen }: { ui: string; taal: string; lessen: Les
   );
 }
 
-function LesView({ ui, les, vorige, volgende, stemmen }: { ui: string; les: Les; vorige?: Les; volgende?: Les; stemmen?: Stemmen }) {
+function LesView({ ui, les, vorige, volgende, stemmen, call }: { ui: string; les: Les; vorige?: Les; volgende?: Les; stemmen?: Stemmen; call?: PluginCall }) {
   const t = teksten(ui);
   const situatie = tekstVoor(les.situatie, ui);
   const patroon = tekstVoor(les.patroon, ui);
   return (
     <article lang={ui} className="max-w-3xl">
+      <Leerling call={call} />
       <Link href={pakketHref(ui, les.taal)} className="text-sm text-muted hover:underline">
         ← {t.alleLessen}
       </Link>
@@ -154,7 +158,7 @@ const uiTalen = (opts: TaalRouteOptions) => (opts.ui ?? UI_TALEN).filter((ui) =>
 
 export function taalPublicRoute(opts: TaalRouteOptions = {}) {
   const standaard = opts.pakket ?? "nl";
-  return async ({ imprint, slug }: PublicRouteContext): Promise<PublicRouteResult | null> => {
+  return async ({ imprint, slug, call }: PublicRouteContext): Promise<PublicRouteResult | null> => {
     const store = imprint.writableStore;
     const [ui, pakket, naam] = slug;
     if (!store || !ui || slug.length > 3 || !uiTalen(opts).includes(ui)) return null;
@@ -167,13 +171,13 @@ export function taalPublicRoute(opts: TaalRouteOptions = {}) {
     if (!naam) {
       // A package without lessons is a page only when it is the one the site opens with.
       if (lessen.length === 0 && taal !== standaard) return null;
-      return { render: <Overzicht ui={ui} taal={taal} lessen={lessen} />, metadata: { title: `${t.pakket[taal] ?? taal}: ${t.lessen.toLowerCase()}` } };
+      return { render: <Overzicht ui={ui} taal={taal} lessen={lessen} call={call} />, metadata: { title: `${t.pakket[taal] ?? taal}: ${t.lessen.toLowerCase()}` } };
     }
     const i = lessen.findIndex((l) => lesSlug(l) === naam);
     const les = lessen[i];
     if (!les) return null;
     return {
-      render: <LesView ui={ui} les={les} vorige={lessen[i - 1]} volgende={lessen[i + 1]} stemmen={opts.stemmen} />,
+      render: <LesView ui={ui} les={les} vorige={lessen[i - 1]} volgende={lessen[i + 1]} stemmen={opts.stemmen} call={call} />,
       metadata: { title: les.titel, description: les.dialoog.map((r) => r[les.taal]).filter(Boolean).slice(0, 2).join(" ") },
       item: { type: "les", slug: les.id },
     };

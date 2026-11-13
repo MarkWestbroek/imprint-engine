@@ -1,20 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { VOORTGANG_KEY } from "./oefeningen";
+import { useMemo } from "react";
+import { useOpslag, VOORTGANG_KEY } from "./opslag";
+import { leesVoortgang } from "./stand";
 
-/** The last score of a lesson in this browser, on the overview; nothing until the lesson was done. */
+/** The best score of a lesson, on the overview; nothing until the lesson was done. */
 export function LesScore({ id, label }: { id: string; label: string }) {
-  const [score, setScore] = useState<{ score: number; total: number } | null>(null);
-  useEffect(() => {
-    try {
-      const all = JSON.parse(localStorage.getItem(VOORTGANG_KEY) ?? "{}") as Record<string, { score: number; total: number }>;
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- browser storage, unknown on the server
-      if (all[id]) setScore(all[id]);
-    } catch {
-      // no storage: no score
-    }
-  }, [id]);
+  const bewaard = useOpslag(VOORTGANG_KEY);
+  const score = useMemo(() => leesVoortgang(bewaard)[id], [bewaard, id]);
   if (!score) return null;
   return (
     <span className="rounded-full border border-line px-2 py-0.5 text-xs text-muted">
