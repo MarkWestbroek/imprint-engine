@@ -68,6 +68,19 @@ export async function koppel(c?: PluginCall): Promise<void> {
   }
 }
 
+/** Before signing in or out: the next page asks the server again who is looking. */
+export function vergeetKoppeling() {
+  gevraagd = false;
+  ingelogd = false;
+}
+
+/** Signing out, or the account is gone: what this browser kept goes too, so the next learner here starts clean. */
+export function vergeetLokaal() {
+  vergeetKoppeling();
+  schrijf(VOORTGANG_KEY, null);
+  schrijf(VORM_KEY, null);
+}
+
 const naarServer = (action: string, ...args: unknown[]) => {
   if (ingelogd && call) call("taal", action, ...args).catch(() => {});
 };

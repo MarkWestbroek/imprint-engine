@@ -208,6 +208,12 @@ services:
       # Leeg = geen opnamen maken; de browser leest dan zelf voor.
       AZURE_TTS_KEY: ${TAAL_AZURE_TTS_KEY:-}
       AZURE_TTS_REGION: ${TAAL_AZURE_TTS_REGION:-westeurope}
+      # Mail voor de accounts van leerlingen (bevestigen, wachtwoord vergeten); leeg = geen mail.
+      SMTP_HOST: ${TAAL_SMTP_HOST:-}
+      SMTP_PORT: ${TAAL_SMTP_PORT:-465}
+      SMTP_USER: ${TAAL_SMTP_USER:-}
+      SMTP_PASS: ${TAAL_SMTP_PASS:-}
+      MAIL_FROM: ${TAAL_MAIL_FROM:-}
       # Eigen MinIO-bucket voor de opnamen (design/beeldbibliotheek.md §8); leeg = op het volume hieronder.
       ASSET_S3_ENDPOINT: ${TAAL_S3_ENDPOINT:-}
       ASSET_S3_BUCKET: ${TAAL_S3_BUCKET:-}

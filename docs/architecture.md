@@ -1302,6 +1302,12 @@ niet van elkaar afwijken.
   van twee uur, inloggen op de site, profiel) staat in
   [members.ts](../packages/runtime-admin/src/admin-server/members.ts); de
   site wikkelt haar in "use server"-acties en routes onder `/account`.
+  Een site in een andere taal (de taaltraining: `/<ui>/account`) geeft een
+  eigen pad en eigen mailteksten mee (`MemberOptions`) en toont bij een
+  mislukte actie haar eigen zin voor de `code` die terugkomt
+  (`MemberErrorCode`; bij `rejected` zegt `error` in het Engels wat de user
+  store weigerde). `deleteOwnAccount` laat een lid zichzelf verwijderen na het
+  wachtwoord; voor redactie-accounts blijft dat `/admin/users`.
 - **Drie niveaus** (design/communities.md §4.2, G2): `Access` is een string
   `public | restricted | group:<slug>` (regex, met `x-imprint.access` als
   hint voor de formulieren); `userSubject(name, role, groups)` geeft de PDP
@@ -1807,6 +1813,16 @@ flowchart LR
   van de `UserStore` (scope `taal`, sleutel `les:<id>` en `vorm`); `bewaar`
   neemt alleen bestaande lessen en echte resultaten aan, en alleen als ze
   beter zijn. De pagina's blijven voorgebouwd en voor iedereen gelijk.
+- **Account** (`sites/taal`: `app/(site)/[ui]/account/*`,
+  `components/account-forms.tsx`, `lib/account-teksten.ts`): registreren,
+  inloggen, wachtwoord vergeten, de accountpagina en de privacytekst, per
+  interfacetaal. De routes zijn dunne wikkels om de ledenlogica van de motor;
+  elk formulier stuurt zijn taal mee (`ui`), zodat mails, links en
+  foutzinnen in die taal zijn. `account-teksten.ts` wordt ook in de browser
+  gelezen en importeert daarom niets van de server (geen `imprint.config`).
+  De kop vraagt in de browser wie er kijkt (`/api/me`). Bij inloggen vraagt
+  de plugin de stand opnieuw op (`vergeetKoppeling`); bij uitloggen en na
+  verwijderen gaat ook de lokale kopie weg (`vergeetLokaal`).
 - **Vormen per leerling** (`tekst.ts`, `vorm.tsx`): een tekst in de steuntaal
   mag `{mannelijk|vrouwelijk}` bevatten (`Pracował{em|am}`). `vormen(tekst,
   keuze)` kiest er één, of toont zonder keuze beide ("Pracowałem/am"). De

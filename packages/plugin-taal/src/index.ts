@@ -81,6 +81,7 @@ export { taalActions, statusVan, type AudioOverzicht, type AudioResult, type Aud
 export { taalContentTypes } from "./content-types";
 export { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal, PAKKETTEN } from "./href";
 export { TEKSTEN, UI_TALEN, teksten, type Teksten } from "./i18n";
+export { Leerling } from "./leerling";
 export { Lesdialoog, LesOefeningen } from "./les-view";
 export { getLes, listLessen, metVertaling, oefeningenVoor } from "./lessen";
 export { taalPublicRoute, taalStaticPaths, type TaalRouteOptions } from "./public";

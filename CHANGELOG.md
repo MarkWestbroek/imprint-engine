@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: een account voor leerlingen (optioneel).** Registreren met
+  e-mailbevestiging, inloggen, wachtwoord vergeten en een accountpagina onder
+  `/pl/account` en `/nl/account`, met de mails en meldingen in de taal van de
+  site. Een leerling kan zijn account zelf verwijderen; alles wat over hem
+  bewaard is, gaat mee weg. Uitloggen wist ook wat de browser had bewaard. Er
+  is een privacypagina in beide talen. Zonder account werkt alles zoals eerst.
+- **Ledenlogica voor sites in een andere taal (motor).** De acties in
+  `members.ts` geven naast de Nederlandse zin een `code` terug, en nemen een
+  eigen pad (`accountPath`) en eigen mailteksten aan. Nieuw:
+  `deleteOwnAccount`. De wachtwoordvelden nemen hun teksten als prop.
+  Bestaande sites merken hier niets van.
 - **Per lid iets kleins bewaren (kern).** Nieuwe tabel `member_values` en
   `UserStore.memberValues` / `setMemberValue`: een plugin houdt per lid een
   voorkeur of een stand bij (JSON, klein). Gaat mee weg als het lid wordt

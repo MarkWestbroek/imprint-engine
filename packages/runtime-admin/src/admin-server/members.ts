@@ -3,8 +3,51 @@ import { ANONYMOUS, userSubject, type AuthzenSubject } from "@imprint/content-co
 import type { Membership, UserRecord } from "@imprint/content-core/user-store";
 import type { AdminContext, AdminSession } from "../admin-context";
 
-/** Same shape as the admin actions' ActionResult. */
-type ActionResult = { ok: boolean; error?: string };
+/**
+ * Why a member action failed, next to the Dutch sentence: a site in another
+ * language shows its own text for the code.
+ */
+export type MemberErrorCode =
+  | "no-database"
+  | "rate-limited"
+  /** The user store refused the name, address or password; `error` says why (in English). */
+  | "rejected"
+  | "no-address"
+  | "no-mail"
+  | "stale-link"
+  | "bad-login"
+  | "not-signed-in"
+  | "staff"
+  | "wrong-password";
+
+/** Same shape as the admin actions' ActionResult, with the code. */
+type ActionResult = { ok: boolean; error?: string; code?: MemberErrorCode };
+
+/** A mail to a member: the site may write its own (another language); the default is Dutch. */
+export type MemberMailText = (a: { name: string; site: string; url: string }) => { subject: string; text: string };
+
+export type MemberOptions = {
+  /** Where the site's account pages live; the links in the mails go there. Default `/account`. */
+  accountPath?: string;
+  mail?: { verify?: MemberMailText; reset?: MemberMailText };
+};
+
+const accountUrl = (baseUrl: string, opts: MemberOptions, page: string, token: string) =>
+  `${baseUrl.replace(/\/$/, "")}${opts.accountPath ?? "/account"}/${page}?token=${encodeURIComponent(token)}`;
+
+const verifyMail: MemberMailText = ({ name, site, url }) => ({
+  subject: `Bevestig je e-mailadres voor ${site}`,
+  text:
+    `Hallo ${name},\n\nBevestig je e-mailadres voor ${site} met deze link (24 uur geldig):\n\n${url}\n\n` +
+    `Heb je je niet aangemeld? Dan kun je dit bericht negeren.\n`,
+});
+
+const resetMail: MemberMailText = ({ name, site, url }) => ({
+  subject: `Nieuw wachtwoord voor ${site}`,
+  text:
+    `Hallo ${name},\n\nKies met deze link een nieuw wachtwoord voor ${site} (2 uur geldig):\n\n${url}\n\n` +
+    `Heb je dit niet aangevraagd? Dan kun je dit bericht negeren; je wachtwoord blijft zoals het was.\n`,
+});
 
 /**
  * Members of a site (design/communities.md §4.1, G1): self-registration with
@@ -44,45 +87,39 @@ export function localPath(value: unknown, fallback: string): string {
 export async function registerMember(
   admin: AdminContext,
   input: { name: string; email: string; password: string; website?: string },
-  opts: { ip?: string; baseUrl: string }
+  opts: { ip?: string; baseUrl: string } & MemberOptions
 ): Promise<RegisterResult> {
   const users = admin.imprint.users;
-  if (!users) return { ok: false, error: "Registreren kan alleen met een database (DATABASE_URL)." };
+  if (!users) return { ok: false, code: "no-database", error: "Registreren kan alleen met een database (DATABASE_URL)." };
   // The honeypot: a real visitor never sees the field, so a value means a bot. Pretend it worked.
   if (input.website) return { ok: true };
-  if (opts.ip && rateLimited(opts.ip, "register")) return { ok: false, error: "Te veel pogingen; probeer het over tien minuten nog eens." };
+  if (opts.ip && rateLimited(opts.ip, "register")) return { ok: false, code: "rate-limited", error: "Te veel pogingen; probeer het over tien minuten nog eens." };
   let user: UserRecord;
   try {
     user = await users.register(input.name.trim(), input.email, input.password);
   } catch (err) {
-    return { ok: false, error: (err as Error).message };
+    return { ok: false, code: "rejected", error: (err as Error).message };
   }
-  return sendVerification(admin, user.name, opts.baseUrl);
+  return sendVerification(admin, user.name, opts.baseUrl, opts);
 }
 
 /** Mail the verification link; without a mailer the link comes back (dev) or an error (production). */
-export async function sendVerification(admin: AdminContext, userName: string, baseUrl: string): Promise<RegisterResult> {
+export async function sendVerification(admin: AdminContext, userName: string, baseUrl: string, opts: MemberOptions = {}): Promise<RegisterResult> {
   const users = admin.imprint.users!;
   const user = await users.get(userName);
-  if (!user?.email) return { ok: false, error: "Geen e-mailadres bekend." };
+  if (!user?.email) return { ok: false, code: "no-address", error: "Geen e-mailadres bekend." };
   const token = await users.createEmailToken(user.name, "verify");
-  const verifyUrl = `${baseUrl.replace(/\/$/, "")}/account/verify?token=${encodeURIComponent(token)}`;
+  const verifyUrl = accountUrl(baseUrl, opts, "verify", token);
   const mailer = admin.imprint.mail;
   if (!mailer) {
     if (process.env.NODE_ENV === "production") {
-      return { ok: false, error: "Mail is op deze site nog niet ingesteld; vraag de beheerder je adres te bevestigen." };
+      return { ok: false, code: "no-mail", error: "Mail is op deze site nog niet ingesteld; vraag de beheerder je adres te bevestigen." };
     }
     console.info(`[members] no mailer configured; verification link for ${user.name}: ${verifyUrl}`);
     return { ok: true, verifyUrl };
   }
   const site = await admin.imprint.store.getSiteConfig();
-  await mailer.send({
-    to: user.email,
-    subject: `Bevestig je e-mailadres voor ${site.name}`,
-    text:
-      `Hallo ${user.name},\n\nBevestig je e-mailadres voor ${site.name} met deze link (24 uur geldig):\n\n${verifyUrl}\n\n` +
-      `Heb je je niet aangemeld? Dan kun je dit bericht negeren.\n`,
-  });
+  await mailer.send({ to: user.email, ...(opts.mail?.verify ?? verifyMail)({ name: user.name, site: site.name, url: verifyUrl }) });
   return { ok: true };
 }
 
@@ -94,15 +131,15 @@ export async function sendVerification(admin: AdminContext, userName: string, ba
 export async function requestPasswordReset(
   admin: AdminContext,
   email: string,
-  opts: { ip?: string; baseUrl: string }
+  opts: { ip?: string; baseUrl: string } & MemberOptions
 ): Promise<RegisterResult> {
   const users = admin.imprint.users;
-  if (!users) return { ok: false, error: "Dit kan alleen met een database (DATABASE_URL)." };
-  if (opts.ip && rateLimited(opts.ip, "reset")) return { ok: false, error: "Te veel pogingen; probeer het over tien minuten nog eens." };
+  if (!users) return { ok: false, code: "no-database", error: "Dit kan alleen met een database (DATABASE_URL)." };
+  if (opts.ip && rateLimited(opts.ip, "reset")) return { ok: false, code: "rate-limited", error: "Te veel pogingen; probeer het over tien minuten nog eens." };
   const user = await users.getByEmail(email);
   if (!user?.email) return { ok: true };
   const token = await users.createEmailToken(user.name, "reset", 2);
-  const resetUrl = `${opts.baseUrl.replace(/\/$/, "")}/account/reset?token=${encodeURIComponent(token)}`;
+  const resetUrl = accountUrl(opts.baseUrl, opts, "reset", token);
   const mailer = admin.imprint.mail;
   if (!mailer) {
     if (process.env.NODE_ENV === "production") return { ok: true }; // nothing to say that would not reveal the address
@@ -110,26 +147,20 @@ export async function requestPasswordReset(
     return { ok: true, verifyUrl: resetUrl };
   }
   const site = await admin.imprint.store.getSiteConfig();
-  await mailer.send({
-    to: user.email,
-    subject: `Nieuw wachtwoord voor ${site.name}`,
-    text:
-      `Hallo ${user.name},\n\nKies met deze link een nieuw wachtwoord voor ${site.name} (2 uur geldig):\n\n${resetUrl}\n\n` +
-      `Heb je dit niet aangevraagd? Dan kun je dit bericht negeren; je wachtwoord blijft zoals het was.\n`,
-  });
+  await mailer.send({ to: user.email, ...(opts.mail?.reset ?? resetMail)({ name: user.name, site: site.name, url: resetUrl }) });
   return { ok: true };
 }
 
 /** The reset link's second step: the token once, then the new password. */
 export async function resetPasswordByToken(admin: AdminContext, token: string, password: string): Promise<ActionResult> {
   const users = admin.imprint.users;
-  if (!users) return { ok: false, error: "Dit kan alleen met een database (DATABASE_URL)." };
+  if (!users) return { ok: false, code: "no-database", error: "Dit kan alleen met een database (DATABASE_URL)." };
   const user = await users.consumeEmailToken(token, "reset");
-  if (!user) return { ok: false, error: "Deze link is onbekend, al gebruikt of verlopen. Vraag een nieuwe aan." };
+  if (!user) return { ok: false, code: "stale-link", error: "Deze link is onbekend, al gebruikt of verlopen. Vraag een nieuwe aan." };
   try {
     await users.setPassword(user.name, password);
   } catch (err) {
-    return { ok: false, error: (err as Error).message };
+    return { ok: false, code: "rejected", error: (err as Error).message };
   }
   return { ok: true };
 }
@@ -141,18 +172,37 @@ export async function confirmEmail(admin: AdminContext, token: string): Promise<
   return users.consumeEmailToken(token, "verify");
 }
 
-/** Sign in on the public site (name or e-mail address) and go back to where the visitor was. */
-export async function signInMember(admin: AdminContext, _prev: ActionResult | null, formData: FormData): Promise<ActionResult> {
+/** Sign in on the public site (name or e-mail address) and go back to where the visitor was, or to `fallback`. */
+export async function signInMember(admin: AdminContext, _prev: ActionResult | null, formData: FormData, fallback = "/account"): Promise<ActionResult> {
   const identifier = String(formData.get("identifier") ?? "").trim();
   const password = String(formData.get("password") ?? "");
   const session = await admin.auth.signIn(identifier, password);
-  if (!session) return { ok: false, error: "Onbekende combinatie van naam of e-mailadres en wachtwoord." };
-  redirect(localPath(formData.get("next"), "/account"));
+  if (!session) return { ok: false, code: "bad-login", error: "Onbekende combinatie van naam of e-mailadres en wachtwoord." };
+  redirect(localPath(formData.get("next"), fallback));
 }
 
 export async function signOutMember(admin: AdminContext, to = "/"): Promise<void> {
   await admin.auth.signOut();
   redirect(localPath(to, "/"));
+}
+
+/**
+ * A member removes their own account, with everything kept about them
+ * (memberships, sign-ups, notifications, member values), after giving the
+ * password once more. Not for staff: an editor's account goes through
+ * /admin/users, where the last-admin rule is visible.
+ */
+export async function deleteOwnAccount(admin: AdminContext, password: string): Promise<ActionResult> {
+  const users = admin.imprint.users;
+  const session = await admin.auth.getSession();
+  if (!users || !session) return { ok: false, code: "not-signed-in", error: "Log eerst in." };
+  if ((await admin.auth.editingSession()) !== null) {
+    return { ok: false, code: "staff", error: "Een redactie-account verwijder je via de admin (Gebruikers)." };
+  }
+  if (!(await users.verify(session.name, password))) return { ok: false, code: "wrong-password", error: "Het wachtwoord klopt niet." };
+  await users.remove(session.name);
+  await admin.auth.signOut();
+  return { ok: true };
 }
 
 /** The groups of this site (for the access options), or none when the site has no group type. */

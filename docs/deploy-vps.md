@@ -458,6 +458,11 @@ compose-omgeving in de draaiende container, niet in de image. Een les
 gewijzigd in het bestand: `./deploy.sh import-lessen taal` en daarna
 `SITES=taal ./deploy.sh`; de opnamen van ongewijzigde zinnen blijven.
 
+Accounts voor leerlingen sturen mail (bevestigen, wachtwoord vergeten): zet
+`TAAL_SMTP_HOST`, `TAAL_SMTP_USER`, `TAAL_SMTP_PASS` en `TAAL_MAIL_FROM` in
+`.env` en herstart de site (`docker compose up -d taal`). Zonder die waarden
+geeft registreren een foutmelding; de lessen werken gewoon.
+
 Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
 en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
 

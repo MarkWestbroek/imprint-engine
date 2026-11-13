@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AccountLink } from "@/components/account-link";
 import type { NavItem } from "@/components/site-chrome";
 
 /**
@@ -22,6 +23,7 @@ export function NavLinks({ nav, ui, standaardUi }: { nav: NavItem[]; ui: string[
           {item.label}
         </Link>
       ))}
+      <AccountLink ui={current ?? standaardUi} />
       <span className="tl-lang">
         {ui.map((code) => (
           <Link
