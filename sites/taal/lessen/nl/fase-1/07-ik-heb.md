@@ -41,7 +41,7 @@ oefeningen:
     opties: ["Heeft u even tijd?", "Heb jij even tijd?", "Heeft zij even tijd?"]
     antwoord: 0
   - type: kies
-    vraag: "Nie jesteś głodny: Ik heb … honger."
+    vraag: "Nie jesteś głodn{y|a}: Ik heb … honger."
     opties: ["niet", "geen", "nee"]
     antwoord: 1
   - type: typ
@@ -50,7 +50,7 @@ oefeningen:
   - type: orden
     zin: "Maar Ewa heeft een auto."
   - type: zeg
-    vraag: "Jestem głodny. / Jestem głodna."
+    vraag: "Jestem głodn{y|a}."
     antwoorden: ["Ik heb honger."]
     voorbeeld: true
   - type: typ

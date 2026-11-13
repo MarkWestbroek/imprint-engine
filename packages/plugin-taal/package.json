@@ -10,6 +10,7 @@
     "./content-types": "./src/content-types.ts",
     "./href": "./src/href.ts",
     "./audio": "./src/audio.ts",
+    "./tekst": "./src/tekst.ts",
     "./tts": "./src/tts.ts",
     "./import": "./src/import.ts"
   },

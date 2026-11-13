@@ -1795,6 +1795,14 @@ flowchart LR
     site uit `AZURE_TTS_KEY`). Zonder sleutel is `azureTts()` null en zegt de
     knop dat. Een test geeft een eigen `synthesize` mee.
 - **Voortgang**: de score per les in `localStorage` (`taal-voortgang`).
+- **Vormen per leerling** (`tekst.ts`, `vorm.tsx`): een tekst in de steuntaal
+  mag `{mannelijk|vrouwelijk}` bevatten (`Pracował{em|am}`). `vormen(tekst,
+  keuze)` kiest er één, of toont zonder keuze beide ("Pracowałem/am"). De
+  keuze staat in `localStorage` (`taal-vorm`) en komt via
+  `useSyncExternalStore` bij de clientdelen; de server kent haar niet, dus de
+  voorgebouwde pagina toont beide vormen en de browser vult de keuze in.
+  Markdown (`patroon`) wordt op de server gerenderd en toont altijd beide.
+  De keuze verschijnt alleen als de interfacetaal vormen heeft (`kentVormen`).
 - **Lesbestanden bewaken** (`sites/taal/scripts/lessen-regels.ts`): het schema
   zegt wat een les mag zijn, `controleer()` wat een goed bestand is (pad en id
   kloppen, elke regel in beide talen, aantallen, elk oefentype aanwezig, een

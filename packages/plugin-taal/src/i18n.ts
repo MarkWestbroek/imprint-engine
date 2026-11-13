@@ -5,6 +5,8 @@
  *
  * The Polish texts are a first translation: to be read by a Polish speaker.
  */
+import { heeftVormen } from "./tekst";
+
 export type Teksten = {
   /** The language taught, as "in Dutch": `{ nl: "in het Nederlands" }`. */
   inTaal: Record<string, string>;
@@ -19,6 +21,8 @@ export type Teksten = {
   oefeningen: string;
   ombouwen: string;
   zagJeDat: string;
+  /** The choice between masculine and feminine forms (tekst.ts); only shown when the language has them (`kentVormen`). */
+  vorm: { vraag: string; m: string; v: string; beide: string };
   speel: string;
   langzaam: string;
   luister: string;
@@ -60,6 +64,7 @@ const nl: Teksten = {
   oefeningen: "Oefeningen",
   ombouwen: "Ombouwen",
   zagJeDat: "Zag je dat?",
+  vorm: { vraag: "Vormen:", m: "hij", v: "zij", beide: "beide" },
   speel: "Speel af",
   langzaam: "Langzaam",
   luister: "Luister",
@@ -100,7 +105,8 @@ const pl: Teksten = {
   brokken: "Zwroty",
   oefeningen: "Ćwiczenia",
   ombouwen: "Przebuduj",
-  zagJeDat: "Zauważyłeś?",
+  zagJeDat: "Zauważył{eś|aś}?",
+  vorm: { vraag: "Formy:", m: "on", v: "ona", beide: "on/ona" },
   speel: "Odtwórz",
   langzaam: "Powoli",
   luister: "Posłuchaj",
@@ -136,6 +142,9 @@ export const TEKSTEN: Record<string, Teksten> = { nl, pl };
 export const UI_TALEN = Object.keys(TEKSTEN);
 
 export const teksten = (ui: string): Teksten => TEKSTEN[ui] ?? nl;
+
+/** Whether the interface language has forms per learner (Polish: -łem/-łam), so the choice is worth showing. */
+export const kentVormen = (ui: string): boolean => Object.values(teksten(ui)).some((v) => typeof v === "string" && heeftVormen(v));
 
 /** Fill `{name}` placeholders. */
 export const vul = (tekst: string, waarden: Record<string, string | number>): string =>

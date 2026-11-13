@@ -962,6 +962,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
             vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
             een vertaling in de les. **S**
+      - [x] ~~Poolse vormen alleen mannelijk~~ — keuze *on/ona* in de
+            browser, `Pracował{em|am}` in de les (13-11).
+      - [ ] Optioneel aanmelden: voortgang en de on/ona-keuze per lid, op
+            elk toestel; zonder account blijft alles werken. **M**
       - [ ] Fasen een naam geven op het overzicht (nu "Etap 0" … "Etap 5"). **S**
       - [ ] Oefeningen zonder steuntaal (Nederlands leren in het Nederlands):
             nu blijven alleen *kies* en *orden* over. Varianten met plaatjes

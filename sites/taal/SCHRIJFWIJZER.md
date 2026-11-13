@@ -59,6 +59,22 @@ Elke les heeft minstens één `luister`, één `kies`, één `typ`, één `orden
   klank of een lange zin.
 - `antwoord` telt vanaf 0. Wissel de plek van het goede antwoord af.
 
+## Mannelijk en vrouwelijk in het Pools
+
+Pools heeft in de verleden tijd, bij *chciałbym* en bij bijvoeglijke naamwoorden
+een andere vorm voor een man dan voor een vrouw. Waar de zin over de leerling
+zelf gaat, schrijf je beide: `Pracował{em|am} cały dzień.` Voor de accolade
+staat wat gelijk is, erin eerst de mannelijke en dan de vrouwelijke vorm. De
+site toont de vorm die de leerling kiest, en anders "Pracowałem/am".
+
+- Wel: de `situatie` ("Wrócił{eś|aś} z Polski"), en de `vraag` van `kies`,
+  `typ` en `zeg` in de ik-vorm of gericht aan de leerling ("Był{em|am} w
+  Polsce.", "jestem chor{y|a}", "Chciał{bym|abym}", "sam{|a}", "z {żoną|mężem}").
+- Niet: de dialoog (Piotr en Anna zijn wie ze zijn), de opties van `luister`
+  (een ander spreekt), en een vraag aan een ander ("Gdzie byłeś?").
+- Nooit in het Nederlands: wat wordt voorgelezen of als antwoord telt, heeft
+  geen accolades. `check:lessen` bewaakt dat, en ook de schrijfwijze `{a|b}`.
+
 ## Taal
 
 - Nederlands: `u` tegen vreemden, in winkels en bij instanties; `jij/je`

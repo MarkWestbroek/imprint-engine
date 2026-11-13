@@ -52,7 +52,7 @@ oefeningen:
   - type: orden
     zin: "Om tien uur heb ik tijd."
   - type: zeg
-    vraag: "Chciałbym umówić się na wizytę."
+    vraag: "Chciał{bym|abym} umówić się na wizytę."
     antwoorden: ["Ik wil graag een afspraak maken.", "Ik wil een afspraak maken.", "Ik wil graag een afspraak."]
     voorbeeld: true
   - type: typ

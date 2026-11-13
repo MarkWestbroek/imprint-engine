@@ -54,7 +54,7 @@ oefeningen:
     antwoorden: ["Het is een grote zwarte tas.", "Dat is een grote zwarte tas.", "Dit is een grote zwarte tas."]
     voorbeeld: true
   - type: typ
-    vraag: "Chciałbym umówić się na wizytę. (powtórka)"
+    vraag: "Chciał{bym|abym} umówić się na wizytę. (powtórka)"
     antwoorden: ["Ik wil graag een afspraak maken.", "Ik wil een afspraak maken.", "Ik wil graag een afspraak."]
 ---
 

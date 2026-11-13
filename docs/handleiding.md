@@ -686,6 +686,13 @@ van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een 
 
 Opslaan maakt een nieuwe versie; de oude vind je onder *History*.
 
+**Mannelijk of vrouwelijk.** Op de Poolse site staat bovenaan het overzicht
+en elke les de keuze *Formy: on / ona / on/ona*. Poolse zinnen die over de
+leerling zelf gaan, volgen die keuze ("Pracowałem" of "Pracowałam"); zonder
+keuze staan beide vormen er ("Pracowałem/am"). De keuze blijft in de browser
+bewaard. In een les schrijf je zo'n zin als `Pracował{em|am}`: eerst de
+mannelijke, dan de vrouwelijke uitgang.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`. Het

@@ -1,7 +1,9 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { parseLes } from "@imprint/plugin-taal/import";
+import { zinnen } from "@imprint/plugin-taal/audio";
 import type { Les } from "@imprint/plugin-taal/schemas";
+import { vormenKloppen } from "@imprint/plugin-taal/tekst";
 
 /**
  * The rules of SCHRIJFWIJZER.md that a machine can check, for the lesson
@@ -30,6 +32,11 @@ export function controleer(file: string, les: Les): string[] {
   les.dialoog.forEach((r, i) => {
     if (!r[les.taal]?.trim() || !r[steun]?.trim()) fout(`dialoog ${i + 1}: needs ${les.taal} and ${steun}`);
   });
+  // Forms per learner (`Pracował{em|am}`) are for the support language: what is read out or answered has none.
+  const gesproken = [...zinnen(les).map((z) => z.text), ...les.oefeningen.flatMap((o) => ("antwoorden" in o ? o.antwoorden : []))];
+  for (const zin of gesproken) if (/[{}]/.test(zin)) fout(`a form in ${les.taal}: ${zin}`);
+  const steunteksten = [les.situatie[steun], les.patroon[steun], ...les.dialoog.map((r) => r[steun]), ...les.oefeningen.flatMap((o) => ("vraag" in o ? [o.vraag] : "opties" in o ? o.opties : []))];
+  for (const tekst of steunteksten) if (tekst && !vormenKloppen(tekst)) fout(`a form that is not {a|b}: ${tekst}`);
   const types = new Set(les.oefeningen.map((o) => o.type));
   les.oefeningen.forEach((o, i) => {
     const waar = `oefening ${i + 1} (${o.type})`;

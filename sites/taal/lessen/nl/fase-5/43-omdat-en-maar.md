@@ -52,7 +52,7 @@ oefeningen:
   - type: orden
     zin: "Marek komt niet omdat hij ziek is."
   - type: zeg
-    vraag: "Nie mogę przyjść, bo jestem chory."
+    vraag: "Nie mogę przyjść, bo jestem chor{y|a}."
     antwoorden: ["Ik kan niet komen, omdat ik ziek ben.", "Ik kan niet komen omdat ik ziek ben.", "Ik kan niet komen, want ik ben ziek.", "Ik kan niet komen want ik ben ziek."]
     voorbeeld: true
   - type: kies

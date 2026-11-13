@@ -5,7 +5,8 @@ import type { AudioKaart } from "./audio";
 import type { Teksten } from "./i18n";
 import type { Oefening } from "./schemas";
 import { Speak } from "./speak";
-import { localeOf, typGoed, woorden, zegGoed } from "./tekst";
+import { localeOf, typGoed, vormen, woorden, zegGoed } from "./tekst";
+import { useVorm } from "./vorm";
 
 /**
  * The exercises of one lesson, one at a time (behaviour of the prototype,
@@ -67,6 +68,7 @@ function zinSpeler(taal: string, audio: AudioKaart, t: Teksten) {
 function Kies({ o, taal, audio, t, onDone }: Omit<Deel<"kies">, "o"> & { o: Extract<Oefening, { type: "kies" | "luister" }> }) {
   const [gekozen, setGekozen] = useState<number | null>(null);
   const speak = zinSpeler(taal, audio, t);
+  const vorm = useVorm();
   const klaar = gekozen !== null;
   return (
     <div className="space-y-4">
@@ -75,7 +77,7 @@ function Kies({ o, taal, audio, t, onDone }: Omit<Deel<"kies">, "o"> & { o: Extr
           {t.luister}: {speak(o.tekst)}
         </p>
       ) : (
-        <p lang={taal}>{o.vraag}</p>
+        <p lang={taal}>{vormen(o.vraag, vorm)}</p>
       )}
       <div className="flex flex-col gap-2">
         {o.opties.map((opt, i) => {
@@ -92,7 +94,7 @@ function Kies({ o, taal, audio, t, onDone }: Omit<Deel<"kies">, "o"> & { o: Extr
                 onDone(i === o.antwoord);
               }}
             >
-              {opt}
+              {vormen(opt, vorm)}
               {klaar && i === o.antwoord && <span aria-hidden> ✓</span>}
             </button>
           );
@@ -105,6 +107,7 @@ function Kies({ o, taal, audio, t, onDone }: Omit<Deel<"kies">, "o"> & { o: Extr
 function Typ({ o, taal, t, onDone }: Deel<"typ">) {
   const [invoer, setInvoer] = useState("");
   const [resultaat, setResultaat] = useState<boolean | null>(null);
+  const vraag = vormen(o.vraag, useVorm());
   return (
     <form
       className="space-y-4"
@@ -117,7 +120,7 @@ function Typ({ o, taal, t, onDone }: Deel<"typ">) {
       }}
     >
       <p>
-        {fill(t.zegIn, { taal: t.inTaal[taal] ?? taal })} <em>{o.vraag}</em>
+        {fill(t.zegIn, { taal: t.inTaal[taal] ?? taal })} <em>{vraag}</em>
       </p>
       <input
         value={invoer}
@@ -127,7 +130,7 @@ function Typ({ o, taal, t, onDone }: Deel<"typ">) {
         autoCapitalize="off"
         autoComplete="off"
         spellCheck={false}
-        aria-label={o.vraag}
+        aria-label={vraag}
         className="w-full rounded-md border border-line bg-background px-3 py-2"
       />
       {resultaat === null && (
@@ -229,6 +232,7 @@ function Zeg({ o, taal, audio, t, onDone }: Deel<"zeg">) {
   const [gehoord, setGehoord] = useState("");
   const [pogingen, setPogingen] = useState(0);
   const speak = zinSpeler(taal, audio, t);
+  const vorm = useVorm();
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- a browser capability, unknown on the server
     setKan(recognitionCtor() !== null);
@@ -236,7 +240,7 @@ function Zeg({ o, taal, audio, t, onDone }: Deel<"zeg">) {
 
   const vraag = (
     <p>
-      {fill(t.zegHardopIn, { taal: t.inTaal[taal] ?? taal })} <em>{o.vraag}</em>
+      {fill(t.zegHardopIn, { taal: t.inTaal[taal] ?? taal })} <em>{vormen(o.vraag, vorm)}</em>
     </p>
   );
   const antwoord = (

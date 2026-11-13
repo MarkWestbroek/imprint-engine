@@ -37,7 +37,7 @@ oefeningen:
     opties: ["weten", "weett", "weet"]
     antwoord: 2
   - type: kies
-    vraag: "Nie usłyszałeś, co powiedział kolega. Co mówisz?"
+    vraag: "Nie usłyszał{eś|aś}, co powiedział kolega. Co mówisz?"
     opties: ["Wat zeg je?", "Wat weet je?", "Wat denk je?"]
     antwoord: 0
   - type: typ

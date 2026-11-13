@@ -6,7 +6,7 @@ fase: 1
 module: dagelijks
 titel: Ik was, ik had (gisteren)
 situatie:
-  pl: "W pracy kolega pyta, gdzie byłeś wczoraj."
+  pl: "W pracy kolega pyta, gdzie był{eś|aś} wczoraj."
   nl: "Op het werk vraagt een collega waar je gisteren was."
 dialoog:
   - nl: "Hoi Piotr! Waar was je gisteren?"
@@ -45,7 +45,7 @@ oefeningen:
     opties: ["groot", "klein", "warm"]
     antwoord: 1
   - type: typ
-    vraag: "Byłem w Amsterdamie. / Byłam w Amsterdamie."
+    vraag: "Był{em|am} w Amsterdamie."
     antwoorden: ["Ik was in Amsterdam."]
   - type: orden
     zin: "Wij hadden een vrije dag."

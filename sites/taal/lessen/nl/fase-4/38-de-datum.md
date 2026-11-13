@@ -50,7 +50,7 @@ oefeningen:
   - type: orden
     zin: "Wanneer bent u geboren?"
   - type: zeg
-    vraag: "Urodziłem się w maju."
+    vraag: "Urodził{em|am} się w maju."
     antwoorden: ["Ik ben in mei geboren.", "Ik ben geboren in mei."]
     voorbeeld: true
   - type: typ

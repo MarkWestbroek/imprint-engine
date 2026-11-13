@@ -111,7 +111,8 @@ describe("taal: the addresses", () => {
     assert.ok(pl && "render" in pl);
     const html = await renderHtml(pl.render as ReactElement);
     assert.match(html, /Nowy sąsiad puka do drzwi/);
-    assert.match(html, /Zauważyłeś\?/);
+    assert.match(html, /Zauważyłeś\/aś\?/, "both forms until the learner chooses");
+    assert.match(html, /aria-label="Formy:"/);
     assert.match(html, /<strong>ik ben<\/strong>/);
     const nl = await visit("nl/nederlands/ik-ben");
     assert.ok(nl && "render" in nl);
@@ -119,6 +120,15 @@ describe("taal: the addresses", () => {
     assert.match(htmlNl, /Een nieuwe buurman belt aan/);
     assert.match(htmlNl, /Zag je dat\?/);
     assert.doesNotMatch(htmlNl, /Nowy sąsiad/);
+    assert.doesNotMatch(htmlNl, /Vormen:/, "Dutch has no forms to choose");
+  });
+
+  it("shows both forms of a sentence that depends on the learner", async () => {
+    const hit = await visit("pl/nederlands/ik-ben-gegaan");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Wróciłeś\/aś z Polski/);
+    assert.doesNotMatch(html, /[{}]/);
   });
 
   it("shows the same lesson in Dutch without translations, with the exercises that need none", async () => {

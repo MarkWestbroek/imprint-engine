@@ -54,7 +54,7 @@ oefeningen:
     antwoorden: ["Hoe was je weekend?", "Hoe was jouw weekend?", "Hoe was het weekend?"]
     voorbeeld: true
   - type: typ
-    vraag: "Byłem w Polsce. (powtórka)"
+    vraag: "Był{em|am} w Polsce. (powtórka)"
     antwoorden: ["Ik ben in Polen geweest.", "Ik was in Polen."]
 ---
 
