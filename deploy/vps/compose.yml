@@ -214,6 +214,8 @@ services:
       SMTP_USER: ${TAAL_SMTP_USER:-}
       SMTP_PASS: ${TAAL_SMTP_PASS:-}
       MAIL_FROM: ${TAAL_MAIL_FROM:-}
+      # Waar het contactformulier heen mailt; leeg = het formulier zegt dat het nog niet werkt.
+      CONTACT_TO: ${TAAL_CONTACT_TO:-}
       # Eigen MinIO-bucket voor de opnamen (design/beeldbibliotheek.md §8); leeg = op het volume hieronder.
       ASSET_S3_ENDPOINT: ${TAAL_S3_ENDPOINT:-}
       ASSET_S3_BUCKET: ${TAAL_S3_BUCKET:-}

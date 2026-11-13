@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Menu } from "@imprint/content-core";
-import { pakketHref } from "@imprint/plugin-taal";
+import { FooterLinks } from "@/components/footer-links";
 import { NavLinks } from "@/components/nav-links";
 import { TAAL } from "../../imprint.config";
 
@@ -23,7 +23,7 @@ export function SiteHeader({ nav, name, tagline }: { nav: NavItem[]; name: strin
   return (
     <header className="tl-header">
       <div className="tl-container tl-header-row">
-        <Link className="tl-brand" href={pakketHref(TAAL.standaardUi, TAAL.pakket)}>
+        <Link className="tl-brand" href="/">
           <span lang="nl">{name}</span>
           <small>{tagline}</small>
         </Link>
@@ -42,6 +42,7 @@ export function SiteFooter() {
         <p>
           <span lang="nl">Langzaam maar zeker</span> · powoli, ale do przodu · <a href="https://imprint-engine.nl">Imprint</a>
         </p>
+        <FooterLinks />
       </div>
     </footer>
   );

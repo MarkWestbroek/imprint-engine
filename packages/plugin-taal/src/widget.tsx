@@ -2,7 +2,10 @@ import type { ReactNode } from "react";
 import { z } from "zod";
 import { WidgetFrame, type WidgetContext } from "@imprint/runtime-admin";
 import { Lesdialoog, LesOefeningen } from "./les-view";
-import { getLes } from "./lessen";
+import { lesHref, pakketHref } from "./href";
+import { teksten } from "./i18n";
+import { getLes, listLessen } from "./lessen";
+import { Verder } from "./verder";
 import type { Les } from "./schemas";
 
 /**
@@ -24,6 +27,26 @@ export type LesdialoogConfig = z.infer<typeof LesdialoogConfig>;
 
 export const OefeningenConfig = z.object(base);
 export type OefeningenConfig = z.infer<typeof OefeningenConfig>;
+
+/** "Continue where you left off", for a front page: the lessons of one package, the next one to do. */
+export const VerderConfig = z.object({
+  /** The interface language (pl, nl). */
+  ui: z.string().default("pl"),
+  /** The language taught: the package. */
+  taal: z.string().default("nl"),
+});
+export type VerderConfig = z.infer<typeof VerderConfig>;
+
+export async function VerderWidget({ config, ctx }: { config: VerderConfig; ctx: WidgetContext }) {
+  const lessen = ctx.writableStore ? (await listLessen(ctx.writableStore)).filter((l) => l.taal === config.taal) : [];
+  return (
+    <Verder
+      lessen={lessen.map((l) => ({ id: l.id, href: lesHref(config.ui, l), titel: l.titel }))}
+      overzicht={pakketHref(config.ui, config.taal)}
+      t={teksten(config.ui).verder}
+    />
+  );
+}
 
 async function metLes(config: { title?: string; les: string; ui: string }, ctx: WidgetContext, render: (les: Les, ui: string) => ReactNode) {
   const les = ctx.writableStore ? await getLes(ctx.writableStore, config.les) : null;

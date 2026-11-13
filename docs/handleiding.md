@@ -711,6 +711,17 @@ het account blijft ze staan. Wat de site bewaart, staat op de pagina
 gebruikt *Nie pamiętasz hasła?*; als redacteur kun je onder `/admin/users`
 een account verwijderen.
 
+**Voorpagina.** De voorpagina is de pagina `home`: bewerk haar in de studio
+(`/admin/page/edit/home`). De widget *Continue where you left off* (`verder`)
+toont hoeveel lessen de bezoeker heeft gedaan en een knop naar de volgende;
+voor een nieuwe bezoeker is dat "Zacznij od lekcji 1". Bestaat de pagina
+`home` niet, dan opent de site op het lessenoverzicht.
+
+**Contact.** In de voet staan *Kontakt* en *Prywatność*. Een bericht via het
+contactformulier komt per mail bij het adres dat op de server is ingesteld;
+naam en e-mailadres zijn niet verplicht. Wie een adres invult, kun je met
+*Beantwoorden* direct terugschrijven. Berichten worden niet op de site bewaard.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`. Het

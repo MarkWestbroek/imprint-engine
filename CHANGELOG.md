@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: een voorpagina.** `/` toont de pagina `home` uit de store
+  (bewerkbaar in de studio) in plaats van door te sturen naar de lessen. Nieuwe
+  widget `verder` van plugin-taal: hoeveel lessen gedaan zijn en een knop naar
+  de volgende ("Zacznij od lekcji 1" voor wie nog niets deed).
+- **Contactformulier (motor + taalsite).** `sendContactMessage` mailt een
+  bericht naar de beheerder (honeypot, limiet per IP, geen opslag); de taalsite
+  heeft `/pl/kontakt` en `/nl/kontakt`, met het ontvangstadres alleen in de
+  omgeving (`CONTACT_TO`). De privacytekst noemt nu de beheerder en het
+  formulier. Kontakt en Prywatność staan in de voet.
+- **Les 22 zonder vlees.** Een broodje kaas en tomatensoep; de schrijfwijzer
+  zegt nu: geen vlees en geen vis in de lessen.
 - **Taaltraining: een account voor leerlingen (optioneel).** Registreren met
   e-mailbevestiging, inloggen, wachtwoord vergeten en een accountpagina onder
   `/pl/account` en `/nl/account`, met de mails en meldingen in de taal van de

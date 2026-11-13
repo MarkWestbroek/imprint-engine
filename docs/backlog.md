@@ -971,8 +971,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             zelf verwijderen), privacypagina; uitloggen wist de lokale stand
             (13-11).
       - [ ] De Poolse teksten van de accountpagina's, de mails en de
-            privacytekst laten nalezen; in de privacytekst ontbreekt nog wie
-            de site beheert en hoe je die bereikt.
+            privacytekst laten nalezen.
+      - [x] ~~Voorpagina~~ — store-pagina `home` met de widget `verder`;
+            contactformulier en privacy in de voet (13-11).
+      - [ ] De fasekaarten op de voorpagina zijn vaste tekst; als de fasen een
+            naam krijgen, kan een widget ze uit de lessen halen.
       - [ ] Een eigen afzenderadres voor de taalsite (nu het postvak van
             Common Ground, als dat wordt hergebruikt).
       - [ ] Accounts die nooit bevestigd zijn na een tijd opruimen. **S**

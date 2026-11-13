@@ -50,6 +50,7 @@ export default defineImprint({
     pass: process.env.SMTP_PASS,
     from: process.env.MAIL_FROM,
   },
+  // The contact form mails to CONTACT_TO (set on the server, never in the page); see app/(site)/[ui]/kontakt.
   stats: { reportDir: process.env.STATS_REPORT_DIR },
   secrets: {
     session: process.env.SESSION_SECRET,

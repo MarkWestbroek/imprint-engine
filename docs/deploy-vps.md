@@ -461,7 +461,13 @@ gewijzigd in het bestand: `./deploy.sh import-lessen taal` en daarna
 Accounts voor leerlingen sturen mail (bevestigen, wachtwoord vergeten): zet
 `TAAL_SMTP_HOST`, `TAAL_SMTP_USER`, `TAAL_SMTP_PASS` en `TAAL_MAIL_FROM` in
 `.env` en herstart de site (`docker compose up -d taal`). Zonder die waarden
-geeft registreren een foutmelding; de lessen werken gewoon.
+geeft registreren een foutmelding; de lessen werken gewoon. Het
+contactformulier mailt naar `TAAL_CONTACT_TO` (alleen in `.env`).
+
+De voorpagina en de pagina over de methode staan in `sites/taal/content/pages`
+en komen met `./deploy.sh seed taal --only=page` in de database. Let op: dat
+maakt van elke pagina in die map een nieuwe versie, ook als iemand haar in de
+studio heeft aangepast.
 
 Opnieuw importeren (Pleio gewijzigd): `./deploy.sh import-pleio commonground`
 en daarna `SITES=commonground ./deploy.sh`, want de build leest de database.
