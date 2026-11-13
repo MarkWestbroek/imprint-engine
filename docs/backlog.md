@@ -954,9 +954,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] De Poolse teksten laten nalezen door iemand die Pools spreekt
             (`plugin-taal/src/i18n.ts`, het menu, de pagina *O metodzie*).
             Tot dan staat de site op noindex.
-      - [ ] De ombouw-opdracht en de vraag bij *kies* staan in het Nederlands;
-            een beginner leest dat nog niet. Per steuntaal een vertaling in
-            de les. **S**
+      - [x] ~~De rest van het lesplan~~ — 45 lessen in zes fasen (13-11),
+            met *situatie* en *Zag je dat?* per les.
+      - [ ] De 40 nieuwe lessen laten nalezen: het Nederlands door Mark, het
+            Pools door iemand die Pools spreekt. Ze zijn geschreven door
+            Claude en alleen op vorm gecontroleerd (`check:lessen`).
+      - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
+            vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
+            een vertaling in de les. **S**
+      - [ ] Fasen een naam geven op het overzicht (nu "Etap 0" … "Etap 5"). **S**
       - [ ] Oefeningen zonder steuntaal (Nederlands leren in het Nederlands):
             nu blijven alleen *kies* en *orden* over. Varianten met plaatjes
             of een omschrijving. **M**

@@ -18,6 +18,7 @@ export type Teksten = {
   brokken: string;
   oefeningen: string;
   ombouwen: string;
+  zagJeDat: string;
   speel: string;
   langzaam: string;
   luister: string;
@@ -58,6 +59,7 @@ const nl: Teksten = {
   brokken: "Brokken",
   oefeningen: "Oefeningen",
   ombouwen: "Ombouwen",
+  zagJeDat: "Zag je dat?",
   speel: "Speel af",
   langzaam: "Langzaam",
   luister: "Luister",
@@ -98,6 +100,7 @@ const pl: Teksten = {
   brokken: "Zwroty",
   oefeningen: "Ćwiczenia",
   ombouwen: "Przebuduj",
+  zagJeDat: "Zauważyłeś?",
   speel: "Odtwórz",
   langzaam: "Powoli",
   luister: "Posłuchaj",

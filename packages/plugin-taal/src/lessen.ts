@@ -30,6 +30,13 @@ export function perFase(lessen: Les[]): { fase: number; lessen: Les[] }[] {
   return [...fasen.entries()].sort(([a], [b]) => a - b).map(([fase, lessen]) => ({ fase, lessen }));
 }
 
+/**
+ * A text that exists per language of the reader (`situatie`, `patroon`): in
+ * the interface language, or nothing — never in a language the reader did
+ * not choose.
+ */
+export const tekstVoor = (tekst: Record<string, string>, ui: string): string => tekst[ui] ?? "";
+
 /** The translations are shown when the interface is in the lesson's support language. */
 export const metVertaling = (les: Pick<Les, "steuntaal">, ui: string): boolean => !!les.steuntaal && les.steuntaal === ui;
 

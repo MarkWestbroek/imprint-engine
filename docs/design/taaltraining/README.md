@@ -4,7 +4,7 @@ Status: **gebouwd en live op taal.imprint-engine.nl (12-11-2026)**, nog zonder o
 site `sites/taal` met `@imprint/plugin-taal`; hoe het in elkaar zit staat in
 [architecture.md](../../architecture.md) §7, wat de redactie ermee doet in de
 [handleiding](../../handleiding.md). Deze map bevat het lesplan en de
-React-prototypes waar de bouw van uitging. De vijf lessen staan nu in
+React-prototypes waar de bouw van uitging. De lessen (inmiddels 45, alle zes de fasen; schrijfwijzer in `sites/taal/SCHRIJFWIJZER.md`) staan in
 `sites/taal/lessen/` (de map `docs` komt niet in de image, en het importscript
 moet ze op de VPS kunnen lezen).
 

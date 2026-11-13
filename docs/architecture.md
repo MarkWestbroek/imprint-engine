@@ -1758,7 +1758,9 @@ flowchart LR
   `imprint.config.ts`); `taalStaticPaths()` levert alle adressen voor
   `generateStaticParams`.
 - **Contenttype `les`** (`schemas.ts`): de frontmatter van een lesbestand,
-  plus `slug`, `ombouwen` (de body) en `audio`. De sleutel van het item is
+  plus `slug`, `ombouwen` (de body) en `audio`, en vanaf fase 1 `situatie`
+  en `patroon` ("Zag je dat?"): een tekst per taal van de lezer, die de
+  lespagina alleen in de interfacetaal toont (`tekstVoor`). De sleutel van het item is
   `id` (`slugOf`). De oefeningen zijn een discriminated union op `type`.
   `LesFormSchema` laat `audio` weg; het formulier bewaart velden die het niet
   toont.
@@ -1793,6 +1795,12 @@ flowchart LR
     site uit `AZURE_TTS_KEY`). Zonder sleutel is `azureTts()` null en zegt de
     knop dat. Een test geeft een eigen `synthesize` mee.
 - **Voortgang**: de score per les in `localStorage` (`taal-voortgang`).
+- **Lesbestanden bewaken** (`sites/taal/scripts/lessen-regels.ts`): het schema
+  zegt wat een les mag zijn, `controleer()` wat een goed bestand is (pad en id
+  kloppen, elke regel in beide talen, aantallen, elk oefentype aanwezig, een
+  `orden`-zin met één volgorde). `npm run check:lessen` en de test van de site
+  gebruiken dezelfde regels; fase 0 is ouder dan de schrijfwijzer en valt
+  alleen onder de basisregels.
 
 Stappen voor een nieuwe site:
 
