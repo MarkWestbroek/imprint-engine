@@ -11,7 +11,7 @@ import { audioKaart, audioSleutel, ontbrekend, opnamen, ssml, STEMMEN, zinKey, z
 import { lesHref, pakketTaal, slugFromFile } from "../src/href";
 import { TEKSTEN } from "../src/i18n";
 import { importLes, parseLes } from "../src/import";
-import { metVertaling, oefeningenVoor, perFase } from "../src/lessen";
+import { metVertaling, oefeningenVoor, perFase, tekstVoor } from "../src/lessen";
 import { LesSchema, type Les } from "../src/schemas";
 import { lijktOp, norm, typGoed, woorden, zegGoed } from "../src/tekst";
 import { azureTts, type Synthesize } from "../src/tts";
@@ -125,6 +125,14 @@ describe("which exercises fit the interface language", () => {
   it("keeps only kies and orden without the support language", () => {
     assert.ok(!metVertaling(les1, "nl"));
     assert.deepEqual(oefeningenVoor(les1, "nl").map((o) => o.type), ["kies", "orden"]);
+  });
+
+  it("shows a per-language text only in the language of the interface", () => {
+    const patroon = { pl: "Zauważ…", nl: "Let op…" };
+    assert.equal(tekstVoor(patroon, "pl"), "Zauważ…");
+    assert.equal(tekstVoor(patroon, "nl"), "Let op…");
+    assert.equal(tekstVoor(patroon, "de"), "");
+    assert.deepEqual(les1.situatie, {}, "phase 0 has none");
   });
 
   it("has every text in both interface languages", () => {

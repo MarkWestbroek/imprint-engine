@@ -5,7 +5,7 @@ import type { Stemmen } from "./audio";
 import { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal } from "./href";
 import { teksten, UI_TALEN } from "./i18n";
 import { Lesdialoog, LesOefeningen } from "./les-view";
-import { listLessen, oefeningenVoor, perFase } from "./lessen";
+import { listLessen, oefeningenVoor, perFase, tekstVoor } from "./lessen";
 import type { Les } from "./schemas";
 import { LesScore } from "./voortgang";
 
@@ -34,20 +34,20 @@ function Overzicht({ ui, taal, lessen }: { ui: string; taal: string; lessen: Les
       <p className="eyebrow">{t.lessen}</p>
       <h1 className="text-3xl font-semibold tracking-tight">{t.pakket[taal] ?? taal}</h1>
       {lessen.length === 0 && <p className="mt-6 text-muted">{t.geenLessen}</p>}
-      {perFase(lessen).map(({ fase, lessen }) => (
+      {perFase(lessen).map(({ fase, lessen: vanFase }) => (
         <section key={fase} className="mt-8">
           <h2 className="eyebrow mb-3">
             {t.fase} {fase}
           </h2>
           <ol className="space-y-2">
-            {lessen.map((les, i) => (
+            {vanFase.map((les) => (
               <li key={les.id}>
                 <Link
                   href={lesHref(ui, les)}
                   className="flex items-center justify-between gap-4 rounded-md border border-line bg-background px-5 py-4 hover:border-accent"
                 >
                   <span>
-                    <span className="mr-3 text-muted">{i + 1}</span>
+                    <span className="mr-3 text-muted">{lessen.indexOf(les) + 1}</span>
                     <span className="text-lg font-semibold" lang={les.taal}>
                       {les.titel}
                     </span>
@@ -65,6 +65,8 @@ function Overzicht({ ui, taal, lessen }: { ui: string; taal: string; lessen: Les
 
 function LesView({ ui, les, vorige, volgende, stemmen }: { ui: string; les: Les; vorige?: Les; volgende?: Les; stemmen?: Stemmen }) {
   const t = teksten(ui);
+  const situatie = tekstVoor(les.situatie, ui);
+  const patroon = tekstVoor(les.patroon, ui);
   return (
     <article lang={ui} className="max-w-3xl">
       <Link href={pakketHref(ui, les.taal)} className="text-sm text-muted hover:underline">
@@ -77,10 +79,21 @@ function LesView({ ui, les, vorige, volgende, stemmen }: { ui: string; les: Les;
         {les.titel}
       </h1>
 
+      {situatie && <p className="mt-3 text-lg text-muted">{situatie}</p>}
+
       <section className="mt-8">
         <h2 className="mb-3 text-xl font-semibold">{t.dialoog}</h2>
         <Lesdialoog les={les} ui={ui} stemmen={stemmen} />
       </section>
+
+      {patroon && (
+        <section className="mt-8 rounded-md border border-line bg-surface p-5">
+          <h2 className="eyebrow mb-2">{t.zagJeDat}</h2>
+          <div className="markdown">
+            <Markdown>{patroon}</Markdown>
+          </div>
+        </section>
+      )}
 
       {les.ombouwen && (
         <section className="mt-8">

@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: het hele lesplan, 45 lessen in zes fasen.** Na fase 0
+  (houtje-touwtje) nu ook de kernwerkwoorden, waar en waarheen, doen,
+  beschrijven, en nuance en beleefdheid.
+  - Een les kan nu een *situatie* hebben (één zin vooraf) en een kader
+    *Zag je dat?* met het ene patroon van die les. Beide staan in de taal van
+    de site.
+  - Het overzicht nummert de lessen door over de fasen.
+  - `npm run check:lessen --workspace=taal` controleert de lesbestanden tegen
+    de schrijfwijzer (`sites/taal/SCHRIJFWIJZER.md`).
 - **Taaltraining: een nieuwe site en `plugin-taal`** (`sites/taal`, live op
   taal.imprint-engine.nl sinds 12-11).
   - Een Poolse site met het lespakket Nederlands. Het adres is

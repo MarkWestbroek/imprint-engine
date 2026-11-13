@@ -645,10 +645,15 @@ Nederlands leert. Het adres zegt wat je ziet: `/pl/nederlands/dit-en-dat` is
 de les *Dit en dat* uit het pakket Nederlands, met de site in het Pools.
 Rechtsboven wissel je de taal van de site (PL of NL); je blijft op dezelfde les.
 
-**Wat de leerling ziet.** Een les heeft vier delen:
+**Wat de leerling ziet.** Het pakket Nederlands heeft 45 lessen in zes
+fasen, van losse brokken (fase 0) tot beleefd vragen en bijzinnen (fase 5).
+Een les heeft deze delen:
 
+- de situatie: één zin die zegt waar je bent (vanaf fase 1);
 - de dialoog, met per zin twee knoppen: ▶ speelt de zin af, 🐢 speelt hem
   langzaam af. De vertaling staat ernaast;
+- *Zag je dat?*: het ene patroon van deze les, in hoogstens drie zinnen
+  (vanaf fase 1);
 - de brokken: vaste stukjes om zo te gebruiken, ook met afspeelknoppen;
 - de ombouw-opdracht;
 - de oefeningen, één tegelijk: luisteren en kiezen, kiezen, vertalen en typen,
@@ -668,7 +673,8 @@ iets in het Pools.
 **Lessen bewerken.** Onder *Taal → Lessen* staat elke les. `id` is de sleutel
 (`nl-0-01`: taal, fase, nummer) en bepaalt de volgorde. `slug` is de naam in
 het adres. Dialoog, brokken en oefeningen zijn vakken met JSON, in dezelfde
-vorm als in de lesbestanden. Een oefening heeft een `type`:
+vorm als in de lesbestanden. `situatie` en `patroon` hebben een tekst per taal
+van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een oefening heeft een `type`:
 
 | type | velden |
 |---|---|
@@ -680,7 +686,9 @@ vorm als in de lesbestanden. Een oefening heeft een `type`:
 
 Opslaan maakt een nieuwe versie; de oude vind je onder *History*.
 
-De vijf lessen van fase 0 staan ook als bestand in `sites/taal/lessen`. Het
+Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
+
+De 45 lessen staan ook als bestand in `sites/taal/lessen`. Het
 importscript zet ze in de database en overschrijft dan wat in de admin is
 gewijzigd. Kies dus per les één plek om te bewerken.
 

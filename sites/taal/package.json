@@ -9,6 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\"",
+    "check:lessen": "tsx --tsconfig tsconfig.test.json scripts/check-lessen.ts",
     "import:lessen": "tsx --tsconfig tsconfig.test.json scripts/import-lessen.ts"
   },
   "dependencies": {

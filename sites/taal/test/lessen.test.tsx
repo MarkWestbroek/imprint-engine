@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
 import type { ReactElement } from "react";
@@ -9,16 +8,16 @@ import { FileContentStore, type ContentRecord, type WritableContentStore } from 
 import { PageRenderer, type WidgetContext } from "@imprint/runtime-admin";
 import { taalPublicRoute, taalStaticPaths } from "@imprint/plugin-taal";
 import { opnamen } from "@imprint/plugin-taal/audio";
-import { parseLes } from "@imprint/plugin-taal/import";
 import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
 import { TAAL } from "../imprint.config";
+import { leesLessen } from "../scripts/lessen-regels";
 
 /** The lesson files of this site are valid, and render through the plugin's route and the two widgets. */
 
-const LESSEN = path.resolve(import.meta.dirname, "../lessen");
-const files = (readdirSync(LESSEN, { recursive: true }) as string[]).filter((f) => f.endsWith(".md")).sort();
-const lessen = files.map((f) => parseLes(f, readFileSync(path.join(LESSEN, f), "utf8")));
+const gelezen = leesLessen();
+const lessen = gelezen.flatMap((g) => (g.les ? [g.les] : []));
+const fase0 = lessen.filter((l) => l.fase === 0);
 
 /** The lessons as the store would hand them out. */
 const store = {
@@ -40,26 +39,28 @@ async function renderHtml(element: ReactElement): Promise<string> {
 }
 
 describe("taal: the lesson files", () => {
-  it("are five valid lessons of phase 0, Dutch with Polish beside it", () => {
-    assert.deepEqual(lessen.map((l) => l.id), ["nl-0-01", "nl-0-02", "nl-0-03", "nl-0-04", "nl-0-05"]);
-    assert.deepEqual(lessen.map((l) => l.slug), ["dit-en-dat", "heeft-u", "misschien-te-genoeg", "betalen", "niet-verstaan"]);
+  it("all parse and follow the writing guide (SCHRIJFWIJZER.md)", () => {
+    const fout = gelezen.filter((g) => g.fouten.length > 0).map((g) => `${g.file}: ${g.fouten.join("; ")}`);
+    assert.deepEqual(fout, []);
+  });
+
+  it("are the 45 lessons of the plan, in order, six phases", () => {
+    assert.deepEqual(lessen.map((l) => l.id), [...lessen.map((l) => l.id)].sort(), "files sort like their ids");
+    assert.deepEqual(fase0.map((l) => l.slug), ["dit-en-dat", "heeft-u", "misschien-te-genoeg", "betalen", "niet-verstaan"]);
+    const perFase = [0, 1, 2, 3, 4, 5].map((f) => lessen.filter((l) => l.fase === f).length);
+    assert.deepEqual(perFase, [5, 7, 8, 10, 10, 5]);
+    assert.deepEqual(lessen.map((l) => Number(l.id.split("-")[2])), Array.from({ length: 45 }, (_, i) => i + 1));
     for (const l of lessen) {
-      assert.equal(l.taal, "nl");
-      assert.equal(l.steuntaal, "pl");
-      assert.equal(l.fase, 0);
-      assert.ok(l.dialoog.every((r) => r.nl && r.pl), `${l.id}: every line in both languages`);
-      assert.ok(l.oefeningen.length >= 4, l.id);
-      assert.ok(l.ombouwen, l.id);
+      assert.equal(l.taal, "nl", l.id);
+      assert.equal(l.steuntaal, "pl", l.id);
     }
-    const types = new Set(lessen.flatMap((l) => l.oefeningen.map((o) => o.type)));
-    assert.deepEqual([...types].sort(), ["kies", "luister", "orden", "typ", "zeg"]);
   });
 
   it("need a known number of recordings (what the first Audio run asks for)", () => {
-    const keys = new Set(lessen.flatMap((l) => opnamen(l).map((o) => o.sleutel)));
-    const tekens = [...new Map(lessen.flatMap((l) => opnamen(l).map((o) => [o.sleutel, o.text.length] as const))).values()].reduce((a, b) => a + b, 0);
-    assert.ok(keys.size > 100 && keys.size < 200, `${keys.size} recordings`);
-    assert.ok(tekens < 5000, `${tekens} characters`);
+    const uniek = new Map(lessen.flatMap((l) => opnamen(l).map((o) => [o.sleutel, o.text.length] as const)));
+    const tekens = [...uniek.values()].reduce((a, b) => a + b, 0);
+    assert.ok(uniek.size > 1000 && uniek.size < 2500, `${uniek.size} recordings`);
+    assert.ok(tekens < 40000, `${tekens} characters`);
   });
 });
 
@@ -100,8 +101,24 @@ describe("taal: the addresses", () => {
     assert.match(html, /Ćwiczenia/);
     assert.match(html, /1 \/ 5/);
     assert.match(html, /href="\/pl\/nederlands\/heeft-u"/, "the next lesson");
+    assert.doesNotMatch(html, /Zauważyłeś/, "phase 0 has no pattern box");
     assert.match(html, /aria-label="Odtwórz: Dat is een peer\."/);
     assert.match(html, /aria-label="Powoli: Dat is een peer\."/);
+  });
+
+  it("shows the situation and the pattern of a phase-1 lesson, in the language of the interface", async () => {
+    const pl = await visit("pl/nederlands/ik-ben");
+    assert.ok(pl && "render" in pl);
+    const html = await renderHtml(pl.render as ReactElement);
+    assert.match(html, /Nowy sąsiad puka do drzwi/);
+    assert.match(html, /Zauważyłeś\?/);
+    assert.match(html, /<strong>ik ben<\/strong>/);
+    const nl = await visit("nl/nederlands/ik-ben");
+    assert.ok(nl && "render" in nl);
+    const htmlNl = await renderHtml(nl.render as ReactElement);
+    assert.match(htmlNl, /Een nieuwe buurman belt aan/);
+    assert.match(htmlNl, /Zag je dat\?/);
+    assert.doesNotMatch(htmlNl, /Nowy sąsiad/);
   });
 
   it("shows the same lesson in Dutch without translations, with the exercises that need none", async () => {

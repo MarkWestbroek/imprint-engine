@@ -15,6 +15,6 @@ export const taalContentTypes: ContentTypeDefinition[] = [
     flags: ["listable", "editable"],
     domain: "taal",
     slugOf: (data) => String(data.id ?? ""),
-    emptyData: () => ({ id: "", slug: "", taal: "nl", steuntaal: "pl", fase: 0, module: "", titel: "", dialoog: [], brokken: [], oefeningen: [], ombouwen: "" }),
+    emptyData: () => ({ id: "", slug: "", taal: "nl", steuntaal: "pl", fase: 0, module: "", titel: "", situatie: {}, dialoog: [], patroon: {}, brokken: [], oefeningen: [], ombouwen: "" }),
   },
 ];

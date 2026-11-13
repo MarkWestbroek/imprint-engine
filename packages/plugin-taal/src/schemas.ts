@@ -5,6 +5,8 @@ import { z } from "zod";
  * fields are the frontmatter of a lesson file, so a file imports as it is.
  * Three fields come on top: `slug` (the name in the address), `ombouwen` (the
  * body of the file) and `audio` (filled by the admin action, not by hand).
+ * From phase 1 a lesson also has `situatie` and `patroon` (the lesson plan's
+ * "Situatie" and "Zag je dat?"), both per language of the reader.
  *
  * `taal` is the language being taught (the lesson package), `steuntaal` the
  * language of the translations. Neither is the item's `lang`: a Polish lesson
@@ -46,7 +48,11 @@ export const LesSchema = z
     fase: z.number().int().min(0),
     module: z.string().default(""),
     titel: z.string().min(1),
+    /** Where you are, in one sentence, per language of the reader: `{ pl: "…", nl: "…" }`. */
+    situatie: Regel.default({}),
     dialoog: z.array(Regel).default([]),
+    /** "Did you see that?": the one pattern of this lesson, at most three sentences (Markdown), per language of the reader. */
+    patroon: Regel.default({}),
     /** The chunks of this lesson: fixed pieces to use as they are. */
     brokken: z.array(z.string()).default([]),
     oefeningen: z.array(Oefening).default([]),
@@ -73,7 +79,9 @@ export const LesFormSchema = z.object({
   fase: z.number().int().min(0),
   module: z.string().default(""),
   titel: z.string(),
+  situatie: Regel.default({}),
   dialoog: z.array(Regel).default([]),
+  patroon: Regel.default({}),
   brokken: z.array(z.string()).default([]),
   oefeningen: z.array(Oefening).default([]),
   ombouwen: z.string().default(""),
