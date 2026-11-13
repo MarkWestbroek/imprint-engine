@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: de titel van de voorpagina in een serif** (Fraunces), het
+  accent cursief. De hero-widget heeft daarvoor de class `hero-title` als
+  haakje voor sites; zonder eigen CSS verandert er niets.
 - **Taaltraining: een voorpagina.** `/` toont de pagina `home` uit de store
   (bewerkbaar in de studio) in plaats van door te sturen naar de lessen. Nieuwe
   widget `verder` van plugin-taal: hoeveel lessen gedaan zijn en een knop naar
