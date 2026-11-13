@@ -24,6 +24,21 @@
 	color-scheme: light;
 }
 
+/*
+ * De titel van de voorpagina (hero): een serif, het geaccentueerde deel
+ * cursief. Buiten de lagen, zodat het de Tailwind-classes van de widget wint.
+ */
+.hero-title {
+	font-family: var(--font-display), Georgia, serif;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	line-height: 1.1;
+}
+.hero-title em {
+	font-style: italic;
+	font-weight: 500;
+}
+
 /* Tokencontract van de standaardwidgets (architecture.md §3). */
 @theme inline {
 	--color-background: var(--background);

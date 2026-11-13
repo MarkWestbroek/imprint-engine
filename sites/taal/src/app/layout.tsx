@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import { store } from "@/lib/content";
 import "./globals.css";
 
@@ -7,6 +7,13 @@ const sans = Inter({
   // Polish needs latin-ext (ą, ę, ł, ż).
   subsets: ["latin", "latin-ext"],
   variable: "--font-sans",
+});
+
+/** A serif with a lively italic, for the title of the front page (globals.css: .hero-title). */
+const display = Fraunces({
+  subsets: ["latin", "latin-ext"],
+  style: ["normal", "italic"],
+  variable: "--font-display",
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -23,7 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pl">
-      <body className={sans.variable}>{children}</body>
+      <body className={`${sans.variable} ${display.variable}`}>{children}</body>
     </html>
   );
 }

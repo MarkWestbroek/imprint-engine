@@ -489,7 +489,8 @@ async function HeroWidget({ config, ctx }: { config: HeroConfig; ctx: WidgetCont
         />
       )}
       <div className="relative">
-        <h2 className="text-balance text-4xl font-extrabold leading-[1.05] tracking-tighter sm:text-5xl">
+        {/* `hero-title`: a hook for a site that gives its front-page title a face of its own. */}
+        <h2 className="hero-title text-balance text-4xl font-extrabold leading-[1.05] tracking-tighter sm:text-5xl">
           {accentTitle(config.title)}
         </h2>
         {config.subtitle && (
