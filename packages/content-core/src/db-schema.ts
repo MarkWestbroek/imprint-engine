@@ -5,6 +5,7 @@ import {
   int,
   json,
   mysqlTable,
+  text,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/mysql-core";
@@ -136,6 +137,25 @@ export const attendances = mysqlTable(
     consentAt: datetime("consent_at", { fsp: 3 }).notNull(),
   },
   (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
+);
+
+/**
+ * Small values a plugin keeps per member: a preference, a score. Personal
+ * data, so a table and not content; they go with the user. `scope` is the
+ * plugin, `item_key` its own name for the value, `value` JSON as text (the
+ * same in both dialects).
+ */
+export const memberValues = mysqlTable(
+  "member_values",
+  {
+    id: bigint("id", { mode: "number" }).autoincrement().primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    scope: varchar("scope", { length: 32 }).notNull(),
+    key: varchar("item_key", { length: 128 }).notNull(),
+    value: text("value").notNull(),
+    updatedAt: datetime("updated_at", { fsp: 3 }).notNull(),
+  },
+  (t) => [uniqueIndex("uq_member_values").on(t.userName, t.scope, t.key)]
 );
 
 /**

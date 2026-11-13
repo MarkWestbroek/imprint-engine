@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Per lid iets kleins bewaren (kern).** Nieuwe tabel `member_values` en
+  `UserStore.memberValues` / `setMemberValue`: een plugin houdt per lid een
+  voorkeur of een stand bij (JSON, klein). Gaat mee weg als het lid wordt
+  verwijderd. Migratie 0007 voor MariaDB en Postgres.
+- **Taaltraining: voortgang en de on/ona-keuze in het account.** Wie ingelogd
+  is, krijgt zijn beste resultaat per les en zijn keuze op elk toestel; wat al
+  in de browser stond, gaat mee naar het account. Zonder account verandert er
+  niets. Het overzicht toont nu het beste resultaat (was: het laatste).
+  Registreren en inloggen voor leerlingen volgen nog.
 - **Taaltraining: mannelijke of vrouwelijke vormen naar keuze.** Poolse zinnen
   die over de leerling zelf gaan ("Pracowałem" / "Pracowałam") staan in de les
   als `Pracował{em|am}`. De leerling kiest op de site *on* of *ona* (bewaard in

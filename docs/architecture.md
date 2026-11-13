@@ -292,7 +292,10 @@ Verschillen met het oorspronkelijke UML:
   Gebruikers lopen **niet** via de `ContentStore`: ze zijn geen content en
   krijgen bewust géén historie — een bitemporale tabel bewaart elke rij voor
   altijd, en dat is precies wat je met wachtwoordhashes niet wilt. Ze hebben
-  een eigen `UserStore`, opgezet als de contentstores: de regels in
+  een eigen `UserStore` (met daarin ook de *member values*: tabel
+  `member_values`, waarin een plugin per lid iets kleins bewaart, zoals een
+  voorkeur of een stand; `memberValues` / `setMemberValue`, JSON tot 2000
+  tekens, sleutel lid + scope + naam), opgezet als de contentstores: de regels in
   [user-store-base.ts](../packages/content-core/src/user-store-base.ts), per
   dialect vijf rij-operaties (`DbUserStore` voor MariaDB, `PgUserStore` voor
   Postgres), gedeeld door
@@ -1794,11 +1797,21 @@ flowchart LR
   - De sleutel van Azure komt uit de config (`tts: { key, region }`, in de
     site uit `AZURE_TTS_KEY`). Zonder sleutel is `azureTts()` null en zegt de
     knop dat. Een test geeft een eigen `synthesize` mee.
-- **Voortgang**: de score per les in `localStorage` (`taal-voortgang`).
+- **Voortgang** (`stand.ts`, `opslag.ts`, `leerling.tsx`): het beste resultaat
+  per les. De browser weet het altijd eerst (`localStorage`,
+  `taal-voortgang`), zodat alles zonder account werkt. Het eiland `Leerling`
+  vraagt per paginalading één keer via de actie `stand` wie er kijkt; voor
+  een lid worden browser en account gelijkgetrokken (`samenvoegen`: per les
+  het beste, en wat het account mist gaat erheen met `bewaar`). Daarna gaat
+  elk nieuw resultaat naar beide. De server bewaart het in de member values
+  van de `UserStore` (scope `taal`, sleutel `les:<id>` en `vorm`); `bewaar`
+  neemt alleen bestaande lessen en echte resultaten aan, en alleen als ze
+  beter zijn. De pagina's blijven voorgebouwd en voor iedereen gelijk.
 - **Vormen per leerling** (`tekst.ts`, `vorm.tsx`): een tekst in de steuntaal
   mag `{mannelijk|vrouwelijk}` bevatten (`Pracował{em|am}`). `vormen(tekst,
   keuze)` kiest er één, of toont zonder keuze beide ("Pracowałem/am"). De
-  keuze staat in `localStorage` (`taal-vorm`) en komt via
+  keuze staat in `localStorage` (`taal-vorm`), voor een lid ook in het
+  account (actie `zetVorm`), en komt via
   `useSyncExternalStore` bij de clientdelen; de server kent haar niet, dus de
   voorgebouwde pagina toont beide vormen en de browser vult de keuze in.
   Markdown (`patroon`) wordt op de server gerenderd en toont altijd beide.

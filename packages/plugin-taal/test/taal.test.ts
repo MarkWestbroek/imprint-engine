@@ -15,6 +15,7 @@ import { metVertaling, oefeningenVoor, perFase, tekstVoor } from "../src/lessen"
 import { LesSchema, type Les } from "../src/schemas";
 import { heeftVormen, lijktOp, norm, typGoed, vormen, vormenKloppen, woorden, zegGoed } from "../src/tekst";
 import { kentVormen } from "../src/i18n";
+import { beste, isScore, leesVoortgang, samenvoegen, type Stand } from "../src/stand";
 import { azureTts, type Synthesize } from "../src/tts";
 
 // One real lesson file; the site's own test parses all of them (sites/taal/test).
@@ -288,6 +289,81 @@ describe("the action genereerAudio", () => {
     const eerste = overzicht!.lessen[0]!;
     assert.equal(eerste.ontbreekt + eerste.hergebruik, eerste.zinnen * 2);
     assert.ok(eerste.tekens > 0);
+  });
+});
+
+describe("where a learner stands", () => {
+  const s = (score: number, total = 5, datum = "2026-11-13") => ({ score, total, datum });
+
+  it("keeps the better result, and of two equal ones the later", () => {
+    assert.deepEqual(beste(s(3), s(4)), s(4));
+    assert.deepEqual(beste(s(4), s(3)), s(4));
+    assert.deepEqual(beste(s(4, 5), s(6, 8)), s(4, 5), "the share right, not the count");
+    assert.deepEqual(beste(s(4, 5, "2026-11-01"), s(4, 5, "2026-11-13")), s(4, 5, "2026-11-13"));
+    assert.deepEqual(beste(undefined, s(1)), s(1));
+  });
+
+  it("knows a result from anything else", () => {
+    assert.ok(isScore(s(0)));
+    assert.ok(isScore({ score: 2, total: 5 }));
+    for (const x of [null, "5", { score: 6, total: 5 }, { score: -1, total: 5 }, { score: 1, total: 0 }, { score: 1.5, total: 5 }, { score: 1, total: 5, datum: "gisteren" }]) assert.ok(!isScore(x), JSON.stringify(x));
+    assert.deepEqual(leesVoortgang('{"a":{"score":1,"total":2},"b":"x"}'), { a: { score: 1, total: 2 } });
+    assert.deepEqual(leesVoortgang("geen json"), {});
+    assert.deepEqual(leesVoortgang(null), {});
+  });
+
+  it("makes browser and account equal: the best of each lesson, and what the account lacks", () => {
+    const { samen, naarServer } = samenvoegen({ a: s(5), b: s(2), c: s(3) }, { b: s(4), c: s(3), d: s(1) });
+    assert.deepEqual(samen, { a: s(5), b: s(4), c: s(3), d: s(1) });
+    assert.deepEqual(Object.keys(naarServer), ["a"]);
+  });
+});
+
+describe("the member's actions: stand, bewaar, zetVorm", () => {
+  function metLid(naam: string | null) {
+    const waarden = new Map<string, unknown>();
+    const { admin } = fakeAdmin([les1]);
+    const a = admin as unknown as { auth: Record<string, unknown>; imprint: Record<string, unknown> };
+    a.auth.getSession = async () => (naam ? { name: naam, role: "reader" } : null);
+    a.imprint.users = {
+      memberValues: async (wie: string, scope: string) =>
+        Object.fromEntries([...waarden].filter(([k]) => k.startsWith(`${wie}|${scope}|`)).map(([k, v]) => [k.split("|")[2], v])),
+      setMemberValue: async (wie: string, scope: string, key: string, value: unknown) => {
+        if (value === null) waarden.delete(`${wie}|${scope}|${key}`);
+        else waarden.set(`${wie}|${scope}|${key}`, value);
+      },
+    };
+    return { admin, waarden, ...taalActions({ synthesize: null }) };
+  }
+
+  it("answers 'not signed in' without a session, and keeps nothing", async () => {
+    const { admin, waarden, stand, bewaar, zetVorm } = metLid(null);
+    assert.deepEqual(await stand(admin), { ingelogd: false });
+    assert.equal((await bewaar(admin, { [les1.id]: { score: 5, total: 5 } })).ok, false);
+    assert.equal((await zetVorm(admin, "v")).ok, false);
+    assert.equal(waarden.size, 0);
+  });
+
+  it("keeps a member's results: only of lessons that exist, only real results, only when better", async () => {
+    const { admin, waarden, stand, bewaar } = metLid("ewa");
+    assert.deepEqual(await stand(admin), { ingelogd: true, naam: "ewa", voortgang: {}, vorm: null });
+    await bewaar(admin, { [les1.id]: { score: 3, total: 5, datum: "2026-11-12" }, "nl-9-99": { score: 5, total: 5 }, x: "y" });
+    await bewaar(admin, { [les1.id]: { score: 2, total: 5, datum: "2026-11-13" } });
+    await bewaar(admin, { [les1.id]: { score: 9, total: 5 } });
+    assert.equal((await bewaar(admin, "kapot")).ok, false);
+    assert.deepEqual([...waarden.keys()], [`ewa|taal|les:${les1.id}`]);
+    const s = (await stand(admin)) as Extract<Stand, { ingelogd: true }>;
+    assert.deepEqual(s.voortgang, { [les1.id]: { score: 3, total: 5, datum: "2026-11-12" } });
+    await bewaar(admin, { [les1.id]: { score: 5, total: 5, datum: "2026-11-13", extra: "weg" } });
+    assert.deepEqual(waarden.get(`ewa|taal|les:${les1.id}`), { score: 5, total: 5, datum: "2026-11-13" });
+  });
+
+  it("keeps the choice of forms, and forgets it for anything else", async () => {
+    const { admin, stand, zetVorm } = metLid("ewa");
+    await zetVorm(admin, "v");
+    assert.equal(((await stand(admin)) as { vorm: unknown }).vorm, "v");
+    await zetVorm(admin, "x");
+    assert.equal(((await stand(admin)) as { vorm: unknown }).vorm, null);
   });
 });
 

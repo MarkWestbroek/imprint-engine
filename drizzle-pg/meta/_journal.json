@@ -50,6 +50,13 @@
       "when": 1791192930467,
       "tag": "0006_nasty_spencer_smythe",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1794570547646,
+      "tag": "0007_mute_salo",
+      "breakpoints": true
     }
   ]
 }

@@ -4,6 +4,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   varchar,
@@ -122,6 +123,20 @@ export const attendances = pgTable(
     consentAt: ts("consent_at").notNull(),
   },
   (t) => [uniqueIndex("uq_attendances").on(t.eventSlug, t.userName), index("idx_attendances_user").on(t.userName)]
+);
+
+/** Small values a plugin keeps per member — see db-schema.ts. */
+export const memberValues = pgTable(
+  "member_values",
+  {
+    id: bigserial("id", { mode: "number" }).primaryKey(),
+    userName: varchar("user_name", { length: 64 }).notNull(),
+    scope: varchar("scope", { length: 32 }).notNull(),
+    key: varchar("item_key", { length: 128 }).notNull(),
+    value: text("value").notNull(),
+    updatedAt: ts("updated_at").notNull(),
+  },
+  (t) => [uniqueIndex("uq_member_values").on(t.userName, t.scope, t.key)]
 );
 
 /** Site search as statistics — see db-schema.ts. */

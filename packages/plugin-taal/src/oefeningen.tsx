@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { AudioKaart } from "./audio";
 import type { Teksten } from "./i18n";
+import { bewaarScore } from "./opslag";
 import type { Oefening } from "./schemas";
 import { Speak } from "./speak";
 import { localeOf, typGoed, vormen, woorden, zegGoed } from "./tekst";
@@ -12,7 +13,8 @@ import { useVorm } from "./vorm";
  * The exercises of one lesson, one at a time (behaviour of the prototype,
  * design/taaltraining/prototype/Oefeningen.jsx): luister and kies (pick),
  * typ (translate and type), orden (words in order), zeg (say it aloud, three
- * tries). The score per lesson is kept in this browser (localStorage).
+ * tries). The best score per lesson is kept (opslag.ts): in this browser, and for a
+ * member in the account.
  *
  * Everything arrives as props from the server viewer: the exercises, the
  * recordings that exist and the interface texts.
@@ -30,18 +32,6 @@ type Props = {
 /** `zelf`: the learner judged it (no speech recognition in this browser). */
 type Done = (goed: boolean, zelf?: boolean) => void;
 type Deel<T extends Oefening["type"]> = { o: Extract<Oefening, { type: T }>; taal: string; audio: AudioKaart; t: Teksten; onDone: Done };
-
-export const VOORTGANG_KEY = "taal-voortgang";
-
-function saveScore(id: string, score: number, total: number) {
-  try {
-    const all = JSON.parse(localStorage.getItem(VOORTGANG_KEY) ?? "{}") as Record<string, unknown>;
-    all[id] = { score, total, datum: new Date().toISOString().slice(0, 10) };
-    localStorage.setItem(VOORTGANG_KEY, JSON.stringify(all));
-  } catch {
-    // no storage (private mode): the score is just not kept
-  }
-}
 
 const fill = (tekst: string, waarden: Record<string, string | number>) => tekst.replace(/\{(\w+)\}/g, (_, k: string) => String(waarden[k] ?? ""));
 
@@ -380,7 +370,7 @@ export function Oefeningen({ lesId, taal, oefeningen, audio, t }: Props) {
     setScore(nieuw);
     if (zelfBeoordeeld) setZelf(zelf + 1);
     setBeantwoord(true);
-    if (stap === oefeningen.length - 1) saveScore(lesId, nieuw, oefeningen.length);
+    if (stap === oefeningen.length - 1) bewaarScore(lesId, nieuw, oefeningen.length);
   };
   const deel = { taal, audio, t, onDone };
 
