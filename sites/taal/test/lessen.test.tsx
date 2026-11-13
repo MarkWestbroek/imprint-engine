@@ -161,6 +161,16 @@ describe("taal: the widgets on a page", () => {
     assert.match(html, /No lesson/);
   });
 
+  it("render the front page: the hero, and 'continue' pointing at lesson 1 before anything is done", async () => {
+    const page = await ctx.store.getPage("home");
+    assert.ok(page?.layout);
+    const html = await renderHtml(<PageRenderer page={page as never} viewers={widgetComponents} ctx={ctx} />);
+    assert.match(html, /od pierwszego zdania/);
+    assert.match(html, /Zacznij od lekcji 1/);
+    assert.match(html, /href="\/pl\/nederlands\/dit-en-dat"/);
+    assert.match(html, /Sześć etapów/);
+  });
+
   it("has valid starting content: the menu and its page", async () => {
     const menu = await ctx.store.getMenu("main");
     assert.ok(menu && menu.items.length === 2);

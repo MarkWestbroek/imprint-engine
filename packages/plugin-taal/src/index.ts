@@ -5,7 +5,7 @@ import { taalContentTypes } from "./content-types";
 import { taalPublicRoute } from "./public";
 import { taalScreen } from "./screen";
 import { azureTts, type Synthesize, type TtsConfig } from "./tts";
-import { LesdialoogConfig, LesdialoogWidget, OefeningenConfig, OefeningenWidget } from "./widget";
+import { LesdialoogConfig, LesdialoogWidget, OefeningenConfig, OefeningenWidget, VerderConfig, VerderWidget } from "./widget";
 
 /**
  * @imprint/plugin-taal — language training as a plugin
@@ -35,11 +35,19 @@ export const taalWidgets = [
     help: "The exercises of a lesson, one at a time: listen, choose, type, order, say. The score stays in the visitor's browser.",
     configSchema: OefeningenConfig,
   },
+  {
+    name: "verder",
+    label: "Continue where you left off",
+    version: "1.0.0",
+    help: "For a front page: how many lessons of a package are done in this browser (or account), and a button to the next one; 'Start with lesson 1' at first.",
+    configSchema: VerderConfig,
+  },
 ] as const;
 
 export const taalViewers: WidgetViewers = {
   lesdialoog: LesdialoogWidget as WidgetViewers[string],
   oefeningen: OefeningenWidget as WidgetViewers[string],
+  verder: VerderWidget as WidgetViewers[string],
 };
 
 export type TaalOptions = {
@@ -81,6 +89,7 @@ export { taalActions, statusVan, type AudioOverzicht, type AudioResult, type Aud
 export { taalContentTypes } from "./content-types";
 export { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal, PAKKETTEN } from "./href";
 export { TEKSTEN, UI_TALEN, teksten, type Teksten } from "./i18n";
+export { Leerling } from "./leerling";
 export { Lesdialoog, LesOefeningen } from "./les-view";
 export { getLes, listLessen, metVertaling, oefeningenVoor } from "./lessen";
 export { taalPublicRoute, taalStaticPaths, type TaalRouteOptions } from "./public";

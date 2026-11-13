@@ -966,14 +966,21 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             browser, `Pracował{em|am}` in de les (13-11).
       - [x] ~~Optioneel aanmelden, deel 1~~ — voortgang en de on/ona-keuze
             per lid in het account (`member_values`), 13-11.
-      - [ ] Optioneel aanmelden, deel 2: registreren (e-mail met
-            bevestiging), inloggen, wachtwoord vergeten en een accountpagina
-            op de taalsite, in het Pools en Nederlands; het lid kan zijn
-            account zelf verwijderen; een korte privacytekst; SMTP voor de
-            taalsite op de VPS. **M**
-      - [ ] Wisselt op één browser het account, dan gaat de lokale voortgang
-            van de vorige leerling mee naar het nieuwe account. Bij uitloggen
-            de lokale stand wissen. **S**
+      - [x] ~~Optioneel aanmelden, deel 2~~ — account onder
+            `/<ui>/account` (registreren, inloggen, wachtwoord vergeten,
+            zelf verwijderen), privacypagina; uitloggen wist de lokale stand
+            (13-11).
+      - [ ] De Poolse teksten van de accountpagina's, de mails en de
+            privacytekst laten nalezen.
+      - [x] ~~Voorpagina~~ — store-pagina `home` met de widget `verder`;
+            contactformulier en privacy in de voet (13-11).
+      - [ ] De fasekaarten op de voorpagina zijn vaste tekst; als de fasen een
+            naam krijgen, kan een widget ze uit de lessen halen.
+      - [ ] Een eigen afzenderadres voor de taalsite (nu het postvak van
+            Common Ground, als dat wordt hergebruikt).
+      - [ ] Accounts die nooit bevestigd zijn na een tijd opruimen. **S**
+      - [ ] Wie zonder uit te loggen op één browser van account wisselt,
+            neemt de lokale voortgang van de vorige mee. **S**
       - [ ] Fasen een naam geven op het overzicht (nu "Etap 0" … "Etap 5"). **S**
       - [ ] Oefeningen zonder steuntaal (Nederlands leren in het Nederlands):
             nu blijven alleen *kies* en *orden* over. Varianten met plaatjes
