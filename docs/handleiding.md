@@ -697,8 +697,19 @@ mannelijke, dan de vrouwelijke uitgang.
 de browser van de leerling. Wie ingelogd is, heeft het ook in zijn account:
 op een ander toestel staat het er dan weer, samen met de keuze *on/ona*. Wat
 al in de browser stond, gaat bij het inloggen mee naar het account.
-(Registreren en inloggen voor leerlingen komen nog; nu geldt dit voor wie via
-`/admin` is ingelogd.)
+
+**Een account (optioneel).** In de kop staat *Zaloguj się*. Een leerling maakt
+een account met een gebruikersnaam, een e-mailadres en een wachtwoord van
+minstens 12 tekens, en krijgt een mail met een link om het adres te
+bevestigen. Inloggen kan meteen, ook voor de bevestiging. Op *Moje konto*
+staan naam en adres, het aantal gedane lessen, uitloggen en *Usuń konto*:
+daarmee verwijdert de leerling zelf zijn account en alles wat erbij bewaard
+is, na nog één keer het wachtwoord. Uitloggen wist ook de voortgang in die
+browser, zodat een volgende leerling op hetzelfde toestel schoon begint; in
+het account blijft ze staan. Wat de site bewaart, staat op de pagina
+*Prywatność* (`/pl/account/privacy`). Een leerling die er niet meer in komt,
+gebruikt *Nie pamiętasz hasła?*; als redacteur kun je onder `/admin/users`
+een account verwijderen.
 
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 

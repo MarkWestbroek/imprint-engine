@@ -11,6 +11,8 @@
     "./href": "./src/href.ts",
     "./audio": "./src/audio.ts",
     "./tekst": "./src/tekst.ts",
+    "./stand": "./src/stand.ts",
+    "./opslag": "./src/opslag.ts",
     "./tts": "./src/tts.ts",
     "./import": "./src/import.ts"
   },

@@ -22,6 +22,7 @@ export { createSessionAuth, type SessionAuth } from "./session";
 export {
   accessGroups,
   confirmEmail,
+  deleteOwnAccount,
   memberProfile,
   subjectFor,
   registerMember,
@@ -30,6 +31,9 @@ export {
   sendVerification,
   signInMember,
   signOutMember,
+  type MemberErrorCode,
+  type MemberMailText,
+  type MemberOptions,
   type MemberProfile,
   type RegisterResult,
 } from "./members";

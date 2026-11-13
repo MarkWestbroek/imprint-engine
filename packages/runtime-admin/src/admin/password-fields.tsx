@@ -10,7 +10,10 @@ import { useId, useRef, useState, type InputHTMLAttributes, type Ref } from "rea
  * their classes. The server checks the repeat as well; this saves a round trip.
  */
 
-type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { ref?: Ref<HTMLInputElement> };
+/** The eye's two labels, for a site in another language: [show, hide]. */
+export type EyeLabels = [show: string, hide: string];
+
+type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & { ref?: Ref<HTMLInputElement>; eyeLabels?: EyeLabels };
 
 const MISMATCH = "De twee wachtwoorden zijn niet gelijk.";
 
@@ -25,7 +28,8 @@ function Eye({ crossed }: { crossed: boolean }) {
 }
 
 /** A password input with an eye button that shows or hides what was typed. */
-export function PasswordInput({ className, style, ref, ...props }: InputProps) {
+export function PasswordInput({ className, style, ref, eyeLabels, ...props }: InputProps) {
+  const [show, hide] = eyeLabels ?? ["Wachtwoord tonen", "Wachtwoord verbergen"];
   const [shown, setShown] = useState(false);
   return (
     <span style={{ position: "relative", display: "block" }}>
@@ -33,9 +37,9 @@ export function PasswordInput({ className, style, ref, ...props }: InputProps) {
       <button
         type="button"
         onClick={() => setShown((s) => !s)}
-        aria-label={shown ? "Wachtwoord verbergen" : "Wachtwoord tonen"}
+        aria-label={shown ? hide : show}
         aria-pressed={shown}
-        title={shown ? "Verbergen" : "Tonen"}
+        title={eyeLabels ? (shown ? hide : show) : shown ? "Verbergen" : "Tonen"}
         style={{ position: "absolute", right: 6, top: "50%", transform: "translateY(-50%)", display: "grid", placeItems: "center", width: 30, height: 30, border: 0, background: "transparent", color: "inherit", opacity: 0.7, cursor: "pointer", padding: 0 }}
       >
         <Eye crossed={shown} />
@@ -64,6 +68,8 @@ export function NewPasswordFields({
   labelTextClassName,
   hintClassName,
   errorClassName,
+  mismatchText = MISMATCH,
+  eyeLabels,
 }: {
   name?: string;
   confirmName?: string;
@@ -80,13 +86,16 @@ export function NewPasswordFields({
   labelTextClassName?: string;
   hintClassName?: string;
   errorClassName?: string;
+  /** The line under a repeat that differs, and the eye's labels: for a site in another language. */
+  mismatchText?: string;
+  eyeLabels?: EyeLabels;
 }) {
   const [first, setFirst] = useState("");
   const [second, setSecond] = useState("");
   const repeat = useRef<HTMLInputElement>(null);
   const errorId = useId();
   const mismatch = second !== "" && first !== second;
-  const check = (a: string, b: string) => repeat.current?.setCustomValidity(a !== b && (a !== "" || b !== "") ? MISMATCH : "");
+  const check = (a: string, b: string) => repeat.current?.setCustomValidity(a !== b && (a !== "" || b !== "") ? mismatchText : "");
 
   return (
     <>
@@ -94,6 +103,7 @@ export function NewPasswordFields({
         <span className={labelTextClassName}>{label}</span>
         <PasswordInput
           name={name}
+          eyeLabels={eyeLabels}
           autoComplete="new-password"
           required={!optional}
           minLength={minLength}
@@ -112,6 +122,7 @@ export function NewPasswordFields({
         <PasswordInput
           ref={repeat}
           name={confirmName}
+          eyeLabels={eyeLabels}
           autoComplete="new-password"
           required={!optional || first !== ""}
           className={inputClassName}
@@ -125,7 +136,7 @@ export function NewPasswordFields({
         />
         {mismatch && (
           <small id={errorId} className={errorClassName} role="alert">
-            {MISMATCH}
+            {mismatchText}
           </small>
         )}
       </label>
