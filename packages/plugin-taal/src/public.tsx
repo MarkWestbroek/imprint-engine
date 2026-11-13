@@ -3,10 +3,12 @@ import type { WritableContentStore } from "@imprint/content-core";
 import { Markdown, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
 import type { Stemmen } from "./audio";
 import { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal } from "./href";
-import { teksten, UI_TALEN } from "./i18n";
+import { kentVormen, teksten, UI_TALEN } from "./i18n";
 import { Lesdialoog, LesOefeningen } from "./les-view";
 import { listLessen, oefeningenVoor, perFase, tekstVoor } from "./lessen";
 import type { Les } from "./schemas";
+import { vormen } from "./tekst";
+import { VormKeuze, Vormen } from "./vorm";
 import { LesScore } from "./voortgang";
 
 /**
@@ -33,6 +35,11 @@ function Overzicht({ ui, taal, lessen }: { ui: string; taal: string; lessen: Les
     <div lang={ui} className="max-w-3xl">
       <p className="eyebrow">{t.lessen}</p>
       <h1 className="text-3xl font-semibold tracking-tight">{t.pakket[taal] ?? taal}</h1>
+      {kentVormen(ui) && (
+        <div className="mt-4">
+          <VormKeuze labels={t.vorm} />
+        </div>
+      )}
       {lessen.length === 0 && <p className="mt-6 text-muted">{t.geenLessen}</p>}
       {perFase(lessen).map(({ fase, lessen: vanFase }) => (
         <section key={fase} className="mt-8">
@@ -79,7 +86,16 @@ function LesView({ ui, les, vorige, volgende, stemmen }: { ui: string; les: Les;
         {les.titel}
       </h1>
 
-      {situatie && <p className="mt-3 text-lg text-muted">{situatie}</p>}
+      {situatie && (
+        <p className="mt-3 text-lg text-muted">
+          <Vormen>{situatie}</Vormen>
+        </p>
+      )}
+      {kentVormen(ui) && (
+        <div className="mt-4">
+          <VormKeuze labels={t.vorm} />
+        </div>
+      )}
 
       <section className="mt-8">
         <h2 className="mb-3 text-xl font-semibold">{t.dialoog}</h2>
@@ -88,9 +104,12 @@ function LesView({ ui, les, vorige, volgende, stemmen }: { ui: string; les: Les;
 
       {patroon && (
         <section className="mt-8 rounded-md border border-line bg-surface p-5">
-          <h2 className="eyebrow mb-2">{t.zagJeDat}</h2>
+          <h2 className="eyebrow mb-2">
+            <Vormen>{t.zagJeDat}</Vormen>
+          </h2>
           <div className="markdown">
-            <Markdown>{patroon}</Markdown>
+            {/* Markdown renders on the server, which knows no choice: both forms. */}
+            <Markdown>{vormen(patroon)}</Markdown>
           </div>
         </section>
       )}

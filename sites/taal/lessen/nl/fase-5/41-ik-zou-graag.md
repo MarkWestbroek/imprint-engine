@@ -6,7 +6,7 @@ fase: 5
 module: dagelijks
 titel: "Ik zou graag… (in het restaurant)"
 situatie:
-  pl: "Jesteś z żoną w restauracji: zamawiacie i rezerwujesz stolik na sobotę."
+  pl: "Jesteś z {żoną|mężem} w restauracji: zamawiacie i rezerwujesz stolik na sobotę."
   nl: "Je bent met je vrouw in een restaurant: jullie bestellen en je reserveert een tafel voor zaterdag."
 dialoog:
   - nl: "Goedenavond. Wij zouden graag bestellen."
@@ -47,7 +47,7 @@ oefeningen:
     opties: ["Ik zou graag maken een afspraak.", "Ik zou graag een afspraak maken.", "Ik graag zou een afspraak maken."]
     antwoord: 1
   - type: typ
-    vraag: "Chciałbym zarezerwować stolik."
+    vraag: "Chciał{bym|abym} zarezerwować stolik."
     antwoorden: ["Ik zou graag een tafel reserveren.", "Ik zou graag een tafel willen reserveren.", "Ik wil graag een tafel reserveren.", "Ik zou graag een tafeltje reserveren.", "Ik zou een tafel willen reserveren."]
   - type: orden
     zin: "Ik zou graag een tafel reserveren."

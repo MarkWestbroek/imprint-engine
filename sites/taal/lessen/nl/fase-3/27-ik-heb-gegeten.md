@@ -6,7 +6,7 @@ fase: 3
 module: dagelijks
 titel: Ik heb gegeten (thuis)
 situatie:
-  pl: "Wracasz z miasta do domu, a współlokator Tom pyta, co robiłeś."
+  pl: "Wracasz z miasta do domu, a współlokator Tom pyta, co robił{eś|aś}."
   nl: "Je komt thuis uit de stad en je huisgenoot Tom vraagt wat je hebt gedaan."
 dialoog:
   - nl: "Hoi! Wat heb je in de stad gedaan?"
@@ -41,7 +41,7 @@ oefeningen:
     opties: ["gedrinkt", "gedranken", "gedronken"]
     antwoord: 2
   - type: typ
-    vraag: "Widziałem Annę."
+    vraag: "Widział{em|am} Annę."
     antwoorden: ["Ik heb Anna gezien."]
   - type: orden
     zin: "Ik heb een mooie jas gevonden."
@@ -50,10 +50,10 @@ oefeningen:
     antwoorden: ["Heb je al gegeten?", "Heb jij al gegeten?"]
     voorbeeld: true
   - type: typ
-    vraag: "Kupiłem chleb."
+    vraag: "Kupił{em|am} chleb."
     antwoorden: ["Ik heb brood gekocht.", "Ik heb een brood gekocht.", "Ik heb het brood gekocht."]
   - type: typ
-    vraag: "Pracowałem cały dzień. (powtórka)"
+    vraag: "Pracował{em|am} cały dzień. (powtórka)"
     antwoorden: ["Ik heb de hele dag gewerkt."]
 ---
 

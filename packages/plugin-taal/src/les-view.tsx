@@ -4,6 +4,7 @@ import { Oefeningen } from "./oefeningen";
 import { metVertaling, oefeningenVoor } from "./lessen";
 import type { Les } from "./schemas";
 import { Speak } from "./speak";
+import { Vormen } from "./vorm";
 
 /**
  * The server halves of the two widgets: they read the lesson's recordings and
@@ -36,7 +37,7 @@ export function Lesdialoog({ les, ui, stemmen, brokken = true }: { les: Les; ui:
                 </td>
                 {vertaald && (
                   <td className="py-3 text-muted" lang={steun}>
-                    {regel[steun]}
+                    <Vormen>{regel[steun] ?? ""}</Vormen>
                   </td>
                 )}
               </tr>

@@ -41,8 +41,8 @@ oefeningen:
     opties: ["ben", "is", "zijn"]
     antwoord: 2
   - type: typ
-    vraag: "Jestem Polakiem."
-    antwoorden: ["Ik ben Pools.", "Ik ben een Pool.", "Ik ben Pool."]
+    vraag: "Jestem {Polakiem|Polką}."
+    antwoorden: ["Ik ben Pools.", "Ik ben een Pool.", "Ik ben Pool.", "Ik ben Poolse.", "Ik ben een Poolse."]
   - type: orden
     zin: "Ik ben de nieuwe buurman."
   - type: zeg

@@ -43,6 +43,20 @@ export const zegGoed = (alternatieven: string[], antwoorden: string[]): boolean 
 /** The words of a sentence, for the ordering exercise. */
 export const woorden = (zin: string): string[] => zin.split(/\s+/).filter(Boolean);
 
+/**
+ * Forms that depend on who the learner is: Polish says "Pracowałem" (a man)
+ * or "Pracowałam" (a woman). A text in the support language writes both as
+ * `Pracował{em|am}`; the learner's choice picks one, and without a choice
+ * both show the way Polish forms do: "Pracowałem/am".
+ */
+export type Vorm = "m" | "v";
+const VORMEN = /\{([^{}|]*)\|([^{}|]*)\}/g;
+export const vormen = (tekst: string, vorm?: Vorm | null): string =>
+  tekst.replace(VORMEN, (_, m: string, v: string) => (vorm === "m" ? m : vorm === "v" ? v : `${m}/${v}`));
+export const heeftVormen = (tekst: string): boolean => new RegExp(VORMEN.source).test(tekst);
+/** What is left of a text without its forms still has a brace: a form that is not `{a|b}`. */
+export const vormenKloppen = (tekst: string): boolean => !/[{}]/.test(tekst.replace(VORMEN, ""));
+
 /** BCP 47 tags for speech synthesis and recognition in the browser. */
 export const LOCALES: Record<string, string> = { nl: "nl-NL", pl: "pl-PL", it: "it-IT", de: "de-DE", en: "en-GB" };
 export const localeOf = (taal: string): string => LOCALES[taal] ?? taal;

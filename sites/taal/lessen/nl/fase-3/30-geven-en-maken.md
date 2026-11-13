@@ -45,7 +45,7 @@ oefeningen:
     opties: ["ons", "wij", "onze"]
     antwoord: 0
   - type: typ
-    vraag: "Robię to sam."
+    vraag: "Robię to sam{|a}."
     antwoorden: ["Ik maak het zelf.", "Ik doe het zelf.", "Ik maak dit zelf.", "Ik maak dat zelf.", "Ik doe dit zelf.", "Ik doe dat zelf.", "Dat maak ik zelf.", "Dat doe ik zelf."]
   - type: orden
     zin: "Ik geef het aan mijn zoon."

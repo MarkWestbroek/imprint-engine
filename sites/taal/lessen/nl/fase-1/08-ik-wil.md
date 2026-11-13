@@ -6,7 +6,7 @@ fase: 1
 module: dagelijks
 titel: Ik wil… (in het café)
 situatie:
-  pl: "Siedzisz z żoną w kawiarni. Kelner przyjmuje zamówienie."
+  pl: "Siedzisz z {żoną|mężem} w kawiarni. Kelner przyjmuje zamówienie."
   nl: "Je zit met je vrouw in een café. De ober neemt de bestelling op."
 dialoog:
   - nl: "Goedemiddag. Wat wilt u drinken?"

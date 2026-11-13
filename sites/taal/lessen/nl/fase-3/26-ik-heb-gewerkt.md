@@ -43,12 +43,12 @@ oefeningen:
     opties: ["gewoond", "woont", "wonen"]
     antwoord: 0
   - type: typ
-    vraag: "Pracowałem cały dzień."
+    vraag: "Pracował{em|am} cały dzień."
     antwoorden: ["Ik heb de hele dag gewerkt."]
   - type: orden
     zin: "Ik heb een tafel gemaakt."
   - type: zeg
-    vraag: "Dzwoniłem wczoraj."
+    vraag: "Dzwonił{em|am} wczoraj."
     antwoorden: ["Ik heb gisteren gebeld.", "Gisteren heb ik gebeld."]
     voorbeeld: true
   - type: typ

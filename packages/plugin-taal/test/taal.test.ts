@@ -13,7 +13,8 @@ import { TEKSTEN } from "../src/i18n";
 import { importLes, parseLes } from "../src/import";
 import { metVertaling, oefeningenVoor, perFase, tekstVoor } from "../src/lessen";
 import { LesSchema, type Les } from "../src/schemas";
-import { lijktOp, norm, typGoed, woorden, zegGoed } from "../src/tekst";
+import { heeftVormen, lijktOp, norm, typGoed, vormen, vormenKloppen, woorden, zegGoed } from "../src/tekst";
+import { kentVormen } from "../src/i18n";
 import { azureTts, type Synthesize } from "../src/tts";
 
 // One real lesson file; the site's own test parses all of them (sites/taal/test).
@@ -113,6 +114,30 @@ describe("comparing answers", () => {
 
   it("splits a sentence into words", () => {
     assert.deepEqual(woorden("Wat  is dit?"), ["Wat", "is", "dit?"]);
+  });
+});
+
+describe("forms per learner", () => {
+  it("shows the chosen form, and both without a choice", () => {
+    assert.equal(vormen("Pracował{em|am} cały dzień.", "m"), "Pracowałem cały dzień.");
+    assert.equal(vormen("Pracował{em|am} cały dzień.", "v"), "Pracowałam cały dzień.");
+    assert.equal(vormen("Pracował{em|am} cały dzień."), "Pracowałem/am cały dzień.");
+    assert.equal(vormen("Robię to sam{|a}.", "m"), "Robię to sam.");
+    assert.equal(vormen("Siedzisz z {żoną|mężem}.", "v"), "Siedzisz z mężem.");
+    assert.equal(vormen("Co to jest?", "v"), "Co to jest?");
+  });
+
+  it("knows a text with forms, and a form that is written wrong", () => {
+    assert.ok(heeftVormen("Był{em|am}"));
+    assert.ok(!heeftVormen("Byłem"));
+    assert.ok(vormenKloppen("Był{em|am} tu, chor{y|a}."));
+    assert.ok(!vormenKloppen("Był{em/am}"));
+    assert.ok(!vormenKloppen("Był{em|am|o}"));
+  });
+
+  it("offers the choice in Polish only", () => {
+    assert.ok(kentVormen("pl"));
+    assert.ok(!kentVormen("nl"));
   });
 });
 

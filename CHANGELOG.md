@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: mannelijke of vrouwelijke vormen naar keuze.** Poolse zinnen
+  die over de leerling zelf gaan ("Pracowałem" / "Pracowałam") staan in de les
+  als `Pracował{em|am}`. De leerling kiest op de site *on* of *ona* (bewaard in
+  de browser, geen account nodig); zonder keuze staat er "Pracowałem/am".
+  `check:lessen` bewaakt de schrijfwijze en dat er geen vormen in het
+  Nederlands staan.
 - **Taaltraining: het hele lesplan, 45 lessen in zes fasen.** Na fase 0
   (houtje-touwtje) nu ook de kernwerkwoorden, waar en waarheen, doen,
   beschrijven, en nuance en beleefdheid.

@@ -6,7 +6,7 @@ fase: 3
 module: dagelijks
 titel: Ik ben gegaan (terug uit Polen)
 situatie:
-  pl: "Wróciłeś z Polski i spotykasz sąsiadkę Annę."
+  pl: "Wrócił{eś|aś} z Polski i spotykasz sąsiadkę Annę."
   nl: "Je bent terug uit Polen en je ziet je buurvrouw Anna."
 dialoog:
   - nl: "Dag Piotr! Waar ben je geweest?"
@@ -47,7 +47,7 @@ oefeningen:
     opties: ["komen", "gekomen", "gekomt"]
     antwoord: 1
   - type: typ
-    vraag: "Byłem w Polsce."
+    vraag: "Był{em|am} w Polsce."
     antwoorden: ["Ik ben in Polen geweest.", "Ik was in Polen."]
   - type: orden
     zin: "Ben je met de auto gegaan?"
