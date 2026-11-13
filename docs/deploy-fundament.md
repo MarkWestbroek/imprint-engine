@@ -1,15 +1,17 @@
 # Een Imprint-site op Fundament (Kubernetes)
 
 Naast de VPS ([deploy-vps.md](deploy-vps.md)) kan een site op het
-Fundament-cluster draaien (cg-test, `*.fundament.common-ground-lab.nl`).
+Fundament-cluster draaien (`common-ground`, sinds 13-11-2026; daarvoor
+cg-test, opgeheven na de Ceph-storing van 11-11; `*.fundament.common-ground-lab.nl`).
+Kubeconfig: `kubeconfig-common-ground.yaml` in het Fundament-repo (login via functl).
 De eerste is de inrichtings-UI op het Omnium-register
 ([design/omnium-inrichting.md](design/omnium-inrichting.md)), werktitel
 `inrichting.fundament.common-ground-lab.nl`. De manifesten staan in
 [`deploy/k8s/`](../deploy/k8s/) (kustomize, ingebouwd in `kubectl`).
 
-> **Stand (6-11-2026):** de site draait op
+> **Stand (13-11-2026):** de site draait op cluster `common-ground` op
 > https://inrichting.fundament.common-ground-lab.nl, met image
-> `0.15.0-cf280c0` (registerschema v7, werkplaats Fase A, proefbewerken en opslaan in de Studio-branch). Migratie en beginteksten staan in de database. De pod leest
+> `0.15.0-cf280c0` (registerschema v7, werkplaats Fase A, proefbewerken en opslaan in de Studio-branch). Migratie en beginteksten staan in de database (teruggezet uit de dump van 12-11; de bucket is opnieuw aangemaakt, de oude was leeg). De pod leest
 > het register met `omnium-lezer`. De backup neemt de database mee, en ook de
 > bucket zodra FUNDAMENT `ensure-backup-secret.ps1` heeft gedraaid.
 

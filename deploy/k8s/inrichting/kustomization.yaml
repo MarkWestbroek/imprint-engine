@@ -1,4 +1,4 @@
-# sites/inrichting op Fundament (cg-test): de inrichtings-UI op het
+# sites/inrichting op Fundament (cluster common-ground, sinds 13-11-2026): de inrichtings-UI op het
 # Omnium-register (docs/design/omnium-inrichting.md). Werktitels; de
 # namespace, de database en de hostnaam in het certificaat regelt FUNDAMENT.
 #   kubectl apply -k deploy/k8s/inrichting
