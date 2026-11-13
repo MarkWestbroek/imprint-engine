@@ -1823,6 +1823,17 @@ flowchart LR
   De kop vraagt in de browser wie er kijkt (`/api/me`). Bij inloggen vraagt
   de plugin de stand opnieuw op (`vergeetKoppeling`); bij uitloggen en na
   verwijderen gaat ook de lokale kopie weg (`vergeetLokaal`).
+- **Voorpagina en verder** (`sites/taal/src/app/(site)/page.tsx`,
+  `plugin-taal/src/verder.tsx`): `/` rendert de store-pagina `home`, met
+  `Leerling` erboven zodat een lid zijn stand ophaalt. De widget `verder` krijgt
+  van de server de lessen van een pakket (id, adres, titel) en kiest in de
+  browser de eerste zonder resultaat; voorgebouwd toont hij les 1.
+- **Contact** (`runtime-admin/src/admin-server/contact.ts`, de route
+  `[ui]/kontakt`): `sendContactMessage` mailt naar het adres dat de site
+  meegeeft (`CONTACT_TO` uit de omgeving), met het adres van de afzender als
+  Reply-To; niets wordt opgeslagen. Honeypot en limiet per IP delen de code
+  met `members.ts` (`rateLimited`). Zonder mailer of ontvanger: in
+  ontwikkeling in het log, in productie een foutcode (`no-mail`).
 - **Vormen per leerling** (`tekst.ts`, `vorm.tsx`): een tekst in de steuntaal
   mag `{mannelijk|vrouwelijk}` bevatten (`Pracował{em|am}`). `vormen(tekst,
   keuze)` kiest er één, of toont zonder keuze beide ("Pracowałem/am"). De

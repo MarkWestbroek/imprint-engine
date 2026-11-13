@@ -1,0 +1,142 @@
+{
+  "slug": "home",
+  "title": "Langzaam maar zeker: niderlandzki od pierwszego zdania",
+  "description": "45 krótkich lekcji niderlandzkiego dla Polaków: najpierw gotowe zwroty do sklepu, pracy i urzędu, potem gramatyka.",
+  "publishedAt": "2026-11-13",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Niderlandzki *od pierwszego zdania*",
+                  "subtitle": "45 krótkich lekcji dla Polaków w Holandii. Najpierw gotowe zwroty do sklepu, pracy i urzędu, potem gramatyka. Słuchaj, powtarzaj i mów na głos.",
+                  "align": "left",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "verder",
+                "config": {
+                  "ui": "pl",
+                  "taal": "nl"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Jak to działa",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "icon": "🎧",
+                      "title": "Słuchaj",
+                      "markdown": "Każde zdanie możesz odtworzyć normalnie i powoli, tyle razy, ile chcesz."
+                    },
+                    {
+                      "icon": "🗣️",
+                      "title": "Mów na głos",
+                      "markdown": "W ćwiczeniach „powiedz” przeglądarka słucha i sprawdza, co mówisz."
+                    },
+                    {
+                      "icon": "🧩",
+                      "title": "Najpierw zwroty",
+                      "markdown": "Gramatyka przychodzi później: w jednej lekcji najwyżej jedna nowa reguła."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Sześć etapów",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Etap 0: Na początek",
+                      "markdown": "Dit, dat, heeft u…: dogadać się w sklepie kilkoma słowami. Lekcje 1–5.",
+                      "href": "/pl/nederlands"
+                    },
+                    {
+                      "title": "Etap 1: Podstawowe czasowniki",
+                      "markdown": "Być, mieć, chcieć, móc, iść, przychodzić. Lekcje 6–12.",
+                      "href": "/pl/nederlands"
+                    },
+                    {
+                      "title": "Etap 2: Gdzie i dokąd",
+                      "markdown": "Przyimki, pytanie o drogę, na dworcu. Lekcje 13–20.",
+                      "href": "/pl/nederlands"
+                    },
+                    {
+                      "title": "Etap 3: Co robisz",
+                      "markdown": "Czasowniki regularne i czas przeszły. Lekcje 21–30.",
+                      "href": "/pl/nederlands"
+                    },
+                    {
+                      "title": "Etap 4: Opisywanie",
+                      "markdown": "Kolory, porównania, pogoda, godzina, dni, umawianie się. Lekcje 31–40.",
+                      "href": "/pl/nederlands"
+                    },
+                    {
+                      "title": "Etap 5: Grzecznie i dokładnie",
+                      "markdown": "Zou graag, omdat, als… dan: uprzejme prośby i dłuższe zdania. Lekcje 41–45.",
+                      "href": "/pl/nederlands"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "tone": "muted",
+                  "markdown": "**Konto nie jest potrzebne.** Wszystkie lekcje działają bez niego. Z kontem twoje wyniki są zapisane także na innym telefonie lub komputerze. [Załóż konto](/pl/account/register)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,4 +1,4 @@
-import type { MemberErrorCode, MemberMailText } from "@imprint/runtime-admin/admin-server";
+import type { ContactErrorCode, MemberErrorCode, MemberMailText } from "@imprint/runtime-admin/admin-server";
 
 /**
  * The texts of the account pages, per interface language (the first segment
@@ -51,6 +51,18 @@ export type AccountTeksten = {
   verwijderKnop: string;
   verwijderd: string;
   privacyTekst: string;
+  kontakt: {
+    titel: string;
+    intro: string;
+    naam: string;
+    email: string;
+    emailHint: string;
+    bericht: string;
+    verstuur: string;
+    verstuurd: string;
+    nogEen: string;
+    fout: Record<ContactErrorCode, string>;
+  };
   fout: Record<MemberErrorCode | "algemeen" | "naamBestaat" | "naamOngeldig" | "emailBestaat" | "emailOngeldig" | "wachtwoordKort", string>;
   mail: { verify: MemberMailText; reset: MemberMailText };
 };
@@ -121,9 +133,36 @@ Po zalogowaniu używamy jednego pliku cookie, żeby cię rozpoznać. Nie używam
 
 Serwer zapisuje, które strony są odwiedzane (z adresem IP), żeby liczyć odwiedziny. Tych danych nie łączymy z twoim kontem.
 
+## Formularz kontaktowy
+
+Wiadomość z [formularza kontaktowego](/pl/kontakt) trafia e-mailem do prowadzącego stronę. Nie zapisujemy jej na stronie. Imię i adres e-mail są nieobowiązkowe; adresu używamy tylko do odpowiedzi.
+
 ## Usunięcie konta
 
-Konto możesz usunąć sam{|a} na stronie „Moje konto”. Usuwamy wtedy wszystko, co o tobie przechowujemy.`,
+Konto możesz usunąć sam{|a} na stronie „Moje konto”. Usuwamy wtedy wszystko, co o tobie przechowujemy.
+
+## Kto prowadzi tę stronę
+
+Mark Westbroek. Pytania o prywatność możesz zadać przez [formularz kontaktowy](/pl/kontakt).`,
+  kontakt: {
+    titel: "Kontakt",
+    intro: "Masz pytanie albo uwagę, albo w lekcji jest błąd? Napisz. Wiadomość trafi do Marka Westbroeka, który prowadzi tę stronę.",
+    naam: "Imię (nieobowiązkowe)",
+    email: "Adres e-mail (nieobowiązkowy)",
+    emailHint: "Tylko jeśli chcesz dostać odpowiedź.",
+    bericht: "Wiadomość",
+    verstuur: "Wyślij",
+    verstuurd: "Dziękujemy! Wiadomość została wysłana.",
+    nogEen: "Napisz kolejną wiadomość",
+    fout: {
+      empty: "Napisz wiadomość.",
+      "too-long": "Wiadomość jest za długa (najwyżej 5000 znaków).",
+      "bad-address": "To nie jest adres e-mail.",
+      "rate-limited": "Za dużo wiadomości. Spróbuj ponownie za dziesięć minut.",
+      "no-mail": "Formularz jeszcze nie działa. Spróbuj później.",
+      failed: "Nie udało się wysłać. Spróbuj jeszcze raz.",
+    },
+  },
   fout: {
     algemeen: "Nie udało się. Spróbuj jeszcze raz.",
     "no-database": "To teraz nie działa. Spróbuj później.",
@@ -224,9 +263,36 @@ Als je inlogt, gebruiken we één cookie om je te herkennen. We gebruiken geen c
 
 De server houdt bij welke pagina's worden bezocht (met het IP-adres), om bezoeken te tellen. Die gegevens koppelen we niet aan je account.
 
+## Contactformulier
+
+Een bericht via het [contactformulier](/nl/kontakt) gaat per e-mail naar de beheerder van de site. We bewaren het niet op de site. Naam en e-mailadres zijn niet verplicht; het adres gebruiken we alleen om te antwoorden.
+
 ## Account verwijderen
 
-Je kunt je account zelf verwijderen op de pagina "Mijn account". We verwijderen dan alles wat we over je bewaren.`,
+Je kunt je account zelf verwijderen op de pagina "Mijn account". We verwijderen dan alles wat we over je bewaren.
+
+## Wie beheert deze site
+
+Mark Westbroek. Vragen over privacy kun je stellen via het [contactformulier](/nl/kontakt).`,
+  kontakt: {
+    titel: "Contact",
+    intro: "Een vraag, een opmerking of een fout in een les? Schrijf het. Je bericht gaat naar Mark Westbroek, die deze site beheert.",
+    naam: "Naam (niet verplicht)",
+    email: "E-mailadres (niet verplicht)",
+    emailHint: "Alleen als je een antwoord wilt.",
+    bericht: "Bericht",
+    verstuur: "Versturen",
+    verstuurd: "Dank je! Je bericht is verstuurd.",
+    nogEen: "Nog een bericht schrijven",
+    fout: {
+      empty: "Schrijf een bericht.",
+      "too-long": "Het bericht is te lang (hoogstens 5000 tekens).",
+      "bad-address": "Dat is geen e-mailadres.",
+      "rate-limited": "Te veel berichten; probeer het over tien minuten nog eens.",
+      "no-mail": "Het contactformulier werkt nog niet. Probeer het later nog eens.",
+      failed: "Versturen lukte niet; probeer het nog eens.",
+    },
+  },
   fout: {
     algemeen: "Dat lukte niet. Probeer het nog eens.",
     "no-database": "Dit werkt nu niet. Probeer het later nog eens.",

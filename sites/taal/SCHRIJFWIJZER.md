@@ -59,6 +59,13 @@ Elke les heeft minstens één `luister`, één `kies`, één `typ`, één `orden
   klank of een lange zin.
 - `antwoord` telt vanaf 0. Wissel de plek van het goede antwoord af.
 
+## Eten
+
+Geen vlees en geen vis in de lessen: geen ham, kip, worst of haring, en geen
+bezoek aan de slager of de visboer. Wie iets bestelt, neemt kaas, soep,
+groente, brood of een ei. Vlees mag alleen voorkomen in een vraag als "Is de
+soep vegetarisch?".
+
 ## Mannelijk en vrouwelijk in het Pools
 
 Pools heeft in de verleden tijd, bij *chciałbym* en bij bijvoeglijke naamwoorden

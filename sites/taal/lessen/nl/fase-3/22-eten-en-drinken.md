@@ -15,22 +15,22 @@ dialoog:
     pl: "Wezmę kawę. A ty?"
   - nl: "Ik drink thee. Eet je ook iets?"
     pl: "Ja piję herbatę. Zjesz też coś?"
-  - nl: "Ja, ik eet een broodje ham."
-    pl: "Tak, zjem bułkę z szynką."
-  - nl: "En Tom? Neemt hij ook een broodje ham?"
-    pl: "A Tom? Też weźmie bułkę z szynką?"
-  - nl: "Nee, Tom eet geen vlees. Hij neemt de soep."
-    pl: "Nie, Tom nie je mięsa. Weźmie zupę."
-  - nl: "Goed. Wij nemen één broodje ham en één soep."
-    pl: "Dobrze. Bierzemy jedną bułkę z szynką i jedną zupę."
+  - nl: "Ja, ik eet een broodje kaas."
+    pl: "Tak, zjem bułkę z serem."
+  - nl: "En Tom? Neemt hij ook een broodje kaas?"
+    pl: "A Tom? Też weźmie bułkę z serem?"
+  - nl: "Nee, Tom eet graag soep. Hij neemt de tomatensoep."
+    pl: "Nie, Tom lubi zupę. Weźmie zupę pomidorową."
+  - nl: "Goed. Wij nemen één broodje kaas en één tomatensoep."
+    pl: "Dobrze. Bierzemy jedną bułkę z serem i jedną zupę pomidorową."
 patroon:
   pl: "Ten sam wzór działa też tutaj: **ik drink**, **hij drinkt**, **wij drinken**; **ik eet**, **hij eet**, **wij eten**; **ik neem**, **hij neemt**, **wij nemen**. Długa samogłoska zostaje długa, dlatego w krótkiej formie pisze się ją podwójnie: *eten → ik eet*, *nemen → ik neem*."
   nl: "Hetzelfde patroon werkt ook hier: **ik drink**, **hij drinkt**, **wij drinken**; **ik eet**, **hij eet**, **wij eten**; **ik neem**, **hij neemt**, **wij nemen**. Een lange klinker blijft lang, en daarom schrijf je hem in de korte vorm dubbel: *eten → ik eet*, *nemen → ik neem*."
-brokken: ["wat drink je?", "ik neem…", "ik drink…", "eet je ook iets?", "ik eet…", "hij eet geen vlees", "hij neemt…", "wij nemen…", "een broodje ham", "de soep"]
+brokken: ["wat drink je?", "ik neem…", "ik drink…", "eet je ook iets?", "ik eet…", "hij eet graag…", "hij neemt…", "wij nemen…", "een broodje kaas", "de soep"]
 oefeningen:
   - type: luister
-    tekst: "Tom eet geen vlees."
-    opties: ["Tom nie pije kawy.", "Tom bierze zupę.", "Tom nie je mięsa."]
+    tekst: "Tom eet graag soep."
+    opties: ["Tom nie lubi zupy.", "Tom bierze bułkę.", "Tom lubi zupę."]
     antwoord: 2
   - type: kies
     vraag: "Chcesz zapytać kolegę, czego się napije. Co mówisz?"
@@ -41,10 +41,10 @@ oefeningen:
     opties: ["neem", "neemt", "nemen"]
     antwoord: 0
   - type: typ
-    vraag: "Nie jem mięsa."
-    antwoorden: ["Ik eet geen vlees."]
+    vraag: "Jem bułkę z serem."
+    antwoorden: ["Ik eet een broodje kaas."]
   - type: orden
-    zin: "Ik eet een broodje ham."
+    zin: "Hij neemt de tomatensoep."
   - type: zeg
     vraag: "Wezmę kawę."
     antwoorden: ["Ik neem een koffie.", "Ik neem koffie."]

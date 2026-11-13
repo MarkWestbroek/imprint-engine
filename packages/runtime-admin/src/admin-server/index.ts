@@ -37,6 +37,7 @@ export {
   type MemberProfile,
   type RegisterResult,
 } from "./members";
+export { CONTACT_MAX, sendContactMessage, type ContactErrorCode, type ContactResult } from "./contact";
 export { composeDigest, digestApi, digestOffByToken, sendDigests, setDigestPreference, type DigestReport } from "./digest";
 export { markNotificationsRead, myNotifications, notify, notifyGroup, notifyManagers, unreadNotifications, type Inbox } from "./notifications";
 export { previewEnter, previewExit } from "./preview-routes";

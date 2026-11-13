@@ -23,6 +23,8 @@ export type Teksten = {
   zagJeDat: string;
   /** The choice between masculine and feminine forms (tekst.ts); only shown when the language has them (`kentVormen`). */
   vorm: { vraag: string; m: string; v: string; beide: string };
+  /** The widget "verder": continue where you left off. */
+  verder: { begin: string; uitleg: string; dalej: string; gedaan: string; alles: string; overzicht: string };
   speel: string;
   langzaam: string;
   luister: string;
@@ -65,6 +67,14 @@ const nl: Teksten = {
   ombouwen: "Ombouwen",
   zagJeDat: "Zag je dat?",
   vorm: { vraag: "Vormen:", m: "hij", v: "zij", beide: "beide" },
+  verder: {
+    begin: "Begin bij les 1",
+    uitleg: "Geen account nodig, geen aanmelding: begin gewoon.",
+    dalej: "Verder met les {nr}",
+    gedaan: "Lessen gedaan: {n} van {totaal}",
+    alles: "Alle lessen gedaan. Gefeliciteerd!",
+    overzicht: "Alle lessen",
+  },
   speel: "Speel af",
   langzaam: "Langzaam",
   luister: "Luister",
@@ -107,6 +117,14 @@ const pl: Teksten = {
   ombouwen: "Przebuduj",
   zagJeDat: "Zauważył{eś|aś}?",
   vorm: { vraag: "Formy:", m: "on", v: "ona", beide: "on/ona" },
+  verder: {
+    begin: "Zacznij od lekcji 1",
+    uitleg: "Bez konta i bez rejestracji: po prostu zacznij.",
+    dalej: "Dalej: lekcja {nr}",
+    gedaan: "Ukończone lekcje: {n} z {totaal}",
+    alles: "Wszystkie lekcje ukończone. Gratulacje!",
+    overzicht: "Wszystkie lekcje",
+  },
   speel: "Odtwórz",
   langzaam: "Powoli",
   luister: "Posłuchaj",

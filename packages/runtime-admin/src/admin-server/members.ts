@@ -70,7 +70,7 @@ const MAX_PER_WINDOW = 5;
 const attempts = new Map<string, number[]>();
 
 /** Per IP and per purpose (registering, a reset request), so one does not block the other. */
-function rateLimited(ip: string, purpose: string, now = Date.now()): boolean {
+export function rateLimited(ip: string, purpose: string, now = Date.now()): boolean {
   const key = `${purpose}:${ip}`;
   const recent = (attempts.get(key) ?? []).filter((t) => now - t < WINDOW_MS);
   recent.push(now);
