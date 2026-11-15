@@ -8,12 +8,13 @@ import type { AdminContext } from "@imprint/runtime-admin";
 
 import { statusVan, taalActions } from "../src/actions";
 import { audioKaart, audioSleutel, ontbrekend, opnamen, ssml, STEMMEN, zinKey, zinnen } from "../src/audio";
-import { lesHref, pakketTaal, slugFromFile } from "../src/href";
+import { grammaticaHref, lesHref, pakketTaal, slugFromFile } from "../src/href";
 import { TEKSTEN } from "../src/i18n";
-import { importLes, parseLes } from "../src/import";
+import { grammaticaId, indeling, leesbaar, lessenOver } from "../src/grammatica";
+import { importLes, parseGrammatica, parseLes } from "../src/import";
 import { metVertaling, oefeningenVoor, perFase, tekstVoor } from "../src/lessen";
-import { LesSchema, type Les } from "../src/schemas";
-import { heeftVormen, lijktOp, norm, typGoed, vormen, vormenKloppen, woorden, zegGoed } from "../src/tekst";
+import { LesSchema, type Grammatica, type Les } from "../src/schemas";
+import { heeftVormen, lijktOp, norm, typGoed, uitspreekbaar, vormen, vormenKloppen, woorden, zegGoed } from "../src/tekst";
 import { kentVormen } from "../src/i18n";
 import { beste, isScore, leesVoortgang, samenvoegen, type Stand } from "../src/stand";
 import { azureTts, type Synthesize } from "../src/tts";
@@ -377,6 +378,57 @@ describe("the import", () => {
     assert.equal(await importLes(store, { ...les1, titel: "Dit en dat" }), "changed");
     assert.deepEqual(les(les1.id).audio, { abc: "/a.mp3" });
     assert.equal(puts.length, 3);
+  });
+
+  it("sees no change in a lesson the database hands back with its keys in another order", async () => {
+    const { store, puts } = fakeAdmin([]);
+    const les = { ...les1, situatie: { pl: "Na targu.", nl: "Op de markt." } };
+    assert.equal(await importLes(store, les), "new");
+    // Postgres jsonb sorts the keys of an object.
+    await store.putItem("les", les.id, { ...les, situatie: { nl: "Op de markt.", pl: "Na targu." } });
+    assert.equal(await importLes(store, les), "same");
+    assert.equal(puts.length, 2);
+  });
+});
+
+describe("the grammar reference", () => {
+  const topic = (data: Partial<Grammatica> & { slug: string }): Grammatica =>
+    ({ id: grammaticaId("nl", data.slug), taal: "nl", soort: "regel", groep: "werkwoorden", volgorde: 0, titel: { pl: "T", nl: "T" }, kort: {}, tekst: { pl: "x", nl: "x" }, anders: {}, ...data }) as Grammatica;
+
+  it("reads a file: everything in the frontmatter, the id from language and file name", () => {
+    const g = parseGrammatica("nl/tegenwoordige-tijd.md", '---\ntaal: nl\ntitel: { pl: "Czas" }\ntekst:\n  pl: |\n    | ik | **ik werk** |\n    |---|---|\n---\n');
+    assert.equal(g.id, "nl-tegenwoordige-tijd");
+    assert.equal(g.slug, "tegenwoordige-tijd");
+    assert.match(g.tekst.pl!, /\*\*ik werk\*\*/);
+    assert.throws(() => parseGrammatica("nl/x.md", "---\ntaal: nl\ntitel: { pl: Czas }\n---\nA body."), /frontmatter/);
+    assert.throws(() => parseGrammatica("nl/x.md", "---\ntaal: nl\ntitel: {}\n---\n"));
+  });
+
+  it("orders the overview by group, the differences last", () => {
+    const groepen = indeling([
+      topic({ slug: "lidwoorden", soort: "verschil", groep: "naamwoorden" }),
+      topic({ slug: "woordvolgorde", groep: "zinsbouw" }),
+      topic({ slug: "zijn", groep: "werkwoorden", volgorde: 2 }),
+      topic({ slug: "tegenwoordige-tijd", groep: "werkwoorden", volgorde: 1 }),
+    ]);
+    assert.deepEqual(
+      groepen.map((g) => [g.groep, g.topics.map((t) => t.slug)]),
+      [["werkwoorden", ["tegenwoordige-tijd", "zijn"]], ["zinsbouw", ["woordvolgorde"]], ["verschil", ["lidwoorden"]]]
+    );
+  });
+
+  it("knows what a reader can read, which lessons point at a topic, and its address", () => {
+    const g = topic({ slug: "tegenwoordige-tijd", tekst: { pl: "x" } });
+    assert.ok(leesbaar(g, "pl"));
+    assert.ok(!leesbaar(g, "nl"), "no Dutch text");
+    assert.deepEqual(lessenOver(g, [{ ...les1, grammatica: [g.id] }, { ...les1, id: "nl-0-02" }]).map((l) => l.id), [les1.id]);
+    assert.equal(grammaticaHref("pl", "nl", "tegenwoordige-tijd"), "/pl/nederlands/grammatica/tegenwoordige-tijd");
+  });
+
+  it("says a bold word aloud, not a piece of one", () => {
+    assert.ok(uitspreekbaar("hij werkt"));
+    assert.ok(uitspreekbaar("is"));
+    for (const stuk of ["-en", "ge-…-t", "t", "-e"]) assert.ok(!uitspreekbaar(stuk), stuk);
   });
 });
 

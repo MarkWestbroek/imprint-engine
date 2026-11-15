@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: grammatica als naslagwerk.** Nieuw contenttype `grammatica`
+  in plugin-taal: per onderwerp een tabel, de regel en de uitzonderingen, per
+  taal van de lezer, met een alinea "Inaczej niż po polsku" en de lessen waarin
+  het voorkomt. Soort `verschil` voor verschillen tussen de talen als geheel.
+  Pagina's onder `/<ui>/<pakket>/grammatica`; een les linkt ernaar onder
+  "Zauważyłeś?" (`grammatica: [id]`). Vetgedrukt Nederlands is aanklikbaar om
+  te horen. Eerste onderwerpen: de tegenwoordige tijd en de lidwoorden.
+  `Markdown` (runtime-admin) neemt nu `components` aan.
+- **Import van lessen maakt geen lege versies meer.** De vergelijking hing af
+  van de sleutelvolgorde die Postgres teruggeeft, zodat elke import elke les
+  vanaf fase 1 een nieuwe versie gaf.
+- **Menu taalsite:** alleen het diepste menu-item waarin je bent is actief.
 - **CI: snelle controle van de deploybestanden, zware stappen alleen bij code.**
   Een nieuwe job `deploy-config` valideert `deploy/vps/compose.yml`
   (`docker compose config`) en parst de shellscripts; die draait altijd en duurt

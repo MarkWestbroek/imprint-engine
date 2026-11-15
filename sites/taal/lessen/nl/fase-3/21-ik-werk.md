@@ -27,6 +27,7 @@ patroon:
   pl: "Większość czasowników odmienia się tak samo: **ik werk** (sam temat), **jij / u / hij / zij werkt** (temat + **t**), **wij / jullie / zij werken** (cała forma na **-en**). Znasz jeden czasownik, znasz dwadzieścia: *ik woon*, *zij woont*, *wij wonen*; *ik maak*, *hij maakt*, *wij maken*. W pytaniu przed *jij* znika **-t**: *jij werkt*, ale *werk jij?*"
   nl: "De meeste werkwoorden gaan hetzelfde: **ik werk** (alleen de stam), **jij / u / hij / zij werkt** (stam + **t**), **wij / jullie / zij werken** (het hele werkwoord op **-en**). Ken je één werkwoord, dan ken je er twintig: *ik woon*, *zij woont*, *wij wonen*; *ik maak*, *hij maakt*, *wij maken*. In een vraag vóór *jij* valt de **-t** weg: *jij werkt*, maar *werk jij?*"
 brokken: ["waar werk jij?", "ik werk in…", "werk jij ook…?", "zij werkt", "wat maken jullie?", "wij maken…", "ik woon in…", "ik werk thuis"]
+grammatica: [nl-tegenwoordige-tijd]
 oefeningen:
   - type: luister
     tekst: "Ik werk in een fabriek in Rotterdam."

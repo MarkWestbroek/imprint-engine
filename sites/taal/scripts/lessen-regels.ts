@@ -1,16 +1,22 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { parseLes } from "@imprint/plugin-taal/import";
+import { GRAMMATICA } from "@imprint/plugin-taal/href";
+import { parseGrammatica, parseLes } from "@imprint/plugin-taal/import";
 import { zinnen } from "@imprint/plugin-taal/audio";
-import type { Les } from "@imprint/plugin-taal/schemas";
+import type { Grammatica, Les } from "@imprint/plugin-taal/schemas";
 import { vormenKloppen } from "@imprint/plugin-taal/tekst";
 
 /**
  * The rules of SCHRIJFWIJZER.md that a machine can check, for the lesson
- * files under lessen/. Used by `npm run check:lessen` and by the site's test.
- * The schema says what a lesson may be; this says what a good file is.
+ * files under lessen/ and the grammar files under grammatica/. Used by
+ * `npm run check:lessen` and by the site's test. The schema says what a lesson
+ * may be; this says what a good file is.
  */
 export const LESSEN_DIR = path.resolve(import.meta.dirname, "../lessen");
+export const GRAMMATICA_DIR = path.resolve(import.meta.dirname, "../grammatica");
+
+/** The interface languages of this site: every grammar topic is written for both. */
+const LEZERS = ["pl", "nl"];
 
 export type Gelezen = { file: string; les?: Les; fouten: string[] };
 
@@ -26,6 +32,7 @@ export function controleer(file: string, les: Les): string[] {
     if (les.fase !== Number(fase)) fout(`fase ${les.fase} in folder fase-${fase}`);
     if (les.id !== `${les.taal}-${fase}-${nr}`) fout(`id ${les.id}, expected ${les.taal}-${fase}-${nr}`);
   }
+  if (les.slug === GRAMMATICA) fout(`a lesson may not be called ${GRAMMATICA}: that is the address of the grammar`);
   if (!les.steuntaal) return [...fouten, "no steuntaal"];
   const steun = les.steuntaal;
 
@@ -80,4 +87,58 @@ export function leesLessen(dir = LESSEN_DIR): Gelezen[] {
     }
   }
   return gelezen;
+}
+
+export type GelezenGrammatica = { file: string; grammatica?: Grammatica; fouten: string[] };
+
+/** What is wrong with one grammar topic; empty = fine. */
+export function controleerGrammatica(file: string, g: Grammatica): string[] {
+  const fouten: string[] = [];
+  const fout = (m: string) => fouten.push(m);
+  const map = file.replace(/\\/g, "/").split("/")[0];
+  if (map !== g.taal) fout(`taal ${g.taal} in folder ${map}`);
+  for (const veld of ["titel", "kort", "tekst"] as const) {
+    for (const lezer of LEZERS) if (!g[veld][lezer]?.trim()) fout(`${veld}: no ${lezer}`);
+  }
+  for (const lezer of Object.keys(g.anders)) if (!LEZERS.includes(lezer)) fout(`anders: ${lezer} is not a language of this site`);
+  if (g.soort === "verschil" && Object.keys(g.anders).length > 0) fout("a verschil is all difference: no separate anders");
+  for (const tekst of [...Object.values(g.tekst), ...Object.values(g.anders), ...Object.values(g.kort)]) {
+    if (!vormenKloppen(tekst)) fout(`a form that is not {a|b}: ${tekst.slice(0, 80)}`);
+    // Bold is the language taught and is read out: no forms per learner in it.
+    for (const [, vet] of tekst.matchAll(/\*\*([^*]+)\*\*/g)) if (/[{}]/.test(vet)) fout(`a form in bold: ${vet}`);
+  }
+  return fouten;
+}
+
+/** Every grammar file, parsed and checked; slugs unique per language. */
+export function leesGrammatica(dir = GRAMMATICA_DIR): GelezenGrammatica[] {
+  const files = (readdirSync(dir, { recursive: true }) as string[]).filter((f) => f.endsWith(".md")).sort();
+  const gelezen: GelezenGrammatica[] = files.map((file) => {
+    try {
+      const grammatica = parseGrammatica(file, readFileSync(path.join(dir, file), "utf8"));
+      return { file, grammatica, fouten: controleerGrammatica(file, grammatica) };
+    } catch (err) {
+      return { file, fouten: [`does not parse: ${err instanceof Error ? err.message.slice(0, 400) : String(err)}`] };
+    }
+  });
+  const seen = new Map<string, string>();
+  for (const g of gelezen) {
+    if (!g.grammatica) continue;
+    const other = seen.get(g.grammatica.id);
+    if (other) g.fouten.push(`id ${g.grammatica.id} is also in ${other}`);
+    else seen.set(g.grammatica.id, g.file);
+  }
+  return gelezen;
+}
+
+/** A lesson's links to the grammar must lead somewhere, in its own package. */
+export function controleerLinks(lessen: Gelezen[], grammatica: GelezenGrammatica[]): void {
+  const topics = new Map(grammatica.flatMap((g) => (g.grammatica ? [[g.grammatica.id, g.grammatica] as const] : [])));
+  for (const l of lessen) {
+    for (const id of l.les?.grammatica ?? []) {
+      const g = topics.get(id);
+      if (!g) l.fouten.push(`grammatica: no topic ${id}`);
+      else if (g.taal !== l.les?.taal) l.fouten.push(`grammatica: ${id} is about another language`);
+    }
+  }
 }

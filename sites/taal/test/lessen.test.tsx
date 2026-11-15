@@ -11,17 +11,25 @@ import { opnamen } from "@imprint/plugin-taal/audio";
 import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
 import { TAAL } from "../imprint.config";
-import { leesLessen } from "../scripts/lessen-regels";
+import { controleerLinks, leesGrammatica, leesLessen } from "../scripts/lessen-regels";
 
 /** The lesson files of this site are valid, and render through the plugin's route and the two widgets. */
 
 const gelezen = leesLessen();
+const gelezenGrammatica = leesGrammatica();
+controleerLinks(gelezen, gelezenGrammatica);
 const lessen = gelezen.flatMap((g) => (g.les ? [g.les] : []));
+const grammatica = gelezenGrammatica.flatMap((g) => (g.grammatica ? [g.grammatica] : []));
 const fase0 = lessen.filter((l) => l.fase === 0);
 
 /** The lessons as the store would hand them out. */
 const store = {
-  listItems: async (type: string) => (type === "les" ? lessen.map((l) => ({ slug: l.id, data: l }) as ContentRecord) : []),
+  listItems: async (type: string) =>
+    type === "les"
+      ? lessen.map((l) => ({ slug: l.id, data: l }) as ContentRecord)
+      : type === "grammatica"
+        ? grammatica.map((g) => ({ slug: g.id, data: g }) as ContentRecord)
+        : [],
   getItem: async (_type: string, slug: string) => {
     const les = lessen.find((l) => l.id === slug);
     return les ? ({ slug, data: les } as ContentRecord) : null;
@@ -42,6 +50,13 @@ describe("taal: the lesson files", () => {
   it("all parse and follow the writing guide (SCHRIJFWIJZER.md)", () => {
     const fout = gelezen.filter((g) => g.fouten.length > 0).map((g) => `${g.file}: ${g.fouten.join("; ")}`);
     assert.deepEqual(fout, []);
+  });
+
+  it("with the grammar topics: all valid, every link from a lesson leads to one", () => {
+    const fout = gelezenGrammatica.filter((g) => g.fouten.length > 0).map((g) => `${g.file}: ${g.fouten.join("; ")}`);
+    assert.deepEqual(fout, []);
+    assert.deepEqual(grammatica.map((g) => g.id).sort(), ["nl-lidwoorden", "nl-tegenwoordige-tijd"]);
+    assert.ok(lessen.some((l) => l.grammatica.length > 0));
   });
 
   it("are the 45 lessons of the plan, in order, six phases", () => {
@@ -67,7 +82,9 @@ describe("taal: the lesson files", () => {
 describe("taal: the addresses", () => {
   it("lists every lesson in both interface languages for the prerender", async () => {
     const paths = (await taalStaticPaths(store, TAAL)).map((p) => p.join("/"));
-    assert.equal(paths.length, 2 * (1 + lessen.length));
+    assert.equal(paths.length, 2 * (1 + lessen.length + 1 + grammatica.length));
+    assert.ok(paths.includes("pl/nederlands/grammatica"));
+    assert.ok(paths.includes("nl/nederlands/grammatica/lidwoorden"));
     assert.ok(paths.includes("pl/nederlands"));
     assert.ok(paths.includes("pl/nederlands/dit-en-dat"));
     assert.ok(paths.includes("nl/nederlands/niet-verstaan"));
@@ -78,6 +95,8 @@ describe("taal: the addresses", () => {
     assert.equal(await visit("de/nederlands"), null);
     assert.equal(await visit("pl/polski"), null, "no Polish lessons yet");
     assert.equal(await visit("pl/nederlands/nope"), null);
+    assert.equal(await visit("pl/nederlands/grammatica/nope"), null);
+    assert.equal(await visit("pl/nederlands/dit-en-dat/meer"), null, "a lesson has nothing under it");
     assert.equal(await visit("o-metodzie"), null, "a page from the store, not the plugin's");
   });
 
@@ -142,6 +161,46 @@ describe("taal: the addresses", () => {
   });
 });
 
+describe("taal: the grammar reference", () => {
+  it("lists the topics per group, the differences apart, with a link from the lessons overview", async () => {
+    const hit = await visit("pl/nederlands/grammatica");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Gramatyka/);
+    assert.match(html, /Czasowniki/);
+    assert.match(html, /Inaczej niż po polsku/);
+    assert.match(html, /href="\/pl\/nederlands\/grammatica\/tegenwoordige-tijd"/);
+    const overzicht = await visit("pl/nederlands");
+    assert.ok(overzicht && "render" in overzicht);
+    assert.match(await renderHtml(overzicht.render as ReactElement), /href="\/pl\/nederlands\/grammatica"/);
+  });
+
+  it("shows a topic: the table, Dutch to listen to, how Polish does it, the lessons", async () => {
+    const hit = await visit("pl/nederlands/grammatica/tegenwoordige-tijd");
+    assert.ok(hit && "render" in hit);
+    assert.deepEqual(hit.item, { type: "grammatica", slug: "nl-tegenwoordige-tijd" });
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /<table>/);
+    assert.match(html, /aria-label="Posłuchaj: hij werkt"/);
+    assert.match(html, /Inaczej niż po polsku/);
+    assert.match(html, /href="\/pl\/nederlands\/ik-werk"/, "a lesson about it");
+    assert.doesNotMatch(html, /De tegenwoordige tijd/, "not the Dutch text");
+    const nl = await visit("nl/nederlands/grammatica/tegenwoordige-tijd");
+    assert.ok(nl && "render" in nl);
+    const htmlNl = await renderHtml(nl.render as ReactElement);
+    assert.match(htmlNl, /De tegenwoordige tijd/);
+    assert.doesNotMatch(htmlNl, /Inaczej|Anders dan/, "no difference for a Dutch reader");
+  });
+
+  it("links a lesson to its topic, under 'did you see that?'", async () => {
+    const hit = await visit("pl/nederlands/ik-werk");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Więcej na ten temat:/);
+    assert.match(html, /href="\/pl\/nederlands\/grammatica\/tegenwoordige-tijd"/);
+  });
+});
+
 describe("taal: the widgets on a page", () => {
   const ctx: WidgetContext = { store: new FileContentStore(path.resolve(import.meta.dirname, "../content"), { widgets: widgetRegistry }), writableStore: store, readOptions: {} };
 
@@ -173,7 +232,7 @@ describe("taal: the widgets on a page", () => {
 
   it("has valid starting content: the menu and its page", async () => {
     const menu = await ctx.store.getMenu("main");
-    assert.ok(menu && menu.items.length === 2);
+    assert.ok(menu && menu.items.length === 3);
     assert.ok(await ctx.store.getPage("o-metodzie"));
   });
 });

@@ -991,6 +991,19 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             naam krijgen, kan een widget ze uit de lessen halen.
       - [ ] Een eigen afzenderadres voor de taalsite (nu het postvak van
             Common Ground, als dat wordt hergebruikt).
+      - [x] ~~Grammatica als naslagwerk, deel 1~~ — contenttype `grammatica`,
+            `/<ui>/<pakket>/grammatica`, link vanuit de les, vet om te horen;
+            de tegenwoordige tijd en de lidwoorden (15-11).
+      - [ ] Grammatica, deel 2: de rest van de set (zijn/hebben apart?,
+            perfectum, meervoud, verkleinwoord, voornaamwoorden, niet/geen,
+            vraagzinnen, woordvolgorde, bijzin, *er*; verschillen: geen
+            naamvallen, werkwoord op plaats 2 en achteraan, perfectum met
+            *hebben*/*zijn*, *u* en *je*), en per les de links. **M**
+      - [ ] De grammatica laten nalezen (Nederlands door Mark, Pools door
+            iemand die Pools spreekt).
+      - [ ] Brede tabellen op de telefoon: de eerste kolom ("wij / jullie /
+            zij") breekt over drie regels. Kleiner lettertype of liggende
+            scroll voor tabellen. **S**
       - [ ] Accounts die nooit bevestigd zijn na een tijd opruimen. **S**
       - [ ] Wie zonder uit te loggen op één browser van account wisselt,
             neemt de lokale voortgang van de vorige mee. **S**

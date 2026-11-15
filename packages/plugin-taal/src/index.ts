@@ -11,7 +11,8 @@ import { LesdialoogConfig, LesdialoogWidget, OefeningenConfig, OefeningenWidget,
  * @imprint/plugin-taal — language training as a plugin
  * (design/taaltraining/README.md): the content type `les` (dialogue, chunks,
  * exercises), the widgets `lesdialoog` and `oefeningen`, the pages
- * `/<ui>/<pakket>/<les>`, and `/admin/taal` with the action that makes the
+ * `/<ui>/<pakket>/<les>`, the grammar reference (content type `grammatica`,
+ * `/<ui>/<pakket>/grammatica/<topic>`), and `/admin/taal` with the action that makes the
  * missing recordings through Azure text-to-speech. A site switches it on with
  * `plugins: [taalPlugin({ tts })]` and composes the widgets into its
  * catalogue (`taalWidgets` / `taalViewers`).
@@ -75,6 +76,7 @@ export function taalPlugin(opts: TaalOptions = {}): ImprintPlugin {
         section: "Taal",
         items: [
           { href: "/admin/les", label: "Lessen" },
+          { href: "/admin/grammatica", label: "Grammatica" },
           { href: "/admin/taal", label: "Audio" },
         ],
       },
@@ -87,11 +89,12 @@ export function taalPlugin(opts: TaalOptions = {}): ImprintPlugin {
 
 export { taalActions, statusVan, type AudioOverzicht, type AudioResult, type AudioStatus } from "./actions";
 export { taalContentTypes } from "./content-types";
-export { lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal, PAKKETTEN } from "./href";
+export { grammaticaId, indeling, leesbaar, lessenOver, listGrammatica } from "./grammatica";
+export { GRAMMATICA, grammaticaHref, lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal, PAKKETTEN } from "./href";
 export { TEKSTEN, UI_TALEN, teksten, type Teksten } from "./i18n";
 export { Leerling } from "./leerling";
 export { Lesdialoog, LesOefeningen } from "./les-view";
 export { getLes, listLessen, metVertaling, oefeningenVoor } from "./lessen";
 export { taalPublicRoute, taalStaticPaths, type TaalRouteOptions } from "./public";
-export { LesSchema, Oefening, type Les } from "./schemas";
+export { GRAMMATICA_GROEPEN, GrammaticaSchema, LesSchema, Oefening, type Grammatica, type Les } from "./schemas";
 export { LesdialoogConfig, OefeningenConfig } from "./widget";

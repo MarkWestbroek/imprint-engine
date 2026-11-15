@@ -6,7 +6,8 @@ import { z } from "zod";
  * Three fields come on top: `slug` (the name in the address), `ombouwen` (the
  * body of the file) and `audio` (filled by the admin action, not by hand).
  * From phase 1 a lesson also has `situatie` and `patroon` (the lesson plan's
- * "Situatie" and "Zag je dat?"), both per language of the reader.
+ * "Situatie" and "Zag je dat?"), both per language of the reader, and
+ * `grammatica`: links to the reference (GrammaticaSchema below).
  *
  * `taal` is the language being taught (the lesson package), `steuntaal` the
  * language of the translations. Neither is the item's `lang`: a Polish lesson
@@ -58,6 +59,8 @@ export const LesSchema = z
     oefeningen: z.array(Oefening).default([]),
     /** The assignment to rebuild the dialogue yourself, in Markdown. */
     ombouwen: z.string().default(""),
+    /** The grammar topics this lesson touches (ids of `grammatica` items): "more about this" under "Did you see that?". */
+    grammatica: z.array(z.string()).default([]),
     /** Recorded sentences: audio key (voice, tempo, text; see audio.ts) → URL in the AssetStore. */
     audio: z.record(z.string(), z.string()).default({}),
   })
@@ -85,4 +88,39 @@ export const LesFormSchema = z.object({
   brokken: z.array(z.string()).default([]),
   oefeningen: z.array(Oefening).default([]),
   ombouwen: z.string().default(""),
+  grammatica: z.array(z.string()).default([]),
 });
+
+/**
+ * A grammar topic: the reference beside the lessons. Where a lesson shows one
+ * pattern in passing ("Did you see that?"), a topic gives the forms in full —
+ * a table, the rule, the exceptions — kept short. The texts are per language
+ * of the reader, like `patroon`; bold is the language taught (speakable).
+ *
+ * `soort` "verschil" is a topic about a difference with the reader's own
+ * language as a whole (no articles in Polish, no cases in Dutch); `anders` is
+ * the same for one topic: a paragraph "unlike in Polish", per reader language.
+ */
+export const GRAMMATICA_GROEPEN = ["werkwoorden", "naamwoorden", "voornaamwoorden", "zinsbouw"] as const;
+
+export const GrammaticaSchema = z.object({
+  /** The key: `nl-tegenwoordige-tijd` (language taught + slug). Lessons point at it. */
+  id: z.string().regex(/^[a-z0-9-]+$/),
+  /** The name in the address: `/pl/nederlands/grammatica/<slug>`. */
+  slug: z.string().regex(/^[a-z0-9-]+$/),
+  taal: Taal,
+  soort: z.enum(["regel", "verschil"]).default("regel"),
+  /** Where the topic stands in the overview; a "verschil" stands with the differences, whatever its group. */
+  groep: z.enum(GRAMMATICA_GROEPEN).default("werkwoorden"),
+  /** Order within the group (low first). */
+  volgorde: z.number().int().default(0),
+  /** The title per language of the reader: `{ pl: "Czas teraźniejszy", nl: "De tegenwoordige tijd" }`. */
+  titel: Regel.refine((t) => Object.keys(t).length > 0, "a title in at least one language"),
+  /** One sentence for the overview, per language of the reader. */
+  kort: Regel.default({}),
+  /** The topic itself (Markdown, tables allowed), per language of the reader. */
+  tekst: Regel.default({}),
+  /** "Unlike in <your language>": how the reader's own language does it, per language of the reader. */
+  anders: Regel.default({}),
+});
+export type Grammatica = z.infer<typeof GrammaticaSchema>;

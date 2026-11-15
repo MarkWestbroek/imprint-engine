@@ -27,6 +27,7 @@ patroon:
   pl: "Temat *weet* kończy się już na **t**, więc nie dostaje drugiego: **ik weet**, **jij weet**, **hij weet**, **wij weten**. **Ik denk dat…** (myślę, że…) zapamiętaj na razie jako gotowy zwrot: *Ik denk dat Tom de sleutel heeft.*"
   nl: "De stam *weet* eindigt al op een **t** en krijgt er dus geen tweede bij: **ik weet**, **jij weet**, **hij weet**, **wij weten**. **Ik denk dat…** onthoud je voorlopig als een vast stukje: *Ik denk dat Tom de sleutel heeft.*"
 brokken: ["wat zeg je?", "weet jij het?", "ik weet het niet", "ik denk dat…", "ik denk het wel", "ik vraag het even", "tom zegt…", "de sleutel van…"]
+grammatica: [nl-tegenwoordige-tijd]
 oefeningen:
   - type: luister
     tekst: "Ik denk het wel."
