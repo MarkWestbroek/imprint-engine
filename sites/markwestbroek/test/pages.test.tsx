@@ -34,9 +34,9 @@ describe("markwestbroek.nl: the starting content", () => {
     const ctx: WidgetContext = { store, writableStore: null, readOptions: {} };
     const html = await renderHtml(<PageRenderer page={{ ...page, layout: page.layout }} viewers={widgetComponents} ctx={ctx} />);
     for (const title of ["Architectuur", "MusicBrain", "Muziek", "Fotografie", "Therapie", "Taal", "Omnium", "Imprint"]) assert.ok(html.includes(title), title);
-    assert.match(html, /<a class="pb-mod[^"]*" href="https:\/\/paratmos\.nl"/);
-    // No URL yet: a module, not a link.
-    assert.match(html, /<div class="pb-mod pb-geel"/);
+    // Another site opens in a new tab, so the rack stays open.
+    assert.match(html, /<a class="pb-mod[^"]*" href="https:\/\/paratmos\.nl" target="_blank" rel="noopener"/);
+    assert.match(html, /href="https:\/\/soundcloud\.com\/mark-westbroek\/[^"]*" target="_blank"/);
     assert.equal(html.match(/class="pb-cable /g)?.length, 8);
   });
 });

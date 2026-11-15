@@ -24,6 +24,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   van de sleutelvolgorde die Postgres teruggeeft, zodat elke import elke les
   vanaf fase 1 een nieuwe versie gaf.
 - **Menu taalsite:** alleen het diepste menu-item waarin je bent is actief.
+- **markwestbroek.nl: modules naar andere sites openen in een nieuw tabblad**
+  (`target="_blank"`, met een melding voor schermlezers); de module Muziek
+  linkt naar SoundCloud. Nieuw script `put:pages`: zet alleen de genoemde
+  pagina's uit de repo als nieuwe versie in de database (geen volledige seed).
 - **CI: snelle controle van de deploybestanden, zware stappen alleen bij code.**
   Een nieuwe job `deploy-config` valideert `deploy/vps/compose.yml`
   (`docker compose config`) en parst de shellscripts; die draait altijd en duurt
@@ -34,7 +38,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   een bronmodule en per activiteit een module, verbonden met bewegende
   patchkabels die uit de gemeten jackposities worden getekend. De woonwagen is
   een sectie (`/woonwagen`); `woonwagen.markwestbroek.nl` stuurt daarheen door.
-  Compose-service, Dockerfile-regel en Caddy-blokken staan klaar; nog niet live.
+  Live op de VPS sinds 15 november 2026 (compose-service, Dockerfile-regel,
+  Caddy-blokken).
   Eigen widget `contact`: een contactformulier dat via `sendContactMessage`
   naar `CONTACT_TO` mailt, zodat er geen adres op de site hoeft te staan.
   De woonwagenpagina (oproep voor een timmerman: staat, maten, foto's en

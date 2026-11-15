@@ -21,7 +21,7 @@
                   "modules": [
                     { "titel": "Architectuur", "tekst": "Paratmos: enterprise-architectuur, requirements en modelgedreven werken.", "url": "https://paratmos.nl", "adres": "paratmos.nl", "jack": "ARCH", "kleur": "oranje" },
                     { "titel": "MusicBrain", "tekst": "Muziekelektronica: boards, componenten en releases.", "url": "https://musicbrain.nl", "adres": "musicbrain.nl", "jack": "MB", "kleur": "blauw" },
-                    { "titel": "Muziek", "tekst": "Eigen muziek. Binnenkort hier te beluisteren.", "adres": "binnenkort", "jack": "MUZ", "kleur": "geel" },
+                    { "titel": "Muziek", "tekst": "Eigen muziek: mixen en sets op SoundCloud.", "url": "https://soundcloud.com/mark-westbroek/sets/2021-mixed", "adres": "soundcloud.com/mark-westbroek", "jack": "MUZ", "kleur": "geel" },
                     { "titel": "Fotografie", "tekst": "Kunstfotografie rond de natuurlijke schoonheid van het lichaam.", "url": "https://pf.markwestbroek.nl", "adres": "pf.markwestbroek.nl", "jack": "FOTO", "kleur": "roze" },
                     { "titel": "Therapie", "tekst": "Postural Integration in Utrecht: lichaamswerk, adem en gesprek.", "url": "https://pi.markwestbroek.nl", "adres": "pi.markwestbroek.nl", "jack": "PI", "kleur": "roze" },
                     { "titel": "Taal", "tekst": "Nederlands voor Polen: 45 korte lessen, vanaf de eerste zin.", "url": "https://taal.imprint-engine.nl", "adres": "taal.imprint-engine.nl", "jack": "TAAL", "kleur": "geel" },
