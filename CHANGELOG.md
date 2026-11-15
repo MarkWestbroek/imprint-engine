@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **markwestbroek.nl: modules naar andere sites openen in een nieuw tabblad**
+  (`target="_blank"`, met een melding voor schermlezers); de module Muziek
+  linkt naar SoundCloud. Nieuw script `put:pages`: zet alleen de genoemde
+  pagina's uit de repo als nieuwe versie in de database (geen volledige seed).
 - **CI: snelle controle van de deploybestanden, zware stappen alleen bij code.**
   Een nieuwe job `deploy-config` valideert `deploy/vps/compose.yml`
   (`docker compose config`) en parst de shellscripts; die draait altijd en duurt

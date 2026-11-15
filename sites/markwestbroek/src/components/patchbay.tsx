@@ -181,9 +181,12 @@ export function Patchbay({ kop, intro, naam, regel, modules }: PatchbayProps) {
                 />
               </>
             );
+            // A module that leads to another site opens in a new tab: the rack stays where it is.
+            const extern = m.url ? /^https?:\/\//.test(m.url) : false;
             return m.url ? (
-              <a key={i} className={className} href={m.url} {...point(i)}>
+              <a key={i} className={className} href={m.url} {...(extern ? { target: "_blank", rel: "noopener" } : {})} {...point(i)}>
                 {inner}
+                {extern ? <span className="sr-only"> (opent in een nieuw tabblad)</span> : null}
               </a>
             ) : (
               <div key={i} className={className} {...point(i)}>

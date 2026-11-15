@@ -6,6 +6,7 @@
     "dev": "next dev --port 3800",
     "build": "next build",
     "start": "next start --port 3800",
+    "put:pages": "tsx --tsconfig tsconfig.test.json scripts/put-pages.ts",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\""
