@@ -12,6 +12,9 @@ import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
 import { TAAL } from "../imprint.config";
 import { controleerLinks, leesGrammatica, leesLessen } from "../scripts/lessen-regels";
+import { lidwoord, Woordenlijst } from "@imprint/plugin-taal";
+import woordenJson from "../woorden/nl.json";
+import aanvullingen from "../woorden/nl-aanvullingen.json";
 
 /** The lesson files of this site are valid, and render through the plugin's route and the two widgets. */
 
@@ -82,7 +85,8 @@ describe("taal: the lesson files", () => {
 describe("taal: the addresses", () => {
   it("lists every lesson in both interface languages for the prerender", async () => {
     const paths = (await taalStaticPaths(store, TAAL)).map((p) => p.join("/"));
-    assert.equal(paths.length, 2 * (1 + lessen.length + 1 + grammatica.length));
+    assert.equal(paths.length, 2 * (1 + lessen.length + 1 + grammatica.length + 1));
+    assert.ok(paths.includes("pl/nederlands/woorden"));
     assert.ok(paths.includes("pl/nederlands/grammatica"));
     assert.ok(paths.includes("nl/nederlands/grammatica/lidwoorden"));
     assert.ok(paths.includes("pl/nederlands"));
@@ -201,6 +205,55 @@ describe("taal: the grammar reference", () => {
   });
 });
 
+describe("taal: check a word", () => {
+  const lijst = Woordenlijst.parse(woordenJson);
+  const nw = (w: string) => lijst.naamwoorden.find((n) => n.w === w);
+  const ww = (w: string) => lijst.werkwoorden.find((v) => v.w === w);
+
+  it("has a basic list of about B1: 2000 nouns and 450 verbs, each once", () => {
+    assert.equal(lijst.naamwoorden.length, 2000);
+    assert.equal(lijst.werkwoorden.length, 450);
+    assert.equal(new Set(lijst.naamwoorden.map((n) => n.w)).size, 2000);
+    assert.equal(new Set(lijst.werkwoorden.map((v) => v.w)).size, 450);
+  });
+
+  it("knows the basics right", () => {
+    assert.deepEqual({ art: lidwoord(nw("huis")!.g).hoofd, mv: nw("huis")!.mv[0] }, { art: "het", mv: "huizen" });
+    assert.equal(lidwoord(nw("tafel")!.g).hoofd, "de");
+    assert.equal(lidwoord(nw("school")!.g).hoofd, "de");
+    assert.equal(lidwoord(nw("hart")!.g).hoofd, "het");
+    assert.deepEqual(ww("zijn")!.tt, ["ben", "bent", "is", "zijn"]);
+    assert.deepEqual([ww("lopen")!.vt[0], ww("lopen")!.vd, ww("lopen")!.hulp], ["liep", "gelopen", "beide"]);
+    assert.equal(ww("gaan")!.hulp, "zijn");
+    assert.equal(ww("werken")!.sterk, false);
+    assert.equal(ww("zeggen")!.sterk, true, "zei: mixed, so not regular");
+    assert.deepEqual([ww("opstaan")!.tt[0], ww("opstaan")!.vd, ww("opstaan")!.hulp], ["sta op", "opgestaan", "zijn"]);
+    assert.equal(ww("weglopen")?.hulp ?? "zijn", "zijn", "a separable verb of lopen says where to");
+  });
+
+  it("keeps out what the corrections leave out, and keeps what they keep", () => {
+    const alle = new Set([...lijst.naamwoorden.map((n) => n.w), ...lijst.werkwoorden.map((v) => v.w)]);
+    for (const w of aanvullingen.weg) assert.ok(!alle.has(w), w);
+    for (const w of aanvullingen.houd) assert.ok(alle.has(w), w);
+    // Counted for another word with the same form: the adverb niet, the plural dagen.
+    for (const w of ["niet", "een", "voor"]) assert.ok(!nw(w), `noun ${w}`);
+    for (const w of ["nieten", "dagen", "dingen"]) assert.ok(!ww(w), `verb ${w}`);
+  });
+
+  it("shows the page with the list and where it comes from", async () => {
+    const hit = await visit("pl/nederlands/woorden");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Sprawdź słowo/);
+    assert.match(html, /type="search"/);
+    assert.match(html, /Wiktionary \(CC BY-SA 4\.0/);
+    assert.equal(await visit("pl/nederlands/woorden/huis"), null);
+    const overzicht = await visit("pl/nederlands/grammatica");
+    assert.ok(overzicht && "render" in overzicht);
+    assert.match(await renderHtml(overzicht.render as ReactElement), /href="\/pl\/nederlands\/woorden"/);
+  });
+});
+
 describe("taal: the widgets on a page", () => {
   const ctx: WidgetContext = { store: new FileContentStore(path.resolve(import.meta.dirname, "../content"), { widgets: widgetRegistry }), writableStore: store, readOptions: {} };
 
@@ -232,7 +285,7 @@ describe("taal: the widgets on a page", () => {
 
   it("has valid starting content: the menu and its page", async () => {
     const menu = await ctx.store.getMenu("main");
-    assert.ok(menu && menu.items.length === 3);
+    assert.ok(menu && menu.items.length === 4);
     assert.ok(await ctx.store.getPage("o-metodzie"));
   });
 });

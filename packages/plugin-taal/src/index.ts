@@ -3,6 +3,7 @@ import { taalActions } from "./actions";
 import type { Stemmen } from "./audio";
 import { taalContentTypes } from "./content-types";
 import { taalPublicRoute } from "./public";
+import type { WoordenBron } from "./woorden-pagina";
 import { taalScreen } from "./screen";
 import { azureTts, type Synthesize, type TtsConfig } from "./tts";
 import { LesdialoogConfig, LesdialoogWidget, OefeningenConfig, OefeningenWidget, VerderConfig, VerderWidget } from "./widget";
@@ -61,6 +62,8 @@ export type TaalOptions = {
   /** Another speech service, or a fake in a test. */
   synthesize?: Synthesize;
   stemmen?: Stemmen;
+  /** The word list per package for "check a word" (`/<ui>/<pakket>/woorden`): raw JSON, checked by the plugin. */
+  woorden?: WoordenBron;
 };
 
 export function taalPlugin(opts: TaalOptions = {}): ImprintPlugin {
@@ -98,3 +101,6 @@ export { getLes, listLessen, metVertaling, oefeningenVoor } from "./lessen";
 export { taalPublicRoute, taalStaticPaths, type TaalRouteOptions } from "./public";
 export { GRAMMATICA_GROEPEN, GrammaticaSchema, LesSchema, Oefening, type Grammatica, type Les } from "./schemas";
 export { LesdialoogConfig, OefeningenConfig } from "./widget";
+export { lidwoord, Woordenlijst, zoek, zoekvorm, type Naamwoord, type Treffer, type Werkwoord } from "./woorden";
+export { woordenlijst, type WoordenBron } from "./woorden-pagina";
+export { WOORDEN, woordenHref } from "./href";

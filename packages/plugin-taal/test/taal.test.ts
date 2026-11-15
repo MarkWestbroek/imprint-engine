@@ -18,6 +18,7 @@ import { heeftVormen, lijktOp, norm, typGoed, uitspreekbaar, vormen, vormenKlopp
 import { kentVormen } from "../src/i18n";
 import { beste, isScore, leesVoortgang, samenvoegen, type Stand } from "../src/stand";
 import { azureTts, type Synthesize } from "../src/tts";
+import { lidwoord, zoek, zoekvorm, type Naamwoord, type Werkwoord } from "../src/woorden";
 
 // One real lesson file; the site's own test parses all of them (sites/taal/test).
 const FILE = "01-dit-en-dat.md";
@@ -388,6 +389,42 @@ describe("the import", () => {
     await store.putItem("les", les.id, { ...les, situatie: { nl: "Op de markt.", pl: "Na targu." } });
     assert.equal(await importLes(store, les), "same");
     assert.equal(puts.length, 2);
+  });
+});
+
+describe("check a word", () => {
+  const huis: Naamwoord = { w: "huis", g: "n", mv: ["huizen"], vk: "huisje", r: 3 };
+  const hulp: Naamwoord = { w: "hulp", g: "f", mv: [], r: 9 };
+  const werk: Naamwoord = { w: "werk", g: "n", mv: [], r: 5 };
+  const lopen: Werkwoord = { w: "lopen", tt: ["loop", "loopt", "loopt", "lopen"], vt: ["liep", "liepen"], vd: "gelopen", hulp: "beide", sterk: true, r: 4 };
+  const werken: Werkwoord = { w: "werken", tt: ["werk", "werkt", "werkt", "werken"], vt: ["werkte", "werkten"], vd: "gewerkt", hulp: "hebben", sterk: false, r: 2 };
+  const opstaan: Werkwoord = { w: "opstaan", tt: ["sta op", "staat op", "staat op", "staan op"], vt: ["stond op", "stonden op"], vd: "opgestaan", hulp: "zijn", sterk: true, r: 7 };
+  const lijst = { naamwoorden: [huis, hulp, werk], werkwoorden: [lopen, werken, opstaan] };
+  const woorden = (q: string) => zoek(lijst, q).map((t) => t.woord.w);
+
+  it("gives the usual article first, from Wiktionary's order", () => {
+    assert.deepEqual(lidwoord("n"), { hoofd: "het" });
+    assert.deepEqual(lidwoord("f"), { hoofd: "de" });
+    assert.deepEqual(lidwoord("n/f"), { hoofd: "het", ook: "de" });
+    assert.deepEqual(lidwoord("m/f"), { hoofd: "de" });
+  });
+
+  it("completes what is typed, the most common first", () => {
+    assert.deepEqual(woorden("hu"), ["huis", "hulp"]);
+    assert.deepEqual(woorden(" HUIS "), ["huis"]);
+    assert.deepEqual(woorden(""), []);
+    assert.equal(zoekvorm("Geëindigd"), "geeindigd");
+  });
+
+  it("finds a verb by any of its forms, and a separable one by its first word", () => {
+    assert.deepEqual(woorden("liep"), ["lopen"]);
+    assert.deepEqual(woorden("gelopen"), ["lopen"]);
+    assert.deepEqual(woorden("stond"), ["opstaan"]);
+  });
+
+  it("puts the word itself before a word that has it as a form", () => {
+    // `werk` is a noun and the ik-form of werken.
+    assert.deepEqual(woorden("werk"), ["werk", "werken"]);
   });
 });
 

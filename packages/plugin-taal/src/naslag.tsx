@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Markdown, type MarkdownComponents } from "@imprint/runtime-admin";
 import { indeling, lessenOver } from "./grammatica";
-import { grammaticaHref, lesHref, pakketHref } from "./href";
+import { grammaticaHref, lesHref, pakketHref, woordenHref } from "./href";
 import { teksten, vul } from "./i18n";
 import { tekstVoor } from "./lessen";
 import type { Grammatica, Les } from "./schemas";
@@ -41,7 +41,7 @@ function NaslagTekst({ children, taal, label }: { children: string; taal: string
   return <Markdown components={components}>{vormen(children)}</Markdown>;
 }
 
-export function GrammaticaOverzicht({ ui, taal, topics }: { ui: string; taal: string; topics: Grammatica[] }) {
+export function GrammaticaOverzicht({ ui, taal, topics, metWoorden = false }: { ui: string; taal: string; topics: Grammatica[]; metWoorden?: boolean }) {
   const t = teksten(ui);
   const g = t.grammatica;
   return (
@@ -52,6 +52,13 @@ export function GrammaticaOverzicht({ ui, taal, topics }: { ui: string; taal: st
       <p className="eyebrow mt-4">{t.pakket[taal] ?? taal}</p>
       <h1 className="text-3xl font-semibold tracking-tight">{g.naam}</h1>
       <p className="mt-3 text-lg text-muted">{vul(g.intro, { taal: t.inTaal[taal] ?? taal })}</p>
+      {metWoorden && (
+        <p className="mt-4">
+          <Link href={woordenHref(ui, taal)} className="font-semibold text-accent hover:underline">
+            {t.woorden.naam} →
+          </Link>
+        </p>
+      )}
       {topics.length === 0 && <p className="mt-6 text-muted">{g.geen}</p>}
       {indeling(topics).map(({ groep, topics: vanGroep }) => (
         <section key={groep} className="mt-8">

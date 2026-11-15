@@ -1001,6 +1001,17 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             *hebben*/*zijn*, *u* en *je*), en per les de links. **M**
       - [ ] De grammatica laten nalezen (Nederlands door Mark, Pools door
             iemand die Pools spreekt).
+      - [x] ~~Woord opzoeken~~ — `/pl/nederlands/woorden`: lidwoord,
+            meervoud, werkwoordsvormen met hebben/zijn; 2450 woorden tot
+            ongeveer B1 (15-11).
+      - [ ] Woord opzoeken: een steekproef van de lijst nakijken (Mark).
+            Vooral het hulpwerkwoord: Wiktionary geeft niet altijd beide
+            (*lopen*), de lijst `hulp` vult aan. De frequentie komt uit
+            filmondertitels, dus misdaadwoorden staan hoger dan in het
+            dagelijks leven.
+      - [ ] Woord opzoeken in het Pools ("dom" → het huis): de Poolse
+            Wiktionary heeft Nederlandse woorden met Poolse betekenis; nagaan
+            of die als JSON te krijgen is. **M**
       - [ ] Brede tabellen op de telefoon: de eerste kolom ("wij / jullie /
             zij") breekt over drie regels. Kleiner lettertype of liggende
             scroll voor tabellen. **S**

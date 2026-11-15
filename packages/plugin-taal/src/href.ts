@@ -6,6 +6,7 @@
  *
  *   /pl/nederlands/dit-en-dat   Polish interface, the Dutch package
  *   /pl/nederlands/grammatica/tegenwoordige-tijd   a topic of its grammar reference
+ *   /pl/nederlands/woorden      "check a word": article, plural, verb forms
  */
 
 /** Language taught → the name of its package in the address. */
@@ -34,6 +35,11 @@ export const GRAMMATICA = "grammatica";
 
 export const grammaticaHref = (ui: string, taal: string, slug?: string): string =>
   `${pakketHref(ui, taal)}/${GRAMMATICA}${slug ? `/${slug}` : ""}`;
+
+/** "Check a word": `/pl/nederlands/woorden`. Reserved like `grammatica`. */
+export const WOORDEN = "woorden";
+
+export const woordenHref = (ui: string, taal: string): string => `${pakketHref(ui, taal)}/${WOORDEN}`;
 
 /** A file name (`01-dit-en-dat.md`) → the slug of the lesson (`dit-en-dat`). */
 export const slugFromFile = (file: string): string =>

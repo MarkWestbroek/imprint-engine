@@ -1859,6 +1859,31 @@ flowchart LR
   `Markdown` van de motor neemt daarvoor `components` aan: `naslag.tsx`
   rendert vet als `Uitspreken`, een knop die de browserstem gebruikt (geen
   opnamen), behalve voor stukjes als `-en` (`uitspreekbaar`, `tekst.ts`).
+- **Woord opzoeken** (`woorden.ts`, `woorden-pagina.tsx`, `woordzoeker.tsx`;
+  `sites/taal/woorden/`, `scripts/woorden-maken.ts`): een woordenlijst per
+  pakket als JSON in de site, geen content in de store. De site geeft hem mee
+  als `woorden: (taal) => import(...)` (`TAAL` in `imprint.config.ts`); de
+  plugin parseert hem één keer per proces met het zod-schema `Woordenlijst`,
+  zodat een kapot bestand de build laat falen. De route
+  `/<ui>/<pakket>/woorden` rendert de lijst als prop in de voorgebouwde
+  pagina (≈210 KB, gecomprimeerd ≈45 KB); `zoek()` zoekt in de browser op het
+  woord, elke vorm en het begin ervan, op frequentierang `r`.
+  `woorden-maken.ts` maakt de lijst uit Wiktionary (kaikki.org) en een
+  frequentielijst uit ondertitels (FrequencyWords), beide CC BY-SA 4.0:
+  - Een vorm telt alleen voor een woord als hij niet ook een ander soort woord
+    is (*niet*, *voor*) en geen vorm van een echt werkwoord (*kom*). Een
+    werkwoord is echt als zijn eigen verleden vormen voorkomen; Wiktionary kent
+    veel zeldzame werkwoorden die gelijk zijn aan een meervoud (*huizen*).
+  - Gedeelde vormen gaan naar het meest gebruikte werkwoord (*wist*: weten,
+    niet wissen).
+  - Het geslacht komt van de betekenis met de meeste senses, in Wiktionary's
+    volgorde (de eerste is de gewone); de pagina toont alleen dat lidwoord.
+  - Hulpwerkwoord: `aux`/`trans=unacc` uit Wiktionary, aangevuld met de lijst
+    `hulp`. Een scheidbaar werkwoord op een basis met *zijn* krijgt *zijn*
+    (*weglopen*).
+  - Zwakke werkwoorden worden tegen 't kofschip gecontroleerd; wat afwijkt
+    (*zeggen → zei*, *bakken → gebakken*) heet onregelmatig en staat in de
+    uitvoer om na te kijken.
 - **Import vergelijkt zonder sleutelvolgorde** (`stabiel()` in `import.ts`):
   Postgres `jsonb` geeft `{ pl, nl }` terug als `{ nl, pl }`; zonder sortering
   zag elke import elke les vanaf fase 1 als gewijzigd.

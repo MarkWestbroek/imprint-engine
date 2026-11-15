@@ -37,6 +37,27 @@ export type Teksten = {
     uitspreken: string;
     geen: string;
   };
+  /** "Check a word" (woordzoeker.tsx); `bron` fills {bron}, `intro` {aantal}. */
+  woorden: {
+    naam: string;
+    intro: string;
+    zoek: string;
+    voorbeeld: string;
+    geen: string;
+    suggesties: string;
+    naamwoord: string;
+    werkwoord: string;
+    meervoud: string;
+    geenMeervoud: string;
+    verkleinwoord: string;
+    regelmatig: string;
+    onregelmatig: string;
+    tt: string;
+    vt: string;
+    vd: string;
+    hulp: { hebben: string; zijn: string; beide: string };
+    bron: string;
+  };
   speel: string;
   langzaam: string;
   luister: string;
@@ -104,6 +125,30 @@ const nl: Teksten = {
     uitspreken: "Luister",
     geen: "Er zijn nog geen onderwerpen.",
   },
+  woorden: {
+    naam: "Zoek een woord",
+    intro: "Typ een Nederlands zelfstandig naamwoord of werkwoord. Bij een zelfstandig naamwoord zie je *de* of *het* en het meervoud, bij een werkwoord alle vormen. De lijst heeft zo'n {aantal} veelgebruikte woorden, tot ongeveer niveau B1.",
+    zoek: "Zoek een woord",
+    voorbeeld: "bijv. huis, lopen, liep",
+    geen: "Dit woord staat niet in de lijst.",
+    suggesties: "Woorden die passen",
+    naamwoord: "Zelfstandig naamwoord",
+    werkwoord: "Werkwoord",
+    meervoud: "meervoud",
+    geenMeervoud: "geen meervoud",
+    verkleinwoord: "verkleinwoord",
+    regelmatig: "regelmatig",
+    onregelmatig: "onregelmatig",
+    tt: "Tegenwoordige tijd",
+    vt: "Verleden tijd",
+    vd: "Voltooide tijd",
+    hulp: {
+      hebben: "Met hebben.",
+      zijn: "Met zijn.",
+      beide: "Met hebben, of met zijn als je zegt waarheen: Ik heb gelopen. Ik ben naar huis gelopen.",
+    },
+    bron: "Bron: {bron}",
+  },
   speel: "Speel af",
   langzaam: "Langzaam",
   luister: "Luister",
@@ -170,6 +215,30 @@ const pl: Teksten = {
     alle: "Cała gramatyka",
     uitspreken: "Posłuchaj",
     geen: "Nie ma jeszcze tematów.",
+  },
+  woorden: {
+    naam: "Sprawdź słowo",
+    intro: "Wpisz niderlandzki rzeczownik albo czasownik. Przy rzeczowniku zobaczysz *de* albo *het* i liczbę mnogą, przy czasowniku wszystkie formy. Lista ma około {aantal} często używanych słów, mniej więcej do poziomu B1.",
+    zoek: "Szukaj słowa",
+    voorbeeld: "np. huis, lopen, liep",
+    geen: "Tego słowa nie ma na liście.",
+    suggesties: "Pasujące słowa",
+    naamwoord: "Rzeczownik",
+    werkwoord: "Czasownik",
+    meervoud: "liczba mnoga",
+    geenMeervoud: "bez liczby mnogiej",
+    verkleinwoord: "zdrobnienie",
+    regelmatig: "regularny",
+    onregelmatig: "nieregularny",
+    tt: "Czas teraźniejszy",
+    vt: "Czas przeszły",
+    vd: "Czas przeszły złożony",
+    hulp: {
+      hebben: "Z hebben.",
+      zijn: "Z zijn.",
+      beide: "Z hebben, albo z zijn, gdy mówisz dokąd: Ik heb gelopen. Ik ben naar huis gelopen.",
+    },
+    bron: "Źródło: {bron}",
   },
   speel: "Odtwórz",
   langzaam: "Powoli",

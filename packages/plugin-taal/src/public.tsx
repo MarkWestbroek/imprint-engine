@@ -3,12 +3,13 @@ import type { WritableContentStore } from "@imprint/content-core";
 import { Markdown, type PluginCall, type PublicRouteContext, type PublicRouteResult } from "@imprint/runtime-admin";
 import type { Stemmen } from "./audio";
 import { grammaticaId, leesbaar, listGrammatica } from "./grammatica";
-import { GRAMMATICA, grammaticaHref, lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal } from "./href";
+import { GRAMMATICA, grammaticaHref, lesHref, lesSlug, pakketHref, pakketNaam, pakketTaal, WOORDEN, woordenHref } from "./href";
 import { kentVormen, teksten, UI_TALEN } from "./i18n";
 import { Leerling } from "./leerling";
 import { Lesdialoog, LesOefeningen } from "./les-view";
 import { listLessen, oefeningenVoor, perFase, tekstVoor } from "./lessen";
 import { GrammaticaOverzicht, GrammaticaView, MeerGrammatica } from "./naslag";
+import { woordenlijst, WoordenView, type WoordenBron } from "./woorden-pagina";
 import type { Grammatica, Les } from "./schemas";
 import { vormen } from "./tekst";
 import { VormKeuze, Vormen } from "./vorm";
@@ -22,6 +23,7 @@ import { LesScore } from "./voortgang";
  *   /<ui>/<pakket>/<les>     one lesson: dialogue, chunks, rebuild, exercises
  *   /<ui>/<pakket>/grammatica           the grammar reference of the package
  *   /<ui>/<pakket>/grammatica/<topic>   one topic (naslag.tsx)
+ *   /<ui>/<pakket>/woorden              check a word (woorden-pagina.tsx), when the site has a word list
  *
  * `<ui>` is the interface language, `<pakket>` the language taught (href.ts).
  * All public and without a session, so the site prerenders them; who is
@@ -33,6 +35,8 @@ export type TaalRouteOptions = {
   /** The package `/<ui>` opens (the language taught); default nl. */
   pakket?: string;
   stemmen?: Stemmen;
+  /** The word list of a package for "check a word" (woorden.ts), as raw JSON; without it there is no such page. */
+  woorden?: WoordenBron;
 };
 
 function Overzicht({ ui, taal, lessen, metGrammatica, call }: { ui: string; taal: string; lessen: Les[]; metGrammatica: boolean; call?: PluginCall }) {
@@ -191,11 +195,17 @@ export function taalPublicRoute(opts: TaalRouteOptions = {}) {
         metadata: { title: `${t.pakket[taal] ?? taal}: ${t.lessen.toLowerCase()}` },
       };
     }
+    if (naam === WOORDEN) {
+      const lijst = slug.length === 3 ? await woordenlijst(opts.woorden, taal) : null;
+      if (!lijst) return null;
+      return { render: <WoordenView ui={ui} lijst={lijst} topics={topics} />, metadata: { title: t.woorden.naam } };
+    }
     if (naam === GRAMMATICA) {
       if (topics.length === 0) return null;
       const onderwerpSlug = slug[3];
       if (!onderwerpSlug) {
-        return { render: <GrammaticaOverzicht ui={ui} taal={taal} topics={topics} />, metadata: { title: `${t.pakket[taal] ?? taal}: ${t.grammatica.naam.toLowerCase()}` } };
+        const metWoorden = !!(await woordenlijst(opts.woorden, taal));
+        return { render: <GrammaticaOverzicht ui={ui} taal={taal} topics={topics} metWoorden={metWoorden} />, metadata: { title: `${t.pakket[taal] ?? taal}: ${t.grammatica.naam.toLowerCase()}` } };
       }
       const onderwerp = topics.find((g) => g.id === grammaticaId(taal, onderwerpSlug));
       if (!onderwerp) return null;
@@ -223,6 +233,7 @@ export async function taalStaticPaths(store: WritableContentStore | null, opts: 
   const lessen = await listLessen(store);
   const grammatica = await listGrammatica(store);
   const talen = new Set([opts.pakket ?? "nl", ...lessen.map((l) => l.taal)]);
+  const metWoorden = (await Promise.all([...talen].map(async (taal) => ((await woordenlijst(opts.woorden, taal)) ? [taal] : [])))).flat();
   return uiTalen(opts).flatMap((ui) => {
     const leesbare = grammatica.filter((g) => leesbaar(g, ui));
     const metGrammatica = [...new Set(leesbare.map((g) => g.taal))];
@@ -231,6 +242,7 @@ export async function taalStaticPaths(store: WritableContentStore | null, opts: 
       ...lessen.map((les) => [ui, pakketNaam(les.taal), lesSlug(les)]),
       ...metGrammatica.map((taal) => [ui, pakketNaam(taal), GRAMMATICA]),
       ...leesbare.map((g) => [ui, pakketNaam(g.taal), GRAMMATICA, g.slug]),
+      ...metWoorden.map((taal) => [ui, pakketNaam(taal), WOORDEN]),
     ];
   });
 }

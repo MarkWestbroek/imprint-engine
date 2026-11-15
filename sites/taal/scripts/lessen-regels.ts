@@ -1,6 +1,6 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { GRAMMATICA } from "@imprint/plugin-taal/href";
+import { GRAMMATICA, WOORDEN } from "@imprint/plugin-taal/href";
 import { parseGrammatica, parseLes } from "@imprint/plugin-taal/import";
 import { zinnen } from "@imprint/plugin-taal/audio";
 import type { Grammatica, Les } from "@imprint/plugin-taal/schemas";
@@ -32,7 +32,7 @@ export function controleer(file: string, les: Les): string[] {
     if (les.fase !== Number(fase)) fout(`fase ${les.fase} in folder fase-${fase}`);
     if (les.id !== `${les.taal}-${fase}-${nr}`) fout(`id ${les.id}, expected ${les.taal}-${fase}-${nr}`);
   }
-  if (les.slug === GRAMMATICA) fout(`a lesson may not be called ${GRAMMATICA}: that is the address of the grammar`);
+  if (les.slug === GRAMMATICA || les.slug === WOORDEN) fout(`a lesson may not be called ${les.slug}: that address is taken (grammar, word search)`);
   if (!les.steuntaal) return [...fouten, "no steuntaal"];
   const steun = les.steuntaal;
 

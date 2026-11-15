@@ -1,0 +1,25 @@
+{
+  "uitleg": "Handmatige aanvullingen op de woordenlijst (scripts/woorden-maken.ts). hulp: werkwoorden met hebben én zijn, afhankelijk van de zin (Ik heb gelopen / Ik ben naar huis gelopen), of waar Wiktionary het hulpwerkwoord mist. houd: gewone zelfstandige naamwoorden die de telling kwijtraken aan een ander woord met dezelfde vorm (de weg, het werk). weg: woorden die niet in de lijst horen: vlees en vis (schrijfwijzer), grof, drugs en seks (de frequentie komt uit filmondertitels), en bijvoeglijke vormen als zelfstandig naamwoord (het goede).",
+  "hulp": {
+    "lopen": "beide",
+    "rennen": "beide",
+    "rijden": "beide",
+    "fietsen": "beide",
+    "zwemmen": "beide",
+    "vliegen": "beide",
+    "varen": "beide",
+    "wandelen": "beide",
+    "springen": "beide",
+    "klimmen": "beide",
+    "kruipen": "beide",
+    "dansen": "hebben",
+    "verhuizen": "zijn",
+    "veranderen": "beide",
+    "beginnen": "zijn",
+    "stoppen": "beide",
+    "vergeten": "beide",
+    "volgen": "beide"
+  },
+  "houd": ["adem", "antwoord", "bad", "bedrijf", "beeld", "begin", "bericht", "bewijs", "bezoek", "bloed", "boek", "brand", "bus", "dag", "deel", "ding", "doel", "dood", "droom", "druk", "eten", "feest", "gebruik", "geld", "geloof", "geluk", "geval", "grond", "hemel", "hoop", "indruk", "jongen", "keer", "kleur", "kus", "kussen", "land", "last", "licht", "lift", "lucht", "lunch", "midden", "onderzoek", "ontbijt", "paar", "plaats", "plan", "post", "prijs", "publiek", "raad", "recht", "rechter", "reden", "reis", "richting", "rij", "rol", "rust", "schat", "school", "slaap", "spel", "stap", "stem", "steun", "strand", "succes", "teken", "test", "top", "trap", "val", "verleden", "verlies", "vertrek", "vertrouwen", "vlucht", "vorm", "vraag", "vuur", "week", "weg", "wens", "werk", "wind", "zak", "zin", "zon", "zorg"],
+  "weg": ["slager", "slagerij", "visboer", "vishandel", "vlees", "biefstuk", "gehakt", "spek", "ham", "worst", "haring", "zalm", "tonijn", "kipfilet", "karbonade", "rookworst", "bacon", "hamburger", "kalkoen", "frikandel", "kroket", "halloën", "briefen", "goede", "vrouwe", "vreemde", "zwangere", "droge", "ondergrondse", "derde", "gedag", "hemelsnaam", "vredesnaam", "teveel", "mille", "house", "sodemieter", "klojo", "donnie", "lori", "del", "sperma", "tepel", "poep", "urine", "seks", "porno", "prostituee", "wiet", "coke", "cocaïne", "heroïne", "shit", "verkrachten", "verkrachting", "hetero"]
+}

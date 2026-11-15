@@ -10,7 +10,13 @@ import { widgetRegistry } from "@/widgets/registry";
  * via DATABASE_URL; the lessons live in the store only (content type `les`
  * of plugin-taal), so without a database there are pages but no lessons.
  */
-export const TAAL = { ui: ["pl", "nl"], standaardUi: "pl", pakket: "nl" };
+export const TAAL = {
+  ui: ["pl", "nl"],
+  standaardUi: "pl",
+  pakket: "nl",
+  // "Check a word" (/pl/nederlands/woorden): the word list of the package, made by scripts/woorden-maken.ts.
+  woorden: async (taal: string) => (taal === "nl" ? (await import("./woorden/nl.json")).default : null),
+};
 
 export default defineImprint({
   id: "taal",
@@ -23,6 +29,7 @@ export default defineImprint({
     taalPlugin({
       ui: TAAL.ui,
       pakket: TAAL.pakket,
+      woorden: TAAL.woorden,
       // Azure text-to-speech for the recordings (admin → Taal → Audio). Without a key the browser's voice reads.
       tts: { key: process.env.AZURE_TTS_KEY, region: process.env.AZURE_TTS_REGION },
     }),
