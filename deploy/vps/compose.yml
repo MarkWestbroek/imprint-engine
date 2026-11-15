@@ -45,6 +45,7 @@ services:
       COMMONGROUND_DB_PASSWORD: ${COMMONGROUND_DB_PASSWORD:-}
       OMNIUM_DB_PASSWORD: ${OMNIUM_DB_PASSWORD:-}
       TAAL_DB_PASSWORD: ${TAAL_DB_PASSWORD:-}
+      MARKWESTBROEK_DB_PASSWORD: ${MARKWESTBROEK_DB_PASSWORD:-}
     ports:
       - "127.0.0.1:${PG_PORT:-5434}:5432"
     volumes:
@@ -248,6 +249,35 @@ secrets:
   database_url:
     environment: BUILD_DATABASE_URL
 
+  # markwestbroek.nl: Marks persoonlijke site (de patchbay) met tijdelijke
+  # secties zoals /woonwagen (woonwagen.markwestbroek.nl, zie Caddyfile.snippet).
+  # Beginteksten via `./deploy.sh seed markwestbroek --only=site,page,menu`.
+  markwestbroek:
+    <<: *site
+    image: imprint/markwestbroek:${MARKWESTBROEK_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: markwestbroek, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
+      network: host
+      secrets: [database_url]
+    environment:
+      STATS_REPORT_DIR: /data/stats
+      DATABASE_URL: postgres://markwestbroek:${MARKWESTBROEK_DB_PASSWORD}@postgres:5432/markwestbroek
+      SESSION_SECRET: ${MARKWESTBROEK_SESSION_SECRET:-}
+      # Het contactformulier (widget contact) mailt naar CONTACT_TO; alleen hier, niet in de image.
+      SMTP_HOST: ${MARKWESTBROEK_SMTP_HOST:-}
+      SMTP_PORT: ${MARKWESTBROEK_SMTP_PORT:-465}
+      SMTP_USER: ${MARKWESTBROEK_SMTP_USER:-}
+      SMTP_PASS: ${MARKWESTBROEK_SMTP_PASS:-}
+      MAIL_FROM: ${MARKWESTBROEK_MAIL_FROM:-}
+      CONTACT_TO: ${MARKWESTBROEK_CONTACT_TO:-}
+      ASSET_ROOT: /data/assets
+    ports:
+      - "127.0.0.1:${MARKWESTBROEK_PORT:-3800}:3000"
+    volumes:
+      - markwestbroek_assets:/data/assets
+      - /srv/imprint-stats/markwestbroek:/data/stats:ro
+
 volumes:
   minio_data:
   pg_data:
@@ -256,6 +286,7 @@ volumes:
   commonground_assets:
   omnium_assets:
   taal_assets:
+  markwestbroek_assets:
 
 networks:
   imprint_net:

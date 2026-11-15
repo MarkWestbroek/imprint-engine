@@ -40,6 +40,7 @@ COPY sites/commonground/package.json sites/commonground/
 COPY sites/omnium/package.json sites/omnium/
 COPY sites/inrichting/package.json sites/inrichting/
 COPY sites/taal/package.json sites/taal/
+COPY sites/markwestbroek/package.json sites/markwestbroek/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund
 COPY . .
 

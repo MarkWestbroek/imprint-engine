@@ -426,6 +426,29 @@ docker compose build tools   # migrate/seed draaien in het tools-image; alleen e
 SITES=omnium ./deploy.sh
 ```
 
+**markwestbroek.nl** (`markwestbroek`, poort 3800; nog niet live): zelfde
+patroon als de Omnium-site, zonder bucket. Op de VPS:
+
+```bash
+printf 'MARKWESTBROEK_DB_PASSWORD=%s\nMARKWESTBROEK_SESSION_SECRET=%s\n' \
+	"$(openssl rand -hex 24)" "$(openssl rand -hex 32)" >> .env   # en SITES aanvullen
+set -a; . ./.env; set +a
+docker compose exec -T postgres psql -U postgres -c "CREATE ROLE markwestbroek LOGIN PASSWORD '$MARKWESTBROEK_DB_PASSWORD'" -c "CREATE DATABASE markwestbroek OWNER markwestbroek"
+./deploy.sh migrate markwestbroek
+./deploy.sh seed markwestbroek --only=site,page,menu
+./deploy.sh user markwestbroek add <naam> admin
+SITES=markwestbroek ./deploy.sh
+```
+
+Daarna bij de registrar de A-records `markwestbroek.nl`, `www` en `woonwagen`
+naar de VPS (geen AAAA naar een parkeeradres laten staan), de drie blokken uit
+[Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
+`sudo systemctl reload caddy`. `pf.markwestbroek.nl` (Adobe Portfolio) en
+`pi.markwestbroek.nl` blijven bij hun eigen host: die records niet aanraken.
+De site staat op `noindex` (`src/app/layout.tsx`) tot hij af is. Het
+contactformulier mailt pas als `MARKWESTBROEK_SMTP_*`, `MARKWESTBROEK_MAIL_FROM`
+en `MARKWESTBROEK_CONTACT_TO` in `.env` staan (zie `.env.example`).
+
 **De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; live sinds
 12 november 2026, zo uitgerold).
 De opnamen gaan vanaf het begin naar een eigen bucket, dus er valt niets te

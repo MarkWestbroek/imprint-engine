@@ -749,6 +749,35 @@ les.
 De Poolse teksten zijn een eerste vertaling en moeten nog worden nagelezen.
 Tot dan vraagt de site zoekmachines om haar niet op te nemen.
 
+## markwestbroek.nl: de patchbay
+
+De voorpagina van markwestbroek.nl is één widget, **Patchbay**: links de
+bronmodule met je naam, daarnaast per activiteit een module, met een
+patchkabel van uitgang naar module. Je bewerkt hem in de studio zoals elke
+widget.
+
+- **Module toevoegen of weghalen**: in de lijst *modules*. Per module: titel,
+  een regel tekst, de URL (leeg = geen link, bijvoorbeeld voor iets dat nog
+  komt), het adres zoals het op de module staat, het label bij de uitgang op de
+  bronmodule (een paar hoofdletters) en de kabelkleur.
+- De kabels tekenen zichzelf; je hoeft niets te plaatsen. Vier modules per rij
+  naast de bron; een negende module begint een derde rij.
+- De kop en de inleiding boven het rack zijn velden van dezelfde widget.
+
+**Contactformulier.** De widget *Contactformulier* zet een formulier op de
+pagina (naam, e-mailadres, bericht). Het bericht komt per mail bij jou aan; je
+adres staat nergens op de site. Het veld *anker* is de naam waar een knop naar
+kan springen (`#contact`); *taal* zet de labels en meldingen in het Nederlands
+of het Pools.
+
+**Een pagina in een andere taal.** Een vertaling is een eigen pagina onder de
+oorspronkelijke, met de taalcode als laatste deel van de slug: `woonwagen/pl`
+is de Poolse versie van `woonwagen`. Zo'n pagina wordt als Pools (of `en`,
+`de`) gemarkeerd, zodat een schermlezer hem goed uitspreekt.
+
+De woonwagen staat als gewone pagina onder `/woonwagen`; het adres
+woonwagen.markwestbroek.nl stuurt daarheen door.
+
 ## De inrichting (Omnium-register)
 
 Een site met de plugin **Omnium** laat de inrichting van e-diensten zien uit
