@@ -228,27 +228,6 @@ services:
       - taal_assets:/data/assets
       - /srv/imprint-stats/taal:/data/stats:ro
 
-  # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
-  # productiedatabase. Draait alleen op verzoek:
-  #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
-  tools:
-    image: imprint/tools:latest
-    profiles: ["tools"]
-    build:
-      context: ../..
-      target: tools
-    depends_on:
-      postgres:
-        condition: service_healthy
-    networks: [imprint_net]
-
-secrets:
-  # Alleen tijdens de build, en via loopback (build.network: host) — niet de
-  # servicenaam `postgres`, want het compose-netwerk bestaat tijdens een build
-  # niet. deploy.sh zet BUILD_DATABASE_URL per site, vlak voor diens build.
-  database_url:
-    environment: BUILD_DATABASE_URL
-
   # markwestbroek.nl: Marks persoonlijke site (de patchbay) met tijdelijke
   # secties zoals /woonwagen (woonwagen.markwestbroek.nl, zie Caddyfile.snippet).
   # Beginteksten via `./deploy.sh seed markwestbroek --only=site,page,menu`.
@@ -277,6 +256,28 @@ secrets:
     volumes:
       - markwestbroek_assets:/data/assets
       - /srv/imprint-stats/markwestbroek:/data/stats:ro
+
+  # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
+  # productiedatabase. Draait alleen op verzoek:
+  #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
+  tools:
+    image: imprint/tools:latest
+    profiles: ["tools"]
+    build:
+      context: ../..
+      target: tools
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [imprint_net]
+
+secrets:
+  # Alleen tijdens de build, en via loopback (build.network: host) — niet de
+  # servicenaam `postgres`, want het compose-netwerk bestaat tijdens een build
+  # niet. deploy.sh zet BUILD_DATABASE_URL per site, vlak voor diens build.
+  database_url:
+    environment: BUILD_DATABASE_URL
+
 
 volumes:
   minio_data:
