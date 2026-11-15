@@ -27,6 +27,7 @@ patroon:
   pl: "Czasownik **zijn** (być) zmienia się z osobą: **ik ben**, **jij bent / u bent**, **hij / zij is**, **wij / jullie / zij zijn**. W pytaniu czasownik stoi na początku: *Ben jij Pools?* Po *ben* znika wtedy **-t**: *jij bent*, ale *ben jij?*"
   nl: "Het werkwoord **zijn** verandert met de persoon: **ik ben**, **jij bent / u bent**, **hij / zij is**, **wij / jullie / zij zijn**. In een vraag staat het werkwoord vooraan: *Ben jij Pools?* Achter *ben* valt dan de **-t** weg: *jij bent*, maar *ben jij?*"
 brokken: ["ik ben…", "ben jij…?", "bent u…?", "dit is…", "hij is", "zij is", "wij zijn", "dat ben ik", "welkom"]
+grammatica: [nl-tegenwoordige-tijd]
 oefeningen:
   - type: luister
     tekst: "Zij is mijn vrouw."

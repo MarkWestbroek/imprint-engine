@@ -5,6 +5,7 @@
  * named after the language it teaches, in that language.
  *
  *   /pl/nederlands/dit-en-dat   Polish interface, the Dutch package
+ *   /pl/nederlands/grammatica/tegenwoordige-tijd   a topic of its grammar reference
  */
 
 /** Language taught → the name of its package in the address. */
@@ -23,6 +24,16 @@ export const lesSlug = (les: { id: string; slug?: string }): string => les.slug 
 
 export const lesHref = (ui: string, les: { id: string; slug?: string; taal: string }): string =>
   `${pakketHref(ui, les.taal)}/${lesSlug(les)}`;
+
+/**
+ * The grammar reference of a package: `/pl/nederlands/grammatica`, a topic
+ * under it. The word is Dutch like the lesson names, and no lesson may be
+ * called so (the site's check).
+ */
+export const GRAMMATICA = "grammatica";
+
+export const grammaticaHref = (ui: string, taal: string, slug?: string): string =>
+  `${pakketHref(ui, taal)}/${GRAMMATICA}${slug ? `/${slug}` : ""}`;
 
 /** A file name (`01-dit-en-dat.md`) → the slug of the lesson (`dit-en-dat`). */
 export const slugFromFile = (file: string): string =>

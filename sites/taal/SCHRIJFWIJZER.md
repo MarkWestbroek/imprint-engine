@@ -59,6 +59,25 @@ Elke les heeft minstens één `luister`, één `kies`, één `typ`, één `orden
   klank of een lange zin.
 - `antwoord` telt vanaf 0. Wissel de plek van het goede antwoord af.
 
+## Grammatica
+
+Een onderwerp van het naslagwerk staat in `grammatica/nl/<slug>.md`; de
+slug is de bestandsnaam en het id wordt `nl-<slug>`. Alles staat in de
+frontmatter, de teksten als YAML-blok (`tekst:` → `pl: |`, `nl: |`); de body
+blijft leeg.
+
+- Kort: één tabel als dat kan, de regel, de uitzonderingen, twee of drie
+  voorbeelden. Liefst voorbeelden die de leerling uit de lessen kent.
+- `titel`, `kort` (één zin voor het overzicht) en `tekst` in `pl` en `nl`.
+  `anders` (hoe het Pools het doet) alleen in `pl`, en alleen bij een
+  `regel`: een `verschil` is zelf al helemaal verschil.
+- **Vet is Nederlands om te horen**: elk vet stuk krijgt een knop die het
+  uitspreekt. Een Pools woord of een Nederlands woord dat je alleen noemt
+  (`*werken*`, een uitgang als `*-en*`) zet je cursief. Vette stukjes als
+  `-en` of `ge-…-t` krijgen geen knop.
+- Een les die het onderwerp gebruikt, wijst ernaar: `grammatica:
+  [nl-tegenwoordige-tijd]`, op de regel na `brokken`.
+
 ## Eten
 
 Geen vlees en geen vis in de lessen: geen ham, kip, worst of haring, en geen

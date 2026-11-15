@@ -27,6 +27,7 @@ patroon:
   pl: "Ten sam wzór działa też tutaj: **ik drink**, **hij drinkt**, **wij drinken**; **ik eet**, **hij eet**, **wij eten**; **ik neem**, **hij neemt**, **wij nemen**. Długa samogłoska zostaje długa, dlatego w krótkiej formie pisze się ją podwójnie: *eten → ik eet*, *nemen → ik neem*."
   nl: "Hetzelfde patroon werkt ook hier: **ik drink**, **hij drinkt**, **wij drinken**; **ik eet**, **hij eet**, **wij eten**; **ik neem**, **hij neemt**, **wij nemen**. Een lange klinker blijft lang, en daarom schrijf je hem in de korte vorm dubbel: *eten → ik eet*, *nemen → ik neem*."
 brokken: ["wat drink je?", "ik neem…", "ik drink…", "eet je ook iets?", "ik eet…", "hij eet graag…", "hij neemt…", "wij nemen…", "een broodje kaas", "de soep"]
+grammatica: [nl-tegenwoordige-tijd]
 oefeningen:
   - type: luister
     tekst: "Tom eet graag soep."

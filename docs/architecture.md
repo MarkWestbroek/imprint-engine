@@ -1757,6 +1757,9 @@ flowchart LR
     AZ -- mp3 --> AS[("AssetStore<br/>taal/tts/&lt;sleutel&gt;.mp3")]
     A -- "putItem: les.audio[sleutel] = url" --> ST
     CL -- "/api/assets/…, anders de browserstem" --> AS
+    G["sites/taal/grammatica/*.md<br/>alleen frontmatter"] -- "parseGrammatica → importGrammatica" --> SG[("store<br/>type grammatica")]
+    SG -- "publicRoute" --> GR["/&lt;ui&gt;/&lt;pakket&gt;/grammatica/&lt;onderwerp&gt;<br/>SSG (naslag.tsx)"]
+    ST -. "les.grammatica: [id]" .-> SG
 ```
 
 - **Adres** (`href.ts`): `/<ui>/<pakket>/<les>`. `<ui>` is de taal van de
@@ -1843,12 +1846,31 @@ flowchart LR
   voorgebouwde pagina toont beide vormen en de browser vult de keuze in.
   Markdown (`patroon`) wordt op de server gerenderd en toont altijd beide.
   De keuze verschijnt alleen als de interfacetaal vormen heeft (`kentVormen`).
+- **Grammatica** (`grammatica.ts`, `naslag.tsx`, `uitspreken.tsx`): contenttype
+  `grammatica`, sleutel `<taal>-<slug>` (`nl-tegenwoordige-tijd`). `soort`
+  `regel` of `verschil`, `groep` uit een vaste lijst, en per lezerstaal
+  `titel`, `kort`, `tekst` en `anders`, zoals `patroon`. Een les wijst ernaar
+  met `grammatica: [id]`; een zachte verwijzing, bewaakt door
+  `check:lessen` (een RelationRule `les.grammatica[] → grammatica` kan in
+  `/admin/relations` als de lessen in de admin bewerkt gaan worden). De
+  route kent `/<ui>/<pakket>/grammatica` (overzicht, `indeling()`: regels per
+  groep, verschillen apart) en `…/grammatica/<slug>`; alleen onderwerpen met
+  titel en tekst in de interfacetaal (`leesbaar`) krijgen een pagina.
+  `Markdown` van de motor neemt daarvoor `components` aan: `naslag.tsx`
+  rendert vet als `Uitspreken`, een knop die de browserstem gebruikt (geen
+  opnamen), behalve voor stukjes als `-en` (`uitspreekbaar`, `tekst.ts`).
+- **Import vergelijkt zonder sleutelvolgorde** (`stabiel()` in `import.ts`):
+  Postgres `jsonb` geeft `{ pl, nl }` terug als `{ nl, pl }`; zonder sortering
+  zag elke import elke les vanaf fase 1 als gewijzigd.
 - **Lesbestanden bewaken** (`sites/taal/scripts/lessen-regels.ts`): het schema
   zegt wat een les mag zijn, `controleer()` wat een goed bestand is (pad en id
   kloppen, elke regel in beide talen, aantallen, elk oefentype aanwezig, een
   `orden`-zin met één volgorde). `npm run check:lessen` en de test van de site
   gebruiken dezelfde regels; fase 0 is ouder dan de schrijfwijzer en valt
-  alleen onder de basisregels.
+  alleen onder de basisregels. `controleerGrammatica()` doet hetzelfde voor
+  de grammaticabestanden (map = taal, titel/kort/tekst in `pl` en `nl`, geen
+  vormen `{m|v}` in vet), `controleerLinks()` of elke verwijzing uit een les
+  bestaat en over dezelfde taal gaat.
 
 Stappen voor een nieuwe site:
 

@@ -6,7 +6,7 @@
  */
 export { DefaultView, viewSlugFor, viewTargetType } from "./default-view";
 export { LAYOUT_PRESETS, layoutRows } from "./layout";
-export { Markdown } from "./markdown";
+export { Markdown, type MarkdownComponents } from "./markdown";
 export { imgProps, resolveMedia, resolveMediaAll, type ResolvedMedia } from "./media/resolve";
 export { ASSET_REF_ROUTE, assetRefUrl, mediaSrc } from "./media/ref";
 export { corsHeadersFor, type CorsOffer } from "./media/cors";

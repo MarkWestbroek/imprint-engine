@@ -58,5 +58,8 @@ export const heeftVormen = (tekst: string): boolean => new RegExp(VORMEN.source)
 export const vormenKloppen = (tekst: string): boolean => !/[{}]/.test(tekst.replace(VORMEN, ""));
 
 /** BCP 47 tags for speech synthesis and recognition in the browser. */
+/** Whether a bold piece of a grammar text is a whole word or phrase a voice can say (not `-en`, `ge-…-t` or one letter). */
+export const uitspreekbaar = (tekst: string): boolean => /\p{L}{2,}/u.test(tekst) && !/…|^[-–]|[-–]$/.test(tekst.trim());
+
 export const LOCALES: Record<string, string> = { nl: "nl-NL", pl: "pl-PL", it: "it-IT", de: "de-DE", en: "en-GB" };
 export const localeOf = (taal: string): string => LOCALES[taal] ?? taal;

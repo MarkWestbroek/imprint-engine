@@ -10,7 +10,7 @@ type Props = {
   labels: { speel: string; langzaam: string };
 };
 
-function browserVoice(text: string, lang: string, slow: boolean) {
+export function browserVoice(text: string, lang: string, slow: boolean) {
   if (!("speechSynthesis" in window)) return;
   const u = new SpeechSynthesisUtterance(text);
   u.lang = localeOf(lang);

@@ -29,6 +29,7 @@ patroon:
   pl: "Przymiotnik przed rzeczownikiem ma zwykle **-e**: *een grote kamer*, *een oude kast*, *het nieuwe bed*. Jest jeden wyjątek: **een** + słowo z **het** – wtedy bez **-e**: *een nieuw bed*, ale *het nieuwe bed*."
   nl: "Een bijvoeglijk naamwoord vóór een zelfstandig naamwoord heeft meestal **-e**: *een grote kamer*, *een oude kast*, *het nieuwe bed*. Er is één uitzondering: **een** + een het-woord – dan zonder **-e**: *een nieuw bed*, maar *het nieuwe bed*."
 brokken: ["een grote kamer", "een nieuw bed", "het nieuwe bed", "een oude kast", "een goede kast", "het raam is klein", "ik ben lang", "kort", "ik neem…"]
+grammatica: [nl-lidwoorden]
 oefeningen:
   - type: luister
     tekst: "Het is een grote kamer."

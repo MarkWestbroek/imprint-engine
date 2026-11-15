@@ -25,6 +25,18 @@ export type Teksten = {
   vorm: { vraag: string; m: string; v: string; beide: string };
   /** The widget "verder": continue where you left off. */
   verder: { begin: string; uitleg: string; dalej: string; gedaan: string; alles: string; overzicht: string };
+  /** The grammar reference (grammatica.ts); `intro` fills {taal} with `inTaal`. */
+  grammatica: {
+    naam: string;
+    intro: string;
+    groepen: Record<"werkwoorden" | "naamwoorden" | "voornaamwoorden" | "zinsbouw" | "verschil", string>;
+    anders: string;
+    meer: string;
+    inLessen: string;
+    alle: string;
+    uitspreken: string;
+    geen: string;
+  };
   speel: string;
   langzaam: string;
   luister: string;
@@ -75,6 +87,23 @@ const nl: Teksten = {
     alles: "Alle lessen gedaan. Gefeliciteerd!",
     overzicht: "Alle lessen",
   },
+  grammatica: {
+    naam: "Grammatica",
+    intro: "De vormen en regels op een rij, om op te zoeken als je de taal al een beetje kent. Vetgedrukte woorden zijn {taal}: klik erop om ze te horen.",
+    groepen: {
+      werkwoorden: "Werkwoorden",
+      naamwoorden: "Zelfstandige naamwoorden en lidwoorden",
+      voornaamwoorden: "Voornaamwoorden",
+      zinsbouw: "Zinsbouw",
+      verschil: "Verschillen met je eigen taal",
+    },
+    anders: "Anders dan in je eigen taal",
+    meer: "Meer hierover:",
+    inLessen: "In de lessen:",
+    alle: "Alle grammatica",
+    uitspreken: "Luister",
+    geen: "Er zijn nog geen onderwerpen.",
+  },
   speel: "Speel af",
   langzaam: "Langzaam",
   luister: "Luister",
@@ -124,6 +153,23 @@ const pl: Teksten = {
     gedaan: "Ukończone lekcje: {n} z {totaal}",
     alles: "Wszystkie lekcje ukończone. Gratulacje!",
     overzicht: "Wszystkie lekcje",
+  },
+  grammatica: {
+    naam: "Gramatyka",
+    intro: "Formy i reguły w jednym miejscu, do sprawdzenia, kiedy już trochę znasz język. Pogrubione słowa są {taal}: kliknij, żeby je usłyszeć.",
+    groepen: {
+      werkwoorden: "Czasowniki",
+      naamwoorden: "Rzeczowniki i rodzajniki",
+      voornaamwoorden: "Zaimki",
+      zinsbouw: "Budowa zdania",
+      verschil: "Inaczej niż po polsku",
+    },
+    anders: "Inaczej niż po polsku",
+    meer: "Więcej na ten temat:",
+    inLessen: "W lekcjach:",
+    alle: "Cała gramatyka",
+    uitspreken: "Posłuchaj",
+    geen: "Nie ma jeszcze tematów.",
   },
   speel: "Odtwórz",
   langzaam: "Powoli",

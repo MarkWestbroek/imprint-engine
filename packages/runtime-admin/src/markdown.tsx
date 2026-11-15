@@ -35,10 +35,13 @@ export function markdownUrl(url: string): string {
   return assetRefUrl(url) ?? defaultUrlTransform(url);
 }
 
-export function Markdown({ children }: { children: string }) {
+/** Elements a caller renders its own way (a plugin that makes bold words speakable, say); headings keep their id unless replaced. */
+export type MarkdownComponents = Components;
+
+export function Markdown({ children, components: eigen }: { children: string; components?: MarkdownComponents }) {
   return (
     <div className="markdown">
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components} urlTransform={markdownUrl}>
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={eigen ? { ...components, ...eigen } : components} urlTransform={markdownUrl}>
         {children}
       </ReactMarkdown>
     </div>

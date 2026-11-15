@@ -722,10 +722,28 @@ contactformulier komt per mail bij het adres dat op de server is ingesteld;
 naam en e-mailadres zijn niet verplicht. Wie een adres invult, kun je met
 *Beantwoorden* direct terugschrijven. Berichten worden niet op de site bewaard.
 
+**Grammatica.** Naast de lessen staat een naslagwerk: *Gramatyka* in het
+menu, `/pl/nederlands/grammatica`. Elk onderwerp geeft de vormen op een rij:
+een tabel, de regel, de uitzonderingen, kort gehouden. Vetgedrukte
+Nederlandse woorden zijn gestippeld onderstreept; een klik laat ze horen (met
+de stem van de browser). Onder *Inaczej niż po polsku* staat hoe het Pools
+het anders doet, en onderaan in welke lessen het onderwerp voorkomt. Een
+onderwerp over een verschil tussen de talen als geheel (het Pools heeft geen
+lidwoorden) staat in het overzicht in een eigen groep. Een les met een
+onderwerp linkt ernaar onder *Zauważyłeś?*: "Więcej na ten temat".
+
+De onderwerpen staan onder *Taal → Grammatica*. Elk heeft een `soort`
+(`regel` of `verschil`), een `groep` (werkwoorden, naamwoorden,
+voornaamwoorden, zinsbouw) en `volgorde`, en per taal van de site (`pl`,
+`nl`) een `titel`, een zin `kort` voor het overzicht, de `tekst` (Markdown,
+met tabellen) en eventueel `anders`. Een les wijst naar een onderwerp met
+`grammatica: [nl-tegenwoordige-tijd]`. Een onderwerp verschijnt pas als het
+in de taal van de site een titel en een tekst heeft.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
-De 45 lessen staan ook als bestand in `sites/taal/lessen`. Het
-importscript zet ze in de database en overschrijft dan wat in de admin is
+De 45 lessen staan ook als bestand in `sites/taal/lessen`, de
+grammatica in `sites/taal/grammatica`. Het importscript zet ze in de database en overschrijft dan wat in de admin is
 gewijzigd. Kies dus per les één plek om te bewerken.
 
 **Audio maken.** Onder *Taal → Audio* staat per les hoeveel zinnen een opname

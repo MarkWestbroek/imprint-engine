@@ -15,7 +15,10 @@ export function NavLinks({ nav, ui, standaardUi }: { nav: NavItem[]; ui: string[
   const path = usePathname();
   const [, first, ...rest] = path.split("/");
   const current = first && ui.includes(first) ? first : null;
-  const inside = (href: string) => href !== "/" && (path === href || path.startsWith(`${href}/`));
+  const binnen = (href: string) => href !== "/" && (path === href || path.startsWith(`${href}/`));
+  // Only the deepest item you are in: in /pl/nederlands/grammatica that is "Gramatyka", not "Lekcje" too.
+  const diepste = nav.map((i) => i.href).filter(binnen).sort((a, b) => b.length - a.length)[0];
+  const inside = (href: string) => href === diepste;
   return (
     <>
       {nav.map((item) => (

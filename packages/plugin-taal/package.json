@@ -9,6 +9,7 @@
     "./schemas": "./src/schemas.ts",
     "./content-types": "./src/content-types.ts",
     "./href": "./src/href.ts",
+    "./grammatica": "./src/grammatica.ts",
     "./audio": "./src/audio.ts",
     "./tekst": "./src/tekst.ts",
     "./stand": "./src/stand.ts",
