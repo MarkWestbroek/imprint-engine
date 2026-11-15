@@ -6,6 +6,11 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **CI: snelle controle van de deploybestanden, zware stappen alleen bij code.**
+  Een nieuwe job `deploy-config` valideert `deploy/vps/compose.yml`
+  (`docker compose config`) en parst de shellscripts; die draait altijd en duurt
+  seconden. Bouwen en browsertests (~6 minuten) slaan over als alleen docs,
+  `*.md` of `deploy/` veranderen.
 - **Nieuwe site: markwestbroek.nl** (`sites/markwestbroek`, poort 3800): Marks
   persoonlijke site. De voorpagina is een eigen widget `patchbay`: een rack met
   een bronmodule en per activiteit een module, verbonden met bewegende

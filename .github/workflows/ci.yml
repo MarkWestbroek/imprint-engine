@@ -1,4 +1,5 @@
-# CI — build + lint + typecheck bij elke push/PR (backlog §6).
+# CI — build + lint + typecheck bij elke push/PR (backlog §6); bij alleen
+# docs/deploy-wijzigingen alleen de snelle controle van de deploybestanden.
 # Bouwt zonder DATABASE_URL: de site valt dan terug op de file-store (v0),
 # dus de SSG-build draait tegen de content in git — geen database nodig.
 name: CI
@@ -9,7 +10,43 @@ on:
   pull_request:
 
 jobs:
+  # Wat is er veranderd? Alleen docs of deploybestanden: dan zijn bouwen en
+  # browsertests (samen ~6 minuten) overbodig en slaan we ze over.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          predicate-quantifier: every
+          filters: |
+            code:
+              - '**'
+              - '!docs/**'
+              - '!doc/**'
+              - '!**/*.md'
+              - '!deploy/**'
+
+  # Snel (seconden) en altijd: de deploybestanden van de VPS. Fouten hierin
+  # vallen anders pas op bij het uitrollen.
+  deploy-config:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: compose.yml geldig
+        run: |
+          # Elke ${VAR} de dummywaarde 1 (ook geldig als poort): hier gaat het om de structuur, niet om geheimen.
+          grep -oE '\$\{[A-Z_0-9]+' deploy/vps/compose.yml | cut -c3- | sort -u | sed 's/$/=1/' > "$RUNNER_TEMP/ci.env"
+          docker compose -f deploy/vps/compose.yml --env-file "$RUNNER_TEMP/ci.env" config --quiet
+      - name: Shellscripts parsen
+        run: for f in deploy/vps/*.sh; do bash -n "$f"; done
+
   verify:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,6 +76,8 @@ jobs:
   # Twee keer dezelfde specs: tegen de productiebuild (wat bezoekers krijgen) en
   # tegen `next dev` (alleen daar meldt React hydration- en propfouten).
   e2e:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     services:
       db:
