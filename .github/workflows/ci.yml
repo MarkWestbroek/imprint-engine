@@ -38,8 +38,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: compose.yml geldig
         run: |
-          # Elke ${VAR} een dummywaarde: hier gaat het om de structuur, niet om geheimen.
-          grep -oE '\$\{[A-Z_0-9]+' deploy/vps/compose.yml | cut -c3- | sort -u | sed 's/$/=x/' > "$RUNNER_TEMP/ci.env"
+          # Elke ${VAR} de dummywaarde 1 (ook geldig als poort): hier gaat het om de structuur, niet om geheimen.
+          grep -oE '\$\{[A-Z_0-9]+' deploy/vps/compose.yml | cut -c3- | sort -u | sed 's/$/=1/' > "$RUNNER_TEMP/ci.env"
           docker compose -f deploy/vps/compose.yml --env-file "$RUNNER_TEMP/ci.env" config --quiet
       - name: Shellscripts parsen
         run: for f in deploy/vps/*.sh; do bash -n "$f"; done
