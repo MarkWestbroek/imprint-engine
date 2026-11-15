@@ -776,7 +776,8 @@ widget.
 
 - **Module toevoegen of weghalen**: in de lijst *modules*. Per module: titel,
   een regel tekst, de URL (leeg = geen link, bijvoorbeeld voor iets dat nog
-  komt), het adres zoals het op de module staat, het label bij de uitgang op de
+  komt; een volledige URL naar een andere site opent in een nieuw tabblad,
+  zodat het rack openblijft), het adres zoals het op de module staat, het label bij de uitgang op de
   bronmodule (een paar hoofdletters) en de kabelkleur.
 - De kabels tekenen zichzelf; je hoeft niets te plaatsen. Vier modules per rij
   naast de bron; een negende module begint een derde rij.

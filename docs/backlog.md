@@ -933,13 +933,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       historie + users + assets, retentie 14, Node-only dus Plesk-Scheduled-
       Task-klaar); zie [backups.md](backups.md). Nog te doen: de dagelijkse
       taak aanmaken op Plesk + af en toe een backup van de server halen.
-- [ ] **markwestbroek.nl live zetten** (november 2026) — site, compose, Caddy
-      en mail (`noreply@markwestbroek.nl`, SMTP-login vanaf de VPS getest)
-      staan klaar; uitrol volgens [deploy-vps.md](deploy-vps.md), daarna de
-      A-records `markwestbroek.nl`, `www`, `woonwagen` naar de VPS (AAAA weg;
-      `mail`, MX, `pf`, `pi` blijven bij Quickhost). Na livegang: `noindex`
-      eraf als Mark de teksten heeft nagelopen; later modules "Te koop",
-      Antonio en muziek (SoundCloud-account onbereikbaar).
+- [x] ~~**markwestbroek.nl live zetten**~~ — live sinds 15 november 2026
+      (VPS, poort 3800; contactformulier getest via `noreply@markwestbroek.nl`).
+- [ ] **markwestbroek.nl afmaken** — `noindex` eraf als Mark de teksten heeft
+      nagelopen ("Utrecht", moduleteksten, Omnium-link); later modules
+      "Te koop", Antonio en muziek (SoundCloud-account onbereikbaar). De
+      woonwagenpagina's komen voorlopig uit de JSON in de repo (alleen die twee
+      pagina's via de store bijwerken, geen volledige seed).
 - [ ] **Meertaligheid in de engine** (november 2026, voor IMPRINT-CORE) —
       `Locale` in content-core kent alleen `en`/`nl` en `<html lang>` is
       sitebreed. markwestbroek.nl lost het nu lokaal op (vertaling als

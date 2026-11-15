@@ -426,7 +426,7 @@ docker compose build tools   # migrate/seed draaien in het tools-image; alleen e
 SITES=omnium ./deploy.sh
 ```
 
-**markwestbroek.nl** (`markwestbroek`, poort 3800; nog niet live): zelfde
+**markwestbroek.nl** (`markwestbroek`, poort 3800; live sinds 15 november 2026): zelfde
 patroon als de Omnium-site, zonder bucket. Op de VPS:
 
 ```bash
@@ -445,9 +445,26 @@ naar de VPS (geen AAAA naar een parkeeradres laten staan), de drie blokken uit
 [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
 `sudo systemctl reload caddy`. `pf.markwestbroek.nl` (Adobe Portfolio) en
 `pi.markwestbroek.nl` blijven bij hun eigen host: die records niet aanraken.
+Let op de zone bij Quickhost: `mail.markwestbroek.nl` heeft geen eigen record
+maar valt onder de wildcard `*.markwestbroek.nl` (laten staan!), en
+`webmail` was een CNAME naar het hoofddomein; die wijst nu naar
+`mail.markwestbroek.nl`. `www` en `woonwagen` kregen een eigen A-record
+(zonder AAAA: een eigen record schakelt de wildcard-AAAA voor die naam uit).
 De site staat op `noindex` (`src/app/layout.tsx`) tot hij af is. Het
 contactformulier mailt pas als `MARKWESTBROEK_SMTP_*`, `MARKWESTBROEK_MAIL_FROM`
 en `MARKWESTBROEK_CONTACT_TO` in `.env` staan (zie `.env.example`).
+
+Inhoud uit de repo bijwerken (de woonwagenpagina's komen voorlopig uit de
+JSON): niet opnieuw seeden, dat vervangt alle pagina's. Zet alleen de
+genoemde pagina's als nieuwe versie; een pagina die sindsdien in de admin is
+bewerkt, slaat het script over (tenzij `--force`):
+
+```bash
+git -C /srv/imprint pull --ff-only && docker compose build tools
+set -a; . ./.env; set +a
+docker compose run --rm -e DATABASE_URL="postgres://markwestbroek:$MARKWESTBROEK_DB_PASSWORD@postgres:5432/markwestbroek" 	tools npm run put:pages --workspace=markwestbroek -- woonwagen woonwagen/pl
+SITES=markwestbroek ./deploy.sh   # de SSG-pagina's opnieuw bouwen
+```
 
 **De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; live sinds
 12 november 2026, zo uitgerold).
