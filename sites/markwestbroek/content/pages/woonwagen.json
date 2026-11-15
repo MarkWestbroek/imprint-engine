@@ -1,0 +1,421 @@
+{
+  "slug": "woonwagen",
+  "title": "De woonwagen",
+  "description": "Gezocht: een timmerman of -vrouw om een handgemaakte woonwagen uit 1978 van buiten op te knappen. De wagen staat in Ede; het hout ligt klaar.",
+  "publishedAt": "2026-11-15",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Timmerman *gezocht*",
+                  "subtitle": "Gezocht: een enthousiaste, bedreven timmerman of -vrouw om deze unieke woonwagen vooral van buiten op te knappen. Het hout ligt al klaar; wat ik niet heb, is de tijd en energie om het zelf te doen.",
+                  "image": "/woonwagen/voorkant-en-zijkant.jpg",
+                  "buttonLabel": "Neem contact op",
+                  "buttonUrl": "#contact",
+                  "variant": "open"
+                }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "[Po polsku](/woonwagen/pl)"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "De wagen",
+                  "markdown": "Een gypsy caravan, een zigeunerwagen, in 1978 met de hand gemaakt in Ede. Hij staat nu weer in Ede, en daar kan en mag eraan verbouwd worden. Er is stroom.\n\nDe wagen is vooral uniek vanwege de binnenkant: uitbundig houtsnijwerk en gegraveerde ruiten en spiegels. Een aantal jaar geleden is de linkerzijde al gerestaureerd; nu is de rechterzijde aan de beurt, de kant met de zijdeur. Links en rechts gelden gezien vanaf de erker aan de achterkant, kijkend naar de voorkant met de dubbele deuren (zoals de bestuurderskant in een auto links is)."
+                }
+              },
+              {
+                "type": "table",
+                "config": {
+                  "headers": [
+                    "",
+                    ""
+                  ],
+                  "rows": [
+                    [
+                      "Type",
+                      "Gypsy caravan (zigeunerwagen), handgemaakt"
+                    ],
+                    [
+                      "Gebouwd",
+                      "1978, in Ede"
+                    ],
+                    [
+                      "Maten",
+                      "11 × 3 m, exclusief dissel"
+                    ],
+                    [
+                      "Standplaats",
+                      "Ede; verbouwen ter plekke mag"
+                    ],
+                    [
+                      "Voorzieningen",
+                      "Stroom aanwezig"
+                    ],
+                    [
+                      "Materiaal",
+                      "Het benodigde hout ligt al in de wagen"
+                    ]
+                  ],
+                  "striped": true
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "toc",
+                "config": {
+                  "title": "Op deze pagina",
+                  "depth": "2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Huidige staat: buiten",
+                  "columns": 3,
+                  "images": [
+                    {
+                      "src": "/woonwagen/rechterzijde-bos.jpg",
+                      "alt": "De rechterzijde van de wagen in het bos: crème boven, geel onder, een groot raam, de zijdeur open en twee ramen",
+                      "caption": "De rechterzijde, die gedaan moet worden"
+                    },
+                    {
+                      "src": "/woonwagen/rechterzijde.jpg",
+                      "alt": "De rechterzijde schuin van voren, met het gesneden hoekstuk onder de luifel",
+                      "caption": "Rechterzijde, oktober 2026"
+                    },
+                    {
+                      "src": "/woonwagen/erker.jpg",
+                      "alt": "De achterkant met de erker: een groot raam onder het gebogen dak",
+                      "caption": "De erker aan de achterkant"
+                    },
+                    {
+                      "src": "/woonwagen/voordeuren.jpg",
+                      "alt": "De dubbele voordeuren met gesneden panelen onder de gebogen dakluifel",
+                      "caption": "De voordeuren met gesneden panelen"
+                    },
+                    {
+                      "src": "/woonwagen/zijaanzicht.jpg",
+                      "alt": "De linkerzijde: witte verticale schroten en oranje kozijnen",
+                      "caption": "De linkerzijde, al gerestaureerd"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "mediatext",
+                "config": {
+                  "title": "Het hart van de wagen: binnen",
+                  "src": "/woonwagen/houtsnijwerk-detail.jpg",
+                  "alt": "Detail van het houtsnijwerk: gesneden bladmotieven en krullen in donker hout",
+                  "markdown": "Wat deze wagen bijzonder maakt, zit binnen: het houtsnijwerk boven de doorgangen en de gegraveerde ruiten en spiegels. Het werk aan de buitenkant is er ook om dat te beschermen.",
+                  "imageSide": "right",
+                  "imageWidth": "half"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Huidige staat: binnen",
+                  "columns": 3,
+                  "images": [
+                    {
+                      "src": "/woonwagen/vitrinekast.jpg",
+                      "alt": "Een gebogen vitrinekast met gegraveerd glas en houtsnijwerk",
+                      "caption": "Vitrinekast met gegraveerd glas"
+                    },
+                    {
+                      "src": "/woonwagen/spiegel-en-kachel.jpg",
+                      "alt": "Een gegraveerde spiegel in een gesneden lijst boven een potkachel",
+                      "caption": "Gegraveerde spiegel en kachel"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-erker.jpg",
+                      "alt": "Het interieur richting de erker, met ramen aan drie kanten",
+                      "caption": "Binnen, richting de erker"
+                    },
+                    {
+                      "src": "/woonwagen/dakconstructie-binnen.jpg",
+                      "alt": "Het open plafond: gebogen dakspanten met houten beschot, en een gesneden boog boven de doorgang",
+                      "caption": "De dakconstructie van binnen"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-met-hout.jpg",
+                      "alt": "Interieur met een stapel latten en planken die klaarliggen voor het werk",
+                      "caption": "Het hout ligt klaar"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-doorkijk.jpg",
+                      "alt": "Doorkijk door de wagen onder een gesneden boog",
+                      "caption": "Doorkijk door de wagen"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "title": "Het werk per onderdeel",
+                  "headers": [
+                    "Onderdeel",
+                    "Nu",
+                    "Wat er moet gebeuren",
+                    "Wie",
+                    "Materiaal / maten"
+                  ],
+                  "rows": [
+                    [
+                      "Rechterzijde (met zijdeur): houten skelet en schroten",
+                      "De linkerzijde is enkele jaren geleden gerestaureerd; de rechter nog niet",
+                      "Alle schroten vervangen en het houten skelet weer netjes maken. Dit is het grote werk.",
+                      "Timmerman (buiten)",
+                      "Hout ligt klaar in de wagen. Wand 190 hoog, 460 + deur 80 + 460 lang. Schroten ca. 8,5 cm zichtbaar."
+                    ],
+                    [
+                      "Raamkozijnen rechterzijde",
+                      "Vrij gewone kozijnen: 242,5 × 105 en twee van 133 × 105. Aangetast in de hoeken: soms bij de dorpels, soms bovenin",
+                      "Herstellen in de hoeken (dorpels en bovenregels), of in zijn geheel vervangen",
+                      "Timmerman",
+                      "Zie de maatschets"
+                    ],
+                    [
+                      "Zijdeur (idee)",
+                      "Enkele deur, 80 × 196",
+                      "Eventueel vergroten naar een dubbele deur (die ligt er al); het raam ernaast wordt dan smaller. Geeft meer ruimte en openheid.",
+                      "Timmerman",
+                      "Dubbele deur aanwezig"
+                    ],
+                    [
+                      "Dak: constructie",
+                      "Dicht, maar twee balken zijn ingezakt, richting de achterkant",
+                      "Het dak optillen en de twee balken weer in positie brengen",
+                      "Timmerman",
+                      "[aanvullen]"
+                    ],
+                    [
+                      "Dak: bedekking (bitumen)",
+                      "Nu nog dicht",
+                      "Na het optillen waarschijnlijk opnieuw verhitten, zodat het weer dicht is",
+                      "Waarschijnlijk een dakdekker",
+                      "[aanvullen]"
+                    ],
+                    [
+                      "Voor- en achterkant",
+                      "Aan de voorkant bladdert de verf van de dakrand en de luifel",
+                      "Alle schroten vervangen; dakrand en luifel herzien",
+                      "Timmerman",
+                      "[aanvullen]"
+                    ],
+                    [
+                      "Binnenkant",
+                      "Houtsnijwerk, gegraveerde ruiten en spiegels",
+                      "[aanvullen]",
+                      "Iemand met ervaring in binnenrenovatie",
+                      "[aanvullen]"
+                    ]
+                  ],
+                  "striped": true
+                }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Het werk kan in delen: iemand die meer van de buitenkant is, of juist meer van de binnenkant. Voor het dak is waarschijnlijk een dakdekker nodig."
+                }
+              },
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Maten van de rechterzijde",
+                  "columns": 2,
+                  "images": [
+                    {
+                      "src": "/woonwagen/maatschets-rechterzijde.jpg",
+                      "alt": "Maatschets van de rechterzijde op ruitjespapier, schaal 1:40: wand 190 hoog, 460 + 80 + 460 lang, ramen 242,5, 133 en 133 breed en 105 hoog, deur 80 × 196",
+                      "caption": "Maatschets rechterzijde (1:40), in cm"
+                    },
+                    {
+                      "src": "/woonwagen/schroten-maat.jpg",
+                      "alt": "Vijf nieuwe schroten tegen de wand met een meetlint: samen ongeveer 42 cm",
+                      "caption": "Nieuwe schroten: vijf stuks ≈ 42 cm"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Schetsen van de ingrepen",
+                  "markdown": "Een vereenvoudigd model van de wagen, met de rechterzijde op de maten van de maatschets. De kleuren betekenen overal hetzelfde:\n\n- **Oranje**: wat er nu zit en aangepakt moet worden.\n- **Blauw**: hoe het wordt: nieuwe delen, of de stand waarin het hoort.\n\nSchematisch: de rest is van foto's geschat, en de doorzakking van het dak is overdreven getekend."
+                }
+              },
+              {
+                "type": "gallery",
+                "config": {
+                  "columns": 2,
+                  "images": [
+                    {
+                      "src": "/woonwagen/schets-overzicht.jpg",
+                      "alt": "Schets van de rechterzijde in kleur: crème boven, geel onder, zijdeur in oranje, dissel rechts",
+                      "caption": "De rechterzijde zoals hij nu is"
+                    },
+                    {
+                      "src": "/woonwagen/schets-zijwand.jpg",
+                      "alt": "Schets van de rechterzijde met de schroten eraf: het houten skelet in oranje, voorin nieuwe schroten in blauw",
+                      "caption": "Rechterzijde: alle schroten vervangen (blauw), skelet herstellen (oranje)"
+                    },
+                    {
+                      "src": "/woonwagen/schets-rechterzijde-nu.jpg",
+                      "alt": "Aanzicht van de rechterzijde nu: de enkele deur en het raam ernaast in oranje",
+                      "caption": "Rechterzijde nu: enkele deur en het raam ernaast"
+                    },
+                    {
+                      "src": "/woonwagen/schets-rechterzijde-voorstel.jpg",
+                      "alt": "Aanzicht van de rechterzijde met een dubbele deur en een smaller raam ernaast, in blauw",
+                      "caption": "Idee: dubbele deur en een smaller raam"
+                    },
+                    {
+                      "src": "/woonwagen/schets-dak.jpg",
+                      "alt": "Schets van het dak met een stuk bedekking weggelaten: twee ingezakte spanten in oranje, hun juiste stand in blauw",
+                      "caption": "Dak: optillen, de twee ingezakte balken (oranje) terug in hun stand (blauw); daarna de bitumen opnieuw verhitten om dicht te maken"
+                    },
+                    {
+                      "src": "/woonwagen/schets-kozijnen.jpg",
+                      "alt": "Schets van de rechterzijde met de raamkozijnen in oranje",
+                      "caption": "Raamkozijnen rechterzijde: hoeken herstellen (dorpels, bovenin) of vervangen"
+                    },
+                    {
+                      "src": "/woonwagen/schets-voorgevel.jpg",
+                      "alt": "Schets van de voorgevel met deuren en luifelrand in oranje",
+                      "caption": "Voorgevel: alle schroten vervangen; deuren en luifelrand herzien"
+                    },
+                    {
+                      "src": "/woonwagen/schets-achtergevel.jpg",
+                      "alt": "Schets van de achtergevel met de erker in oranje",
+                      "caption": "Achtergevel en erker: alle schroten vervangen"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "divider",
+                "config": {
+                  "style": "scope",
+                  "size": 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Praktisch",
+                  "markdown": "- **Planning:** zo snel mogelijk. De wagen staat buiten, dus het hangt af van het weer; nu al plannen voor het vroege voorjaar is ook goed.\n- **Waar:** Ede, ter plekke. Er is stroom.\n- **Omvang:** het werk kan in delen, buiten, binnen of het dak.",
+                  "tone": "muted"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "contact",
+                "config": {
+                  "title": "Timmerman? Neem contact op",
+                  "intro": "Ben jij die timmerman of -vrouw, of ken je iemand? Laat het me weten! Bellen of WhatsApp werkt voor mij het handigst: zet je nummer in je bericht, dan neem ik contact op.",
+                  "anker": "contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "main",
+  "items": [
+    { "label": "Rack", "page": "home" },
+    { "label": "Woonwagen", "page": "woonwagen" }
+  ]
+}

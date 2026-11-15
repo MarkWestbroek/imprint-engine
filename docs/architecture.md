@@ -1873,6 +1873,42 @@ Stappen voor een nieuwe site:
 
 De kern verandert daarbij niet — dat is de kern van het ontwerp.
 
+Een zevende site, `sites/markwestbroek`, is **Marks persoonlijke site**
+(poort 3800, markwestbroek.nl): pagina's en menu uit de store, geen plugins.
+De voorpagina is één eigen domeinwidget, `patchbay`:
+
+```mermaid
+flowchart LR
+    C["config (zod, registry.ts)<br/>naam + modules[]"] --> V["Patchbay (client)<br/>src/components/patchbay.tsx"]
+    V --> D["DOM: bronmodule met uitgangen,<br/>modules met ingang"]
+    D -- "getBoundingClientRect<br/>(ResizeObserver, fonts.ready)" --> M["jackposities"]
+    M --> K["SVG-paden per kabel<br/>(requestAnimationFrame)"]
+```
+
+- De kabels worden uit de **gemeten** jackposities getekend, niet uit vaste
+  coördinaten: het rack mag dus omvloeien en modules mogen erbij of eraf.
+- Breed (rack ≥ 900 px): kabels naar een rij erboven lopen door de goot onder
+  die rij, kabels naar dezelfde hoogte hangen onder het rack. Smal: alleen een
+  kort stompje per jack, anders loopt de kabel over de tekst.
+- Beweging: een lichte deining per kabel; de aangewezen kabel (module of
+  uitgang, muis of toetsenbord) zwaait harder en de rest dimt. Bij
+  `prefers-reduced-motion` staat alles stil.
+- Kleuren en maten staan als tokens (`--pb-*`) in `globals.css`.
+- De widget `contact` is een formulier met een server action
+  (`src/app/contact-action.ts`) die `sendContactMessage` uit de engine
+  aanroept: honeypot, limiet per IP, mail naar `CONTACT_TO` (omgeving, nooit in
+  de pagina). Zonder SMTP logt hij in ontwikkeling en meldt hij in productie
+  dat het formulier nog niet werkt. De sectie krijgt serverside een `id`, dus
+  een knop naar `#contact` werkt zonder script. De teksten staan per taal
+  (`nl`, `pl`) in `src/lib/contact-teksten.ts`, gedeeld door formulier en action.
+- Vertaalde pagina's zijn eigen pagina's met de taalcode als laatste
+  slugdeel (`woonwagen/pl`); `PageView` zet daar `lang` op de inhoud
+  (`pageLang`). `<html lang>` blijft die van de site, want `Locale` in
+  content-core kent alleen `en` en `nl`; een echte meertalige site (zoals
+  `sites/taal`) is een ander patroon.
+- De woonwagen is een sectie (`/woonwagen`) van dezelfde instantie;
+  `woonwagen.markwestbroek.nl` is alleen een doorverwijzing in Caddy.
+
 ## 8. Tests: contractsuite en karakterisatie
 
 `npm test` draait in elke workspace diens eigen `test`-script (`npm run test

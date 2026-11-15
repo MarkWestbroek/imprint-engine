@@ -1,0 +1,165 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer en de standaardwidgets, met classes
+ * die buiten deze site-map staan; Tailwind moet ze dus expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+
+/*
+ * Huisstijl "Patchbay": een donker rack met aluminium modules en gekleurde
+ * patchkabels. De vier kabelkleuren zijn de enige felle kleuren; de rest is
+ * grijs. Letters: Big Shoulders voor de grote koppen, Urbanist voor de naam
+ * op de bronmodule (gezet als het logo), smalle Plex voor de rest, mono voor labels.
+ */
+:root {
+	--background: #26282c;
+	--surface: #1b1c1f;
+	--border: #45484e;
+	--foreground: #f1efe8;
+	--muted: #b9b7b0;
+	--accent: #f08a3c;
+	--accent-strong: #f6a868;
+	--accent-2: #45b5d6;
+	/* Het rack. */
+	--pb-rail: #0c0d0e;
+	--pb-panel: #dcdad3;
+	--pb-panel-ink: #17181a;
+	--pb-panel-muted: #3f4247;
+	--pb-source: #17181a;
+	--pb-metal: #8d8b85;
+	--pb-oranje: #f08a3c;
+	--pb-blauw: #45b5d6;
+	--pb-geel: #ecc94b;
+	--pb-roze: #e2578a;
+	--mw-width: 1240px;
+	color-scheme: dark;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3). */
+@theme inline {
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
+}
+
+/* In Tailwinds base-laag, zodat utilities (zoals de tekstkleur van widgetknoppen) winnen. */
+@layer base {
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; }
+	body {
+		margin: 0;
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 18px;
+		line-height: 1.55;
+		-webkit-font-smoothing: antialiased;
+	}
+	a { color: inherit; text-decoration: none; }
+}
+
+.mw-container { max-width: var(--mw-width); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+.mw-mono { font-family: var(--font-mono), ui-monospace, monospace; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+
+/* Kop en voet: mono, in kapitalen, een rail eronder of erboven. */
+.mw-header-row { min-height: 76px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 28px; }
+.mw-nav { display: flex; flex-wrap: wrap; gap: 4px 28px; color: var(--muted); }
+.mw-nav a { padding: 12px 0; }
+.mw-nav a:hover, .mw-nav a.is-active { color: var(--foreground); }
+.mw-nav a.is-active { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+.mw-footer { border-top: 2px solid var(--pb-rail); padding: 24px 0 40px; color: var(--muted); }
+.mw-footer-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 28px; }
+.mw-footer a:hover { color: var(--foreground); }
+
+/* De pagina: de widgets doen de opmaak, hier alleen ruimte en leesbaarheid. */
+.mw-main { padding: 24px 0 88px; }
+.mw-page h1 { font-family: var(--font-display), var(--font-sans), sans-serif; font-size: clamp(44px, 7.4vw, 96px); line-height: .95; font-weight: 900; letter-spacing: .01em; text-transform: uppercase; margin: 24px 0 24px; }
+.mw-page h2 { font-size: 26px; font-weight: 600; text-transform: uppercase; letter-spacing: .01em; }
+
+.eyebrow { text-transform: uppercase; font-size: 12px; font-weight: 700; letter-spacing: .12em; color: var(--muted); }
+.markdown { line-height: 1.6; }
+.markdown > * + * { margin-top: 1em; }
+.markdown h2 { margin-top: 1.6em; }
+.markdown h3 { font-size: 20px; font-weight: 600; margin-top: 1.4em; }
+.markdown a { color: var(--accent-strong); text-decoration: underline; text-underline-offset: 3px; }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown code { font-size: .9em; padding: .1em .35em; border-radius: 4px; background: var(--surface); }
+.markdown table { border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
+.markdown blockquote { border-left: 3px solid var(--accent); padding-left: 16px; color: var(--muted); }
+
+/* ── De patchbay (src/components/patchbay.tsx) ─────────────────────────── */
+.pb { display: grid; gap: 16px; }
+.pb-kop { margin: 32px 0 0 !important; }
+.pb-intro { margin: 0 0 24px; max-width: 34em; font-size: 21px; color: var(--muted); text-wrap: pretty; }
+/* Ruimte onder het rack: daar hangen de kabels van de onderste rij. */
+.pb-frame { padding-bottom: 120px; }
+.pb-rack { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; padding: 14px; background: var(--pb-rail); }
+
+.pb-source, .pb-mod { position: relative; display: flex; flex-direction: column; gap: 8px; padding: 32px 16px 72px; }
+.pb-source { grid-column: 1 / -1; background: var(--pb-source); color: var(--foreground); padding: 32px 22px 22px; gap: 12px; }
+.pb-mod { min-height: 250px; background: var(--pb-panel); color: var(--pb-panel-ink); transition: transform .18s ease, filter .18s ease; }
+a.pb-mod:hover, a.pb-mod:focus-visible { transform: translateY(-3px); outline: none; }
+a.pb-mod:focus-visible { box-shadow: 0 0 0 3px var(--pb-c); }
+/* Schroeven in de bovenhoeken. */
+.pb-source::before, .pb-source::after, .pb-mod::before, .pb-mod::after { content: ""; position: absolute; top: 9px; width: 9px; height: 9px; border-radius: 50%; background: var(--pb-metal); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--pb-metal) 70%, black); }
+.pb-source::before, .pb-mod::before { left: 9px; }
+.pb-source::after, .pb-mod::after { right: 9px; }
+
+.pb-tag { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+/* De naam als het logo: twee staande lijnen, de voornaam groot, de achternaam klein eronder. */
+.pb-name { align-self: flex-start; display: grid; margin: 6px 0; padding: 0 14px 6px; border-inline: 2px solid currentColor; font-family: var(--font-logo), var(--font-sans), sans-serif; font-weight: 300; text-transform: none; }
+.pb-name > :first-child { font-size: clamp(72px, 8vw, 96px); line-height: .9; letter-spacing: -.01em; }
+.pb-name > :nth-child(2) { font-size: clamp(30px, 3.4vw, 40px); line-height: 1.05; letter-spacing: .06em; text-transform: lowercase; }
+.pb-title { font-size: 18px; line-height: 1.05; font-weight: 700; text-transform: uppercase; overflow-wrap: break-word; hyphens: auto; }
+.pb-text { font-size: 15px; line-height: 1.35; color: var(--pb-panel-muted); }
+.pb-adres { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; overflow-wrap: anywhere; }
+
+.pb-oranje { --pb-c: var(--pb-oranje); }
+.pb-blauw { --pb-c: var(--pb-blauw); }
+.pb-geel { --pb-c: var(--pb-geel); }
+.pb-roze { --pb-c: var(--pb-roze); }
+
+.pb-jack { display: block; width: 24px; height: 24px; flex: none; border-radius: 50%; border: 4px solid var(--pb-metal); background: var(--pb-rail); }
+.pb-mod .pb-jack { position: absolute; left: calc(50% - 12px); bottom: 26px; }
+.pb-outs { margin-top: auto; padding-top: 40px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 36px 8px; }
+.pb-out { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.pb-out.is-active { color: var(--pb-c); }
+
+/* Lampje: uit, aan bij aanwijzen; dat van de bron knippert traag. */
+.pb-led { position: absolute; top: 10px; left: calc(50% - 4px); width: 8px; height: 8px; border-radius: 50%; background: color-mix(in srgb, var(--pb-metal) 60%, black); }
+.pb-mod.is-active .pb-led { background: var(--pb-c); box-shadow: 0 0 10px 2px var(--pb-c); }
+.pb-led-on { background: var(--pb-oranje); animation: pb-pulse 2.4s ease-in-out infinite; }
+
+.pb-cables { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.pb-cable { color: var(--pb-c); animation: pb-plug .9s ease-out both; }
+.pb-cable > * { transition: opacity .2s ease; }
+.pb-cable-line { fill: none; stroke: currentColor; stroke-width: 6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: var(--pb-dash, 0); transition: stroke-width .2s ease; }
+.pb-cable-shadow { fill: none; stroke: #000; stroke-opacity: .35; stroke-width: 9; stroke-linecap: round; transform: translateY(4px); stroke-dasharray: 1; stroke-dashoffset: var(--pb-dash, 0); }
+.pb-plug { fill: currentColor; stroke: var(--pb-rail); stroke-width: 3; }
+.pb-rack.has-active .pb-cable:not(.is-active) > * { opacity: .28; }
+.pb-rack.has-active .pb-mod:not(.is-active) { filter: brightness(.82); }
+.pb-cable.is-active .pb-cable-line { stroke-width: 8; }
+
+@property --pb-dash { syntax: "<number>"; inherits: true; initial-value: 0; }
+@keyframes pb-plug { from { --pb-dash: 1; opacity: 0; } 15% { opacity: 1; } to { --pb-dash: 0; opacity: 1; } }
+@keyframes pb-pulse { 50% { opacity: .35; } }
+
+/* Breed: de bron links over twee kolommen, vier modules ernaast, een goot tussen de rijen voor de kabels. */
+@media (min-width: 940px) {
+	.pb-rack { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 48px; }
+	.pb-source { grid-column: 1 / span 2; }
+	.pb-mod { min-height: 280px; }
+	.pb-title { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.pb-cable, .pb-led-on { animation: none; }
+	.pb-mod { transition: none; }
+}

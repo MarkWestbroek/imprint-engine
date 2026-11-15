@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Nieuwe site: markwestbroek.nl** (`sites/markwestbroek`, poort 3800): Marks
+  persoonlijke site. De voorpagina is een eigen widget `patchbay`: een rack met
+  een bronmodule en per activiteit een module, verbonden met bewegende
+  patchkabels die uit de gemeten jackposities worden getekend. De woonwagen is
+  een sectie (`/woonwagen`); `woonwagen.markwestbroek.nl` stuurt daarheen door.
+  Compose-service, Dockerfile-regel en Caddy-blokken staan klaar; nog niet live.
+  Eigen widget `contact`: een contactformulier dat via `sendContactMessage`
+  naar `CONTACT_TO` mailt, zodat er geen adres op de site hoeft te staan.
+  De woonwagenpagina (oproep voor een timmerman: staat, maten, foto's en
+  3D-schetsen uit `tools/woonwagen-schetsen.py`, Blender) staat er ook in het
+  Pools (`/woonwagen/pl`); het contactformulier kent `taal: nl|pl` en een
+  vertaalde pagina krijgt `lang` op haar inhoud.
 - **Taaltraining: de titel van de voorpagina in een serif** (Fraunces), het
   accent cursief. De hero-widget heeft daarvoor de class `hero-title` als
   haakje voor sites; zonder eigen CSS verandert er niets.

@@ -1,0 +1,70 @@
+{
+  "slug": "home",
+  "title": "Mark Westbroek",
+  "description": "Mark Westbroek: architect, muzikant, therapeut, fotograaf en bouwer van software. Van hieruit vind je de weg naar elk van die werelden.",
+  "publishedAt": "2026-11-15",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "patchbay",
+                "config": {
+                  "kop": "Eén bron, acht uitgangen",
+                  "intro": "Architect, muzikant, therapeut, fotograaf en bouwer van software. Volg een kabel.",
+                  "naam": "Mark Westbroek",
+                  "regel": "Utrecht",
+                  "modules": [
+                    { "titel": "Architectuur", "tekst": "Paratmos: enterprise-architectuur, requirements en modelgedreven werken.", "url": "https://paratmos.nl", "adres": "paratmos.nl", "jack": "ARCH", "kleur": "oranje" },
+                    { "titel": "MusicBrain", "tekst": "Muziekelektronica: boards, componenten en releases.", "url": "https://musicbrain.nl", "adres": "musicbrain.nl", "jack": "MB", "kleur": "blauw" },
+                    { "titel": "Muziek", "tekst": "Eigen muziek. Binnenkort hier te beluisteren.", "adres": "binnenkort", "jack": "MUZ", "kleur": "geel" },
+                    { "titel": "Fotografie", "tekst": "Kunstfotografie rond de natuurlijke schoonheid van het lichaam.", "url": "https://pf.markwestbroek.nl", "adres": "pf.markwestbroek.nl", "jack": "FOTO", "kleur": "roze" },
+                    { "titel": "Therapie", "tekst": "Postural Integration in Utrecht: lichaamswerk, adem en gesprek.", "url": "https://pi.markwestbroek.nl", "adres": "pi.markwestbroek.nl", "jack": "PI", "kleur": "roze" },
+                    { "titel": "Taal", "tekst": "Nederlands voor Polen: 45 korte lessen, vanaf de eerste zin.", "url": "https://taal.imprint-engine.nl", "adres": "taal.imprint-engine.nl", "jack": "TAAL", "kleur": "geel" },
+                    { "titel": "Omnium", "tekst": "De modelwerkbank: één canoniek model, en daaruit een register.", "url": "https://omnium.imprint-engine.nl", "adres": "omnium.imprint-engine.nl", "jack": "OMN", "kleur": "blauw" },
+                    { "titel": "Imprint", "tekst": "De publicatiemotor onder deze site, en onder de andere.", "url": "https://imprint-engine.nl", "adres": "imprint-engine.nl", "jack": "IMP", "kleur": "oranje" }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Mensen",
+                  "markdown": "**[Ewa Grabowska](https://psycholog.pi-utrecht.nl)**  \nPsycholog dla Polaków w Holandii: psychologische hulp en therapie in het Pools."
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Tijdelijk ingeplugd: de woonwagen",
+                  "markdown": "De woonwagen wordt gerenoveerd, en daar zoek ik een timmerman voor.",
+                  "tone": "muted",
+                  "buttonLabel": "Bekijk het project",
+                  "buttonUrl": "/woonwagen"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

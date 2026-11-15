@@ -1,0 +1,422 @@
+{
+  "slug": "woonwagen/pl",
+  "title": "Wóz cygański – szukam stolarza",
+  "description": "Szukam stolarza lub cieśli do odnowienia ręcznie zbudowanego wozu cygańskiego z 1978 roku, przede wszystkim z zewnątrz. Wóz stoi w Ede (Holandia), drewno jest już na miejscu.",
+  "publishedAt": "2026-11-15",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Szukam *stolarza*",
+                  "subtitle": "Szukam stolarza lub cieśli (kobiety albo mężczyzny) z zapałem i doświadczeniem do odnowienia tego wyjątkowego wozu mieszkalnego, przede wszystkim z zewnątrz. Całe potrzebne drewno jest już na miejscu; brakuje mi tylko czasu i sił, żeby zrobić to samemu.",
+                  "image": "/woonwagen/voorkant-en-zijkant.jpg",
+                  "buttonLabel": "Napisz do mnie",
+                  "buttonUrl": "#kontakt",
+                  "variant": "open"
+                }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "[Nederlands](/woonwagen)"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 2,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Wóz",
+                  "markdown": "To wóz cygański, zbudowany ręcznie w 1978 roku w Ede w Holandii. Dziś znowu stoi w Ede i można go tam remontować – jest na to zgoda. Na miejscu jest prąd.\n\nWóz jest wyjątkowy przede wszystkim ze względu na wnętrze: bogate rzeźbienia w drewnie oraz grawerowane szyby i lustra. Kilka lat temu odnowiono już lewą stronę wozu; teraz kolej na prawą, tę z bocznymi drzwiami. Strona lewa i prawa – patrząc od wykuszu z tyłu w stronę przodu z podwójnymi drzwiami (tak jak w samochodzie strona kierowcy jest po lewej)."
+                }
+              },
+              {
+                "type": "table",
+                "config": {
+                  "headers": [
+                    "",
+                    ""
+                  ],
+                  "rows": [
+                    [
+                      "Typ",
+                      "Wóz cygański, wykonany ręcznie"
+                    ],
+                    [
+                      "Rok budowy",
+                      "1978, Ede"
+                    ],
+                    [
+                      "Wymiary",
+                      "11 × 3 m, bez dyszla"
+                    ],
+                    [
+                      "Lokalizacja",
+                      "Ede (Holandia); prace na miejscu są dozwolone"
+                    ],
+                    [
+                      "Media",
+                      "Na miejscu jest prąd"
+                    ],
+                    [
+                      "Materiał",
+                      "Potrzebne drewno leży już w wozie"
+                    ]
+                  ],
+                  "striped": true
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "toc",
+                "config": {
+                  "title": "Na tej stronie",
+                  "depth": "2"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Obecny stan: z zewnątrz",
+                  "columns": 3,
+                  "images": [
+                    {
+                      "src": "/woonwagen/rechterzijde-bos.jpg",
+                      "alt": "Prawa strona wozu w lesie: kremowa u góry, żółta na dole, duże okno, otwarte boczne drzwi i dwa okna",
+                      "caption": "Prawa strona, do odnowienia"
+                    },
+                    {
+                      "src": "/woonwagen/rechterzijde.jpg",
+                      "alt": "Prawa strona wozu z ukosa od przodu, z rzeźbionym narożnikiem pod daszkiem",
+                      "caption": "Prawa strona, październik 2026"
+                    },
+                    {
+                      "src": "/woonwagen/erker.jpg",
+                      "alt": "Tył wozu z wykuszem: duże okno pod łukowym dachem",
+                      "caption": "Wykusz z tyłu"
+                    },
+                    {
+                      "src": "/woonwagen/voordeuren.jpg",
+                      "alt": "Podwójne drzwi wejściowe z rzeźbionymi płycinami pod łukowatym daszkiem",
+                      "caption": "Drzwi wejściowe z rzeźbionymi płycinami"
+                    },
+                    {
+                      "src": "/woonwagen/zijaanzicht.jpg",
+                      "alt": "Lewa strona: białe pionowe deski i pomarańczowe ramy okienne",
+                      "caption": "Lewa strona, już odnowiona"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "mediatext",
+                "config": {
+                  "title": "Serce wozu: wnętrze",
+                  "src": "/woonwagen/houtsnijwerk-detail.jpg",
+                  "alt": "Zbliżenie rzeźbień: motywy liści i spirale w ciemnym drewnie",
+                  "markdown": "To, co czyni ten wóz wyjątkowym, jest w środku: rzeźbienia nad przejściami oraz grawerowane szyby i lustra. Prace na zewnątrz mają również to wszystko chronić.",
+                  "imageSide": "right",
+                  "imageWidth": "half"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Obecny stan: wnętrze",
+                  "columns": 3,
+                  "images": [
+                    {
+                      "src": "/woonwagen/vitrinekast.jpg",
+                      "alt": "Łukowa witryna z grawerowanym szkłem i rzeźbieniami",
+                      "caption": "Witryna z grawerowanym szkłem"
+                    },
+                    {
+                      "src": "/woonwagen/spiegel-en-kachel.jpg",
+                      "alt": "Grawerowane lustro w rzeźbionej ramie nad piecykiem",
+                      "caption": "Grawerowane lustro i piecyk"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-erker.jpg",
+                      "alt": "Wnętrze w stronę wykuszu, z oknami z trzech stron",
+                      "caption": "Wnętrze, w stronę wykuszu"
+                    },
+                    {
+                      "src": "/woonwagen/dakconstructie-binnen.jpg",
+                      "alt": "Odsłonięty sufit: łukowe krokwie z deskowaniem i rzeźbiony łuk nad przejściem",
+                      "caption": "Konstrukcja dachu od środka"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-met-hout.jpg",
+                      "alt": "Wnętrze ze stosem listew i desek przygotowanych do pracy",
+                      "caption": "Drewno jest już przygotowane"
+                    },
+                    {
+                      "src": "/woonwagen/interieur-doorkijk.jpg",
+                      "alt": "Widok przez wnętrze wozu pod rzeźbionym łukiem",
+                      "caption": "Widok przez wóz"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "table",
+                "config": {
+                  "title": "Zakres prac",
+                  "headers": [
+                    "Element",
+                    "Stan obecny",
+                    "Co trzeba zrobić",
+                    "Kto",
+                    "Materiał / wymiary"
+                  ],
+                  "rows": [
+                    [
+                      "Prawa strona (z bocznymi drzwiami): drewniany szkielet i deski elewacyjne",
+                      "Lewą stronę odnowiono kilka lat temu, prawej jeszcze nie",
+                      "Wymienić wszystkie deski i doprowadzić drewniany szkielet do porządku. To główna część pracy.",
+                      "Stolarz / cieśla (prace zewnętrzne)",
+                      "Drewno jest już w wozie. Ściana: wysokość 190, długość 460 + drzwi 80 + 460. Deski: ok. 8,5 cm szerokości widocznej."
+                    ],
+                    [
+                      "Ramy okienne, prawa strona",
+                      "Dość zwyczajne ramy: 242,5 × 105 i dwie po 133 × 105. Uszkodzone w narożnikach: czasem na dole ramy, czasem u góry",
+                      "Naprawić narożniki (dolne i górne belki ram) albo wymienić ramy w całości",
+                      "Stolarz",
+                      "Zob. szkic z wymiarami"
+                    ],
+                    [
+                      "Boczne drzwi (pomysł)",
+                      "Pojedyncze drzwi, 80 × 196",
+                      "Ewentualnie poszerzyć do drzwi podwójnych (już są na miejscu); okno obok byłoby wtedy węższe. Daje to więcej przestrzeni i otwartości.",
+                      "Stolarz",
+                      "Podwójne drzwi są na miejscu"
+                    ],
+                    [
+                      "Dach: konstrukcja",
+                      "Szczelny, ale dwie belki się zapadły, bliżej tyłu wozu",
+                      "Podnieść dach i przywrócić obie belki do właściwego położenia",
+                      "Stolarz / cieśla",
+                      "[do uzupełnienia]"
+                    ],
+                    [
+                      "Dach: pokrycie (papa)",
+                      "Na razie szczelne",
+                      "Po podniesieniu dachu prawdopodobnie ponownie zgrzać papę, żeby znów była szczelna",
+                      "Prawdopodobnie dekarz",
+                      "[do uzupełnienia]"
+                    ],
+                    [
+                      "Przód i tył wozu",
+                      "Na przodzie łuszczy się farba na krawędzi dachu i daszku",
+                      "Wymienić wszystkie deski; przejrzeć krawędź dachu i daszek",
+                      "Stolarz",
+                      "[do uzupełnienia]"
+                    ],
+                    [
+                      "Wnętrze",
+                      "Rzeźbienia, grawerowane szyby i lustra",
+                      "[do uzupełnienia]",
+                      "Osoba z doświadczeniem w renowacji wnętrz",
+                      "[do uzupełnienia]"
+                    ]
+                  ],
+                  "striped": true
+                }
+              },
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Prace można podzielić: może je wykonać ktoś, kto zna się raczej na pracach zewnętrznych, albo ktoś od wnętrz. Do dachu prawdopodobnie potrzebny będzie dekarz."
+                }
+              },
+              {
+                "type": "gallery",
+                "config": {
+                  "title": "Wymiary prawej strony",
+                  "columns": 2,
+                  "images": [
+                    {
+                      "src": "/woonwagen/maatschets-rechterzijde.jpg",
+                      "alt": "Szkic prawej strony z wymiarami na papierze w kratkę, skala 1:40: ściana 190 wysokości, 460 + 80 + 460 długości, okna 242,5, 133 i 133 szerokości i 105 wysokości, drzwi 80 × 196",
+                      "caption": "Szkic prawej strony (1:40), w cm"
+                    },
+                    {
+                      "src": "/woonwagen/schroten-maat.jpg",
+                      "alt": "Pięć nowych desek przy ścianie z miarką: razem około 42 cm",
+                      "caption": "Nowe deski: pięć sztuk ≈ 42 cm"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "title": "Szkice prac",
+                  "markdown": "Uproszczony model wozu; prawa strona według szkicu z wymiarami. Kolory znaczą wszędzie to samo:\n\n- **Pomarańczowy**: to, co jest teraz i wymaga naprawy.\n- **Niebieski**: jak ma być: nowe elementy albo położenie, w którym coś powinno się znaleźć.\n\nSzkice są schematyczne: reszta jest oszacowana na podstawie zdjęć, a ugięcie dachu jest celowo przesadzone."
+                }
+              },
+              {
+                "type": "gallery",
+                "config": {
+                  "columns": 2,
+                  "images": [
+                    {
+                      "src": "/woonwagen/schets-overzicht.jpg",
+                      "alt": "Szkic prawej strony w kolorze: kremowa u góry, żółta na dole, boczne drzwi pomarańczowe, dyszel po prawej",
+                      "caption": "Prawa strona w obecnym stanie"
+                    },
+                    {
+                      "src": "/woonwagen/schets-zijwand.jpg",
+                      "alt": "Szkic prawej strony bez desek: drewniany szkielet na pomarańczowo, z przodu nowe deski na niebiesko",
+                      "caption": "Prawa strona: wymiana wszystkich desek (niebieski), naprawa szkieletu (pomarańczowy)"
+                    },
+                    {
+                      "src": "/woonwagen/schets-rechterzijde-nu.jpg",
+                      "alt": "Widok prawej strony obecnie: pojedyncze drzwi i okno obok na pomarańczowo",
+                      "caption": "Prawa strona obecnie: pojedyncze drzwi i okno obok"
+                    },
+                    {
+                      "src": "/woonwagen/schets-rechterzijde-voorstel.jpg",
+                      "alt": "Widok prawej strony z podwójnymi drzwiami i węższym oknem obok, na niebiesko",
+                      "caption": "Pomysł: podwójne drzwi i węższe okno"
+                    },
+                    {
+                      "src": "/woonwagen/schets-dak.jpg",
+                      "alt": "Szkic dachu z częściowo zdjętym pokryciem: dwie zapadnięte krokwie na pomarańczowo, ich właściwe położenie na niebiesko",
+                      "caption": "Dach: podnieść, dwie zapadnięte belki (pomarańczowy) z powrotem na właściwe miejsce (niebieski); potem ponownie zgrzać papę"
+                    },
+                    {
+                      "src": "/woonwagen/schets-kozijnen.jpg",
+                      "alt": "Szkic prawej strony z ramami okiennymi na pomarańczowo",
+                      "caption": "Ramy okienne prawej strony: naprawa narożników (dół, góra) albo wymiana"
+                    },
+                    {
+                      "src": "/woonwagen/schets-voorgevel.jpg",
+                      "alt": "Szkic przedniej ściany z drzwiami i krawędzią daszka na pomarańczowo",
+                      "caption": "Przednia ściana: wymiana wszystkich desek; drzwi i krawędź daszka do przejrzenia"
+                    },
+                    {
+                      "src": "/woonwagen/schets-achtergevel.jpg",
+                      "alt": "Szkic tylnej ściany z wykuszem na pomarańczowo",
+                      "caption": "Tylna ściana i wykusz: wymiana wszystkich desek"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "divider",
+                "config": {
+                  "style": "scope",
+                  "size": 2
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Najważniejsze informacje",
+                  "markdown": "- **Termin:** jak najszybciej. Wóz stoi na zewnątrz, więc dużo zależy od pogody; można też już teraz umówić się na wczesną wiosnę.\n- **Gdzie:** Ede (Holandia), na miejscu. Jest prąd.\n- **Zakres:** prace można podzielić – zewnątrz, wnętrze albo dach.",
+                  "tone": "muted"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "contact",
+                "config": {
+                  "title": "Stolarz? Napisz do mnie",
+                  "intro": "Jesteś tą osobą albo znasz kogoś takiego? Daj mi znać! Najwygodniej jest dla mnie telefonicznie albo przez WhatsApp: wpisz swój numer w wiadomości, a odezwę się. Możesz pisać po polsku.",
+                  "anker": "kontakt",
+                  "taal": "pl"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
