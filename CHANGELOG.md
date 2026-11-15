@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: een woord opzoeken.** `/pl/nederlands/woorden` (*Słowa* in
+  het menu): typ een Nederlands woord en zie *de* of *het*, meervoud en
+  verkleinwoord, of bij een werkwoord alle vormen met *hebben*/*zijn*; zoekt
+  ook op vormen (*liep* → lopen). 2000 zelfstandige naamwoorden en 450
+  werkwoorden, tot ongeveer B1, uit Wiktionary en een frequentielijst
+  (CC BY-SA 4.0), gemaakt met `sites/taal/scripts/woorden-maken.ts`.
 - **Taaltraining: grammatica als naslagwerk.** Nieuw contenttype `grammatica`
   in plugin-taal: per onderwerp een tabel, de regel en de uitzonderingen, per
   taal van de lezer, met een alinea "Inaczej niż po polsku" en de lessen waarin

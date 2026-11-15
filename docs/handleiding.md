@@ -740,6 +740,24 @@ met tabellen) en eventueel `anders`. Een les wijst naar een onderwerp met
 `grammatica: [nl-tegenwoordige-tijd]`. Een onderwerp verschijnt pas als het
 in de taal van de site een titel en een tekst heeft.
 
+**Een woord opzoeken.** *Słowa* in het menu (`/pl/nederlands/woorden`) is
+een zoekveld voor Nederlandse woorden. Al tijdens het typen verschijnen de
+woorden die passen: "hu" geeft *het huis · de huizen*, *de hulp*, *huilen*…
+Een zelfstandig naamwoord toont *de* of *het*, het meervoud en het
+verkleinwoord. Een werkwoord toont de tegenwoordige tijd (ik, jij, hij/zij,
+wij/jullie/zij), de verleden tijd, het voltooid deelwoord met *hebben* of
+*zijn*, en of het regelmatig is. Je kunt ook op een vorm zoeken: "liep" vindt
+*lopen*. Elke vorm is aan te klikken om te horen.
+
+De lijst heeft 2000 zelfstandige naamwoorden en 450 werkwoorden, ongeveer tot
+niveau B1, gekozen op hoe vaak ze in gesproken Nederlands voorkomen. De
+vormen komen uit Wiktionary. Een fout herstel je in
+`sites/taal/woorden/nl-aanvullingen.json`: `hulp` (hebben, zijn of beide),
+`houd` (een woord dat erin moet) en `weg` (een woord dat eruit moet). Daarna
+maak je de lijst opnieuw met `scripts/woorden-maken.ts` (zie het commentaar
+bovenin). De lijst staat in de repo, niet in de admin: een wijziging gaat mee
+met de volgende uitrol.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`, de
