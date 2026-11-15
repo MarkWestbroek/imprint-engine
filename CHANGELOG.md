@@ -16,7 +16,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   een bronmodule en per activiteit een module, verbonden met bewegende
   patchkabels die uit de gemeten jackposities worden getekend. De woonwagen is
   een sectie (`/woonwagen`); `woonwagen.markwestbroek.nl` stuurt daarheen door.
-  Compose-service, Dockerfile-regel en Caddy-blokken staan klaar; nog niet live.
+  Live op de VPS sinds 15 november 2026 (compose-service, Dockerfile-regel,
+  Caddy-blokken).
   Eigen widget `contact`: een contactformulier dat via `sendContactMessage`
   naar `CONTACT_TO` mailt, zodat er geen adres op de site hoeft te staan.
   De woonwagenpagina (oproep voor een timmerman: staat, maten, foto's en

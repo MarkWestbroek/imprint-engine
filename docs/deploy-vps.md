@@ -426,7 +426,7 @@ docker compose build tools   # migrate/seed draaien in het tools-image; alleen e
 SITES=omnium ./deploy.sh
 ```
 
-**markwestbroek.nl** (`markwestbroek`, poort 3800; nog niet live): zelfde
+**markwestbroek.nl** (`markwestbroek`, poort 3800; live sinds 15 november 2026): zelfde
 patroon als de Omnium-site, zonder bucket. Op de VPS:
 
 ```bash
@@ -445,6 +445,11 @@ naar de VPS (geen AAAA naar een parkeeradres laten staan), de drie blokken uit
 [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
 `sudo systemctl reload caddy`. `pf.markwestbroek.nl` (Adobe Portfolio) en
 `pi.markwestbroek.nl` blijven bij hun eigen host: die records niet aanraken.
+Let op de zone bij Quickhost: `mail.markwestbroek.nl` heeft geen eigen record
+maar valt onder de wildcard `*.markwestbroek.nl` (laten staan!), en
+`webmail` was een CNAME naar het hoofddomein; die wijst nu naar
+`mail.markwestbroek.nl`. `www` en `woonwagen` kregen een eigen A-record
+(zonder AAAA: een eigen record schakelt de wildcard-AAAA voor die naam uit).
 De site staat op `noindex` (`src/app/layout.tsx`) tot hij af is. Het
 contactformulier mailt pas als `MARKWESTBROEK_SMTP_*`, `MARKWESTBROEK_MAIL_FROM`
 en `MARKWESTBROEK_CONTACT_TO` in `.env` staan (zie `.env.example`).
