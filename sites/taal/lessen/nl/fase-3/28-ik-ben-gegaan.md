@@ -15,7 +15,7 @@ dialoog:
     pl: "Byłem w Polsce, u mamy."
   - nl: "Ben je met de auto gegaan?"
     pl: "Pojechałeś samochodem?"
-  - nl: "Ja. Maar Ewa is thuis gebleven."
+  - nl: "Ja. Maar Ewa is thuisgebleven."
     pl: "Tak. Ale Ewa została w domu."
   - nl: "Is je broer ook gekomen?"
     pl: "Twój brat też przyjechał?"
@@ -28,10 +28,11 @@ dialoog:
 patroon:
   pl: "Czasowniki ruchu i zmiany, a także *zijn* i *blijven*, tworzą przeszłość z **zijn**, nie z *hebben*: *ik ben gegaan*, *hij is gekomen*, *zij is gebleven*, *ik ben geweest*. Reszta zostaje ta sama: forma z *ge-* stoi na końcu: *Ik ben in Polen geweest.*"
   nl: "Werkwoorden van beweging en verandering, en ook *zijn* en *blijven*, maken de verleden tijd met **zijn**, niet met *hebben*: *ik ben gegaan*, *hij is gekomen*, *zij is gebleven*, *ik ben geweest*. De rest blijft hetzelfde: de vorm met *ge-* staat aan het eind: *Ik ben in Polen geweest.*"
-brokken: ["waar ben je geweest?", "ik ben in … geweest", "ben je met de auto gegaan?", "zij is thuis gebleven", "hij is … gekomen", "ben je lang gebleven?", "ik ben naar huis gegaan", "met de trein"]
+brokken: ["waar ben je geweest?", "ik ben in … geweest", "ben je met de auto gegaan?", "zij is thuisgebleven", "hij is … gekomen", "ben je lang gebleven?", "ik ben naar huis gegaan", "met de trein"]
+grammatica: [nl-voltooide-tijd]
 oefeningen:
   - type: luister
-    tekst: "Ewa is thuis gebleven."
+    tekst: "Ewa is thuisgebleven."
     opties: ["Ewa pojechała do domu.", "Ewa została w domu.", "Ewa była w Polsce."]
     antwoord: 1
   - type: kies

@@ -21,6 +21,7 @@ dialoog:
   - nl: "Dit, alstublieft."
     pl: "To poproszę."
 brokken: ["wat is dit?", "dit", "dat", "hier", "daar", "hoeveel is dit?", "alstublieft"]
+grammatica: [nl-vraagzinnen]
 oefeningen:
   - type: luister
     tekst: "Dat is een peer."

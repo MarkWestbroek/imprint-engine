@@ -29,6 +29,7 @@ patroon:
   pl: "Gdy zdanie zaczyna się od określenia czasu, czasownik zostaje na drugim miejscu, a podmiot staje za nim: *Dinsdag kan ik niet*, *Om tien uur heb ik tijd*. To ta sama zamiana, którą znasz po *eerst* i *dan*: *Dan werk ik*."
   nl: "Als een zin met een tijd begint, blijft het werkwoord op de tweede plaats en komt het onderwerp erachter: *Dinsdag kan ik niet*, *Om tien uur heb ik tijd*. Het is dezelfde omkering die je kent na *eerst* en *dan*: *Dan werk ik*."
 brokken: ["ik wil graag een afspraak maken", "kan het vandaag?", "dat kan niet", "kunt u dinsdag?", "dinsdag kan ik niet", "past het om tien uur?", "om tien uur heb ik tijd", "tot donderdag!", "dank u wel"]
+grammatica: [nl-woordvolgorde]
 oefeningen:
   - type: luister
     tekst: "Past het om tien uur?"

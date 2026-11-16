@@ -27,6 +27,7 @@ patroon:
   pl: "**Naar** odpowiada na pytanie *dokąd?*, a **in** i **op** na pytanie *gdzie?*: *Ik ga **naar** de winkel* (idę do sklepu), ale *Ewa is **in** de winkel* (jest w sklepie); *ik ga **naar** het werk*, ale *ik was **op** het werk*. Uwaga: **naar huis** (do domu) mówi się bez *de/het*."
   nl: "**Naar** is het antwoord op *waarheen?*, **in** en **op** op *waar?*: *Ik ga **naar** de winkel*, maar *Ewa is **in** de winkel*; *ik ga **naar** het werk*, maar *ik was **op** het werk*. Let op: **naar huis** zeg je zonder *de/het*."
 brokken: ["waar ga je naartoe?", "ik ga naar…", "naar de winkel", "in de winkel", "naar het werk", "op het werk", "naar huis", "naar de dokter", "beterschap"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Ik ga naar huis."

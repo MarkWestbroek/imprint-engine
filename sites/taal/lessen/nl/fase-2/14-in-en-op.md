@@ -27,7 +27,7 @@ patroon:
   pl: "Dobra wiadomość: niderlandzki nie ma przypadków. Po **in**, **op** i **onder** rzeczownik się nie zmienia, zostaje tylko **de** albo **het**: *de tas* → *in de tas*, *het bed* → *op het bed*, *de stoel* → *onder de stoel*. Po polsku: torba → w torbie; po niderlandzku zawsze *de tas*."
   nl: "Goed nieuws: het Nederlands heeft geen naamvallen. Na **in**, **op** en **onder** verandert het zelfstandig naamwoord niet, alleen **de** of **het** blijft staan: *de tas* → *in de tas*, *het bed* → *op het bed*, *de stoel* → *onder de stoel*. In het Pools: torba → w torbie; in het Nederlands altijd *de tas*."
 brokken: ["waar zijn mijn sleutels?", "misschien in…?", "in de tas", "op de tafel", "op het bed", "onder de stoel", "daar ook niet", "kijk, daar!"]
-grammatica: [nl-lidwoorden]
+grammatica: [nl-lidwoorden, nl-voorzetsels, nl-geen-naamvallen]
 oefeningen:
   - type: luister
     tekst: "Misschien op het bed?"

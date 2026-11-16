@@ -27,6 +27,7 @@ patroon:
   pl: "Po czasowniku i po przyimku *ik* zmienia się w **mij**, *jij* w **jou**, *hij* w **hem**, *zij* w **haar**, *wij* w **ons**; **u** zostaje **u**: *Kunt u mij helpen?* *U betaalt bij hem.* Kiedy mówisz, komu coś dajesz, użyj **aan**: *Ik geef de planken aan mijn zoon* — albo krócej: *Ik geef het hem.*"
   nl: "Na een werkwoord en na een voorzetsel wordt *ik* **mij**, *jij* **jou**, *hij* **hem**, *zij* **haar**, *wij* **ons**; **u** blijft **u**: *Kunt u mij helpen?* *U betaalt bij hem.* Als je zegt aan wie je iets geeft, gebruik je **aan**: *Ik geef de planken aan mijn zoon*, of korter: *Ik geef het hem.*"
 brokken: ["kunt u mij helpen?", "ik zoek … voor…", "ik maak het zelf", "dan neemt u…", "geeft u mij…", "u betaalt bij hem", "ik geef … aan…", "hij helpt mij"]
+grammatica: [nl-persoonlijke-voornaamwoorden]
 oefeningen:
   - type: luister
     tekst: "Kunt u mij helpen?"

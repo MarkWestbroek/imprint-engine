@@ -27,6 +27,7 @@ patroon:
   pl: "Czas przeszły od *zijn* i *hebben* to tylko cztery słowa: w liczbie pojedynczej **was** i **had**, w liczbie mnogiej **waren** i **hadden**. *Ik **was** in Amsterdam.* *Wij **hadden** een vrije dag.*"
   nl: "De verleden tijd van *zijn* en *hebben* is maar vier woorden: in het enkelvoud **was** en **had**, in het meervoud **waren** en **hadden**. *Ik **was** in Amsterdam.* *Wij **hadden** een vrije dag.*"
 brokken: ["ik was…", "waar was je gisteren?", "was het warm?", "het was koud", "wij hadden…", "waren jullie…?", "ik had veel werk", "een vrije dag", "duur", "goedkoop"]
+grammatica: [nl-verleden-tijd]
 oefeningen:
   - type: luister
     tekst: "Was het warm?"

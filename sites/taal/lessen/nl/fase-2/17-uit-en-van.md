@@ -25,6 +25,7 @@ patroon:
   pl: "**Uit** znaczy „z wnętrza”: z kraju, z miasta, z pomieszczenia – *ik kom uit Polen*, *zij komt uit de winkel*. **Van** to „od” albo „z” przy osobie, miejscu lub zajęciu: *van het werk*, *van de dokter*; także *van acht tot vijf* (od… do…). W pytaniu mówisz zawsze: *Waar kom je **vandaan**?*"
   nl: "**Uit** betekent ‘van binnenuit’: uit een land, een stad, een ruimte – *ik kom uit Polen*, *zij komt uit de winkel*. **Van** gebruik je bij een persoon, een plek of een bezigheid: *van het werk*, *van de dokter*; ook *van acht tot vijf*. In de vraag zeg je altijd: *Waar kom je **vandaan**?*"
 brokken: ["waar kom je vandaan?", "ik kom uit…", "en jij?", "kom je van het werk?", "van het werk", "van de dokter", "van … tot …", "uit de winkel", "dat is lang"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Ik werk van acht tot vijf."

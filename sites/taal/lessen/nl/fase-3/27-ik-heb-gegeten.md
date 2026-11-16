@@ -27,6 +27,7 @@ patroon:
   pl: "Najczęstsze czasowniki nie trzymają się reguły *ge-…-t/-d*: *eten – gegeten*, *drinken – gedronken*, *kopen – gekocht*, *zoeken – gezocht*, *vinden – gevonden*, *nemen – genomen*, *zien – gezien*, *doen – gedaan*. Ucz się ich parami, tak jak po polsku uczysz się par *brać – wziąć* albo *widzieć – zobaczyć*. Miejsce w zdaniu jest to samo: na końcu."
   nl: "De meest gebruikte werkwoorden houden zich niet aan de regel *ge-…-t/-d*: *eten – gegeten*, *drinken – gedronken*, *kopen – gekocht*, *zoeken – gezocht*, *vinden – gevonden*, *nemen – genomen*, *zien – gezien*, *doen – gedaan*. Leer ze als paren, zoals je in het Pools de paren *brać – wziąć* of *widzieć – zobaczyć* leert. De plaats in de zin is dezelfde: aan het eind."
 brokken: ["wat heb je gedaan?", "ik heb … gezocht", "ik heb … gevonden", "heb je … gekocht?", "heb je al gegeten?", "ik heb … genomen", "koffie gedronken", "ik heb … gezien"]
+grammatica: [nl-voltooide-tijd]
 oefeningen:
   - type: luister
     tekst: "Ik heb een broodje genomen en koffie gedronken."

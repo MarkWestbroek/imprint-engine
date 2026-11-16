@@ -19,14 +19,15 @@ dialoog:
     pl: "Fajnie! Co robiłyście?"
   - nl: "Wij hebben in de stad gegeten en een film gezien."
     pl: "Zjadłyśmy coś na mieście i obejrzałyśmy film."
-  - nl: "En jij? Ben jij thuis gebleven?"
+  - nl: "En jij? Ben jij thuisgebleven?"
     pl: "A ty? Zostałeś w domu?"
   - nl: "Ja. Ik heb in de tuin gewerkt. En gisteren heb ik niets gedaan!"
     pl: "Tak. Pracowałem w ogrodzie. A wczoraj nic nie robiłem!"
 patroon:
-  pl: "W pytaniu o przeszłość *heb* albo *ben* stoi na drugim miejscu, zaraz po słowie pytającym, a forma z *ge-* na końcu: *Wat heb jij gedaan?* *Wat hebben jullie gedaan?* Bez słowa pytającego *heb* albo *ben* stoi na początku: *Ben jij thuis gebleven?*"
-  nl: "In een vraag over vroeger staat *heb* of *ben* op de tweede plaats, direct na het vraagwoord, en de vorm met *ge-* aan het eind: *Wat heb jij gedaan?* *Wat hebben jullie gedaan?* Zonder vraagwoord staat *heb* of *ben* vooraan: *Ben jij thuis gebleven?*"
-brokken: ["hoe was je weekend?", "wat heb jij gedaan?", "ik ben in … geweest", "wat hebben jullie gedaan?", "een film gezien", "ben jij thuis gebleven?", "in de tuin gewerkt", "niets gedaan"]
+  pl: "W pytaniu o przeszłość *heb* albo *ben* stoi na drugim miejscu, zaraz po słowie pytającym, a forma z *ge-* na końcu: *Wat heb jij gedaan?* *Wat hebben jullie gedaan?* Bez słowa pytającego *heb* albo *ben* stoi na początku: *Ben jij thuisgebleven?*"
+  nl: "In een vraag over vroeger staat *heb* of *ben* op de tweede plaats, direct na het vraagwoord, en de vorm met *ge-* aan het eind: *Wat heb jij gedaan?* *Wat hebben jullie gedaan?* Zonder vraagwoord staat *heb* of *ben* vooraan: *Ben jij thuisgebleven?*"
+brokken: ["hoe was je weekend?", "wat heb jij gedaan?", "ik ben in … geweest", "wat hebben jullie gedaan?", "een film gezien", "ben jij thuisgebleven?", "in de tuin gewerkt", "niets gedaan"]
+grammatica: [nl-voltooide-tijd, nl-vraagzinnen]
 oefeningen:
   - type: luister
     tekst: "Wat hebben jullie gedaan?"
@@ -34,7 +35,7 @@ oefeningen:
     antwoord: 1
   - type: kies
     vraag: "Chcesz zapytać kolegę, gdzie był w weekend. Co mówisz?"
-    opties: ["Wat heb je gedaan?", "Ben je thuis gebleven?", "Waar ben je geweest?"]
+    opties: ["Wat heb je gedaan?", "Ben je thuisgebleven?", "Waar ben je geweest?"]
     antwoord: 2
   - type: kies
     vraag: "Wat … je gisteren gegeten?"
@@ -48,7 +49,7 @@ oefeningen:
     vraag: "Co robiłeś wczoraj?"
     antwoorden: ["Wat heb je gisteren gedaan?", "Wat heb jij gisteren gedaan?", "Wat heb je gedaan gisteren?", "Wat heb jij gedaan gisteren?"]
   - type: orden
-    zin: "Ben jij thuis gebleven?"
+    zin: "Ben jij thuisgebleven?"
   - type: zeg
     vraag: "Jak ci minął weekend?"
     antwoorden: ["Hoe was je weekend?", "Hoe was jouw weekend?", "Hoe was het weekend?"]

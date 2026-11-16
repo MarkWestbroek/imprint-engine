@@ -27,6 +27,7 @@ patroon:
   pl: "Przed dniem stoi **op**, przed godziną **om**: *op zaterdag*, *om drie uur*. Pory dnia mają własną formę z **'s**: *'s morgens* (rano), *'s middags* (po południu), *'s avonds* (wieczorem). Dni tygodnia to *maandag, dinsdag, woensdag, donderdag, vrijdag, zaterdag, zondag* – pisane małą literą, jak po polsku."
   nl: "Voor een dag staat **op**, voor een tijd **om**: *op zaterdag*, *om drie uur*. De dagdelen hebben een eigen vorm met **'s**: *'s morgens*, *'s middags*, *'s avonds*. De dagen van de week zijn *maandag, dinsdag, woensdag, donderdag, vrijdag, zaterdag, zondag* – met een kleine letter, net als in het Pools."
 brokken: ["op maandag", "op zaterdag", "om drie uur", "'s morgens", "'s middags", "'s avonds", "vanavond", "dit weekend", "ik ben vrij", "tot zaterdag!"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Ik ben op zaterdag vrij."

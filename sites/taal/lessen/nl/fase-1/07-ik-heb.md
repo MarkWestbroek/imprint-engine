@@ -27,7 +27,7 @@ patroon:
   pl: "Czasownik **hebben** (mieć) zmienia się z osobą: **ik heb**, **jij hebt / u heeft**, **hij / zij heeft**, **wij / jullie / zij hebben**; w pytaniu *heb jij?* – bez **-t**, tak jak *ben jij?* Przeczenie przy rzeczowniku to **geen**: *Ik heb **geen** auto.*"
   nl: "Het werkwoord **hebben** verandert met de persoon: **ik heb**, **jij hebt / u heeft**, **hij / zij heeft**, **wij / jullie / zij hebben**; in de vraag *heb jij?* – zonder **-t**, net als *ben jij?* De ontkenning bij een zelfstandig naamwoord is **geen**: *Ik heb **geen** auto.*"
 brokken: ["ik heb…", "heb jij…?", "hij heeft", "zij heeft", "wij hebben", "ik heb geen…", "ik heb een vraag", "ik heb honger", "heb jij even tijd?", "wat is er?"]
-grammatica: [nl-tegenwoordige-tijd]
+grammatica: [nl-tegenwoordige-tijd, nl-niet-en-geen]
 oefeningen:
   - type: luister
     tekst: "Ik heb geen auto."

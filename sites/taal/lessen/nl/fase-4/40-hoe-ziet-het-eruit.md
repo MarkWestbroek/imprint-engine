@@ -27,6 +27,7 @@ patroon:
   pl: "Dwa przymiotniki z rzędu oba dostają **-e**, najpierw wielkość, potem kolor: *een grote zwarte tas* – kolejność jak po polsku: „duża czarna torba”. Czasownik **eruitzien** (wyglądać) rozpada się na dwie części: *Hoe ziet hij eruit?*"
   nl: "Twee bijvoeglijke naamwoorden achter elkaar krijgen allebei **-e**, eerst de grootte, dan de kleur: *een grote zwarte tas* – dezelfde volgorde als in het Pools: „duża czarna torba”. Het werkwoord **eruitzien** valt in twee stukken uiteen: *Hoe ziet hij eruit?*"
 brokken: ["hoe ziet hij eruit?", "hij is lang", "hij heeft kort haar", "wat draagt hij?", "hij draagt…", "een rode jas", "een grote zwarte tas", "ik zie hem", "tot straks!"]
+grammatica: [nl-scheidbare-werkwoorden, nl-bijvoeglijk-naamwoord, nl-bezittelijke-voornaamwoorden]
 oefeningen:
   - type: luister
     tekst: "Hij is lang en hij heeft kort haar."

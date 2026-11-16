@@ -27,6 +27,7 @@ patroon:
   pl: "W zdaniu z **als** (jeśli) czasownik stoi na końcu, a zdanie główne po przecinku zaczyna się od czasownika: *Als u thuis **bent**, **kom** ik vanmiddag langs.* Tak samo: *Als u morgen tijd **heeft**, **kunnen** we om tien uur afspreken.*"
   nl: "In een zin met **als** staat het werkwoord aan het eind, en de hoofdzin na de komma begint met het werkwoord: *Als u thuis **bent**, **kom** ik vanmiddag langs.* Net zo: *Als u morgen tijd **heeft**, **kunnen** we om tien uur afspreken.*"
 brokken: ["als u thuis bent, …", "als het kan", "als u tijd heeft, …", "de verwarming doet het niet", "ik kom langs", "kunnen we … afspreken", "graag morgen", "dat is heel aardig", "tot morgen"]
+grammatica: [nl-bijzin, nl-scheidbare-werkwoorden]
 oefeningen:
   - type: luister
     tekst: "Als het kan, graag morgen."

@@ -27,6 +27,7 @@ patroon:
   pl: "Przed miesiącem i rokiem stoi **in**, przed konkretną datą **op**: *in februari*, *in 1990*, ale *op drie mei*. W dacie mówisz zwykłą liczbę, nie „trzeciego”: *drie mei*, *twaalf maart*."
   nl: "Voor een maand en een jaar staat **in**, voor een datum **op**: *in februari*, *in 1990*, maar *op drie mei*. In een datum zeg je het gewone getal, niet „de derde”: *drie mei*, *twaalf maart*."
 brokken: ["wanneer bent u geboren?", "op drie mei", "in januari", "in februari", "in april", "twaalf maart", "welke datum is het vandaag?", "de datum"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Vandaag is het twaalf maart."

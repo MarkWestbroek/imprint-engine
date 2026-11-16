@@ -27,6 +27,7 @@ patroon:
   pl: "O jedną rzecz pytasz **Waar is…?**, o kilka – **Waar zijn…?**: *Waar is de apotheek?*, ale *Waar zijn de toiletten?* W odpowiedzi jest tak samo: *de apotheek **is** daar*, *de toiletten **zijn** hier*."
   nl: "Naar één ding vraag je met **Waar is…?**, naar meer dingen met **Waar zijn…?**: *Waar is de apotheek?*, maar *Waar zijn de toiletten?* In het antwoord is het net zo: *de apotheek **is** daar*, *de toiletten **zijn** hier*."
 brokken: ["waar is…?", "waar zijn…?", "hier", "daar", "links", "rechts", "rechtdoor", "is het ver?", "het is dichtbij", "dank u wel"]
+grammatica: [nl-vraagzinnen, nl-meervoud]
 oefeningen:
   - type: luister
     tekst: "Eerst rechtdoor, dan links."
