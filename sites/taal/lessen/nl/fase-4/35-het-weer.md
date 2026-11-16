@@ -27,6 +27,7 @@ patroon:
   pl: "O pogodzie mówisz zawsze z **het**: *het regent*, *het waait*, *het is koud*. Po polsku wystarczy „pada” albo „jest zimno”, ale niderlandzkie zdanie musi mieć podmiot – i jest nim **het**. W pytaniu **het** stoi po czasowniku: *Regent het morgen ook?*"
   nl: "Over het weer praat je altijd met **het**: *het regent*, *het waait*, *het is koud*. In het Pools is „pada” of „jest zimno” genoeg, maar een Nederlandse zin moet een onderwerp hebben – en dat is **het**. In een vraag staat **het** achter het werkwoord: *Regent het morgen ook?*"
 brokken: ["wat een weer!", "het regent", "het waait", "het is koud", "het is warm", "de zon schijnt", "gisteren was het…", "morgen wordt het warmer", "tot morgen"]
+grammatica: [nl-het-als-onderwerp]
 oefeningen:
   - type: luister
     tekst: "Het regent en het waait."

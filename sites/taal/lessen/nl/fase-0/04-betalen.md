@@ -19,6 +19,7 @@ dialoog:
   - nl: "Nee, dank u."
     pl: "Nie, dziękuję."
 brokken: ["hoeveel kost het?", "kan ik…?", "pinnen", "wilt u…?", "natuurlijk", "drie euro vijftig", "twaalf euro", "negentien vijfennegentig", "veertig euro", "honderd euro"]
+grammatica: [nl-verkleinwoord]
 oefeningen:
   - type: luister
     tekst: "Vijftien euro vijftig."

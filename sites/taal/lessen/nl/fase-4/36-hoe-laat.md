@@ -27,6 +27,7 @@ patroon:
   pl: "**Half vier** to 3:30, nie 4:30: liczy się godzina, która nadchodzi – dokładnie jak po polsku „wpół do czwartej”. *Kwart over drie* to 3:15, *kwart voor vier* to 3:45. Przed godziną stoi **om**: *om half vier* (o wpół do czwartej)."
   nl: "**Half vier** is 3:30, niet 4:30: je telt naar het uur dat komt – precies zoals het Poolse „wpół do czwartej”. *Kwart over drie* is 3:15, *kwart voor vier* is 3:45. Voor een tijd staat **om**: *om half vier*."
 brokken: ["hoe laat is het?", "het is drie uur", "kwart over drie", "half vier", "kwart voor vier", "om half vier", "hoe laat komt…?", "precies", "dan heb ik nog tijd"]
+grammatica: [nl-het-als-onderwerp, nl-er]
 oefeningen:
   - type: luister
     tekst: "Het is half vier."

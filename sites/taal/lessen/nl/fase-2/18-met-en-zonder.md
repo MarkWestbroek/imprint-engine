@@ -27,6 +27,7 @@ patroon:
   pl: "**Bij** znaczy „u” kogoś albo „w”, „przy” – w sklepie, w firmie: *ik woon **bij** mijn zus* (mieszkam u siostry), *ik werk **bij** de bakker* (pracuję u piekarza, czyli w piekarni). **Met** to „z”, a **zonder** to „bez”: *koffie met melk*, *zonder suiker*."
   nl: "**Bij** betekent ‘bij iemand thuis’ of ‘in een winkel of bedrijf’: *ik woon **bij** mijn zus*, *ik werk **bij** de bakker*. **Met** en **zonder** zijn elkaars tegendeel: *koffie met melk*, *zonder suiker*."
 brokken: ["een koffie met melk", "met suiker", "zonder suiker", "met slagroom", "heeft u ook…?", "ik woon bij…", "bij mijn zus", "ik werk bij…", "bij de bakker"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Met suiker of zonder suiker?"

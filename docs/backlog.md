@@ -994,13 +994,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Grammatica als naslagwerk, deel 1~~ — contenttype `grammatica`,
             `/<ui>/<pakket>/grammatica`, link vanuit de les, vet om te horen;
             de tegenwoordige tijd en de lidwoorden (15-11).
-      - [ ] Grammatica, deel 2: de rest van de set (zijn/hebben apart?,
-            perfectum, meervoud, verkleinwoord, voornaamwoorden, niet/geen,
-            vraagzinnen, woordvolgorde, bijzin, *er*; verschillen: geen
-            naamvallen, werkwoord op plaats 2 en achteraan, perfectum met
-            *hebben*/*zijn*, *u* en *je*), en per les de links. **M**
+      - [x] ~~Grammatica, deel 2~~ — 19 onderwerpen erbij (21 in totaal),
+            43 lessen gelinkt (16-11).
+      - [ ] Grammatica: links tussen onderwerpen (nu noemt een onderwerp een
+            ander alleen bij naam, cursief). **S**
       - [ ] De grammatica laten nalezen (Nederlands door Mark, Pools door
-            iemand die Pools spreekt).
+            iemand die Pools spreekt). Twijfelgevallen van de schrijvers:
+            Poolse termen *czas przeszły prosty/złożony*, „przejdźmy na ty”
+            voor *zeg maar je*, „Klucz leży na nim”, *w pracy* = *op het
+            werk*; Nederlands: *dus* met gewone volgorde (ook *dus ben ik*
+            kan), *er* + getal vereenvoudigd.
       - [x] ~~Woord opzoeken~~ — `/pl/nederlands/woorden`: lidwoord,
             meervoud, werkwoordsvormen met hebben/zijn; 2450 woorden tot
             ongeveer B1 (15-11).

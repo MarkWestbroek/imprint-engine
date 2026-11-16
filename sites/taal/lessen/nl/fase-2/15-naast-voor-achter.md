@@ -29,6 +29,7 @@ patroon:
   pl: "Kiedy mówisz, że coś gdzieś jest, zaczynasz od **er is** (jedna rzecz) albo **er zijn** (kilka): *Er is een bakker naast de bank*, *Er zijn twee supermarkten*. W pytaniu odwrotnie: *Is er hier een bakker?*"
   nl: "Als je zegt dat iets ergens is, begin je met **er is** (één ding) of **er zijn** (meer dingen): *Er is een bakker naast de bank*, *Er zijn twee supermarkten*. In een vraag draai je het om: *Is er hier een bakker?*"
 brokken: ["er is…", "er zijn…", "is er hier…?", "naast de bank", "tegenover het station", "tussen … en …", "voor de apotheek", "achter het station", "daar niet"]
+grammatica: [nl-voorzetsels, nl-meervoud, nl-er]
 oefeningen:
   - type: luister
     tekst: "Er is een bakker naast de bank."

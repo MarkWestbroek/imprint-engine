@@ -27,6 +27,7 @@ patroon:
   pl: "Stopień wyższy tworzysz przez **-er**, najwyższy przez **-st**: *groot – groter – de grootste*, *goedkoop – goedkoper – de goedkoopste*; „niż” to **dan**: *groter dan deze*. Po **r** dochodzi jeszcze **d**: *duur – duurder*. Jeden wyjątek: *goed – beter – de beste*."
   nl: "De vergrotende trap maak je met **-er**, de overtreffende met **-st**: *groot – groter – de grootste*, *goedkoop – goedkoper – de goedkoopste*; vergelijken doe je met **dan**: *groter dan deze*. Na een **r** komt er nog een **d** bij: *duur – duurder*. Eén uitzondering: *goed – beter – de beste*."
 brokken: ["te klein", "is die groter?", "duurder", "de goedkoopste", "beter", "groter dan…", "goedkoper dan…", "dat is te veel", "dan neem ik…"]
+grammatica: [nl-vergelijken]
 oefeningen:
   - type: luister
     tekst: "Die is groter, maar ook duurder."

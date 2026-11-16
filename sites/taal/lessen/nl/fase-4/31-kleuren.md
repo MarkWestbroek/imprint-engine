@@ -27,6 +27,7 @@ patroon:
   pl: "Przymiotnik przed rzeczownikiem dostaje **-e**: *de rode jas*, *een blauwe broek*. Sam kolor, bez rzeczownika za nim, zostaje bez końcówki: *de jas is rood*, *in het blauw*. W pisowni: *rood* → *rode*, *grijs* → *grijze*."
   nl: "Een bijvoeglijk naamwoord vóór een zelfstandig naamwoord krijgt **-e**: *de rode jas*, *een blauwe broek*. De kleur alleen, zonder woord erachter, blijft zonder uitgang: *de jas is rood*, *in het blauw*. In de spelling: *rood* → *rode*, *grijs* → *grijze*."
 brokken: ["welke kleur?", "heeft u deze in het…?", "in het blauw", "de rode jas", "de zwarte", "een blauwe broek", "een grijze", "ik zoek…", "rood", "zwart"]
+grammatica: [nl-bijvoeglijk-naamwoord]
 oefeningen:
   - type: luister
     tekst: "Heeft u deze in het blauw?"

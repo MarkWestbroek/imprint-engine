@@ -29,6 +29,7 @@ patroon:
   pl: "Po **omdat** (ponieważ) czasownik idzie na KONIEC: *…omdat ik om negen uur een afspraak **heb**.* Po **want** (bo), **maar** (ale) i **dus** (więc) nic się nie zmienia: *…want de bus **rijdt** niet.*"
   nl: "Na **omdat** gaat het werkwoord naar het EIND: *…omdat ik om negen uur een afspraak **heb**.* Na **want**, **maar** en **dus** verandert er niets: *…want de bus **rijdt** niet.*"
 brokken: ["ik kom vandaag later", "want…", "omdat…", "maar…", "dus…", "wat vervelend", "geen probleem", "hoewel het regent", "tot zo"]
+grammatica: [nl-bijzin]
 oefeningen:
   - type: luister
     tekst: "Ik kom vandaag later, want de bus rijdt niet."

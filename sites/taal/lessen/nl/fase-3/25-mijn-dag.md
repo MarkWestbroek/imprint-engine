@@ -27,6 +27,7 @@ patroon:
   pl: "Po **eerst**, **dan**, **daarna** i **'s avonds** na początku zdania czasownik stoi przed osobą: *Eerst drink ik koffie.* *Dan ga ik naar huis.* Czasownik zostaje na drugim miejscu — tak samo jak po *morgen* czy *vandaag*."
   nl: "Na **eerst**, **dan**, **daarna** en **'s avonds** vooraan in de zin staat het werkwoord vóór de persoon: *Eerst drink ik koffie.* *Dan ga ik naar huis.* Het werkwoord blijft op de tweede plaats, net als na *morgen* of *vandaag*."
 brokken: ["ik sta vroeg op", "sta jij vroeg op?", "eerst drink ik koffie", "daarna rijd ik naar…", "de hele dag", "dan ga ik naar huis", "'s avonds", "dan slaap ik"]
+grammatica: [nl-woordvolgorde, nl-scheidbare-werkwoorden]
 oefeningen:
   - type: luister
     tekst: "Dan ga ik naar huis."

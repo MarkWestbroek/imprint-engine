@@ -29,6 +29,7 @@ patroon:
   pl: "Czasownik **gaan** (iść, jechać): **ik ga**, **jij gaat** (w pytaniu *ga jij?*), **wij gaan**. Z drugim czasownikiem na końcu zdania *gaan* mówi o tym, co zaraz albo niedługo zrobisz: *Ik ga een lamp **kopen**.* *Ik ga straks **werken**.*"
   nl: "Het werkwoord **gaan**: **ik ga**, **jij gaat** (in de vraag *ga jij?*), **wij gaan**. Met een tweede werkwoord aan het eind van de zin zegt *gaan* wat je zo meteen of binnenkort doet: *Ik ga een lamp **kopen**.* *Ik ga straks **werken**.*"
 brokken: ["wat ga jij vandaag doen?", "ik ga naar…", "ik ga … kopen", "ik ga straks werken", "wij gaan morgen naar…", "nu", "ver", "dichtbij", "hoe lang?", "tot later"]
+grammatica: [nl-woordvolgorde]
 oefeningen:
   - type: luister
     tekst: "Ik ga straks werken."

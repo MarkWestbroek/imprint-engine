@@ -27,6 +27,7 @@ patroon:
   pl: "Czasownik **kunnen** (móc): **ik kan**, **jij kunt / u kunt** (w pytaniu *kun jij?* albo *kan jij?*), **wij kunnen**. Drugi czasownik stoi – tak jak po *willen* – na samym końcu zdania: *Kunt u mij **helpen**?* *Wij kunnen morgen **komen**.*"
   nl: "Het werkwoord **kunnen**: **ik kan**, **jij kunt / u kunt** (in de vraag *kun jij?* of *kan jij?*), **wij kunnen**. Het tweede werkwoord staat – net als na *willen* – helemaal aan het eind van de zin: *Kunt u mij **helpen**?* *Wij kunnen morgen **komen**.*"
 brokken: ["kunt u mij helpen?", "wat kan ik voor u doen?", "kan ik…?", "ik kan morgen niet", "wij kunnen…", "kan dat?", "dat kan", "het is koud", "vandaag", "straks"]
+grammatica: [nl-modale-werkwoorden, nl-niet-en-geen]
 oefeningen:
   - type: luister
     tekst: "Kunt u vandaag komen?"

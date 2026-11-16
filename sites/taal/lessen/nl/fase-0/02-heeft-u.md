@@ -17,6 +17,7 @@ dialoog:
   - nl: "Oké, dan dit. Dank u."
     pl: "Dobrze, to w takim razie to. Dziękuję."
 brokken: ["heeft u…?", "is er…?", "ja", "nee", "alleen", "dan dit", "dank u"]
+grammatica: [nl-vraagzinnen, nl-er, nl-u-en-je]
 oefeningen:
   - type: luister
     tekst: "Ja, daar, naast de kassa."

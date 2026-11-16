@@ -25,6 +25,7 @@ patroon:
   pl: "O przeszłości mówisz z **hebben** + forma z **ge-…-t** albo **ge-…-d**: *werken → gewerkt*, *maken → gemaakt*, *horen → gehoord*, *bellen → gebeld*. Ta forma stoi na samym końcu zdania: *Ik heb de hele dag gewerkt.* Czasownik *betalen* ma już *be-* i nie dostaje *ge-*: *betaald*."
   nl: "Over vroeger praat je met **hebben** + een vorm met **ge-…-t** of **ge-…-d**: *werken → gewerkt*, *maken → gemaakt*, *horen → gehoord*, *bellen → gebeld*. Die vorm staat helemaal aan het eind van de zin: *Ik heb de hele dag gewerkt.* Het werkwoord *betalen* heeft al *be-* en krijgt geen *ge-*: *betaald*."
 brokken: ["ik heb gebeld", "ik heb niets gehoord", "ik heb gewerkt", "wat heb je gemaakt?", "ik heb … gemaakt", "heb je veel betaald?", "de hele dag", "niet duur"]
+grammatica: [nl-voltooide-tijd]
 oefeningen:
   - type: luister
     tekst: "Ik heb niets gehoord."

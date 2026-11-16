@@ -27,6 +27,7 @@ patroon:
   pl: "Po **willen** (chcieć) drugi czasownik stoi w całości na samym końcu zdania: *Ik wil iets **eten**.* *Wilt u de kaart **zien**?* Wszystko inne stoi w środku, między *wil* a tym czasownikiem: *Wij willen graag **betalen**.*"
   nl: "Na **willen** staat het tweede werkwoord in zijn geheel helemaal aan het eind van de zin: *Ik wil iets **eten**.* *Wilt u de kaart **zien**?* Al het andere staat in het midden, tussen *wil* en dat werkwoord: *Wij willen graag **betalen**.*"
 brokken: ["ik wil…", "ik wil graag…", "wil jij…?", "wilt u…?", "wat wilt u drinken?", "ik wil iets eten", "wij willen graag betalen", "ja, graag", "de kaart"]
+grammatica: [nl-modale-werkwoorden]
 oefeningen:
   - type: luister
     tekst: "Ik wil iets eten."

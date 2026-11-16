@@ -29,6 +29,7 @@ patroon:
   pl: "**Ik wil** brzmi twardo; grzeczniej jest **ik zou graag** (chciałbym / chciałabym). Po **zou** (wij: **zouden**) stoi **graag**, a cały czasownik idzie na koniec: *Ik zou graag een tafel **reserveren**.* *Wij zouden graag **bestellen**.*"
   nl: "**Ik wil** klinkt hard; beleefder is **ik zou graag**. Achter **zou** (wij: **zouden**) staat **graag**, en het hele werkwoord gaat naar het eind: *Ik zou graag een tafel **reserveren**.* *Wij zouden graag **bestellen**.*"
 brokken: ["ik zou graag…", "wij zouden graag…", "een tafel reserveren", "bestellen", "een glas water", "de soep van de dag", "verder nog iets?", "voor vier personen", "dat kan"]
+grammatica: [nl-modale-werkwoorden]
 oefeningen:
   - type: luister
     tekst: "Wij zouden graag bestellen."

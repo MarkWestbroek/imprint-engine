@@ -27,6 +27,7 @@ patroon:
   pl: "Grzeczna prośba to **zou u … kunnen** (czy mógłby pan / mogłaby pani): *Zou u mij **kunnen helpen**?* Rada to **u zou … moeten** (powinien pan / powinna pani): *U zou naar de gemeente **moeten gaan**.* Oba czasowniki stoją razem na końcu zdania."
   nl: "Een beleefd verzoek is **zou u … kunnen**: *Zou u mij **kunnen helpen**?* Een advies is **u zou … moeten**: *U zou naar de gemeente **moeten gaan**.* De twee werkwoorden staan samen aan het eind van de zin."
 brokken: ["zou u mij kunnen helpen?", "zou u … kunnen?", "u zou … moeten gaan", "wat is het probleem?", "naar de gemeente", "het adres opschrijven", "misschien kunnen we…", "heel graag"]
+grammatica: [nl-modale-werkwoorden, nl-u-en-je]
 oefeningen:
   - type: luister
     tekst: "U zou naar de gemeente moeten gaan."

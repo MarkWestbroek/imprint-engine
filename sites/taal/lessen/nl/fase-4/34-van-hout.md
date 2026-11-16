@@ -29,6 +29,7 @@ patroon:
   pl: "Materiał podajesz na dwa sposoby: **van** + materiał po rzeczowniku albo forma na **-en** przed nim: *een plank van hout* = *een houten plank*. Ta forma nigdy nie dostaje dodatkowego **-e**: *een metalen bak*, *de glazen deuren*. Słowo *plastic* się nie zmienia: *een plastic bak*."
   nl: "Het materiaal zeg je op twee manieren: **van** + materiaal achter het woord, of de vorm op **-en** ervoor: *een plank van hout* = *een houten plank*. Die vorm krijgt nooit een extra **-e**: *een metalen bak*, *de glazen deuren*. Het woord *plastic* verandert niet: *een plastic bak*."
 brokken: ["van hout", "van metaal", "van plastic", "een houten plank", "een plastic bak", "een metalen bak", "de glazen deuren", "is deze … van …?", "die vindt u daar"]
+grammatica: [nl-bijvoeglijk-naamwoord]
 oefeningen:
   - type: luister
     tekst: "Van hout of van metaal?"

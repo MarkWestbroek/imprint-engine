@@ -19,6 +19,7 @@ dialoog:
   - nl: "Wat betekent ‘bonnetje’?"
     pl: "Co znaczy „bonnetje”?"
 brokken: ["ik begrijp het niet", "nog een keer", "langzaam", "spreekt u…?", "een beetje", "wat betekent…?"]
+grammatica: [nl-verkleinwoord, nl-niet-en-geen]
 oefeningen:
   - type: kies
     vraag: "Iemand praat te snel. Wat zeg je?"

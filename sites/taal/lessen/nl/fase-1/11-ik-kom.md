@@ -27,6 +27,7 @@ patroon:
   pl: "Czasownik **komen** (przychodzić, przyjeżdżać, pochodzić): **ik kom**, **jij komt** (w pytaniu *kom je?*), **wij komen**. Gdy zdanie zaczyna się od słowa takiego jak *morgen*, czasownik stoi przed osobą: *Ik kom morgen*, ale *Morgen **kom ik** om acht uur.*"
   nl: "Het werkwoord **komen**: **ik kom**, **jij komt** (in de vraag *kom je?*), **wij komen**. Begint de zin met een woord als *morgen*, dan staat het werkwoord vóór de persoon: *Ik kom morgen*, maar *Morgen **kom ik** om acht uur.*"
 brokken: ["waar kom je vandaan?", "ik kom uit…", "kom je ook?", "wanneer?", "om acht uur", "te vroeg", "te laat", "morgen kom ik…", "tot morgen"]
+grammatica: [nl-woordvolgorde]
 oefeningen:
   - type: luister
     tekst: "Ik kom uit Polen."

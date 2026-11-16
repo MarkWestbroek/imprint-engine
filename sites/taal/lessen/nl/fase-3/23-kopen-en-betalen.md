@@ -27,6 +27,7 @@ patroon:
   pl: "**Niet** stoi po czasowniku i po rzeczy, o której mowa — a nie przed czasownikiem, jak polskie „nie”: *Ik vind het niet.* *Ik koop dit niet.* Po polsku „Nie kupuję tego”, po niderlandzku dosłownie „Kupuję to nie”."
   nl: "**Niet** staat achter het werkwoord en achter het ding waar het over gaat, en niet vóór het werkwoord zoals het Poolse „nie”: *Ik vind het niet.* *Ik koop dit niet.* In het Pools „Nie kupuję tego”, in het Nederlands letterlijk „Kupuję to nie”."
 brokken: ["ik zoek…", "ik vind het niet", "kopen wij ook…?", "ik koop dit niet", "te duur", "betaalt u samen?", "wij betalen samen", "het brood ligt daar"]
+grammatica: [nl-niet-en-geen]
 oefeningen:
   - type: luister
     tekst: "Ik vind het niet."

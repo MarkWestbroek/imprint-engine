@@ -58,7 +58,10 @@ describe("taal: the lesson files", () => {
   it("with the grammar topics: all valid, every link from a lesson leads to one", () => {
     const fout = gelezenGrammatica.filter((g) => g.fouten.length > 0).map((g) => `${g.file}: ${g.fouten.join("; ")}`);
     assert.deepEqual(fout, []);
-    assert.deepEqual(grammatica.map((g) => g.id).sort(), ["nl-lidwoorden", "nl-tegenwoordige-tijd"]);
+    assert.equal(grammatica.length, 21, "the reference: 17 rules and 4 differences");
+    assert.equal(grammatica.filter((g) => g.soort === "verschil").length, 4);
+    // Every topic is reached from at least one lesson.
+    for (const g of grammatica) assert.ok(lessen.some((l) => l.grammatica.includes(g.id)), `no lesson links to ${g.id}`);
     assert.ok(lessen.some((l) => l.grammatica.length > 0));
   });
 

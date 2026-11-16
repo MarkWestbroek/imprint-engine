@@ -27,6 +27,7 @@ patroon:
   pl: "Pytanie w środku zdania: po **of** (czy), **waar**, **hoe laat** i **wanneer** czasownik idzie na koniec. *Waar **is** het station?* → *Weet u waar het station **is**?* Tak samo: *Kunt u zeggen hoe laat de bus **komt**?*"
   nl: "Een vraag binnen een zin: na **of**, **waar**, **hoe laat** en **wanneer** gaat het werkwoord naar het eind. *Waar **is** het station?* → *Weet u waar het station **is**?* Net zo: *Kunt u zeggen hoe laat de bus **komt**?*"
 brokken: ["weet u waar…?", "weet u of…?", "kunt u zeggen…?", "hoe laat de bus komt", "ik weet niet of…", "dat weet ik niet", "u kunt beter…", "de bus nemen", "voor uw hulp"]
+grammatica: [nl-bijzin]
 oefeningen:
   - type: luister
     tekst: "Kunt u zeggen hoe laat de bus komt?"

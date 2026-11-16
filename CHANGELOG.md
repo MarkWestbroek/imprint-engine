@@ -6,6 +6,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: de grammatica compleet (deel 2).** 19 onderwerpen erbij, 21
+  in totaal: verleden en voltooide tijd, modale en scheidbare werkwoorden,
+  meervoud, verkleinwoord, bijvoeglijk naamwoord, vergelijken, persoonlijke en
+  bezittelijke voornaamwoorden, woordvolgorde, vraagzinnen, niet en geen, de
+  bijzin, *er*, voorzetsels; en de verschillen met het Pools: geen naamvallen,
+  *u* en *je*, *het* als onderwerp. 43 van de 45 lessen linken naar hun
+  onderwerpen. Les 28 en 29: *thuisgebleven* aaneen.
 - **markwestbroek.nl: de naam op de bronmodule in Big Shoulders**, de letter van
   de kop (MARK groot, WESTBROEK eronder), zonder de logostreepjes; Urbanist is
   eruit.

@@ -29,6 +29,7 @@ patroon:
   pl: "Zamiast *is* Holendrzy często mówią, **jak** coś się gdzieś znajduje: **staat** (stoi), **ligt** (leży), **zit** (dosłownie: siedzi – jest w środku). *De trein **staat** op spoor vijf*, *uw kaartje **ligt** hier*, *mijn pas **zit** in mijn tas*."
   nl: "In plaats van *is* zeggen Nederlanders vaak **hoe** iets ergens is: **staat**, **ligt**, **zit** (het zit ergens in). *De trein **staat** op spoor vijf*, *uw kaartje **ligt** hier*, *mijn pas **zit** in mijn tas*."
 brokken: ["een kaartje naar…", "enkele reis", "retour", "hoe laat vertrekt de trein?", "over tien minuten", "overstappen in…", "welk spoor?", "de trein staat op spoor…", "… zit in mijn tas", "… ligt hier"]
+grammatica: [nl-verkleinwoord, nl-bezittelijke-voornaamwoorden]
 oefeningen:
   - type: luister
     tekst: "Mijn pas zit in mijn tas."
