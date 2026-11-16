@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **markwestbroek.nl: de naam op de bronmodule in Big Shoulders**, de letter van
+  de kop (MARK groot, WESTBROEK eronder), zonder de logostreepjes; Urbanist is
+  eruit.
 - **Taaltraining: een woord opzoeken.** `/pl/nederlands/woorden` (*Słowa* in
   het menu): typ een Nederlands woord en zie *de* of *het*, meervoud en
   verkleinwoord, of bij een werkwoord alle vormen met *hebben*/*zijn*; zoekt

@@ -9,8 +9,8 @@
 /*
  * Huisstijl "Patchbay": een donker rack met aluminium modules en gekleurde
  * patchkabels. De vier kabelkleuren zijn de enige felle kleuren; de rest is
- * grijs. Letters: Big Shoulders voor de grote koppen, Urbanist voor de naam
- * op de bronmodule (gezet als het logo), smalle Plex voor de rest, mono voor labels.
+ * grijs. Letters: Big Shoulders voor de grote koppen en de naam
+ * op de bronmodule, smalle Plex voor de rest, mono voor labels.
  */
 :root {
 	--background: #26282c;
@@ -114,10 +114,10 @@ a.pb-mod:focus-visible { box-shadow: 0 0 0 3px var(--pb-c); }
 .pb-source::after, .pb-mod::after { right: 9px; }
 
 .pb-tag { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-/* De naam als het logo: twee staande lijnen, de voornaam groot, de achternaam klein eronder. */
-.pb-name { align-self: flex-start; display: grid; margin: 6px 0; padding: 0 14px 6px; border-inline: 2px solid currentColor; font-family: var(--font-logo), var(--font-sans), sans-serif; font-weight: 300; text-transform: none; }
-.pb-name > :first-child { font-size: clamp(72px, 8vw, 96px); line-height: .9; letter-spacing: -.01em; }
-.pb-name > :nth-child(2) { font-size: clamp(30px, 3.4vw, 40px); line-height: 1.05; letter-spacing: .06em; text-transform: lowercase; }
+/* De naam in de letter van de kop: de voornaam groot, de achternaam eronder, samen ongeveer even breed. */
+.pb-name { display: grid; margin: 4px 0; font-family: var(--font-display), var(--font-sans), sans-serif; font-weight: 900; text-transform: uppercase; }
+.pb-name > :first-child { font-size: clamp(76px, 8.4vw, 104px); line-height: .86; letter-spacing: .01em; }
+.pb-name > :nth-child(2) { font-size: clamp(48px, 5.3vw, 66px); line-height: .9; letter-spacing: .015em; }
 .pb-title { font-size: 18px; line-height: 1.05; font-weight: 700; text-transform: uppercase; overflow-wrap: break-word; hyphens: auto; }
 .pb-text { font-size: 15px; line-height: 1.35; color: var(--pb-panel-muted); }
 .pb-adres { font-family: var(--font-mono), ui-monospace, monospace; font-size: 11px; overflow-wrap: anywhere; }
