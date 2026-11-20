@@ -260,6 +260,15 @@ product, component, board-spec).
   boven het formulier staat sinds wanneer, met een link naar de geschiedenis
   van de bron. Opslaan van de vertaling maakt haar weer bij.
 
+- Het kader van de site in de studio (`StudioSlot.chrome`) krijgt `locale`
+  mee: de taal van de pagina die bewerkt wordt, voor het menu van die taal.
+
+**In de browser bekeken (20-11-2026, paratmos, door de sessie van die site):**
+de kolom *Translations*, de tabbladen in de studio en het beginnen van een
+vertaling werken; de routes van een site moeten `lang` ongewijzigd doorgeven
+(niet `lang ?? "en"`), anders opent de admin op een Nederlandse site de
+Engelse versie.
+
 **Nog te doen in stap D.**
 - Het verschil sinds de vertaling tonen (nu alleen een link naar de
   geschiedenis van de bron).

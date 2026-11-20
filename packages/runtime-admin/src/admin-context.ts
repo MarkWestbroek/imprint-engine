@@ -59,7 +59,12 @@ export interface AdminContribution {
  */
 export interface StudioSlot {
   viewers: WidgetViewers;
-  chrome: (props: { children: ReactNode }) => ReactNode | Promise<ReactNode>;
+  /**
+   * The site's header and footer around the canvas. `locale` is the language of
+   * the page being edited, so a site with more languages can show that
+   * language's menu and texts; a site with one language ignores it.
+   */
+  chrome: (props: { children: ReactNode; locale?: string }) => ReactNode | Promise<ReactNode>;
   editor?: WidgetEditor;
 }
 

@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Studio: het kader van de site krijgt de taal van de pagina mee**
+  (`StudioSlot.chrome` met `locale`). Een site met meer talen kan zo bij een
+  Engelse pagina het Engelse menu tonen; gevonden bij de test van de
+  vertaalfuncties op paratmos.
 - **Meer talen naast elkaar: de admin** (tweede deel van stap D van
   design/meertaligheid.md). Op een site met meer dan één taal staan boven het
   formulier en in de studio tabbladen per taal, en in de lijst een kolom
