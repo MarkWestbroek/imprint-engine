@@ -49,12 +49,21 @@ export async function saveItem(admin: AdminContext, _prev: ActionResult | null, 
 
     const validFromRaw = String(formData.get("validFrom") ?? "");
     const validToRaw = String(formData.get("validTo") ?? "");
+    // The language: what the form says (`lang` in the data), else the one the
+    // item is stored under, else the store's default for the type.
+    const original = String(formData.get("originalLang") ?? "") || undefined;
+    const lang = typeof data.lang === "string" ? data.lang : original;
     await store.putItem(type, slug, data, {
-      lang: typeof data.lang === "string" ? data.lang : itemLang(type, admin.imprint.defaultLocale),
+      lang,
       by: session.name,
       validFrom: validFromRaw ? new Date(validFromRaw) : undefined,
       validTo: validToRaw ? new Date(validToRaw) : undefined,
     });
+    // Another language in the form relabels the item: the version under the
+    // old language ends (its history stays), so it does not exist twice.
+    if (original && lang && lang !== original && (await store.getItem(type, slug, original))) {
+      await store.deleteItem(type, slug, original);
+    }
   } catch (err) {
     return { ok: false, error: err instanceof Error ? err.message : String(err) };
   }

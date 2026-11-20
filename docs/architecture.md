@@ -1030,6 +1030,39 @@ flowchart LR
   teksten als props en importeert geen catalogus.
 - Een nieuwe taal is één object erbij in elke catalogus.
 
+**Meer talen naast elkaar** (laag 4, de site-kant). Een vertaling is dezelfde
+slug met een andere `lang`. De basistaal heeft geen prefix in het adres, elke
+andere taal haar code als eerste segment.
+
+```mermaid
+flowchart TD
+    U["/en/over-ons"] --> SP["splitLocalePath<br/>taal en · slug over-ons"]
+    SP --> RO["localeReadOptions<br/>lang en, exactLang"]
+    RO --> GP["store.getPage"]
+    GP -- "vertaling bestaat" --> R["pagina, ctx.locale en,<br/>ctx.pathPrefix /en"]
+    GP -- "geen vertaling" --> RD["redirect naar /over-ons<br/>of 404"]
+    R --> PT["pageTranslations"]
+    PT --> LL["languageLinks → LanguageSwitch"]
+    PT --> HA["hreflangAlternates → Metadata.alternates"]
+    R --> M["getMenu(main, lang en)"]
+    R --> LS["localizedSite(site, en)"]
+```
+
+- Een site met meer dan één taal heeft geen terugval op `en` meer
+  (`legacyFallback`): een `en`-rij is daar een vertaling. Lezen in de basistaal
+  valt dus nooit op een Engelse pagina.
+- `exactLang` in `ReadOptions`: alleen wat in die taal bestaat. Zonder valt
+  lezen terug op de basistaal, zoals voor een widget die een gedeeld item
+  toont.
+- Een menu is een type met een taal (`LANGUAGE_TYPES`); de siteconfig houdt
+  haar vertaalde teksten in `translations`.
+- Zonder taal in de aanroep kiest de store de taal die het item al heeft
+  (`langOf`): op een site die haar `en`-etiketten nog niet heeft omgezet vindt
+  `getItem("menu", "main")` het menu dus nog, en een wijziging maakt geen
+  tweede rij.
+- Het generieke formulier onthoudt de taal waaronder een item staat
+  (`originalLang`); een andere taal kiezen en opslaan verhuist het item.
+
 Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
 README): één catch-all route handler die de `ContentStore` aanroept, met
 dezelfde query-parameters. API, site en admin kunnen daardoor per definitie

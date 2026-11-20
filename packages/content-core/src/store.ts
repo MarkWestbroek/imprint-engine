@@ -28,6 +28,12 @@ export interface ReadOptions {
   asOf?: Date;
   /** Preferred language; absent = the site's base language, which is also the fallback (S9, lang.ts). */
   lang?: Locale;
+  /**
+   * Only items that exist in `lang` itself: no fallback to the base language.
+   * For the side of a site in another language (`/en/…`), where a page
+   * without a translation is not there.
+   */
+  exactLang?: boolean;
   /** Include drafts (preview mode only). */
   includeDrafts?: boolean;
 }

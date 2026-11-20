@@ -22,6 +22,7 @@ export function ItemEditor({
   validFrom,
   validTo,
   pages,
+  lang,
   action,
 }: {
   type: ContentType;
@@ -31,7 +32,9 @@ export function ItemEditor({
   validFrom?: string;
   validTo?: string;
   pages?: { slug: string; title: string }[];
-  /** Saves the item as a new version; the form posts `type`, `data` (JSON), `validFrom`, `validTo`. */
+  /** The language the item is stored under now (absent for a new one); posted as `originalLang`. */
+  lang?: string;
+  /** Saves the item as a new version; the form posts `type`, `data` (JSON), `originalLang`, `validFrom`, `validTo`. */
   action: FormAction;
 }) {
   const [data, setData] = useState(initialData);
@@ -41,6 +44,7 @@ export function ItemEditor({
     <form action={formAction} className="space-y-6">
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="data" value={JSON.stringify(data)} />
+      {lang && <input type="hidden" name="originalLang" value={lang} />}
 
       <SchemaForm
         schema={formSchema}

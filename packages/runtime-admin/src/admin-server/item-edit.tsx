@@ -7,6 +7,11 @@ import { itemLang } from "@imprint/content-core";
 import { withAccessOptions, withLocaleOptions } from "../forms";
 import { accessGroups } from "./members";
 
+/** A new item starts in the language its type has by default (the site's base language for pages and menus). */
+function newData(empty: Record<string, unknown>, lang: string): Record<string, unknown> {
+  return "lang" in empty ? { ...empty, lang } : empty;
+}
+
 /** Date → value for <input type="datetime-local"> (minute precision). */
 function toLocalInput(date: Date | null | undefined): string | undefined {
   if (!date) return undefined;
@@ -66,7 +71,8 @@ export async function ItemEditScreen({
       <div className="mt-6">
         <ItemEditor
           type={contentType}
-          initialData={(item?.data as Record<string, unknown>) ?? def.emptyData?.() ?? {}}
+          initialData={(item?.data as Record<string, unknown>) ?? newData(def.emptyData?.() ?? {}, baseLang)}
+          lang={item?.lang}
           formSchema={withLocaleOptions(withAccessOptions(admin.forms.content(contentType), await accessGroups(admin)), admin.imprint.locales)}
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}

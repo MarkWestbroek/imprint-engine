@@ -21,7 +21,7 @@ import {
   type SiteConfig,
   type Theme,
 } from "./schemas";
-import { LEGACY_LOCALE, pickByLang } from "./lang";
+import { LEGACY_LOCALE, legacyFallback, pickByLang } from "./lang";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentStore, ReadOptions } from "./store";
 
@@ -34,7 +34,8 @@ import type { ContentStore, ReadOptions } from "./store";
  *   pages/<slug>.md           Page: frontmatter (PageMeta) + markdown body
  *   pages/<slug>.json         Composed page: meta + PageLayout with widgets
  *   pages/posts/<slug>.md     Devlog posts (just pages under a prefix)
- *   menus/<name>.json         Menu (nestable items pointing to pages/URLs)
+ *   menus/<name>.json         Menu (nestable items pointing to pages/URLs);
+ *                             <name>.<lang>.json for the menu in another language
  *
  * Everything is validated with zod on read, so a broken file fails the build
  * instead of silently rendering garbage. Pass the site's WidgetTypeRegistry
@@ -46,11 +47,19 @@ import type { ContentStore, ReadOptions } from "./store";
 export class FileContentStore implements ContentStore {
   constructor(
     private readonly contentDir: string,
-    private readonly opts: { widgets?: WidgetTypeRegistry; defaultLocale?: string } = {}
+    private readonly opts: { widgets?: WidgetTypeRegistry; defaultLocale?: string; locales?: readonly string[] } = {}
   ) {}
 
   private get defaultLocale(): string {
     return this.opts.defaultLocale ?? LEGACY_LOCALE;
+  }
+
+  /** One item per slug, as the database stores pick (lang.ts). */
+  private pick<T extends { slug: string; lang: string }>(items: T[], opts?: ReadOptions): T[] {
+    return pickByLang(items, opts?.lang, this.defaultLocale, {
+      exact: opts?.exactLang,
+      legacy: legacyFallback(this.opts.locales, this.defaultLocale),
+    });
   }
 
   /** A file without `lang` is written in the site's base language. */
@@ -71,7 +80,7 @@ export class FileContentStore implements ContentStore {
       const raw = await fs.readFile(file, "utf8");
       products.push(ProductSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const picked = pickByLang(products, opts?.lang, this.defaultLocale);
+    const picked = this.pick(products, opts);
     return picked.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
   }
 
@@ -103,7 +112,7 @@ export class FileContentStore implements ContentStore {
       const raw = await fs.readFile(file, "utf8");
       components.push(ComponentSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const picked = pickByLang(components, opts?.lang, this.defaultLocale);
+    const picked = this.pick(components, opts);
     return picked.sort((a, b) => a.name.localeCompare(b.name));
   }
 
@@ -120,7 +129,7 @@ export class FileContentStore implements ContentStore {
       const raw = await fs.readFile(file, "utf8");
       specs.push(BoardSpecSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const picked = pickByLang(specs, opts?.lang, this.defaultLocale);
+    const picked = this.pick(specs, opts);
     let out = picked;
     if (opts?.component) out = out.filter((s) => s.component === opts.component);
     return out.sort((a, b) => a.slug.localeCompare(b.slug));
@@ -154,7 +163,7 @@ export class FileContentStore implements ContentStore {
     );
     if (opts?.prefix) visible = visible.filter((p) => p.slug.startsWith(opts.prefix!));
 
-    return pickByLang(visible, opts?.lang, this.defaultLocale).sort((a, b) =>
+    return this.pick(visible, opts).sort((a, b) =>
       (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "")
     );
   }
@@ -164,17 +173,18 @@ export class FileContentStore implements ContentStore {
     return pages.find((p) => p.slug === slug) ?? null;
   }
 
-  async getMenu(name: string): Promise<Menu | null> {
-    try {
-      const raw = await fs.readFile(
-        path.join(this.contentDir, "menus", `${name}.json`),
-        "utf8"
-      );
-      return MenuSchema.parse(JSON.parse(raw));
-    } catch (err: unknown) {
-      if ((err as NodeJS.ErrnoException).code === "ENOENT") return null;
-      throw err;
+  /** `<name>.<lang>.json` for another language than the base; `<name>.json` is the base language's. */
+  async getMenu(name: string, opts?: ReadOptions): Promise<Menu | null> {
+    const lang = opts?.lang ?? this.defaultLocale;
+    const files = lang === this.defaultLocale ? [`${name}.json`] : [`${name}.${lang}.json`, ...(opts?.exactLang ? [] : [`${name}.json`])];
+    for (const file of files) {
+      try {
+        return MenuSchema.parse(JSON.parse(await fs.readFile(path.join(this.contentDir, "menus", file), "utf8")));
+      } catch (err: unknown) {
+        if ((err as NodeJS.ErrnoException).code !== "ENOENT") throw err;
+      }
     }
+    return null;
   }
 
   async listThemes(): Promise<Theme[]> {

@@ -636,7 +636,7 @@ async function PostsWidget({ config, ctx }: { config: PostsConfig; ctx: WidgetCo
           {posts.map((p) => (
             <Link
               key={p.slug}
-              href={`/${p.slug}`}
+              href={`${ctx.pathPrefix ?? ""}/${p.slug}`}
               className="block rounded-lg border border-line p-3 hover:border-accent"
             >
               <span className="font-semibold">{p.title}</span>
@@ -696,7 +696,7 @@ async function EmbedWidget({ config, ctx }: { config: EmbedConfig; ctx: WidgetCo
 }
 
 /** Nest pages into a tree by their slug segments (e.g. posts/hello-world). */
-function pagesToTree(pages: Page[]): TreeNode[] {
+function pagesToTree(pages: Page[], pathPrefix = ""): TreeNode[] {
   const root: TreeNode[] = [];
   for (const page of pages) {
     let level = root;
@@ -706,7 +706,7 @@ function pagesToTree(pages: Page[]): TreeNode[] {
       let node = level.find((n) => n.label === (leaf ? page.title : segment));
       if (!node) {
         node = leaf
-          ? { label: page.title, href: `/${page.slug}` }
+          ? { label: page.title, href: `${pathPrefix}/${page.slug}` }
           : { label: segment, children: [] };
         level.push(node);
       }
@@ -743,7 +743,7 @@ async function TreeviewWidget({ config, ctx }: { config: TreeviewConfig; ctx: Wi
   let nodes = config.items;
   if (config.pagesPrefix !== undefined) {
     const pages = await ctx.store.listPages({ prefix: config.pagesPrefix, ...ctx.readOptions });
-    nodes = [...nodes, ...pagesToTree(pages)];
+    nodes = [...nodes, ...pagesToTree(pages, ctx.pathPrefix)];
   }
   return (
     <WidgetFrame title={config.title}>
@@ -1116,13 +1116,13 @@ async function BreadcrumbWidget({ config, ctx }: { config: BreadcrumbConfig; ctx
     segments.slice(0, -1).map(async (seg, i) => {
       const slug = segments.slice(0, i + 1).join("/");
       const page = await ctx.store.getPage(slug, ctx.readOptions);
-      return { href: `/${slug}`, label: page?.title || humanise(seg) };
+      return { href: `${ctx.pathPrefix ?? ""}/${slug}`, label: page?.title || humanise(seg) };
     })
   );
   const sep = <span className="text-muted/60">›</span>;
   return (
     <nav aria-label={messagesFor(messages, ctx.locale).breadcrumb} className="flex flex-wrap items-center gap-2 text-sm text-muted">
-      <Link href="/" className="hover:text-accent">
+      <Link href={ctx.pathPrefix || "/"} className="hover:text-accent">
         {config.homeLabel}
       </Link>
       {parents.map((p) => (

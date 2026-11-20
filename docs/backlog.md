@@ -810,9 +810,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             schema's hebben `lang` met standaard `en`. Zolang hun typen geen
             taal hebben is dat een etiket zonder betekenis; bij stap D per
             type beslissen of het vertaalbaar wordt. _(M)_
-      - [ ] Het generieke formulier (`saveItem`) verhuist een item niet als je
-            de taal wijzigt: het oude blijft naast het nieuwe staan. De studio
-            doet dat wel. _(S)_
+      - [x] ~~Het generieke formulier (`saveItem`) verhuist een item niet als
+            je de taal wijzigt.~~ Sinds 20-11-2026 wel, net als de studio.
       - [ ] `defaultLocale` staat ook nog in de siteconfig in de store (de
             RSS-feed van MusicBrain leest het); de config is leidend. Het veld
             daar weghalen of laten volgen. _(S)_
@@ -832,6 +831,15 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   `dynamic`-lader, krijgt geen props). **S**
       - [ ] Stap C: beheeromgeving vertaald, taal per gebruiker. _(L)_
       - [ ] Stap D: vertalingen per item, `/en/`-prefix, `hreflang`. _(M+M+S)_
+            Eerste deel gebouwd 20-11-2026 (de site-kant, in de engine);
+            eerste gebruiker is paratmos. Open:
+            - [ ] paratmos aansluiten: route, taalkeuze, `<html lang>` per
+                  taal, de Engelse teksten uit WPML (sessie PARATMOS). **M**
+            - [ ] Admin: taaltabs, "Vertaling maken", kolom *vertaald*,
+                  melding bij een verouderde vertaling. **M**
+            - [ ] Vertaalde slugs (`/en/about` naast `/over-ons`): niet
+                  gebouwd, alleen als een site het nodig heeft. **M**
+            - [ ] Plugin-typen (bericht, wiki, begrip) per taal. **M**
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_
 - [ ] **W11** Community: links + GitHub Discussions embed. _(should; S)_
 - [ ] **W12** Privacy-vriendelijke analytics (Plausible/Umami). _(should; S)_

@@ -7,6 +7,8 @@ import type { Catalog } from "@imprint/content-core";
  * are a first translation, to be read by a Polish speaker.
  */
 export type PublicMessages = {
+  /** The label of the language choice in the header (for screen readers). */
+  language: string;
   search: {
     title: string;
     term: string;
@@ -24,6 +26,7 @@ export type PublicMessages = {
 
 export const publicMessages = {
   en: {
+    language: "Language",
     search: {
       title: "Search",
       term: "Search term",
@@ -36,6 +39,7 @@ export const publicMessages = {
     },
   },
   nl: {
+    language: "Taal",
     search: {
       title: "Zoeken",
       term: "Zoekterm",
@@ -48,6 +52,7 @@ export const publicMessages = {
     },
   },
   pl: {
+    language: "Język",
     search: {
       title: "Szukaj",
       term: "Szukane hasło",
