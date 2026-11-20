@@ -294,9 +294,9 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
 
   const registry = registryOf(cfg);
   const { locales, defaultLocale } = localesOf(cfg);
-  const opened = url ? openContentDatabase(url, { widgets, contentTypes: registry, defaultLocale }) : null;
+  const opened = url ? openContentDatabase(url, { widgets, contentTypes: registry, defaultLocale, locales }) : null;
   const readStore: ContentStore =
-    opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets, defaultLocale });
+    opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets, defaultLocale, locales });
   const pdp = cfg.pdp ?? inProcessPdp;
 
   const assetRoot = cfg.assets?.root || path.join(process.cwd(), ".assets");

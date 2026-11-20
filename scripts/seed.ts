@@ -80,8 +80,8 @@ async function main() {
   const store = opened.store;
   const by = "seed";
   /** With `--new`: whether this page or menu is not in the store yet (an existing one is skipped, and said so). */
-  const mag = async (type: "page" | "menu", slug: string): Promise<boolean> => {
-    if (!onlyNew || !(await store.getItem(type, slug))) return true;
+  const mag = async (type: "page" | "menu", slug: string, lang?: string): Promise<boolean> => {
+    if (!onlyNew || !(await store.getItem(type, slug, lang))) return true;
     console.log(`${type.padEnd(9)} = ${slug} already exists, skipped`);
     return false;
   };
@@ -144,9 +144,11 @@ async function main() {
   if (want("menu")) {
     for (const file of await listFiles(path.join(CONTENT_DIR, "menus"), ".json")) {
       const menu = MenuSchema.parse(await json(file));
-      if (!(await mag("menu", menu.name))) continue;
-      await store.putItem("menu", menu.name, menu, { by });
-      console.log(`menu      ✓ ${menu.name}`);
+      // `main.en.json` is the menu in English; `main.json` the one in the base language.
+      const lang = /\.([a-z]{2})\.json$/.exec(file)?.[1] ?? baseLang;
+      if (!(await mag("menu", menu.name, lang))) continue;
+      await store.putItem("menu", menu.name, menu, { lang, by });
+      console.log(`menu      ✓ ${menu.name} (${lang})`);
     }
   }
 

@@ -618,6 +618,14 @@ export const SiteConfigSchema = z.object({
   motto: z.string().default(""),
   baseUrl: z.string().url(),
   defaultLocale: Locale.default("en"),
+  /**
+   * The texts above in another language of the site, per language code
+   * (design/meertaligheid.md layer 4): `{ en: { tagline: "…" } }`. What is
+   * left out stays as in the base language; read with `localizedSite`.
+   */
+  translations: z
+    .record(z.string(), z.object({ name: z.string().optional(), tagline: z.string().optional(), motto: z.string().optional() }))
+    .default({}),
   links: z.record(z.string(), z.string().url()).default({}),
   /**
    * URL-aliases: eerste padsegment → doel-route, permanent geredirect.

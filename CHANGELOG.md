@@ -6,6 +6,21 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Meer talen naast elkaar: de site-kant** (W5/S9, eerste deel van stap D van
+  design/meertaligheid.md; eerste gebruiker wordt paratmos). Een site met
+  `locales: ["nl", "en"]` toont een vertaling (zelfde slug, andere `lang`)
+  onder `/en/…`; de basistaal houdt haar adressen. Nieuw in `content-core`:
+  `exactLang` in de leesopties (een pagina zonder vertaling bestaat aan die
+  kant niet), `splitLocalePath`, `localeHref`, `localeReadOptions`,
+  `pageTranslations`, `languageLinks`, `hreflangAlternates` (absoluut, met
+  `x-default`) en `localizedSite`. Een menu bestaat per taal
+  (`menus/main.en.json`, `getMenu(naam, { lang })`), de siteconfig krijgt
+  `translations` voor naam, tagline en motto, en `@imprint/runtime-admin`
+  heeft een `LanguageSwitch`. Widgets die naar pagina's linken zetten
+  `WidgetContext.pathPrefix` ervoor. Op een site met meer talen vervalt de
+  terugval op `en`. Zonder taal in de aanroep kiest de store de taal die een
+  item al heeft, en het generieke formulier verhuist een item als je de taal
+  wijzigt. De admin (taaltabs, "Vertaling maken") volgt.
 - **Vaste teksten in de taal van de site** (W5/S9, eerste deel van stap B van
   design/meertaligheid.md). Een catalogus per package in plaats van tekst in
   de code: de standaardwidgets en de zoekpagina van de engine in Nederlands,

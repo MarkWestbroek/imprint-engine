@@ -44,6 +44,13 @@ export type WidgetContext = {
    * Absent = English. Viewers pick their texts with `messagesFor`.
    */
   locale?: string;
+  /**
+   * What goes before a page's address on this side of the site: "/en" on the
+   * English side, absent in the base language (design/meertaligheid.md layer
+   * 4). Viewers that link to pages by slug (posts, breadcrumb, treeview) put
+   * it in front, so a visitor stays in their language.
+   */
+  pathPrefix?: string;
 };
 
 /** What a widget viewer receives. */

@@ -229,6 +229,15 @@ zien, inclusief header en footer.
   downloaden", het kruimelpad voor schermlezers) staat in de taal van de site:
   Nederlands, Engels of Pools. Een eigen tekst in de instellingen van de
   widget (bijvoorbeeld *emptyText*) gaat altijd voor.
+- **Een site in meer talen**: een vertaling is dezelfde pagina (zelfde slug)
+  in een andere taal, met een eigen geschiedenis. Ze staat op de site onder de
+  taalcode: `/en/over-ons` naast `/over-ons`. De taalkeuze in de kop toont
+  alleen vertalingen die bestaan; een pagina zonder vertaling wijst naar de
+  startpagina van de andere taal. Elke taal heeft een eigen menu met dezelfde
+  naam (in de lijst *Menus* staat de taal erbij), zodat het Engelse menu
+  alleen pagina's noemt die er in het Engels zijn. Een knop "Vertaling maken"
+  is er nog niet: open de pagina in de studio met `?lang=en` achter het adres
+  en sla op.
 - **Taal**: een nieuwe pagina krijgt de taal van de site. Het veld **lang** in
   de instellingen is een keuzelijst met de talen die de site heeft. Staat een
   pagina in een taal die de site niet heeft, dan zegt een melding bovenaan dat,

@@ -1,7 +1,7 @@
 # Ontwerp — meertaligheid (W5/S9)
 
-Status: **stap A gebouwd (20-11-2026), stap B voor een deel** (zie §3), C en
-D ontwerp. De keuzes
+Status: **stap A gebouwd (20-11-2026), stap B voor een deel** (zie §3), **stap
+D voor een deel** (de site-kant, zie §5), C ontwerp. De keuzes
 in §7 zijn besloten op 20-11-2026. Vervangt het denkstuk van juli 2026 (dat
 ging alleen over vertalingen van inhoud, met Engels als bron; het staat nu in
 §5, bijgewerkt).
@@ -179,6 +179,77 @@ basistaal is de bron.**
 - **Later en apart te besluiten**: voorvertalen met een LLM in de knop
   "Vertaling maken" (kosten, wie controleert).
 
+**Zo gebouwd (stap D, eerste deel: de site-kant, 20-11-2026).** Eerste
+gebruiker is paratmos (besloten 20-11-2026), dat van WordPress met WPML komt.
+De engine levert de bouwstenen; de routes zijn van de site.
+
+- **Talen aanzetten**: `locales: ["nl", "en"]` in `imprint.config.ts`. Vanaf
+  dat moment is een `en`-rij een vertaling en geen oude Nederlandse rij meer:
+  de terugval op `en` vervalt (`legacyFallback`). Een site met nog
+  `en`-etiketten draait dus eerst `relabel-lang`.
+- **Strikt lezen**: `ReadOptions.exactLang`. Aan de Engelse kant bestaat een
+  pagina zonder vertaling niet; geen Nederlandse tekst onder `lang="en"`.
+  `localeReadOptions(taal, basistaal)` geeft de juiste opties.
+- **Adres** (`content-core/src/lang.ts`): `splitLocalePath(segmenten, site)`
+  haalt de taal uit het eerste segment, `localeHref(taal, pad, basistaal)`
+  maakt het adres. Puur, dus zonder `headers()`: de basistaal blijft SSG.
+- **Vertalingen van een pagina**: `pageTranslations(store, slug, site)`,
+  daaruit `languageLinks(…)` voor de taalkeuze (een taal zonder vertaling
+  wijst naar de startpagina van die taal) en `hreflangAlternates(…, baseUrl)`
+  voor `Metadata.alternates`: absoluut, met `x-default` op de basistaal.
+- **Taalkeuze**: `LanguageSwitch` in `@imprint/runtime-admin`; gewone links,
+  geen cookie.
+- **Menu per taal**: een menu is een type met een taal geworden. `main` in
+  `nl` en in `en` zijn twee rijen; `getMenu("main", { lang })`. In de
+  content-map `menus/main.en.json` naast `main.json`.
+- **Sitenaam, tagline en motto per taal**: `translations` in de siteconfig
+  (`{ en: { tagline: "…" } }`), gelezen met `localizedSite(site, taal)`.
+- **Links in widgets**: `WidgetContext.pathPrefix` (`"/en"`); berichten,
+  kruimelpad en boomweergave zetten hem voor het adres.
+- **Zelfde slug in elke taal** (`/over-ons` en `/en/over-ons`). Vertaalde
+  slugs zijn niet gebouwd.
+
+Wat een site doet (schets; paratmos is het voorbeeld):
+
+```tsx
+// app/(site)/[[...slug]]/page.tsx: één route voor beide talen
+const site = { locales: imprint.locales, defaultLocale: imprint.defaultLocale };
+
+export async function generateStaticParams() {
+  const out: { slug: string[] }[] = [];
+  for (const locale of site.locales) {
+    const pages = await store.listPages(localeReadOptions(locale, site.defaultLocale));
+    for (const p of pages) out.push({ slug: localeHref(locale, p.slug, site.defaultLocale).split("/").filter(Boolean) });
+  }
+  return out;
+}
+
+export default async function Page({ params }: { params: Promise<{ slug?: string[] }> }) {
+  const { locale, segments } = splitLocalePath((await params).slug ?? [], site);
+  const slug = segments.join("/") || "home";
+  const page = await store.getPage(slug, localeReadOptions(locale, site.defaultLocale, await readOpts()));
+  if (!page) {
+    // Geen vertaling: naar de pagina in de basistaal, als die er is.
+    if (locale !== site.defaultLocale && (await store.getPage(slug))) redirect(localeHref(site.defaultLocale, slug, site.defaultLocale));
+    notFound();
+  }
+  const ctx = { ...(await widgetContext()), locale, pathPrefix: locale === site.defaultLocale ? undefined : `/${locale}`,
+                readOptions: localeReadOptions(locale, site.defaultLocale, await readOpts()) };
+  …
+}
+```
+
+**Nog te doen in stap D.**
+- De admin: taaltabs, de knop "Vertaling maken", de kolom *vertaald*, en de
+  melding bij een verouderde vertaling (zie hierboven). Tot dan komt een
+  vertaling uit een script, of door in de studio een pagina onder `?lang=en`
+  te openen en op te slaan.
+- De typen van plugins (bericht, wiki, begrip) hebben geen taal; hun routes
+  bestaan alleen in de basistaal.
+- `<html lang>` per taal vraagt aan de sitekant een layout per taal (route
+  groups); de engine hoeft daar niets voor te doen.
+- De Imprint-site, inrichting en omnium, en als laatste de taaltraining.
+
 **Wat de taaltraining erbij vraagt** (`sites/taal`, opgegeven door die sessie
 op 20-11-2026). Die site lost het nu lokaal op en gaat als laatste over:
 - Een **ingang** is daar de taal van de lezer plus een lespakket, niet alleen
@@ -204,7 +275,7 @@ op 20-11-2026). Die site lost het nu lokaal op en gaat als laatste over:
 | A | Laag 1: `locales`, basistaal in lezen en schrijven, `<html lang>`, waarschuwing in de studio. **Gebouwd 20-11-2026**, aangezet op de Imprint-site | S | Poolse inhoud correct opgeslagen en getoond |
 | B | Laag 2: catalogi `nl/en/pl` in widgets-standard, de plugins en de site-chrome; `formatDate`. **Eerste deel gebouwd 20-11-2026**: de helpers, `uiLocale`, de standaardwidgets, de zoekpagina en de kop en voet van de Imprint-site; de plugins volgen | M | een volledig Poolse publieke site |
 | C | Laag 3: admin-catalogus, taal per gebruiker, labelkaarten voor formulieren | L | Pools beheer |
-| D | Laag 4: taaltabs, "Vertaling maken", dekking, `/en/`-prefix, `hreflang`, verouderd-melding | M + M + S | meertalige sites |
+| D | Laag 4: taaltabs, "Vertaling maken", dekking, `/en/`-prefix, `hreflang`, verouderd-melding. **Eerste deel gebouwd 20-11-2026**: de site-kant (strikt lezen, adres, `hreflang`, taalkeuze, menu en sitetekst per taal); de admin volgt | M + M + S | meertalige sites |
 
 De Poolse site (de taaltraining) is er intussen, met een eigen oplossing in
 de site. De volgorde is daarom (besloten 20-11-2026, zie keuze E): eerst de

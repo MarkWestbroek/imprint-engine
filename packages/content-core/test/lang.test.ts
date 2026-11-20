@@ -1,11 +1,22 @@
-import assert from "node:assert/strict";
+﻿import assert from "node:assert/strict";
 import { promises as fs } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { after, describe, it } from "node:test";
 
 import { FileContentStore } from "../src/file-store";
-import { itemLang, pickByLang, relabelLanguage } from "../src/lang";
+import {
+  hreflangAlternates,
+  itemLang,
+  languageLinks,
+  legacyFallback,
+  localeHref,
+  localizedSite,
+  pageTranslations,
+  pickByLang,
+  relabelLanguage,
+  splitLocalePath,
+} from "../src/lang";
 import { createMemoryDb, MemoryContentStore } from "../src/memory-store";
 import { Locale } from "../src/schemas";
 
@@ -40,7 +51,8 @@ describe("languages", () => {
 
   it("only the types read by language follow the base language", () => {
     assert.equal(itemLang("page", "pl"), "pl");
-    assert.equal(itemLang("menu", "pl"), "en");
+    assert.equal(itemLang("menu", "pl"), "pl", "a menu exists per language");
+    assert.equal(itemLang("theme", "pl"), "en");
     assert.equal(itemLang("asset", "pl"), "en");
     assert.equal(itemLang("page"), "en");
   });
@@ -56,7 +68,7 @@ describe("a store with a base language", () => {
     assert.equal((await store.listVersions("page", "o-nas")).length, 1);
 
     await store.putItem("menu", "main", { name: "main", items: [] });
-    assert.equal((await store.listItems("menu"))[0].lang, "en", "a menu has no language of its own");
+    assert.equal((await store.listItems("menu"))[0].lang, "pl", "a menu is in the base language too");
   });
 
   it("still shows rows labelled en, and prefers the base language over them", async () => {
@@ -115,5 +127,90 @@ describe("the file store with a base language", () => {
     assert.equal((await nl.getPage("over"))?.lang, "nl");
     assert.equal((await nl.getPage("about"))?.lang, "en", "a named language stays");
     assert.equal((await new FileContentStore(dir).getPage("over"))?.lang, "en", "no base language: en, as before");
+  });
+});
+
+describe("more languages side by side", () => {
+  const site = { locales: ["nl", "en"], defaultLocale: "nl" };
+
+  it("reads an address: the base language has no prefix, another language is the first segment", () => {
+    assert.deepEqual(splitLocalePath(["en", "over", "ons"], site), { locale: "en", segments: ["over", "ons"] });
+    assert.deepEqual(splitLocalePath(["over"], site), { locale: "nl", segments: ["over"] });
+    assert.deepEqual(splitLocalePath(["nl", "over"], site), { locale: "nl", segments: ["nl", "over"] }, "the base language is no prefix");
+    assert.deepEqual(splitLocalePath(["pl", "over"], site), { locale: "nl", segments: ["pl", "over"] }, "not a language of this site");
+    assert.deepEqual(splitLocalePath([], site), { locale: "nl", segments: [] });
+    assert.equal(localeHref("nl", "/over", "nl"), "/over");
+    assert.equal(localeHref("en", "over/ons", "nl"), "/en/over/ons");
+    assert.equal(localeHref("en", "/", "nl"), "/en");
+    assert.equal(localeHref("nl", "", "nl"), "/");
+  });
+
+  it("en rows stand in for the base language only on a site without English", () => {
+    assert.equal(legacyFallback(["nl"], "nl"), true);
+    assert.equal(legacyFallback(["nl", "en"], "nl"), false);
+    assert.equal(legacyFallback(undefined, "en"), false);
+    const items = [
+      { slug: "a", lang: "nl" },
+      { slug: "a", lang: "en" },
+      { slug: "only-en", lang: "en" },
+    ];
+    const slugs = (wanted: string, opts: { exact?: boolean; legacy?: boolean }) =>
+      pickByLang(items, wanted, "nl", opts).map((i) => `${i.slug}:${i.lang}`).sort();
+    assert.deepEqual(slugs("nl", { legacy: false }), ["a:nl"], "an English-only page is not Dutch");
+    assert.deepEqual(slugs("en", { legacy: false }), ["a:en", "only-en:en"]);
+    assert.deepEqual(slugs("en", { exact: true }), ["a:en", "only-en:en"]);
+    assert.deepEqual(slugs("pl", { exact: true }), []);
+  });
+
+  it("a bilingual store: each side reads its own pages and its own menu", async () => {
+    const store = new MemoryContentStore(createMemoryDb(), { defaultLocale: "nl", locales: ["nl", "en"] });
+    await store.putItem("page", "over", page("over", "nl", "Over ons"));
+    await store.putItem("page", "over", page("over", "en", "About us"));
+    await store.putItem("page", "contact", page("contact", "nl", "Contact"));
+    await store.putItem("menu", "main", { name: "main", items: [{ label: "Over", page: "over" }] });
+    await store.putItem("menu", "main", { name: "main", items: [{ label: "About", page: "over" }] }, { lang: "en" });
+
+    assert.equal((await store.getPage("over"))?.body, "Over ons");
+    assert.equal((await store.getPage("over", { lang: "en", exactLang: true }))?.body, "About us");
+    assert.equal(await store.getPage("contact", { lang: "en", exactLang: true }), null, "no translation: not there");
+    assert.equal((await store.getPage("contact", { lang: "en" }))?.body, "Contact", "without exactLang: the base language");
+    assert.deepEqual((await store.listPages({ lang: "en", exactLang: true })).map((p) => p.slug), ["over"]);
+    assert.equal((await store.getMenu("main"))?.items[0].label, "Over");
+    assert.equal((await store.getMenu("main", { lang: "en" }))?.items[0].label, "About");
+
+    const translations = await pageTranslations(store, "over", site);
+    assert.deepEqual(translations, [
+      { locale: "nl", href: "/over" },
+      { locale: "en", href: "/en/over" },
+    ]);
+    assert.deepEqual(hreflangAlternates(translations, "en", site, "https://x.test/"), {
+      canonical: "https://x.test/en/over",
+      languages: { nl: "https://x.test/over", en: "https://x.test/en/over", "x-default": "https://x.test/over" },
+    });
+    const single = await pageTranslations(store, "contact", site);
+    assert.deepEqual(hreflangAlternates(single, "nl", site), { canonical: "/contact", languages: {} });
+    assert.deepEqual(languageLinks(single, site), [
+      { locale: "nl", href: "/contact", translated: true },
+      { locale: "en", href: "/en", translated: false },
+    ]);
+  });
+
+  it("an item keeps the language it has when the caller names none (before relabel-lang)", async () => {
+    const db = createMemoryDb();
+    await new MemoryContentStore(db).putItem("menu", "main", { name: "main", items: [] });
+    const store = new MemoryContentStore(db, { defaultLocale: "nl", locales: ["nl"] });
+    assert.equal((await store.getItem("menu", "main"))?.lang, "en", "found under its old label");
+    await store.putItem("menu", "main", { name: "main", items: [{ label: "Home", url: "/" }] });
+    assert.equal((await store.listItems("menu")).length, 1, "still one menu");
+    assert.equal((await store.getMenu("main"))?.items.length, 1);
+    await store.putItem("menu", "footer", { name: "footer", items: [] });
+    assert.equal((await store.getItem("menu", "footer"))?.lang, "nl", "a new one is in the base language");
+  });
+
+  it("the site's name and tagline per language, where given", () => {
+    const cfg = { name: "Paratmos", tagline: "Samen modelleren", motto: "", translations: { en: { tagline: "Modelling together", motto: "" } } };
+    assert.equal(localizedSite(cfg, "en").tagline, "Modelling together");
+    assert.equal(localizedSite(cfg, "en").name, "Paratmos");
+    assert.equal(localizedSite(cfg, "nl").tagline, "Samen modelleren");
   });
 });
