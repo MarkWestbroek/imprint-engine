@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: plaatjes bij de woorden.** In *Zoek een woord* (Nederlands en
+  Pools) staat bij een concreet woord een plaatje, ook klein in de suggesties;
+  twee betekenissen, twee plaatjes (*bank* 🏦 🛋, *zamek* 🏰 🔒). Fluent Emoji
+  (Microsoft, MIT), gekoppeld via de Nederlandse en Poolse emojinamen van
+  Unicode en met de hand nagelopen.
+- **Nederlandse woordenlijst: basiswoorden terug.** *Hond*, *fiets*, *regen*,
+  *melk*, *paard*, *neus* en zo'n dertig andere ontbraken: hun vorm is ook een
+  werkwoordsvorm (*ik fiets*) of Wiktionary geeft ze een grove bijbetekenis.
+  Ze staan nu in de `houd`-lijst, en een woord uit die lijst komt er altijd in.
 - **Vaste teksten in de taal van de site** (W5/S9, eerste deel van stap B van
   design/meertaligheid.md). Een catalogus per package in plaats van tekst in
   de code: de standaardwidgets en de zoekpagina van de engine in Nederlands,

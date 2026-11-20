@@ -12,10 +12,13 @@ import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
 import { TAAL } from "../imprint.config";
 import { controleerLinks, leesGrammatica, leesLessen } from "../scripts/lessen-regels";
-import { lidwoord, NederlandseWoordenlijst, PoolseWoordenlijst, zoek } from "@imprint/plugin-taal";
+import { lidwoord, metBeelden, NederlandseWoordenlijst, PoolseWoordenlijst, zoek } from "@imprint/plugin-taal";
 import woordenJson from "../woorden/nl.json";
 import poolsJson from "../woorden/pl.json";
 import poolseAanvullingen from "../woorden/pl-aanvullingen.json";
+import beeldenJson from "../woorden/beelden.json";
+import { existsSync } from "node:fs";
+import { Beelden } from "@imprint/plugin-taal/woorden";
 import aanvullingen from "../woorden/nl-aanvullingen.json";
 
 /** The lesson files of this site are valid, and render through the plugin's route and the two widgets. */
@@ -335,10 +338,11 @@ describe("taal: check a word", () => {
   const nw = (w: string) => lijst.naamwoorden.find((n) => n.w === w);
   const ww = (w: string) => lijst.werkwoorden.find((v) => v.w === w);
 
-  it("has a basic list of about B1: 2000 nouns and 450 verbs, each once", () => {
-    assert.equal(lijst.naamwoorden.length, 2000);
+  it("has a basic list of about B1: some 2000 nouns and 450 verbs, each once", () => {
+    // 2000 by count, plus the words kept by hand that fall just below it.
+    assert.ok(lijst.naamwoorden.length >= 2000 && lijst.naamwoorden.length < 2050, `${lijst.naamwoorden.length} nouns`);
     assert.equal(lijst.werkwoorden.length, 450);
-    assert.equal(new Set(lijst.naamwoorden.map((n) => n.w)).size, 2000);
+    assert.equal(new Set(lijst.naamwoorden.map((n) => n.w)).size, lijst.naamwoorden.length);
     assert.equal(new Set(lijst.werkwoorden.map((v) => v.w)).size, 450);
   });
 
@@ -347,6 +351,8 @@ describe("taal: check a word", () => {
     assert.equal(lidwoord(nw("tafel")!.g).hoofd, "de");
     assert.equal(lidwoord(nw("school")!.g).hoofd, "de");
     assert.equal(lidwoord(nw("hart")!.g).hoofd, "het");
+    // Basic words that the count lost to a verb form (ik fiets) or a coarse side meaning (hond): kept by hand.
+    for (const w of ["hond", "fiets", "regen", "melk", "paard", "neus", "apotheek"]) assert.ok(nw(w), w);
     assert.deepEqual(ww("zijn")!.tt, ["ben", "bent", "is", "zijn"]);
     assert.deepEqual([ww("lopen")!.vt[0], ww("lopen")!.vd, ww("lopen")!.hulp], ["liep", "gelopen", "beide"]);
     assert.equal(ww("gaan")!.hulp, "zijn");
@@ -439,6 +445,37 @@ describe("taal: check a Polish word", () => {
     const overzicht = await visit("nl/polski/grammatica");
     assert.ok(overzicht && "render" in overzicht);
     assert.match(await renderHtml(overzicht.render as ReactElement), /href="\/nl\/polski\/woorden"/);
+  });
+});
+
+describe("taal: pictures beside the words", () => {
+  const beelden = Beelden.parse(beeldenJson);
+  const lijsten = { nl: NederlandseWoordenlijst.parse(woordenJson), pl: PoolseWoordenlijst.parse(poolsJson) };
+  const perTaal = (taal: "nl" | "pl") => beelden[taal] as Record<string, string[]>;
+
+  it("pictures only words of the lists, with a picture on disk for every code", () => {
+    for (const taal of ["nl", "pl"] as const) {
+      const woorden = new Set([...lijsten[taal].naamwoorden, ...lijsten[taal].werkwoorden].map((x) => x.w));
+      const m = perTaal(taal);
+      assert.ok(Object.keys(m).length > 300, `${taal}: ${Object.keys(m).length} words with a picture`);
+      for (const [w, codes] of Object.entries(m)) {
+        assert.ok(woorden.has(w), `${taal}: ${w} is not in the list`);
+        for (const c of codes) assert.ok(existsSync(path.join(import.meta.dirname, "..", "public", "beeld", `${c}.svg`)), `${taal} ${w}: no ${c}.svg`);
+      }
+    }
+    assert.ok(existsSync(path.join(import.meta.dirname, "..", "public", "beeld", "LICENSE.txt")), "the MIT licence goes with the pictures");
+  });
+
+  it("shows the things a beginner meets, two pictures for two meanings, and no meat or fish", () => {
+    assert.deepEqual(perTaal("nl")["fiets"], ["1f6b2"]);
+    assert.equal(perTaal("nl")["bank"]?.length, 2, "bank: the bank and the sofa");
+    assert.equal(perTaal("pl")["zamek"]?.length, 2, "zamek: the castle and the lock");
+    assert.ok(perTaal("pl")["jabłko"]?.length);
+    // 🍖 🍗 🥩 🥓 🍔 🌭 🍣 🍤 🐟 🐠 🦐 🦞 🦀 🦑
+    const vleesVis = ["1f356", "1f357", "1f969", "1f953", "1f354", "1f32d", "1f363", "1f364", "1f41f", "1f420", "1f990", "1f99e", "1f980", "1f991"];
+    for (const taal of ["nl", "pl"] as const) for (const [w, codes] of Object.entries(perTaal(taal))) for (const c of codes) assert.ok(!vleesVis.includes(c), `${taal} ${w}: ${c}`);
+    // The site hands the pictures to the plugin with the list.
+    assert.equal(metBeelden(lijsten.pl, beelden).beelden?.woorden["zamek"]?.length, 2);
   });
 });
 
