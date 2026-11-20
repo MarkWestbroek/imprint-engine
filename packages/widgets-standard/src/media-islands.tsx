@@ -14,12 +14,18 @@ export type ShownImage = ImageItem & { srcSet?: string; objectPosition?: string;
 
 /* eslint-disable @next/next/no-img-element -- arbitrary content/asset URLs */
 
+/** The fixed texts of these islands, in the language of the site (the viewer passes them; default English). */
+export type MediaLabels = { previous: string; next: string; photo: string };
+const EN: MediaLabels = { previous: "Previous", next: "Next", photo: "Photo" };
+
 export function Gallery({
   images,
   columns = 3,
 }: {
   images: ShownImage[];
   columns?: number;
+  /** Accepted so every photo island takes the same props; the gallery itself shows no text. */
+  labels?: MediaLabels;
 }) {
   const [open, setOpen] = useState<number | null>(null);
   if (images.length === 0) return null;
@@ -132,9 +138,11 @@ function LbBtn({
 export function Carousel({
   images,
   interval = 0,
+  labels = EN,
 }: {
   images: ShownImage[];
   interval?: number;
+  labels?: MediaLabels;
 }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -170,14 +178,14 @@ export function Carousel({
       )}
       {count > 1 && (
         <>
-          <CarouselBtn side="left" onClick={() => setIndex((index - 1 + count) % count)} />
-          <CarouselBtn side="right" onClick={() => setIndex((index + 1) % count)} />
+          <CarouselBtn side="left" label={labels.previous} onClick={() => setIndex((index - 1 + count) % count)} />
+          <CarouselBtn side="right" label={labels.next} onClick={() => setIndex((index + 1) % count)} />
           <div className="absolute inset-x-0 top-2 flex justify-center gap-1.5">
             {images.map((_, i) => (
               <button
                 key={i}
                 type="button"
-                aria-label={`Photo ${i + 1}`}
+                aria-label={`${labels.photo} ${i + 1}`}
                 onClick={() => setIndex(i)}
                 className={`h-1.5 w-4 rounded-full transition ${
                   i === index ? "bg-white" : "bg-white/40 hover:bg-white/70"
@@ -191,11 +199,11 @@ export function Carousel({
   );
 }
 
-function CarouselBtn({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
+function CarouselBtn({ side, label, onClick }: { side: "left" | "right"; label: string; onClick: () => void }) {
   return (
     <button
       type="button"
-      aria-label={side === "left" ? "Previous" : "Next"}
+      aria-label={label}
       onClick={onClick}
       className={`absolute top-1/2 -translate-y-1/2 rounded-full bg-black/40 px-2.5 py-1.5 text-white hover:bg-black/70 ${
         side === "left" ? "left-2" : "right-2"

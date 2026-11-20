@@ -7,5 +7,5 @@ import { imprint } from "@/lib/content";
  * plus the read options of the as-of preview (the admin's Time travel).
  */
 export async function widgetContext(): Promise<WidgetContext> {
-  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: await readOpts() };
+  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: await readOpts(), locale: imprint.uiLocale };
 }
