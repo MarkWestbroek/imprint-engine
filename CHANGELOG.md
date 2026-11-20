@@ -20,6 +20,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   Imprint-site (`nl`, ook `<html lang>`); elke andere site blijft op `en` tot
   ze een basistaal krijgt. **Bij de uitrol van de Imprint-site eerst
   `relabel-lang` draaien** (docs/deploy-vps.md).
+- **Seed: `--new`.** `npm run db:seed -- --only=page,menu --new` voegt alleen
+  de pagina's en menu's toe die nog niet bestaan, zodat een pagina die in de
+  admin is bewerkt niet door het bestand wordt overschreven.
+- **Taaltraining: Pools voor Nederlandstaligen.** Een tweede lespakket op
+  dezelfde site (`/nl/polski`, ingang `/nl`; jezyk.imprint-engine.nl als extra
+  hostnaam): 45 nieuwe lessen in zes fasen met Tom en Sanne in Kraków, en een
+  eigen grammatica van 31 onderwerpen met een groep *Naamvallen* en vier
+  verschillen met het Nederlands (uitspraak en spelling, geen lidwoorden, *pan*
+  en *pani*, het onderwerp weglaten). Eigen startpagina, menu en naam in de
+  kop (*Powoli, ale do przodu*). Een getypt antwoord zonder Poolse tekens
+  telt goed (*l* voor *ł*).
 - **Taaltraining: Nederlands leren vanuit het Engels.** De 45 lessen en de
   grammatica hebben nu ook Engels: vertaling van de dialoog, *situatie*,
   *Did you see that?* en de oefenvragen (`vertaald` per oefening; de

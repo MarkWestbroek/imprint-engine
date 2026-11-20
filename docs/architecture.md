@@ -1777,10 +1777,17 @@ Nederlands, voor Poolstaligen (de standaard) en voor Engelstaligen. De site
 zelf is dun: chrome, een startpagina per ingang, en één catch-all die eerst
 de plugin vraagt. Een **ingang** (`src/lib/ingang.ts`, platte data voor server
 en client) koppelt een interfacetaal aan een startadres, een pagina en een
-menu uit de store: `pl` → `/`, `home`, `main`; `en` → `/en`, `home-en`,
-`main-en`. De header (client, `nav-links.tsx`) krijgt alle menu's mee en kiest
-op het adres: het eerste segment, of voor een pagina zonder taal in het adres
-de ingang waarvan het menu ernaar linkt. Alles van de lessen
+menu uit de store, en aan het pakket dat die lezer leert: `pl` → `/`, `home`,
+`main` (Nederlands); `en` → `/en`, `home-en`, `main-en` (Nederlands); `nl` →
+`/nl`, `home-nl`, `main-nl` (Pools, met eigen naam in de kop en zonder
+taalkeuze). De header (client, `nav-links.tsx`) krijgt alle menu's mee en
+kiest op het adres (`ingangVoor`): lezer en pakket uit de eerste twee
+segmenten, alleen de lezer bij `/<ui>/account`, en voor een pagina zonder taal
+in het adres de ingang waarvan het menu ernaar linkt. Het tweede pakket,
+**Pools voor Nederlandstaligen**, is geen tweede site: lessen met `taal: pl`
+onder `lessen/pl/`, grammatica onder `grammatica/pl/`, dezelfde routes
+(`/nl/polski/…`). jezyk.imprint-engine.nl is een extra hostnaam op dezelfde
+container; Caddy herschrijft daar `/` naar `/nl`. Alles van de lessen
 zit in `@imprint/plugin-taal`.
 
 ```mermaid
@@ -1829,7 +1836,7 @@ flowchart LR
   plaats: `typ` en `zeg` zonder vertaalde vraag en `luister` zonder vertaalde
   opties vallen weg; `kies` en `orden` blijven altijd.
 - **Vergelijken** (`tekst.ts`, puur): `norm()` haalt hoofdletters, leestekens
-  en accenten weg; `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
+  en accenten weg (ook de Poolse *ł*, die geen accent is maar een eigen letter); `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
   kleine fouten van de spraakherkenning.
 - **Zeg**: `SpeechRecognition` van de browser, alleen in een veilige context.
   Of het kan, weet pas de browser; de component vraagt het in een effect en
@@ -1938,7 +1945,10 @@ flowchart LR
   Engels bij elke oefening die het nodig heeft, aantallen, elk oefentype aanwezig, een
   `orden`-zin met één volgorde). `npm run check:lessen` en de test van de site
   gebruiken dezelfde regels; fase 0 is ouder dan de schrijfwijzer en valt
-  alleen onder de basisregels. `controleerGrammatica()` doet hetzelfde voor
+  alleen onder de basisregels. Per pakket (`PAKKET` in `lessen-regels.ts`) staat voor welke lezers de
+  teksten er moeten zijn: Nederlands voor `pl`, `en` en `nl`, Pools alleen
+  voor `nl`, en daar geldt de schrijfwijzer vanaf fase 0.
+  `controleerGrammatica()` doet hetzelfde voor
   de grammaticabestanden (map = taal, titel/kort/tekst voor elke lezer: `pl`,
   `en` en `nl`; een `verschil` alleen voor de lezers van die taal plus `nl`;
   geen

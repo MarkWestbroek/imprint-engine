@@ -5,7 +5,8 @@ import { widgetRegistry } from "@/widgets/registry";
 
 /**
  * The language training (design/taaltraining/README.md): the lesson package
- * Dutch, for Polish speakers (the default) and for English speakers. The
+ * Dutch, for Polish speakers (the default) and for English speakers, and the
+ * package Polish for Dutch speakers (`/nl/polski`). The
  * address is `/<ui>/<pakket>/<les>`: the interface language first, then the
  * language taught; each interface language has its own front page and menu
  * (src/lib/ingang.ts). Runs on Postgres

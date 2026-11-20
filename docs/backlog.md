@@ -996,8 +996,24 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             goed; datums in les 38 zijn dag-maand (Amerikaanse lezer).
       - [ ] Les 43: de brok *tot zo* staat niet in de dialoog (daar: *Tot
             straks!*). **S**
-      - [ ] Pools voor Nederlandstaligen (`/nl/polski`, jezyk.imprint-engine.nl):
-            een eigen cursus van 45 lessen met grammatica. **L**
+      - [x] ~~Pools voor Nederlandstaligen~~ — `/nl/polski`, ingang `/nl`:
+            45 lessen en 31 grammatica-onderwerpen (20-11).
+      - [ ] jezyk.imprint-engine.nl: A-record (bij de DNS-beheerder), het
+            Caddy-blok uit de snippet, en de Poolse opnamen maken in de
+            admin (Taal → Audio). **S**
+      - [ ] De Poolse cursus laten nalezen door iemand die Pools spreekt.
+            Geschreven en daarna proefgelezen door Claude; de vormen in de
+            tabellen zijn stuk voor stuk nagelopen, de natuurlijkheid van
+            de zinnen niet door een mens. Bekende vereenvoudigingen in de
+            grammatica: 2–4 bij mannen (*dwóch braci*), genitief meervoud
+            van zachte stammen, locatief op *-ech* (*we Włoszech*), *żaden*.
+            Twijfels over toon: *ciasto z serem* (liever *sernik*), *Tu nie
+            ma* zonder *ich*, *do czwartej* voor een kantoor.
+      - [ ] Pools: *Zoek een woord* (naamwoord met geslacht en naamvallen,
+            werkwoord met aspectpaar en vormen), uit Wiktionary. **L**
+      - [ ] Pools: *zeg* testen met de Poolse spraakherkenning van de
+            browser (pl-PL), en of *orden* niet te vaak een tweede goede
+            volgorde heeft (Poolse woordvolgorde is vrij). **S**
       - [ ] Afbeeldingen bij *Zoek een woord* voor de concrete woorden
             (vrije pictogrammen, bijv. OpenMoji, CC BY-SA). **M**
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de

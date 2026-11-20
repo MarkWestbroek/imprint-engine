@@ -15,15 +15,21 @@ import { vormenKloppen } from "@imprint/plugin-taal/tekst";
 export const LESSEN_DIR = path.resolve(import.meta.dirname, "../lessen");
 export const GRAMMATICA_DIR = path.resolve(import.meta.dirname, "../grammatica");
 
-/** The interface languages of this site: every grammar rule is written for all of them. */
-const LEZERS = ["pl", "en", "nl"];
-
 /**
- * The readers a lesson is translated for, besides its own `steuntaal`: the
- * dialogue, `situatie` and `patroon` have a text in each, and the exercises a
- * `vertaald` part (schemas.ts).
+ * The packages of this site, by the language taught.
+ * - `lezers`: who a grammar rule is written for, and (from phase 1) the
+ *   languages of a lesson's `situatie` and `patroon`.
+ * - `ookVoor`: the readers a lesson is translated for besides its own
+ *   `steuntaal`: the dialogue, `situatie` and `patroon` have a text in each,
+ *   and the exercises a `vertaald` part (schemas.ts).
+ * - `vanaf`: the first phase the full writing guide holds for (the Dutch
+ *   phase 0 came before it).
  */
-const OOK_VOOR = ["en"];
+const PAKKET: Record<string, { lezers: string[]; ookVoor: string[]; vanaf: number }> = {
+  nl: { lezers: ["pl", "en", "nl"], ookVoor: ["en"], vanaf: 1 },
+  pl: { lezers: ["nl"], ookVoor: [], vanaf: 0 },
+};
+const pakketVan = (taal: string) => PAKKET[taal] ?? { lezers: [], ookVoor: [], vanaf: 0 };
 
 /** Whether a text has letters: options that are numbers or times need no translation. */
 const heeftLetters = (s: string) => /\p{L}{2,}/u.test(s);
@@ -39,7 +45,10 @@ export function controleer(file: string, les: Les): string[] {
   const fouten: string[] = [];
   const fout = (m: string) => fouten.push(m);
   const [, fase, nr] = /fase-(\d+)[\\/](\d+)-/.exec(file) ?? [];
-  if (!fase || !nr) fout("the path is not nl/fase-<n>/<nr>-<slug>.md");
+  if (!fase || !nr) fout("the path is not <taal>/fase-<n>/<nr>-<slug>.md");
+  if (file.replace(/\\/g, "/").split("/")[0] !== les.taal) fout(`taal ${les.taal} in folder ${file.replace(/\\/g, "/").split("/")[0]}`);
+  const { lezers, ookVoor: OOK_VOOR, vanaf } = pakketVan(les.taal);
+  if (lezers.length === 0) fout(`no package ${les.taal} on this site`);
   else {
     if (les.fase !== Number(fase)) fout(`fase ${les.fase} in folder fase-${fase}`);
     if (les.id !== `${les.taal}-${fase}-${nr}`) fout(`id ${les.id}, expected ${les.taal}-${fase}-${nr}`);
@@ -83,11 +92,11 @@ export function controleer(file: string, les: Les): string[] {
   }
 
   // Phase 0 came before the writing guide: only the rules above apply to it.
-  if (les.fase === 0) return fouten;
+  if (les.fase < vanaf) return fouten;
 
   if (!les.ombouwen.startsWith("**Ombouwen:**")) fout("the body must start with **Ombouwen:**");
   for (const veld of ["situatie", "patroon"] as const) {
-    for (const taal of [steun, les.taal]) if (!les[veld][taal]?.trim()) fout(`${veld}: no ${taal}`);
+    for (const taal of new Set([steun, ...lezers])) if (!les[veld][taal]?.trim()) fout(`${veld}: no ${taal}`);
   }
   if (les.dialoog.length < 5 || les.dialoog.length > 8) fout(`dialoog: ${les.dialoog.length} lines, 5 to 8 expected`);
   if (les.brokken.length < 6 || les.brokken.length > 10) fout(`brokken: ${les.brokken.length}, 6 to 10 expected`);
@@ -128,8 +137,10 @@ export function controleerGrammatica(file: string, g: Grammatica): string[] {
   const map = file.replace(/\\/g, "/").split("/")[0];
   if (map !== g.taal) fout(`taal ${g.taal} in folder ${map}`);
   // A rule is for every reader. A difference is with one language: for the readers it is written for, and in Dutch.
+  const LEZERS = pakketVan(g.taal).lezers;
+  if (LEZERS.length === 0) fout(`no package ${g.taal} on this site`);
   const lezers = g.soort === "verschil" ? LEZERS.filter((l) => l === g.taal || g.titel[l]?.trim()) : LEZERS;
-  if (lezers.length < 2) fout("a verschil needs a reader besides the language taught");
+  if (!lezers.some((l) => l !== g.taal)) fout("a verschil needs a reader besides the language taught");
   for (const veld of ["titel", "kort", "tekst"] as const) {
     for (const lezer of lezers) if (!g[veld][lezer]?.trim()) fout(`${veld}: no ${lezer}`);
   }

@@ -8,6 +8,7 @@ import { pluginAction } from "@/app/admin/actions";
 import { admin } from "@/lib/admin";
 import { imprint } from "@/lib/content";
 import { accountPad, accountTeksten } from "@/lib/account-teksten";
+import { ingangVan } from "@/lib/ingang";
 import { TAAL } from "../../../../../imprint.config";
 import { deleteAccountAction, logoutAction, resendVerificationAction } from "./actions";
 
@@ -51,7 +52,7 @@ export default async function AccountPage({ params, searchParams }: Props) {
       </dl>
       <p>{t.lessenGedaan.replace("{n}", String(gedaan))}</p>
       <div className="flex flex-wrap items-center gap-4">
-        <Link href={pakketHref(ui, TAAL.pakket)} className="rounded-md bg-accent px-4 py-2 font-semibold text-background hover:bg-accent-strong">
+        <Link href={pakketHref(ui, ingangVan(ui).pakket)} className="rounded-md bg-accent px-4 py-2 font-semibold text-background hover:bg-accent-strong">
           {t.naarLessen}
         </Link>
         <LogoutButton ui={ui} action={logoutAction} />

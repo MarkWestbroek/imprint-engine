@@ -28,6 +28,26 @@ opdracht is, staat er ook in het Engels:
 - Geen vormen `{a|b}` in het Engels.
 - Vergelijk in `patroon` en in `anders` met het Engels, niet met het Pools.
 
+## Het pakket Pools
+
+De Poolse cursus (`lessen/pl/`, `grammatica/pl/`) volgt deze schrijfwijzer met
+de talen omgekeerd: `taal: pl`, `steuntaal: nl`, id `pl-<fase>-<nr>`. De
+leerling is een Nederlandstalige beginner; de hoofdpersonen zijn Tom en
+Sanne, twee Nederlanders in Kraków, met hun buren Marek en Kasia.
+
+- Alles wat uitleg of opdracht is, staat in het Nederlands, en alleen in het
+  Nederlands: `situatie` en `patroon` hebben alleen `nl`, de dialoog `pl` en
+  `nl`. Ook fase 0 heeft een `situatie` en een `patroon` (daar mag het over
+  uitspraak of spelling gaan).
+- Geen accolades `{a|b}`: waar het Pools een andere vorm heeft voor een man en
+  een vrouw, staan beide in `antwoorden` (*Byłem*, *Byłam*), of zegt de vraag
+  het tussen haakjes: "(tegen een vrouw)", "(beleefd, tegen een man)".
+- Naamvallen komen als vaste stukjes (*w sklepie*, *do sklepu*), één per les;
+  de tabellen staan in de grammatica, groep `naamvallen`.
+- Een grammatica-onderwerp heeft alleen `nl` en geen `anders`: de hele tekst
+  is al voor de Nederlandse lezer geschreven.
+- De herhaling aan het eind heet "(herhaling)".
+
 ## Methode
 
 - Eerst bruikbaar, dan correct. Elke zin is iets wat je echt zegt of hoort.
