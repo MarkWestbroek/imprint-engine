@@ -74,7 +74,10 @@
   nieuw workspace-package vraagt een `COPY`-regel in de Dockerfile.
 - Design-tokens staan in `sites/musicbrain/src/app/globals.css` (@theme);
   geen losse hexkleuren in componenten.
-- Build verifiëren met `npm run build` vanuit de root. Publieke pagina's
+- Verifiëren met `npm run verify` vanuit de root: typecheck, lint, tests en
+  build voor wat er veranderd is (tegen origin/main), dezelfde keuze als CI;
+  `-- --site=<naam>` voor één site, `-- --all` voor alles. `npm run build`
+  bouwt nog steeds alle sites. Publieke pagina's
   blijven prerendered (SSG + revalidatie na admin-saves); alles onder
   `/admin` is per definitie dynamisch.
 - Admin-formulieren worden gegenereerd uit de zod-schema's
