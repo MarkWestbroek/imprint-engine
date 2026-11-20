@@ -3,12 +3,13 @@
  * Pure (no store, no React): used in the browser and in the tests.
  */
 
-/** Lenient: case, diacritics, punctuation and double spaces do not count. */
+/** Lenient: case, diacritics (also the Polish ł, which is a letter of its own), punctuation and double spaces do not count. */
 export const norm = (s: string): string =>
   s
     .toLowerCase()
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "")
+    .replace(/ł/g, "l")
     .replace(/[.,!?¿¡‘’'"“”„…]/g, "")
     .replace(/\s+/g, " ")
     .trim();

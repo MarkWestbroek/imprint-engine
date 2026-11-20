@@ -138,7 +138,8 @@ function LesView({ ui, les, vorige, volgende, topics, stemmen, call }: { ui: str
       {les.ombouwen && (
         <section className="mt-8">
           <h2 className="mb-3 text-xl font-semibold">{t.ombouwen}</h2>
-          <div className="markdown" lang={les.taal}>
+          {/* Written in simple Dutch: the language taught in the Dutch package, the reader's own in the Polish one. */}
+          <div className="markdown" lang="nl">
             <Markdown>{les.ombouwen.replace(/^\*\*Ombouwen:\*\*\s*/, "")}</Markdown>
           </div>
         </section>

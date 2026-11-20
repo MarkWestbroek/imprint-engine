@@ -29,7 +29,7 @@ export type Teksten = {
   grammatica: {
     naam: string;
     intro: string;
-    groepen: Record<"werkwoorden" | "naamwoorden" | "voornaamwoorden" | "zinsbouw" | "verschil", string>;
+    groepen: Record<"werkwoorden" | "naamwoorden" | "naamvallen" | "voornaamwoorden" | "zinsbouw" | "verschil", string>;
     anders: string;
     meer: string;
     inLessen: string;
@@ -116,6 +116,7 @@ const nl: Teksten = {
       naamwoorden: "Zelfstandige naamwoorden en lidwoorden",
       voornaamwoorden: "Voornaamwoorden",
       zinsbouw: "Zinsbouw",
+      naamvallen: "Naamvallen",
       verschil: "Verschillen met je eigen taal",
     },
     anders: "Anders dan in je eigen taal",
@@ -207,6 +208,7 @@ const pl: Teksten = {
       naamwoorden: "Rzeczowniki i rodzajniki",
       voornaamwoorden: "Zaimki",
       zinsbouw: "Budowa zdania",
+      naamvallen: "Przypadki",
       verschil: "Inaczej niż po polsku",
     },
     anders: "Inaczej niż po polsku",
@@ -298,6 +300,7 @@ const en: Teksten = {
       naamwoorden: "Nouns and articles",
       voornaamwoorden: "Pronouns",
       zinsbouw: "Sentence structure",
+      naamvallen: "Cases",
       verschil: "Differences from English",
     },
     anders: "Unlike in English",

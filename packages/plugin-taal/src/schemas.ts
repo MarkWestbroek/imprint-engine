@@ -117,7 +117,7 @@ export const LesFormSchema = z.object({
  * language as a whole (no articles in Polish, no cases in Dutch); `anders` is
  * the same for one topic: a paragraph "unlike in Polish", per reader language.
  */
-export const GRAMMATICA_GROEPEN = ["werkwoorden", "naamwoorden", "voornaamwoorden", "zinsbouw"] as const;
+export const GRAMMATICA_GROEPEN = ["werkwoorden", "naamwoorden", "naamvallen", "voornaamwoorden", "zinsbouw"] as const;
 
 export const GrammaticaSchema = z.object({
   /** The key: `nl-tegenwoordige-tijd` (language taught + slug). Lessons point at it. */

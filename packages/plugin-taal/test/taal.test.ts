@@ -138,6 +138,12 @@ describe("forms per learner", () => {
     assert.ok(!vormenKloppen("Był{em|am|o}"));
   });
 
+  it("counts a Polish answer typed without Polish letters", () => {
+    assert.ok(typGoed("bylem w domu", ["Byłem w domu."]));
+    assert.ok(typGoed("Dziekuje, prosze", ["Dziękuję, proszę."]));
+    assert.ok(!typGoed("bylam w domu", ["Byłem w domu."]));
+  });
+
   it("offers the choice in Polish only", () => {
     assert.ok(kentVormen("pl"));
     assert.ok(!kentVormen("nl"));

@@ -143,6 +143,33 @@ taal.imprint-engine.nl {
 	reverse_proxy 127.0.0.1:3700
 }
 
+# Pools voor Nederlandstaligen: dezelfde site en container als taal, met de
+# ingang /nl (startpagina `home-nl`, lessen onder /nl/polski) als voorpagina.
+jezyk.imprint-engine.nl {
+	import veilig
+	log {
+		output file /var/log/caddy/taal.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+			mode 0644
+		}
+		format filter {
+			request>remote_ip ip_mask 24 48
+			request>client_ip ip_mask 24 48
+			request>headers>Cookie delete
+			request>headers>Authorization delete
+			resp_headers>Set-Cookie delete
+			request>uri query {
+				delete token
+			}
+		}
+	}
+	@voorpagina path /
+	rewrite @voorpagina /nl
+	reverse_proxy 127.0.0.1:3700
+}
+
 # markwestbroek.nl: Marks persoonlijke site (live sinds 15 november 2026).
 # Alleen markwestbroek.nl, www en woonwagen wijzen naar de VPS (eigen
 # A-records); de wildcard, mail, webmail, pf (Adobe Portfolio) en pi blijven
