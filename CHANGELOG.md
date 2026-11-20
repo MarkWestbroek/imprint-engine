@@ -6,6 +6,8 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **paratmos.nl: de studio toont de kop en voet in de taal van de pagina.**
+  Een Engelse pagina krijgt in de studio het Engelse menu (met #33).
 - **paratmos.nl: de admin opent een pagina in het Nederlands.** Bewerken en
   historie zonder `?lang` gingen naar de Engelse versie (of begonnen een
   nieuwe vertaling); nu de basistaal, zoals op de Imprint-site.
