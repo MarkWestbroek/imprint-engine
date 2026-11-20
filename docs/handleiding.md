@@ -821,6 +821,17 @@ lessen. Een fout herstel je in `sites/taal/woorden/pl-aanvullingen.json`
 (`houd`, `weg`, en `sie` voor werkwoorden die alleen met *się* voorkomen);
 daarna maak je de lijst opnieuw met `scripts/woorden-maken-pl.ts`.
 
+**Plaatjes bij de woorden.** In beide woordzoekers staat bij een concreet
+woord een plaatje (de appel 🍎, *rower* 🚲), ook klein in de lijst met
+suggesties. Een woord met twee gewone betekenissen krijgt er twee: *bank*
+🏦 🛋, *slot* 🔒 🏰, *zamek* 🏰 🔒. Een abstract woord (*tijd*, *probleem*)
+heeft geen plaatje. De plaatjes zijn Fluent Emoji van Microsoft (MIT-licentie)
+en staan in `sites/taal/public/beeld/`. Welk woord welk plaatje krijgt, staat in
+`sites/taal/woorden/beelden.json`. Een verkeerd plaatje herstel je in
+`woorden/beelden-aanvullingen.json`, per taal: `weg` (geen plaatje) of `keuze`
+(woord → precies deze emoji, met de code uit Fluent, bijvoorbeeld `1f34e` voor
+🍎). Daarna maak je de koppeling opnieuw met `scripts/beelden-maken.ts`.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`, de

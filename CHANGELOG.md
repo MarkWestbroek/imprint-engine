@@ -6,6 +6,15 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: plaatjes bij de woorden.** In *Zoek een woord* (Nederlands en
+  Pools) staat bij een concreet woord een plaatje, ook klein in de suggesties;
+  twee betekenissen, twee plaatjes (*bank* 🏦 🛋, *zamek* 🏰 🔒). Fluent Emoji
+  (Microsoft, MIT), gekoppeld via de Nederlandse en Poolse emojinamen van
+  Unicode en met de hand nagelopen.
+- **Nederlandse woordenlijst: basiswoorden terug.** *Hond*, *fiets*, *regen*,
+  *melk*, *paard*, *neus* en zo'n dertig andere ontbraken: hun vorm is ook een
+  werkwoordsvorm (*ik fiets*) of Wiktionary geeft ze een grove bijbetekenis.
+  Ze staan nu in de `houd`-lijst, en een woord uit die lijst komt er altijd in.
 - **Taaltraining: een Pools woord opzoeken** (`/nl/polski/woorden`). Typ een
   Pools zelfstandig naamwoord of werkwoord in welke vorm ook, met of zonder
   Poolse tekens: geslacht en de zeven naamvallen, of aspect met partner, de
