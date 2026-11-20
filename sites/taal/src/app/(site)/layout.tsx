@@ -12,7 +12,7 @@ export default async function SiteLayout({ children }: Readonly<{ children: Reac
       <main className="tl-main">
         <div className="tl-container tl-page">{children}</div>
       </main>
-      <SiteFooter menus={nav} tagline={site.tagline} />
+      <SiteFooter menus={nav} name={site.name} tagline={site.tagline} />
     </>
   );
 }

@@ -26,6 +26,10 @@ import { wikiContentTypes } from "@imprint/plugin-wiki/content-types";
  * page, menu, theme, relations, planning, user) — e.g. `--only=themes` to add
  * the themes to an existing database without touching edited content, or
  * `--only=relations` to (re)load the default relation rules.
+ *
+ * `--new` leaves the pages and menus that already exist alone: for adding a
+ * new page or menu from the files to a live site whose pages are edited in
+ * the admin (`--only=page,menu --new`).
  */
 
 const siteArg = process.argv.find((a) => a.startsWith("--site="))?.slice(7) ?? "musicbrain";
@@ -38,6 +42,8 @@ const only = onlyArg
 /** Should this section run? (no --only = everything). Singularise both sides
  * so `--only=relations` (plural) matches the `want("relations")` call. */
 const want = (type: string) => !only || only.has(type.replace(/s$/, ""));
+
+const onlyNew = process.argv.includes("--new");
 
 async function json(file: string): Promise<unknown> {
   return JSON.parse(await fs.readFile(file, "utf8"));
@@ -64,6 +70,12 @@ async function main() {
   const opened = openContentDatabase(url, { contentTypes });
   const store = opened.store;
   const by = "seed";
+  /** With `--new`: whether this page or menu is not in the store yet (an existing one is skipped, and said so). */
+  const mag = async (type: "page" | "menu", slug: string): Promise<boolean> => {
+    if (!onlyNew || !(await store.getItem(type, slug))) return true;
+    console.log(`${type.padEnd(9)} = ${slug} already exists, skipped`);
+    return false;
+  };
 
   // site config
   if (want("site")) {
@@ -96,6 +108,7 @@ async function main() {
     for (const file of await listFiles(path.join(CONTENT_DIR, "pages"), ".md")) {
       const { data, content } = matter(await fs.readFile(file, "utf8"));
       const meta = PageMetaSchema.parse(data);
+      if (!(await mag("page", meta.slug))) continue;
       await store.putItem(
         "page",
         meta.slug,
@@ -112,6 +125,7 @@ async function main() {
     // composed pages (widget layouts)
     for (const file of await listFiles(path.join(CONTENT_DIR, "pages"), ".json")) {
       const doc = PageDocSchema.parse(await json(file));
+      if (!(await mag("page", doc.slug))) continue;
       await store.putItem("page", doc.slug, doc, { lang: doc.lang, by });
       console.log(`page      ✓ ${doc.slug} (${doc.lang}, layout)`);
     }
@@ -121,6 +135,7 @@ async function main() {
   if (want("menu")) {
     for (const file of await listFiles(path.join(CONTENT_DIR, "menus"), ".json")) {
       const menu = MenuSchema.parse(await json(file));
+      if (!(await mag("menu", menu.name))) continue;
       await store.putItem("menu", menu.name, menu, { by });
       console.log(`menu      ✓ ${menu.name}`);
     }
