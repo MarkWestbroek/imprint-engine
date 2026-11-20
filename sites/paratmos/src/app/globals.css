@@ -1,0 +1,220 @@
+@import "tailwindcss";
+/*
+ * Engine-packages leveren de renderer, de standaardwidgets en de plugins, met
+ * classes die buiten deze site-map staan; Tailwind moet ze dus expliciet scannen.
+ */
+@source "../../../../packages/runtime-admin/src";
+@source "../../../../packages/widgets-standard/src";
+@source "../../../../packages/plugin-wiki/src";
+@source "../../../../packages/plugin-glossary/src";
+@source "../../../../packages/plugin-blog/src";
+
+/*
+ * Huisstijl van Paratmos (merkrichtlijnen 1.0, juni 2026; de logo's staan in
+ * public/brand). Het palet leunt op één contrast: inkt (concreet, geaard)
+ * tegenover blauw (voorbij de lucht).
+ *
+ *   Inkt      #16384E   tekst, koppen, lijnen van een diagram
+ *   Primair   #2E8FC7   accenten, lijnen, het baken
+ *   Atmosfeer #6FB7DD   de boog, lichtere accenten
+ *   Tint      #DCEEF8   vlakken
+ *
+ * Primair blauw is volgens de richtlijnen niet voor kleine tekst op wit
+ * (contrast 3,5). `--accent` is daarom dezelfde tint, donkerder (5,3 op wit):
+ * links, knoppen met witte tekst. Het echte Primair staat in `--pm-primair`,
+ * voor beeld en lijnen. Koppen in Montserrat, het merkfont.
+ */
+:root {
+	--pm-inkt: #16384e;
+	--pm-primair: #2e8fc7;
+	--pm-atmosfeer: #6fb7dd;
+	--pm-tint: #dceef8;
+	--pm-licht: #eaf4fb;
+
+	--background: #ffffff;
+	--surface: #f4f9fc;
+	--border: #c4dded;
+	--foreground: var(--pm-inkt);
+	--muted: #557085;
+	--accent: #1c6fa3;
+	--accent-strong: var(--pm-inkt);
+	--accent-2: var(--pm-atmosfeer);
+	--pm-width: 1120px;
+	--pm-text: 44rem;
+	color-scheme: light;
+}
+
+/* Tokencontract van de standaardwidgets (architecture.md §3). */
+@theme inline {
+	--color-background: var(--background);
+	--color-surface: var(--surface);
+	--color-line: var(--border);
+	--color-foreground: var(--foreground);
+	--color-muted: var(--muted);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-2: var(--accent-2);
+}
+
+/* In Tailwinds base-laag, zodat utilities (zoals de tekstkleur van widgetknoppen) winnen. */
+@layer base {
+	* { box-sizing: border-box; }
+	html { scroll-behavior: smooth; overflow-x: clip; }
+	body {
+		margin: 0;
+		background: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans), system-ui, sans-serif;
+		font-size: 17px;
+		line-height: 1.6;
+		-webkit-font-smoothing: antialiased;
+	}
+	h1, h2, h3 { font-family: var(--font-display), var(--font-sans), sans-serif; }
+	a { color: inherit; text-decoration: none; }
+	:focus-visible { outline: 2px solid var(--pm-primair); outline-offset: 2px; }
+}
+
+.pm-container { max-width: var(--pm-width); margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); }
+.pm-mono { font-family: var(--font-mono), ui-monospace, monospace; font-size: 13px; letter-spacing: .04em; }
+
+/* Kop: het logo (beeldmerk en woordmerk in kleine letters), het menu in mono. */
+.pm-header { border-bottom: 1px solid var(--border); background: var(--background); }
+.pm-header-row { min-height: 76px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 32px; }
+.pm-logo { display: inline-flex; align-items: center; gap: 4px; color: var(--pm-inkt); }
+.pm-logo svg { width: 52px; height: 52px; flex: none; }
+.pm-logo-naam { font-family: var(--font-display), var(--font-sans), sans-serif; font-size: 25px; font-weight: 700; letter-spacing: .035em; line-height: 1; }
+.pm-nav { display: flex; flex-wrap: wrap; gap: 2px 26px; color: var(--muted); }
+.pm-nav a { padding: 12px 0; }
+.pm-nav a:hover, .pm-nav a.is-active { color: var(--foreground); }
+.pm-nav a.is-active { text-decoration: underline; text-decoration-color: var(--pm-primair); text-decoration-thickness: 2px; text-underline-offset: 8px; }
+
+.pm-footer { border-top: 1px solid var(--border); padding: 28px 0 44px; color: var(--muted); }
+.pm-footer-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 28px; }
+.pm-footer-links { display: flex; flex-wrap: wrap; gap: 6px 22px; }
+.pm-footer a:hover { color: var(--foreground); text-decoration: underline; text-underline-offset: 4px; }
+
+/* De pagina: de widgets doen de opmaak, hier alleen ruimte en leesbaarheid. */
+.pm-main { padding: 40px 0 96px; }
+.pm-page h1 { font-size: clamp(30px, 4.4vw, 50px); line-height: 1.12; font-weight: 700; letter-spacing: -.01em; margin: 8px 0 24px; text-wrap: balance; }
+.pm-page h2 { font-size: 25px; line-height: 1.25; font-weight: 600; }
+
+.eyebrow { font-family: var(--font-mono), ui-monospace, monospace; text-transform: uppercase; font-size: 12px; letter-spacing: .1em; color: var(--muted); }
+.markdown { line-height: 1.65; max-width: var(--pm-text); }
+.markdown > * + * { margin-top: 1em; }
+.markdown > :first-child { margin-top: 0; }
+.markdown h2 { margin-top: 1.8em; }
+.markdown h3 { font-size: 20px; font-weight: 600; margin-top: 1.5em; }
+.markdown a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.markdown a:hover { color: var(--accent-strong); }
+.markdown ul { list-style: disc; padding-left: 1.3em; }
+.markdown ol { list-style: decimal; padding-left: 1.3em; }
+.markdown li + li { margin-top: .3em; }
+.markdown li::marker { color: var(--pm-primair); }
+.markdown code { font-family: var(--font-mono), ui-monospace, monospace; font-size: .88em; padding: .1em .35em; border: 1px solid var(--border); border-radius: 3px; background: var(--surface); }
+.markdown table { border-collapse: collapse; }
+.markdown th, .markdown td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; vertical-align: top; }
+.markdown th { background: var(--pm-inkt); color: #fff; font-weight: 600; border-color: var(--pm-inkt); }
+.markdown tr:nth-child(even) td { background: var(--surface); }
+.markdown blockquote { border-left: 3px solid var(--pm-primair); padding-left: 16px; color: var(--muted); }
+
+/* ── De doorbraak (src/components/doorbraak.tsx): de opening van de voorpagina ── */
+/* Over de volle breedte van het scherm, en tegen de kop aan: 40px lucht van de pagina en 32px (mt-8) van de renderer eraf. */
+.db { position: relative; overflow: hidden; margin: -72px calc(50% - 50vw) 56px; background: var(--pm-inkt); color: var(--pm-licht); }
+.db-tekst { position: relative; padding-top: 56px; padding-bottom: 8px; }
+.db-kop { margin: 0 !important; max-width: 13em; font-size: clamp(34px, 5.2vw, 62px) !important; line-height: 1.08 !important; color: #fff; }
+.db-sub { margin: 20px 0 0; max-width: 27em; font-size: clamp(17px, 1.7vw, 20px); line-height: 1.5; color: var(--pm-licht); text-wrap: pretty; }
+.db-knop { display: inline-block; margin-top: 28px; padding: 11px 22px; border-radius: 6px; background: var(--pm-licht); color: var(--pm-inkt); font-weight: 600; font-size: 15px; }
+.db-knop:hover { background: #fff; }
+.db-knop:focus-visible { outline-color: #fff; }
+
+/* Smal: het beeld breder dan het scherm en rechts uitgelijnd, zodat de koers groot blijft. */
+.db-beeld { display: block; width: 230%; margin: -56px 0 0 -130%; aspect-ratio: 1200 / 520; height: auto; overflow: visible; order: 2; }
+.db-boog { fill: none; stroke: var(--pm-atmosfeer); stroke-width: 5; }
+.db-koers { fill: none; stroke-width: 7; stroke-linecap: round; stroke-dasharray: 1; }
+.db-koers-onder { stroke: var(--pm-licht); animation: db-teken .5s ease-out both; }
+.db-koers-boven { stroke: var(--pm-primair); animation: db-teken .7s .45s ease-out both; }
+.db-voet { fill: var(--pm-licht); }
+.db-baken { fill: var(--pm-primair); animation: db-op .4s 1.05s ease-out both; }
+.db-label { font-family: var(--font-mono), ui-monospace, monospace; font-size: 19px; letter-spacing: .04em; fill: var(--pm-licht); animation: db-op .5s 1.2s ease-out both; }
+.db-label-boog { fill: var(--pm-atmosfeer); }
+@keyframes db-teken { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes db-op { from { opacity: 0; } to { opacity: 1; } }
+
+/* Smal: de tekst boven, het beeld eronder. */
+.db { display: flex; flex-direction: column; }
+/* Breed: het beeld vult het vlak, de tekst staat links ervoor. */
+@media (min-width: 860px) {
+	.db { display: block; min-height: clamp(440px, 42vw, 600px); }
+	.db-beeld { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; aspect-ratio: auto; }
+	.db-tekst { padding-top: clamp(56px, 7vw, 104px); padding-bottom: 72px; }
+	.db-kop, .db-sub { max-width: min(13em, 52%); }
+	.db-sub { max-width: min(27em, 48%); }
+}
+@media (prefers-reduced-motion: reduce) {
+	.db-koers, .db-baken, .db-label { animation: none; }
+}
+
+/* ── De afleiding (src/components/afleiding.tsx): één model, en wat eruit volgt ── */
+.afl { margin: 8px 0 24px; }
+.afl-kop { margin: 0 0 12px !important; max-width: 18em; }
+h2.afl-kop { font-size: clamp(26px, 3vw, 34px) !important; font-weight: 700 !important; }
+.afl-intro { margin: 0 0 36px; max-width: 36em; font-size: 19px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.afl-diagram { display: grid; gap: 0; }
+
+/* Het model: een klasse, met naamvak en attributen. */
+.afl-model { border: 2px solid var(--pm-inkt); background: var(--background); font-family: var(--font-mono), ui-monospace, monospace; align-self: center; }
+.afl-model-naam { padding: 14px 18px; border-bottom: 2px solid var(--pm-inkt); text-align: center; background: var(--pm-tint); }
+.afl-stereo { display: block; font-size: 12px; color: var(--muted); }
+.afl-naam { display: block; font-size: 17px; font-weight: 500; }
+.afl-attrs { margin: 0; padding: 12px 18px 14px; list-style: none; font-size: 13.5px; line-height: 1.7; }
+.afl-attrs li::before { content: "+ "; color: var(--pm-primair); }
+
+/* De afgeleiden: smal onder elkaar, met een lijn vanaf het model. */
+.afl-uit { margin: 0; padding: 28px 0 0 24px; list-style: none; display: grid; gap: 12px; border-left: 2px solid var(--pm-inkt); margin-left: 32px; }
+.afl-item { position: relative; border: 1px solid var(--border); background: var(--surface); padding: 12px 16px 14px; }
+.afl-item::before { content: ""; position: absolute; left: -25px; top: 26px; width: 24px; border-top: 2px solid var(--pm-inkt); }
+.afl-item::after { content: ""; position: absolute; left: -9px; top: 21px; border: 6px solid transparent; border-left-color: var(--pm-inkt); border-right-width: 0; }
+.afl-label { font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; color: var(--accent); }
+.afl-titel { display: block; font-weight: 600; line-height: 1.3; }
+.afl-tekst { display: block; font-size: 15px; line-height: 1.45; color: var(--muted); }
+a.afl-item:hover { border-color: var(--pm-inkt); }
+
+/* Breed: het model links, de afgeleiden rechts ervan; de stam loopt tussen beide. */
+@media (min-width: 860px) {
+	.afl-diagram { grid-template-columns: minmax(260px, 340px) 56px minmax(0, 1fr); align-items: center; }
+	.afl-stam { align-self: center; border-top: 2px solid var(--pm-inkt); }
+	.afl-uit { margin-left: 0; padding: 4px 0 4px 32px; }
+	.afl-item::before { left: -33px; width: 32px; }
+}
+@media (max-width: 859px) {
+	.afl-stam { display: none; }
+}
+
+/* ── De drie-eenheid (src/components/drie-eenheid.tsx): gegevens, processen, regels ── */
+.de { margin: 8px 0 24px; }
+.de-kop { margin: 0 0 12px !important; font-size: clamp(26px, 3vw, 34px) !important; font-weight: 700 !important; max-width: 20em; text-wrap: balance; }
+.de-intro { margin: 0 0 12px; max-width: 38em; font-size: 19px; line-height: 1.5; color: var(--muted); text-wrap: pretty; }
+.de-rij { display: grid; gap: 8px 40px; align-items: center; }
+.de-beeld { display: block; width: 100%; max-width: 640px; height: auto; margin-inline: auto; }
+/* De ring is de boog uit het logo, rondgetrokken: wat de basis omgeeft. */
+.de-ring { fill: none; stroke: var(--pm-atmosfeer); stroke-width: 3; }
+.de-omgeving { font-family: var(--font-mono), ui-monospace, monospace; font-size: 22px; letter-spacing: .02em; fill: var(--muted); }
+.de-lijn { fill: var(--pm-tint); stroke: var(--pm-inkt); stroke-width: 2.5; stroke-linejoin: round; }
+.de-punt { stroke: var(--background); stroke-width: 4; }
+.de-punt.de-gegevens { fill: var(--pm-inkt); }
+.de-punt.de-processen { fill: var(--pm-primair); }
+.de-punt.de-regels { fill: var(--pm-atmosfeer); }
+.de-gegevens .de-stip { background: var(--pm-inkt); }
+.de-processen .de-stip { background: var(--pm-primair); }
+.de-regels .de-stip { background: var(--pm-atmosfeer); }
+.de-naam { font-family: var(--font-display), var(--font-sans), sans-serif; font-size: 27px; font-weight: 700; fill: var(--pm-inkt); }
+.de-verband { font-family: var(--font-mono), ui-monospace, monospace; font-size: 18px; fill: var(--muted); }
+
+.de-lijst { margin: 0; display: grid; gap: 22px; }
+.de-item dt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-family: var(--font-display), var(--font-sans), sans-serif; font-size: 19px; font-weight: 700; }
+.de-stip { display: inline-block; width: 11px; height: 11px; border-radius: 50%; align-self: center; }
+.de-notatie { font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; font-weight: 400; color: var(--muted); }
+.de-item dd { margin: 4px 0 0 21px; max-width: 30em; line-height: 1.5; color: var(--muted); }
+@media (min-width: 940px) {
+	.de-rij { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+}

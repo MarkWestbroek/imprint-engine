@@ -1956,6 +1956,47 @@ flowchart LR
 - De woonwagen is een sectie (`/woonwagen`) van dezelfde instantie;
   `woonwagen.markwestbroek.nl` is alleen een doorverwijzing in Caddy.
 
+Een achtste site, `sites/paratmos`, is de **zakelijke site van Paratmos**
+(poort 3900, paratmos.nl; nog niet live). Het is de eerste kleine site die
+pagina's combineert met drie plugins zonder ledendeel:
+
+```mermaid
+flowchart LR
+    R["/[...slug]"] --> P{"pagina in de store?"}
+    P -- ja --> PV["PageView<br/>widgets uit registry.ts"]
+    P -- nee --> PL["pluginPublicRoute"]
+    PL --> B["plugin-blog<br/>/blog, /blog/&lt;slug&gt;"]
+    PL --> W["plugin-wiki<br/>/kennisbank/…"]
+    PL --> G["plugin-glossary<br/>/terms/&lt;slug&gt;"]
+    PL -- "geen treffer of niet openbaar" --> N["404"]
+```
+
+- Een pagina uit de store gaat vóór de plugins (bij commonground andersom),
+  zodat `begrippen` een gewone pagina met de `glossary`-widget kan zijn. Er is
+  geen `/members`: inhoud die niet openbaar is, geeft 404.
+- De file-store kent geen plugin-typen. Zonder `DATABASE_URL` toont de site
+  alleen de pagina's; blog, kennisbank en begrippenlijst zijn dan leeg. De
+  beginteksten staan in `content/items/<type>/<slug>.json` en gaan met
+  `scripts/put-content.ts` door de `WritableContentStore` de database in
+  (zelfde regels als `put-pages` van markwestbroek: ongewijzigd wordt
+  overgeslagen, een bewerking uit de admin wordt niet overschreven zonder
+  `--force`).
+- Eigen widgets, alle drie server-only (SVG, HTML en CSS, geen clientcode):
+  `doorbraak` (de opening van de voorpagina: het beeld uit het logo groot op
+  inkt, over de volle schermbreedte), `drie-eenheid` (gegevens, processen en
+  regels als driehoek, met een ring eromheen voor diensten, visie, doelen en
+  wat van buiten komt) en `afleiding` (het model als klasse, de afgeleiden op
+  een lijn ernaast). Daarnaast `contact` (zoals op markwestbroek.nl, alleen
+  Nederlands).
+- De huisstijl volgt de merkrichtlijnen van Paratmos (juni 2026): de tokens
+  `--pm-inkt`, `--pm-primair`, `--pm-atmosfeer` en `--pm-tint` in
+  `globals.css`, Montserrat voor koppen en woordmerk, de logo's in
+  `public/brand`. `--accent` is een donkerder blauw dan Primair, omdat Primair
+  op wit te weinig contrast geeft voor kleine tekst en knoppen.
+- `test/content.test.tsx` rendert elke pagina, valideert de plugin-inhoud met
+  de schema's van de plugins en controleert dat elke interne link in pagina's,
+  wiki, begrippen en posts naar een bestaand adres wijst.
+
 ## 8. Tests: contractsuite en karakterisatie
 
 `npm test` draait in elke workspace diens eigen `test`-script (`npm run test

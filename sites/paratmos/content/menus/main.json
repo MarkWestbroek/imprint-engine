@@ -1,0 +1,12 @@
+{
+  "name": "main",
+  "items": [
+    { "label": "Werkwijze", "page": "modelgedreven-werken" },
+    { "label": "Diensten", "page": "diensten" },
+    { "label": "Ervaring", "page": "ervaring", "children": [{ "label": "KVK", "page": "ervaring/kvk" }, { "label": "Common Ground", "page": "ervaring/common-ground" }] },
+    { "label": "Kennisbank", "url": "/kennisbank", "children": [{ "label": "Begrippen", "page": "begrippen" }] },
+    { "label": "Blog", "url": "/blog" },
+    { "label": "Over", "page": "over" },
+    { "label": "Contact", "page": "contact" }
+  ]
+}

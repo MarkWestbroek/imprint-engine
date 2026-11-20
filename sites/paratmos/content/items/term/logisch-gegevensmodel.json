@@ -1,0 +1,10 @@
+{
+  "slug": "logisch-gegevensmodel",
+  "access": "public",
+  "title": "Logisch gegevensmodel (LGM)",
+  "summary": "Een precieze beschrijving van gegevens, hun kenmerken, hun samenhang en hun regels, onafhankelijk van de techniek waarin ze worden opgeslagen.",
+  "body": "Een precieze beschrijving van gegevens, hun kenmerken, hun samenhang en hun regels, onafhankelijk van de techniek waarin ze worden opgeslagen. Het is geen databaseontwerp.\n\nMeer: [conceptueel, logisch, fysiek](/kennisbank/gegevensmodelleren/conceptueel-logisch-fysiek).",
+  "tags": [
+    "modelleren"
+  ]
+}
