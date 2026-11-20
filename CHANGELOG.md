@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Basistaal Nederlands op omnium en inrichting** (stap A van
+  design/meertaligheid.md, na de Imprint-site): `defaultLocale: "nl"` in de
+  config, `<html lang>` uit de config, en de scripts van de Omnium-site
+  (`import-deck`, `sync-widget`) lezen en schrijven pagina's in die taal.
+  **Bij de uitrol per site eenmalig `relabel-lang` draaien**
+  (docs/deploy-vps.md); tot dan vallen de pagina's terug op `en`.
 - **Taaltraining: plaatjes bij de woorden.** In *Zoek een woord* (Nederlands en
   Pools) staat bij een concreet woord een plaatje, ook klein in de suggesties;
   twee betekenissen, twee plaatjes (*bank* 🏦 🛋, *zamek* 🏰 🔒). Fluent Emoji
