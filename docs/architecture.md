@@ -1062,6 +1062,13 @@ flowchart TD
   tweede rij.
 - Het generieke formulier onthoudt de taal waaronder een item staat
   (`originalLang`); een andere taal kiezen en opslaan verhuist het item.
+- **De admin** (`runtime-admin/src/admin-server/translations.tsx`, alleen op
+  een site met meer talen): `translationState` leest de versie per taal,
+  `LanguageTabs` toont ze boven het formulier en in de studio. Een item
+  openen in een taal die het nog niet heeft begint met `translationStart`:
+  een kopie van de basistaal, als concept; pas Save schrijft. `isOutdated`
+  vergelijkt de `txFrom` van vertaling en bron. Er komt geen server action
+  bij, dus de routebestanden van de sites veranderen niet.
 
 Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
 README): één catch-all route handler die de `ContentStore` aanroept, met

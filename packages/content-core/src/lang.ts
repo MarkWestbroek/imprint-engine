@@ -107,6 +107,34 @@ export async function pageTranslations(
 }
 
 /**
+ * The slugs of the pages each language has. For a language choice that sits
+ * in a layout: the layout does not know the page, so a client part gets this
+ * list and looks the current address up in it (`LanguageSwitchClient`).
+ */
+export async function pageSlugsByLocale(
+  store: Pick<ContentStore, "listPages">,
+  site: SiteLocales,
+  opts: ReadOptions = {}
+): Promise<Record<string, string[]>> {
+  const out: Record<string, string[]> = {};
+  for (const locale of site.locales) {
+    out[locale] = (await store.listPages(localeReadOptions(locale, site.defaultLocale, opts))).map((p) => p.slug);
+  }
+  return out;
+}
+
+/** The translations of one page out of `pageSlugsByLocale`: the same answer as `pageTranslations`, without the store. */
+export function translationsFromSlugs(
+  slugs: Readonly<Record<string, readonly string[]>>,
+  slug: string,
+  site: SiteLocales
+): { locale: string; href: string }[] {
+  return site.locales
+    .filter((locale) => slugs[locale]?.includes(slug))
+    .map((locale) => ({ locale, href: localeHref(locale, slug === "home" ? "" : slug, site.defaultLocale) }));
+}
+
+/**
  * The language choice for a page: every language of the site, with the
  * address of the translation where there is one and the start page of that
  * language where there is none (`translated: false`, so the site can show it

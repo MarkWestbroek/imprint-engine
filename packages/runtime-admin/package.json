@@ -7,6 +7,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./layout": "./src/layout.ts",
+    "./language-switch": "./src/language-switch-client.tsx",
     "./admin": "./src/admin/index.ts",
     "./password-fields": "./src/admin/password-fields.tsx",
     "./forms": "./src/forms.ts",

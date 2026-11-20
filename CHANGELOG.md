@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Meer talen naast elkaar: de admin** (tweede deel van stap D van
+  design/meertaligheid.md). Op een site met meer dan één taal staan boven het
+  formulier en in de studio tabbladen per taal, en in de lijst een kolom
+  *Translations*. `+ en` begint een vertaling als kopie van de versie in de
+  basistaal, als concept; er wordt niets opgeslagen tot je opslaat. Een
+  vertaling die ouder is dan de laatste wijziging van de bron staat als
+  *outdated* in de lijst en krijgt een melding met een link naar de
+  geschiedenis. Voor sites met één taal verandert er niets. Erbij, uit de
+  aansluiting van paratmos: `LanguageSwitchClient`
+  (`@imprint/runtime-admin/language-switch`) voor een taalkeuze in een layout,
+  met `pageSlugsByLocale` en `translationsFromSlugs` in `content-core`.
 - **paratmos.nl in het Engels** (eerste site op stap D van
   design/meertaligheid.md). Nederlands blijft de basistaal zonder prefix, het
   Engels staat onder `/en` met dezelfde slugs: `/en/diensten`. Elke pagina

@@ -6,6 +6,7 @@ import type { AdminActions } from "./actions";
 import { itemLang } from "@imprint/content-core";
 import { withAccessOptions, withLocaleOptions } from "../forms";
 import { accessGroups } from "./members";
+import { isTranslatable, LanguageTabs, translationStart, translationState } from "./translations";
 
 /** A new item starts in the language its type has by default (the site's base language for pages and menus). */
 function newData(empty: Record<string, unknown>, lang: string): Record<string, unknown> {
@@ -46,8 +47,13 @@ export async function ItemEditScreen({
   const store = admin.imprint.writableStore!;
 
   const baseLang = itemLang(contentType, admin.imprint.defaultLocale);
-  const item = slug ? await store.getItem(contentType, slug, lang ?? baseLang) : null;
-  if (slug && !item) notFound();
+  const itemLangNow = lang ?? baseLang;
+  const item = slug ? await store.getItem(contentType, slug, itemLangNow) : null;
+  // A language the item does not have yet, on a site with more languages: a
+  // new translation, started from the version in the base language.
+  const translations = slug && isTranslatable(admin, contentType) ? await translationState(admin, contentType, slug) : null;
+  const startFrom = !item && translations?.source && admin.imprint.locales.includes(itemLangNow) ? translations.source : null;
+  if (slug && !item && !startFrom) notFound();
 
   // Menu items point to pages; give the editor the real list to pick from.
   const pages =
@@ -66,12 +72,16 @@ export async function ItemEditScreen({
         </Link>
       </p>
       <h1 className="mt-2 text-2xl font-semibold tracking-tight">
-        {item ? `Edit ${type}: ${slug}` : `New ${type}`}
+        {item ? `Edit ${type}: ${slug}` : startFrom ? `Translate ${type}: ${slug}` : `New ${type}`}
       </h1>
       <div className="mt-6">
+        {slug && translations && <LanguageTabs type={type} slug={slug} current={itemLangNow} state={translations} />}
         <ItemEditor
           type={contentType}
-          initialData={(item?.data as Record<string, unknown>) ?? newData(def.emptyData?.() ?? {}, baseLang)}
+          initialData={
+            (item?.data as Record<string, unknown>) ??
+            (startFrom ? translationStart(startFrom, itemLangNow) : newData(def.emptyData?.() ?? {}, baseLang))
+          }
           lang={item?.lang}
           formSchema={withLocaleOptions(withAccessOptions(admin.forms.content(contentType), await accessGroups(admin)), admin.imprint.locales)}
           isNew={!item}
