@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
+import { isOutdated, isTranslatable } from "./translations";
 
 function title(data: unknown, slug: string): string {
   const d = data as Record<string, unknown>;
@@ -20,6 +21,10 @@ export async function ListScreen({
 }) {
   if (!admin.imprint.contentTypes.has(type, "listable")) notFound();
   const items = await admin.imprint.writableStore!.listItems(type);
+  // On a site with more languages: per item, which other languages it has.
+  const translatable = isTranslatable(admin, type);
+  const { locales, defaultLocale } = admin.imprint;
+  const version = (slug: string, lang: string) => items.find((i) => i.slug === slug && i.lang === lang) ?? null;
 
   return (
     <div>
@@ -39,6 +44,7 @@ export async function ListScreen({
             <th className="py-2 pr-4">Title</th>
             <th className="py-2 pr-4">Slug</th>
             <th className="py-2 pr-4">Lang</th>
+            {translatable && <th className="py-2 pr-4">Translations</th>}
             <th className="py-2 pr-4">Valid from</th>
             <th className="py-2 pr-4">By</th>
             <th className="py-2"></th>
@@ -49,7 +55,31 @@ export async function ListScreen({
             <tr key={item.id} className="border-b border-line">
               <td className="py-2.5 pr-4 font-medium">{title(item.data, item.slug)}</td>
               <td className="py-2.5 pr-4 font-mono text-xs text-muted">{item.slug}</td>
-              <td className="py-2.5 pr-4 text-muted">{item.lang}</td>
+              <td className="py-2.5 pr-4 text-muted">
+                {item.lang}
+                {translatable && isOutdated(item, version(item.slug, defaultLocale)) && (
+                  <span className="ml-2 rounded-full border border-line px-2 py-0.5 text-xs" title={`The ${defaultLocale} version was changed after this translation`}>
+                    outdated
+                  </span>
+                )}
+              </td>
+              {translatable && (
+                <td className="py-2.5 pr-4">
+                  <span className="flex flex-wrap gap-1.5">
+                    {locales
+                      .filter((l) => l !== item.lang)
+                      .map((l) => (
+                        <Link
+                          key={l}
+                          href={`/admin/${type}/edit/${item.slug}?lang=${l}`}
+                          className="rounded border border-line px-1.5 py-0.5 text-xs text-muted hover:border-accent hover:text-foreground"
+                        >
+                          {version(item.slug, l) ? `${l} ✓` : `+ ${l}`}
+                        </Link>
+                      ))}
+                  </span>
+                </td>
+              )}
               <td className="py-2.5 pr-4 text-muted">
                 {item.validFrom.toISOString().slice(0, 16).replace("T", " ")}
               </td>
@@ -82,7 +112,7 @@ export async function ListScreen({
           ))}
           {items.length === 0 && (
             <tr>
-              <td colSpan={6} className="py-6 text-center text-muted">
+              <td colSpan={translatable ? 7 : 6} className="py-6 text-center text-muted">
                 Nothing here yet.
               </td>
             </tr>

@@ -22,6 +22,7 @@ import type { AdminActions } from "./actions";
 import { draftKey, getDraft, setDraft } from "./drafts";
 import { withAccessOptions, withLocaleOptions } from "../forms";
 import { accessGroups } from "./members";
+import { isTranslatable, LanguageTabs, translationStart, translationState } from "./translations";
 
 /**
  * Server half of the page studio: loads (or initialises) the draft, renders
@@ -76,10 +77,15 @@ export async function PageStudioScreen({
     subject = chosen?.data;
   }
 
+  // The page's versions per language, on a site with more than one (the tabs above the canvas).
+  const translations = slug && !targetType && isTranslatable(admin, "page") ? await translationState(admin, "page", slug) : null;
+
   let draft = getDraft(key);
   if (!draft) {
     const item = slug ? await store.getItem("page", slug, lang) : null;
-    const data = (item?.data as Record<string, unknown>) ?? {
+    // No version in this language yet: a new translation starts as a copy of the base language's.
+    const startFrom = !item && translations?.source && locales.includes(lang) ? translations.source : null;
+    const data = (item?.data as Record<string, unknown>) ?? (startFrom ? translationStart(startFrom, lang) : null) ?? {
       slug: "",
       lang,
       title: "",
@@ -101,7 +107,8 @@ export async function PageStudioScreen({
     store: admin.imprint.storeFor(who),
     writableStore: guardReads(store, who, admin.imprint.pdp),
     readOptions: { ...(await readOpts()), includeDrafts: true },
-    locale: admin.imprint.uiLocale,
+    // A translation is previewed with the fixed texts of its own language.
+    locale: locales.includes(lang) ? lang : admin.imprint.uiLocale,
     page: { slug: slug ?? String(draft.meta.slug ?? ""), title: String(draft.meta.title ?? "") },
   };
   const pageLang = typeof draft.meta.lang === "string" ? draft.meta.lang : lang;
@@ -141,6 +148,7 @@ export async function PageStudioScreen({
       {/* data-wide: the admin shell lifts its reading-width cap for the studio */}
       <div data-wide="">
       <StudioTopBar isNew={!slug} />
+      {slug && translations && <LanguageTabs type="page" slug={slug} current={lang} state={translations} />}
       {!locales.includes(pageLang) && (
         <p role="alert" className="mb-4 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm">
           <span className="font-semibold">Language:</span> this page is stored as <code>{pageLang}</code>, and this site

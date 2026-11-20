@@ -235,9 +235,17 @@ zien, inclusief header en footer.
   alleen vertalingen die bestaan; een pagina zonder vertaling wijst naar de
   startpagina van de andere taal. Elke taal heeft een eigen menu met dezelfde
   naam (in de lijst *Menus* staat de taal erbij), zodat het Engelse menu
-  alleen pagina's noemt die er in het Engels zijn. Een knop "Vertaling maken"
-  is er nog niet: open de pagina in de studio met `?lang=en` achter het adres
-  en sla op.
+  alleen pagina's noemt die er in het Engels zijn.
+- **Een vertaling maken**: in de lijst staat bij elk item de kolom
+  *Translations*, en boven het formulier en in de studio staan tabbladen per
+  taal. `+ en` opent het item in het Engels: je begint met een kopie van de
+  Nederlandse versie, als concept, en er is niets opgeslagen tot je op Save
+  drukt. Vertaal de tekst, haal *draft* weg en sla op. `en ✓` opent een
+  vertaling die er al is.
+- **Verouderde vertaling**: wordt de Nederlandse versie gewijzigd nadat de
+  vertaling is opgeslagen, dan staat er *outdated* in de lijst en een melding
+  boven de vertaling, met een link naar wat er veranderd is. Sla de vertaling
+  opnieuw op als ze weer klopt.
 - **Taal**: een nieuwe pagina krijgt de taal van de site. Het veld **lang** in
   de instellingen is een keuzelijst met de talen die de site heeft. Staat een
   pagina in een taal die de site niet heeft, dan zegt een melding bovenaan dat,

@@ -831,8 +831,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             eerste gebruiker is paratmos. Open:
             - [ ] paratmos aansluiten: route, taalkeuze, `<html lang>` per
                   taal, de Engelse teksten uit WPML (sessie PARATMOS). **M**
-            - [ ] Admin: taaltabs, "Vertaling maken", kolom *vertaald*,
-                  melding bij een verouderde vertaling. **M**
+            - [x] ~~Admin: taaltabs, een vertaling beginnen, kolom
+                  *Translations*, melding bij een verouderde vertaling.~~
+                  Gebouwd 20-11-2026. Niet in een browser gezien: eerst
+                  bekijken op paratmos zodra dat twee talen heeft.
+            - [ ] Bij een verouderde vertaling het verschil tonen in plaats
+                  van een link naar de geschiedenis. **S**
             - [ ] Vertaalde slugs (`/en/about` naast `/over-ons`): niet
                   gebouwd, alleen als een site het nodig heeft. **M**
             - [ ] Plugin-typen (bericht, wiki, begrip) per taal. **M**

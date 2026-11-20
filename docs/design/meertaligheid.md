@@ -239,11 +239,27 @@ export default async function Page({ params }: { params: Promise<{ slug?: string
 }
 ```
 
+**Zo gebouwd (stap D, tweede deel: de admin, 20-11-2026).** Alleen op een
+site met meer dan één taal, en voor de typen met een taal (pagina, menu,
+product, component, board-spec).
+- **Taaltabs** boven het formulier en in de studio (`LanguageTabs`): één per
+  taal van de site; een taal zonder versie staat er als `+ en`.
+- **Vertaling maken** is geen aparte knop met een eigen actie, maar het openen
+  van een item in een taal die het nog niet heeft. Het formulier of de studio
+  begint dan met een kopie van de versie in de basistaal, in de nieuwe taal,
+  en als concept waar het type concepten kent. Er wordt niets opgeslagen tot
+  de redacteur opslaat. Zo is er geen nieuwe server action nodig en hoeft
+  geen site iets aan haar routes te veranderen.
+- **Dekking** in de lijst: een kolom *Translations* met per andere taal `en ✓`
+  of `+ en`.
+- **Verouderd**: een vertaling is verouderd als de versie in de basistaal een
+  latere `txFrom` heeft. De lijst toont *outdated*, het tabblad een ⚠, en
+  boven het formulier staat sinds wanneer, met een link naar de geschiedenis
+  van de bron. Opslaan van de vertaling maakt haar weer bij.
+
 **Nog te doen in stap D.**
-- De admin: taaltabs, de knop "Vertaling maken", de kolom *vertaald*, en de
-  melding bij een verouderde vertaling (zie hierboven). Tot dan komt een
-  vertaling uit een script, of door in de studio een pagina onder `?lang=en`
-  te openen en op te slaan.
+- Het verschil sinds de vertaling tonen (nu alleen een link naar de
+  geschiedenis van de bron).
 - De typen van plugins (bericht, wiki, begrip) hebben geen taal; hun routes
   bestaan alleen in de basistaal.
 - `<html lang>` per taal vraagt aan de sitekant een layout per taal (route
@@ -275,7 +291,7 @@ op 20-11-2026). Die site lost het nu lokaal op en gaat als laatste over:
 | A | Laag 1: `locales`, basistaal in lezen en schrijven, `<html lang>`, waarschuwing in de studio. **Gebouwd 20-11-2026**, aangezet op de Imprint-site | S | Poolse inhoud correct opgeslagen en getoond |
 | B | Laag 2: catalogi `nl/en/pl` in widgets-standard, de plugins en de site-chrome; `formatDate`. **Eerste deel gebouwd 20-11-2026**: de helpers, `uiLocale`, de standaardwidgets, de zoekpagina en de kop en voet van de Imprint-site; de plugins volgen | M | een volledig Poolse publieke site |
 | C | Laag 3: admin-catalogus, taal per gebruiker, labelkaarten voor formulieren | L | Pools beheer |
-| D | Laag 4: taaltabs, "Vertaling maken", dekking, `/en/`-prefix, `hreflang`, verouderd-melding. **Eerste deel gebouwd 20-11-2026**: de site-kant (strikt lezen, adres, `hreflang`, taalkeuze, menu en sitetekst per taal); de admin volgt | M + M + S | meertalige sites |
+| D | Laag 4: taaltabs, "Vertaling maken", dekking, `/en/`-prefix, `hreflang`, verouderd-melding. **Eerste deel gebouwd 20-11-2026**: de site-kant (strikt lezen, adres, `hreflang`, taalkeuze, menu en sitetekst per taal) en de admin (taaltabs, vertaling beginnen, dekking, verouderd-melding) | M + M + S | meertalige sites |
 
 De Poolse site (de taaltraining) is er intussen, met een eigen oplossing in
 de site. De volgorde is daarom (besloten 20-11-2026, zie keuze E): eerst de
