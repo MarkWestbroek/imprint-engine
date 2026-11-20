@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: admin opent de basistaal.** De bewerk- en historieschermen
+  krijgen geen vaste terugval op Engels meer (`lang ?? "en"`), net als de
+  andere sites; ze kiezen zelf de basistaal van de site. Nu nog zonder
+  zichtbaar verschil, nodig zodra de taalsite een `defaultLocale` krijgt.
 - **paratmos.nl: de studio toont de kop en voet in de taal van de pagina.**
   Een Engelse pagina krijgt in de studio het Engelse menu (met #33).
 - **Studio: het kader van de site krijgt de taal van de pagina mee**
