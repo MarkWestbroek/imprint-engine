@@ -26,6 +26,7 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "test": "node scripts/check-boundaries.mjs && npm run test --workspaces --if-present",
     "test:db": "node scripts/test-db.mjs",
+    "verify": "node scripts/verify.mjs",
     "test:e2e": "npm run test:e2e --workspace=musicbrain --",
     "test:e2e:dev": "npm run test:e2e:dev --workspace=musicbrain --",
     "db:up": "docker compose up -d --wait",
