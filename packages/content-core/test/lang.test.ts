@@ -12,10 +12,12 @@ import {
   legacyFallback,
   localeHref,
   localizedSite,
+  pageSlugsByLocale,
   pageTranslations,
   pickByLang,
   relabelLanguage,
   splitLocalePath,
+  translationsFromSlugs,
 } from "../src/lang";
 import { createMemoryDb, MemoryContentStore } from "../src/memory-store";
 import { Locale } from "../src/schemas";
@@ -187,6 +189,10 @@ describe("more languages side by side", () => {
       canonical: "https://x.test/en/over",
       languages: { nl: "https://x.test/over", en: "https://x.test/en/over", "x-default": "https://x.test/over" },
     });
+    const slugs = await pageSlugsByLocale(store, site);
+    assert.deepEqual({ nl: [...slugs.nl].sort(), en: slugs.en }, { nl: ["contact", "over"], en: ["over"] });
+    assert.deepEqual(translationsFromSlugs(slugs, "over", site), translations, "the same answer without the store");
+    assert.deepEqual(translationsFromSlugs(slugs, "blog/een-bericht", site), [], "no page of the store: no translation");
     const single = await pageTranslations(store, "contact", site);
     assert.deepEqual(hreflangAlternates(single, "nl", site), { canonical: "/contact", languages: {} });
     assert.deepEqual(languageLinks(single, site), [

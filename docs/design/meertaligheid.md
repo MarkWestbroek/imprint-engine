@@ -198,7 +198,10 @@ De engine levert de bouwstenen; de routes zijn van de site.
   wijst naar de startpagina van die taal) en `hreflangAlternates(…, baseUrl)`
   voor `Metadata.alternates`: absoluut, met `x-default` op de basistaal.
 - **Taalkeuze**: `LanguageSwitch` in `@imprint/runtime-admin`; gewone links,
-  geen cookie.
+  geen cookie. Staat de kop in een layout, dan kent die de pagina niet:
+  `LanguageSwitchClient` (`@imprint/runtime-admin/language-switch`) leest het
+  adres in de browser en krijgt van de layout de slugs per taal
+  (`pageSlugsByLocale`).
 - **Menu per taal**: een menu is een type met een taal geworden. `main` in
   `nl` en in `en` zijn twee rijen; `getMenu("main", { lang })`. In de
   content-map `menus/main.en.json` naast `main.json`.
@@ -262,8 +265,15 @@ product, component, board-spec).
   geschiedenis van de bron).
 - De typen van plugins (bericht, wiki, begrip) hebben geen taal; hun routes
   bestaan alleen in de basistaal.
-- `<html lang>` per taal vraagt aan de sitekant een layout per taal (route
-  groups); de engine hoeft daar niets voor te doen.
+- `<html lang>` per taal is een keuze van de site. Twee root-layouts (route
+  groups per taal) geven een echte `<html lang="en">`, maar Next vraagt dan
+  de experimentele `global-not-found` en herlaadt de hele pagina bij een
+  taalwissel. Paratmos doet het daarom anders: één root-layout met de
+  basistaal, en een route group `(en)/en` waarvan alles in `<div lang="en">`
+  staat. Dat is voor schermlezers en zoekmachines gelijkwaardig en is de
+  aanbevolen weg.
+- Widgets van plugins zonder taal (de blog) kennen `pathPrefix` niet en
+  linken naar de basistaal; dat klopt, hun routes bestaan alleen daar.
 - De Imprint-site, inrichting en omnium, en als laatste de taaltraining.
 
 **Wat de taaltraining erbij vraagt** (`sites/taal`, opgegeven door die sessie

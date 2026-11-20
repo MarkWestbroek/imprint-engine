@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { messagesFor } from "@imprint/content-core";
+import { messagesFor } from "@imprint/content-core/messages"; // the subpath: this file is also used from a client part
 import { publicMessages } from "./messages";
 
 /** A language in its own words: "Nederlands", "English", "Polski". */

@@ -13,7 +13,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   basistaal, als concept; er wordt niets opgeslagen tot je opslaat. Een
   vertaling die ouder is dan de laatste wijziging van de bron staat als
   *outdated* in de lijst en krijgt een melding met een link naar de
-  geschiedenis. Voor sites met één taal verandert er niets.
+  geschiedenis. Voor sites met één taal verandert er niets. Erbij, uit de
+  aansluiting van paratmos: `LanguageSwitchClient`
+  (`@imprint/runtime-admin/language-switch`) voor een taalkeuze in een layout,
+  met `pageSlugsByLocale` en `translationsFromSlugs` in `content-core`.
 - **Meer talen naast elkaar: de site-kant** (W5/S9, eerste deel van stap D van
   design/meertaligheid.md; eerste gebruiker wordt paratmos). Een site met
   `locales: ["nl", "en"]` toont een vertaling (zelfde slug, andere `lang`)
