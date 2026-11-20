@@ -48,7 +48,7 @@ export function WoordenView({ ui, lijst, topics }: { ui: string; lijst: Woordenl
       <div className="mt-6">
         <Woordzoeker lijst={lijst} labels={{ ...w, uitspreken: t.grammatica.uitspreken }} meer={meer} />
       </div>
-      <p className="mt-10 text-xs text-muted">{vul(w.bron, { bron: lijst.bron })}</p>
+      <p className="mt-10 text-xs text-muted">{vul(w.bron, { bron: lijst.beelden ? `${lijst.bron} · ${lijst.beelden.bron}` : lijst.bron })}</p>
     </div>
   );
 }

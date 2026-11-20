@@ -69,7 +69,8 @@ function bruikbaar(e: Entry): boolean {
   const senses = eigenSenses(e);
   if (senses.length === 0) return false;
   // One coarse sense is enough to leave the word out: a learner should not meet it by accident.
-  if (senses.some((s) => s.tags?.some((t) => GROF.includes(t)))) return false;
+  // Unless it is kept by hand: a coarse side meaning does not take a basic word away (hond, neus, banaan).
+  if (!houd.has(e.word) && senses.some((s) => s.tags?.some((t) => GROF.includes(t)))) return false;
   if (senses.every((s) => s.tags?.some((t) => ONGEBRUIKELIJK.includes(t)))) return false;
   if (senses.some((s) => s.categories?.some((c) => VLEES.test(c.name)))) return false;
   return true;
@@ -218,6 +219,8 @@ async function main(): Promise<void> {
     .filter((x) => x.n > 0)
     .sort((a, b) => b.n - a.n)
     .slice(0, Number(nNoun));
+  // Kept by hand means in the list, also when its count falls just below the cut (apotheek).
+  for (const n of naamwoorden.values()) if (houd.has(n.w) && !nouns.some((y) => y.x === n)) nouns.push({ x: n, n: Math.max(nwScore(n), 1) });
   const verbs = ww
     .filter((v) => echt(v) || houd.has(v.w))
     .map((v) => ({ x: v, n: wwScore.get(v.w)! }))

@@ -2017,6 +2017,18 @@ flowchart LR
   - De tabel van *pani* staat in Wiktionary onder het voornaamwoord en wordt
     daar opgehaald. Werkwoorden die alleen met *się* voorkomen staan met de
     hand in `pl-aanvullingen.json`: de tags zeggen dat niet betrouwbaar.
+
+  **Plaatjes** (`beelden-maken.ts`, `woorden/beelden.json`, `public/beeld/`):
+  per taal woord → hoogstens twee Fluent Emoji (MIT), als code (`1f34e`).
+  Het script koppelt via de emojinamen van Unicode (CLDR) in het Nederlands en
+  het Pools: eerst op de naam (🍎 heet "rode appel"/"czerwone jabłko"), anders
+  op een trefwoord dat hoogstens twee emoji hebben. Correcties per taal in
+  `beelden-aanvullingen.json` (`weg`, `keuze`). Alleen de gebruikte plaatjes
+  gaan naar `public/beeld/` (≈540 SVG's, ≈1,7 MB in de repo; de browser haalt
+  er per kaart één of twee, lazy). De site voegt ze bij het laden aan de lijst
+  toe met `metBeelden(lijst, beelden)`; `LijstBeelden` is een optioneel veld
+  van beide woordenlijsten, zodat de woordenlijst-scripts en het
+  plaatjes-script elkaar niet overschrijven.
   - Hulpwerkwoord: `aux`/`trans=unacc` uit Wiktionary, aangevuld met de lijst
     `hulp`. Een scheidbaar werkwoord op een basis met *zijn* krijgt *zijn*
     (*weglopen*).

@@ -1039,8 +1039,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Pools: *zeg* testen met de Poolse spraakherkenning van de
             browser (pl-PL), en of *orden* niet te vaak een tweede goede
             volgorde heeft (Poolse woordvolgorde is vrij). **S**
-      - [ ] Afbeeldingen bij *Zoek een woord* voor de concrete woorden
-            (vrije pictogrammen, bijv. OpenMoji, CC BY-SA). **M**
+      - [x] ~~Afbeeldingen bij *Zoek een woord*~~ — Fluent Emoji bij de
+            concrete woorden, beide talen (20-11).
+      - [ ] Plaatjes ook in de lessen: bij de brokken, en *kies* met
+            plaatjes voor wie zonder vertaling leert. **M**
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
             vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
             een vertaling in de les. **S**
