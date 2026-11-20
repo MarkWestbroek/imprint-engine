@@ -3,6 +3,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { pluginPublicRoute, readOpts } from "@imprint/runtime-admin";
 import { isInternal, PageView } from "@/components/page-view";
 import { imprint, store } from "@/lib/content";
+import { pageMetadata, pageReadOptions, SITE } from "@/lib/locale";
 
 /**
  * Every page from the store (Postgres with DATABASE_URL, content/ without),
@@ -15,14 +16,14 @@ import { imprint, store } from "@/lib/content";
 type Props = { params: Promise<{ slug: string[] }> };
 
 export async function generateStaticParams() {
-  const pages = await store.listPages();
+  const pages = await store.listPages({ lang: SITE.defaultLocale });
   return pages.filter((p) => !isInternal(p.slug) && p.slug !== "home").map((p) => ({ slug: p.slug.split("/") }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const page = await store.getPage(slug.join("/"));
-  if (page) return { title: page.title, description: page.description };
+  if (page) return pageMetadata(page.slug, SITE.defaultLocale);
   const hit = await pluginPublicRoute({ imprint, slug, members: false, session: null });
   return hit && "render" in hit && hit.metadata ? hit.metadata : {};
 }
@@ -35,8 +36,8 @@ export default async function ContentPage({ params }: Props) {
   // Old addresses and Dutch names from the site config's aliases (`"begrip": "terms"`): /begrip/x → /terms/x.
   const aliases = (await store.getSiteConfig(opts)).aliases;
   if (parts[0]! in aliases) permanentRedirect(`/${[aliases[parts[0]!], ...parts.slice(1)].filter(Boolean).join("/")}`);
-  const page = isInternal(slug) ? null : await store.getPage(slug, opts);
-  if (page) return <PageView page={page} />;
+  const page = isInternal(slug) ? null : await store.getPage(slug, await pageReadOptions(SITE.defaultLocale));
+  if (page) return <PageView page={page} locale={SITE.defaultLocale} />;
   const hit = await pluginPublicRoute({ imprint, slug: parts, members: false, session: null });
   // No member area on this site: content that is not public is not shown.
   if (!hit || "redirect" in hit) notFound();

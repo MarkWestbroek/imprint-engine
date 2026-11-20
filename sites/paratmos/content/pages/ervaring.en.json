@@ -1,0 +1,156 @@
+{
+  "slug": "ervaring",
+  "title": "Experience",
+  "description": "Assignments of Paratmos since 1998: logical data models, data architecture, analysis and coaching at VNG, the CAK, RVO, the KVK and Statistics Netherlands, among others.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "I have worked on software since 1998, with UML and use cases since 2001, and for the last fifteen years mainly on data architecture and the logical data model. Usually as a senior analyst, modeller or data architect, often with the task of raising the level of analysis of a team or a whole organisation.\n\nThe common thread: first the model, then what follows from it. Two assignments are worked out as cases, the rest is in the timeline. References are available on request."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Worked out",
+                  "columns": 2,
+                  "items": [
+                    {
+                      "title": "VNG, Common Ground",
+                      "markdown": "Ongoing. From the bitemporal register as a principle to working components on Fundament.",
+                      "href": "/en/ervaring/common-ground"
+                    },
+                    {
+                      "title": "KVK, the trade register",
+                      "markdown": "2017–2020. The logical model of a base register, and a register that processes corrections without errors again.",
+                      "href": "/en/ervaring/kvk"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "timeline",
+                "config": {
+                  "title": "Timeline",
+                  "items": [
+                    {
+                      "date": "now",
+                      "title": "VNG, Common Ground",
+                      "markdown": "The bitemporal register, the municipal data model (GGM), federated access control (FTV) and history in APIs. [Read more](/en/ervaring/common-ground)",
+                      "tone": "accent"
+                    },
+                    {
+                      "date": "2024",
+                      "title": "The CAK, The Hague",
+                      "markdown": "Data architect: an organisation-wide logical data model, drawn up single-handedly and handed over to the architects (UML, Bizzdesign). Before that information analyst on the core application for the Social Support Act (Wmo).",
+                      "tone": "accent"
+                    },
+                    {
+                      "date": "2020 – 2023",
+                      "title": "RVO, Zwolle",
+                      "markdown": "Senior analyst, data architect and coach in the Common Agricultural Policy 2023–2027 programme. Responsible for the programme-wide logical model, in line with the conceptual model and the RVO terminology (MIM); the basis for the service interfaces of a central subsidy calculation.",
+                      "tone": "accent"
+                    },
+                    {
+                      "date": "2020 – now",
+                      "title": "CAI, Rijswijk",
+                      "markdown": "Trainer for IREB, UML, SysML, OCEB and BPM(N); co-developer of the trainings.",
+                      "tone": "info"
+                    },
+                    {
+                      "date": "2020",
+                      "title": "Dutch Tax Administration, Apeldoorn",
+                      "markdown": "Analysis of the message specifications and the model behind them for the European directive DAC6 (UML, XML, XSD).",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2017 – 2020",
+                      "title": "KVK, Utrecht",
+                      "markdown": "Data modeller and information architect: the logical model of the entire trade register, the REST interfaces and the design for correction and repair. [Read the case](/en/ervaring/kvk)",
+                      "tone": "accent"
+                    },
+                    {
+                      "date": "2017",
+                      "title": "SURFsara, Amsterdam",
+                      "markdown": "A data plan and a central domain model for planning the use of services, gathered in a short time through interviews and workshops.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2016 – 2017",
+                      "title": "Volkswagen Pon Financial Services, Amersfoort",
+                      "markdown": "Impact analyses and domain modelling for the online services: private lease, financial lease and insurance.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2016",
+                      "title": "Statistics Netherlands (CBS), Heerlen",
+                      "markdown": "Led the drawing up of a new conceptual metamodel of the statistical concepts, as the basis for a data lake.",
+                      "tone": "accent"
+                    },
+                    {
+                      "date": "2015 – 2016",
+                      "title": "Justis (Ministry of Justice and Security), The Hague",
+                      "markdown": "Domain model and workflows (BPMN) around letters and certificates, the primary products of Justis.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2014 – 2015",
+                      "title": "Meyn, Oostzaan",
+                      "markdown": "A data plan and tightly worked-out domain models for an infrastructure renewal in an industrial environment.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2013 – 2014",
+                      "title": "Shell / Ortec, Zoetermeer",
+                      "markdown": "Specified a modelling and cost estimation tool with a team of seven analysts; jointly responsible for the shared data model.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "2009 – 2012",
+                      "title": "Air France-KLM, Schiphol-Rijk",
+                      "markdown": "Coordinating information analyst for the ancillary products (extra baggage, seats, meals) sold through the website and kiosks.",
+                      "tone": "muted"
+                    },
+                    {
+                      "date": "1998 – 2009",
+                      "title": "Earlier",
+                      "markdown": "Among others ABN AMRO (mentor in the bank-wide introduction of RUP), the Dutch Tax Administration (Benefits), the Judiciary, the Probation Service, Essent Kabelkom and UWV. Started as a designer and programmer of web applications.",
+                      "tone": "muted"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

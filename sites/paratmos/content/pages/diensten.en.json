@@ -1,0 +1,110 @@
+{
+  "slug": "diensten",
+  "title": "Services",
+  "description": "The services of Paratmos: an organisation-wide logical data model, analysis and requirements, training and coaching, and tooling (Sparx Enterprise Architect, Bizzdesign, Omnium).",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Four services that together form one chain: from the model to what is built with it. You can take them separately; they work best together. How I go about it is described under [model-driven working](/en/modelgedreven-werken)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**For whom.** Organisations where the same data lives in several systems and departments, and where nobody oversees the whole any more. Often during a renewal programme, a migration or the phasing out of legacy.\n\n**What I do.** I draw up a logical data model that shows the data, its meaning and its coherence, in breadth and in depth, as the whole organisation uses it. In UML, in line with your domain structure and your terminology, for instance following MIM (the Dutch metamodel for information modelling).\n\n**What it delivers.** One model that architects, analysts and developers refer to. A basis for service interfaces and database schemas. And insight into which data is duplicated, contradictory or owned by nobody.\n\n**In practice.** For the CAK an organisation-wide model in five months, including the handover. For RVO the programme-wide model for the Common Agricultural Policy. For the KVK [the model of the trade register](/en/ervaring/kvk).",
+                  "title": "1. Logical data model and data architecture"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**For whom.** Programmes and teams that have to build on legislation, policy or a pile of wishes, and want to stay in control of it.\n\n**What I do.** Impact analyses and requirements analyses, use case models (Use Cases 2.0), process models in BPMN, and translating features into backlog items within scrum or SAFe. I get to know a domain quickly and talk as easily with the business as with architects, developers and testers.\n\n**What it delivers.** Requirements that can be traced to their source and fit the data model, and a level of analysis in the team that holds up after I leave.",
+                  "title": "2. Analysis and requirements"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Trainings.** I give certification trainings in requirements management (IREB Foundation), UML, SysML, BPM and BPMN and OCEB, and tool training for Sparx Enterprise Architect. Since 2020 as a trainer at [CAI](https://cai-advies.nl), and also directly through Paratmos. On site at your organisation or as an open training.\n\n**For whom.** Junior, medior and senior (business) analysts, functional designers, data architects and data modellers.\n\n**Coaching.** A training sticks when it is put to work afterwards. That is why we often plan a follow-up period, or I coach a group of analysts and architects on method for a longer time, as at RVO in a programme of ten to twenty people.",
+                  "title": "3. Training and coaching"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Your modelling environment.** My preference is Sparx Enterprise Architect; I also work with Bizzdesign Enterprise Studio. I help set up the repository (processes, data, functionality), extend the tool and script recurring work.\n\n**Omnium, the model workbench.** [Omnium](https://omnium.imprint-engine.nl) is my own instrument: from one canonical model it derives a working register, with full history. It does not replace your modelling tool; I use it to show in days rather than months what a model delivers in practice, for instance in a proof of concept.",
+                  "title": "4. Tooling"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "A question that is not listed here?",
+                  "markdown": "Most assignments start with a problem, not with a service. Tell me about it.",
+                  "tone": "accent",
+                  "buttonLabel": "Get in touch",
+                  "buttonUrl": "/en/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

@@ -1,0 +1,27 @@
+{
+  "slug": "over",
+  "title": "About Paratmos",
+  "description": "Paratmos is the company of Mark Westbroek: analyst, data modeller and data architect since 1998, trainer, and builder of his own software.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Paratmos was founded by Mark Westbroek. The name comes from Ancient Greek and means roughly \"beyond the air\". That is the programme: IT beyond selling hot air.\n\n## Mark Westbroek\n\nMy speciality is clarifying the core concepts of an organisation, with a view to the software that is built for it. I have worked on software since 1998: first as a designer and programmer, then as an analyst, and for the last fifteen years mainly as a data modeller and data architect.\n\nI abstract easily, work methodically and have an eye for detail. I get to know a new domain quickly: within a few weeks to a month or two I can usually hold my own with the experts. Clients often say that I quickly understand what an organisation does and wants.\n\nI studied chemistry in Utrecht and later also trained in body-oriented therapy. The first taught me to think in structures, the second to listen to what people mean. A modeller needs both.\n\n## Also a builder\n\nBesides the work for clients I build my own software: [Omnium](https://omnium.imprint-engine.nl), the model workbench, and [Imprint](https://imprint-engine.nl), the publishing engine this site runs on, which keeps every change as a new version. I also design music electronics, with the hardware and the embedded software that go with it. So what I advise, I have usually built myself.\n\nMore about me personally is on [markwestbroek.nl](https://markwestbroek.nl) (in Dutch) and on [LinkedIn](https://www.linkedin.com/in/markwestbroek/).\n\n## Network\n\nParatmos works together with other small firms:\n\n- [Michael Egmont-Petersen](https://egmont-petersen.nl)\n- [Hans Admiraal](http://admiraalit.nl)\n- [Jurn Franken](https://ia-consult.nl/syrah.html)\n- [CAI](https://cai-advies.nl), for the trainings"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

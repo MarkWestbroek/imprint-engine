@@ -1,0 +1,72 @@
+{
+  "slug": "ervaring/kvk",
+  "title": "KVK: the model of the trade register",
+  "description": "Case: for the KVK, the logical data model of the entire trade register, the service interfaces that followed from it and the design with which correction and repair worked without errors again.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "breadcrumb",
+                "config": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "specs",
+                "config": {
+                  "items": [
+                    {
+                      "value": "2017 – 2020",
+                      "label": "period"
+                    },
+                    {
+                      "value": "KernGezond",
+                      "label": "programme, under SAFe"
+                    },
+                    {
+                      "value": "UML · BPMN",
+                      "label": "model and processes"
+                    },
+                    {
+                      "value": "REST · JSON",
+                      "label": "derived interfaces"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## The question\n\nThe KVK, the Dutch Chamber of Commerce, renewed the trade register in a large programme, KernGezond. Two things had to come together in it. Legacy systems were phased out, and their data and functionality had to find a place in the new register. And part of the register was rebuilt so that it could be shared with the separate register of ultimate beneficial owners (UBO).\n\nBoth needed the same thing: one precise description of what the trade register actually records.\n\n## The model\n\nFrom the existing documentation, the requirements, the legal texts and interviews I built an extensive logical data model in UML of the entire base register. As data modeller and data architect I was responsible for how the whole data aspect of the trade register was recorded.\n\nI drew the processes around the register (filing, registration, consulting other registers and retrieval) in BPMN, in the same concepts as the model.\n\n## What followed from it\n\n- **The service interfaces.** I was responsible for all REST and JSON interfaces on the register. They follow the model, so a consumer sees the same concepts as the registration.\n- **The database schema and the logic** for the rebuilt part that is shared with the UBO register.\n- **Correction and repair.** In that design every piece of data has two timelines: the material one (when did something hold in reality) and the formal one (when was it registered), following GEMMA. With that, for the first time in the history of the digital trade register, corrections and repairs could be handled without errors again.\n- **Use cases.** The use case model, and fellow analysts trained as use case specifiers.\n\n## The model on the wall\n\nA model that only modellers can read does half the job. Of the essential parts I made presentable versions on A1, A0 and larger, to grow understanding in the IT organisation and in support as well.\n\n## What I take from it\n\nThe two timelines have been a fixed part of my work ever since. At Common Ground I worked the principle out further, and in Omnium it has become working software.\n\n[The sequel: Common Ground](/en/ervaring/common-ground) · [Knowledge base: time in data](/kennisbank) (in Dutch)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

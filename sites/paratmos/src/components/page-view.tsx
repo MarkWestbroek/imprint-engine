@@ -1,42 +1,28 @@
 import { Markdown, PageRenderer } from "@imprint/runtime-admin";
 import type { Page } from "@imprint/content-core";
+import { imprint } from "@/lib/content";
+import { pageReadOptions, pathPrefix, SITE } from "@/lib/locale";
 import { widgetContext } from "@/lib/widget-context";
 import { widgetComponents } from "@/widgets/components";
 
 /**
- * One page from the store: its widget layout through the engine renderer, or
- * its title and Markdown body. No page title above a page that opens with its
- * own hero, nor on the home page.
+ * One page from the store, in a language: its widget layout through the engine
+ * renderer, or its title and Markdown body. No page title above a page that
+ * opens with its own hero or opening, nor on the home page. The widgets get
+ * the language for their fixed texts, the /en prefix for the links they make,
+ * and read options that only find what is translated.
  */
-export async function PageView({ page }: { page: Page }) {
-  const lang = pageLang(page.slug);
-  if (lang) return <div lang={lang}>{await pageContent(page)}</div>;
-  return pageContent(page);
-}
-
-/**
- * The language of a translated page, from its slug: `woonwagen/pl` is the
- * Polish version of `woonwagen`. The site itself is Dutch (`<html lang>`), so
- * such a page marks its own content; screen readers and search engines read
- * the nearest `lang`.
- */
-const PAGE_LANGS = ["pl", "en", "de"];
-export function pageLang(slug: string): string | undefined {
-  const last = slug.split("/").pop() ?? "";
-  return slug.includes("/") && PAGE_LANGS.includes(last) ? last : undefined;
-}
-
-async function pageContent(page: Page) {
+export async function PageView({ page, locale }: { page: Page; locale: string }) {
   if (page.layout) {
     const first = page.layout.rows?.[0]?.cells[0]?.widgets[0];
-    const untitled = page.slug === "home" || first?.type === "hero";
-    return (
-      <PageRenderer
-        page={{ ...page, title: untitled ? "" : page.title, layout: page.layout }}
-        viewers={widgetComponents}
-        ctx={await widgetContext()}
-      />
-    );
+    const untitled = page.slug === "home" || first?.type === "hero" || first?.type === "doorbraak";
+    const ctx = {
+      ...(await widgetContext()),
+      locale: locale === SITE.defaultLocale ? imprint.uiLocale : locale,
+      pathPrefix: pathPrefix(locale),
+      readOptions: await pageReadOptions(locale),
+    };
+    return <PageRenderer page={{ ...page, title: untitled ? "" : page.title, layout: page.layout }} viewers={widgetComponents} ctx={ctx} />;
   }
   return (
     <>

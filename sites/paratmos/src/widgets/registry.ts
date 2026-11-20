@@ -98,7 +98,7 @@ const contact = {
   name: "contact",
   label: "Contactformulier",
   version: "1.0.0",
-  help: "Naam, e-mailadres en bericht; komt per mail bij de eigenaar van de site aan. Het adres staat nergens op de pagina. Labels en meldingen in het Nederlands.",
+  help: "Naam, e-mailadres en bericht; komt per mail bij de eigenaar van de site aan. Het adres staat nergens op de pagina. Labels en meldingen in het Nederlands of het Engels.",
   configSchema: z.object({
     title: z.string().default("Contact"),
     /** Markdown above the form. */
@@ -109,7 +109,7 @@ const contact = {
       .regex(/^[a-z][a-z0-9-]*$/)
       .default("contact"),
     /** The language of the labels and messages; the section is marked with it (`lang`). */
-    taal: z.enum(["nl"]).default("nl"),
+    taal: z.enum(["nl", "en"]).default("nl"),
   }),
 };
 
