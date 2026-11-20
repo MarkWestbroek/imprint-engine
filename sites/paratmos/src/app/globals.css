@@ -83,6 +83,13 @@
 .pm-logo { display: inline-flex; align-items: center; gap: 4px; color: var(--pm-inkt); }
 .pm-logo svg { width: 52px; height: 52px; flex: none; }
 .pm-logo-naam { font-family: var(--font-display), var(--font-sans), sans-serif; font-size: 25px; font-weight: 700; letter-spacing: .035em; line-height: 1; }
+.pm-header-right { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 28px; }
+/* De taalkeuze: NL · EN, de huidige taal in inkt, een taal zonder vertaling van deze pagina gedempt. */
+.pm-lang { display: flex; align-items: center; gap: 2px; font-family: var(--font-mono), ui-monospace, monospace; font-size: 12px; letter-spacing: .06em; }
+.pm-lang > * { padding: 4px 7px; border: 1px solid transparent; border-radius: 4px; color: var(--muted); }
+.pm-lang > [aria-current] { border-color: var(--border); color: var(--foreground); font-weight: 500; }
+.pm-lang a:hover { color: var(--foreground); border-color: var(--border); }
+.pm-lang a[data-untranslated] { opacity: .7; }
 .pm-nav { display: flex; flex-wrap: wrap; gap: 2px 26px; color: var(--muted); }
 .pm-nav a { padding: 12px 0; }
 .pm-nav a:hover, .pm-nav a.is-active { color: var(--foreground); }

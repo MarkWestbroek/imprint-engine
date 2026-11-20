@@ -22,9 +22,10 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
-  // Written in Dutch (design/meertaligheid.md layer 1): pages are stored and read as `nl`. The English
-  // pages of the old site join `locales` when the engine serves translations (step D).
-  locales: ["nl"],
+  // Dutch is the base language (no prefix); English pages live under /en with the same slugs
+  // (design/meertaligheid.md layer 4). Only pages are translated: the blog, the knowledge base and
+  // the glossary are Dutch. With two languages the store no longer falls back to `en`.
+  locales: ["nl", "en"],
   defaultLocale: "nl",
   plugins: [wikiPlugin(), glossaryPlugin({ indexHref: "/begrippen" }), blogPlugin()],
   // The core types this site uses; the plugins' types (wiki, term, post) are active on top of these.

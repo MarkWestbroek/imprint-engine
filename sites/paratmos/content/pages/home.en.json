@@ -1,0 +1,232 @@
+{
+  "slug": "home",
+  "title": "Paratmos",
+  "description": "Paratmos: model-driven working for organisations with complex data. One canonical model as the source, and from it the interfaces, the register and the documentation.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "doorbraak",
+                "config": {
+                  "kop": "IT beyond selling hot air.",
+                  "tekst": "Concrete, applicable and thorough: one model for the data, the processes and the rules of your organisation.",
+                  "knopLabel": "How it works",
+                  "knopUrl": "/en/modelgedreven-werken",
+                  "labelVoet": "the model",
+                  "labelBoog": "the air",
+                  "labelBaken": "what works"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "drie-eenheid",
+                "config": {
+                  "kop": "The basis: data, processes and rules",
+                  "intro": "Together these three carry the whole functioning of an organisation. Services, vision, goals and what comes from outside lie around them.",
+                  "gegevens": {
+                    "titel": "Data",
+                    "tekst": "What the organisation knows and records.",
+                    "notatie": "UML"
+                  },
+                  "processen": {
+                    "titel": "Processes",
+                    "tekst": "What happens, in what order and by whom.",
+                    "notatie": "BPMN"
+                  },
+                  "regels": {
+                    "titel": "Rules",
+                    "tekst": "What is allowed and what is required."
+                  },
+                  "verbandProcessenGegevens": "read, write",
+                  "verbandRegelsGegevens": "guard",
+                  "verbandProcessenRegels": "steer",
+                  "omgeving": [
+                    "External rules and constraints",
+                    "Vision",
+                    "Goals",
+                    "Services",
+                    "External task"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "afleiding",
+                "config": {
+                  "kop": "One model. The rest follows from it.",
+                  "intro": "From the model follow the interfaces, the register, the requirements and the documentation.",
+                  "model": {
+                    "stereotype": "canonical model",
+                    "naam": "Inschrijving",
+                    "attributen": [
+                      "kvkNummer : Nummer",
+                      "rechtsvorm : Rechtsvorm",
+                      "geldigVan : Datum",
+                      "geldigTot : Datum",
+                      "geregistreerdOp : Tijdstip"
+                    ]
+                  },
+                  "afgeleiden": [
+                    {
+                      "label": "OpenAPI · XSD",
+                      "titel": "Service interfaces",
+                      "tekst": "Messages and APIs that say the same as the model, because they come from it."
+                    },
+                    {
+                      "label": "SQL",
+                      "titel": "The register",
+                      "tekst": "A schema that gets history, correction and repair right from the start."
+                    },
+                    {
+                      "label": "BPMN · use cases",
+                      "titel": "Processes and requirements",
+                      "tekst": "What happens to the data, in the same concepts as the model."
+                    },
+                    {
+                      "label": "A0",
+                      "titel": "Documentation that gets read",
+                      "tekst": "From the reference for developers to the poster on the wall for the business."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "What you hire me for",
+                  "columns": 2,
+                  "items": [
+                    {
+                      "title": "An organisation-wide data model",
+                      "markdown": "A logical model of all data, its meaning and its coherence, independent of the systems it lives in today.",
+                      "href": "/en/diensten"
+                    },
+                    {
+                      "title": "Analysis and requirements",
+                      "markdown": "From legislation and wishes to use cases, impact analyses and backlog items a team can build with.",
+                      "href": "/en/diensten"
+                    },
+                    {
+                      "title": "Training and coaching",
+                      "markdown": "UML, SysML, BPMN, requirements (IREB) and OCEB, and coaching a group of analysts on method.",
+                      "href": "/en/diensten"
+                    },
+                    {
+                      "title": "Tooling",
+                      "markdown": "Setting up your modelling environment in Sparx Enterprise Architect or Bizzdesign, and Omnium as a workbench for a proof of concept.",
+                      "href": "/en/diensten"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Now: Common Ground",
+                  "markdown": "For VNG, the association of Dutch municipalities, I work on Common Ground: the bitemporal register, the municipal data model, federated access control and the question of how APIs deal with history.",
+                  "tone": "muted",
+                  "buttonLabel": "Read about this work",
+                  "buttonUrl": "/en/ervaring/common-ground"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Before: the trade register",
+                  "markdown": "For the KVK, the Dutch Chamber of Commerce, I made the logical model of the entire trade register, with the interfaces and the design for correction and repair.",
+                  "tone": "muted",
+                  "buttonLabel": "Read the case",
+                  "buttonUrl": "/en/ervaring/kvk"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Blog and knowledge base",
+                  "markdown": "The blog and the knowledge base on modelling, time in data and Dutch government standards are written in Dutch.",
+                  "tone": "muted",
+                  "buttonLabel": "To the blog (in Dutch)",
+                  "buttonUrl": "/blog"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Shall we talk?",
+                  "markdown": "A one-hour conversation is usually enough to see whether and where a model will help you.",
+                  "tone": "accent",
+                  "buttonLabel": "Get in touch",
+                  "buttonUrl": "/en/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **paratmos.nl in het Engels** (eerste site op stap D van
+  design/meertaligheid.md). Nederlands blijft de basistaal zonder prefix, het
+  Engels staat onder `/en` met dezelfde slugs: `/en/diensten`. Elke pagina
+  behalve de begrippen heeft een Engelse versie (`content/pages/*.en.json`),
+  er is een Engels menu (`menus/main.en.json`) en een Engelse tagline en
+  motto (`translations` in `site.json`). In de kop staat de taalkeuze NL · EN,
+  die naar dezelfde pagina in de andere taal gaat of, waar die er niet is,
+  naar de startpagina. Elke pagina heeft `hreflang`-links. Blog, kennisbank en
+  begrippen blijven Nederlands; hun `/en`-adressen sturen door. Het
+  contactformulier kent ook Engels. Het oude WordPress-adres van de Engelse
+  pagina stuurt door naar `/en/modelgedreven-werken`.
 - **Meer talen naast elkaar: de site-kant** (W5/S9, eerste deel van stap D van
   design/meertaligheid.md; eerste gebruiker wordt paratmos). Een site met
   `locales: ["nl", "en"]` toont een vertaling (zelfde slug, andere `lang`)

@@ -1,0 +1,44 @@
+{
+  "slug": "contact",
+  "title": "Contact",
+  "description": "Get in touch with Paratmos for an introduction, an assignment or a training.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "For an introduction, an assignment or a training: send a message and I will get back to you. You can also find me on [LinkedIn](https://www.linkedin.com/in/markwestbroek/)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "contact",
+                "config": {
+                  "title": "Send a message",
+                  "anker": "contact",
+                  "taal": "en"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

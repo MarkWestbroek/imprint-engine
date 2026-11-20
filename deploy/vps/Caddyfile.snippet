@@ -210,7 +210,7 @@ woonwagen.markwestbroek.nl {
 
 # paratmos.nl: de zakelijke site van Paratmos. NOG NIET LIVE: pas aanzetten als
 # de A-records van paratmos.nl en www naar de VPS wijzen. De DNS staat bij
-# Exsilia (Plesk, DNS Settings); mail, de MX- en de SPF-record en
+# Exsilia (Plesk, DNS Settings); mail, de MX- en de SPF-record, vps1 (de VPS zelf) en
 # oud.paratmos.nl (het oude WordPress) blijven daar: alleen deze twee
 # A-records omzetten.
 paratmos.nl {
@@ -235,7 +235,7 @@ paratmos.nl {
 	}
 	# De adressen van de oude WordPress-site (/?page_id=…, /?p=…), zodat links
 	# op LinkedIn en in oude mails blijven werken. De drie dienstenpagina's
-	# zijn nu één pagina; de Engelse pagina heeft (nog) geen tegenhanger.
+	# zijn nu één pagina; de Engelse pagina is nu /en/modelgedreven-werken.
 	@wp_ea {
 		path /
 		query page_id=20
@@ -269,7 +269,7 @@ paratmos.nl {
 	redir @wp_tools /diensten permanent
 	redir @wp_over /over permanent
 	redir @wp_contact /contact permanent
-	redir @wp_en / permanent
+	redir @wp_en /en/modelgedreven-werken permanent
 	redir @wp_post /blog permanent
 	# Wat WordPress verder aanbood, bestaat niet meer.
 	@wp_rest path /wp-admin* /wp-login.php /wp-content/* /wp-includes/* /xmlrpc.php /feed* /comments/feed*
