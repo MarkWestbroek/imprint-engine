@@ -1529,9 +1529,17 @@ flowchart LR
 - Publieke pagina's zijn prerendered (SSG); admin-saves legen de cache en
   nieuwe pagina's renderen on demand — geen rebuild nodig.
 - **CI**: GitHub Actions ([ci.yml](../.github/workflows/ci.yml)) draait
-  typecheck + lint + build bij elke push/PR. De build draait zonder
-  `DATABASE_URL` en valt dus terug op de file-store — precies de
-  v0-belofte "een checkout bouwt zonder database".
+  typecheck + lint + tests + build bij elke push/PR, alleen voor wat er
+  veranderd is: [scripts/verify.mjs](../scripts/verify.mjs) bepaalt dat
+  (een wijziging in `packages/` of de package-bestanden van de root raakt
+  elke site, een wijziging in `sites/<naam>/` alleen die site, docs en
+  deploybestanden geen). De packages zijn één job, de sites een matrix die
+  naast elkaar draait, met de Next-cache van de vorige run. De browsertests
+  (de admin via MusicBrain) draaien alleen als de engine of MusicBrain
+  verandert, met Chromium uit de cache. Lokaal maakt `npm run verify`
+  dezelfde keuze. De build draait zonder `DATABASE_URL` en valt dus terug op
+  de file-store — precies de v0-belofte "een checkout bouwt zonder database".
+  `gh pr checks <nr>` toont per site een eigen check (`site (paratmos)`).
 - **Backups**: `npm run backup` (Node-only; hele bitemporale historie +
   users + assets, retentie) — zie [backups.md](backups.md); asset-wezen
   opruimen met `npm run assets:gc` (houdt alles wat óóit gerefereerd is).
