@@ -1,5 +1,8 @@
-# CI — build + lint + typecheck bij elke push/PR (backlog §6); bij alleen
-# docs/deploy-wijzigingen alleen de snelle controle van de deploybestanden.
+# CI — typecheck, lint, tests en build bij elke push/PR (backlog §6), alleen voor
+# wat er veranderd is en per site naast elkaar. Dezelfde keuze maakt
+# `npm run verify` lokaal (scripts/verify.mjs): een wijziging in packages/ of in
+# de package-bestanden van de root raakt elke site, een wijziging in
+# sites/<naam>/ alleen die site; docs en deploybestanden raken geen site.
 # Bouwt zonder DATABASE_URL: de site valt dan terug op de file-store (v0),
 # dus de SSG-build draait tegen de content in git — geen database nodig.
 name: CI
@@ -9,26 +12,40 @@ on:
     branches: [main]
   pull_request:
 
+# Een nieuwe push op dezelfde PR maakt de vorige run overbodig.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
-  # Wat is er veranderd? Alleen docs of deploybestanden: dan zijn bouwen en
-  # browsertests (samen ~6 minuten) overbodig en slaan we ze over.
+  # Wat moet er gecontroleerd worden? scripts/verify.mjs --list --json, tegen de
+  # basis van de PR (of de vorige stand van main bij een push).
   changes:
     runs-on: ubuntu-latest
     outputs:
-      code: ${{ steps.filter.outputs.code }}
+      packages: ${{ steps.plan.outputs.packages }}
+      sites: ${{ steps.plan.outputs.sites }}
+      e2e: ${{ steps.plan.outputs.e2e }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: filter
         with:
-          predicate-quantifier: every
-          filters: |
-            code:
-              - '**'
-              - '!docs/**'
-              - '!doc/**'
-              - '!**/*.md'
-              - '!deploy/**'
+          fetch-depth: 0
+      - id: plan
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
+        run: |
+          # Een nieuwe branch of een force-push heeft geen bruikbare vorige stand: dan alles.
+          if git cat-file -e "$BASE^{commit}" 2>/dev/null; then
+            plan=$(node scripts/verify.mjs --list --json --base="$BASE")
+          else
+            plan=$(node scripts/verify.mjs --list --json --all)
+          fi
+          echo "$plan"
+          {
+            echo "packages=$(echo "$plan" | jq -c .packages)"
+            echo "sites=$(echo "$plan" | jq -c .sites)"
+            echo "e2e=$(echo "$plan" | jq -c .e2e)"
+          } >> "$GITHUB_OUTPUT"
 
   # Snel (seconden) en altijd: de deploybestanden van de VPS. Fouten hierin
   # vallen anders pas op bij het uitrollen.
@@ -44,40 +61,56 @@ jobs:
       - name: Shellscripts parsen
         run: for f in deploy/vps/*.sh; do bash -n "$f"; done
 
-  verify:
+  # De engine: de pakketgrenzen, en typecheck, lint en tests van elk package.
+  packages:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.packages == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-
       - name: Install
         run: npm ci
+      - name: Packages (grenzen, typecheck, lint, test)
+        run: node scripts/verify.mjs --packages
 
-      - name: Typecheck
-        run: npm run typecheck
+  # Per geraakte site, naast elkaar: typecheck, lint, test en build. De
+  # Next-cache van de vorige run maakt de build sneller.
+  site:
+    needs: changes
+    if: needs.changes.outputs.sites != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        site: ${{ fromJSON(needs.changes.outputs.sites) }}
+    name: site (${{ matrix.site }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: npm ci
+      - uses: actions/cache@v4
+        with:
+          path: sites/${{ matrix.site }}/.next/cache
+          key: next-${{ matrix.site }}-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          restore-keys: next-${{ matrix.site }}-${{ hashFiles('package-lock.json') }}-
+      - name: ${{ matrix.site }} (typecheck, lint, test, build)
+        run: node scripts/verify.mjs --site=${{ matrix.site }}
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Test (karakterisatie; DB-suite wordt zonder TEST_DATABASE_URL overgeslagen)
-        run: npm test
-
-      - name: Build (file-store, geen DB)
-        run: npm run build
-
-  # Browsertests van de admin (ontwerp Fase 3, stap 2). Aparte job: deze heeft
-  # een database en een browser nodig, `verify` hierboven blijft snel.
-  # Twee keer dezelfde specs: tegen de productiebuild (wat bezoekers krijgen) en
-  # tegen `next dev` (alleen daar meldt React hydration- en propfouten).
+  # Browsertests van de admin (ontwerp Fase 3, stap 2), via MusicBrain: alleen
+  # als de engine of MusicBrain veranderd is. Twee keer dezelfde specs: tegen de
+  # productiebuild (wat bezoekers krijgen) en tegen `next dev` (alleen daar
+  # meldt React hydration- en propfouten).
   e2e:
     needs: changes
-    if: needs.changes.outputs.code == 'true'
+    if: needs.changes.outputs.e2e == 'true'
     runs-on: ubuntu-latest
     services:
       db:
@@ -102,8 +135,21 @@ jobs:
       - name: Install
         run: npm ci
 
+      # De browser zelf uit de cache (de versie hangt aan package-lock); de
+      # systeembibliotheken komen altijd uit apt.
+      - uses: actions/cache@v4
+        id: playwright
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Chromium
+        if: steps.playwright.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Chromium-systeembibliotheken
+        if: steps.playwright.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Browsertests (productiebuild)
         run: npm run test:e2e

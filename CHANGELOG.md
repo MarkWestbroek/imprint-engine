@@ -10,6 +10,13 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   (`StudioSlot.chrome` met `locale`). Een site met meer talen kan zo bij een
   Engelse pagina het Engelse menu tonen; gevonden bij de test van de
   vertaalfuncties op paratmos.
+- **Snellere CI en `npm run verify`.** CI controleert alleen wat er veranderd
+  is, en elke geraakte site in een eigen job naast de andere (typecheck,
+  lint, tests, build, met de Next-cache van de vorige run). De engine-packages
+  zijn één job. De browsertests draaien alleen bij een wijziging in de engine
+  of MusicBrain, met Chromium uit de cache. Een nieuwe push op een PR stopt de
+  vorige run. Lokaal maakt `npm run verify` dezelfde keuze
+  (`-- --site=<naam>`, `-- --all`, `-- --list`).
 - **paratmos.nl: de admin opent een pagina in het Nederlands.** Bewerken en
   historie zonder `?lang` gingen naar de Engelse versie (of begonnen een
   nieuwe vertaling); nu de basistaal, zoals op de Imprint-site.
