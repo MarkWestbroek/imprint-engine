@@ -1,0 +1,10 @@
+{
+  "slug": "bitemporeel",
+  "access": "public",
+  "title": "Bitemporeel",
+  "summary": "Een registratie die van elk gegeven zowel de materiële als de formele tijd bijhoudt, en daardoor kan zeggen wat er gold en wat er op een bepaald moment bekend was.",
+  "body": "Een registratie die van elk gegeven zowel de materiële als de formele tijd bijhoudt, en daardoor kan zeggen wat er gold en wat er op een bepaald moment bekend was.",
+  "tags": [
+    "tijd"
+  ]
+}

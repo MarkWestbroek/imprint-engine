@@ -1,0 +1,10 @@
+{
+  "name": "Paratmos",
+  "tagline": "Modelgedreven werken",
+  "motto": "IT voorbij aan het verkopen van lucht: één model als bron, en daaruit de interfaces, het register en de documentatie.",
+  "baseUrl": "https://paratmos.nl",
+  "defaultLocale": "nl",
+  "links": {},
+  "aliases": { "wiki": "kennisbank", "termen": "begrippen" },
+  "releaseSources": {}
+}

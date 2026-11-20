@@ -1,0 +1,41 @@
+{
+  "slug": "begrippen",
+  "title": "Begrippen",
+  "description": "Begrippenlijst van Paratmos: de termen uit gegevensmodellering, architectuur en overheidsstandaarden die in elke opdracht terugkomen.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "De termen die in elke opdracht opnieuw uitgelegd moeten worden, kort en in gewone taal. Verdieping staat in de [kennisbank](/kennisbank)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "glossary",
+                "config": {
+                  "showSearch": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "slug": "een-logisch-model-is-geen-databaseontwerp",
+  "access": "public",
+  "title": "Een logisch model is geen databaseontwerp",
+  "summary": "Wie een gegevensmodel afleidt uit de database van één systeem, legt de toevalligheden van dat systeem op aan de hele organisatie.",
+  "body": "Het gebeurt in bijna elke opdracht. Iemand vraagt om het gegevensmodel en krijgt een plaat met tabellen, sleutels en koppeltabellen. \"Dit is ons model.\" Het is een model, maar het is het verkeerde.\n\nEen databaseschema beantwoordt de vraag hoe één systeem zijn gegevens opslaat. Daar zitten keuzes in die niets met de werkelijkheid te maken hebben: een veld dat is samengevoegd omdat het sneller was, een tabel die is gesplitst vanwege de prestaties, een code die ooit een andere betekenis had.\n\nEen logisch model beantwoordt een andere vraag: welke gegevens zijn er, wat betekenen ze en hoe hangen ze samen? Onafhankelijk van welk systeem dan ook. Daardoor kan het gelden voor de hele organisatie, en daardoor kun je er meerdere systemen en interfaces uit afleiden die elkaar blijven begrijpen.\n\nDe richting is dus van betekenis naar techniek, en niet andersom. Dat lijkt een omweg als er al een database staat. In de praktijk is het de kortste route, omdat de discussie over wat een gegeven betekent dan één keer gevoerd wordt, en niet opnieuw bij elke koppeling.\n\nVerder lezen in de kennisbank: [conceptueel, logisch, fysiek](/kennisbank/gegevensmodelleren/conceptueel-logisch-fysiek).",
+  "author": "Mark Westbroek",
+  "publishedAt": "2026-11-20",
+  "tags": [
+    "gegevensmodelleren"
+  ],
+  "group": "",
+  "kind": "blog"
+}

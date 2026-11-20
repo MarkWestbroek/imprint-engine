@@ -1,0 +1,26 @@
+{
+  "slug": "over",
+  "title": "Over Paratmos",
+  "description": "Paratmos is het bedrijf van Mark Westbroek: analist, datamodelleur en data-architect sinds 1998, docent, en bouwer van eigen software.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Paratmos is opgericht door Mark Westbroek. De naam komt uit het Oudgrieks en betekent ongeveer \"voorbij aan de lucht\". Dat is het programma: IT voorbij aan het verkopen van lucht.\n\n## Mark Westbroek\n\nMijn specialiteit is het verhelderen van de kernbegrippen van een organisatie, met het oog op de software die ervoor gebouwd wordt. Ik werk sinds 1998 aan software: eerst als ontwerper en programmeur, daarna als analist, en de laatste vijftien jaar vooral als datamodelleur en data-architect.\n\nIk abstraheer makkelijk, werk methodisch en heb oog voor detail. Een nieuw domein maak ik mij snel eigen: meestal kan ik binnen enkele weken tot een à twee maanden op niveau meepraten met de experts. Opdrachtgevers zeggen vaak dat ik snel begrijp wat een organisatie doet en wil.\n\nIk heb scheikunde gestudeerd in Utrecht en ben later ook opgeleid in lichaamsgerichte therapie. Het eerste leerde mij denken in structuren, het tweede luisteren naar wat mensen bedoelen. Voor een modelleur zijn ze allebei nuttig.\n\n## Ook bouwer\n\nNaast het werk voor opdrachtgevers bouw ik eigen software: [Omnium](https://omnium.imprint-engine.nl), de modelwerkbank, en [Imprint](https://imprint-engine.nl), de publicatiemotor waarop deze site draait en die elke wijziging als nieuwe versie bewaart. Daarnaast ontwerp ik muziekelektronica, met de hardware en de embedded software die daarbij horen. Wat ik adviseer, heb ik dus meestal ook zelf gemaakt.\n\nMeer over mij persoonlijk staat op [markwestbroek.nl](https://markwestbroek.nl) en op [LinkedIn](https://www.linkedin.com/in/markwestbroek/).\n\n## Netwerk\n\nParatmos werkt samen met andere kleine bureaus:\n\n- [Michael Egmont-Petersen](https://egmont-petersen.nl)\n- [Hans Admiraal](http://admiraalit.nl)\n- [Jurn Franken](https://ia-consult.nl/syrah.html)\n- [CAI](https://cai-advies.nl), voor de trainingen"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

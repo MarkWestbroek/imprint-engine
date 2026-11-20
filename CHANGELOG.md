@@ -29,6 +29,24 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   terugval op `en`. Zonder taal in de aanroep kiest de store de taal die een
   item al heeft, en het generieke formulier verhuist een item als je de taal
   wijzigt. De admin (taaltabs, "Vertaling maken") volgt.
+- **Nieuwe site: paratmos.nl** (`sites/paratmos`, poort 3900): de zakelijke
+  site van Paratmos, als opvolger van de WordPress-site. Pagina's en menu uit
+  de store; blog (`/blog`), kennisbank (wiki, `/kennisbank/…`) en
+  begrippenlijst (`/terms/…`, overzicht op `/begrippen`) als plugins; zoeken
+  op `/search`. In de huisstijl van Paratmos (merkrichtlijnen juni 2026: inkt
+  en blauw, Montserrat, het beeldmerk "Doorbraak"). Eigen widgets: `doorbraak`
+  (de opening van de voorpagina: het beeld uit het logo, groot), `drie-eenheid`
+  (gegevens, processen en regels als driehoek, met eromheen wat die basis
+  omgeeft), `afleiding` (één model als klasse, met een lijn naar wat eruit
+  volgt) en het contactformulier. Conceptteksten in
+  `content/`; de plugin-inhoud gaat met `npm run put:content
+  --workspace=paratmos` de database in. Nog niet live en op `noindex`.
+- **Basistaal Nederlands op omnium en inrichting** (stap A van
+  design/meertaligheid.md, na de Imprint-site): `defaultLocale: "nl"` in de
+  config, `<html lang>` uit de config, en de scripts van de Omnium-site
+  (`import-deck`, `sync-widget`) lezen en schrijven pagina's in die taal.
+  **Bij de uitrol per site eenmalig `relabel-lang` draaien**
+  (docs/deploy-vps.md); tot dan vallen de pagina's terug op `en`.
 - **Taaltraining: plaatjes bij de woorden.** In *Zoek een woord* (Nederlands en
   Pools) staat bij een concreet woord een plaatje, ook klein in de suggesties;
   twee betekenissen, twee plaatjes (*bank* 🏦 🛋, *zamek* 🏰 🔒). Fluent Emoji

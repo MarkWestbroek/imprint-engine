@@ -1,0 +1,9 @@
+{
+  "slug": "correctie-en-herstel",
+  "access": "public",
+  "wiki": "kennisbank",
+  "folder": "tijd-in-gegevens",
+  "title": "Correctie en herstel",
+  "body": "Een register bevat fouten. De vraag is niet of er gecorrigeerd moet worden, maar wat er na een correctie nog te zien is van wat er eerst stond.\n\n## Wijzigen is geen corrigeren\n\nEen **wijziging** zegt dat de werkelijkheid veranderd is: de onderneming is verhuisd. Een **correctie** zegt dat het register het mis had: het adres is nooit Dorpsstraat 1 geweest, er was een tikfout.\n\nIn een register met alleen een \"geldig vanaf\"-datum zien die twee er hetzelfde uit. Dan kan niemand achteraf nog zien of een adres ooit gold, of er alleen ooit gestaan heeft.\n\n## Niets overschrijven\n\nIn een bitemporeel register wordt bij een correctie niets overschreven. Het foute gegeven krijgt een einde op de formele tijdlijn (\"dit dachten wij tot vandaag\"), en het juiste gegeven wordt toegevoegd met de materiële geldigheid die het altijd al had. Het register weet daarna twee dingen: wat er werkelijk gold, en wat het tot de correctie daarover beweerde.\n\n## Wat het oplevert\n\n- Een besluit dat op een fout gegeven is genomen, blijft verklaarbaar.\n- Een correctie kan zelf weer gecorrigeerd worden, zonder dat de geschiedenis onleesbaar wordt.\n- Afnemers kunnen opvragen wat er sinds hun laatste bevraging is veranderd én wat er is rechtgezet.\n\nIn de praktijk: [het handelsregister bij de KVK](/ervaring/kvk).",
+  "order": 1
+}

@@ -1,0 +1,71 @@
+{
+  "slug": "ervaring/kvk",
+  "title": "KVK: het model van het handelsregister",
+  "description": "Case: voor de KVK het logisch gegevensmodel van het volledige handelsregister, de service-interfaces die eruit volgden en het ontwerp waarmee correctie en herstel weer foutloos verliepen.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "breadcrumb",
+                "config": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "specs",
+                "config": {
+                  "items": [
+                    {
+                      "value": "2017 – 2020",
+                      "label": "periode"
+                    },
+                    {
+                      "value": "KernGezond",
+                      "label": "programma, onder SAFe"
+                    },
+                    {
+                      "value": "UML · BPMN",
+                      "label": "model en processen"
+                    },
+                    {
+                      "value": "REST · JSON",
+                      "label": "afgeleide interfaces"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## De vraag\n\nDe KVK vernieuwde het handelsregister in een groot programma, KernGezond. Twee dingen moesten daarin samenkomen. Legacy-systemen werden uitgefaseerd, en hun gegevens en functionaliteit moesten een plaats krijgen in het nieuwe register. En een deel van het register werd herbouwd om te kunnen delen met het aparte UBO-register.\n\nVoor beide was hetzelfde nodig: één precieze beschrijving van wat het handelsregister eigenlijk vastlegt.\n\n## Het model\n\nOp basis van de bestaande documentatie, de eisen, de wetteksten en interviews heb ik een omvangrijk logisch gegevensmodel in UML opgebouwd van het volledige basisregister. Als datamodelleur en data-architect was ik verantwoordelijk voor de manier waarop het hele gegevensaspect van het handelsregister werd vastgelegd.\n\nDe processen rond het register (opgave, registratie, het bevragen van andere registers en het opvragen) heb ik uitgetekend in BPMN, in dezelfde begrippen als het model.\n\n## Wat eruit volgde\n\n- **De service-interfaces.** Ik was verantwoordelijk voor alle REST- en JSON-interfaces op het register. Ze volgen het model, zodat een afnemer dezelfde begrippen ziet als de registratie.\n- **Het databaseschema en de logica** voor het herbouwde deel dat met het UBO-register wordt gedeeld.\n- **Correctie en herstel.** In dat ontwerp heeft elk gegeven twee tijdlijnen: de materiële (wanneer gold iets in de werkelijkheid) en de formele (wanneer is het geregistreerd), volgens GEMMA. Daarmee kon voor het eerst in de geschiedenis van het digitale handelsregister weer foutloos worden omgegaan met correcties en herstel.\n- **Use cases.** Het use case-model, en collega-analisten opgeleid als use case specifier.\n\n## Het model aan de muur\n\nEen model dat alleen modelleurs kunnen lezen, doet maar half werk. Van de essentiële delen heb ik presentabele versies gemaakt op A1, A0 en groter, om het begrip te vergroten in de IT-organisatie en ook bij support.\n\n## Wat ik ervan meeneem\n\nDe twee tijdlijnen zijn sindsdien een vast onderdeel van mijn werk. Bij Common Ground heb ik het principe verder uitgewerkt, en in Omnium is het werkende software geworden.\n\n[Het vervolg: Common Ground](/ervaring/common-ground) · [Kennisbank: tijd in gegevens](/kennisbank)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
