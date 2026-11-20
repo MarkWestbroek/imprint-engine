@@ -1,0 +1,26 @@
+{
+  "slug": "over-de-methode",
+  "title": "De methode",
+  "description": "Eerst kant-en-klare zinnen, daarna de grammatica: zo werkt deze cursus Pools.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Deze cursus begint niet met grammatica en ook niet met zinnen die je nooit gebruikt. Hij begint met kant-en-klare zinnen waar je meteen iets aan hebt: in de winkel, op de markt, bij de kassa.\n\n## Hoe het werkt\n\n- **Eerst bruikbaar, dan correct.** „Poproszę to” met je vinger erbij is een geslaagde zin.\n- **Eerst het patroon, dan de regel.** Per les komt er hoogstens één nieuwe regel bij.\n- **Naamvallen in stukjes.** Je leert *w sklepie* en *do sklepu* als vaste stukjes; de tabellen staan in de grammatica, voor als je ze wilt opzoeken.\n- **Luister en zeg na.** Elke zin kun je gewoon en langzaam afspelen.\n- **Spreek hardop.** Bij de oefeningen “zeg” luistert de browser mee.\n\n## Een les, stap voor stap\n\n1. Luister naar de dialoog en lees de vertaling.\n2. Zeg de brokken hardop na.\n3. Bouw de dialoog om naar jezelf.\n4. Maak de oefeningen. Je resultaat blijft in je browser, en in je account als je er een hebt.\n\n## Wie er in de lessen zijn\n\nTom en Sanne, twee Nederlanders in Kraków, met hun Poolse buren Marek en Kasia.\n\n**Powoli, ale do przodu** betekent: langzaam maar zeker."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

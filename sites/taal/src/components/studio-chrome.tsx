@@ -14,7 +14,7 @@ export async function StudioChrome({ children }: { children: ReactNode }) {
         <article className="tl-container tl-page">{children}</article>
       </main>
       <div className="pointer-events-none select-none">
-        <SiteFooter menus={nav} tagline={site.tagline} />
+        <SiteFooter menus={nav} name={site.name} tagline={site.tagline} />
       </div>
     </div>
   );

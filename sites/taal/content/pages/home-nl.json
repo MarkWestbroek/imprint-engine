@@ -1,0 +1,142 @@
+{
+  "slug": "home-nl",
+  "title": "Powoli, ale do przodu: Pools vanaf de eerste zin",
+  "description": "45 korte lessen Pools voor Nederlandstaligen: eerst kant-en-klare zinnen voor de winkel, het werk en het loket, daarna de grammatica.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Pools *vanaf de eerste zin*",
+                  "subtitle": "45 korte lessen voor Nederlandstaligen. Eerst kant-en-klare zinnen voor de winkel, het werk en het loket, daarna de grammatica. Luister, zeg na en spreek hardop.",
+                  "align": "left",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "verder",
+                "config": {
+                  "ui": "nl",
+                  "taal": "pl"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Hoe het werkt",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "icon": "🎧",
+                      "title": "Luister",
+                      "markdown": "Elke zin kun je gewoon en langzaam afspelen, zo vaak als je wilt."
+                    },
+                    {
+                      "icon": "🗣️",
+                      "title": "Spreek hardop",
+                      "markdown": "Bij de oefeningen “zeg” luistert de browser mee en controleert wat je zegt."
+                    },
+                    {
+                      "icon": "🧩",
+                      "title": "Eerst zinnen",
+                      "markdown": "De grammatica komt later: per les hoogstens één nieuwe regel. Naamvallen leer je in vaste stukjes."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Zes fasen",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Fase 0: Om te beginnen",
+                      "markdown": "Co to jest, poproszę, nie rozumiem: je redden in een winkel met een paar woorden. Lessen 1–5.",
+                      "href": "/nl/polski"
+                    },
+                    {
+                      "title": "Fase 1: De basiswerkwoorden",
+                      "markdown": "Zijn, hebben, willen, kunnen, gaan, wonen. Lessen 6–12.",
+                      "href": "/nl/polski"
+                    },
+                    {
+                      "title": "Fase 2: Waar en waarheen",
+                      "markdown": "Voorzetsels met hun naamval, de weg vragen, op het station. Lessen 13–20.",
+                      "href": "/nl/polski"
+                    },
+                    {
+                      "title": "Fase 3: Wat je doet",
+                      "markdown": "De tegenwoordige en de verleden tijd, en klaar of bezig (aspect). Lessen 21–30.",
+                      "href": "/nl/polski"
+                    },
+                    {
+                      "title": "Fase 4: Beschrijven",
+                      "markdown": "Kleuren, vergelijken, het weer, de tijd, de dagen, een afspraak maken. Lessen 31–40.",
+                      "href": "/nl/polski"
+                    },
+                    {
+                      "title": "Fase 5: Beleefd en precies",
+                      "markdown": "Chciałbym, bo, jeśli… to: beleefd vragen en langere zinnen. Lessen 41–45.",
+                      "href": "/nl/polski"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "tone": "muted",
+                  "markdown": "**Een account is niet nodig.** Alle lessen werken zonder. Met een account staan je resultaten ook op een andere telefoon of computer. [Account maken](/nl/account/register)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

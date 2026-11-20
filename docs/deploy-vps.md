@@ -498,6 +498,16 @@ compose-omgeving in de draaiende container, niet in de image. Een les
 gewijzigd in het bestand: `./deploy.sh import-lessen taal` en daarna
 `SITES=taal ./deploy.sh`; de opnamen van ongewijzigde zinnen blijven.
 
+**Pools voor Nederlandstaligen** (`jezyk.imprint-engine.nl`) is dezelfde site
+en dezelfde container: het pakket `/nl/polski` met de ingang `/nl`. Er is geen
+eigen database, image of poort. Nodig: het A-record `jezyk.imprint-engine.nl`
+naar de VPS (bij de DNS-beheerder van imprint-engine.nl), het Caddy-blok
+`jezyk.imprint-engine.nl` uit de snippet (het herschrijft `/` naar `/nl`) en
+`sudo systemctl reload caddy`. De lessen komen mee met
+`./deploy.sh import-lessen taal`; de pagina's `home-nl` en `over-de-methode`
+en het menu `main-nl` met de seed. De Poolse opnamen maak je net als de
+Nederlandse in de admin (Taal → Audio); de stem is `pl-PL-ZofiaNeural`.
+
 Accounts voor leerlingen sturen mail (bevestigen, wachtwoord vergeten): zet
 `TAAL_SMTP_HOST`, `TAAL_SMTP_USER`, `TAAL_SMTP_PASS` en `TAAL_MAIL_FROM` in
 `.env` en herstart de site (`docker compose up -d taal`). Zonder die waarden

@@ -641,7 +641,10 @@ importscript; de beelden moeten dan als bestand in de site staan.
 ## De taaltraining
 
 De site `taal` (taal.imprint-engine.nl) is een site waarop je Nederlands
-leert, vanuit het Pools of vanuit het Engels. Het adres zegt wat je ziet:
+leert, vanuit het Pools of vanuit het Engels. Dezelfde site heeft een tweede
+pakket: Pools voor Nederlandstaligen (`/nl/polski`, straks ook
+jezyk.imprint-engine.nl), een eigen cursus van 45 lessen met een eigen
+grammatica. Het adres zegt wat je ziet:
 `/pl/nederlands/dit-en-dat` is de les *Dit en dat* uit het pakket Nederlands,
 met de site in het Pools; `/en/nederlands/dit-en-dat` is dezelfde les met
 Engelse vertaling, uitleg en oefenvragen. Rechtsboven wissel je de taal van de
@@ -654,11 +657,21 @@ een eigen menu, allebei gewoon te bewerken in de admin:
 |---|---|---|---|
 | Pools | `/` | `home` | `main` |
 | Engels | `/en` | `home-en` | `main-en` |
+| Nederlands (leert Pools) | `/nl` | `home-nl` | `main-nl` |
 
 Een losse pagina (zoals *The method*, `/about-the-method`) hoort bij de ingang
-waarvan het menu ernaar linkt: daar krijgt hij dat menu en die voettekst. NL
-(Nederlands leren in het Nederlands, zonder vertaling) heeft geen eigen
-ingang en gebruikt die van het Pools.
+waarvan het menu ernaar linkt: daar krijgt hij dat menu en die voettekst.
+Nederlands leren in het Nederlands, zonder vertaling (`/nl/nederlands`), heeft
+geen eigen ingang en gebruikt die van het Pools. De Poolse cursus heet in de
+kop *Powoli, ale do przodu* en heeft geen taalkeuze: hij is er alleen voor de
+Nederlandse lezer.
+
+**De Poolse cursus.** De lessen staan in de admin tussen de Nederlandse, met
+een id dat met `pl-` begint (`pl-0-01`), `taal: pl` en `steuntaal: nl`. Alles
+werkt hetzelfde, met de talen omgekeerd: de dialoog en de antwoorden zijn
+Pools, de vertaling, de uitleg en de vragen Nederlands. Wie een antwoord typt
+hoeft geen Poolse tekens te gebruiken: *l* telt als *ł*, *a* als *ą*. De
+grammatica heeft een eigen groep *Naamvallen*.
 
 **Wat de leerling ziet.** Het pakket Nederlands heeft 45 lessen in zes
 fasen, van losse brokken (fase 0) tot beleefd vragen en bijzinnen (fase 5).
