@@ -111,6 +111,21 @@ Eerst seeden, dan bouwen: de seed leegt de Next-cache niet (backlog §6), dus
 na een latere seed is opnieuw `./deploy.sh` nodig. Haal `SEED_ADMIN_PASSWORD`
 na de eerste seed weer uit `.env`.
 
+**Een site die een basistaal krijgt** (`defaultLocale` in haar
+`imprint.config.ts`, [design/meertaligheid.md](design/meertaligheid.md) §7 B):
+haar pagina's staan nog met het etiket `en` in de database. Zet ze eenmalig
+om, vóór de build met de nieuwe config:
+
+```bash
+./deploy.sh relabel-lang imprint --to=nl --dry-run   # zegt alleen wat het zou doen
+./deploy.sh relabel-lang imprint --to=nl
+SITES=imprint ./deploy.sh
+```
+
+Het script werkt via de store (historie blijft) en doet bij een tweede keer
+niets. Wie het vergeet, ziet de pagina's nog wel: lezen valt terug op `en`.
+Een latere seed van zo'n site krijgt `--lang=nl` mee.
+
 Dan Caddy: neem het blok uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet)
 over in `/etc/caddy/Caddyfile` en `sudo systemctl reload caddy` — **pas als
 het A-record naar de VPS wijst**, anders blijft Caddy vergeefs een certificaat

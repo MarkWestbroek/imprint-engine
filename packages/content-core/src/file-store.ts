@@ -21,6 +21,7 @@ import {
   type SiteConfig,
   type Theme,
 } from "./schemas";
+import { LEGACY_LOCALE, pickByLang } from "./lang";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentStore, ReadOptions } from "./store";
 
@@ -38,12 +39,24 @@ import type { ContentStore, ReadOptions } from "./store";
  * Everything is validated with zod on read, so a broken file fails the build
  * instead of silently rendering garbage. Pass the site's WidgetTypeRegistry
  * to also validate widget configs against their declared schemas.
+ *
+ * A file that names no `lang` is in the site's base language (`defaultLocale`,
+ * absent = "en"); reads pick per slug as the database stores do (lang.ts).
  */
 export class FileContentStore implements ContentStore {
   constructor(
     private readonly contentDir: string,
-    private readonly opts: { widgets?: WidgetTypeRegistry } = {}
+    private readonly opts: { widgets?: WidgetTypeRegistry; defaultLocale?: string } = {}
   ) {}
+
+  private get defaultLocale(): string {
+    return this.opts.defaultLocale ?? LEGACY_LOCALE;
+  }
+
+  /** A file without `lang` is written in the site's base language. */
+  private inBaseLang(data: unknown): unknown {
+    return data && typeof data === "object" && !("lang" in data) ? { ...data, lang: this.defaultLocale } : data;
+  }
 
   /** One file, no history: `asOf` has nothing to select between. */
   async getSiteConfig(_opts?: ReadOptions): Promise<SiteConfig> {
@@ -56,15 +69,10 @@ export class FileContentStore implements ContentStore {
     const products: Product[] = [];
     for (const file of files) {
       const raw = await fs.readFile(file, "utf8");
-      products.push(ProductSchema.parse(JSON.parse(raw)));
+      products.push(ProductSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const lang = opts?.lang ?? "en";
-    const bySlug = new Map<string, Product>();
-    for (const p of products.filter((p) => p.lang === "en")) bySlug.set(p.slug, p);
-    if (lang !== "en") {
-      for (const p of products.filter((p) => p.lang === lang)) bySlug.set(p.slug, p);
-    }
-    return [...bySlug.values()].sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
+    const picked = pickByLang(products, opts?.lang, this.defaultLocale);
+    return picked.sort((a, b) => a.order - b.order || a.slug.localeCompare(b.slug));
   }
 
   async getProduct(slug: string, opts?: ReadOptions): Promise<Product | null> {
@@ -93,15 +101,10 @@ export class FileContentStore implements ContentStore {
     const components: Component[] = [];
     for (const file of files) {
       const raw = await fs.readFile(file, "utf8");
-      components.push(ComponentSchema.parse(JSON.parse(raw)));
+      components.push(ComponentSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const lang = opts?.lang ?? "en";
-    const bySlug = new Map<string, Component>();
-    for (const c of components.filter((c) => c.lang === "en")) bySlug.set(c.slug, c);
-    if (lang !== "en") {
-      for (const c of components.filter((c) => c.lang === lang)) bySlug.set(c.slug, c);
-    }
-    return [...bySlug.values()].sort((a, b) => a.name.localeCompare(b.name));
+    const picked = pickByLang(components, opts?.lang, this.defaultLocale);
+    return picked.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async getComponent(slug: string, opts?: ReadOptions): Promise<Component | null> {
@@ -115,15 +118,10 @@ export class FileContentStore implements ContentStore {
     const specs: BoardSpec[] = [];
     for (const file of files) {
       const raw = await fs.readFile(file, "utf8");
-      specs.push(BoardSpecSchema.parse(JSON.parse(raw)));
+      specs.push(BoardSpecSchema.parse(this.inBaseLang(JSON.parse(raw))));
     }
-    const lang = opts?.lang ?? "en";
-    const bySlug = new Map<string, BoardSpec>();
-    for (const s of specs.filter((s) => s.lang === "en")) bySlug.set(s.slug, s);
-    if (lang !== "en") {
-      for (const s of specs.filter((s) => s.lang === lang)) bySlug.set(s.slug, s);
-    }
-    let out = [...bySlug.values()];
+    const picked = pickByLang(specs, opts?.lang, this.defaultLocale);
+    let out = picked;
     if (opts?.component) out = out.filter((s) => s.component === opts.component);
     return out.sort((a, b) => a.slug.localeCompare(b.slug));
   }
@@ -137,17 +135,16 @@ export class FileContentStore implements ContentStore {
     for (const file of await this.listFiles("pages", ".md", true)) {
       const raw = await fs.readFile(file, "utf8");
       const { data, content } = matter(raw);
-      pages.push({ ...PageMetaSchema.parse(data), body: content.trim() });
+      pages.push({ ...PageMetaSchema.parse(this.inBaseLang(data)), body: content.trim() });
     }
     for (const file of await this.listFiles("pages", ".json", true)) {
       const raw = await fs.readFile(file, "utf8");
-      const doc = PageDocSchema.parse(JSON.parse(raw));
+      const doc = PageDocSchema.parse(this.inBaseLang(JSON.parse(raw)));
       const layout = this.opts.widgets
         ? this.opts.widgets.parseLayout(doc.layout)
         : doc.layout;
       pages.push({ ...doc, layout });
     }
-    const lang = opts?.lang ?? "en";
     const asOf = opts?.asOf ?? new Date();
 
     let visible = pages.filter(
@@ -157,12 +154,7 @@ export class FileContentStore implements ContentStore {
     );
     if (opts?.prefix) visible = visible.filter((p) => p.slug.startsWith(opts.prefix!));
 
-    const bySlug = new Map<string, Page>();
-    for (const p of visible.filter((p) => p.lang === "en")) bySlug.set(p.slug, p);
-    if (lang !== "en") {
-      for (const p of visible.filter((p) => p.lang === lang)) bySlug.set(p.slug, p);
-    }
-    return [...bySlug.values()].sort((a, b) =>
+    return pickByLang(visible, opts?.lang, this.defaultLocale).sort((a, b) =>
       (b.publishedAt ?? "").localeCompare(a.publishedAt ?? "")
     );
   }
