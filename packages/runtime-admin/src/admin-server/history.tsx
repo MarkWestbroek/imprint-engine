@@ -1,3 +1,4 @@
+import { itemLang } from "@imprint/content-core";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { AdminContext } from "../admin-context";
@@ -18,11 +19,12 @@ export async function HistoryScreen({
   admin: AdminContext;
   type: string;
   slug: string;
-  lang: string;
+  /** Absent = the language items of this type have by default. */
+  lang?: string;
   actions: Pick<AdminActions, "restoreVersion">;
 }) {
   if (!admin.imprint.contentTypes.has(type, "editable")) notFound();
-  const versions = await admin.imprint.writableStore!.listVersions(type, slug, lang);
+  const versions = await admin.imprint.writableStore!.listVersions(type, slug, lang ?? itemLang(type, admin.imprint.defaultLocale));
   if (versions.length === 0) notFound();
 
   return (

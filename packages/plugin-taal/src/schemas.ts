@@ -10,8 +10,12 @@ import { z } from "zod";
  * `grammatica`: links to the reference (GrammaticaSchema below).
  *
  * `taal` is the language being taught (the lesson package), `steuntaal` the
- * language of the translations. Neither is the item's `lang`: a Polish lesson
- * is another lesson, not a translation of a Dutch one.
+ * language the lesson was written for: the plain `vraag` and `opties` of the
+ * exercises are in it. A lesson can serve more readers: the dialogue,
+ * `situatie` and `patroon` have a text per language, and an exercise carries
+ * the other languages under `vertaald` (lessen.ts: `oefeningenVoor`). Neither
+ * is the item's `lang`: a Polish lesson is another lesson, not a translation
+ * of a Dutch one.
  */
 
 /** A two-letter language code: nl, pl, it, de. */
@@ -23,18 +27,25 @@ export type Regel = z.infer<typeof Regel>;
 
 const Opties = z.array(z.string()).min(2);
 const Antwoorden = z.array(z.string().min(1)).min(1);
+/**
+ * An exercise for readers of another language than the lesson's `steuntaal`:
+ * `vertaald: { en: { vraag: "I was in Poland." } }`. Only what is in the
+ * support language is repeated (`vraag`, or `opties` when they are the
+ * translations); answers in the language taught stay as they are.
+ */
+const Vertaald = z.record(Taal, z.object({ vraag: z.string().min(1).optional(), opties: Opties.optional() })).optional();
 
 export const Oefening = z.discriminatedUnion("type", [
   /** Hear a sentence, pick what it means. */
-  z.object({ type: z.literal("luister"), tekst: z.string().min(1), opties: Opties, antwoord: z.number().int().min(0) }),
+  z.object({ type: z.literal("luister"), tekst: z.string().min(1), opties: Opties, antwoord: z.number().int().min(0), vertaald: Vertaald }),
   /** Multiple choice. */
-  z.object({ type: z.literal("kies"), vraag: z.string().min(1), opties: Opties, antwoord: z.number().int().min(0) }),
+  z.object({ type: z.literal("kies"), vraag: z.string().min(1), opties: Opties, antwoord: z.number().int().min(0), vertaald: Vertaald }),
   /** Translate and type; every entry of `antwoorden` counts as right. */
-  z.object({ type: z.literal("typ"), vraag: z.string().min(1), antwoorden: Antwoorden }),
+  z.object({ type: z.literal("typ"), vraag: z.string().min(1), antwoorden: Antwoorden, vertaald: Vertaald }),
   /** Put the words of the sentence in order. */
   z.object({ type: z.literal("orden"), zin: z.string().min(1) }),
   /** Say it aloud; `voorbeeld` offers the first answer to listen to first. */
-  z.object({ type: z.literal("zeg"), vraag: z.string().min(1), antwoorden: Antwoorden, voorbeeld: z.boolean().optional() }),
+  z.object({ type: z.literal("zeg"), vraag: z.string().min(1), antwoorden: Antwoorden, voorbeeld: z.boolean().optional(), vertaald: Vertaald }),
 ]);
 export type Oefening = z.infer<typeof Oefening>;
 
@@ -69,6 +80,11 @@ export const LesSchema = z
       if ((o.type === "kies" || o.type === "luister") && o.antwoord >= o.opties.length) {
         ctx.addIssue({ code: "custom", path: ["oefeningen", i, "antwoord"], message: "antwoord points past the last option" });
       }
+      for (const [taal, v] of Object.entries(("vertaald" in o && o.vertaald) || {})) {
+        if (v.opties && "opties" in o && v.opties.length !== o.opties.length) {
+          ctx.addIssue({ code: "custom", path: ["oefeningen", i, "vertaald", taal, "opties"], message: "as many options as the exercise has" });
+        }
+      }
     });
   });
 export type Les = z.infer<typeof LesSchema>;
@@ -101,7 +117,7 @@ export const LesFormSchema = z.object({
  * language as a whole (no articles in Polish, no cases in Dutch); `anders` is
  * the same for one topic: a paragraph "unlike in Polish", per reader language.
  */
-export const GRAMMATICA_GROEPEN = ["werkwoorden", "naamwoorden", "voornaamwoorden", "zinsbouw"] as const;
+export const GRAMMATICA_GROEPEN = ["werkwoorden", "naamwoorden", "naamvallen", "voornaamwoorden", "zinsbouw"] as const;
 
 export const GrammaticaSchema = z.object({
   /** The key: `nl-tegenwoordige-tijd` (language taught + slug). Lessons point at it. */

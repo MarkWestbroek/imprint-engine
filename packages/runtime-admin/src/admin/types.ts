@@ -31,7 +31,7 @@ export type StudioActions = {
     slug: string | undefined,
     lang: string,
     validity: { validFrom?: string; validTo?: string }
-  ): Promise<StudioResult & { slug?: string }>;
+  ): Promise<StudioResult & { slug?: string; lang?: string }>;
 };
 
 /** Answer of the token actions; `token` only right after creating one (shown once). */

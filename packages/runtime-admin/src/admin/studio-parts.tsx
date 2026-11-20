@@ -191,8 +191,8 @@ export function StudioTopBar({ isNew }: { isNew: boolean }) {
       const result = await actions.savePageDraft(slug, lang, { validFrom, validTo });
       if (result.ok && result.slug) {
         setMessage({ ok: true, text: "Saved ✓" });
-        if (result.slug !== slug) {
-          router.replace(`/admin/page/edit/${result.slug}?lang=${lang}`);
+        if (result.slug !== slug || (result.lang && result.lang !== lang)) {
+          router.replace(`/admin/page/edit/${result.slug}?lang=${result.lang ?? lang}`);
         }
         router.refresh();
       } else {

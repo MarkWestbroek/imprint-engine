@@ -225,6 +225,15 @@ zien, inclusief header en footer.
   bovenbalk opent de opgeslagen pagina op de site in een nieuw tabblad.
 - **Opslaan**: je werkt in een concept; pas **Save** zet het live (als nieuwe
   versie). **Undo changes** gooit het concept weg.
+- **Vaste teksten**: wat een widget zelf zegt ("Nog geen foto's", "Pdf
+  downloaden", het kruimelpad voor schermlezers) staat in de taal van de site:
+  Nederlands, Engels of Pools. Een eigen tekst in de instellingen van de
+  widget (bijvoorbeeld *emptyText*) gaat altijd voor.
+- **Taal**: een nieuwe pagina krijgt de taal van de site. Het veld **lang** in
+  de instellingen is een keuzelijst met de talen die de site heeft. Staat een
+  pagina in een taal die de site niet heeft, dan zegt een melding bovenaan dat,
+  en of bezoekers de pagina zien. Kies de taal van de site en sla op: de
+  pagina verhuist dan naar die taal, de oude versie blijft in de geschiedenis.
 - **Default views**: onder **Default views** ontwerp je hoe een producten-,
   componenten- of releasepagina er standáárd uitziet — één keer ontwerpen,
   geldt voor elk item van dat type. Kies "Preview as …" om met een echt
@@ -640,10 +649,38 @@ importscript; de beelden moeten dan als bestand in de site staan.
 
 ## De taaltraining
 
-De site `taal` (straks taal.imprint-engine.nl) is een Poolse site waarop je
-Nederlands leert. Het adres zegt wat je ziet: `/pl/nederlands/dit-en-dat` is
-de les *Dit en dat* uit het pakket Nederlands, met de site in het Pools.
-Rechtsboven wissel je de taal van de site (PL of NL); je blijft op dezelfde les.
+De site `taal` (taal.imprint-engine.nl) is een site waarop je Nederlands
+leert, vanuit het Pools of vanuit het Engels. Dezelfde site heeft een tweede
+pakket: Pools voor Nederlandstaligen (`/nl/polski`, straks ook
+jezyk.imprint-engine.nl), een eigen cursus van 45 lessen met een eigen
+grammatica. Het adres zegt wat je ziet:
+`/pl/nederlands/dit-en-dat` is de les *Dit en dat* uit het pakket Nederlands,
+met de site in het Pools; `/en/nederlands/dit-en-dat` is dezelfde les met
+Engelse vertaling, uitleg en oefenvragen. Rechtsboven wissel je de taal van de
+site (PL, EN of NL); je blijft op dezelfde les.
+
+**Een ingang per taal.** Elke taal van de lezer heeft een eigen startpagina en
+een eigen menu, allebei gewoon te bewerken in de admin:
+
+| lezer | startpagina | pagina | menu |
+|---|---|---|---|
+| Pools | `/` | `home` | `main` |
+| Engels | `/en` | `home-en` | `main-en` |
+| Nederlands (leert Pools) | `/nl` | `home-nl` | `main-nl` |
+
+Een losse pagina (zoals *The method*, `/about-the-method`) hoort bij de ingang
+waarvan het menu ernaar linkt: daar krijgt hij dat menu en die voettekst.
+Nederlands leren in het Nederlands, zonder vertaling (`/nl/nederlands`), heeft
+geen eigen ingang en gebruikt die van het Pools. De Poolse cursus heet in de
+kop *Powoli, ale do przodu* en heeft geen taalkeuze: hij is er alleen voor de
+Nederlandse lezer.
+
+**De Poolse cursus.** De lessen staan in de admin tussen de Nederlandse, met
+een id dat met `pl-` begint (`pl-0-01`), `taal: pl` en `steuntaal: nl`. Alles
+werkt hetzelfde, met de talen omgekeerd: de dialoog en de antwoorden zijn
+Pools, de vertaling, de uitleg en de vragen Nederlands. Wie een antwoord typt
+hoeft geen Poolse tekens te gebruiken: *l* telt als *ł*, *a* als *ą*. De
+grammatica heeft een eigen groep *Naamvallen*.
 
 **Wat de leerling ziet.** Het pakket Nederlands heeft 45 lessen in zes
 fasen, van losse brokken (fase 0) tot beleefd vragen en bijzinnen (fase 5).
@@ -674,7 +711,8 @@ iets in het Pools.
 (`nl-0-01`: taal, fase, nummer) en bepaalt de volgorde. `slug` is de naam in
 het adres. Dialoog, brokken en oefeningen zijn vakken met JSON, in dezelfde
 vorm als in de lesbestanden. `situatie` en `patroon` hebben een tekst per taal
-van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een oefening heeft een `type`:
+van de site (`pl`, `en` en `nl`), en elke regel van de dialoog een vertaling
+per lezer (`pl`, `en`); `patroon` mag Markdown bevatten (vet, cursief). Een oefening heeft een `type`:
 
 | type | velden |
 |---|---|
@@ -683,6 +721,13 @@ van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een 
 | `typ` | `vraag`, `antwoorden` (alles wat goed is; het eerste is het voorbeeld) |
 | `orden` | `zin` |
 | `zeg` | `vraag`, `antwoorden`, `voorbeeld` (true = eerst laten horen) |
+
+De `vraag` en de `opties` staan in de steuntaal van de les (Pools). Voor de
+Engelse lezer staat hetzelfde onder `vertaald`:
+`"vertaald": { "en": { "vraag": "I was in Poland." } }`, of bij *luister*
+`{ "en": { "opties": ["…", "…", "…"] } }`. Een *typ*, *zeg* of *luister*
+zonder Engels krijgt de Engelse lezer niet te zien; een *kies* met een
+Nederlandse vraag is voor iedereen.
 
 Opslaan maakt een nieuwe versie; de oude vind je onder *History*.
 
@@ -757,6 +802,28 @@ vormen komen uit Wiktionary. Een fout herstel je in
 maak je de lijst opnieuw met `scripts/woorden-maken.ts` (zie het commentaar
 bovenin). De lijst staat in de repo, niet in de admin: een wijziging gaat mee
 met de volgende uitrol.
+
+**Een Pools woord opzoeken.** De Poolse cursus heeft hetzelfde: *Woorden* in
+het menu (`/nl/polski/woorden`). Je typt een Pools woord in welke vorm ook:
+"sklepie" vindt *sklep*, "poszłam" vindt *pójść*. Poolse tekens hoeven niet
+("poszlam" werkt ook). Wat je ziet:
+
+- bij een zelfstandig naamwoord: *ten*, *ta* of *to* met het woord (dat laat
+  het geslacht zien), en een tabel met de zeven naamvallen in enkelvoud en
+  meervoud;
+- bij een werkwoord: het aspect (onvoltooid of voltooid) met het werkwoord van
+  het andere aspect als knop (*robić* ↔ *zrobić*), de vormen voor ja, ty,
+  on/ona, my, wy, oni/one, en de verleden tijd voor een man en een vrouw. Bij
+  een voltooid werkwoord heet de eerste tabel *Toekomende tijd*, want *zrobię*
+  betekent "ik zal doen";
+- de betekenis, kort en in het Engels: de lijst komt uit de Engelse
+  Wiktionary en heeft geen Nederlandse vertaling.
+
+De lijst heeft zo'n 2500 zelfstandige naamwoorden en 700 werkwoorden: de
+meest gebruikte, plus elk zelfstandig naamwoord en werkwoord uit de Poolse
+lessen. Een fout herstel je in `sites/taal/woorden/pl-aanvullingen.json`
+(`houd`, `weg`, en `sie` voor werkwoorden die alleen met *się* voorkomen);
+daarna maak je de lijst opnieuw met `scripts/woorden-maken-pl.ts`.
 
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 

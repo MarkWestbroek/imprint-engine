@@ -29,7 +29,7 @@ export type Teksten = {
   grammatica: {
     naam: string;
     intro: string;
-    groepen: Record<"werkwoorden" | "naamwoorden" | "voornaamwoorden" | "zinsbouw" | "verschil", string>;
+    groepen: Record<"werkwoorden" | "naamwoorden" | "naamvallen" | "voornaamwoorden" | "zinsbouw" | "verschil", string>;
     anders: string;
     meer: string;
     inLessen: string;
@@ -57,6 +57,25 @@ export type Teksten = {
     vd: string;
     hulp: { hebben: string; zijn: string; beide: string };
     bron: string;
+    /** The Polish list: its own introduction, and what a Polish word has that a Dutch one has not. */
+    pools: {
+      intro: string;
+      voorbeeld: string;
+      geslacht: Record<"m" | "f" | "n" | "p" | "pv", string>;
+      naamval: string;
+      enkelvoud: string;
+      meervoud: string;
+      /** The seven cases, in the order of `NAAMVALLEN`. */
+      naamvallen: string[];
+      aspect: Record<"ndk" | "dk" | "beide", string>;
+      /** Before the partner of the other aspect, by the aspect of the verb shown. */
+      paar: Record<"ndk" | "dk" | "beide", string>;
+      tt: string;
+      /** The same forms of a perfective verb mean the future. */
+      toekomst: string;
+      vt: string;
+      betekenis: string;
+    };
   };
   speel: string;
   langzaam: string;
@@ -116,6 +135,7 @@ const nl: Teksten = {
       naamwoorden: "Zelfstandige naamwoorden en lidwoorden",
       voornaamwoorden: "Voornaamwoorden",
       zinsbouw: "Zinsbouw",
+      naamvallen: "Naamvallen",
       verschil: "Verschillen met je eigen taal",
     },
     anders: "Anders dan in je eigen taal",
@@ -148,6 +168,21 @@ const nl: Teksten = {
       beide: "Met hebben, of met zijn als je zegt waarheen: Ik heb gelopen. Ik ben naar huis gelopen.",
     },
     bron: "Bron: {bron}",
+    pools: {
+      intro: "Typ een Pools zelfstandig naamwoord of werkwoord, in welke vorm ook: *sklepie* vindt *sklep*, *poszłam* vindt *pójść*. Poolse tekens hoeven niet: *l* telt als *ł*, *a* als *ą*. Bij een zelfstandig naamwoord zie je het geslacht en alle naamvallen, bij een werkwoord het aspect en de vormen. De lijst heeft zo'n {aantal} veelgebruikte woorden.",
+      voorbeeld: "bijv. sklep, domu, robić, poszłam",
+      geslacht: { m: "mannelijk", f: "vrouwelijk", n: "onzijdig", p: "alleen meervoud", pv: "alleen meervoud (personen)" },
+      naamval: "naamval",
+      enkelvoud: "enkelvoud",
+      meervoud: "meervoud",
+      naamvallen: ["nominatief", "genitief", "datief", "accusatief", "instrumentalis", "locatief", "vocatief"],
+      aspect: { ndk: "onvoltooid: bezig, of vaker", dk: "voltooid: één keer, af", beide: "onvoltooid en voltooid" },
+      paar: { ndk: "voltooid:", dk: "onvoltooid:", beide: "ook:" },
+      tt: "Tegenwoordige tijd",
+      toekomst: "Toekomende tijd",
+      vt: "Verleden tijd",
+      betekenis: "Engels:",
+    },
   },
   speel: "Speel af",
   langzaam: "Langzaam",
@@ -207,6 +242,7 @@ const pl: Teksten = {
       naamwoorden: "Rzeczowniki i rodzajniki",
       voornaamwoorden: "Zaimki",
       zinsbouw: "Budowa zdania",
+      naamvallen: "Przypadki",
       verschil: "Inaczej niż po polsku",
     },
     anders: "Inaczej niż po polsku",
@@ -239,6 +275,21 @@ const pl: Teksten = {
       beide: "Z hebben, albo z zijn, gdy mówisz dokąd: Ik heb gelopen. Ik ben naar huis gelopen.",
     },
     bron: "Źródło: {bron}",
+    pools: {
+      intro: "Wpisz polski rzeczownik albo czasownik w dowolnej formie: *sklepie* znajdzie *sklep*, *poszłam* znajdzie *pójść*. Przy rzeczowniku zobaczysz rodzaj i wszystkie przypadki, przy czasowniku aspekt i formy. Lista ma około {aantal} często używanych słów.",
+      voorbeeld: "np. sklep, domu, robić, poszłam",
+      geslacht: { m: "rodzaj męski", f: "rodzaj żeński", n: "rodzaj nijaki", p: "tylko liczba mnoga", pv: "tylko liczba mnoga (osoby)" },
+      naamval: "przypadek",
+      enkelvoud: "liczba pojedyncza",
+      meervoud: "liczba mnoga",
+      naamvallen: ["mianownik", "dopełniacz", "celownik", "biernik", "narzędnik", "miejscownik", "wołacz"],
+      aspect: { ndk: "niedokonany", dk: "dokonany", beide: "niedokonany i dokonany" },
+      paar: { ndk: "dokonany:", dk: "niedokonany:", beide: "także:" },
+      tt: "Czas teraźniejszy",
+      toekomst: "Czas przyszły",
+      vt: "Czas przeszły",
+      betekenis: "Po angielsku:",
+    },
   },
   speel: "Odtwórz",
   langzaam: "Powoli",
@@ -269,7 +320,114 @@ const pl: Teksten = {
   volgendeLes: "Następna lekcja",
 };
 
-export const TEKSTEN: Record<string, Teksten> = { nl, pl };
+const en: Teksten = {
+  inTaal: { nl: "in Dutch", pl: "in Polish", it: "in Italian", de: "in German" },
+  pakket: { nl: "Dutch", pl: "Polish", it: "Italian", de: "German" },
+  lessen: "Lessons",
+  fase: "Phase",
+  alleLessen: "All lessons",
+  geenLessen: "There are no lessons yet.",
+  dialoog: "Dialogue",
+  brokken: "Chunks",
+  oefeningen: "Exercises",
+  ombouwen: "Make it your own",
+  zagJeDat: "Did you see that?",
+  vorm: { vraag: "Forms:", m: "he", v: "she", beide: "both" },
+  verder: {
+    begin: "Start with lesson 1",
+    uitleg: "No account, no sign-up: just start.",
+    dalej: "Continue with lesson {nr}",
+    gedaan: "Lessons done: {n} of {totaal}",
+    alles: "All lessons done. Congratulations!",
+    overzicht: "All lessons",
+  },
+  grammatica: {
+    naam: "Grammar",
+    intro: "The forms and rules side by side, to look up once you know a little of the language. Words in bold are {taal}: click them to hear them.",
+    groepen: {
+      werkwoorden: "Verbs",
+      naamwoorden: "Nouns and articles",
+      voornaamwoorden: "Pronouns",
+      zinsbouw: "Sentence structure",
+      naamvallen: "Cases",
+      verschil: "Differences from English",
+    },
+    anders: "Unlike in English",
+    meer: "More about this:",
+    inLessen: "In the lessons:",
+    alle: "All grammar",
+    uitspreken: "Listen",
+    geen: "There are no topics yet.",
+  },
+  woorden: {
+    naam: "Look up a word",
+    intro: "Type a Dutch noun or verb. For a noun you see *de* or *het* and the plural, for a verb all its forms. The list has about {aantal} common words, up to roughly level B1.",
+    zoek: "Look up a word",
+    voorbeeld: "e.g. huis, lopen, liep",
+    geen: "This word is not in the list.",
+    suggesties: "Words that match",
+    naamwoord: "Noun",
+    werkwoord: "Verb",
+    meervoud: "plural",
+    geenMeervoud: "no plural",
+    verkleinwoord: "diminutive",
+    regelmatig: "regular",
+    onregelmatig: "irregular",
+    tt: "Present tense",
+    vt: "Past tense",
+    vd: "Perfect tense",
+    hulp: {
+      hebben: "With hebben.",
+      zijn: "With zijn.",
+      beide: "With hebben, or with zijn when you say where to: Ik heb gelopen. Ik ben naar huis gelopen.",
+    },
+    bron: "Source: {bron}",
+    pools: {
+      intro: "Type a Polish noun or verb in any form: *sklepie* finds *sklep*, *poszłam* finds *pójść*. You need no Polish letters: *l* counts as *ł*, *a* as *ą*. For a noun you see its gender and all its cases, for a verb its aspect and its forms. The list has about {aantal} common words.",
+      voorbeeld: "e.g. sklep, domu, robić, poszłam",
+      geslacht: { m: "masculine", f: "feminine", n: "neuter", p: "plural only", pv: "plural only (people)" },
+      naamval: "case",
+      enkelvoud: "singular",
+      meervoud: "plural",
+      naamvallen: ["nominative", "genitive", "dative", "accusative", "instrumental", "locative", "vocative"],
+      aspect: { ndk: "imperfective: ongoing, or repeated", dk: "perfective: once, completed", beide: "imperfective and perfective" },
+      paar: { ndk: "perfective:", dk: "imperfective:", beide: "also:" },
+      tt: "Present tense",
+      toekomst: "Future tense",
+      vt: "Past tense",
+      betekenis: "Meaning:",
+    },
+  },
+  speel: "Play",
+  langzaam: "Slowly",
+  luister: "Listen",
+  zetOpVolgorde: "Put the words in order.",
+  zegIn: "Say {taal}:",
+  zegHardopIn: "Say aloud {taal}:",
+  voorbeeld: "Example",
+  controleer: "Check",
+  volgende: "Next",
+  nogEenKeer: "Once more",
+  goed: "Correct!",
+  bijvoorbeeld: "For example:",
+  juist: "Correct:",
+  spreek: "Speak",
+  ikLuister: "Listening…",
+  gehoord: "Heard:",
+  bijna: "Almost. Try again ({n} left).",
+  zonderMicrofoon: "Without a microphone",
+  geenHerkenning: "This browser cannot listen along (Chrome, Edge and Safari can, over https).",
+  zelfBeoordelen: "Listen to the example, say it aloud and judge for yourself.",
+  gelukt: "Got it",
+  nogNiet: "Not yet",
+  vanGoed: "{score} of {totaal} correct.",
+  zelfBeoordeeld: "{n} of them judged by yourself",
+  score: "{score} of {totaal}",
+  vorige: "Previous lesson",
+  volgendeLes: "Next lesson",
+};
+
+export const TEKSTEN: Record<string, Teksten> = { nl, pl, en };
 
 /** The interface languages the plugin has texts for. */
 export const UI_TALEN = Object.keys(TEKSTEN);

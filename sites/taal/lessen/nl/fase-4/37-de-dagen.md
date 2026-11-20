@@ -7,31 +7,43 @@ module: dagelijks
 titel: "De dagen (afspreken met de buurvrouw)"
 situatie:
   pl: "Sąsiadka zaprasza cię na kawę; szukacie dnia, który pasuje wam obojgu."
+  en: "Your neighbour invites you for coffee; you look for a day that suits you both."
   nl: "De buurvrouw nodigt je uit voor koffie; jullie zoeken een dag die voor allebei past."
 dialoog:
   - nl: "Hoi Piotr! Kom je vanavond koffie drinken?"
     pl: "Cześć, Piotr! Przyjdziesz dziś wieczorem na kawę?"
+    en: "Hi Piotr! Are you coming for coffee this evening?"
   - nl: "Vanavond kan ik niet. Ik werk op maandag 's avonds."
     pl: "Dziś wieczorem nie mogę. W poniedziałki pracuję wieczorem."
+    en: "I can't this evening. I work on Monday evenings."
   - nl: "Jammer. En dit weekend?"
     pl: "Szkoda. A w ten weekend?"
+    en: "Pity. And this weekend?"
   - nl: "Ik ben op zaterdag vrij. 's Morgens of 's middags?"
     pl: "W sobotę mam wolne. Rano czy po południu?"
+    en: "I'm free on Saturday. In the morning or in the afternoon?"
   - nl: "'s Middags, om drie uur?"
     pl: "Po południu, o trzeciej?"
+    en: "In the afternoon, at three o'clock?"
   - nl: "Goed! Op zaterdag om drie uur."
     pl: "Dobrze! W sobotę o trzeciej."
+    en: "Good! On Saturday at three o'clock."
   - nl: "Gezellig. Tot zaterdag!"
     pl: "Super. Do soboty!"
+    en: "Lovely. See you on Saturday!"
 patroon:
   pl: "Przed dniem stoi **op**, przed godziną **om**: *op zaterdag*, *om drie uur*. Pory dnia mają własną formę z **'s**: *'s morgens* (rano), *'s middags* (po południu), *'s avonds* (wieczorem). Dni tygodnia to *maandag, dinsdag, woensdag, donderdag, vrijdag, zaterdag, zondag* – pisane małą literą, jak po polsku."
+  en: "Before a day you put **op**, before a time **om**: *op zaterdag*, *om drie uur*. The parts of the day have their own form with **'s**: *'s morgens* (in the morning), *'s middags* (in the afternoon), *'s avonds* (in the evening). The days of the week are *maandag, dinsdag, woensdag, donderdag, vrijdag, zaterdag, zondag* – written with a small letter, unlike in English."
   nl: "Voor een dag staat **op**, voor een tijd **om**: *op zaterdag*, *om drie uur*. De dagdelen hebben een eigen vorm met **'s**: *'s morgens*, *'s middags*, *'s avonds*. De dagen van de week zijn *maandag, dinsdag, woensdag, donderdag, vrijdag, zaterdag, zondag* – met een kleine letter, net als in het Pools."
 brokken: ["op maandag", "op zaterdag", "om drie uur", "'s morgens", "'s middags", "'s avonds", "vanavond", "dit weekend", "ik ben vrij", "tot zaterdag!"]
+grammatica: [nl-voorzetsels]
 oefeningen:
   - type: luister
     tekst: "Ik ben op zaterdag vrij."
     opties: ["W sobotę mam wolne.", "W niedzielę mam wolne.", "W sobotę pracuję."]
     antwoord: 0
+    vertaald:
+      en: { opties: ["I'm free on Saturday.", "I'm free on Sunday.", "I work on Saturday."] }
   - type: kies
     vraag: "maandag, dinsdag, …, donderdag"
     opties: ["vrijdag", "woensdag", "zondag"]
@@ -44,18 +56,26 @@ oefeningen:
     vraag: "Jest godzina 20:00. Jaka to pora dnia?"
     opties: ["'s avonds", "'s morgens", "'s middags"]
     antwoord: 0
+    vertaald:
+      en: { vraag: "It is 20:00. What part of the day is it?" }
   - type: typ
     vraag: "Dziś wieczorem nie mogę."
     antwoorden: ["Vanavond kan ik niet.", "Ik kan vanavond niet."]
+    vertaald:
+      en: { vraag: "I can't this evening." }
   - type: orden
     zin: "Kom je vanavond koffie drinken?"
   - type: zeg
     vraag: "Do soboty!"
     antwoorden: ["Tot zaterdag!"]
     voorbeeld: true
+    vertaald:
+      en: { vraag: "See you on Saturday!" }
   - type: typ
     vraag: "O której przyjeżdża autobus? (powtórka)"
     antwoorden: ["Hoe laat komt de bus?", "Wanneer komt de bus?"]
+    vertaald:
+      en: { vraag: "What time does the bus come? (review)" }
 ---
 
 **Ombouwen:** zeg wat je deze week doet, met de dag en het dagdeel: "Op dinsdag werk ik 's morgens." Spreek daarna iets af voor dit weekend, met "op" en "om".

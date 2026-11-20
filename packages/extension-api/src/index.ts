@@ -15,6 +15,8 @@ import {
   type AssetStore,
   guardReads,
   inProcessPdp,
+  isLocale,
+  LEGACY_LOCALE,
   type AuthzenSubject,
   type PolicyDecisionPoint,
   FileContentStore,
@@ -82,6 +84,23 @@ export interface ImprintConfig {
   contentTypeDefinitions?: ContentTypeDefinition[];
   /** Plugins switched on for this instance (§6.3: trusted code, composed at build time). */
   plugins?: ImprintPluginCore[];
+  /**
+   * The languages this site has, as two-letter codes (design/meertaligheid.md
+   * layer 1). Absent = only the base language.
+   */
+  locales?: string[];
+  /**
+   * The base language: what the site's content is written in. Pages are read
+   * and written in it when no language is asked for, and it is `<html lang>`.
+   * Absent = the first of `locales`, else "en".
+   */
+  defaultLocale?: string;
+  /**
+   * The language of the site's fixed texts: buttons, "no results", dates
+   * (design/meertaligheid.md layer 2). Absent = `defaultLocale`. Set it apart
+   * for a site whose content is not labelled with its language (yet).
+   */
+  uiLocale?: string;
   /** The widget catalogue (config schemas) this instance supports; the store validates layouts against it. */
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
@@ -155,6 +174,12 @@ export interface ImprintInstance {
   contentTypes: ContentTypeCatalog;
   /** The plugins, as configured; the admin reads their React half from the same objects. */
   plugins: ImprintPluginCore[];
+  /** The site's languages; always contains `defaultLocale`. */
+  locales: string[];
+  /** The base language of the site's content (config, else "en"). */
+  defaultLocale: string;
+  /** The language of the site's fixed texts (config, else `defaultLocale`). */
+  uiLocale: string;
   /** Disk or bucket (`assets.s3` in the config); the serving route reads through it either way. */
   assets: AssetStore;
   /** Upload limits per file kind (defaults from content-core, overridden by the config), and the API's allowed origins. */
@@ -185,11 +210,28 @@ export function defineImprint(config: ImprintConfig): ImprintConfig {
     throw new Error(`imprint.config (${config.id}): widgets must be a WidgetTypeRegistry`);
   }
   checkPlugins(config.plugins ?? []);
+  localesOf(config); // fail early on a bad language code
   new ContentTypeCatalog(registryOf(config), config.contentTypes); // fail early on an unknown type
   if (config.session?.hours !== undefined && !(config.session.hours > 0)) {
     throw new Error(`imprint.config (${config.id}): session.hours must be positive`);
   }
   return config;
+}
+
+/** The site's languages and its base language, checked: two-letter codes, the base among them. */
+function localesOf(cfg: ImprintConfig): { locales: string[]; defaultLocale: string } {
+  const defaultLocale = cfg.defaultLocale ?? cfg.locales?.[0] ?? LEGACY_LOCALE;
+  const locales = cfg.locales?.length ? [...new Set(cfg.locales)] : [defaultLocale];
+  for (const code of [defaultLocale, ...locales]) {
+    if (!isLocale(code)) throw new Error(`imprint.config (${cfg.id}): language "${code}" must be two lowercase letters, like nl`);
+  }
+  if (cfg.uiLocale !== undefined && !isLocale(cfg.uiLocale)) {
+    throw new Error(`imprint.config (${cfg.id}): uiLocale "${cfg.uiLocale}" must be two lowercase letters, like nl`);
+  }
+  if (!locales.includes(defaultLocale)) {
+    throw new Error(`imprint.config (${cfg.id}): defaultLocale "${defaultLocale}" is not one of locales (${locales.join(", ")})`);
+  }
+  return { locales, defaultLocale };
 }
 
 const PLUGIN_NAME_RE = /^[a-z][a-z0-9-]*$/;
@@ -251,9 +293,10 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
   const url = cfg.store.databaseUrl || undefined;
 
   const registry = registryOf(cfg);
-  const opened = url ? openContentDatabase(url, { widgets, contentTypes: registry }) : null;
+  const { locales, defaultLocale } = localesOf(cfg);
+  const opened = url ? openContentDatabase(url, { widgets, contentTypes: registry, defaultLocale }) : null;
   const readStore: ContentStore =
-    opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets });
+    opened?.store ?? new FileContentStore(cfg.store.contentDir, { widgets, defaultLocale });
   const pdp = cfg.pdp ?? inProcessPdp;
 
   const assetRoot = cfg.assets?.root || path.join(process.cwd(), ".assets");
@@ -271,6 +314,9 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     widgets,
     contentTypes: new ContentTypeCatalog(registry, activeTypesOf(cfg)),
     plugins: cfg.plugins ?? [],
+    locales,
+    defaultLocale,
+    uiLocale: cfg.uiLocale ?? defaultLocale,
     assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
     mail: createMailer(cfg.mail),
     stats: { reportDir: cfg.stats?.reportDir || null },
@@ -322,6 +368,8 @@ export function fingerprintOf(config: ImprintConfig): string {
     // Where the files live (not the secret key): switching disk ↔ bucket is a different instance.
     assets: [cfg.assets?.root ?? "", cfg.assets?.baseUrl ?? "", cfg.assets?.s3?.endpoint ?? "", cfg.assets?.s3?.bucket ?? ""],
     media: cfg.media ?? null,
+    // The base language decides which rows a read finds.
+    locales: localesOf(cfg),
   };
   return createHash("sha1").update(JSON.stringify(shape)).digest("hex").slice(0, 16);
 }

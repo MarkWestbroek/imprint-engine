@@ -43,6 +43,8 @@ describe("defineImprint", () => {
       /unsupported scheme/
     );
     assert.throws(() => defineImprint({ ...base, session: { hours: 0 } }), /session.hours/);
+    assert.throws(() => defineImprint({ ...base, locales: ["nl", "Polski"] }), /two lowercase letters/);
+    assert.throws(() => defineImprint({ ...base, locales: ["nl"], defaultLocale: "pl" }), /not one of locales/);
     assert.throws(
       () => defineImprint({ ...base, widgets: [] as unknown as WidgetTypeRegistry }),
       /WidgetTypeRegistry/
@@ -61,6 +63,16 @@ describe("resolveImprint", () => {
     assert.deepEqual(imprint.session, { cookie: "imprint_filesite_session", hours: 12 });
     assert.ok(imprint.widgets.has("text"));
     await imprint.close();
+  });
+
+  it("has a base language: en unless the config says otherwise, and always among the locales", async () => {
+    const base: ImprintConfig = { id: "lang-1", store: { contentDir: await contentDir() }, widgets: registry() };
+    const plain = resolveImprint(base);
+    assert.deepEqual([plain.defaultLocale, plain.locales], ["en", ["en"]]);
+    const polish = resolveImprint({ ...base, defaultLocale: "pl" });
+    assert.deepEqual([polish.defaultLocale, polish.locales], ["pl", ["pl"]]);
+    const both = resolveImprint({ ...base, locales: ["nl", "en"] });
+    assert.deepEqual([both.defaultLocale, both.locales], ["nl", ["nl", "en"]], "the first locale is the base");
   });
 
   it("treats an empty database URL as no database (CI builds without one)", async () => {

@@ -7,36 +7,49 @@ module: dagelijks
 titel: Ik ben… (kennismaken)
 situatie:
   pl: "Nowy sąsiad puka do drzwi i chce się przedstawić."
+  en: "A new neighbour rings the doorbell and wants to introduce himself."
   nl: "Een nieuwe buurman belt aan en wil zich voorstellen."
 dialoog:
   - nl: "Hallo, ik ben Piotr. Ik ben de nieuwe buurman."
     pl: "Cześć, jestem Piotr. Jestem nowym sąsiadem."
+    en: "Hello, I'm Piotr. I'm the new neighbour."
   - nl: "Welkom! Ik ben Anna. Ben jij Pools?"
     pl: "Witaj! Jestem Anna. Jesteś Polakiem?"
+    en: "Welcome! I'm Anna. Are you Polish?"
   - nl: "Ja, ik ben Pools. En dit is Ewa. Zij is mijn vrouw."
     pl: "Tak, jestem Polakiem. A to jest Ewa. Ona jest moją żoną."
+    en: "Yes, I'm Polish. And this is Ewa. She is my wife."
   - nl: "Dag Ewa. Zijn jullie hier al lang?"
     pl: "Dzień dobry, Ewa. Długo już tu jesteście?"
+    en: "Hello, Ewa. Have you been here long?"
   - nl: "Nee, wij zijn hier nieuw."
     pl: "Nie, jesteśmy tu nowi."
+    en: "No, we are new here."
   - nl: "Bent u de buurvrouw van nummer tien?"
     pl: "Czy pani jest sąsiadką spod dziesiątki?"
+    en: "Are you the neighbour from number ten?"
   - nl: "Ja, dat ben ik."
     pl: "Tak, to ja."
+    en: "Yes, that's me."
 patroon:
   pl: "Czasownik **zijn** (być) zmienia się z osobą: **ik ben**, **jij bent / u bent**, **hij / zij is**, **wij / jullie / zij zijn**. W pytaniu czasownik stoi na początku: *Ben jij Pools?* Po *ben* znika wtedy **-t**: *jij bent*, ale *ben jij?*"
+  en: "The verb **zijn** (to be) changes with the person: **ik ben**, **jij bent / u bent**, **hij / zij is**, **wij / jullie / zij zijn**. In a question the verb comes first: *Ben jij Pools?* After *ben* the **-t** then drops: *jij bent*, but *ben jij?*"
   nl: "Het werkwoord **zijn** verandert met de persoon: **ik ben**, **jij bent / u bent**, **hij / zij is**, **wij / jullie / zij zijn**. In een vraag staat het werkwoord vooraan: *Ben jij Pools?* Achter *ben* valt dan de **-t** weg: *jij bent*, maar *ben jij?*"
 brokken: ["ik ben…", "ben jij…?", "bent u…?", "dit is…", "hij is", "zij is", "wij zijn", "dat ben ik", "welkom"]
-grammatica: [nl-tegenwoordige-tijd]
+grammatica: [nl-tegenwoordige-tijd, nl-vraagzinnen]
 oefeningen:
   - type: luister
     tekst: "Zij is mijn vrouw."
     opties: ["Ona jest moją żoną.", "On jest moim sąsiadem.", "Jesteśmy tu nowi."]
     antwoord: 0
+    vertaald:
+      en: { opties: ["She is my wife.", "He is my neighbour.", "We are new here."] }
   - type: kies
     vraag: "Chcesz zapytać starszą sąsiadkę (grzecznie), czy jest Holenderką. Co mówisz?"
     opties: ["Ben jij Nederlands?", "Bent u Nederlands?", "Is zij Nederlands?"]
     antwoord: 1
+    vertaald:
+      en: { vraag: "You want to ask an older neighbour (politely) whether she is Dutch. What do you say?" }
   - type: kies
     vraag: "Wij … hier nieuw."
     opties: ["ben", "is", "zijn"]
@@ -44,15 +57,21 @@ oefeningen:
   - type: typ
     vraag: "Jestem {Polakiem|Polką}."
     antwoorden: ["Ik ben Pools.", "Ik ben een Pool.", "Ik ben Pool.", "Ik ben Poolse.", "Ik ben een Poolse."]
+    vertaald:
+      en: { vraag: "I am Polish." }
   - type: orden
     zin: "Ik ben de nieuwe buurman."
   - type: zeg
     vraag: "Jesteśmy tu nowi."
     antwoorden: ["Wij zijn hier nieuw.", "We zijn hier nieuw."]
     voorbeeld: true
+    vertaald:
+      en: { vraag: "We are new here." }
   - type: typ
     vraag: "Ile to kosztuje? (powtórka)"
     antwoorden: ["Hoeveel kost het?", "Hoeveel is dit?", "Hoeveel kost dit?"]
+    vertaald:
+      en: { vraag: "How much is it? (review)" }
 ---
 
 **Ombouwen:** stel jezelf voor en stel daarna iemand anders voor: "Dit is… Hij is…" of "Zij is…". Vraag één keer met "ben jij…?" en één keer met "bent u…?".

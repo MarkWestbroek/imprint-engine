@@ -17,6 +17,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // A Dutch site: its fixed texts are Dutch (design/meertaligheid.md layer 2). The content keeps its old label.
+  uiLocale: "nl",
   // A personal site: pages and their chrome, nothing more.
   contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],
   // Unset locally (engine default: .assets/); the container points these at a volume.

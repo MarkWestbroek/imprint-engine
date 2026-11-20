@@ -11,6 +11,10 @@
 #                                    (de Imprint-site heeft geen catalogus/planning:
 #                                    altijd met --only, zie sites/imprint/README.md)
 #   ./deploy.sh user imprint <args>  npm run user (gebruikersbeheer) voor die site
+#   ./deploy.sh relabel-lang imprint --to=nl [--dry-run]
+#                                    eenmalig: pagina's met het etiket "en" krijgen de
+#                                    basistaal van de site (docs/design/meertaligheid.md §7 B);
+#                                    daarna bouwen (SITES=imprint ./deploy.sh)
 #   ./deploy.sh import-pleio commonground [--base-url=https://…]
 #                                    publieke pagina's, menu en footer uit Pleio (GraphQL)
 #                                    → database; daarna bouwen (SITES=commonground ./deploy.sh)
@@ -63,6 +67,10 @@ case "${1:-}" in
     site="${2:?gebruik: deploy.sh seed <site> [--only=…]}"; shift 2
     tools "$site" npm run db:seed -- --site="$site" "$@"
     echo "Geseed. Bouw nu (SITES=$site ./deploy.sh): de seed leegt de Next-cache niet."
+    exit 0 ;;
+  relabel-lang)
+    site="${2:?gebruik: deploy.sh relabel-lang <site> --to=nl [--dry-run]}"; shift 2
+    tools "$site" npm run db:relabel-lang -- "$@"
     exit 0 ;;
   user)
     site="${2:?gebruik: deploy.sh user <site> <args>}"; shift 2

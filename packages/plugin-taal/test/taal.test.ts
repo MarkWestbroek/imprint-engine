@@ -18,7 +18,7 @@ import { heeftVormen, lijktOp, norm, typGoed, uitspreekbaar, vormen, vormenKlopp
 import { kentVormen } from "../src/i18n";
 import { beste, isScore, leesVoortgang, samenvoegen, type Stand } from "../src/stand";
 import { azureTts, type Synthesize } from "../src/tts";
-import { lidwoord, zoek, zoekvorm, type Naamwoord, type Werkwoord } from "../src/woorden";
+import { lidwoord, zoek, zoekvorm, type Naamwoord, type Werkwoord, aanwijzend, PoolseWoordenlijst } from "../src/woorden";
 
 // One real lesson file; the site's own test parses all of them (sites/taal/test).
 const FILE = "01-dit-en-dat.md";
@@ -138,6 +138,12 @@ describe("forms per learner", () => {
     assert.ok(!vormenKloppen("Był{em|am|o}"));
   });
 
+  it("counts a Polish answer typed without Polish letters", () => {
+    assert.ok(typGoed("bylem w domu", ["Byłem w domu."]));
+    assert.ok(typGoed("Dziekuje, prosze", ["Dziękuję, proszę."]));
+    assert.ok(!typGoed("bylam w domu", ["Byłem w domu."]));
+  });
+
   it("offers the choice in Polish only", () => {
     assert.ok(kentVormen("pl"));
     assert.ok(!kentVormen("nl"));
@@ -153,6 +159,32 @@ describe("which exercises fit the interface language", () => {
   it("keeps only kies and orden without the support language", () => {
     assert.ok(!metVertaling(les1, "nl"));
     assert.deepEqual(oefeningenVoor(les1, "nl").map((o) => o.type), ["kies", "orden"]);
+  });
+
+  it("serves a second reader from the translated parts: dialogue, and the exercises under vertaald", () => {
+    assert.ok(!metVertaling(les1, "en"), "no English in this lesson yet");
+    const les = LesSchema.parse({
+      ...les1,
+      dialoog: les1.dialoog.map((r) => ({ ...r, en: "…" })),
+      oefeningen: [
+        { type: "luister", tekst: "Dat is een peer.", opties: ["To jest gruszka.", "To jest jabłko."], antwoord: 0, vertaald: { en: { opties: ["That is a pear.", "That is an apple."] } } },
+        { type: "kies", vraag: "Sklep jest blisko. Co mówisz?", opties: ["dichtbij", "ver"], antwoord: 0, vertaald: { en: { vraag: "The shop is close. What do you say?" } } },
+        { type: "kies", vraag: "Ik … een peer.", opties: ["heb", "hebt"], antwoord: 0 },
+        { type: "typ", vraag: "Ile to kosztuje?", antwoorden: ["Hoeveel is dit?"], vertaald: { en: { vraag: "How much is this?" } } },
+        { type: "zeg", vraag: "Co to jest?", antwoorden: ["Wat is dit?"] },
+        { type: "orden", zin: "Wat is dit?" },
+      ],
+    });
+    assert.ok(metVertaling(les, "en"));
+    const en = oefeningenVoor(les, "en");
+    assert.deepEqual(en.map((o) => o.type), ["luister", "kies", "kies", "typ", "orden"], "the zeg without English is left out");
+    assert.deepEqual(en[0]?.type === "luister" && en[0].opties, ["That is a pear.", "That is an apple."]);
+    assert.equal(en[1]?.type === "kies" && en[1].vraag, "The shop is close. What do you say?");
+    assert.equal(en[2]?.type === "kies" && en[2].vraag, "Ik … een peer.", "a Dutch question is for every reader");
+    assert.equal(en[3]?.type === "typ" && en[3].vraag, "How much is this?");
+    assert.equal(oefeningenVoor(les, "pl").length, 6, "the support language: as written");
+    // The translated options must match the exercise's own.
+    assert.ok(!LesSchema.safeParse({ ...les1, oefeningen: [{ type: "luister", tekst: "Dat.", opties: ["a", "b"], antwoord: 0, vertaald: { en: { opties: ["a", "b", "c"] } } }] }).success);
   });
 
   it("shows a per-language text only in the language of the interface", () => {
@@ -399,8 +431,34 @@ describe("check a word", () => {
   const lopen: Werkwoord = { w: "lopen", tt: ["loop", "loopt", "loopt", "lopen"], vt: ["liep", "liepen"], vd: "gelopen", hulp: "beide", sterk: true, r: 4 };
   const werken: Werkwoord = { w: "werken", tt: ["werk", "werkt", "werkt", "werken"], vt: ["werkte", "werkten"], vd: "gewerkt", hulp: "hebben", sterk: false, r: 2 };
   const opstaan: Werkwoord = { w: "opstaan", tt: ["sta op", "staat op", "staat op", "staan op"], vt: ["stond op", "stonden op"], vd: "opgestaan", hulp: "zijn", sterk: true, r: 7 };
-  const lijst = { naamwoorden: [huis, hulp, werk], werkwoorden: [lopen, werken, opstaan] };
+  const lijst = { taal: "nl" as const, bron: "test", naamwoorden: [huis, hulp, werk], werkwoorden: [lopen, werken, opstaan] };
   const woorden = (q: string) => zoek(lijst, q).map((t) => t.woord.w);
+
+  it("finds a Polish word by any of its forms, typed without Polish letters", () => {
+    const pools = PoolseWoordenlijst.parse({
+      taal: "pl",
+      bron: "test",
+      naamwoorden: [
+        { w: "sklep", g: "m", ev: ["sklep", "sklepu", "sklepowi", "sklep", "sklepem", "sklepie", "sklepie"], mv: ["sklepy", "sklepów", "sklepom", "sklepy", "sklepami", "sklepach", "sklepy"], b: "shop", r: 2 },
+        { w: "drzwi", g: "p", ev: [], mv: ["drzwi", "drzwi", "drzwiom", "drzwi", "drzwiami", "drzwiach", "drzwi"], r: 3 },
+      ],
+      werkwoorden: [
+        { w: "pójść", asp: "dk", paar: ["iść"], tt: ["pójdę", "pójdziesz", "pójdzie", "pójdziemy", "pójdziecie", "pójdą"], vt: ["poszedłem", "poszłam", "poszedł", "poszła", "poszli", "poszły"], r: 1 },
+        { w: "bać", sie: true, asp: "ndk", tt: ["boję", "boisz", "boi", "boimy", "boicie", "boją"], vt: ["bałem", "bałam", "bał", "bała", "bali", "bały"], r: 4 },
+      ],
+    });
+    const vind = (q: string) => zoek(pools, q).map((t) => t.woord.w);
+    assert.deepEqual(vind("sklepie"), ["sklep"], "a case finds the word");
+    assert.deepEqual(vind("poszlam"), ["pójść"], "ł typed as l");
+    assert.deepEqual(vind("pojde"), ["pójść"], "ó and ę typed plain");
+    assert.deepEqual(vind("drzwiami"), ["drzwi"]);
+    assert.deepEqual(vind("bala"), ["bać"]);
+    assert.deepEqual(vind("p"), ["pójść"], "the start of a word or of a form");
+    assert.deepEqual([aanwijzend("m"), aanwijzend("f"), aanwijzend("n"), aanwijzend("p"), aanwijzend("pv")], ["ten", "ta", "to", "te", "ci"]);
+    // Seven cases or none, and a noun has a singular or a plural.
+    assert.ok(!PoolseWoordenlijst.safeParse({ taal: "pl", bron: "x", naamwoorden: [{ w: "x", g: "m", ev: ["x"], mv: [], r: 0 }], werkwoorden: [] }).success);
+    assert.ok(!PoolseWoordenlijst.safeParse({ taal: "pl", bron: "x", naamwoorden: [{ w: "x", g: "m", ev: [], mv: [], r: 0 }], werkwoorden: [] }).success);
+  });
 
   it("gives the usual article first, from Wiktionary's order", () => {
     assert.deepEqual(lidwoord("n"), { hoofd: "het" });

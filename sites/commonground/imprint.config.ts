@@ -23,6 +23,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // A Dutch site: its fixed texts are Dutch (design/meertaligheid.md layer 2). The content keeps its old label.
+  uiLocale: "nl",
   // Groups with their wikis, and the terms, imported from Pleio (scripts/import-pleio.ts).
   plugins: [
     wikiPlugin(),

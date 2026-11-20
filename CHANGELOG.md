@@ -18,6 +18,66 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   volgt) en het contactformulier. Conceptteksten in
   `content/`; de plugin-inhoud gaat met `npm run put:content
   --workspace=paratmos` de database in. Nog niet live en op `noindex`.
+- **Vaste teksten in de taal van de site** (W5/S9, eerste deel van stap B van
+  design/meertaligheid.md). Een catalogus per package in plaats van tekst in
+  de code: de standaardwidgets en de zoekpagina van de engine in Nederlands,
+  Engels en Pools, de kop en voet van de Imprint-site in Nederlands en Engels.
+  Nieuw in `content-core`: `Catalog`, `messagesFor` en `formatDate`. Een site
+  zet de taal van haar vaste teksten met `uiLocale` in `imprint.config.ts`
+  (standaard de basistaal) en geeft hem door als `WidgetContext.locale`.
+  Zichtbaar gevolg: op commonground, inrichting, omnium, markwestbroek en de
+  Imprint-site zijn de teksten van de standaardwidgets nu Nederlands
+  ("No photos yet." wordt "Nog geen foto's."); MusicBrain en de taaltraining
+  blijven zoals ze waren. De plugins volgen later.
+- **Taaltraining: een Pools woord opzoeken** (`/nl/polski/woorden`). Typ een
+  Pools zelfstandig naamwoord of werkwoord in welke vorm ook, met of zonder
+  Poolse tekens: geslacht en de zeven naamvallen, of aspect met partner, de
+  vormen en de verleden tijd voor een man en een vrouw, met een korte Engelse
+  betekenis. Zo'n 2500 zelfstandige naamwoorden en 700 werkwoorden uit
+  Wiktionary, waaronder alle uit de lessen.
+- **Basistaal per site** (W5/S9, stap A van design/meertaligheid.md). Een site
+  zet `locales` en `defaultLocale` in haar `imprint.config.ts`; pagina's,
+  producten, componenten en board-specs worden zonder taal in die basistaal
+  gelezen en geschreven, met terugval op `en` voor bestaande rijen. `Locale`
+  is een taalcode van twee letters in plaats van de vaste lijst `en`/`nl`. In
+  de admin is het veld *lang* een keuzelijst van de talen van de site, een
+  nieuwe pagina krijgt de basistaal, en de studio waarschuwt bij een pagina in
+  een taal die de site niet heeft; een andere taal kiezen en opslaan verhuist
+  de pagina. Nieuw: `npm run db:relabel-lang -- --to=nl` (op de VPS
+  `./deploy.sh relabel-lang <site> --to=nl`) zet de `en`-etiketten van een
+  bestaande site om, via de store; de seed kent `--lang=`. Aangezet op de
+  Imprint-site (`nl`, ook `<html lang>`); elke andere site blijft op `en` tot
+  ze een basistaal krijgt. **Bij de uitrol van de Imprint-site eerst
+  `relabel-lang` draaien** (docs/deploy-vps.md).
+- **Seed: `--new`.** `npm run db:seed -- --only=page,menu --new` voegt alleen
+  de pagina's en menu's toe die nog niet bestaan, zodat een pagina die in de
+  admin is bewerkt niet door het bestand wordt overschreven.
+- **Taaltraining: Pools voor Nederlandstaligen.** Een tweede lespakket op
+  dezelfde site (`/nl/polski`, ingang `/nl`; jezyk.imprint-engine.nl als extra
+  hostnaam): 45 nieuwe lessen in zes fasen met Tom en Sanne in Kraków, en een
+  eigen grammatica van 31 onderwerpen met een groep *Naamvallen* en vier
+  verschillen met het Nederlands (uitspraak en spelling, geen lidwoorden, *pan*
+  en *pani*, het onderwerp weglaten). Eigen startpagina, menu en naam in de
+  kop (*Powoli, ale do przodu*). Een getypt antwoord zonder Poolse tekens
+  telt goed (*l* voor *ł*).
+- **Taaltraining: Nederlands leren vanuit het Engels.** De 45 lessen en de
+  grammatica hebben nu ook Engels: vertaling van de dialoog, *situatie*,
+  *Did you see that?* en de oefenvragen (`vertaald` per oefening; de
+  Nederlandse zinnen en opnamen blijven dezelfde). Een eigen ingang `/en` met
+  startpagina (`home-en`), menu (`main-en`), *The method*, account- en
+  contactpagina's in het Engels. De grammatica legt uit *unlike in English*
+  en heeft twee eigen verschillen: geen *do* en geen *-ing*, en het werkwoord
+  op plaats twee. De header kiest het menu van de ingang waar je bent.
+- **Taaltraining: de grammatica compleet (deel 2).** 19 onderwerpen erbij, 21
+  in totaal: verleden en voltooide tijd, modale en scheidbare werkwoorden,
+  meervoud, verkleinwoord, bijvoeglijk naamwoord, vergelijken, persoonlijke en
+  bezittelijke voornaamwoorden, woordvolgorde, vraagzinnen, niet en geen, de
+  bijzin, *er*, voorzetsels; en de verschillen met het Pools: geen naamvallen,
+  *u* en *je*, *het* als onderwerp. 43 van de 45 lessen linken naar hun
+  onderwerpen. Les 28 en 29: *thuisgebleven* aaneen.
+- **markwestbroek.nl: de naam op de bronmodule in Big Shoulders**, de letter van
+  de kop (MARK groot, WESTBROEK eronder), zonder de logostreepjes; Urbanist is
+  eruit.
 - **Taaltraining: een woord opzoeken.** `/pl/nederlands/woorden` (*Słowa* in
   het menu): typ een Nederlands woord en zie *de* of *het*, meervoud en
   verkleinwoord, of bij een werkwoord alle vormen met *hebben*/*zijn*; zoekt

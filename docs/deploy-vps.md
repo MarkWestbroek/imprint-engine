@@ -111,6 +111,21 @@ Eerst seeden, dan bouwen: de seed leegt de Next-cache niet (backlog §6), dus
 na een latere seed is opnieuw `./deploy.sh` nodig. Haal `SEED_ADMIN_PASSWORD`
 na de eerste seed weer uit `.env`.
 
+**Een site die een basistaal krijgt** (`defaultLocale` in haar
+`imprint.config.ts`, [design/meertaligheid.md](design/meertaligheid.md) §7 B):
+haar pagina's staan nog met het etiket `en` in de database. Zet ze eenmalig
+om, vóór de build met de nieuwe config:
+
+```bash
+./deploy.sh relabel-lang imprint --to=nl --dry-run   # zegt alleen wat het zou doen
+./deploy.sh relabel-lang imprint --to=nl
+SITES=imprint ./deploy.sh
+```
+
+Het script werkt via de store (historie blijft) en doet bij een tweede keer
+niets. Wie het vergeet, ziet de pagina's nog wel: lezen valt terug op `en`.
+Een latere seed van zo'n site krijgt `--lang=nl` mee.
+
 Dan Caddy: neem het blok uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet)
 over in `/etc/caddy/Caddyfile` en `sudo systemctl reload caddy` — **pas als
 het A-record naar de VPS wijst**, anders blijft Caddy vergeefs een certificaat
@@ -540,6 +555,17 @@ les *Genereer*. De sleutel staat alleen in `.env` op de VPS en komt via de
 compose-omgeving in de draaiende container, niet in de image. Een les
 gewijzigd in het bestand: `./deploy.sh import-lessen taal` en daarna
 `SITES=taal ./deploy.sh`; de opnamen van ongewijzigde zinnen blijven.
+
+**Pools voor Nederlandstaligen** (`jezyk.imprint-engine.nl`) is dezelfde site
+en dezelfde container: het pakket `/nl/polski` met de ingang `/nl`. Er is geen
+eigen database, image of poort. Nodig: het A-record `jezyk.imprint-engine.nl`
+naar de VPS (bij de DNS-beheerder van imprint-engine.nl), het Caddy-blok
+`jezyk.imprint-engine.nl` uit de snippet (het herschrijft `/` naar `/nl`) en
+`sudo systemctl reload caddy`. De lessen komen mee met
+`./deploy.sh import-lessen taal`; de pagina's `home-nl` en `over-de-methode`
+en het menu `main-nl` met `./deploy.sh seed taal --only=page,menu --new`
+(`--new` laat bestaande pagina's en menu's met rust). De Poolse opnamen maak je net als de
+Nederlandse in de admin (Taal → Audio); de stem is `pl-PL-ZofiaNeural`.
 
 Accounts voor leerlingen sturen mail (bevestigen, wachtwoord vergeten): zet
 `TAAL_SMTP_HOST`, `TAAL_SMTP_USER`, `TAAL_SMTP_PASS` en `TAAL_MAIL_FROM` in

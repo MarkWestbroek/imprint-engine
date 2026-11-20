@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Mustache from "mustache";
-import type { ContentType, Page } from "@imprint/content-core";
+import { messagesFor, type ContentType, type Page } from "@imprint/content-core";
+import { messages } from "./messages";
 import { imgProps, Markdown, resolveMedia, resolveMediaAll, WidgetFrame, type WidgetContext, type WidgetViewer } from "@imprint/runtime-admin";
 import { Carousel, Gallery, type ShownImage } from "./media-islands";
 import { MapIsland } from "./map-island";
@@ -223,7 +224,7 @@ async function ListWidget({
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-muted">{config.emptyText ?? "Nothing here yet."}</p>
+        <p className="text-sm text-muted">{config.emptyText ?? messagesFor(messages, ctx.locale).nothingYet}</p>
       )}
     </WidgetFrame>
   );
@@ -268,9 +269,9 @@ async function GalleryWidget({
   return (
     <WidgetFrame title={config.title}>
       {images.length > 0 ? (
-        <Gallery images={images} columns={config.columns} />
+        <Gallery images={images} columns={config.columns} labels={mediaLabels(ctx)} />
       ) : (
-        <p className="text-sm text-muted">No photos yet.</p>
+        <p className="text-sm text-muted">{messagesFor(messages, ctx.locale).noPhotos}</p>
       )}
     </WidgetFrame>
   );
@@ -289,12 +290,18 @@ async function CarouselWidget({
   return (
     <WidgetFrame title={config.title}>
       {images.length > 0 ? (
-        <Carousel images={images} interval={config.interval} />
+        <Carousel images={images} interval={config.interval} labels={mediaLabels(ctx)} />
       ) : (
-        <p className="text-sm text-muted">No photos yet.</p>
+        <p className="text-sm text-muted">{messagesFor(messages, ctx.locale).noPhotos}</p>
       )}
     </WidgetFrame>
   );
+}
+
+/** The texts of the photo islands (client parts get them as plain data). */
+function mediaLabels(ctx: WidgetContext) {
+  const t = messagesFor(messages, ctx.locale);
+  return { previous: t.previous, next: t.next, photo: t.photo };
 }
 
 const LR_API_KEY = "LightroomMobileWeb1";
@@ -378,7 +385,7 @@ async function loadAlbumImages(config: AlbumConfig): Promise<ImageItem[]> {
     .slice(0, config.limit);
 }
 
-async function AlbumWidget({ config }: { config: AlbumConfig }) {
+async function AlbumWidget({ config, ctx }: { config: AlbumConfig; ctx: WidgetContext }) {
   let images: ImageItem[] = [];
   let error: string | undefined;
   try {
@@ -387,15 +394,14 @@ async function AlbumWidget({ config }: { config: AlbumConfig }) {
     error = err instanceof Error ? err.message : String(err);
   }
   const host = new URL(config.url).hostname;
+  const t = messagesFor(messages, ctx.locale);
 
   return (
     <WidgetFrame title={config.title}>
       {images.length > 0 ? (
-        <Gallery images={images} columns={config.columns} />
+        <Gallery images={images} columns={config.columns} labels={mediaLabels(ctx)} />
       ) : (
-        <p className="text-sm text-muted">
-          {error ? `Could not load ${host}: ${error}` : `No previewable photos on ${host}.`}
-        </p>
+        <p className="text-sm text-muted">{error ? t.couldNotLoad(host, error) : t.noPhotosOn(host)}</p>
       )}
       <a
         href={config.url}
@@ -403,7 +409,7 @@ async function AlbumWidget({ config }: { config: AlbumConfig }) {
         rel="noopener noreferrer"
         className="mt-3 inline-block text-sm text-accent underline underline-offset-4"
       >
-        Open album on {host} ↗
+        {`${t.openAlbumOn(host)} ↗`}
       </a>
     </WidgetFrame>
   );
@@ -520,7 +526,7 @@ function videoEmbedUrl(url: string): string | null {
   return null;
 }
 
-async function VideoWidget({ config }: { config: VideoConfig }) {
+async function VideoWidget({ config, ctx }: { config: VideoConfig; ctx: WidgetContext }) {
   const embed = videoEmbedUrl(config.url);
   return (
     <WidgetFrame title={config.title}>
@@ -531,7 +537,7 @@ async function VideoWidget({ config }: { config: VideoConfig }) {
             className="aspect-video w-full rounded-lg border border-line"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
-            title={config.title ?? "Video"}
+            title={config.title ?? messagesFor(messages, ctx.locale).video}
           />
         ) : (
           <video src={config.url} controls className="aspect-video w-full rounded-lg border border-line bg-black" />
@@ -624,7 +630,7 @@ async function PostsWidget({ config, ctx }: { config: PostsConfig; ctx: WidgetCo
   return (
     <WidgetFrame title={config.title}>
       {posts.length === 0 ? (
-        <p className="text-sm text-muted">No posts yet.</p>
+        <p className="text-sm text-muted">{messagesFor(messages, ctx.locale).noPosts}</p>
       ) : (
         <div className="space-y-3">
           {posts.map((p) => (
@@ -674,7 +680,7 @@ async function CalloutWidget({ config }: { config: CalloutConfig }) {
   );
 }
 
-async function EmbedWidget({ config }: { config: EmbedConfig }) {
+async function EmbedWidget({ config, ctx }: { config: EmbedConfig; ctx: WidgetContext }) {
   return (
     <WidgetFrame title={config.title}>
       <iframe
@@ -683,7 +689,7 @@ async function EmbedWidget({ config }: { config: EmbedConfig }) {
         className="w-full rounded-lg border border-line"
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
         loading="lazy"
-        title={config.title ?? "Embedded content"}
+        title={config.title ?? messagesFor(messages, ctx.locale).embeddedContent}
       />
     </WidgetFrame>
   );
@@ -1092,11 +1098,11 @@ async function LogosWidget({ config, ctx }: { config: LogosConfig; ctx: WidgetCo
   );
 }
 
-async function TocWidget({ config }: { config: TocConfig }) {
+async function TocWidget({ config, ctx }: { config: TocConfig; ctx: WidgetContext }) {
   return (
     <nav data-toc aria-label={config.title} className="rounded-xl border border-line bg-surface px-5 py-4">
       {config.title && <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted">{config.title}</p>}
-      <TocList depth={Number(config.depth)} />
+      <TocList depth={Number(config.depth)} emptyText={messagesFor(messages, ctx.locale).noHeadings} />
     </nav>
   );
 }
@@ -1115,7 +1121,7 @@ async function BreadcrumbWidget({ config, ctx }: { config: BreadcrumbConfig; ctx
   );
   const sep = <span className="text-muted/60">›</span>;
   return (
-    <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-2 text-sm text-muted">
+    <nav aria-label={messagesFor(messages, ctx.locale).breadcrumb} className="flex flex-wrap items-center gap-2 text-sm text-muted">
       <Link href="/" className="hover:text-accent">
         {config.homeLabel}
       </Link>
@@ -1146,7 +1152,7 @@ async function AudioWidget({ config, ctx }: { config: AudioConfig; ctx: WidgetCo
     <figure className="rounded-xl border border-line bg-surface px-5 py-4">
       {config.title && <p className="mb-2 font-semibold">{config.title}</p>}
       <audio controls preload="metadata" loop={config.loop} src={media.src} className="w-full">
-        <a href={media.src}>{config.title ?? "Download audio"}</a>
+        <a href={media.src}>{config.title ?? messagesFor(messages, ctx.locale).downloadAudio}</a>
       </audio>
       {config.caption && <figcaption className="mt-2 text-sm text-muted">{config.caption}</figcaption>}
     </figure>
@@ -1156,20 +1162,21 @@ async function AudioWidget({ config, ctx }: { config: AudioConfig; ctx: WidgetCo
 async function PdfWidget({ config, ctx }: { config: PdfConfig; ctx: WidgetContext }) {
   const media = await resolveMedia(ctx, config.src);
   if (!media) return null;
+  const t = messagesFor(messages, ctx.locale);
   return (
     <WidgetFrame title={config.title}>
       <object data={media.src} type="application/pdf" className="w-full rounded-lg border border-line" style={{ height: config.height }}>
         <p className="p-4 text-sm text-muted">
-          Your browser cannot show the PDF here.{" "}
+          {t.pdfNotShown}{" "}
           <a href={media.src} className="text-accent underline">
-            Download it
+            {t.downloadIt}
           </a>
           .
         </p>
       </object>
       <p className="mt-2 text-right text-xs">
         <a href={media.src} download className="text-muted hover:text-accent">
-          Download PDF ↓
+          {`${t.downloadPdf} ↓`}
         </a>
       </p>
     </WidgetFrame>

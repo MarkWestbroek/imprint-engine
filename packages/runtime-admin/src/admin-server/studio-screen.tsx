@@ -20,7 +20,7 @@ import { readOpts } from "../preview";
 import type { PageDraft } from "../studio/layout-ops";
 import type { AdminActions } from "./actions";
 import { draftKey, getDraft, setDraft } from "./drafts";
-import { withAccessOptions } from "../forms";
+import { withAccessOptions, withLocaleOptions } from "../forms";
 import { accessGroups } from "./members";
 
 /**
@@ -39,13 +39,14 @@ export async function PageStudioScreen({
   admin,
   actions,
   slug,
-  lang,
+  lang: givenLang,
   previewAs,
 }: {
   admin: AdminContext;
   actions: Pick<AdminActions, "studio">;
   slug?: string;
-  lang: string;
+  /** Absent = the site's base language. */
+  lang?: string;
   /** When editing a default-view template, the sample item to bind as subject. */
   previewAs?: string;
 }) {
@@ -59,6 +60,8 @@ export async function PageStudioScreen({
   }
   const session = (await admin.auth.editingSession())!; // the gate guarantees a session
   const store = admin.imprint.writableStore!;
+  const { locales, defaultLocale } = admin.imprint;
+  const lang = givenLang ?? defaultLocale;
   const key = draftKey(admin.imprint.id, session.name, slug, lang);
 
   // A page at slug "_view/<type>" is that content type's default view; while
@@ -98,8 +101,10 @@ export async function PageStudioScreen({
     store: admin.imprint.storeFor(who),
     writableStore: guardReads(store, who, admin.imprint.pdp),
     readOptions: { ...(await readOpts()), includeDrafts: true },
+    locale: admin.imprint.uiLocale,
     page: { slug: slug ?? String(draft.meta.slug ?? ""), title: String(draft.meta.title ?? "") },
   };
+  const pageLang = typeof draft.meta.lang === "string" ? draft.meta.lang : lang;
   const widgetSchemas = admin.forms.widgets();
   const widgetLabel = (type: string) => widgetSchemas.find((w) => w.name === type)?.label ?? type;
   const title = targetType ? `Default view: ${targetType}` : String(draft.meta.title ?? "") || "Untitled";
@@ -128,7 +133,7 @@ export async function PageStudioScreen({
       meta={draft.meta}
       body={draft.body}
       rows={draft.rows}
-      metaSchema={withAccessOptions(admin.forms.content("page"), await accessGroups(admin))}
+      metaSchema={withLocaleOptions(withAccessOptions(admin.forms.content("page"), await accessGroups(admin)), locales)}
       widgetSchemas={widgetSchemas}
       actions={actions.studio}
       editor={studio.editor}
@@ -136,6 +141,16 @@ export async function PageStudioScreen({
       {/* data-wide: the admin shell lifts its reading-width cap for the studio */}
       <div data-wide="">
       <StudioTopBar isNew={!slug} />
+      {!locales.includes(pageLang) && (
+        <p role="alert" className="mb-4 rounded-xl border border-line bg-surface px-4 py-2.5 text-sm">
+          <span className="font-semibold">Language:</span> this page is stored as <code>{pageLang}</code>, and this site
+          has {locales.length === 1 ? "only" : ""} <code>{locales.join(", ")}</code>.{" "}
+          {pageLang === "en"
+            ? "It is shown for now, as a page from before the site had its own language."
+            : "Visitors do not see it."}{" "}
+          Set <em>lang</em> to <code>{defaultLocale}</code> in the page settings and save.
+        </p>
+      )}
       {targetType && <PreviewAsPicker lang={lang} current={previewAs} samples={samples} />}
       <div className="flex items-start gap-4">
         <StudioSidebar />

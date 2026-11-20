@@ -1,0 +1,26 @@
+{
+  "slug": "about-the-method",
+  "title": "The method",
+  "description": "Ready-made phrases first, grammar later: how this Dutch course works.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "This course does not start with grammar, nor with sentences you will never use. It starts with ready-made phrases that are useful at once: in the shop, at the market, at the till.\n\n## How it works\n\n- **Useful first, correct later.** “Misschien dit?” with a screw in your hand is a successful sentence.\n- **The pattern first, the rule later.** A lesson has at most one new rule.\n- **Listen and repeat.** You can play every sentence at normal speed and slowly.\n- **Speak aloud.** In the “say it” exercises the browser listens and checks what you say.\n\n## A lesson step by step\n\n1. Listen to the dialogue and read the translation.\n2. Repeat the phrases aloud.\n3. Rebuild the dialogue in your own way.\n4. Do the exercises. Your result stays in your browser, and in your account if you have one.\n\n## Who is in the lessons\n\nThe course was first written for Polish speakers, so the people in the dialogues are Piotr and Ewa from Poland, with their Dutch neighbours and colleagues. The Dutch is the same for everyone.\n\n**Langzaam maar zeker** means: slowly but surely."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

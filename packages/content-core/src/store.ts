@@ -26,7 +26,7 @@ import type {
 export interface ReadOptions {
   /** Render the site as it was/will be valid at this moment (S5/S6 preview). */
   asOf?: Date;
-  /** Preferred language; stores fall back to "en" when missing (S9). */
+  /** Preferred language; absent = the site's base language, which is also the fallback (S9, lang.ts). */
   lang?: Locale;
   /** Include drafts (preview mode only). */
   includeDrafts?: boolean;

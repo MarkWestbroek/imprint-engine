@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Manrope } from "next/font/google";
-import { store } from "@/lib/content";
+import { imprint, store } from "@/lib/content";
 import "./globals.css";
 
 const display = Fraunces({
@@ -24,7 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl">
+    <html lang={imprint.defaultLocale}>
       <body className={`${display.variable} ${sans.variable}`}>{children}</body>
     </html>
   );

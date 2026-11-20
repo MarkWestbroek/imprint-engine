@@ -1,0 +1,21 @@
+{
+  "name": "main-nl",
+  "items": [
+    {
+      "label": "Lessen",
+      "url": "/nl/polski"
+    },
+    {
+      "label": "Grammatica",
+      "url": "/nl/polski/grammatica"
+    },
+    {
+      "label": "Woorden",
+      "url": "/nl/polski/woorden"
+    },
+    {
+      "label": "De methode",
+      "page": "over-de-methode"
+    }
+  ]
+}

@@ -19,6 +19,7 @@ import {
 } from "./schemas";
 import type { WidgetTypeRegistry } from "./widgets";
 import type { ContentTypeRegistry } from "./content-types";
+import { itemLang, LEGACY_LOCALE, pickByLang } from "./lang";
 import { coreContentTypes } from "./core-content-types";
 import {
   RelationsDoc,
@@ -34,8 +35,12 @@ import type {
 } from "./store";
 
 
-/** What every database backend takes: the site's widget registry (page layouts) and content-type registry (payloads). */
-export type StoreOptions = { widgets?: WidgetTypeRegistry; contentTypes?: ContentTypeRegistry };
+/**
+ * What every database backend takes: the site's widget registry (page
+ * layouts), its content-type registry (payloads) and its base language
+ * (absent = "en").
+ */
+export type StoreOptions = { widgets?: WidgetTypeRegistry; contentTypes?: ContentTypeRegistry; defaultLocale?: string };
 
 /** One `content_items` row, dialect-neutral (what every backend hands up). */
 export type ContentRow = {
@@ -57,7 +62,7 @@ export type NewContentRow = Omit<ContentRow, "id">;
 /**
  * Database-backed ContentStore (v1, bitemporal-light §B3) plus the write side
  * for the admin — the dialect-neutral part. Everything a site can observe
- * (language fallback to "en" (S9), drafts hidden unless asked (S5), asOf on
+ * (language fallback to the base language (S9), drafts hidden unless asked (S5), asOf on
  * both time axes (S6), validation, referential integrity, supersede-not-
  * overwrite) lives here, once. A concrete backend (MariaDB, Postgres, …) only
  * implements the six row operations below, so every database backend is
@@ -69,6 +74,11 @@ export abstract class DbContentStoreBase implements WritableContentStore {
   /** What this store validates writes with: the instance's registry, else the core's. */
   protected get contentTypes(): ContentTypeRegistry {
     return this.opts.contentTypes ?? coreContentTypes;
+  }
+
+  /** The site's base language: what a read or write without a language means (lang.ts). */
+  protected get defaultLocale(): string {
+    return this.opts.defaultLocale ?? LEGACY_LOCALE;
   }
 
   // ---------- dialect-specific row operations ----------
@@ -190,7 +200,7 @@ export abstract class DbContentStoreBase implements WritableContentStore {
     return (await this.selectCurrent(type)) as ContentRecord[];
   }
 
-  async getItem(type: ContentType, slug: string, lang = "en"): Promise<ContentRecord | null> {
+  async getItem(type: ContentType, slug: string, lang = itemLang(type, this.defaultLocale)): Promise<ContentRecord | null> {
     return (await this.selectCurrentOne(type, slug, lang)) as ContentRecord | null;
   }
 
@@ -202,7 +212,7 @@ export abstract class DbContentStoreBase implements WritableContentStore {
   ): Promise<void> {
     const parsed = this.validate(type, data);
     await this.checkReferences(type, parsed);
-    const lang = opts.lang ?? "en";
+    const lang = opts.lang ?? itemLang(type, this.defaultLocale);
     const now = new Date();
     await this.supersede(type, slug, lang, now, {
       type,
@@ -217,11 +227,11 @@ export abstract class DbContentStoreBase implements WritableContentStore {
     });
   }
 
-  async deleteItem(type: ContentType, slug: string, lang = "en"): Promise<void> {
+  async deleteItem(type: ContentType, slug: string, lang = itemLang(type, this.defaultLocale)): Promise<void> {
     await this.supersede(type, slug, lang, new Date(), null);
   }
 
-  async listVersions(type: ContentType, slug: string, lang = "en"): Promise<ContentRecord[]> {
+  async listVersions(type: ContentType, slug: string, lang = itemLang(type, this.defaultLocale)): Promise<ContentRecord[]> {
     return (await this.selectVersions(type, slug, lang)) as ContentRecord[];
   }
 
@@ -238,18 +248,9 @@ export abstract class DbContentStoreBase implements WritableContentStore {
     return this.selectValidAt(type, opts?.asOf ?? new Date());
   }
 
-  /** EN as base, requested language overlaid per slug (S9). */
-  private pickLang<T extends { slug: string; lang: string }>(
-    items: T[],
-    lang?: string
-  ): T[] {
-    const wanted = lang ?? "en";
-    const bySlug = new Map<string, T>();
-    for (const item of items.filter((i) => i.lang === "en")) bySlug.set(item.slug, item);
-    if (wanted !== "en") {
-      for (const item of items.filter((i) => i.lang === wanted)) bySlug.set(item.slug, item);
-    }
-    return [...bySlug.values()];
+  /** One item per slug: the wanted language, else the base language (S9, lang.ts). */
+  private pickLang<T extends { slug: string; lang: string }>(items: T[], lang?: string): T[] {
+    return pickByLang(items, lang, this.defaultLocale);
   }
 
   private parsePage(data: unknown): Page {

@@ -8,10 +8,16 @@ import { PageLayoutSchema } from "./widgets";
  *  - structured: product, release — schema-validated, no free HTML
  *  - free-form:  page, post — markdown/MDX body + validated frontmatter
  *
- * Locale handling (S9): every item carries a `lang`; lookups fall back to "en".
+ * Locale handling (S9): every item carries a `lang`, a two-letter language
+ * code. Which languages a site has is a setting (`locales` in its
+ * imprint.config.ts), not part of the schema; lookups fall back to the site's
+ * base language (lang.ts).
  */
 
-export const Locale = z.enum(["en", "nl"]);
+export const Locale = z
+  .string()
+  .regex(/^[a-z]{2}$/, "A language is two lowercase letters, like nl or pl")
+  .meta({ "x-imprint": { locale: true } });
 export type Locale = z.infer<typeof Locale>;
 
 /**

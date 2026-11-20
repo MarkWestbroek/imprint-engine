@@ -1,0 +1,21 @@
+{
+  "name": "main-en",
+  "items": [
+    {
+      "label": "Lessons",
+      "url": "/en/nederlands"
+    },
+    {
+      "label": "Grammar",
+      "url": "/en/nederlands/grammatica"
+    },
+    {
+      "label": "Words",
+      "url": "/en/nederlands/woorden"
+    },
+    {
+      "label": "The method",
+      "page": "about-the-method"
+    }
+  ]
+}

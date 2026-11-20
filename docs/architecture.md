@@ -965,7 +965,70 @@ wenselijk is voor de bitemporele route: `jsonb` i.p.v. tekst, en
 echt bitemporeel klein.
 
 Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
-(taal-fallback naar EN, S9) en `includeDrafts` (previews).
+(taal, S9) en `includeDrafts` (previews).
+
+**Basistaal per site** (W5/S9, [design/meertaligheid.md](design/meertaligheid.md)
+laag 1). Een site zet in `imprint.config.ts` haar talen (`locales`) en haar
+basistaal (`defaultLocale`; zonder: `en`). De composition root geeft de
+basistaal aan de store mee en biedt beide aan als `imprint.locales` en
+`imprint.defaultLocale`. Eén regel voor file-store, database-stores en admin,
+in `content-core/src/lang.ts`:
+
+```mermaid
+flowchart LR
+    C["imprint.config.ts<br/>locales, defaultLocale"] --> R["resolveImprint"]
+    R -- "defaultLocale" --> S["store<br/>(file, MariaDB, Postgres, memory)"]
+    R -- "locales, defaultLocale" --> A["admin en studio"]
+    S --> P["pickByLang<br/>gevraagd → basistaal → en"]
+    S --> W["itemLang(type)<br/>schrijven zonder taal"]
+    A --> F["withLocaleOptions<br/>lang als keuzelijst"]
+    A --> X["waarschuwing in de studio<br/>taal buiten locales"]
+```
+
+- **Lezen**: per slug de gevraagde taal, anders de basistaal, anders `en`. De
+  laatste stap vindt rijen van vóór de basistaal.
+- **Schrijven zonder taal**: de basistaal, voor de typen die de store per taal
+  leest (`LANGUAGE_TYPES`: pagina, product, component, board-spec). Andere
+  typen hebben geen eigen taal en houden het etiket `en`.
+- **`Locale`** is een taalcode van twee letters, geen vaste lijst; welke talen
+  een site heeft is een instelling.
+- **Omzetten** van een bestaande site: `relabelLanguage` (script
+  `npm run db:relabel-lang -- --to=nl`) legt elk `en`-item opnieuw vast in de
+  basistaal, met dezelfde geldigheid, en beëindigt de `en`-versie. Via de
+  store, dus met historie.
+- Een file zonder `lang` in de content-map is in de basistaal; de seed neemt
+  dat over met `--lang=nl`.
+
+**Vaste teksten in de taal van de site** (laag 2). Knoppen, lege-lijstteksten
+en datums staan niet meer in één taal in de code, maar in een catalogus per
+package: `src/messages.ts`, één object per taal met dezelfde sleutels. Geen
+i18n-bibliotheek; de helpers staan in `content-core/src/messages.ts`.
+
+```mermaid
+flowchart LR
+    C["imprint.config.ts<br/>uiLocale (standaard: defaultLocale)"] --> I["imprint.uiLocale"]
+    I --> W["WidgetContext.locale<br/>(site: widget-context.ts)"]
+    I --> S["SearchPage locale=…"]
+    I --> H["kop en voet van de site"]
+    W --> V["viewer: messagesFor(messages, ctx.locale)"]
+    V -- "teksten als props" --> E["client-eiland<br/>(carrousel, inhoudsopgave)"]
+    M1["widgets-standard/src/messages.ts<br/>en · nl · pl"] --> V
+    M2["runtime-admin/src/messages.ts<br/>en · nl · pl"] --> S
+    M3["sites/imprint/src/messages.ts<br/>en · nl"] --> H
+```
+
+- `Catalog<T>`: Engels is verplicht en de terugval; het type van de Engelse
+  teksten is het contract, dus een taal die een sleutel mist compileert niet.
+  Een test per package controleert bovendien dat geen tekst leeg is.
+- `messagesFor(catalogus, taal)` geeft het object; `formatDate(taal, datum,
+  stijl)` schrijft een datum via `Intl`. Een kale dag (`2026-11-20`) verschuift
+  niet door een tijdzone.
+- `uiLocale` staat los van `defaultLocale`: de eerste is de taal van de
+  knoppen, de tweede het etiket van de inhoud. Zonder `uiLocale` zijn ze
+  gelijk.
+- Een viewer leest de taal uit `ctx.locale`; een client-eiland krijgt zijn
+  teksten als props en importeert geen catalogus.
+- Een nieuwe taal is één object erbij in elke catalogus.
 
 Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
 README): één catch-all route handler die de `ContentStore` aanroept, met
@@ -1740,9 +1803,22 @@ Een vijfde site, `sites/inrichting`, is de **werkplek** op dit register
 - De site draait op Fundament: [deploy-fundament.md](deploy-fundament.md).
 
 Een zesde site, `sites/taal`, is de **taaltraining** (poort 3700; ontwerp in
-[design/taaltraining](design/taaltraining/README.md)): een Poolse site met het
-lespakket Nederlands. De site zelf is dun: chrome, de startpagina die
-doorstuurt, en één catch-all die eerst de plugin vraagt. Alles van de lessen
+[design/taaltraining](design/taaltraining/README.md)): het lespakket
+Nederlands, voor Poolstaligen (de standaard) en voor Engelstaligen. De site
+zelf is dun: chrome, een startpagina per ingang, en één catch-all die eerst
+de plugin vraagt. Een **ingang** (`src/lib/ingang.ts`, platte data voor server
+en client) koppelt een interfacetaal aan een startadres, een pagina en een
+menu uit de store, en aan het pakket dat die lezer leert: `pl` → `/`, `home`,
+`main` (Nederlands); `en` → `/en`, `home-en`, `main-en` (Nederlands); `nl` →
+`/nl`, `home-nl`, `main-nl` (Pools, met eigen naam in de kop en zonder
+taalkeuze). De header (client, `nav-links.tsx`) krijgt alle menu's mee en
+kiest op het adres (`ingangVoor`): lezer en pakket uit de eerste twee
+segmenten, alleen de lezer bij `/<ui>/account`, en voor een pagina zonder taal
+in het adres de ingang waarvan het menu ernaar linkt. Het tweede pakket,
+**Pools voor Nederlandstaligen**, is geen tweede site: lessen met `taal: pl`
+onder `lessen/pl/`, grammatica onder `grammatica/pl/`, dezelfde routes
+(`/nl/polski/…`). jezyk.imprint-engine.nl is een extra hostnaam op dezelfde
+container; Caddy herschrijft daar `/` naar `/nl`. Alles van de lessen
 zit in `@imprint/plugin-taal`.
 
 ```mermaid
@@ -1780,11 +1856,18 @@ flowchart LR
   via de `WidgetContext` en geven alleen platte props door. De clientdelen
   (`speak.tsx`, `oefeningen.tsx`, `voortgang.tsx`) lezen niets van de server.
   De vaste teksten komen per interfacetaal uit `i18n.ts` en gaan als prop mee.
+- **Meer lezers per les**: de dialoog, `situatie` en `patroon` hebben een
+  tekst per taal; `metVertaling(les, ui)` is waar als de dialoog die taal
+  heeft. De `vraag` en `opties` van een oefening staan in de `steuntaal` van
+  de les; voor een andere lezer staat hetzelfde onder `vertaald: { en: {
+  vraag?, opties? } }` (het schema eist evenveel opties). Zo blijven de
+  Nederlandse zinnen, en dus de opnamen, één keer bestaan.
 - **Welke oefeningen** (`oefeningenVoor`): is de interfacetaal de steuntaal
-  van de les, dan alle. Anders alleen `kies` en `orden`, want de rest vraagt
-  of antwoordt in de steuntaal.
+  van de les, dan alle, zoals geschreven. Anders komt `vertaald[ui]` in de
+  plaats: `typ` en `zeg` zonder vertaalde vraag en `luister` zonder vertaalde
+  opties vallen weg; `kies` en `orden` blijven altijd.
 - **Vergelijken** (`tekst.ts`, puur): `norm()` haalt hoofdletters, leestekens
-  en accenten weg; `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
+  en accenten weg (ook de Poolse *ł*, die geen accent is maar een eigen letter); `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
   kleine fouten van de spraakherkenning.
 - **Zeg**: `SpeechRecognition` van de browser, alleen in een veilige context.
   Of het kan, weet pas de browser; de component vraagt het in een effect en
@@ -1878,6 +1961,29 @@ flowchart LR
     niet wissen).
   - Het geslacht komt van de betekenis met de meeste senses, in Wiktionary's
     volgorde (de eerste is de gewone); de pagina toont alleen dat lidwoord.
+
+  `Woordenlijst` is een discriminated union op `taal`: de Nederlandse lijst
+  en de **Poolse** (`PoolsNaamwoord`: geslacht en zeven naamvallen in
+  enkelvoud en meervoud; `PoolsWerkwoord`: aspect, partner, zes vormen zonder
+  hulpwerkwoord en zes van de verleden tijd; allebei met een korte Engelse
+  betekenis). `zoek()` en de zoekpagina zijn gedeeld; de kaart in
+  `woordzoeker.tsx` kiest op `lijst.taal`. `zoekvorm()` vouwt ook *ł* naar
+  *l*, en de vormen per woord worden één keer per lijst genormaliseerd
+  (WeakMap), want de Poolse lijst heeft zo'n 45.000 vormen (≈610 KB,
+  gecomprimeerd ≈170 KB). `woorden-maken-pl.ts` maakt hem:
+  - Een woord is een lemma op zijn kopregel, niet op zijn senses: Wiktionary
+    merkt ook "female equivalent of pan" (*pani*, *sąsiadka*) als vorm.
+  - Een vorm telt niet als hij ook een functiewoord is of een vorm van een
+    bijvoeglijk naamwoord, voornaamwoord of telwoord (*dobra*, *tego*). Een
+    vorm van meer woorden (*mam*: mieć en mama) gaat naar het woord dat het
+    meest gebruikt wordt in de vormen die het alleen heeft.
+  - Elk zelfstandig naamwoord en werkwoord uit de Poolse lessen en uit de
+    vette voorbeelden van de grammatica komt erin, ongeacht de telling; en
+    bij een werkwoord zijn partner van het andere aspect, als die gebruikt
+    wordt.
+  - De tabel van *pani* staat in Wiktionary onder het voornaamwoord en wordt
+    daar opgehaald. Werkwoorden die alleen met *się* voorkomen staan met de
+    hand in `pl-aanvullingen.json`: de tags zeggen dat niet betrouwbaar.
   - Hulpwerkwoord: `aux`/`trans=unacc` uit Wiktionary, aangevuld met de lijst
     `hulp`. Een scheidbaar werkwoord op een basis met *zijn* krijgt *zijn*
     (*weglopen*).
@@ -1889,11 +1995,17 @@ flowchart LR
   zag elke import elke les vanaf fase 1 als gewijzigd.
 - **Lesbestanden bewaken** (`sites/taal/scripts/lessen-regels.ts`): het schema
   zegt wat een les mag zijn, `controleer()` wat een goed bestand is (pad en id
-  kloppen, elke regel in beide talen, aantallen, elk oefentype aanwezig, een
+  kloppen, elke regel in de taal van de les en voor elke lezer (`pl`, `en`),
+  Engels bij elke oefening die het nodig heeft, aantallen, elk oefentype aanwezig, een
   `orden`-zin met één volgorde). `npm run check:lessen` en de test van de site
   gebruiken dezelfde regels; fase 0 is ouder dan de schrijfwijzer en valt
-  alleen onder de basisregels. `controleerGrammatica()` doet hetzelfde voor
-  de grammaticabestanden (map = taal, titel/kort/tekst in `pl` en `nl`, geen
+  alleen onder de basisregels. Per pakket (`PAKKET` in `lessen-regels.ts`) staat voor welke lezers de
+  teksten er moeten zijn: Nederlands voor `pl`, `en` en `nl`, Pools alleen
+  voor `nl`, en daar geldt de schrijfwijzer vanaf fase 0.
+  `controleerGrammatica()` doet hetzelfde voor
+  de grammaticabestanden (map = taal, titel/kort/tekst voor elke lezer: `pl`,
+  `en` en `nl`; een `verschil` alleen voor de lezers van die taal plus `nl`;
+  geen
   vormen `{m|v}` in vet), `controleerLinks()` of elke verwijzing uit een les
   bestaat en over dezelfde taal gaat.
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { search, searchKinds, searchLooksAutomated, type ContentStore, type ContentTypeDefinition } from "@imprint/content-core";
+import { messagesFor, search, searchKinds, searchLooksAutomated, type ContentStore, type ContentTypeDefinition } from "@imprint/content-core";
+import { publicMessages } from "./messages";
 
 /**
  * The standard search page (content-core/search.ts): a form, a hint with
@@ -17,6 +18,7 @@ export async function SearchPage({
   action = "/search",
   limit = 100,
   log,
+  locale,
 }: {
   /** The site's active content types; those with `search` take part. */
   definitions: ContentTypeDefinition[];
@@ -26,7 +28,10 @@ export async function SearchPage({
   limit?: number;
   /** Where searches are counted (`imprint.users`); absent or null = not counted. */
   log?: { logSearch(query: string, hits: number, automated: boolean): Promise<void> } | null;
+  /** The language of the fixed texts (`imprint.uiLocale`); absent = English. */
+  locale?: string;
 }) {
+  const t = messagesFor(publicMessages, locale).search;
   const kinds = searchKinds(definitions);
   const result = q.trim() ? await search(definitions, store, q) : null;
   // Counting never breaks the page.
@@ -35,27 +40,27 @@ export async function SearchPage({
 
   return (
     <section>
-      <h1 className="text-3xl font-semibold tracking-tight">Zoeken</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">{t.title}</h1>
       <form action={action} role="search" className="mt-6 flex max-w-xl gap-2">
         <label htmlFor="q" className="sr-only">
-          Zoekterm
+          {t.term}
         </label>
         <input
           id="q"
           name="q"
           type="search"
           defaultValue={q}
-          placeholder="Waar ben je naar op zoek?"
+          placeholder={t.placeholder}
           autoFocus
           className="min-w-0 flex-1 rounded-md border border-line bg-background px-3 py-2"
         />
         <button type="submit" className="rounded-md bg-accent px-5 py-2 font-semibold text-background hover:bg-accent-strong">
-          Zoeken
+          {t.submit}
         </button>
       </form>
       {examples.length > 1 && (
         <p className="mt-3 text-sm text-muted">
-          Tip: zoek in één soort met een voorvoegsel, bijvoorbeeld{" "}
+          {t.tip}{" "}
           {examples.map((e, i) => (
             <span key={e.kind}>
               {i > 0 && ", "}
@@ -70,7 +75,7 @@ export async function SearchPage({
       )}
       {result && (
         <p className="mt-6 text-muted">
-          {result.hits.length === 0 ? "Geen resultaten" : result.hits.length === 1 ? "1 resultaat" : `${result.hits.length} resultaten`} voor “{q.trim()}”
+          {t.results(result.hits.length)} {t.forQuery} “{q.trim()}”
           {result.kind && ` (${kinds[result.kind]?.label ?? result.kind})`}
           {!result.kind && result.hits.length > 0 && (
             <>
@@ -96,7 +101,7 @@ export async function SearchPage({
         </ul>
       )}
       {result && result.hits.length > limit && (
-        <p className="mt-4 text-sm text-muted">De eerste {limit} worden getoond; maak je zoekterm preciezer.</p>
+        <p className="mt-4 text-sm text-muted">{t.firstShown(limit)}</p>
       )}
     </section>
   );

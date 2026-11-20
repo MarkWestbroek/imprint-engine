@@ -411,15 +411,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           rendert `/techniek` uit Postgres of `content/` met dezelfde
           renderer en acht gekozen standaardwidgets; tokencontract gevuld met
           het Imprint-palet.
-        - [ ] **Basistaal per site** — de store gebruikt Engels als basis
-          (`pickLang`), dus de Nederlandstalige Imprint-site moet haar
-          pagina's als `en` opslaan om ze zonder taalparameter te tonen. Een
-          `defaultLocale` uit de siteconfig als basis maakt dat recht. _(S9; M)_
-          Gezien 30-09: een in de studio als `nl` opgeslagen pagina
-          (`/canoniek-model`) geeft op de site 404, zonder enige waarschuwing
-          in de studio. Tot `defaultLocale` er is: in de studio waarschuwen
-          (of de taalkeuze verbergen) als de gekozen taal niet de basistaal is
-          die de site toont.
+        - [x] ~~**Basistaal per site**~~ — gebouwd 20-11-2026 (stap A van
+          [design/meertaligheid.md](design/meertaligheid.md)): `locales` en
+          `defaultLocale` in `imprint.config.ts`, de store leest en schrijft
+          in de basistaal, en de studio waarschuwt bij een pagina in een taal
+          die de site niet heeft.
         - [ ] **Viewers per widget importeerbaar** — `standardViewers` is één
           object, dus elke site bundelt alle twintig viewers en hun
           client-eilanden, ook als ze er acht kiest. Losse exports per widget
@@ -796,11 +792,40 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       basistaal per site, vaste teksten (catalogus nl/en/pl), beheeromgeving
       per gebruiker, meer talen naast elkaar:
       [design/meertaligheid.md](design/meertaligheid.md). Aanleiding: een
-      eentalig Poolse site. Wacht op Marks keuzes (§7 daar). _(should; L)_
-      - [ ] Stap A: `locales` + basistaal in lezen/schrijven, `<html lang>`,
-            waarschuwing in de studio. _(S)_
+      eentalig Poolse site. Keuzes besloten 20-11-2026 (§7 daar): eerst de
+      engine op de Imprint-site, dan inrichting en omnium, de taaltraining
+      als laatste; commonground blijft zoals het is. _(should; L)_
+      - [x] ~~Stap A: `locales` + basistaal in lezen/schrijven, `<html lang>`,
+            waarschuwing in de studio.~~ Gebouwd 20-11-2026, aangezet op de
+            Imprint-site.
+      - [ ] Stap A uitrollen op de Imprint-site: op de VPS eerst
+            `./deploy.sh relabel-lang imprint --to=nl`, dan bouwen. _(S)_
+      - [ ] Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
+            config, `<html lang>` uit de config, en `relabel-lang`. _(S)_
+      - [ ] De plugins schrijven hun items met een vast `"en"` en hun
+            schema's hebben `lang` met standaard `en`. Zolang hun typen geen
+            taal hebben is dat een etiket zonder betekenis; bij stap D per
+            type beslissen of het vertaalbaar wordt. _(M)_
+      - [ ] Het generieke formulier (`saveItem`) verhuist een item niet als je
+            de taal wijzigt: het oude blijft naast het nieuwe staan. De studio
+            doet dat wel. _(S)_
+      - [ ] `defaultLocale` staat ook nog in de siteconfig in de store (de
+            RSS-feed van MusicBrain leest het); de config is leidend. Het veld
+            daar weghalen of laten volgen. _(S)_
       - [ ] Stap B: catalogi in widgets-standard, plugins en site-chrome;
-            `formatDate`. _(M)_
+            `formatDate`. _(M)_ Eerste deel gebouwd 20-11-2026: de helpers,
+            `uiLocale`, de standaardwidgets, de zoekpagina en de kop en voet
+            van de Imprint-site. Open:
+            - [ ] De Poolse teksten laten nalezen (`widgets-standard` en
+                  `runtime-admin`, `src/messages.ts`). **S**
+            - [ ] De communityplugins (groepen, blog, evenementen, annotaties,
+                  wiki, begrippen): teksten en datums staan in het Nederlands
+                  in de code, ook formulieren en foutmeldingen. Catalogus per
+                  plugin zodra een site ze in een andere taal nodig heeft. **L**
+            - [ ] De plugins presentations en omnium. **S**
+            - [ ] Inlog- en accountpagina's voor leden. **M**
+            - [ ] "Loading map…" van de kaartwidget (staat in een
+                  `dynamic`-lader, krijgt geen props). **S**
       - [ ] Stap C: beheeromgeving vertaald, taal per gebruiker. _(L)_
       - [ ] Stap D: vertalingen per item, `/en/`-prefix, `hreflang`. _(M+M+S)_
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_
@@ -959,8 +984,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       woonwagenpagina's komen voorlopig uit de JSON in de repo (alleen die twee
       pagina's via de store bijwerken, geen volledige seed).
 - [ ] **Meertaligheid in de engine** (november 2026, voor IMPRINT-CORE) —
-      `Locale` in content-core kent alleen `en`/`nl` en `<html lang>` is
-      sitebreed. markwestbroek.nl lost het nu lokaal op (vertaling als
+      `Locale` is sinds 20-11 een vrije taalcode en een site heeft een
+      basistaal (stap A van [meertaligheid.md](design/meertaligheid.md)),
+      maar `<html lang>` is nog sitebreed. markwestbroek.nl lost het nu lokaal op (vertaling als
       subpagina `woonwagen/pl`, `lang` op de inhoud via `pageLang`, contactwidget
       met `taal`); in de engine horen: meer locales, `lang` per pagina,
       `hreflang`-koppeling tussen vertalingen en vertaalbare widgetteksten.
@@ -990,6 +1016,41 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] De 40 nieuwe lessen laten nalezen: het Nederlands door Mark, het
             Pools door iemand die Pools spreekt. Ze zijn geschreven door
             Claude en alleen op vorm gecontroleerd (`check:lessen`).
+      - [x] ~~Nederlands vanuit het Engels~~ — `/en`, alle 45 lessen en de
+            grammatica met Engels, eigen startpagina en menu (20-11).
+      - [ ] Het Engels laten nalezen (geschreven door Claude, alleen op vorm
+            gecontroleerd). Twijfelgevallen van de vertalers: *(polite)* ook
+            bij een antwoord met alleen *alstublieft*; *gemeente* = "the
+            town hall"; les 24 "What did you say?" voor *Wat zeg je?*; les 33
+            *zeg* "What is cheaper?" rekent "Welke fiets is goedkoper?" niet
+            goed; datums in les 38 zijn dag-maand (Amerikaanse lezer).
+      - [ ] Les 43: de brok *tot zo* staat niet in de dialoog (daar: *Tot
+            straks!*). **S**
+      - [x] ~~Pools voor Nederlandstaligen~~ — `/nl/polski`, ingang `/nl`:
+            45 lessen en 31 grammatica-onderwerpen (20-11).
+      - [ ] jezyk.imprint-engine.nl: A-record (bij de DNS-beheerder), het
+            Caddy-blok uit de snippet, en de Poolse opnamen maken in de
+            admin (Taal → Audio). **S**
+      - [ ] De Poolse cursus laten nalezen door iemand die Pools spreekt.
+            Geschreven en daarna proefgelezen door Claude; de vormen in de
+            tabellen zijn stuk voor stuk nagelopen, de natuurlijkheid van
+            de zinnen niet door een mens. Bekende vereenvoudigingen in de
+            grammatica: 2–4 bij mannen (*dwóch braci*), genitief meervoud
+            van zachte stammen, locatief op *-ech* (*we Włoszech*), *żaden*.
+            Twijfels over toon: *ciasto z serem* (liever *sernik*), *Tu nie
+            ma* zonder *ich*, *do czwartej* voor een kantoor.
+      - [x] ~~Pools: *Zoek een woord*~~ — geslacht en naamvallen, aspect met
+            partner en vormen, uit Wiktionary (20-11).
+      - [ ] Poolse woordenlijst: Nederlandse betekenis in plaats van de
+            Engelse van Wiktionary; bijvoeglijke naamwoorden erbij; de lijst
+            laten nalopen (staartje met namen en straattaal uit de
+            ondertitels; `sie` alleen met de hand). De pagina is ≈170 KB
+            gecomprimeerd: eventueel de lijst apart laden. **M**
+      - [ ] Pools: *zeg* testen met de Poolse spraakherkenning van de
+            browser (pl-PL), en of *orden* niet te vaak een tweede goede
+            volgorde heeft (Poolse woordvolgorde is vrij). **S**
+      - [ ] Afbeeldingen bij *Zoek een woord* voor de concrete woorden
+            (vrije pictogrammen, bijv. OpenMoji, CC BY-SA). **M**
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
             vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
             een vertaling in de les. **S**
@@ -1012,13 +1073,16 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] ~~Grammatica als naslagwerk, deel 1~~ — contenttype `grammatica`,
             `/<ui>/<pakket>/grammatica`, link vanuit de les, vet om te horen;
             de tegenwoordige tijd en de lidwoorden (15-11).
-      - [ ] Grammatica, deel 2: de rest van de set (zijn/hebben apart?,
-            perfectum, meervoud, verkleinwoord, voornaamwoorden, niet/geen,
-            vraagzinnen, woordvolgorde, bijzin, *er*; verschillen: geen
-            naamvallen, werkwoord op plaats 2 en achteraan, perfectum met
-            *hebben*/*zijn*, *u* en *je*), en per les de links. **M**
+      - [x] ~~Grammatica, deel 2~~ — 19 onderwerpen erbij (21 in totaal),
+            43 lessen gelinkt (16-11).
+      - [ ] Grammatica: links tussen onderwerpen (nu noemt een onderwerp een
+            ander alleen bij naam, cursief). **S**
       - [ ] De grammatica laten nalezen (Nederlands door Mark, Pools door
-            iemand die Pools spreekt).
+            iemand die Pools spreekt). Twijfelgevallen van de schrijvers:
+            Poolse termen *czas przeszły prosty/złożony*, „przejdźmy na ty”
+            voor *zeg maar je*, „Klucz leży na nim”, *w pracy* = *op het
+            werk*; Nederlands: *dus* met gewone volgorde (ook *dus ben ik*
+            kan), *er* + getal vereenvoudigd.
       - [x] ~~Woord opzoeken~~ — `/pl/nederlands/woorden`: lidwoord,
             meervoud, werkwoordsvormen met hebben/zijn; 2450 woorden tot
             ongeveer B1 (15-11).
@@ -1044,9 +1108,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             zelfbeoordeling te verschijnen).
       - [ ] Een formulier voor dialoog en oefeningen; nu zijn dat JSON-vakken
             in het lesformulier. **M**
-      - [ ] De site slaat haar inhoud op als `en`, want de basistaal `pl`
-            bestaat nog niet ([meertaligheid.md](design/meertaligheid.md),
-            stap A). Daarna ook `<html lang>` per interfacetaal.
+      - [ ] De site slaat haar inhoud op als `en`. De basistaal per site
+            bestaat sinds 20-11 ([meertaligheid.md](design/meertaligheid.md),
+            stap A), maar de taaltraining gaat als laatste over (§5 en §7 E
+            daar). Dan ook `<html lang>` per interfacetaal.
       - [ ] Eigen domeinen (langzaammaarzeker.nl, powolialedoprzodu.pl): per
             domein een standaardpakket. Nu kiest de siteconfig het pakket.
       - [ ] Voortgang per gebruiker in plaats van per browser; uitspraak met

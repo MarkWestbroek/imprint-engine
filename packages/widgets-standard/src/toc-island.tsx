@@ -19,7 +19,7 @@ function slug(text: string): string {
  * heading without an id one, and lists them as anchor links. On the server
  * it renders nothing, so the static HTML carries only the frame.
  */
-export function TocList({ depth }: { depth: number }) {
+export function TocList({ depth, emptyText = "No headings on this page yet." }: { depth: number; emptyText?: string }) {
   const [entries, setEntries] = useState<Entry[] | null>(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function TocList({ depth }: { depth: number }) {
   }, [depth]);
 
   if (!entries) return null;
-  if (entries.length === 0) return <p className="text-sm text-muted">No headings on this page yet.</p>;
+  if (entries.length === 0) return <p className="text-sm text-muted">{emptyText}</p>;
   return (
     <ol className="space-y-1 text-sm">
       {entries.map((e) => (

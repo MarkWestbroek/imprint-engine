@@ -18,6 +18,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // A Dutch site: its fixed texts are Dutch (design/meertaligheid.md layer 2). The content keeps its old label.
+  uiLocale: "nl",
   // The register (OMNIUM_REGISTER_URL, OMNIUM_REGISTER_TOKEN), read-only.
   plugins: [omniumPlugin()],
   contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],
