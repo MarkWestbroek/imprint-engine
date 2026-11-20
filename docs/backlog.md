@@ -1009,8 +1009,13 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             van zachte stammen, locatief op *-ech* (*we Włoszech*), *żaden*.
             Twijfels over toon: *ciasto z serem* (liever *sernik*), *Tu nie
             ma* zonder *ich*, *do czwartej* voor een kantoor.
-      - [ ] Pools: *Zoek een woord* (naamwoord met geslacht en naamvallen,
-            werkwoord met aspectpaar en vormen), uit Wiktionary. **L**
+      - [x] ~~Pools: *Zoek een woord*~~ — geslacht en naamvallen, aspect met
+            partner en vormen, uit Wiktionary (20-11).
+      - [ ] Poolse woordenlijst: Nederlandse betekenis in plaats van de
+            Engelse van Wiktionary; bijvoeglijke naamwoorden erbij; de lijst
+            laten nalopen (staartje met namen en straattaal uit de
+            ondertitels; `sie` alleen met de hand). De pagina is ≈170 KB
+            gecomprimeerd: eventueel de lijst apart laden. **M**
       - [ ] Pools: *zeg* testen met de Poolse spraakherkenning van de
             browser (pl-PL), en of *orden* niet te vaak een tweede goede
             volgorde heeft (Poolse woordvolgorde is vrij). **S**

@@ -17,8 +17,9 @@ export const TAAL = {
   ui: ["pl", "en", "nl"],
   standaardUi: "pl",
   pakket: "nl",
-  // "Check a word" (/pl/nederlands/woorden): the word list of the package, made by scripts/woorden-maken.ts.
-  woorden: async (taal: string) => (taal === "nl" ? (await import("./woorden/nl.json")).default : null),
+  // "Check a word" (/pl/nederlands/woorden, /nl/polski/woorden): the word list of the package, made by scripts/woorden-maken*.ts.
+  woorden: async (taal: string) =>
+    taal === "nl" ? (await import("./woorden/nl.json")).default : taal === "pl" ? (await import("./woorden/pl.json")).default : null,
 };
 
 export default defineImprint({

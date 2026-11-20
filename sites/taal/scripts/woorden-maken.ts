@@ -1,7 +1,7 @@
 import { createReadStream, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createInterface } from "node:readline";
-import { Woordenlijst, type Naamwoord, type Werkwoord } from "@imprint/plugin-taal/woorden";
+import { NederlandseWoordenlijst, type Naamwoord, type Werkwoord } from "@imprint/plugin-taal/woorden";
 
 /**
  * Make the word list for "check a word" (woorden/nl.json) from two open
@@ -237,7 +237,7 @@ async function main(): Promise<void> {
     return [`${v.w}: Wiktionary ${v.vt[0]} / ${v.vd}, regel ${r.vt} / ${r.vd}`];
   });
 
-  const lijst = Woordenlijst.parse({
+  const lijst = NederlandseWoordenlijst.parse({
     taal: "nl",
     bron: "Wiktionary (CC BY-SA 4.0, kaikki.org) · FrequencyWords / OpenSubtitles 2018 (CC BY-SA 4.0)",
     // The schema drops the working fields (zwaarte, zwak, telvormen, …).

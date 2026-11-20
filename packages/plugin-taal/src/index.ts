@@ -101,6 +101,21 @@ export { getLes, listLessen, metVertaling, oefeningenVoor } from "./lessen";
 export { taalPublicRoute, taalStaticPaths, type TaalRouteOptions } from "./public";
 export { GRAMMATICA_GROEPEN, GrammaticaSchema, LesSchema, Oefening, type Grammatica, type Les } from "./schemas";
 export { LesdialoogConfig, OefeningenConfig } from "./widget";
-export { lidwoord, Woordenlijst, zoek, zoekvorm, type Naamwoord, type Treffer, type Werkwoord } from "./woorden";
+export {
+  aanwijzend,
+  lidwoord,
+  NAAMVALLEN,
+  NederlandseWoordenlijst,
+  PoolseWoordenlijst,
+  Woordenlijst,
+  zoek,
+  zoekvorm,
+  type Naamwoord,
+  type PoolseTreffer,
+  type PoolsNaamwoord,
+  type PoolsWerkwoord,
+  type Treffer,
+  type Werkwoord,
+} from "./woorden";
 export { woordenlijst, type WoordenBron } from "./woorden-pagina";
 export { WOORDEN, woordenHref } from "./href";

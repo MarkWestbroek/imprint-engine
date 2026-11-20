@@ -57,6 +57,25 @@ export type Teksten = {
     vd: string;
     hulp: { hebben: string; zijn: string; beide: string };
     bron: string;
+    /** The Polish list: its own introduction, and what a Polish word has that a Dutch one has not. */
+    pools: {
+      intro: string;
+      voorbeeld: string;
+      geslacht: Record<"m" | "f" | "n" | "p" | "pv", string>;
+      naamval: string;
+      enkelvoud: string;
+      meervoud: string;
+      /** The seven cases, in the order of `NAAMVALLEN`. */
+      naamvallen: string[];
+      aspect: Record<"ndk" | "dk" | "beide", string>;
+      /** Before the partner of the other aspect, by the aspect of the verb shown. */
+      paar: Record<"ndk" | "dk" | "beide", string>;
+      tt: string;
+      /** The same forms of a perfective verb mean the future. */
+      toekomst: string;
+      vt: string;
+      betekenis: string;
+    };
   };
   speel: string;
   langzaam: string;
@@ -149,6 +168,21 @@ const nl: Teksten = {
       beide: "Met hebben, of met zijn als je zegt waarheen: Ik heb gelopen. Ik ben naar huis gelopen.",
     },
     bron: "Bron: {bron}",
+    pools: {
+      intro: "Typ een Pools zelfstandig naamwoord of werkwoord, in welke vorm ook: *sklepie* vindt *sklep*, *poszłam* vindt *pójść*. Poolse tekens hoeven niet: *l* telt als *ł*, *a* als *ą*. Bij een zelfstandig naamwoord zie je het geslacht en alle naamvallen, bij een werkwoord het aspect en de vormen. De lijst heeft zo'n {aantal} veelgebruikte woorden.",
+      voorbeeld: "bijv. sklep, domu, robić, poszłam",
+      geslacht: { m: "mannelijk", f: "vrouwelijk", n: "onzijdig", p: "alleen meervoud", pv: "alleen meervoud (personen)" },
+      naamval: "naamval",
+      enkelvoud: "enkelvoud",
+      meervoud: "meervoud",
+      naamvallen: ["nominatief", "genitief", "datief", "accusatief", "instrumentalis", "locatief", "vocatief"],
+      aspect: { ndk: "onvoltooid: bezig, of vaker", dk: "voltooid: één keer, af", beide: "onvoltooid en voltooid" },
+      paar: { ndk: "voltooid:", dk: "onvoltooid:", beide: "ook:" },
+      tt: "Tegenwoordige tijd",
+      toekomst: "Toekomende tijd",
+      vt: "Verleden tijd",
+      betekenis: "Engels:",
+    },
   },
   speel: "Speel af",
   langzaam: "Langzaam",
@@ -241,6 +275,21 @@ const pl: Teksten = {
       beide: "Z hebben, albo z zijn, gdy mówisz dokąd: Ik heb gelopen. Ik ben naar huis gelopen.",
     },
     bron: "Źródło: {bron}",
+    pools: {
+      intro: "Wpisz polski rzeczownik albo czasownik w dowolnej formie: *sklepie* znajdzie *sklep*, *poszłam* znajdzie *pójść*. Przy rzeczowniku zobaczysz rodzaj i wszystkie przypadki, przy czasowniku aspekt i formy. Lista ma około {aantal} często używanych słów.",
+      voorbeeld: "np. sklep, domu, robić, poszłam",
+      geslacht: { m: "rodzaj męski", f: "rodzaj żeński", n: "rodzaj nijaki", p: "tylko liczba mnoga", pv: "tylko liczba mnoga (osoby)" },
+      naamval: "przypadek",
+      enkelvoud: "liczba pojedyncza",
+      meervoud: "liczba mnoga",
+      naamvallen: ["mianownik", "dopełniacz", "celownik", "biernik", "narzędnik", "miejscownik", "wołacz"],
+      aspect: { ndk: "niedokonany", dk: "dokonany", beide: "niedokonany i dokonany" },
+      paar: { ndk: "dokonany:", dk: "niedokonany:", beide: "także:" },
+      tt: "Czas teraźniejszy",
+      toekomst: "Czas przyszły",
+      vt: "Czas przeszły",
+      betekenis: "Po angielsku:",
+    },
   },
   speel: "Odtwórz",
   langzaam: "Powoli",
@@ -333,6 +382,21 @@ const en: Teksten = {
       beide: "With hebben, or with zijn when you say where to: Ik heb gelopen. Ik ben naar huis gelopen.",
     },
     bron: "Source: {bron}",
+    pools: {
+      intro: "Type a Polish noun or verb in any form: *sklepie* finds *sklep*, *poszłam* finds *pójść*. You need no Polish letters: *l* counts as *ł*, *a* as *ą*. For a noun you see its gender and all its cases, for a verb its aspect and its forms. The list has about {aantal} common words.",
+      voorbeeld: "e.g. sklep, domu, robić, poszłam",
+      geslacht: { m: "masculine", f: "feminine", n: "neuter", p: "plural only", pv: "plural only (people)" },
+      naamval: "case",
+      enkelvoud: "singular",
+      meervoud: "plural",
+      naamvallen: ["nominative", "genitive", "dative", "accusative", "instrumental", "locative", "vocative"],
+      aspect: { ndk: "imperfective: ongoing, or repeated", dk: "perfective: once, completed", beide: "imperfective and perfective" },
+      paar: { ndk: "perfective:", dk: "imperfective:", beide: "also:" },
+      tt: "Present tense",
+      toekomst: "Future tense",
+      vt: "Past tense",
+      betekenis: "Meaning:",
+    },
   },
   speel: "Play",
   langzaam: "Slowly",

@@ -18,7 +18,7 @@ import { heeftVormen, lijktOp, norm, typGoed, uitspreekbaar, vormen, vormenKlopp
 import { kentVormen } from "../src/i18n";
 import { beste, isScore, leesVoortgang, samenvoegen, type Stand } from "../src/stand";
 import { azureTts, type Synthesize } from "../src/tts";
-import { lidwoord, zoek, zoekvorm, type Naamwoord, type Werkwoord } from "../src/woorden";
+import { lidwoord, zoek, zoekvorm, type Naamwoord, type Werkwoord, aanwijzend, PoolseWoordenlijst } from "../src/woorden";
 
 // One real lesson file; the site's own test parses all of them (sites/taal/test).
 const FILE = "01-dit-en-dat.md";
@@ -431,8 +431,34 @@ describe("check a word", () => {
   const lopen: Werkwoord = { w: "lopen", tt: ["loop", "loopt", "loopt", "lopen"], vt: ["liep", "liepen"], vd: "gelopen", hulp: "beide", sterk: true, r: 4 };
   const werken: Werkwoord = { w: "werken", tt: ["werk", "werkt", "werkt", "werken"], vt: ["werkte", "werkten"], vd: "gewerkt", hulp: "hebben", sterk: false, r: 2 };
   const opstaan: Werkwoord = { w: "opstaan", tt: ["sta op", "staat op", "staat op", "staan op"], vt: ["stond op", "stonden op"], vd: "opgestaan", hulp: "zijn", sterk: true, r: 7 };
-  const lijst = { naamwoorden: [huis, hulp, werk], werkwoorden: [lopen, werken, opstaan] };
+  const lijst = { taal: "nl" as const, bron: "test", naamwoorden: [huis, hulp, werk], werkwoorden: [lopen, werken, opstaan] };
   const woorden = (q: string) => zoek(lijst, q).map((t) => t.woord.w);
+
+  it("finds a Polish word by any of its forms, typed without Polish letters", () => {
+    const pools = PoolseWoordenlijst.parse({
+      taal: "pl",
+      bron: "test",
+      naamwoorden: [
+        { w: "sklep", g: "m", ev: ["sklep", "sklepu", "sklepowi", "sklep", "sklepem", "sklepie", "sklepie"], mv: ["sklepy", "sklepów", "sklepom", "sklepy", "sklepami", "sklepach", "sklepy"], b: "shop", r: 2 },
+        { w: "drzwi", g: "p", ev: [], mv: ["drzwi", "drzwi", "drzwiom", "drzwi", "drzwiami", "drzwiach", "drzwi"], r: 3 },
+      ],
+      werkwoorden: [
+        { w: "pójść", asp: "dk", paar: ["iść"], tt: ["pójdę", "pójdziesz", "pójdzie", "pójdziemy", "pójdziecie", "pójdą"], vt: ["poszedłem", "poszłam", "poszedł", "poszła", "poszli", "poszły"], r: 1 },
+        { w: "bać", sie: true, asp: "ndk", tt: ["boję", "boisz", "boi", "boimy", "boicie", "boją"], vt: ["bałem", "bałam", "bał", "bała", "bali", "bały"], r: 4 },
+      ],
+    });
+    const vind = (q: string) => zoek(pools, q).map((t) => t.woord.w);
+    assert.deepEqual(vind("sklepie"), ["sklep"], "a case finds the word");
+    assert.deepEqual(vind("poszlam"), ["pójść"], "ł typed as l");
+    assert.deepEqual(vind("pojde"), ["pójść"], "ó and ę typed plain");
+    assert.deepEqual(vind("drzwiami"), ["drzwi"]);
+    assert.deepEqual(vind("bala"), ["bać"]);
+    assert.deepEqual(vind("p"), ["pójść"], "the start of a word or of a form");
+    assert.deepEqual([aanwijzend("m"), aanwijzend("f"), aanwijzend("n"), aanwijzend("p"), aanwijzend("pv")], ["ten", "ta", "to", "te", "ci"]);
+    // Seven cases or none, and a noun has a singular or a plural.
+    assert.ok(!PoolseWoordenlijst.safeParse({ taal: "pl", bron: "x", naamwoorden: [{ w: "x", g: "m", ev: ["x"], mv: [], r: 0 }], werkwoorden: [] }).success);
+    assert.ok(!PoolseWoordenlijst.safeParse({ taal: "pl", bron: "x", naamwoorden: [{ w: "x", g: "m", ev: [], mv: [], r: 0 }], werkwoorden: [] }).success);
+  });
 
   it("gives the usual article first, from Wiktionary's order", () => {
     assert.deepEqual(lidwoord("n"), { hoofd: "het" });

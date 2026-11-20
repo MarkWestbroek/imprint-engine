@@ -12,8 +12,10 @@ import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
 import { TAAL } from "../imprint.config";
 import { controleerLinks, leesGrammatica, leesLessen } from "../scripts/lessen-regels";
-import { lidwoord, Woordenlijst } from "@imprint/plugin-taal";
+import { lidwoord, NederlandseWoordenlijst, PoolseWoordenlijst, zoek } from "@imprint/plugin-taal";
 import woordenJson from "../woorden/nl.json";
+import poolsJson from "../woorden/pl.json";
+import poolseAanvullingen from "../woorden/pl-aanvullingen.json";
 import aanvullingen from "../woorden/nl-aanvullingen.json";
 
 /** The lesson files of this site are valid, and render through the plugin's route and the two widgets. */
@@ -133,13 +135,13 @@ describe("taal: the addresses", () => {
     // Per language: the package, the lessons, the grammar overview with the topics that reader can read, the words.
     const topics = TAAL.ui.reduce((n, ui) => n + grammatica.filter((g) => leesbaar(g, ui)).length, 0);
     const nederlands = TAAL.ui.length * (1 + lessen.length + 1 + 1) + topics;
-    // The Polish package: its lessons in every language, its grammar for the Dutch reader only, no word list.
-    const polski = TAAL.ui.length * (1 + pools.length) + 1 + poolseGrammatica.length;
+    // The Polish package: its lessons and its word list in every language, its grammar for the Dutch reader only.
+    const polski = TAAL.ui.length * (1 + pools.length + 1) + 1 + poolseGrammatica.length;
     assert.equal(paths.length, nederlands + polski);
     assert.ok(paths.includes("nl/polski/co-to-jest"));
     assert.ok(paths.includes("nl/polski/grammatica/naamvallen-overzicht"));
     assert.ok(!paths.includes("pl/polski/grammatica"));
-    assert.ok(!paths.includes("nl/polski/woorden"));
+    assert.ok(paths.includes("nl/polski/woorden"));
     assert.ok(paths.includes("en/nederlands/dit-en-dat"));
     assert.ok(paths.includes("en/nederlands/grammatica/geen-do-geen-ing"));
     assert.ok(!paths.includes("pl/nederlands/grammatica/geen-do-geen-ing"), "a difference with English is not for the Polish reader");
@@ -156,7 +158,6 @@ describe("taal: the addresses", () => {
     assert.deepEqual(await visit("pl"), { redirect: "/pl/nederlands" });
     assert.equal(await visit("de/nederlands"), null);
     assert.equal(await visit("pl/italiano"), null, "no Italian lessons");
-    assert.equal(await visit("nl/polski/woorden"), null, "no word list for Polish");
     assert.equal(await visit("pl/nederlands/nope"), null);
     assert.equal(await visit("pl/nederlands/grammatica/nope"), null);
     assert.equal(await visit("pl/nederlands/dit-en-dat/meer"), null, "a lesson has nothing under it");
@@ -330,7 +331,7 @@ describe("taal: the grammar reference", () => {
 });
 
 describe("taal: check a word", () => {
-  const lijst = Woordenlijst.parse(woordenJson);
+  const lijst = NederlandseWoordenlijst.parse(woordenJson);
   const nw = (w: string) => lijst.naamwoorden.find((n) => n.w === w);
   const ww = (w: string) => lijst.werkwoorden.find((v) => v.w === w);
 
@@ -375,6 +376,69 @@ describe("taal: check a word", () => {
     const overzicht = await visit("pl/nederlands/grammatica");
     assert.ok(overzicht && "render" in overzicht);
     assert.match(await renderHtml(overzicht.render as ReactElement), /href="\/pl\/nederlands\/woorden"/);
+  });
+});
+
+describe("taal: check a Polish word", () => {
+  const lijst = PoolseWoordenlijst.parse(poolsJson);
+  const nw = (w: string) => lijst.naamwoorden.find((n) => n.w === w);
+  const ww = (w: string) => lijst.werkwoorden.find((v) => v.w === w);
+  const vind = (q: string) => zoek(lijst, q).map((t) => t.woord.w);
+
+  it("has a basic list: about 2500 nouns and 700 verbs, each once", () => {
+    assert.ok(lijst.naamwoorden.length >= 2500 && lijst.naamwoorden.length < 2700, `${lijst.naamwoorden.length} nouns`);
+    assert.ok(lijst.werkwoorden.length >= 500 && lijst.werkwoorden.length < 800, `${lijst.werkwoorden.length} verbs`);
+    assert.equal(new Set(lijst.naamwoorden.map((n) => n.w)).size, lijst.naamwoorden.length);
+    assert.equal(new Set(lijst.werkwoorden.map((v) => v.w)).size, lijst.werkwoorden.length);
+  });
+
+  it("knows the basics right", () => {
+    assert.deepEqual(nw("sklep")!.ev, ["sklep", "sklepu", "sklepowi", "sklep", "sklepem", "sklepie", "sklepie"]);
+    assert.deepEqual([nw("torba")!.g, nw("torba")!.ev[3], nw("torba")!.ev[4]], ["f", "torbę", "torbą"]);
+    assert.deepEqual([nw("brat")!.ev[3], nw("brat")!.mv[0]], ["brata", "bracia"], "a man: accusative like the genitive");
+    assert.deepEqual([nw("drzwi")!.g, nw("drzwi")!.ev.length], ["p", 0], "plural only");
+    assert.equal(nw("pani")!.ev[3], "panią");
+    assert.deepEqual(ww("być")!.tt, ["jestem", "jesteś", "jest", "jesteśmy", "jesteście", "są"]);
+    assert.deepEqual(ww("iść")!.vt.slice(0, 4), ["szedłem", "szłam", "szedł", "szła"]);
+    assert.deepEqual([ww("robić")!.asp, ww("robić")!.paar, ww("zrobić")!.asp, ww("zrobić")!.paar], ["ndk", ["zrobić"], "dk", ["robić"]]);
+    assert.deepEqual([ww("bać")!.sie, ww("bać")!.tt[0]], [true, "boję"]);
+    assert.equal(ww("móc")!.vt[2], "mógł");
+  });
+
+  it("finds a word by any form, with or without Polish letters", () => {
+    assert.equal(vind("sklepie")[0], "sklep");
+    assert.equal(vind("poszlam")[0], "pójść");
+    assert.equal(vind("bylam")[0], "być");
+    assert.equal(vind("drzwiami")[0], "drzwi");
+    assert.equal(vind("kupilem")[0], "kupić");
+  });
+
+  it("links every partner to a verb in the list, and has the words of the lessons", () => {
+    const werkwoorden = new Set(lijst.werkwoorden.map((v) => v.w));
+    for (const v of lijst.werkwoorden) for (const p of v.paar) assert.ok(werkwoorden.has(p), `${v.w} → ${p}`);
+    for (const w of ["chleb", "klucz", "jabłko", "bankomat", "peron", "piekarnia"]) assert.ok(nw(w), w);
+    for (const w of ["mieszkać", "pracować", "kupić", "chcieć", "jechać"]) assert.ok(ww(w), w);
+  });
+
+  it("keeps out what the corrections leave out, and keeps what they keep", () => {
+    const alle = new Set([...lijst.naamwoorden.map((n) => n.w), ...lijst.werkwoorden.map((v) => v.w)]);
+    for (const w of poolseAanvullingen.weg) assert.ok(!alle.has(w), w);
+    for (const w of poolseAanvullingen.houd) assert.ok(alle.has(w), w);
+    // Counted for another word with the same form: the particle nie, the pronoun to, the preposition bez.
+    for (const w of ["nie", "to", "bez", "jak", "miał"]) assert.ok(!nw(w), `noun ${w}`);
+  });
+
+  it("shows the page in Dutch, with a link from the grammar", async () => {
+    const hit = await visit("nl/polski/woorden");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Zoek een woord/);
+    assert.match(html, /Typ een Pools zelfstandig naamwoord/);
+    assert.match(html, /placeholder="bijv\. sklep/);
+    assert.match(html, /Wiktionary \(CC BY-SA 4\.0/);
+    const overzicht = await visit("nl/polski/grammatica");
+    assert.ok(overzicht && "render" in overzicht);
+    assert.match(await renderHtml(overzicht.render as ReactElement), /href="\/nl\/polski\/woorden"/);
   });
 });
 
