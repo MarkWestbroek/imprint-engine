@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Studio: het kader van de site krijgt de taal van de pagina mee**
+  (`StudioSlot.chrome` met `locale`). Een site met meer talen kan zo bij een
+  Engelse pagina het Engelse menu tonen; gevonden bij de test van de
+  vertaalfuncties op paratmos.
 - **Snellere CI en `npm run verify`.** CI controleert alleen wat er veranderd
   is, en elke geraakte site in een eigen job naast de andere (typecheck,
   lint, tests, build, met de Next-cache van de vorige run). De engine-packages
