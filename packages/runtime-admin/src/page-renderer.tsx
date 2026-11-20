@@ -38,6 +38,12 @@ export type WidgetContext = {
   readOptions: ReadOptions;
   /** The page being rendered (set by the renderer/studio); breadcrumb-like widgets read it. */
   page?: { slug: string; title: string };
+  /**
+   * The language of the fixed texts a viewer shows ("No photos yet", dates):
+   * the site's `uiLocale`, or per request where a site has more languages.
+   * Absent = English. Viewers pick their texts with `messagesFor`.
+   */
+  locale?: string;
 };
 
 /** What a widget viewer receives. */

@@ -17,6 +17,8 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // A Dutch site: its fixed texts are Dutch (design/meertaligheid.md layer 2). The content keeps its old label.
+  uiLocale: "nl",
   // Slide decks (Content → Presentations), shown with the widget `presentation`.
   plugins: [presentationsPlugin()],
   // An information site: pages and their chrome, nothing more.

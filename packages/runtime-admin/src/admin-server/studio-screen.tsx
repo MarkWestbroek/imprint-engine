@@ -101,6 +101,7 @@ export async function PageStudioScreen({
     store: admin.imprint.storeFor(who),
     writableStore: guardReads(store, who, admin.imprint.pdp),
     readOptions: { ...(await readOpts()), includeDrafts: true },
+    locale: admin.imprint.uiLocale,
     page: { slug: slug ?? String(draft.meta.slug ?? ""), title: String(draft.meta.title ?? "") },
   };
   const pageLang = typeof draft.meta.lang === "string" ? draft.meta.lang : lang;

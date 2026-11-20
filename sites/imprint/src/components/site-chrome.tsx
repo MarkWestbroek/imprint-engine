@@ -1,31 +1,37 @@
 import Link from "next/link";
 import { ArrowUpRight, Menu } from "lucide-react";
+import { messagesFor } from "@imprint/content-core";
 import { BrandMark } from "@/components/brand-mark";
+import { imprint } from "@/lib/content";
+import { siteMessages } from "@/messages";
 
-const navigation = [
-  { href: "/mogelijkheden", label: "Mogelijkheden" },
-  { href: "/praktijk", label: "In de praktijk" },
-  { href: "/merk", label: "Merkvoorstellen" },
-  { href: "/voor-opdrachtgevers", label: "Website laten bouwen" },
-];
+/** The fixed texts in the site's language; a page in another language passes its own. */
+const texts = (locale: string = imprint.uiLocale) => messagesFor(siteMessages, locale);
 
-export function SiteHeader() {
+export function SiteHeader({ locale }: { locale?: string } = {}) {
+  const t = texts(locale);
+  const navigation = [
+    { href: "/mogelijkheden", label: t.nav.features },
+    { href: "/praktijk", label: t.nav.practice },
+    { href: "/merk", label: t.nav.brand },
+    { href: "/voor-opdrachtgevers", label: t.nav.clients },
+  ];
   return (
     <header className="site-header">
-      <Link className="brand" href="/" aria-label="Imprint, naar home">
+      <Link className="brand" href="/" aria-label={t.homeLabel}>
         <BrandMark className="brand-mark" />
         <span>Imprint</span>
       </Link>
-      <nav aria-label="Hoofdnavigatie">
+      <nav aria-label={t.mainNavigation}>
         {navigation.map((item) => (
           <Link href={item.href} key={item.href}>{item.label}</Link>
         ))}
       </nav>
       <a className="header-cta" href="https://github.com/MarkWestbroek/imprint-engine">
-        Bekijk de code <ArrowUpRight size={16} />
+        {t.viewCode} <ArrowUpRight size={16} />
       </a>
       <details className="mobile-menu">
-        <summary aria-label="Menu openen"><Menu size={22} /></summary>
+        <summary aria-label={t.openMenu}><Menu size={22} /></summary>
         <div>
           {navigation.map((item) => (
             <Link href={item.href} key={item.href}>{item.label}</Link>
@@ -36,14 +42,15 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ locale }: { locale?: string } = {}) {
+  const t = texts(locale);
   return (
     <footer>
       <Link className="brand" href="/">
         <BrandMark className="brand-mark" />
         <span>Imprint</span>
       </Link>
-      <p>Ontwikkeld vanuit een echte productsite, niet vanuit een leeg template.</p>
+      <p>{t.footerLine}</p>
       <a href="https://github.com/MarkWestbroek/imprint-engine">
         GitHub <ArrowUpRight size={14} />
       </a>
