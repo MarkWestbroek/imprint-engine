@@ -964,6 +964,24 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       taak aanmaken op Plesk + af en toe een backup van de server halen.
 - [x] ~~**markwestbroek.nl live zetten**~~ — live sinds 15 november 2026
       (VPS, poort 3800; contactformulier getest via `noreply@markwestbroek.nl`).
+- [ ] **paratmos.nl afmaken en live zetten** — `sites/paratmos` staat (v1:
+      pagina's, blog, kennisbank, begrippen; lokaal op poort 3900). Nog te
+      doen: Mark loopt de conceptteksten na (cases KVK en Common Ground,
+      diensten, de eerste blogpost); bedrijfsgegevens (KvK, btw) en een
+      privacyverklaring; de kernpagina over het bitemporele axioma in de
+      kennisbank. De VPS-kant staat klaar in de repo (service, Caddy-blok met
+      doorverwijzingen van de oude WordPress-adressen, runbook "paratmos.nl"
+      in deploy-vps.md): Mark kloont WordPress naar `oud.paratmos.nl`, dan
+      uitrollen, A-records omzetten en `noindex` eraf. De Engelse pagina's wachten
+      op meertaligheid in de engine.
+- [ ] **Vindbaarheid voor blog en kennisbank** — RSS-feed voor
+      `plugin-blog`-posts (nu alleen MusicBrain, uit pagina's), Open
+      Graph-gegevens per post en wikipagina (titel, samenvatting, beeld) zodat
+      een gedeelde link op LinkedIn een voorvertoning krijgt, en de
+      sitemap. Nodig vóór paratmos.nl posts gaat delen. _(W13; M)_
+- [ ] **Posts doorzetten naar LinkedIn** — eerst handmatig delen met een
+      goede voorvertoning (zie hierboven); automatisch plaatsen vraagt een
+      LinkedIn-app met OAuth en loont pas bij regelmatig publiceren. _(L)_
 - [ ] **markwestbroek.nl afmaken** — `noindex` eraf als Mark de teksten heeft
       nagelopen ("Utrecht", moduleteksten, Omnium-link); later modules
       "Te koop", Antonio en muziek (SoundCloud-account onbereikbaar). De

@@ -1,0 +1,84 @@
+{
+  "slug": "ervaring/common-ground",
+  "title": "VNG: Common Ground",
+  "description": "Lopend werk voor VNG aan Common Ground: het bitemporele register, de expertgroep van het Gemeentelijk Gegevensmodel, het NL ODRL-profiel voor federatieve toegangsverlening en historie in API's.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "breadcrumb",
+                "config": {}
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Common Ground is de beweging waarmee gemeenten hun informatievoorziening opnieuw inrichten: gegevens bij de bron, gescheiden van processen en applicaties. Voor VNG werk ik daar aan de kant van de gegevens. Dit is lopend werk in de openbare sfeer.\n\n## Het bitemporele register\n\nWat bij de KVK een ontwerp voor één register was, werk ik hier uit als principe: elk gegeven heeft een materiële tijdlijn (wanneer gold het in de werkelijkheid) en een formele (wanneer is het geregistreerd). Een register dat beide vanaf het begin goed bijhoudt, kan altijd beantwoorden wat er gold én wat er op een bepaald moment bekend was, en kan corrigeren zonder de geschiedenis te herschrijven.\n\nDe uitwerking daarvan komt in de [kennisbank](/kennisbank) te staan."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Waar ik aan bijdraag",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Gemeentelijk Gegevensmodel",
+                      "markdown": "Lid van de expertgroep van het GGM, het gegevensmodel voor het gemeentelijke domein."
+                    },
+                    {
+                      "title": "Federatieve toegangsverlening",
+                      "markdown": "Lid van de schrijversgroep van het NL ODRL-profiel binnen FTV: toegangsregels vastleggen op een manier die organisaties van elkaar kunnen lezen."
+                    },
+                    {
+                      "title": "Historie in API's",
+                      "markdown": "Lid van de groep binnen de NL API-strategie die uitwerkt hoe API's met historie omgaan. Dat sluit direct aan op het bitemporele register."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## Van principe naar werkende software\n\nParallel aan dit werk heb ik [Omnium](https://omnium.imprint-engine.nl) gebouwd, de modelwerkbank die uit één canoniek model een register met volledige historie afleidt. Daarmee maak ik proofs of concept voor het inrichten van Common Ground-componenten, onder meer op Fundament, de overheidscloud in wording.\n\nZo komt de lijn rond: een praktijkprobleem bij een basisregister, een principe dat het oplost, en software die laat zien dat het werkt.\n\n[De eerdere stap: het handelsregister](/ervaring/kvk) · [Hoe ik werk](/modelgedreven-werken)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

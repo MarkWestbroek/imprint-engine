@@ -1,0 +1,10 @@
+{
+  "slug": "modelgedreven-werken",
+  "access": "public",
+  "title": "Modelgedreven werken",
+  "summary": "Werken met het model als bron: interfaces, schema's, requirements en documentatie worden eruit afgeleid in plaats van ernaast gemaakt.",
+  "body": "Werken met het model als bron: interfaces, schema's, requirements en documentatie worden eruit afgeleid in plaats van ernaast gemaakt. In de vakliteratuur: model driven architecture (MDA).\n\nMeer: [modelgedreven werken](/modelgedreven-werken).",
+  "tags": [
+    "modelleren"
+  ]
+}

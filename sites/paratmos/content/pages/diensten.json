@@ -1,0 +1,109 @@
+{
+  "slug": "diensten",
+  "title": "Diensten",
+  "description": "De diensten van Paratmos: een organisatiebreed logisch gegevensmodel, analyse en requirements, training en coaching, en tooling (Sparx Enterprise Architect, Bizzdesign, Omnium).",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Vier diensten, die samen één keten vormen: van het model tot wat ermee gebouwd wordt. U kunt ze los afnemen; ze werken het best in samenhang. Hoe ik daarbij te werk ga, staat bij [modelgedreven werken](/modelgedreven-werken)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Voor wie.** Organisaties waar dezelfde gegevens in meerdere systemen en afdelingen leven, en waar niemand meer het geheel overziet. Vaak bij een vernieuwingsprogramma, een migratie of het uitfaseren van legacy.\n\n**Wat ik doe.** Ik stel een logisch gegevensmodel (LGM) op dat in de breedte en de diepte de gegevens, hun betekenis en hun samenhang weergeeft, zoals de hele organisatie ze gebruikt. In UML, aansluitend op uw domeinindeling en uw terminologie, bijvoorbeeld volgens MIM.\n\n**Wat het oplevert.** Eén model waar architecten, analisten en ontwikkelaars naar verwijzen. Een basis voor service-interfaces en databaseschema's. En het inzicht welke gegevens dubbel, tegenstrijdig of van niemand zijn.\n\n**Uit de praktijk.** Voor het CAK een organisatiebreed model in vijf maanden, inclusief overdracht. Voor RVO het programmabrede model voor het Gemeenschappelijk Landbouwbeleid. Voor de KVK [het model van het handelsregister](/ervaring/kvk).",
+                  "title": "1. Logisch gegevensmodel en data-architectuur"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Voor wie.** Programma's en teams die moeten bouwen op basis van wetgeving, beleid of een stapel wensen, en die daar grip op willen houden.\n\n**Wat ik doe.** Impactanalyses en requirementsanalyses, use case-modellen (Use Cases 2.0), procesmodellen in BPMN, en het vertalen van features naar backlog-items binnen scrum of SAFe. Ik maak mij een domein snel eigen en praat even makkelijk met de business als met architecten, ontwikkelaars en testers.\n\n**Wat het oplevert.** Requirements die herleidbaar zijn naar hun bron en aansluiten op het gegevensmodel, en een analyseniveau in het team dat ook na mijn vertrek overeind blijft.",
+                  "title": "2. Analyse en requirements"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Trainingen.** Ik geef certificeringstrainingen in requirements management (IREB Foundation), UML, SysML, BPM en BPMN en OCEB, en toolingtraining voor Sparx Enterprise Architect. Sinds 2020 als docent bij [CAI](https://cai-advies.nl), en ook rechtstreeks vanuit Paratmos. Bij u op locatie of in een open training.\n\n**Voor wie.** Junior, medior en senior (business)analisten, functioneel ontwerpers, data-architecten en datamodelleurs.\n\n**Coaching.** Een training beklijft als er daarna mee gewerkt wordt. Daarom plannen we vaak een terugkomperiode, of ik begeleid een groep analisten en architecten langere tijd op methodisch vlak, zoals bij RVO in een programma van tien tot twintig mensen.",
+                  "title": "3. Training en coaching"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "**Uw modelleeromgeving.** Mijn voorkeur gaat uit naar Sparx Enterprise Architect; ik werk ook met Bizzdesign Enterprise Studio. Ik help bij het inrichten van de repository (processen, gegevens, functionaliteit), bij het uitbreiden van de tool en bij het scripten van terugkerend werk.\n\n**Omnium, de modelwerkbank.** [Omnium](https://omnium.imprint-engine.nl) is mijn eigen instrument: uit één canoniek model leidt het een werkend register af, met volledige historie. Het vervangt uw modelleertool niet; ik zet het in om in dagen in plaats van maanden te laten zien wat een model in de praktijk oplevert, bijvoorbeeld in een proof of concept.",
+                  "title": "4. Tooling"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Een vraag die hier niet tussen staat?",
+                  "markdown": "De meeste opdrachten beginnen met een probleem, niet met een dienst. Leg het voor.",
+                  "tone": "accent",
+                  "buttonLabel": "Neem contact op",
+                  "buttonUrl": "/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

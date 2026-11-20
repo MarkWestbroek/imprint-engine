@@ -12,7 +12,7 @@ set -euo pipefail
 
 LOGS=/var/log/caddy
 OUT=/srv/imprint-stats
-SITES="${*:-musicbrain imprint commonground omnium taal markwestbroek}"
+SITES="${*:-musicbrain imprint commonground omnium taal markwestbroek paratmos}"
 
 command -v goaccess >/dev/null || { echo "goaccess ontbreekt (sudo apt install goaccess)" >&2; exit 1; }
 

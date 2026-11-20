@@ -1,0 +1,38 @@
+{
+  "name": "paratmos",
+  "version": "0.15.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3900",
+    "build": "next build",
+    "start": "next start --port 3900",
+    "put:content": "tsx --tsconfig tsconfig.test.json scripts/put-content.ts",
+    "lint": "eslint",
+    "typecheck": "next typegen && tsc --noEmit",
+    "test": "tsx --tsconfig tsconfig.test.json --test \"test/**/*.test.ts\" \"test/**/*.test.tsx\""
+  },
+  "dependencies": {
+    "@imprint/content-core": "*",
+    "@imprint/extension-api": "*",
+    "@imprint/plugin-blog": "*",
+    "@imprint/plugin-glossary": "*",
+    "@imprint/plugin-wiki": "*",
+    "@imprint/runtime-admin": "*",
+    "@imprint/widgets-standard": "*",
+    "lucide-react": "^0.468.0",
+    "next": "^16.3.7",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "^16.3.7",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

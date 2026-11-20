@@ -6,6 +6,18 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Nieuwe site: paratmos.nl** (`sites/paratmos`, poort 3900): de zakelijke
+  site van Paratmos, als opvolger van de WordPress-site. Pagina's en menu uit
+  de store; blog (`/blog`), kennisbank (wiki, `/kennisbank/…`) en
+  begrippenlijst (`/terms/…`, overzicht op `/begrippen`) als plugins; zoeken
+  op `/search`. In de huisstijl van Paratmos (merkrichtlijnen juni 2026: inkt
+  en blauw, Montserrat, het beeldmerk "Doorbraak"). Eigen widgets: `doorbraak`
+  (de opening van de voorpagina: het beeld uit het logo, groot), `drie-eenheid`
+  (gegevens, processen en regels als driehoek, met eromheen wat die basis
+  omgeeft), `afleiding` (één model als klasse, met een lijn naar wat eruit
+  volgt) en het contactformulier. Conceptteksten in
+  `content/`; de plugin-inhoud gaat met `npm run put:content
+  --workspace=paratmos` de database in. Nog niet live en op `noindex`.
 - **Basistaal Nederlands op omnium en inrichting** (stap A van
   design/meertaligheid.md, na de Imprint-site): `defaultLocale: "nl"` in de
   config, `<html lang>` uit de config, en de scripts van de Omnium-site

@@ -893,6 +893,45 @@ is de Poolse versie van `woonwagen`. Zo'n pagina wordt als Pools (of `en`,
 De woonwagen staat als gewone pagina onder `/woonwagen`; het adres
 woonwagen.markwestbroek.nl stuurt daarheen door.
 
+## paratmos.nl: pagina's, blog, kennisbank en begrippen
+
+De site van Paratmos bestaat uit vier soorten inhoud, elk met een eigen plek
+in de admin:
+
+- **Pagina's** (Werkwijze, Diensten, Ervaring, de cases, Over, Contact):
+  onder *Pages*, te bewerken in de studio. Een case is een pagina onder
+  `ervaring/`, bijvoorbeeld `ervaring/kvk`.
+- **Blog**: onder *Posts*. Een post heeft een titel, een samenvatting (voor
+  de lijsten), de tekst, een datum en tags. Hij verschijnt op `/blog` en in
+  het blok "Van het blog" op de voorpagina. Er is geen conceptstatus: wat je
+  opslaat, staat er.
+- **Kennisbank**: onder *Wikis*. Mappen zijn de onderwerpen (Tijd in
+  gegevens, Gegevensmodelleren, …), pagina's de artikelen; slepen verandert
+  de volgorde. Het adres is `/kennisbank/<map>/<pagina>`. Verwijs vanuit een
+  blogpost naar het artikel in de kennisbank voor de verdieping.
+- **Begrippen**: onder *Terms*. Een korte omschrijving voor het kaartje en
+  eventueel een langere uitleg; het overzicht staat op `/begrippen`.
+
+De voorpagina bestaat vooral uit beeld, met drie eigen widgets:
+
+- **Doorbraak (opening)**: het beeld uit het logo, groot op een donker vlak:
+  de boog van de atmosfeer en de koers die erdoorheen breekt. Je vult de kop,
+  één regel tekst en een knop in, en eventueel drie korte labels langs de
+  koers (aan de voet, op de boog, bij het baken).
+- **Drie-eenheid**: gegevens, processen en regels als driehoek. Per aspect een
+  titel, een regel tekst en de notatie (UML, BPMN); langs elke zijde een woord
+  voor het verband; en een lijst *omgeving* voor de ring eromheen (diensten,
+  visie, doelen, externe regels, de opgave). De eerste uit die lijst staat
+  gecentreerd bovenaan: zet daar de langste.
+- **Afleiding**: links één model, getekend als een klasse met attributen, en
+  rechts wat eruit wordt afgeleid. Je vult de naam van het model, de
+  attributen en per afgeleide een label, een titel en een regel tekst in; met
+  een URL wordt een afgeleide een link.
+
+Bezoekers zoeken over alles heen op `/search` (ook bereikbaar als `/zoeken`).
+Zolang de teksten concepten zijn, vraagt de site zoekmachines om haar niet op
+te nemen.
+
 ## De inrichting (Omnium-register)
 
 Een site met de plugin **Omnium** laat de inrichting van e-diensten zien uit

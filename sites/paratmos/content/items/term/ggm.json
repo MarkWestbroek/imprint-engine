@@ -1,0 +1,11 @@
+{
+  "slug": "ggm",
+  "access": "public",
+  "title": "GGM",
+  "summary": "Gemeentelijk Gegevensmodel: een logisch gegevensmodel voor het gemeentelijke domein.",
+  "body": "Gemeentelijk Gegevensmodel: een logisch gegevensmodel voor het gemeentelijke domein.",
+  "tags": [
+    "standaard",
+    "afkorting"
+  ]
+}
