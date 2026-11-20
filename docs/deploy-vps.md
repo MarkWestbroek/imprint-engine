@@ -498,7 +498,7 @@ PARATMOS_SESSION_SECRET=%s
    set -a; . ./.env; set +a
    docker compose exec -T postgres psql -U postgres -c "CREATE ROLE paratmos LOGIN PASSWORD '$PARATMOS_DB_PASSWORD'" -c "CREATE DATABASE paratmos OWNER paratmos"
    ./deploy.sh migrate paratmos
-   ./deploy.sh seed paratmos --only=site,menu
+   ./deploy.sh seed paratmos --only=site,menu --lang=nl
    # Pagina's, kennisbank, begrippen en blog: de seed kent de plugin-typen niet.
    docker compose run --rm -e DATABASE_URL="postgres://paratmos:$PARATMOS_DB_PASSWORD@postgres:5432/paratmos" tools npm run put:content --workspace=paratmos
    ./deploy.sh user paratmos add <naam> admin

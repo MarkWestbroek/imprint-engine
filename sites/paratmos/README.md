@@ -36,7 +36,7 @@ Met een eigen database (eenmalig aanmaken in de lokale Postgres):
 docker exec -it imprint-engine-pg-1 psql -U imprint -c "CREATE DATABASE paratmos"
 export DATABASE_URL=postgres://imprint:imprint-dev@localhost:5434/paratmos
 npm run db:migrate:pg
-npm run db:seed -- --site=paratmos --only=site,menu
+npm run db:seed -- --site=paratmos --only=site,menu --lang=nl
 npm run put:content --workspace=paratmos     # pagina's, kennisbank, begrippen, blog
 npm run user -- add <naam> admin
 ```

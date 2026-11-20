@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { store } from "@/lib/content";
+import { imprint, store } from "@/lib/content";
 import "./globals.css";
 
 /*
@@ -43,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl">
+    <html lang={imprint.defaultLocale}>
       <body className={`${sans.variable} ${mono.variable} ${display.variable}`}>{children}</body>
     </html>
   );

@@ -22,6 +22,10 @@ export default defineImprint({
     contentDir: path.join(process.cwd(), "content"),
   },
   widgets: widgetRegistry,
+  // Written in Dutch (design/meertaligheid.md layer 1): pages are stored and read as `nl`. The English
+  // pages of the old site join `locales` when the engine serves translations (step D).
+  locales: ["nl"],
+  defaultLocale: "nl",
   plugins: [wikiPlugin(), glossaryPlugin({ indexHref: "/begrippen" }), blogPlugin()],
   // The core types this site uses; the plugins' types (wiki, term, post) are active on top of these.
   contentTypes: ["page", "menu", "theme", "site", "relations", "asset", "taglist"],

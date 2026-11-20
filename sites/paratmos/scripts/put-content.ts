@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { config as loadEnv } from "dotenv";
-import { ContentTypeRegistry, coreContentTypeDefinitions, PageDocSchema } from "@imprint/content-core";
+import { ContentTypeRegistry, coreContentTypeDefinitions, PageDocSchema, SiteConfigSchema } from "@imprint/content-core";
 import { openContentDatabase } from "@imprint/content-core/db";
 import { blogContentTypes } from "@imprint/plugin-blog/content-types"; // React-free entries: this runs under tsx, not Next
 import { glossaryContentTypes } from "@imprint/plugin-glossary/content-types";
@@ -21,7 +21,7 @@ loadEnv({ quiet: true });
  * Refuses an item whose latest version was made in the admin (not by the seed
  * or by this script), unless `--force`: the file would overwrite that edit.
  * Unchanged items are skipped. Site config and menu go through the root seed
- * (`npm run db:seed -- --site=paratmos --only=site,menu`).
+ * (`npm run db:seed -- --site=paratmos --only=site,menu --lang=nl`).
  *
  *   npm run put:content --workspace=paratmos                  # everything
  *   npm run put:content --workspace=paratmos -- page post     # only these types
@@ -68,8 +68,12 @@ async function main() {
   if (!url) throw new Error("No database (DATABASE_URL): nothing to change.");
 
   const contentTypes = ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, blogContentTypes);
-  const opened = openContentDatabase(url, { widgets: widgetRegistry, contentTypes });
   const content = path.join(process.cwd(), "content");
+  // The site's base language (defaultLocale in imprint.config.ts; site.json carries the same value, and this
+  // script reads it there so it needs no React imports). A page file without `lang` is in it, as with the
+  // seed's --lang; the store reads and writes pages in it. The plugins' types have no language of their own.
+  const baseLang = SiteConfigSchema.parse(JSON.parse(await fs.readFile(path.join(content, "site.json"), "utf8"))).defaultLocale;
+  const opened = openContentDatabase(url, { widgets: widgetRegistry, contentTypes, defaultLocale: baseLang });
 
   async function put(type: string, doc: { slug: string; lang?: string }) {
     const current = await opened.store.getItem(type, doc.slug, doc.lang);
@@ -84,7 +88,8 @@ async function main() {
   try {
     if (want("page")) {
       for (const file of await jsonFiles(path.join(content, "pages"))) {
-        const doc = PageDocSchema.parse(JSON.parse(await fs.readFile(file, "utf8")));
+        const raw = JSON.parse(await fs.readFile(file, "utf8"));
+        const doc = PageDocSchema.parse({ lang: baseLang, ...raw });
         // With the widgets' defaults filled in, as the store keeps it: otherwise every page looks changed.
         const page = { ...doc, layout: doc.layout && widgetRegistry.parseLayout(doc.layout) };
         await put("page", page);

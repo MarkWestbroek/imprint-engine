@@ -4,8 +4,9 @@ import { imprint } from "@/lib/content";
 
 /**
  * The WidgetContext for this site (architecture.md §3): the visitor's stores
- * plus the read options of the as-of preview (the admin's Time travel).
+ * plus the read options of the as-of preview (the admin's Time travel), and
+ * the language of the widgets' fixed texts (Dutch, from the site's config).
  */
 export async function widgetContext(): Promise<WidgetContext> {
-  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: await readOpts() };
+  return { store: imprint.store, writableStore: imprint.writableStore, readOptions: await readOpts(), locale: imprint.uiLocale };
 }

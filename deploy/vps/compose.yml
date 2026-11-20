@@ -259,7 +259,7 @@ services:
       - /srv/imprint-stats/markwestbroek:/data/stats:ro
 
   # paratmos.nl: de zakelijke site van Paratmos (pagina's, blog, kennisbank,
-  # begrippen). Site en menu via `./deploy.sh seed paratmos --only=site,menu`,
+  # begrippen). Site en menu via `./deploy.sh seed paratmos --only=site,menu --lang=nl`,
   # de rest (pagina's en de plugin-inhoud) via put:content (docs/deploy-vps.md).
   paratmos:
     <<: *site
