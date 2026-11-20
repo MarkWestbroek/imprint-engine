@@ -13,7 +13,7 @@ export default async function AdminEdit({ params, searchParams }: Props) {
   const { lang, previewAs } = await searchParams;
   const slug = slugParts?.map(decodeURIComponent).join("/");
   if (type === "page") {
-    return <PageStudioScreen admin={admin} actions={adminActions} slug={slug} lang={lang ?? "en"} previewAs={previewAs} />;
+    return <PageStudioScreen admin={admin} actions={adminActions} slug={slug} lang={lang} previewAs={previewAs} />;
   }
-  return <ItemEditScreen admin={admin} type={type} slug={slug} lang={lang ?? "en"} actions={adminActions} />;
+  return <ItemEditScreen admin={admin} type={type} slug={slug} lang={lang} actions={adminActions} />;
 }
