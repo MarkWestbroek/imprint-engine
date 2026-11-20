@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Seed: `--new`.** `npm run db:seed -- --only=page,menu --new` voegt alleen
+  de pagina's en menu's toe die nog niet bestaan, zodat een pagina die in de
+  admin is bewerkt niet door het bestand wordt overschreven.
 - **Taaltraining: Pools voor Nederlandstaligen.** Een tweede lespakket op
   dezelfde site (`/nl/polski`, ingang `/nl`; jezyk.imprint-engine.nl als extra
   hostnaam): 45 nieuwe lessen in zes fasen met Tom en Sanne in Kraków, en een

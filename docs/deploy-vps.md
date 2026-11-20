@@ -505,7 +505,8 @@ naar de VPS (bij de DNS-beheerder van imprint-engine.nl), het Caddy-blok
 `jezyk.imprint-engine.nl` uit de snippet (het herschrijft `/` naar `/nl`) en
 `sudo systemctl reload caddy`. De lessen komen mee met
 `./deploy.sh import-lessen taal`; de pagina's `home-nl` en `over-de-methode`
-en het menu `main-nl` met de seed. De Poolse opnamen maak je net als de
+en het menu `main-nl` met `./deploy.sh seed taal --only=page,menu --new`
+(`--new` laat bestaande pagina's en menu's met rust). De Poolse opnamen maak je net als de
 Nederlandse in de admin (Taal → Audio); de stem is `pl-PL-ZofiaNeural`.
 
 Accounts voor leerlingen sturen mail (bevestigen, wachtwoord vergeten): zet
