@@ -5,9 +5,11 @@ groep: naamwoorden
 volgorde: 1
 titel:
   pl: "Rodzajniki: de, het, een"
+  en: "Articles: de, het, een"
   nl: "Lidwoorden: de, het, een"
 kort:
   pl: "Polski nie ma rodzajników, niderlandzki ma trzy. Który kiedy?"
+  en: "English has one \"the\", Dutch has two: de and het. Which one when?"
   nl: "Het Pools heeft geen lidwoorden, het Nederlands drie. Welk wanneer?"
 tekst:
   pl: |
@@ -41,6 +43,39 @@ tekst:
     - zawód i narodowość po *ben* i *is*: **ik ben leraar**, **zij is Poolse**;
     - coś niepoliczalnego, ogólnie: **ik drink koffie**, **ik eet brood**;
     - stałe zwroty: **naar huis**, **naar bed**.
+  en: |
+    English has one word for *the*. Dutch has two, *de* and *het*, and every noun takes one of them: **de tafel**, **het huis**. *Een* is the English *a* or *an*, and it is the same for all words.
+
+    | | the | a / an | plural |
+    |---|---|---|---|
+    | de-word | **de tafel** | **een tafel** | **de tafels** |
+    | het-word | **het huis** | **een huis** | **de huizen** |
+
+    ### Three rules
+
+    1. In the plural always *de*: *het huis → de huizen*.
+    2. There is one *een* for all words. In the plural it disappears, as *a* does in English: **een tafel**, but **tafels**.
+    3. Diminutives in *-je* always take *het*: **het tafeltje**, **het huisje**.
+
+    ### Which words take het?
+
+    About two thirds of all nouns take *de*. There are few rules for *het*, and they have exceptions. You cannot tell from the English word, so learn each word with its article: not *huis*, but **het huis**. A few things to hold on to:
+
+    - diminutives: **het meisje**, **het kopje**;
+    - a verb used as a noun: **het eten**, **het leven**;
+    - words that begin with *ge-* and *be-* (usually): **het gesprek**, **het begin**.
+
+    ### The article changes the adjective
+
+    In English the adjective never changes. In Dutch an adjective before a noun gets *-e*: **de grote kamer**, **het nieuwe bed**. One exception: *een* + a het-word, then without *-e*: **een nieuw bed**.
+
+    ### No article
+
+    Mostly Dutch uses an article where English does, and leaves it out where English does. The main differences:
+
+    - profession and nationality after *ben* and *is*, where English says *a*: **ik ben leraar** (I am a teacher), **zij is Poolse** (she is Polish);
+    - something you cannot count, in general, as in English: **ik drink koffie**, **ik eet brood**;
+    - fixed expressions: **naar huis** (home), **naar bed** (to bed).
   nl: |
     In het Pools zeg je gewoon *tafel* of *huis*. In het Nederlands staat er bijna altijd een lidwoord voor het zelfstandig naamwoord: **de tafel**, **het huis**.
 

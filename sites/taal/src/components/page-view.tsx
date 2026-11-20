@@ -1,5 +1,6 @@
 import { Markdown, PageRenderer } from "@imprint/runtime-admin";
 import type { Page } from "@imprint/content-core";
+import { ingangMetHome } from "@/lib/ingang";
 import { widgetContext } from "@/lib/widget-context";
 import { widgetComponents } from "@/widgets/components";
 
@@ -11,7 +12,7 @@ import { widgetComponents } from "@/widgets/components";
 export async function PageView({ page }: { page: Page }) {
   if (page.layout) {
     const first = page.layout.rows?.[0]?.cells[0]?.widgets[0];
-    const untitled = page.slug === "home" || first?.type === "hero";
+    const untitled = !!ingangMetHome(page.slug) || first?.type === "hero";
     return (
       <PageRenderer
         page={{ ...page, title: untitled ? "" : page.title, layout: page.layout }}

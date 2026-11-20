@@ -5,9 +5,11 @@ groep: voornaamwoorden
 volgorde: 1
 titel:
   pl: "Zaimki osobowe"
+  en: "Personal pronouns"
   nl: "Persoonlijke voornaamwoorden"
 kort:
   pl: "Dwie formy: podmiot (ik, hij) i dopełnienie (mij, hem), często w wersji krótkiej."
+  en: "Two forms: subject (ik, hij) and object (mij, hem), often in a short version."
   nl: "Twee vormen: onderwerp (ik, hij) en voorwerp (mij, hem), vaak in een korte vorm."
 tekst:
   pl: |
@@ -33,6 +35,29 @@ tekst:
     ### Rzeczy: hij albo het
 
     Rzecz z *de* to **hij** i **hem**, rzecz z *het* to **het**: **de fiets is duur, maar hij is goed**; **ik koop het huis niet, het is te groot**.
+  en: |
+    | | subject | object |
+    |---|---|---|
+    | I | **ik** | **mij** / **me** |
+    | you (one person) | **jij** / **je** | **jou** / **je** |
+    | you (polite) | **u** | **u** |
+    | he | **hij** | **hem** |
+    | she | **zij** / **ze** | **haar** |
+    | it | **het** | **het** |
+    | we | **wij** / **we** | **ons** |
+    | you (more people) | **jullie** | **jullie** |
+    | they | **zij** / **ze** | **ze** |
+
+    ### Which form when
+
+    - The subject goes with the verb: **ik help**, **hij helpt**.
+    - The object comes after the verb, and always after a preposition: **hij helpt mij**, **ik zie hem**, **met mij**, **voor jou**, **bij hem**.
+    - The short forms (*je*, *ze*, *we*, *me*) are normal in spoken Dutch: **ik zie je morgen**, **kunt u me helpen?** You use the long ones for emphasis: **ik zie jou, niet hem**.
+    - "Them" as an object: in spoken Dutch simply **ze**: **ik ken ze**. You will meet the forms *hen* and *hun* in written Dutch.
+
+    ### Things: hij or het
+
+    A thing with *de* is **hij** and **hem**, a thing with *het* is **het**: **de fiets is duur, maar hij is goed**; **ik koop het huis niet, het is te groot**.
   nl: |
     | | onderwerp | voorwerp |
     |---|---|---|
@@ -63,4 +88,10 @@ anders:
     Polskiego podmiotu często się nie mówi (*widzę go*), niderlandzkiego nigdy się nie pomija: **ik zie hem**.
 
     Rodzaj rzeczy nie idzie za polskim: *szafa* jest rodzaju żeńskiego, ale **de kast** to **hij**: **de kast is oud, maar hij is goed**.
+  en: |
+    English calls every thing *it*. Dutch only does that for a thing with *het*; a thing with *de* is **hij**: **de fiets is duur, maar hij is goed**, literally "the bike is expensive, but he is good".
+
+    English has one *you*. Dutch has three: **jij** / **je** to one person you know, **u** to be polite, **jullie** to more than one person.
+
+    Most Dutch pronouns have a short, unstressed form (*je*, *ze*, *we*, *me*). In speech the short form is the normal one; the long one sounds like you are stressing the word.
 ---

@@ -37,14 +37,28 @@ export function perFase(lessen: Les[]): { fase: number; lessen: Les[] }[] {
  */
 export const tekstVoor = (tekst: Record<string, string>, ui: string): string => tekst[ui] ?? "";
 
-/** The translations are shown when the interface is in the lesson's support language. */
-export const metVertaling = (les: Pick<Les, "steuntaal">, ui: string): boolean => !!les.steuntaal && les.steuntaal === ui;
+/**
+ * The translations are shown when the dialogue has them in the interface
+ * language: the lesson's own support language, or one added later.
+ */
+export const metVertaling = (les: Pick<Les, "taal" | "dialoog">, ui: string): boolean =>
+  ui !== les.taal && les.dialoog.some((regel) => !!regel[ui]?.trim());
 
 /**
- * The exercises a learner can do in this interface language. `typ` and `zeg`
- * ask in the support language and `luister` answers in it, so without it
- * (Dutch taught in Dutch) only `kies` and `orden` remain.
+ * The exercises a learner can do in this interface language, as they read for
+ * that reader. In the lesson's support language: as written. In another
+ * language the `vertaald` part comes in place; `typ` and `zeg` ask in the
+ * reader's language and `luister` answers in it, so without a translation
+ * they are left out (Dutch taught in Dutch keeps only `kies` and `orden`).
  */
 export function oefeningenVoor(les: Pick<Les, "steuntaal" | "oefeningen">, ui: string): Oefening[] {
-  return metVertaling(les, ui) ? les.oefeningen : les.oefeningen.filter((o) => o.type === "kies" || o.type === "orden");
+  if (les.steuntaal === ui) return les.oefeningen;
+  return les.oefeningen.flatMap((o): Oefening[] => {
+    if (o.type === "orden") return [o];
+    const v = o.vertaald?.[ui];
+    if (o.type === "kies") return [{ ...o, vraag: v?.vraag ?? o.vraag, opties: v?.opties ?? o.opties }];
+    // Options that are only numbers or times read the same for everyone.
+    if (o.type === "luister") return v?.opties ? [{ ...o, opties: v.opties }] : o.opties.some((opt) => /\p{L}{2,}/u.test(opt)) ? [] : [o];
+    return v?.vraag ? [{ ...o, vraag: v.vraag }] : [];
+  });
 }

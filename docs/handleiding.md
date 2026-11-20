@@ -640,10 +640,25 @@ importscript; de beelden moeten dan als bestand in de site staan.
 
 ## De taaltraining
 
-De site `taal` (straks taal.imprint-engine.nl) is een Poolse site waarop je
-Nederlands leert. Het adres zegt wat je ziet: `/pl/nederlands/dit-en-dat` is
-de les *Dit en dat* uit het pakket Nederlands, met de site in het Pools.
-Rechtsboven wissel je de taal van de site (PL of NL); je blijft op dezelfde les.
+De site `taal` (taal.imprint-engine.nl) is een site waarop je Nederlands
+leert, vanuit het Pools of vanuit het Engels. Het adres zegt wat je ziet:
+`/pl/nederlands/dit-en-dat` is de les *Dit en dat* uit het pakket Nederlands,
+met de site in het Pools; `/en/nederlands/dit-en-dat` is dezelfde les met
+Engelse vertaling, uitleg en oefenvragen. Rechtsboven wissel je de taal van de
+site (PL, EN of NL); je blijft op dezelfde les.
+
+**Een ingang per taal.** Elke taal van de lezer heeft een eigen startpagina en
+een eigen menu, allebei gewoon te bewerken in de admin:
+
+| lezer | startpagina | pagina | menu |
+|---|---|---|---|
+| Pools | `/` | `home` | `main` |
+| Engels | `/en` | `home-en` | `main-en` |
+
+Een losse pagina (zoals *The method*, `/about-the-method`) hoort bij de ingang
+waarvan het menu ernaar linkt: daar krijgt hij dat menu en die voettekst. NL
+(Nederlands leren in het Nederlands, zonder vertaling) heeft geen eigen
+ingang en gebruikt die van het Pools.
 
 **Wat de leerling ziet.** Het pakket Nederlands heeft 45 lessen in zes
 fasen, van losse brokken (fase 0) tot beleefd vragen en bijzinnen (fase 5).
@@ -674,7 +689,8 @@ iets in het Pools.
 (`nl-0-01`: taal, fase, nummer) en bepaalt de volgorde. `slug` is de naam in
 het adres. Dialoog, brokken en oefeningen zijn vakken met JSON, in dezelfde
 vorm als in de lesbestanden. `situatie` en `patroon` hebben een tekst per taal
-van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een oefening heeft een `type`:
+van de site (`pl`, `en` en `nl`), en elke regel van de dialoog een vertaling
+per lezer (`pl`, `en`); `patroon` mag Markdown bevatten (vet, cursief). Een oefening heeft een `type`:
 
 | type | velden |
 |---|---|
@@ -683,6 +699,13 @@ van de site (`pl` en `nl`); `patroon` mag Markdown bevatten (vet, cursief). Een 
 | `typ` | `vraag`, `antwoorden` (alles wat goed is; het eerste is het voorbeeld) |
 | `orden` | `zin` |
 | `zeg` | `vraag`, `antwoorden`, `voorbeeld` (true = eerst laten horen) |
+
+De `vraag` en de `opties` staan in de steuntaal van de les (Pools). Voor de
+Engelse lezer staat hetzelfde onder `vertaald`:
+`"vertaald": { "en": { "vraag": "I was in Poland." } }`, of bij *luister*
+`{ "en": { "opties": ["…", "…", "…"] } }`. Een *typ*, *zeg* of *luister*
+zonder Engels krijgt de Engelse lezer niet te zien; een *kies* met een
+Nederlandse vraag is voor iedereen.
 
 Opslaan maakt een nieuwe versie; de oude vind je onder *History*.
 

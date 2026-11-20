@@ -327,7 +327,137 @@ Mark Westbroek. Vragen over privacy kun je stellen via het [contactformulier](/n
   },
 };
 
-export const ACCOUNT: Record<string, AccountTeksten> = { pl, nl };
+const en: AccountTeksten = {
+  inloggen: "Sign in",
+  registreren: "Create an account",
+  account: "My account",
+  uitloggen: "Sign out",
+  wachtwoordVergeten: "Forgot your password?",
+  nieuwWachtwoord: "New password",
+  privacy: "Privacy",
+  naam: "Username",
+  naamHint: "Letters, digits, dot, hyphen or underscore.",
+  email: "E-mail address",
+  wachtwoord: "Password",
+  herhaal: "Repeat password",
+  wachtwoordHint: "At least 12 characters.",
+  nietGelijk: "The two passwords are not the same.",
+  oog: ["Show password", "Hide password"],
+  naamOfEmail: "Username or e-mail address",
+  bezig: "One moment…",
+  maakAccount: "Create an account",
+  waarom:
+    "You do not need an account: all lessons work without one. With an account your results are also there on another phone or computer. We use your e-mail address only to confirm your account and for a new password.",
+  alAccount: "Already have an account?",
+  nogGeenAccount: "No account yet?",
+  bijnaKlaar: "Almost done. We have sent you an e-mail with a link to confirm your address (valid for 24 hours). You can sign in already.",
+  zonderMail: "Test environment without mail:",
+  stuurLink: "Send me a link",
+  linkVerstuurd: "If we know this address, we have sent it an e-mail with a link to choose a new password (valid for 2 hours).",
+  opslaan: "Save password",
+  gewijzigd: "Your password has been changed.",
+  alleenViaLink: "This page only works through the link in the e-mail.",
+  nieuweLink: "Ask for a new link",
+  bevestigd: "Your e-mail address is confirmed. Welcome!",
+  nietBevestigdLink: "This link is unknown, already used or expired.",
+  nogNietBevestigd: "not confirmed yet",
+  opnieuwSturen: "Send the confirmation e-mail again",
+  verstuurd: "Sent.",
+  geen: "none",
+  lessenGedaan: "Lessons done: {n}",
+  naarLessen: "To the lessons",
+  naarAdmin: "To the admin",
+  verwijderen: "Delete account",
+  verwijderUitleg: "We delete your account and everything we keep about you: your name, your e-mail address and your results. This cannot be undone.",
+  verwijderKnop: "Delete my account",
+  verwijderd: "Your account has been deleted.",
+  privacyTekst: `## Without an account
+
+The lessons work without an account. Your results are then kept only in your own browser. We do not see them.
+
+## With an account
+
+If you create an account, we keep:
+
+- your username and your e-mail address;
+- your password, only encrypted (as a hash);
+- your best result per lesson.
+
+We use your e-mail address only to confirm your account and for a new password. We send no advertising and pass your data on to no one.
+
+## Cookies
+
+When you sign in, we use one cookie to recognise you. We use no cookies for advertising or to follow you.
+
+## Visitor statistics
+
+The server records which pages are visited (with the IP address), to count visits. We do not link that data to your account.
+
+## Contact form
+
+A message through the [contact form](/en/kontakt) goes by e-mail to the person who runs the site. We do not keep it on the site. Name and e-mail address are optional; we use the address only to answer.
+
+## Deleting your account
+
+You can delete your account yourself on the page "My account". We then delete everything we keep about you.
+
+## Who runs this site
+
+Mark Westbroek. You can ask questions about privacy through the [contact form](/en/kontakt).`,
+  kontakt: {
+    titel: "Contact",
+    intro: "A question, a remark, or a mistake in a lesson? Write it down. Your message goes to Mark Westbroek, who runs this site.",
+    naam: "Name (optional)",
+    email: "E-mail address (optional)",
+    emailHint: "Only if you want an answer.",
+    bericht: "Message",
+    verstuur: "Send",
+    verstuurd: "Thank you! Your message has been sent.",
+    nogEen: "Write another message",
+    fout: {
+      empty: "Write a message.",
+      "too-long": "The message is too long (at most 5000 characters).",
+      "bad-address": "That is not an e-mail address.",
+      "rate-limited": "Too many messages. Try again in ten minutes.",
+      "no-mail": "The contact form does not work yet. Try again later.",
+      failed: "Sending failed. Try again.",
+    },
+  },
+  fout: {
+    algemeen: "That did not work. Try again.",
+    "no-database": "This does not work right now. Try again later.",
+    "rate-limited": "Too many attempts. Try again in ten minutes.",
+    rejected: "That did not work. Check what you filled in.",
+    "no-address": "No e-mail address known.",
+    "no-mail": "Mail is not set up on this site yet.",
+    "stale-link": "This link is unknown, already used or expired.",
+    "bad-login": "Unknown combination of name or e-mail address and password.",
+    "not-signed-in": "Sign in first.",
+    staff: "An editor's account is deleted in the admin.",
+    "wrong-password": "The password is not right.",
+    naamBestaat: "This username is already taken.",
+    naamOngeldig: "Username: 2 to 64 characters, only letters, digits, dot, hyphen or underscore.",
+    emailBestaat: "This e-mail address already has an account.",
+    emailOngeldig: "That is not an e-mail address.",
+    wachtwoordKort: "The password must have at least 12 characters.",
+  },
+  mail: {
+    verify: ({ name, site, url }) => ({
+      subject: `Confirm your e-mail address for ${site}`,
+      text:
+        `Hello ${name},\n\nConfirm your e-mail address for ${site} with this link (valid for 24 hours):\n\n${url}\n\n` +
+        `Did you not sign up? Then you can ignore this message.\n`,
+    }),
+    reset: ({ name, site, url }) => ({
+      subject: `New password for ${site}`,
+      text:
+        `Hello ${name},\n\nChoose a new password for ${site} with this link (valid for 2 hours):\n\n${url}\n\n` +
+        `Did you not ask for this? Then you can ignore this message; your password stays as it was.\n`,
+    }),
+  },
+};
+
+export const ACCOUNT: Record<string, AccountTeksten> = { pl, en, nl };
 
 /** The languages the account pages exist in; the first is the default (as in imprint.config.ts). */
 export const isUi = (ui: string): boolean => Object.hasOwn(ACCOUNT, ui);

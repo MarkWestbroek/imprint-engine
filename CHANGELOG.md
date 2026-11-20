@@ -6,6 +6,14 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Taaltraining: Nederlands leren vanuit het Engels.** De 45 lessen en de
+  grammatica hebben nu ook Engels: vertaling van de dialoog, *situatie*,
+  *Did you see that?* en de oefenvragen (`vertaald` per oefening; de
+  Nederlandse zinnen en opnamen blijven dezelfde). Een eigen ingang `/en` met
+  startpagina (`home-en`), menu (`main-en`), *The method*, account- en
+  contactpagina's in het Engels. De grammatica legt uit *unlike in English*
+  en heeft twee eigen verschillen: geen *do* en geen *-ing*, en het werkwoord
+  op plaats twee. De header kiest het menu van de ingang waar je bent.
 - **Taaltraining: de grammatica compleet (deel 2).** 19 onderwerpen erbij, 21
   in totaal: verleden en voltooide tijd, modale en scheidbare werkwoorden,
   meervoud, verkleinwoord, bijvoeglijk naamwoord, vergelijken, persoonlijke en

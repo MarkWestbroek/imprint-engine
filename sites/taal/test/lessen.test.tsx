@@ -6,7 +6,7 @@ import { prerenderToNodeStream } from "react-dom/static";
 
 import { FileContentStore, type ContentRecord, type WritableContentStore } from "@imprint/content-core";
 import { PageRenderer, type WidgetContext } from "@imprint/runtime-admin";
-import { taalPublicRoute, taalStaticPaths } from "@imprint/plugin-taal";
+import { leesbaar, metVertaling, oefeningenVoor, taalPublicRoute, taalStaticPaths } from "@imprint/plugin-taal";
 import { opnamen } from "@imprint/plugin-taal/audio";
 import { widgetComponents } from "../src/widgets/components";
 import { widgetRegistry } from "../src/widgets/registry";
@@ -58,8 +58,11 @@ describe("taal: the lesson files", () => {
   it("with the grammar topics: all valid, every link from a lesson leads to one", () => {
     const fout = gelezenGrammatica.filter((g) => g.fouten.length > 0).map((g) => `${g.file}: ${g.fouten.join("; ")}`);
     assert.deepEqual(fout, []);
-    assert.equal(grammatica.length, 21, "the reference: 17 rules and 4 differences");
-    assert.equal(grammatica.filter((g) => g.soort === "verschil").length, 4);
+    assert.equal(grammatica.length, 23, "the reference: 17 rules and 6 differences");
+    assert.equal(grammatica.filter((g) => g.soort === "verschil").length, 6);
+    // A rule is for every reader; a difference is with one language (two of them with both).
+    const leest = (ui: string) => grammatica.filter((g) => leesbaar(g, ui)).length;
+    assert.deepEqual([leest("pl"), leest("en"), leest("nl")], [21, 21, 23]);
     // Every topic is reached from at least one lesson.
     for (const g of grammatica) assert.ok(lessen.some((l) => l.grammatica.includes(g.id)), `no lesson links to ${g.id}`);
     assert.ok(lessen.some((l) => l.grammatica.length > 0));
@@ -77,6 +80,18 @@ describe("taal: the lesson files", () => {
     }
   });
 
+  it("serve the English reader too: the translation, and as many exercises as the Polish reader gets", () => {
+    for (const l of lessen) {
+      assert.ok(metVertaling(l, "en"), l.id);
+      assert.equal(oefeningenVoor(l, "en").length, l.oefeningen.length, l.id);
+      // No Polish left in what the English reader is asked.
+      for (const o of oefeningenVoor(l, "en")) {
+        const tekst = "vraag" in o ? o.vraag : o.type === "luister" ? o.opties.join(" ") : "";
+        assert.doesNotMatch(tekst, /[ąćęłńśźż{]/i, `${l.id}: ${tekst}`);
+      }
+    }
+  });
+
   it("need a known number of recordings (what the first Audio run asks for)", () => {
     const uniek = new Map(lessen.flatMap((l) => opnamen(l).map((o) => [o.sleutel, o.text.length] as const)));
     const tekens = [...uniek.values()].reduce((a, b) => a + b, 0);
@@ -86,9 +101,15 @@ describe("taal: the lesson files", () => {
 });
 
 describe("taal: the addresses", () => {
-  it("lists every lesson in both interface languages for the prerender", async () => {
+  it("lists every lesson in every interface language for the prerender", async () => {
     const paths = (await taalStaticPaths(store, TAAL)).map((p) => p.join("/"));
-    assert.equal(paths.length, 2 * (1 + lessen.length + 1 + grammatica.length + 1));
+    // Per language: the package, the lessons, the grammar overview with the topics that reader can read, the words.
+    const topics = TAAL.ui.reduce((n, ui) => n + grammatica.filter((g) => leesbaar(g, ui)).length, 0);
+    assert.equal(paths.length, TAAL.ui.length * (1 + lessen.length + 1 + 1) + topics);
+    assert.ok(paths.includes("en/nederlands/dit-en-dat"));
+    assert.ok(paths.includes("en/nederlands/grammatica/geen-do-geen-ing"));
+    assert.ok(!paths.includes("pl/nederlands/grammatica/geen-do-geen-ing"), "a difference with English is not for the Polish reader");
+    assert.ok(!paths.includes("en/nederlands/grammatica/geen-naamvallen"));
     assert.ok(paths.includes("pl/nederlands/woorden"));
     assert.ok(paths.includes("pl/nederlands/grammatica"));
     assert.ok(paths.includes("nl/nederlands/grammatica/lidwoorden"));
@@ -149,6 +170,20 @@ describe("taal: the addresses", () => {
     assert.doesNotMatch(htmlNl, /Vormen:/, "Dutch has no forms to choose");
   });
 
+  it("shows a lesson in English: the translation, the pattern, all the exercises, no forms to choose", async () => {
+    const hit = await visit("en/nederlands/ik-ben-gegaan");
+    assert.ok(hit && "render" in hit);
+    const html = await renderHtml(hit.render as ReactElement);
+    assert.match(html, /Ewa is thuisgebleven\./);
+    assert.match(html, /Where have you been\?/);
+    assert.match(html, /Did you see that\?/);
+    assert.match(html, /More about this:/);
+    assert.match(html, /href="\/en\/nederlands\/grammatica\/voltooide-tijd"/);
+    assert.match(html, /1 \/ 8/);
+    assert.doesNotMatch(html, /Gdzie byłeś|Forms:|[{}]/);
+    assert.deepEqual(await visit("en"), { redirect: "/en/nederlands" }, "without the site's own front page");
+  });
+
   it("shows both forms of a sentence that depends on the learner", async () => {
     const hit = await visit("pl/nederlands/ik-ben-gegaan");
     assert.ok(hit && "render" in hit);
@@ -197,6 +232,23 @@ describe("taal: the grammar reference", () => {
     const htmlNl = await renderHtml(nl.render as ReactElement);
     assert.match(htmlNl, /De tegenwoordige tijd/);
     assert.doesNotMatch(htmlNl, /Inaczej|Anders dan/, "no difference for a Dutch reader");
+  });
+
+  it("explains in English against English: the overview, a rule with 'unlike in English', a difference of its own", async () => {
+    const overzicht = await visit("en/nederlands/grammatica");
+    assert.ok(overzicht && "render" in overzicht);
+    const lijst = await renderHtml(overzicht.render as ReactElement);
+    assert.match(lijst, /Differences from English/);
+    assert.match(lijst, /href="\/en\/nederlands\/grammatica\/werkwoord-op-plaats-twee"/);
+    assert.doesNotMatch(lijst, /geen-naamvallen/);
+    const regel = await visit("en/nederlands/grammatica/tegenwoordige-tijd");
+    assert.ok(regel && "render" in regel);
+    const html = await renderHtml(regel.render as ReactElement);
+    assert.match(html, /Unlike in English/);
+    assert.match(html, /aria-label="Listen: hij werkt"/);
+    assert.doesNotMatch(html, /po polsku/);
+    assert.equal(await visit("en/nederlands/grammatica/geen-naamvallen"), null);
+    assert.equal(await visit("pl/nederlands/grammatica/geen-do-geen-ing"), null);
   });
 
   it("links a lesson to its topic, under 'did you see that?'", async () => {
