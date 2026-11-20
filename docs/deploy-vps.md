@@ -492,9 +492,8 @@ verandert aan wat bezoekers zien: pas het omzetten van de A-records doet dat.
    ```bash
    cd /srv/imprint/deploy/vps
    ss -ltn | grep -q ':3900 ' && echo "3900 is bezet: zet PARATMOS_PORT in .env"
-   printf 'PARATMOS_DB_PASSWORD=%s
-PARATMOS_SESSION_SECRET=%s
-'    	"$(openssl rand -hex 24)" "$(openssl rand -hex 32)" >> .env   # en SITES aanvullen met paratmos
+   printf 'PARATMOS_DB_PASSWORD=%s\nPARATMOS_SESSION_SECRET=%s\n' \
+   	"$(openssl rand -hex 24)" "$(openssl rand -hex 32)" >> .env   # en SITES aanvullen met paratmos
    set -a; . ./.env; set +a
    docker compose exec -T postgres psql -U postgres -c "CREATE ROLE paratmos LOGIN PASSWORD '$PARATMOS_DB_PASSWORD'" -c "CREATE DATABASE paratmos OWNER paratmos"
    ./deploy.sh migrate paratmos
@@ -510,7 +509,8 @@ PARATMOS_SESSION_SECRET=%s
    (ook `/admin`).
 3. Overschakelen: in Plesk bij Exsilia (*DNS Settings* van paratmos.nl) alleen
    de A-records van `paratmos.nl` en `www.paratmos.nl` naar de VPS zetten.
-   `mail`, de MX- en SPF-record en `oud` blijven staan. Daarna de twee blokken
+   `mail`, de MX- en SPF-record, `oud` en **`vps1`** blijven staan:
+   `vps1.paratmos.nl` is de naam van de VPS zelf. Daarna de twee blokken
    uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
    `sudo systemctl reload caddy`. Het blok stuurt de oude WordPress-adressen
    (`/?page_id=…`, `/?p=…`) door naar de nieuwe pagina's.

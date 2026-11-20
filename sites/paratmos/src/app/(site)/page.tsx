@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { readOpts } from "@imprint/runtime-admin";
 import { PageView } from "@/components/page-view";
 import { store } from "@/lib/content";
+import { pageMetadata, pageReadOptions, SITE } from "@/lib/locale";
 
 /** The home page is the page `home` from the store, like every other page. */
 
 export async function generateMetadata(): Promise<Metadata> {
-  const page = await store.getPage("home");
-  return page?.description ? { description: page.description } : {};
+  return pageMetadata("home", SITE.defaultLocale);
 }
 
 export default async function Home() {
-  const page = await store.getPage("home", await readOpts());
+  const page = await store.getPage("home", await pageReadOptions(SITE.defaultLocale));
   if (!page) {
     return (
       <>
@@ -20,5 +19,5 @@ export default async function Home() {
       </>
     );
   }
-  return <PageView page={page} />;
+  return <PageView page={page} locale={SITE.defaultLocale} />;
 }

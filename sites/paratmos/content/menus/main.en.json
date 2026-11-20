@@ -1,0 +1,35 @@
+{
+  "name": "main",
+  "items": [
+    {
+      "label": "Approach",
+      "page": "modelgedreven-werken"
+    },
+    {
+      "label": "Services",
+      "page": "diensten"
+    },
+    {
+      "label": "Experience",
+      "page": "ervaring",
+      "children": [
+        {
+          "label": "KVK",
+          "page": "ervaring/kvk"
+        },
+        {
+          "label": "Common Ground",
+          "page": "ervaring/common-ground"
+        }
+      ]
+    },
+    {
+      "label": "About",
+      "page": "over"
+    },
+    {
+      "label": "Contact",
+      "page": "contact"
+    }
+  ]
+}

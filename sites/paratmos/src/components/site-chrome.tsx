@@ -36,34 +36,54 @@ function Beeldmerk() {
   );
 }
 
-export function SiteHeader({ nav }: { nav: NavItem[] }) {
+/** The words of the header and footer per language (the site's own fixed texts). */
+const TEKSTEN = {
+  nl: { home: "Paratmos, naar home", menu: "Hoofdmenu", taal: "Taal", regel: "Paratmos · IT voorbij aan het verkopen van lucht", zoeken: "Zoeken", gemaakt: "Gemaakt met Imprint" },
+  en: { home: "Paratmos, to the home page", menu: "Main menu", taal: "Language", regel: "Paratmos · IT beyond selling hot air", zoeken: "Search (in Dutch)", gemaakt: "Made with Imprint" },
+} as const;
+const tekstenVoor = (locale: string) => TEKSTEN[locale === "en" ? "en" : "nl"];
+
+/** The label of the language choice, for the layouts. */
+export const languageLabel = (locale: string) => tekstenVoor(locale).taal;
+
+/**
+ * The header: the logo (to the start page of this language), the menu of this
+ * language, and the language choice (handed in, so the studio can leave it out).
+ */
+export function SiteHeader({ nav, locale = "nl", languages }: { nav: NavItem[]; locale?: string; languages?: React.ReactNode }) {
+  const t = tekstenVoor(locale);
   return (
     <header className="pm-header">
       <div className="pm-container pm-header-row">
-        <Link href="/" aria-label="Paratmos, naar home" className="pm-logo">
+        <Link href={locale === "nl" ? "/" : `/${locale}`} aria-label={t.home} className="pm-logo">
           <Beeldmerk />
           <span className="pm-logo-naam">paratmos</span>
         </Link>
-        <nav aria-label="Hoofdmenu" className="pm-nav pm-mono">
-          <NavLinks nav={nav} />
-        </nav>
+        <div className="pm-header-right">
+          <nav aria-label={t.menu} className="pm-nav pm-mono">
+            <NavLinks nav={nav} />
+          </nav>
+          {languages}
+        </div>
       </div>
     </header>
   );
 }
 
-export function SiteFooter() {
+/** The footer. Search covers the Dutch content only, so the English side says so. */
+export function SiteFooter({ locale = "nl" }: { locale?: string }) {
+  const t = tekstenVoor(locale);
   return (
     <footer className="pm-footer pm-mono">
       <div className="pm-container pm-footer-row">
-        <span>Paratmos · IT voorbij aan het verkopen van lucht</span>
+        <span>{t.regel}</span>
         <span className="pm-footer-links">
-          <Link href="/search">Zoeken</Link>
-          <Link href="/contact">Contact</Link>
+          <Link href="/search">{t.zoeken}</Link>
+          <Link href={locale === "nl" ? "/contact" : `/${locale}/contact`}>Contact</Link>
           <a href="https://www.linkedin.com/in/markwestbroek/" rel="me noopener">
             LinkedIn
           </a>
-          <a href="https://imprint-engine.nl">Gemaakt met Imprint</a>
+          <a href="https://imprint-engine.nl">{t.gemaakt}</a>
         </span>
       </div>
     </footer>

@@ -1,0 +1,171 @@
+{
+  "slug": "modelgedreven-werken",
+  "title": "Model-driven working",
+  "description": "How Paratmos works: one canonical model as the source, a strict separation between conceptual, logical and physical, and interfaces, register and documentation that follow from the model.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "For me the model is the holy grail. Not because a diagram is the goal, but because an organisation that has its own core concepts sharp has much less to invent, align and repair afterwards.\n\nModel-driven working means that the model is the source and the rest follows from it: the service interfaces, the database schema, the requirements and the documentation. When reality changes, the model changes first, and then what is derived from it.\n\nIn the literature this is called *model driven architecture* (MDA). I prefer to speak of model-driven working, because it is a way of working and not a product."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "mermaid",
+                "config": {
+                  "title": "Three layers, one direction",
+                  "code": "flowchart LR\n  C[\"Conceptual model<br/>concepts and their meaning\"] --> L[\"Logical model<br/>data, structure, rules\"]\n  L --> F1[\"Service interfaces<br/>OpenAPI, XSD\"]\n  L --> F2[\"Database schema<br/>with history\"]\n  L --> F3[\"Requirements<br/>use cases, backlog\"]\n  L --> F4[\"Documentation<br/>reference and posters\"]",
+                  "theme": "neutral",
+                  "caption": "The conceptual model says what the organisation means, the logical model how the data fits together. Everything to the right of it is derived."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "drie-eenheid",
+                "config": {
+                  "kop": "The holy trinity: data, processes and rules",
+                  "intro": "An organisation can be described along three lines that are closely related but fundamentally different. Together they are the basis of how it functions.",
+                  "gegevens": {
+                    "titel": "Data",
+                    "tekst": "What the organisation knows and records.",
+                    "notatie": "UML"
+                  },
+                  "processen": {
+                    "titel": "Processes",
+                    "tekst": "What happens, in what order and by whom.",
+                    "notatie": "BPMN"
+                  },
+                  "regels": {
+                    "titel": "Rules",
+                    "tekst": "What is allowed and what is required."
+                  },
+                  "verbandProcessenGegevens": "read, write",
+                  "verbandRegelsGegevens": "guard",
+                  "verbandProcessenRegels": "steer",
+                  "omgeving": [
+                    "External rules and constraints",
+                    "Vision",
+                    "Goals",
+                    "Services",
+                    "External task"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "My starting point is that each of the three deserves its own elaboration, and that they reinforce each other when all three are well set up. A process that describes data that is not in the model, or a rule hidden in the code, is a predictable source of errors.\n\nWhat an organisation further is and wants (its services, its vision and goals) and what is imposed on it from outside (legislation, constraints, the task itself) lies around it. That determines what has to be modelled; the trinity determines whether it works afterwards.\n\n## Conceptual, logical, physical\n\nThe second separation is the one in layers. The **conceptual** model describes concepts in the language of the organisation. The **logical** model describes the data precisely, but independently of technology. The **physical** level is the implementation: tables, messages, screens.\n\nKeeping those layers apart makes a complex landscape manageable. The logical model decouples the data from the systems it happens to live in, and is therefore an integration step in itself.\n\n## Not too deep, not too shallow\n\nA model is finished when it answers the questions it was made for. Too shallow, and everyone reads their own intention into it. Too deep, and nobody maintains it. Where that line lies differs per organisation; what matters is that an organisation takes the steps it can take. Sometimes those are small steps, sometimes big strides."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "timeline",
+                "config": {
+                  "title": "How I approach an organisation-wide model",
+                  "items": [
+                    {
+                      "date": "Step 1",
+                      "title": "Explore",
+                      "markdown": "Map the breadth of the field: which domains are there, who knows what, what documentation already exists. Interviews and reading."
+                    },
+                    {
+                      "date": "Step 2",
+                      "title": "Deepen",
+                      "markdown": "Work out the data, its meaning and its coherence per domain, together with the people who work with it."
+                    },
+                    {
+                      "date": "Step 3",
+                      "title": "Integrate",
+                      "markdown": "Rationalise and abstract across the domains: what is the same, what only looks the same, which data lives in which domain."
+                    },
+                    {
+                      "date": "Step 4",
+                      "title": "Hand over",
+                      "markdown": "Hand the model over to the architects and analysts who will maintain it, so that it stays alive after I leave."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## The proof: Omnium\n\nWhat I advise, I also build. [Omnium](https://omnium.imprint-engine.nl) is my own model workbench: one canonical model, and from it a working register with full history. I use it for proofs of concept, among others for Common Ground components.\n\nRead on: [the KVK case](/en/ervaring/kvk), [the work for Common Ground](/en/ervaring/common-ground) and the [knowledge base](/kennisbank) (in Dutch)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Does this fit your question?",
+                  "markdown": "Tell me what you are running into; I will tell you honestly whether a model is the answer.",
+                  "tone": "accent",
+                  "buttonLabel": "Get in touch",
+                  "buttonUrl": "/en/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "lang": "en"
+}

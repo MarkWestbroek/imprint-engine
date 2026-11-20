@@ -18,7 +18,11 @@ import { widgetRegistry } from "../src/widgets/registry";
 /** The starting content in content/ is valid, renders through the shared renderer, and its internal links lead somewhere. */
 
 const CONTENT = path.resolve(import.meta.dirname, "../content");
-const store = new FileContentStore(CONTENT, { widgets: widgetRegistry });
+// As imprint.config.ts: Dutch is the base language, English the second.
+const LOCALES = ["nl", "en"];
+const store = new FileContentStore(CONTENT, { widgets: widgetRegistry, defaultLocale: "nl", locales: LOCALES });
+const inLang = (lang: string) => (lang === "nl" ? { lang } : { lang, exactLang: true });
+const href = (lang: string, slug: string) => (lang === "nl" ? `/${slug === "home" ? "" : slug}` : `/${lang}${slug === "home" ? "" : `/${slug}`}`);
 const contentTypes = ContentTypeRegistry.of(coreContentTypeDefinitions, wikiContentTypes, glossaryContentTypes, blogContentTypes);
 const ctx: WidgetContext = { store, writableStore: null, readOptions: {} };
 
@@ -37,25 +41,37 @@ async function items<T>(type: string): Promise<T[]> {
 }
 
 describe("paratmos.nl: the starting content", () => {
-  it("has a page behind every menu item that points to one", async () => {
-    const menu = await store.getMenu("main");
-    assert.ok(menu && menu.items.length >= 5, "the main menu");
+  it("has, per language, a page in that language behind every menu item that points to one", async () => {
     const all = (list: MenuItem[]): MenuItem[] => list.flatMap((i) => [i, ...all(i.children ?? [])]);
-    for (const item of all(menu.items)) if (item.page) assert.ok(await store.getPage(item.page), `page ${item.page}`);
+    for (const lang of LOCALES) {
+      const menu = await store.getMenu("main", inLang(lang));
+      assert.ok(menu && menu.items.length >= 5, `the main menu (${lang})`);
+      for (const item of all(menu.items)) if (item.page) assert.ok(await store.getPage(item.page, inLang(lang)), `page ${item.page} (${lang})`);
+    }
   });
 
-  it("renders every page", async () => {
-    const pages = await store.listPages();
-    assert.ok(pages.length >= 9);
-    for (const page of pages) {
-      assert.ok(page.layout, page.slug);
-      const html = await renderHtml(<PageRenderer page={{ ...page, layout: page.layout }} viewers={widgetComponents} ctx={ctx} />);
-      assert.ok(html.length > 200, page.slug);
+  it("has an English version of every page except the glossary, with the same slug", async () => {
+    const nl = (await store.listPages(inLang("nl"))).map((p) => p.slug).sort();
+    const en = (await store.listPages(inLang("en"))).map((p) => p.slug).sort();
+    assert.deepEqual(en, nl.filter((s) => s !== "begrippen"));
+    for (const p of await store.listPages(inLang("en"))) assert.equal(p.lang, "en", p.slug);
+  });
+
+  it("renders every page in both languages", async () => {
+    for (const lang of LOCALES) {
+      const pages = await store.listPages(inLang(lang));
+      assert.ok(pages.length >= 8, lang);
+      for (const page of pages) {
+        assert.ok(page.layout, page.slug);
+        const c: WidgetContext = { ...ctx, locale: lang, readOptions: inLang(lang), ...(lang === "nl" ? {} : { pathPrefix: `/${lang}` }) };
+        const html = await renderHtml(<PageRenderer page={{ ...page, layout: page.layout }} viewers={widgetComponents} ctx={c} />);
+        assert.ok(html.length > 200, `${page.slug} (${lang})`);
+      }
     }
   });
 
   it("draws the home page: the opening, the triangle, and the model with a line to each derived artefact", async () => {
-    const page = await store.getPage("home");
+    const page = await store.getPage("home", inLang("nl"));
     assert.ok(page?.layout);
     const html = await renderHtml(<PageRenderer page={{ ...page, layout: page.layout }} viewers={widgetComponents} ctx={ctx} />);
     assert.match(html, /<h1 class="db-kop">IT voorbij aan het verkopen van lucht\.<\/h1>/);
@@ -79,16 +95,16 @@ describe("paratmos.nl: the starting content", () => {
   it("links only to addresses that exist", async () => {
     const folders = await items<WikiFolder>("wiki-folder");
     const wikiPages = await items<WikiPage>("wiki-page");
-    const known = new Set<string>(["/", "/blog", "/kennisbank", "/search"]);
-    for (const p of await store.listPages()) known.add(`/${p.slug}`);
+    const known = new Set<string>(["/", "/en", "/blog", "/kennisbank", "/search"]);
+    for (const lang of LOCALES) for (const p of await store.listPages(inLang(lang))) known.add(href(lang, p.slug));
     for (const p of wikiPages) known.add(wikiPageHref(p, folders));
     for (const t of await items<{ slug: string }>("term")) known.add(`/terms/${t.slug}`);
     for (const p of await items<{ slug: string }>("post")) known.add(`/blog/${p.slug}`);
 
     const sources: [string, string][] = [];
-    for (const p of await store.listPages()) sources.push([`page ${p.slug}`, JSON.stringify(p.layout)]);
+    for (const lang of LOCALES) for (const p of await store.listPages(inLang(lang))) sources.push([`page ${p.slug} (${lang})`, JSON.stringify(p.layout)]);
     for (const type of ["wiki-page", "term", "post"]) for (const d of await items<{ slug: string }>(type)) sources.push([`${type} ${d.slug}`, JSON.stringify(d)]);
-    sources.push(["menu", JSON.stringify(await store.getMenu("main"))]);
+    for (const lang of LOCALES) sources.push([`menu (${lang})`, JSON.stringify(await store.getMenu("main", inLang(lang)))]);
     for (const [where, text] of sources) {
       // Markdown links `](/…)` and widget fields ("href", "buttonUrl", "url") that start with a slash.
       for (const m of text.matchAll(/(?:\]\(|"(?:href|buttonUrl|url)":")(\/[^)"#\s]*)/g)) assert.ok(known.has(m[1]!), `${where} links to ${m[1]}`);

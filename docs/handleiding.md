@@ -945,6 +945,16 @@ De voorpagina bestaat vooral uit beeld, met drie eigen widgets:
   attributen en per afgeleide een label, een titel en een regel tekst in; met
   een URL wordt een afgeleide een link.
 
+**Twee talen.** De site is Nederlands, met een Engelse versie onder `/en`.
+Een Engelse pagina heeft dezelfde slug als de Nederlandse (`/diensten` en
+`/en/diensten`). Met NL · EN in de kop wisselt de bezoeker van taal; bestaat
+de pagina niet in de andere taal, dan gaat de link naar de startpagina van
+die taal (de taal staat dan gedempt). Een Engelse pagina bewerk je in de
+studio via `/admin/page/edit/<slug>?lang=en`. Let op: in het formulier de taal
+van een pagina wijzigen *verhuist* de pagina naar die taal, het maakt geen
+vertaling. Het Engelse menu is een eigen menu (`main` in het Engels). Blog,
+kennisbank en begrippen zijn alleen Nederlands.
+
 Bezoekers zoeken over alles heen op `/search` (ook bereikbaar als `/zoeken`).
 Zolang de teksten concepten zijn, vraagt de site zoekmachines om haar niet op
 te nemen.

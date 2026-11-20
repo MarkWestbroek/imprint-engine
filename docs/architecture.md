@@ -2157,6 +2157,17 @@ flowchart LR
   `globals.css`, Montserrat voor koppen en woordmerk, de logo's in
   `public/brand`. `--accent` is een donkerder blauw dan Primair, omdat Primair
   op wit te weinig contrast geeft voor kleine tekst en knoppen.
+- Twee talen (design/meertaligheid.md, laag 4): `locales: ["nl", "en"]`.
+  Eén root-layout (`<html lang="nl">`) voor beide; de Engelse kant is een
+  eigen route group `app/(en)/en/` met layout, startpagina en
+  `[...slug]` (`dynamicParams`), waarvan alles in een element met
+  `lang="en"` staat. Zo blijven beide kanten SSG en is er geen experimentele
+  `global-not-found` nodig, die twee root-layouts zouden vragen. Een Engels
+  adres zonder vertaling stuurt door naar het Nederlandse (307). De taalkeuze
+  is een client-component (`language-choice.tsx`): de layout kent de pagina
+  niet, dus krijgt hij per taal de lijst slugs mee (`lib/locale.ts`) en leest
+  hij het pad zelf. `PageView` geeft de widgets `locale`, `pathPrefix` en
+  strikte `readOptions`.
 - `test/content.test.tsx` rendert elke pagina, valideert de plugin-inhoud met
   de schema's van de plugins en controleert dat elke interne link in pagina's,
   wiki, begrippen en posts naar een bestaand adres wijst.
