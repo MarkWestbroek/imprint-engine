@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { WidthInit } from "@/components/width-toggle";
-import { store } from "@/lib/content";
+import { imprint, store } from "@/lib/content";
 import "./globals.css";
 
 const sans = Inter({
@@ -24,7 +24,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     // WidthInit sets data-breedte on <html> before hydration (no jump); React
     // did not render that attribute, hence suppressHydrationWarning.
-    <html lang="nl" suppressHydrationWarning>
+    <html lang={imprint.defaultLocale} suppressHydrationWarning>
       <body className={sans.variable}>
         <WidthInit />
         {children}

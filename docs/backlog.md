@@ -800,8 +800,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             Imprint-site.
       - [ ] Stap A uitrollen op de Imprint-site: op de VPS eerst
             `./deploy.sh relabel-lang imprint --to=nl`, dan bouwen. _(S)_
-      - [ ] Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
-            config, `<html lang>` uit de config, en `relabel-lang`. _(S)_
+      - [x] ~~Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
+            config, `<html lang>` uit de config.~~ In de code sinds 20-11-2026.
+      - [ ] `relabel-lang` draaien voor omnium (VPS:
+            `./deploy.sh relabel-lang omnium --to=nl`) en voor inrichting
+            (Fundament, daar met `npm run db:relabel-lang -- --to=nl` tegen de
+            database van de site). Tot dan vallen de pagina's terug op `en`. _(S)_
       - [ ] De plugins schrijven hun items met een vast `"en"` en hun
             schema's hebben `lang` met standaard `en`. Zolang hun typen geen
             taal hebben is dat een etiket zonder betekenis; bij stap D per

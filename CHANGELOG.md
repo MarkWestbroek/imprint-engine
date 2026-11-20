@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Basistaal Nederlands op omnium en inrichting** (stap A van
+  design/meertaligheid.md, na de Imprint-site): `defaultLocale: "nl"` in de
+  config, `<html lang>` uit de config, en de scripts van de Omnium-site
+  (`import-deck`, `sync-widget`) lezen en schrijven pagina's in die taal.
+  **Bij de uitrol per site eenmalig `relabel-lang` draaien**
+  (docs/deploy-vps.md); tot dan vallen de pagina's terug op `en`.
 - **Vaste teksten in de taal van de site** (W5/S9, eerste deel van stap B van
   design/meertaligheid.md). Een catalogus per package in plaats van tekst in
   de code: de standaardwidgets en de zoekpagina van de engine in Nederlands,
