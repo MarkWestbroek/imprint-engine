@@ -1930,6 +1930,29 @@ flowchart LR
     niet wissen).
   - Het geslacht komt van de betekenis met de meeste senses, in Wiktionary's
     volgorde (de eerste is de gewone); de pagina toont alleen dat lidwoord.
+
+  `Woordenlijst` is een discriminated union op `taal`: de Nederlandse lijst
+  en de **Poolse** (`PoolsNaamwoord`: geslacht en zeven naamvallen in
+  enkelvoud en meervoud; `PoolsWerkwoord`: aspect, partner, zes vormen zonder
+  hulpwerkwoord en zes van de verleden tijd; allebei met een korte Engelse
+  betekenis). `zoek()` en de zoekpagina zijn gedeeld; de kaart in
+  `woordzoeker.tsx` kiest op `lijst.taal`. `zoekvorm()` vouwt ook *ł* naar
+  *l*, en de vormen per woord worden één keer per lijst genormaliseerd
+  (WeakMap), want de Poolse lijst heeft zo'n 45.000 vormen (≈610 KB,
+  gecomprimeerd ≈170 KB). `woorden-maken-pl.ts` maakt hem:
+  - Een woord is een lemma op zijn kopregel, niet op zijn senses: Wiktionary
+    merkt ook "female equivalent of pan" (*pani*, *sąsiadka*) als vorm.
+  - Een vorm telt niet als hij ook een functiewoord is of een vorm van een
+    bijvoeglijk naamwoord, voornaamwoord of telwoord (*dobra*, *tego*). Een
+    vorm van meer woorden (*mam*: mieć en mama) gaat naar het woord dat het
+    meest gebruikt wordt in de vormen die het alleen heeft.
+  - Elk zelfstandig naamwoord en werkwoord uit de Poolse lessen en uit de
+    vette voorbeelden van de grammatica komt erin, ongeacht de telling; en
+    bij een werkwoord zijn partner van het andere aspect, als die gebruikt
+    wordt.
+  - De tabel van *pani* staat in Wiktionary onder het voornaamwoord en wordt
+    daar opgehaald. Werkwoorden die alleen met *się* voorkomen staan met de
+    hand in `pl-aanvullingen.json`: de tags zeggen dat niet betrouwbaar.
   - Hulpwerkwoord: `aux`/`trans=unacc` uit Wiktionary, aangevuld met de lijst
     `hulp`. Een scheidbaar werkwoord op een basis met *zijn* krijgt *zijn*
     (*weglopen*).
