@@ -1,0 +1,230 @@
+{
+  "slug": "home",
+  "title": "Paratmos",
+  "description": "Paratmos: modelgedreven werken voor organisaties met complexe gegevens. Eén canoniek model als bron, en daaruit de interfaces, het register en de documentatie.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "doorbraak",
+                "config": {
+                  "kop": "IT voorbij aan het verkopen van lucht.",
+                  "tekst": "Concreet, toepasbaar en grondig: één model voor de gegevens, de processen en de regels van uw organisatie.",
+                  "knopLabel": "Zo werkt het",
+                  "knopUrl": "/modelgedreven-werken",
+                  "labelVoet": "het model",
+                  "labelBoog": "de lucht",
+                  "labelBaken": "wat werkt"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "drie-eenheid",
+                "config": {
+                  "kop": "De basis: gegevens, processen en regels",
+                  "intro": "Deze drie dragen samen het hele functioneren van een organisatie. Diensten, visie, doelen en wat van buiten komt, liggen eromheen.",
+                  "gegevens": {
+                    "titel": "Gegevens",
+                    "tekst": "Wat de organisatie weet en vastlegt.",
+                    "notatie": "UML"
+                  },
+                  "processen": {
+                    "titel": "Processen",
+                    "tekst": "Wat er gebeurt, in welke volgorde en door wie.",
+                    "notatie": "BPMN"
+                  },
+                  "regels": {
+                    "titel": "Regels",
+                    "tekst": "Wat er mag en wat er moet."
+                  },
+                  "verbandProcessenGegevens": "leest, schrijft",
+                  "verbandRegelsGegevens": "bewaakt",
+                  "verbandProcessenRegels": "stuurt",
+                  "omgeving": [
+                    "Externe regels en constraints",
+                    "Visie",
+                    "Doelen",
+                    "Diensten",
+                    "Externe opgave"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "afleiding",
+                "config": {
+                  "kop": "Eén model. De rest volgt eruit.",
+                  "intro": "Uit het model volgen de interfaces, het register, de requirements en de documentatie.",
+                  "model": {
+                    "stereotype": "canoniek model",
+                    "naam": "Inschrijving",
+                    "attributen": [
+                      "kvkNummer : Nummer",
+                      "rechtsvorm : Rechtsvorm",
+                      "geldigVan : Datum",
+                      "geldigTot : Datum",
+                      "geregistreerdOp : Tijdstip"
+                    ]
+                  },
+                  "afgeleiden": [
+                    {
+                      "label": "OpenAPI · XSD",
+                      "titel": "Service-interfaces",
+                      "tekst": "Berichten en API's die hetzelfde zeggen als het model, omdat ze eruit komen."
+                    },
+                    {
+                      "label": "SQL",
+                      "titel": "Het register",
+                      "tekst": "Een schema dat historie, correctie en herstel vanaf het begin goed doet."
+                    },
+                    {
+                      "label": "BPMN · use cases",
+                      "titel": "Processen en requirements",
+                      "tekst": "Wat er met de gegevens gebeurt, in dezelfde begrippen als het model."
+                    },
+                    {
+                      "label": "A0",
+                      "titel": "Documentatie die gelezen wordt",
+                      "tekst": "Van de naslag voor ontwikkelaars tot de poster aan de muur bij de business."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Waarvoor u mij inschakelt",
+                  "columns": 2,
+                  "items": [
+                    {
+                      "title": "Een organisatiebreed gegevensmodel",
+                      "markdown": "Een logisch model van alle gegevens, hun betekenis en hun samenhang, los van de systemen waarin ze nu staan.",
+                      "href": "/diensten"
+                    },
+                    {
+                      "title": "Analyse en requirements",
+                      "markdown": "Van wetgeving en wensen naar use cases, impactanalyses en backlog-items waar een team mee kan bouwen.",
+                      "href": "/diensten"
+                    },
+                    {
+                      "title": "Training en coaching",
+                      "markdown": "UML, SysML, BPMN, requirements (IREB) en OCEB, en het methodisch begeleiden van een groep analisten.",
+                      "href": "/diensten"
+                    },
+                    {
+                      "title": "Tooling",
+                      "markdown": "Uw modelleeromgeving inrichten in Sparx Enterprise Architect of Bizzdesign, en Omnium als werkbank voor een proof of concept.",
+                      "href": "/diensten"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Nu: Common Ground",
+                  "markdown": "Voor VNG werk ik aan Common Ground: het bitemporele register, het Gemeentelijk Gegevensmodel, federatieve toegangsverlening en de vraag hoe API's met historie omgaan.",
+                  "tone": "muted",
+                  "buttonLabel": "Lees over dit werk",
+                  "buttonUrl": "/ervaring/common-ground"
+                }
+              }
+            ]
+          },
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Eerder: het handelsregister",
+                  "markdown": "Voor de KVK maakte ik het logisch model van het volledige handelsregister, met de interfaces en het ontwerp voor correctie en herstel.",
+                  "tone": "muted",
+                  "buttonLabel": "Lees de case",
+                  "buttonUrl": "/ervaring/kvk"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "posts",
+                "config": {
+                  "title": "Van het blog",
+                  "limit": 3,
+                  "showSummary": true,
+                  "showMore": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Kennismaken?",
+                  "markdown": "Een gesprek van een uur is meestal genoeg om te zien of en waar een model u verder helpt.",
+                  "tone": "accent",
+                  "buttonLabel": "Neem contact op",
+                  "buttonUrl": "/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

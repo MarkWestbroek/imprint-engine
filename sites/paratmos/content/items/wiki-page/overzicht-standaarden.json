@@ -1,0 +1,9 @@
+{
+  "slug": "overzicht-standaarden",
+  "access": "public",
+  "wiki": "kennisbank",
+  "folder": "overheidsstandaarden",
+  "title": "Standaarden in het kort",
+  "body": "De standaarden uit de Nederlandse overheid die in mijn werk het vaakst terugkomen, en hoe ze zich tot elkaar verhouden. Elk krijgt hier op termijn een eigen pagina.\n\n## MIM\n\nHet **Metamodel Informatie Modellering** is de Nederlandse standaard voor het beschrijven van informatiemodellen. MIM onderscheidt niveaus van modellering, van begrippen tot technische uitwerking, en geeft per niveau de bouwstenen. Het maakt modellen van verschillende organisaties onderling leesbaar.\n\n## GGM\n\nHet **Gemeentelijk Gegevensmodel** is een logisch gegevensmodel voor het gemeentelijke domein. Gemeenten gebruiken het als gemeenschappelijke basis voor hun eigen gegevenslandschap.\n\n## GEMMA\n\nDe **Gemeentelijke Model Architectuur** is de referentiearchitectuur voor gemeenten. Het onderscheid tussen materiële en formele historie in registraties komt daar onder meer vandaan.\n\n## FTV en ODRL\n\n**Federatieve toegangsverlening** is de standaard voor het regelen van toegang tot gegevens over organisatiegrenzen heen. Toegangsregels worden daarin uitgedrukt met **ODRL** (Open Digital Rights Language, een W3C-standaard); het NL ODRL-profiel legt vast hoe dat in Nederland gebeurt.\n\n## NL API-strategie\n\nDe **NL API-strategie** bevat de afspraken voor API's van de Nederlandse overheid, met de REST API Design Rules als kern. Een van de open onderwerpen is hoe een API met historie omgaat; zie [twee tijdlijnen](/kennisbank/tijd-in-gegevens/twee-tijdlijnen).\n\nMijn eigen betrokkenheid bij deze standaarden staat bij [Common Ground](/ervaring/common-ground).",
+  "order": 0
+}

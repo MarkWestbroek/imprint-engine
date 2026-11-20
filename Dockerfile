@@ -41,6 +41,7 @@ COPY sites/omnium/package.json sites/omnium/
 COPY sites/inrichting/package.json sites/inrichting/
 COPY sites/taal/package.json sites/taal/
 COPY sites/markwestbroek/package.json sites/markwestbroek/
+COPY sites/paratmos/package.json sites/paratmos/
 RUN --mount=type=cache,target=/root/.npm npm ci --include=dev --no-audit --no-fund
 COPY . .
 

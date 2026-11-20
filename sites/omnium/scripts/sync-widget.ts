@@ -39,7 +39,11 @@ async function main() {
   const source = find(file.layout, title);
   if (source.length !== 1) throw new Error(`content/pages/${slug}.json: ${source.length} blocks titled "${title}" (expected 1)`);
 
-  const opened = openContentDatabase(url, { widgets: widgetRegistry, contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions) });
+  const opened = openContentDatabase(url, {
+    widgets: widgetRegistry,
+    contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions),
+    defaultLocale: "nl", // the site's base language (imprint.config.ts): pages are looked up and written in it
+  });
   try {
     const record = await opened.store.getItem("page", slug);
     if (!record) throw new Error(`No page "${slug}" in the database.`);

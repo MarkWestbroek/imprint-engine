@@ -1,0 +1,170 @@
+{
+  "slug": "modelgedreven-werken",
+  "title": "Modelgedreven werken",
+  "description": "Hoe Paratmos werkt: één canoniek model als bron, een strikte scheiding tussen conceptueel, logisch en fysiek, en interfaces, register en documentatie die uit het model volgen.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Het model is bij mij de heilige graal. Niet omdat een diagram het doel is, maar omdat een organisatie die haar eigen kernbegrippen scherp heeft, daarna veel minder hoeft uit te vinden, af te stemmen en te herstellen.\n\nModelgedreven werken betekent dat het model de bron is en dat de rest eruit volgt: de service-interfaces, het databaseschema, de requirements en de documentatie. Verandert de werkelijkheid, dan verandert eerst het model, en daarna wat ervan is afgeleid.\n\nIn de vakliteratuur heet dit *model driven architecture* (MDA). Ik gebruik liever de Nederlandse term, omdat het om een manier van werken gaat en niet om een product."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "mermaid",
+                "config": {
+                  "title": "Drie lagen, één richting",
+                  "code": "flowchart LR\n  C[\"Conceptueel model<br/>begrippen en hun betekenis\"] --> L[\"Logisch model<br/>gegevens, structuur, regels\"]\n  L --> F1[\"Service-interfaces<br/>OpenAPI, XSD\"]\n  L --> F2[\"Databaseschema<br/>met historie\"]\n  L --> F3[\"Requirements<br/>use cases, backlog\"]\n  L --> F4[\"Documentatie<br/>naslag en posters\"]",
+                  "theme": "neutral",
+                  "caption": "Het conceptuele model zegt wat de organisatie bedoelt, het logische model hoe de gegevens in elkaar zitten. Alles rechts daarvan is afgeleid."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "drie-eenheid",
+                "config": {
+                  "kop": "De drie-eenheid: gegevens, processen en regels",
+                  "intro": "Een organisatie laat zich beschrijven langs drie lijnen die nauw samenhangen maar wezenlijk verschillen. Samen zijn ze de basis voor haar hele functioneren.",
+                  "gegevens": {
+                    "titel": "Gegevens",
+                    "tekst": "Wat de organisatie weet en vastlegt.",
+                    "notatie": "UML"
+                  },
+                  "processen": {
+                    "titel": "Processen",
+                    "tekst": "Wat er gebeurt, in welke volgorde en door wie.",
+                    "notatie": "BPMN"
+                  },
+                  "regels": {
+                    "titel": "Regels",
+                    "tekst": "Wat er mag en wat er moet."
+                  },
+                  "verbandProcessenGegevens": "leest, schrijft",
+                  "verbandRegelsGegevens": "bewaakt",
+                  "verbandProcessenRegels": "stuurt",
+                  "omgeving": [
+                    "Externe regels en constraints",
+                    "Visie",
+                    "Doelen",
+                    "Diensten",
+                    "Externe opgave"
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Mijn uitgangspunt is dat elk van de drie zijn eigen uitwerking verdient, en dat ze elkaar versterken als ze alle drie goed zijn opgezet. Een proces dat gegevens beschrijft die niet in het model staan, of een regel die in de code verstopt zit, is een voorspelbare bron van fouten.\n\nWat een organisatie verder is en wil (haar diensten, haar visie en doelen) en wat haar van buiten wordt opgelegd (wetgeving, beperkingen, de opgave zelf) ligt daaromheen. Het bepaalt wat er gemodelleerd moet worden; de drie-eenheid bepaalt of het daarna werkt.\n\n## Conceptueel, logisch, fysiek\n\nDe tweede scheiding is die in lagen. Het **conceptuele** model beschrijft begrippen in de taal van de organisatie. Het **logische** model beschrijft de gegevens precies, maar los van techniek. Het **fysieke** niveau is de implementatie: tabellen, berichten, schermen.\n\nDoor die lagen uit elkaar te houden, wordt een complex landschap behapbaar. Het logische model ontkoppelt de gegevens van de systemen waarin ze toevallig staan, en is daarmee vanzelf ook een integratieslag.\n\n## Niet te diep, niet te vlak\n\nEen model is af als het de vragen beantwoordt waarvoor het gemaakt is. Te vlak, en iedereen leest er zijn eigen bedoeling in. Te diep, en niemand onderhoudt het. Waar die grens ligt, verschilt per organisatie; het is belangrijk dat een organisatie de stappen zet die ze kan zetten. Soms zijn dat kleine stapjes, soms flinke passen."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "timeline",
+                "config": {
+                  "title": "Zo pak ik een organisatiebreed model aan",
+                  "items": [
+                    {
+                      "date": "Stap 1",
+                      "title": "Verkennen",
+                      "markdown": "De breedte van het terrein in kaart: welke domeinen zijn er, wie weet wat, welke documentatie bestaat al. Interviews en lezen."
+                    },
+                    {
+                      "date": "Stap 2",
+                      "title": "Uitdiepen",
+                      "markdown": "Per domein de gegevens, hun betekenis en hun samenhang uitwerken, samen met de mensen die ermee werken."
+                    },
+                    {
+                      "date": "Stap 3",
+                      "title": "Integreren",
+                      "markdown": "Over de domeinen heen rationaliseren en abstraheren: wat is hetzelfde, wat lijkt alleen hetzelfde, welk gegeven leeft in welk domein."
+                    },
+                    {
+                      "date": "Stap 4",
+                      "title": "Overdragen",
+                      "markdown": "Het model overdragen aan de architecten en analisten die het gaan onderhouden, zodat het na mijn vertrek blijft leven."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "## Het bewijs: Omnium\n\nWat ik adviseer, bouw ik ook. [Omnium](https://omnium.imprint-engine.nl) is mijn eigen modelwerkbank: één canoniek model, en daaruit een werkend register met volledige historie. Ik gebruik het voor proofs of concept, onder meer voor Common Ground-componenten.\n\nVerder lezen: [de case KVK](/ervaring/kvk), [het werk voor Common Ground](/ervaring/common-ground) en de [kennisbank](/kennisbank)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "title": "Past dit bij uw vraag?",
+                  "markdown": "Vertel waar u tegenaan loopt; ik zeg eerlijk of een model daar het antwoord op is.",
+                  "tone": "accent",
+                  "buttonLabel": "Neem contact op",
+                  "buttonUrl": "/contact"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

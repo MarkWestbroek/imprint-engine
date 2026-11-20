@@ -1,0 +1,9 @@
+{
+  "slug": "twee-tijdlijnen",
+  "access": "public",
+  "wiki": "kennisbank",
+  "folder": "tijd-in-gegevens",
+  "title": "Twee tijdlijnen: materieel en formeel",
+  "body": "Bijna elk gegeven in een register heeft met tijd te maken, en bijna altijd met twee soorten tijd tegelijk. Wie ze door elkaar haalt, krijgt een register dat niet meer kan uitleggen wat het wist.\n\n## Materiële tijd\n\nDe **materiële tijd** (ook: geldigheid) zegt wanneer iets in de werkelijkheid gold. Een onderneming is op 1 maart verhuisd; het nieuwe adres geldt dus vanaf 1 maart, ook als de verhuizing pas weken later wordt doorgegeven.\n\n## Formele tijd\n\nDe **formele tijd** (ook: registratietijd) zegt wanneer het register het wist. De verhuizing van 1 maart is op 20 maart geregistreerd. Tussen 1 en 20 maart gaf het register dus een adres dat achteraf niet meer klopte.\n\n## Waarom je beide nodig hebt\n\nMet alleen materiële tijd kun je vragen \"waar was deze onderneming gevestigd op 10 maart?\" en krijg je het nieuwe adres. Dat is juist, maar het is niet wat een afnemer op 10 maart te zien kreeg. Wie op 10 maart een besluit nam op basis van het register, deed dat met het oude adres, en moet dat later kunnen aantonen.\n\nMet beide tijdlijnen kan een register twee verschillende vragen beantwoorden:\n\n| Vraag | Tijdlijn |\n|---|---|\n| Wat gold er op 10 maart? | materieel |\n| Wat wisten wij op 10 maart over 10 maart? | materieel en formeel |\n\nEen register dat beide bijhoudt heet **bitemporeel**.\n\n## Wat het vraagt van een model\n\nDe twee tijdlijnen zijn geen detail van de database, maar een eigenschap van het gegeven zelf. Ze horen daarom in het logische model, en van daaruit in de interfaces: een API die alleen \"de huidige stand\" teruggeeft, gooit de helft van de kennis weg.\n\nZie ook: [correctie en herstel](/kennisbank/tijd-in-gegevens/correctie-en-herstel).",
+  "order": 0
+}

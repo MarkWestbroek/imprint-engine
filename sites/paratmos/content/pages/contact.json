@@ -1,0 +1,43 @@
+{
+  "slug": "contact",
+  "title": "Contact",
+  "description": "Neem contact op met Paratmos voor een kennismaking, een opdracht of een training.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "text",
+                "config": {
+                  "markdown": "Voor een kennismaking, een opdracht of een training: stuur een bericht, dan neem ik contact op. U vindt mij ook op [LinkedIn](https://www.linkedin.com/in/markwestbroek/)."
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "contact",
+                "config": {
+                  "title": "Stuur een bericht",
+                  "anker": "contact",
+                  "taal": "nl"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

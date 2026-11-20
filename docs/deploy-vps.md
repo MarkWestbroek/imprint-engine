@@ -481,6 +481,49 @@ docker compose run --rm -e DATABASE_URL="postgres://markwestbroek:$MARKWESTBROEK
 SITES=markwestbroek ./deploy.sh   # de SSG-pagina's opnieuw bouwen
 ```
 
+**paratmos.nl** (`paratmos`, poort 3900; **nog niet live**): de zakelijke site
+van Paratmos, met blog, kennisbank en begrippen als plugins. Het oude WordPress
+blijft bij Exsilia (Plesk) draaien op `oud.paratmos.nl` (gekloond met de WP
+Toolkit); daar staan ook de DNS en de mail. Uitrollen kan zonder dat er iets
+verandert aan wat bezoekers zien: pas het omzetten van de A-records doet dat.
+
+1. Klaarzetten op de VPS (de site draait daarna alleen op loopback):
+
+   ```bash
+   cd /srv/imprint/deploy/vps
+   ss -ltn | grep -q ':3900 ' && echo "3900 is bezet: zet PARATMOS_PORT in .env"
+   printf 'PARATMOS_DB_PASSWORD=%s
+PARATMOS_SESSION_SECRET=%s
+'    	"$(openssl rand -hex 24)" "$(openssl rand -hex 32)" >> .env   # en SITES aanvullen met paratmos
+   set -a; . ./.env; set +a
+   docker compose exec -T postgres psql -U postgres -c "CREATE ROLE paratmos LOGIN PASSWORD '$PARATMOS_DB_PASSWORD'" -c "CREATE DATABASE paratmos OWNER paratmos"
+   ./deploy.sh migrate paratmos
+   ./deploy.sh seed paratmos --only=site,menu --lang=nl
+   # Pagina's, kennisbank, begrippen en blog: de seed kent de plugin-typen niet.
+   docker compose run --rm -e DATABASE_URL="postgres://paratmos:$PARATMOS_DB_PASSWORD@postgres:5432/paratmos" tools npm run put:content --workspace=paratmos
+   ./deploy.sh user paratmos add <naam> admin
+   SITES=paratmos ./deploy.sh
+   ```
+
+2. Bekijken vóór de DNS om is, via een tunnel vanaf je eigen machine:
+   `ssh -L 3900:127.0.0.1:3900 <vps>` en dan `http://localhost:3900`
+   (ook `/admin`).
+3. Overschakelen: in Plesk bij Exsilia (*DNS Settings* van paratmos.nl) alleen
+   de A-records van `paratmos.nl` en `www.paratmos.nl` naar de VPS zetten.
+   `mail`, de MX- en SPF-record en `oud` blijven staan. Daarna de twee blokken
+   uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
+   `sudo systemctl reload caddy`. Het blok stuurt de oude WordPress-adressen
+   (`/?page_id=…`, `/?p=…`) door naar de nieuwe pagina's.
+4. Na de omzetting: `noindex` eraf (`sites/paratmos/src/app/layout.tsx`) zodra
+   de teksten zijn nagelopen, en het oude WordPress op `oud.paratmos.nl`
+   opruimen als het niet meer nodig is.
+
+Het contactformulier mailt pas als `PARATMOS_SMTP_*`, `PARATMOS_MAIL_FROM` en
+`PARATMOS_CONTACT_TO` in `.env` staan (zie `.env.example`). Inhoud uit de repo
+later bijwerken: dezelfde `put:content`-regel; ongewijzigde items en items die
+in de admin zijn bewerkt, slaat hij over (tenzij `--force`). Daarna
+`SITES=paratmos ./deploy.sh` voor de SSG-pagina's.
+
 **De taaltraining** (`taal`, poort 3700, `taal.imprint-engine.nl`; live sinds
 12 november 2026, zo uitgerold).
 De opnamen gaan vanaf het begin naar een eigen bucket, dus er valt niets te

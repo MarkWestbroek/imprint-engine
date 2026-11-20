@@ -46,6 +46,7 @@ services:
       OMNIUM_DB_PASSWORD: ${OMNIUM_DB_PASSWORD:-}
       TAAL_DB_PASSWORD: ${TAAL_DB_PASSWORD:-}
       MARKWESTBROEK_DB_PASSWORD: ${MARKWESTBROEK_DB_PASSWORD:-}
+      PARATMOS_DB_PASSWORD: ${PARATMOS_DB_PASSWORD:-}
     ports:
       - "127.0.0.1:${PG_PORT:-5434}:5432"
     volumes:
@@ -257,6 +258,35 @@ services:
       - markwestbroek_assets:/data/assets
       - /srv/imprint-stats/markwestbroek:/data/stats:ro
 
+  # paratmos.nl: de zakelijke site van Paratmos (pagina's, blog, kennisbank,
+  # begrippen). Site en menu via `./deploy.sh seed paratmos --only=site,menu --lang=nl`,
+  # de rest (pagina's en de plugin-inhoud) via put:content (docs/deploy-vps.md).
+  paratmos:
+    <<: *site
+    image: imprint/paratmos:${PARATMOS_TAG:-latest}
+    build:
+      context: ../..
+      args: { SITE: paratmos, BUILD_ID: "${BUILD_ID:-dev}", OMNIUM_URL: *omnium_url }
+      network: host
+      secrets: [database_url]
+    environment:
+      STATS_REPORT_DIR: /data/stats
+      DATABASE_URL: postgres://paratmos:${PARATMOS_DB_PASSWORD}@postgres:5432/paratmos
+      SESSION_SECRET: ${PARATMOS_SESSION_SECRET:-}
+      # Het contactformulier (widget contact) mailt naar CONTACT_TO; alleen hier, niet in de image.
+      SMTP_HOST: ${PARATMOS_SMTP_HOST:-}
+      SMTP_PORT: ${PARATMOS_SMTP_PORT:-465}
+      SMTP_USER: ${PARATMOS_SMTP_USER:-}
+      SMTP_PASS: ${PARATMOS_SMTP_PASS:-}
+      MAIL_FROM: ${PARATMOS_MAIL_FROM:-}
+      CONTACT_TO: ${PARATMOS_CONTACT_TO:-}
+      ASSET_ROOT: /data/assets
+    ports:
+      - "127.0.0.1:${PARATMOS_PORT:-3900}:3000"
+    volumes:
+      - paratmos_assets:/data/assets
+      - /srv/imprint-stats/paratmos:/data/stats:ro
+
   # Werkboom + devDependencies: migraties, seed en gebruikersbeheer tegen de
   # productiedatabase. Draait alleen op verzoek:
   #   docker compose run --rm -e DATABASE_URL=… tools npm run db:migrate:pg
@@ -288,6 +318,7 @@ volumes:
   omnium_assets:
   taal_assets:
   markwestbroek_assets:
+  paratmos_assets:
 
 networks:
   imprint_net:
