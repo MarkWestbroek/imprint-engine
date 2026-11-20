@@ -165,7 +165,7 @@ export async function PageStudioScreen({
 
         <div className="min-w-0 flex-1 overflow-hidden rounded-xl border border-line">
           <div className="flex min-h-[60vh] flex-col bg-background">
-            <Chrome>
+            <Chrome locale={locales.includes(lang) ? lang : undefined}>
               <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
               {draft.body && (
                 <div className="mt-4 max-w-3xl">

@@ -11,5 +11,5 @@ export default async function AdminHistory({ params, searchParams }: Props) {
   const { type, slug: slugParts } = await params;
   const { lang } = await searchParams;
   const slug = slugParts.map(decodeURIComponent).join("/");
-  return <HistoryScreen admin={admin} type={type} slug={slug} lang={lang ?? "en"} actions={adminActions} />;
+  return <HistoryScreen admin={admin} type={type} slug={slug} lang={lang} actions={adminActions} />;
 }
