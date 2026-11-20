@@ -13,6 +13,7 @@ import {
   type PoolsNaamwoord,
   type PoolsWerkwoord,
   type Treffer,
+  type LijstBeelden,
   type Werkwoord,
   type Woordenlijst,
 } from "./woorden";
@@ -28,6 +29,24 @@ type Props = {
 const PERSONEN = ["ik", "jij", "hij / zij", "wij / jullie / zij"];
 const OSOBY = ["ja", "ty", "on / ona", "my", "wy", "oni / one"];
 
+/**
+ * The picture(s) of a word, if it has any: one, or two for two meanings
+ * (bank 🏦 🛋). Decorative for a screen reader: the word is said beside it.
+ */
+function Beeld({ woord, beelden, klein = false }: { woord: string; beelden?: LijstBeelden; klein?: boolean }) {
+  const codes = beelden?.woorden[woord];
+  if (!codes) return null;
+  const maat = klein ? "h-5 w-5" : "h-16 w-16 sm:h-20 sm:w-20";
+  return (
+    <span className={`inline-flex shrink-0 ${klein ? "gap-0.5" : "gap-3"}`} aria-hidden>
+      {codes.map((code) => (
+        // eslint-disable-next-line @next/next/no-img-element -- a small static SVG from public/, no optimisation to gain
+        <img key={code} src={`${beelden!.pad}${code}.svg`} alt="" width={klein ? 20 : 80} height={klein ? 20 : 80} loading="lazy" className={maat} />
+      ))}
+    </span>
+  );
+}
+
 /** Says `tekst`; shows `toon` if given (the form alone, said with its person: "ik loop"). */
 function Zeg({ tekst, toon, taal, label }: { tekst: string; toon?: string; taal: string; label: string }) {
   return (
@@ -37,14 +56,17 @@ function Zeg({ tekst, toon, taal, label }: { tekst: string; toon?: string; taal:
   );
 }
 
-function NaamwoordKaart({ w, taal, labels }: { w: Naamwoord; taal: string; labels: Labels }) {
+function NaamwoordKaart({ w, taal, labels, beelden }: { w: Naamwoord; taal: string; labels: Labels; beelden?: LijstBeelden }) {
   // Only the usual article: Wiktionary's second gender is often Flemish or old (het school), and would mislead.
   const { hoofd } = lidwoord(w.g);
   return (
     <div>
-      <p className="text-3xl">
-        <Zeg tekst={`${hoofd} ${w.w}`} taal={taal} label={labels.uitspreken} />
-      </p>
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-3xl">
+          <Zeg tekst={`${hoofd} ${w.w}`} taal={taal} label={labels.uitspreken} />
+        </p>
+        <Beeld woord={w.w} beelden={beelden} />
+      </div>
       <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
         <dt className="text-muted">{labels.meervoud}</dt>
         <dd lang={taal}>
@@ -72,14 +94,17 @@ function NaamwoordKaart({ w, taal, labels }: { w: Naamwoord; taal: string; label
   );
 }
 
-function WerkwoordKaart({ w, taal, labels }: { w: Werkwoord; taal: string; labels: Labels }) {
+function WerkwoordKaart({ w, taal, labels, beelden }: { w: Werkwoord; taal: string; labels: Labels; beelden?: LijstBeelden }) {
   const hulp = { hebben: ["heb"], zijn: ["ben"], beide: ["heb", "ben"] }[w.hulp];
   return (
     <div>
-      <p className="text-3xl">
-        <Zeg tekst={w.w} taal={taal} label={labels.uitspreken} />
-        <span className="ml-3 text-base text-muted">{w.sterk ? labels.onregelmatig : labels.regelmatig}</span>
-      </p>
+      <div className="flex items-center justify-between gap-4">
+        <p className="text-3xl">
+          <Zeg tekst={w.w} taal={taal} label={labels.uitspreken} />
+          <span className="ml-3 text-base text-muted">{w.sterk ? labels.onregelmatig : labels.regelmatig}</span>
+        </p>
+        <Beeld woord={w.w} beelden={beelden} />
+      </div>
       <div className="mt-4 grid gap-6 sm:grid-cols-2">
         <section>
           <h3 className="eyebrow mb-2">{labels.tt}</h3>
@@ -130,17 +155,22 @@ function Betekenis({ b, label }: { b?: string; label: string }) {
 }
 
 /** A Polish noun: "this" for its gender (ten sklep), and the seven cases in both numbers. */
-function PoolsNaamwoordKaart({ w, labels }: { w: PoolsNaamwoord; labels: Labels }) {
+function PoolsNaamwoordKaart({ w, labels, beelden }: { w: PoolsNaamwoord; labels: Labels; beelden?: LijstBeelden }) {
   const p = labels.pools;
   const dit = aanwijzend(w.g);
   const kop = w.ev[0] ?? w.mv[0]!;
   return (
     <div>
-      <p className="text-3xl">
-        <Zeg tekst={`${dit} ${kop}`} taal="pl" label={labels.uitspreken} />
-        <span className="ml-3 text-base text-muted">{p.geslacht[w.g]}</span>
-      </p>
-      <Betekenis b={w.b} label={p.betekenis} />
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-3xl">
+            <Zeg tekst={`${dit} ${kop}`} taal="pl" label={labels.uitspreken} />
+            <span className="ml-3 text-base text-muted">{p.geslacht[w.g]}</span>
+          </p>
+          <Betekenis b={w.b} label={p.betekenis} />
+        </div>
+        <Beeld woord={w.w} beelden={beelden} />
+      </div>
       <table className="mt-4 w-full text-left">
         <thead>
           <tr className="border-b border-line text-sm text-muted">
@@ -172,17 +202,22 @@ function PoolsNaamwoordKaart({ w, labels }: { w: PoolsNaamwoord; labels: Labels 
 }
 
 /** A Polish verb: its aspect and its partner, the forms without a helper, and the past for a man and a woman. */
-function PoolsWerkwoordKaart({ w, labels, onZoek }: { w: PoolsWerkwoord; labels: Labels; onZoek: (woord: string) => void }) {
+function PoolsWerkwoordKaart({ w, labels, beelden, onZoek }: { w: PoolsWerkwoord; labels: Labels; beelden?: LijstBeelden; onZoek: (woord: string) => void }) {
   const p = labels.pools;
   const sie = w.sie ? " się" : "";
   const zeg = (persoon: string, vorm: string) => <Zeg tekst={`${persoon} ${vorm}${sie}`} toon={`${vorm}${sie}`} taal="pl" label={labels.uitspreken} />;
   return (
     <div>
-      <p className="text-3xl">
-        <Zeg tekst={`${w.w}${sie}`} taal="pl" label={labels.uitspreken} />
-        <span className="ml-3 text-base text-muted">{p.aspect[w.asp]}</span>
-      </p>
-      <Betekenis b={w.b} label={p.betekenis} />
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-3xl">
+            <Zeg tekst={`${w.w}${sie}`} taal="pl" label={labels.uitspreken} />
+            <span className="ml-3 text-base text-muted">{p.aspect[w.asp]}</span>
+          </p>
+          <Betekenis b={w.b} label={p.betekenis} />
+        </div>
+        <Beeld woord={w.w} beelden={beelden} />
+      </div>
       {w.paar.length > 0 && (
         <p className="mt-1 text-muted">
           <span className="text-sm">{p.paar[w.asp]}</span>{" "}
@@ -312,8 +347,9 @@ export function Woordzoeker({ lijst, labels, meer }: Props) {
                 type="button"
                 aria-pressed={i === gekozen}
                 onClick={() => setGekozen(i)}
-                className={`rounded-full border px-3 py-1 text-sm ${i === gekozen ? "border-accent bg-accent text-background" : "border-line hover:border-accent"}`}
+                className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm ${i === gekozen ? "border-accent bg-accent text-background" : "border-line hover:border-accent"}`}
               >
+                <Beeld woord={x.t.woord.w} beelden={lijst.beelden} klein />
                 {x.regel}
               </button>
             </li>
@@ -326,14 +362,14 @@ export function Woordzoeker({ lijst, labels, meer }: Props) {
           <p className="eyebrow mb-2">{kaart.t.soort === "naamwoord" ? labels.naamwoord : labels.werkwoord}</p>
           {kaart.taal === "pl" ? (
             kaart.t.soort === "naamwoord" ? (
-              <PoolsNaamwoordKaart w={kaart.t.woord} labels={labels} />
+              <PoolsNaamwoordKaart w={kaart.t.woord} labels={labels} beelden={lijst.beelden} />
             ) : (
-              <PoolsWerkwoordKaart w={kaart.t.woord} labels={labels} onZoek={zoekWoord} />
+              <PoolsWerkwoordKaart w={kaart.t.woord} labels={labels} beelden={lijst.beelden} onZoek={zoekWoord} />
             )
           ) : kaart.t.soort === "naamwoord" ? (
-            <NaamwoordKaart w={kaart.t.woord} taal={taal} labels={labels} />
+            <NaamwoordKaart w={kaart.t.woord} taal={taal} labels={labels} beelden={lijst.beelden} />
           ) : (
-            <WerkwoordKaart w={kaart.t.woord} taal={taal} labels={labels} />
+            <WerkwoordKaart w={kaart.t.woord} taal={taal} labels={labels} beelden={lijst.beelden} />
           )}
           {link && (
             <p className="mt-4 text-sm">

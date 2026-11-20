@@ -800,8 +800,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             Imprint-site.
       - [ ] Stap A uitrollen op de Imprint-site: op de VPS eerst
             `./deploy.sh relabel-lang imprint --to=nl`, dan bouwen. _(S)_
-      - [ ] Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
-            config, `<html lang>` uit de config, en `relabel-lang`. _(S)_
+      - [x] ~~Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
+            config, `<html lang>` uit de config.~~ In de code sinds 20-11-2026.
+      - [ ] `relabel-lang` draaien voor omnium (VPS:
+            `./deploy.sh relabel-lang omnium --to=nl`) en voor inrichting
+            (Fundament, daar met `npm run db:relabel-lang -- --to=nl` tegen de
+            database van de site). Tot dan vallen de pagina's terug op `en`. _(S)_
       - [ ] De plugins schrijven hun items met een vast `"en"` en hun
             schema's hebben `lang` met standaard `en`. Zolang hun typen geen
             taal hebben is dat een etiket zonder betekenis; bij stap D per
@@ -1049,8 +1053,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] Pools: *zeg* testen met de Poolse spraakherkenning van de
             browser (pl-PL), en of *orden* niet te vaak een tweede goede
             volgorde heeft (Poolse woordvolgorde is vrij). **S**
-      - [ ] Afbeeldingen bij *Zoek een woord* voor de concrete woorden
-            (vrije pictogrammen, bijv. OpenMoji, CC BY-SA). **M**
+      - [x] ~~Afbeeldingen bij *Zoek een woord*~~ — Fluent Emoji bij de
+            concrete woorden, beide talen (20-11).
+      - [ ] Plaatjes ook in de lessen: bij de brokken, en *kies* met
+            plaatjes voor wie zonder vertaling leert. **M**
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
             vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
             een vertaling in de les. **S**

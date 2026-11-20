@@ -48,6 +48,7 @@ async function main() {
   const opened = openContentDatabase(url, {
     widgets: widgetRegistry,
     contentTypes: ContentTypeRegistry.of(coreContentTypeDefinitions, presentationsContentTypes),
+    defaultLocale: "nl", // the site's base language (imprint.config.ts): pages are looked up and written in it
   });
   const store = opened.store;
   const by = "import-deck";

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { store } from "@/lib/content";
+import { imprint, store } from "@/lib/content";
 import "./globals.css";
 
 const sans = Inter({
@@ -21,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="nl">
+    <html lang={imprint.defaultLocale}>
       <body className={sans.variable}>{children}</body>
     </html>
   );
