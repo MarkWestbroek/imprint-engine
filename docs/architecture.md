@@ -999,6 +999,37 @@ flowchart LR
 - Een file zonder `lang` in de content-map is in de basistaal; de seed neemt
   dat over met `--lang=nl`.
 
+**Vaste teksten in de taal van de site** (laag 2). Knoppen, lege-lijstteksten
+en datums staan niet meer in één taal in de code, maar in een catalogus per
+package: `src/messages.ts`, één object per taal met dezelfde sleutels. Geen
+i18n-bibliotheek; de helpers staan in `content-core/src/messages.ts`.
+
+```mermaid
+flowchart LR
+    C["imprint.config.ts<br/>uiLocale (standaard: defaultLocale)"] --> I["imprint.uiLocale"]
+    I --> W["WidgetContext.locale<br/>(site: widget-context.ts)"]
+    I --> S["SearchPage locale=…"]
+    I --> H["kop en voet van de site"]
+    W --> V["viewer: messagesFor(messages, ctx.locale)"]
+    V -- "teksten als props" --> E["client-eiland<br/>(carrousel, inhoudsopgave)"]
+    M1["widgets-standard/src/messages.ts<br/>en · nl · pl"] --> V
+    M2["runtime-admin/src/messages.ts<br/>en · nl · pl"] --> S
+    M3["sites/imprint/src/messages.ts<br/>en · nl"] --> H
+```
+
+- `Catalog<T>`: Engels is verplicht en de terugval; het type van de Engelse
+  teksten is het contract, dus een taal die een sleutel mist compileert niet.
+  Een test per package controleert bovendien dat geen tekst leeg is.
+- `messagesFor(catalogus, taal)` geeft het object; `formatDate(taal, datum,
+  stijl)` schrijft een datum via `Intl`. Een kale dag (`2026-11-20`) verschuift
+  niet door een tijdzone.
+- `uiLocale` staat los van `defaultLocale`: de eerste is de taal van de
+  knoppen, de tweede het etiket van de inhoud. Zonder `uiLocale` zijn ze
+  gelijk.
+- Een viewer leest de taal uit `ctx.locale`; een client-eiland krijgt zijn
+  teksten als props en importeert geen catalogus.
+- Een nieuwe taal is één object erbij in elke catalogus.
+
 Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
 README): één catch-all route handler die de `ContentStore` aanroept, met
 dezelfde query-parameters. API, site en admin kunnen daardoor per definitie

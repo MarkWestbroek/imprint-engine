@@ -813,7 +813,19 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             RSS-feed van MusicBrain leest het); de config is leidend. Het veld
             daar weghalen of laten volgen. _(S)_
       - [ ] Stap B: catalogi in widgets-standard, plugins en site-chrome;
-            `formatDate`. _(M)_
+            `formatDate`. _(M)_ Eerste deel gebouwd 20-11-2026: de helpers,
+            `uiLocale`, de standaardwidgets, de zoekpagina en de kop en voet
+            van de Imprint-site. Open:
+            - [ ] De Poolse teksten laten nalezen (`widgets-standard` en
+                  `runtime-admin`, `src/messages.ts`). **S**
+            - [ ] De communityplugins (groepen, blog, evenementen, annotaties,
+                  wiki, begrippen): teksten en datums staan in het Nederlands
+                  in de code, ook formulieren en foutmeldingen. Catalogus per
+                  plugin zodra een site ze in een andere taal nodig heeft. **L**
+            - [ ] De plugins presentations en omnium. **S**
+            - [ ] Inlog- en accountpagina's voor leden. **M**
+            - [ ] "Loading map…" van de kaartwidget (staat in een
+                  `dynamic`-lader, krijgt geen props). **S**
       - [ ] Stap C: beheeromgeving vertaald, taal per gebruiker. _(L)_
       - [ ] Stap D: vertalingen per item, `/en/`-prefix, `hreflang`. _(M+M+S)_
 - [ ] **W8** Press kit als downloadbare zip. _(should; S)_

@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Vaste teksten in de taal van de site** (W5/S9, eerste deel van stap B van
+  design/meertaligheid.md). Een catalogus per package in plaats van tekst in
+  de code: de standaardwidgets en de zoekpagina van de engine in Nederlands,
+  Engels en Pools, de kop en voet van de Imprint-site in Nederlands en Engels.
+  Nieuw in `content-core`: `Catalog`, `messagesFor` en `formatDate`. Een site
+  zet de taal van haar vaste teksten met `uiLocale` in `imprint.config.ts`
+  (standaard de basistaal) en geeft hem door als `WidgetContext.locale`.
+  Zichtbaar gevolg: op commonground, inrichting, omnium, markwestbroek en de
+  Imprint-site zijn de teksten van de standaardwidgets nu Nederlands
+  ("No photos yet." wordt "Nog geen foto's."); MusicBrain en de taaltraining
+  blijven zoals ze waren. De plugins volgen later.
 - **Basistaal per site** (W5/S9, stap A van design/meertaligheid.md). Een site
   zet `locales` en `defaultLocale` in haar `imprint.config.ts`; pagina's,
   producten, componenten en board-specs worden zonder taal in die basistaal

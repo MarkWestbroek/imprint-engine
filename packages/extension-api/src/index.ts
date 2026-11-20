@@ -95,6 +95,12 @@ export interface ImprintConfig {
    * Absent = the first of `locales`, else "en".
    */
   defaultLocale?: string;
+  /**
+   * The language of the site's fixed texts: buttons, "no results", dates
+   * (design/meertaligheid.md layer 2). Absent = `defaultLocale`. Set it apart
+   * for a site whose content is not labelled with its language (yet).
+   */
+  uiLocale?: string;
   /** The widget catalogue (config schemas) this instance supports; the store validates layouts against it. */
   widgets: WidgetTypeRegistry;
   /** Admin session cookie (rule 5: each instance its own cookie name). */
@@ -172,6 +178,8 @@ export interface ImprintInstance {
   locales: string[];
   /** The base language of the site's content (config, else "en"). */
   defaultLocale: string;
+  /** The language of the site's fixed texts (config, else `defaultLocale`). */
+  uiLocale: string;
   /** Disk or bucket (`assets.s3` in the config); the serving route reads through it either way. */
   assets: AssetStore;
   /** Upload limits per file kind (defaults from content-core, overridden by the config), and the API's allowed origins. */
@@ -216,6 +224,9 @@ function localesOf(cfg: ImprintConfig): { locales: string[]; defaultLocale: stri
   const locales = cfg.locales?.length ? [...new Set(cfg.locales)] : [defaultLocale];
   for (const code of [defaultLocale, ...locales]) {
     if (!isLocale(code)) throw new Error(`imprint.config (${cfg.id}): language "${code}" must be two lowercase letters, like nl`);
+  }
+  if (cfg.uiLocale !== undefined && !isLocale(cfg.uiLocale)) {
+    throw new Error(`imprint.config (${cfg.id}): uiLocale "${cfg.uiLocale}" must be two lowercase letters, like nl`);
   }
   if (!locales.includes(defaultLocale)) {
     throw new Error(`imprint.config (${cfg.id}): defaultLocale "${defaultLocale}" is not one of locales (${locales.join(", ")})`);
@@ -305,6 +316,7 @@ export function resolveImprint(config: ImprintConfig): ImprintInstance {
     plugins: cfg.plugins ?? [],
     locales,
     defaultLocale,
+    uiLocale: cfg.uiLocale ?? defaultLocale,
     assets: s3Config(cfg.assets?.s3) ? new S3AssetStore(s3Config(cfg.assets?.s3)!, assetBase) : new FileAssetStore(assetRoot, assetBase),
     mail: createMailer(cfg.mail),
     stats: { reportDir: cfg.stats?.reportDir || null },

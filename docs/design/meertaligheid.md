@@ -1,6 +1,7 @@
 # Ontwerp — meertaligheid (W5/S9)
 
-Status: **stap A gebouwd (20-11-2026)**, B tot en met D ontwerp. De keuzes
+Status: **stap A gebouwd (20-11-2026), stap B voor een deel** (zie §3), C en
+D ontwerp. De keuzes
 in §7 zijn besloten op 20-11-2026. Vervangt het denkstuk van juli 2026 (dat
 ging alleen over vertalingen van inhoud, met Engels als bron; het staat nu in
 §5, bijgewerkt).
@@ -102,6 +103,37 @@ of `en-GB` vast in 14 plekken.
   niet nodig voor Polen.
 - Een test per package: alle talen hebben dezelfde sleutels.
 
+**Zo gebouwd (stap B, eerste deel, 20-11-2026).**
+- `content-core/src/messages.ts`: het type `Catalog<T>` (Engels verplicht, een
+  taal die een sleutel mist compileert niet), `messagesFor(catalogus, taal)`
+  met terugval op Engels, en `formatDate(taal, datum, stijl)`.
+- De taal van de vaste teksten is een eigen instelling: **`uiLocale`** in
+  `imprint.config.ts`, standaard de basistaal. Zo krijgt een Nederlandse site
+  Nederlandse knoppen zonder dat haar inhoud een ander etiket hoeft
+  (commonground). De site geeft hem door als `WidgetContext.locale`; een site
+  met meer talen kan dat later per verzoek doen.
+- Catalogi in `nl`, `en` en `pl`: de standaardwidgets
+  (`widgets-standard/src/messages.ts`) en de zoekpagina van de engine
+  (`runtime-admin/src/messages.ts`). De kop en voet van de Imprint-site
+  (`sites/imprint/src/messages.ts`) in `nl` en `en`.
+- Client-eilanden (carrousel, inhoudsopgave) krijgen hun teksten als gewone
+  data van de viewer; ze importeren geen catalogus.
+- Wat een redacteur ziet als een widget nog niet is ingesteld ("Paste a V3
+  model…") is beheer en hoort bij laag 3.
+
+**Nog te doen in stap B.**
+- De plugins van de community (groepen, blog, evenementen, annotaties, wiki,
+  begrippen) hebben hun teksten in het Nederlands in de code, veel meer dan de
+  telling hierboven: ook formulieren en foutmeldingen. Alleen commonground
+  gebruikt ze. Omzetten naar een catalogus per plugin zodra een site ze in een
+  andere taal nodig heeft.
+- De datums in die plugins (`nl-NL` vast) naar `formatDate`; de blog gebruikt
+  hem al.
+- De plugins presentations en omnium, voor omnium en inrichting.
+- Inlog- en accountpagina's voor leden.
+- Datums in de standaardwidgets (berichten, tijdlijn) staan er als ruwe
+  ISO-datum; bewust niet veranderd, want dat wijzigt wat MusicBrain toont.
+
 Waarom geen `next-intl` of i18next: de packages moeten framework-vrij blijven
 (`extension-api`, de stores), de hoeveelheid tekst is klein, en de taal komt
 per site, niet per verzoek (behalve in laag 4). Een eigen catalogus is een
@@ -170,7 +202,7 @@ op 20-11-2026). Die site lost het nu lokaal op en gaat als laatste over:
 | Stap | Wat | Maat | Levert op |
 |---|---|---|---|
 | A | Laag 1: `locales`, basistaal in lezen en schrijven, `<html lang>`, waarschuwing in de studio. **Gebouwd 20-11-2026**, aangezet op de Imprint-site | S | Poolse inhoud correct opgeslagen en getoond |
-| B | Laag 2: catalogi `nl/en/pl` in widgets-standard, de plugins en de site-chrome; `formatDate` | M | een volledig Poolse publieke site |
+| B | Laag 2: catalogi `nl/en/pl` in widgets-standard, de plugins en de site-chrome; `formatDate`. **Eerste deel gebouwd 20-11-2026**: de helpers, `uiLocale`, de standaardwidgets, de zoekpagina en de kop en voet van de Imprint-site; de plugins volgen | M | een volledig Poolse publieke site |
 | C | Laag 3: admin-catalogus, taal per gebruiker, labelkaarten voor formulieren | L | Pools beheer |
 | D | Laag 4: taaltabs, "Vertaling maken", dekking, `/en/`-prefix, `hreflang`, verouderd-melding | M + M + S | meertalige sites |
 

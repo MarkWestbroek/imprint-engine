@@ -1,4 +1,5 @@
 /** Pure blog helpers (no store imports: usable in client, server and Node scripts). */
+import { formatDate as coreFormatDate } from "@imprint/content-core/messages";
 
 /** The URL space the plugin claims: `/blog` (the overview) and `/blog/<slug>`. */
 export const BLOG_PREFIX = "blog";
@@ -34,8 +35,6 @@ export function postSummary(post: { summary: string; body: string }, max = 220):
 }
 
 /** "3 oktober 2026" for a YYYY-MM-DD date. */
-export function formatDate(iso: string, locale = "nl-NL"): string {
-  const [y, m, d] = iso.split("-").map(Number);
-  if (!y || !m || !d) return iso;
-  return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+export function formatDate(iso: string, locale = "nl"): string {
+  return coreFormatDate(locale, iso);
 }

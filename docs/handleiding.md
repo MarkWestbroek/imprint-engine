@@ -225,6 +225,10 @@ zien, inclusief header en footer.
   bovenbalk opent de opgeslagen pagina op de site in een nieuw tabblad.
 - **Opslaan**: je werkt in een concept; pas **Save** zet het live (als nieuwe
   versie). **Undo changes** gooit het concept weg.
+- **Vaste teksten**: wat een widget zelf zegt ("Nog geen foto's", "Pdf
+  downloaden", het kruimelpad voor schermlezers) staat in de taal van de site:
+  Nederlands, Engels of Pools. Een eigen tekst in de instellingen van de
+  widget (bijvoorbeeld *emptyText*) gaat altijd voor.
 - **Taal**: een nieuwe pagina krijgt de taal van de site. Het veld **lang** in
   de instellingen is een keuzelijst met de talen die de site heeft. Staat een
   pagina in een taal die de site niet heeft, dan zegt een melding bovenaan dat,
