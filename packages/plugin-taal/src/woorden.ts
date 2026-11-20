@@ -46,9 +46,30 @@ export type Werkwoord = z.infer<typeof Werkwoord>;
 /** Where the words come from, to show on the page (the licence asks for it). */
 const Bron = z.string();
 
+/** An emoji by its code points: `1f34e`, `1f3ca-200d-2642`. */
+const Code = z.string().regex(/^[0-9a-f]+(-[0-9a-f]+)*$/);
+/** word → at most two pictures: two meanings (bank 🏦 🛋, zamek 🏰 🔒). */
+const PerWoord = z.record(z.string(), z.array(Code).min(1).max(2));
+
+/** The pictures of a list: where they are (`pad` + code + `.svg`), and which word has which. */
+export const LijstBeelden = z.object({ bron: z.string(), pad: z.string(), woorden: PerWoord });
+export type LijstBeelden = z.infer<typeof LijstBeelden>;
+
+/** The pictures of every list, as sites/taal/scripts/beelden-maken.ts writes them. */
+export const Beelden = z.object({ bron: z.string(), pad: z.string() }).catchall(PerWoord);
+export type Beelden = z.infer<typeof Beelden>;
+
+/** A list with its pictures: the word list as made, plus the pictures of its language. */
+export function metBeelden<T extends { taal: string }>(lijst: T, beelden: unknown): T & { beelden?: LijstBeelden } {
+  const b = Beelden.parse(beelden);
+  const woorden = b[lijst.taal];
+  return woorden && typeof woorden === "object" ? { ...lijst, beelden: { bron: b.bron, pad: b.pad, woorden } } : lijst;
+}
+
 export const NederlandseWoordenlijst = z.object({
   taal: z.literal("nl"),
   bron: Bron,
+  beelden: LijstBeelden.optional(),
   naamwoorden: z.array(Naamwoord),
   werkwoorden: z.array(Werkwoord),
 });
@@ -100,6 +121,7 @@ export type PoolsWerkwoord = z.infer<typeof PoolsWerkwoord>;
 export const PoolseWoordenlijst = z.object({
   taal: z.literal("pl"),
   bron: Bron,
+  beelden: LijstBeelden.optional(),
   naamwoorden: z.array(PoolsNaamwoord),
   werkwoorden: z.array(PoolsWerkwoord),
 });

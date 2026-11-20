@@ -103,7 +103,10 @@ export { GRAMMATICA_GROEPEN, GrammaticaSchema, LesSchema, Oefening, type Grammat
 export { LesdialoogConfig, OefeningenConfig } from "./widget";
 export {
   aanwijzend,
+  Beelden,
   lidwoord,
+  LijstBeelden,
+  metBeelden,
   NAAMVALLEN,
   NederlandseWoordenlijst,
   PoolseWoordenlijst,

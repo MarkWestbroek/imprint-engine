@@ -1,6 +1,7 @@
 import path from "node:path";
 import { defineImprint } from "@imprint/extension-api";
 import { taalPlugin } from "@imprint/plugin-taal";
+import { metBeelden } from "@imprint/plugin-taal/woorden";
 import { widgetRegistry } from "@/widgets/registry";
 
 /**
@@ -18,8 +19,11 @@ export const TAAL = {
   standaardUi: "pl",
   pakket: "nl",
   // "Check a word" (/pl/nederlands/woorden, /nl/polski/woorden): the word list of the package, made by scripts/woorden-maken*.ts.
-  woorden: async (taal: string) =>
-    taal === "nl" ? (await import("./woorden/nl.json")).default : taal === "pl" ? (await import("./woorden/pl.json")).default : null,
+  // With a picture beside the concrete words (woorden/beelden.json, made by scripts/beelden-maken.ts).
+  woorden: async (taal: string) => {
+    const lijst = taal === "nl" ? (await import("./woorden/nl.json")).default : taal === "pl" ? (await import("./woorden/pl.json")).default : null;
+    return lijst ? metBeelden(lijst, (await import("./woorden/beelden.json")).default) : null;
+  },
 };
 
 export default defineImprint({
