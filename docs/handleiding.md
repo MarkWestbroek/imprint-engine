@@ -803,6 +803,28 @@ maak je de lijst opnieuw met `scripts/woorden-maken.ts` (zie het commentaar
 bovenin). De lijst staat in de repo, niet in de admin: een wijziging gaat mee
 met de volgende uitrol.
 
+**Een Pools woord opzoeken.** De Poolse cursus heeft hetzelfde: *Woorden* in
+het menu (`/nl/polski/woorden`). Je typt een Pools woord in welke vorm ook:
+"sklepie" vindt *sklep*, "poszłam" vindt *pójść*. Poolse tekens hoeven niet
+("poszlam" werkt ook). Wat je ziet:
+
+- bij een zelfstandig naamwoord: *ten*, *ta* of *to* met het woord (dat laat
+  het geslacht zien), en een tabel met de zeven naamvallen in enkelvoud en
+  meervoud;
+- bij een werkwoord: het aspect (onvoltooid of voltooid) met het werkwoord van
+  het andere aspect als knop (*robić* ↔ *zrobić*), de vormen voor ja, ty,
+  on/ona, my, wy, oni/one, en de verleden tijd voor een man en een vrouw. Bij
+  een voltooid werkwoord heet de eerste tabel *Toekomende tijd*, want *zrobię*
+  betekent "ik zal doen";
+- de betekenis, kort en in het Engels: de lijst komt uit de Engelse
+  Wiktionary en heeft geen Nederlandse vertaling.
+
+De lijst heeft zo'n 2500 zelfstandige naamwoorden en 700 werkwoorden: de
+meest gebruikte, plus elk zelfstandig naamwoord en werkwoord uit de Poolse
+lessen. Een fout herstel je in `sites/taal/woorden/pl-aanvullingen.json`
+(`houd`, `weg`, en `sie` voor werkwoorden die alleen met *się* voorkomen);
+daarna maak je de lijst opnieuw met `scripts/woorden-maken-pl.ts`.
+
 Hoe je een goede les schrijft, staat in `sites/taal/SCHRIJFWIJZER.md`.
 
 De 45 lessen staan ook als bestand in `sites/taal/lessen`, de

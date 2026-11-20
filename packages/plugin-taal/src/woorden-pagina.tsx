@@ -32,7 +32,8 @@ export function WoordenView({ ui, lijst, topics }: { ui: string; lijst: Woordenl
     const g = topics.find((x) => x.groep === groep);
     return g ? { href: grammaticaHref(ui, g.taal, g.slug), titel: tekstVoor(g.titel, ui) } : undefined;
   };
-  const meer = { werkwoord: eerste("werkwoorden"), naamwoord: eerste("naamwoorden") };
+  // Polish: from a noun to the cases.
+  const meer = { werkwoord: eerste("werkwoorden"), naamwoord: (lijst.taal === "pl" ? eerste("naamvallen") : undefined) ?? eerste("naamwoorden") };
   const aantal = Math.round((lijst.naamwoorden.length + lijst.werkwoorden.length) / 100) * 100;
   return (
     <div lang={ui} className="max-w-3xl">
@@ -42,7 +43,7 @@ export function WoordenView({ ui, lijst, topics }: { ui: string; lijst: Woordenl
       <p className="eyebrow mt-4">{t.pakket[lijst.taal] ?? lijst.taal}</p>
       <h1 className="text-3xl font-semibold tracking-tight">{w.naam}</h1>
       <div className="mt-3 text-lg text-muted">
-        <Markdown>{vul(w.intro, { aantal })}</Markdown>
+        <Markdown>{vul(lijst.taal === "pl" ? w.pools.intro : w.intro, { aantal })}</Markdown>
       </div>
       <div className="mt-6">
         <Woordzoeker lijst={lijst} labels={{ ...w, uitspreken: t.grammatica.uitspreken }} meer={meer} />

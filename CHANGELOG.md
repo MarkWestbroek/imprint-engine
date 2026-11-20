@@ -17,6 +17,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   Imprint-site zijn de teksten van de standaardwidgets nu Nederlands
   ("No photos yet." wordt "Nog geen foto's."); MusicBrain en de taaltraining
   blijven zoals ze waren. De plugins volgen later.
+- **Taaltraining: een Pools woord opzoeken** (`/nl/polski/woorden`). Typ een
+  Pools zelfstandig naamwoord of werkwoord in welke vorm ook, met of zonder
+  Poolse tekens: geslacht en de zeven naamvallen, of aspect met partner, de
+  vormen en de verleden tijd voor een man en een vrouw, met een korte Engelse
+  betekenis. Zo'n 2500 zelfstandige naamwoorden en 700 werkwoorden uit
+  Wiktionary, waaronder alle uit de lessen.
 - **Basistaal per site** (W5/S9, stap A van design/meertaligheid.md). Een site
   zet `locales` en `defaultLocale` in haar `imprint.config.ts`; pagina's,
   producten, componenten en board-specs worden zonder taal in die basistaal
