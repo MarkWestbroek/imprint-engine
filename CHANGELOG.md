@@ -6,6 +6,20 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Basistaal per site** (W5/S9, stap A van design/meertaligheid.md). Een site
+  zet `locales` en `defaultLocale` in haar `imprint.config.ts`; pagina's,
+  producten, componenten en board-specs worden zonder taal in die basistaal
+  gelezen en geschreven, met terugval op `en` voor bestaande rijen. `Locale`
+  is een taalcode van twee letters in plaats van de vaste lijst `en`/`nl`. In
+  de admin is het veld *lang* een keuzelijst van de talen van de site, een
+  nieuwe pagina krijgt de basistaal, en de studio waarschuwt bij een pagina in
+  een taal die de site niet heeft; een andere taal kiezen en opslaan verhuist
+  de pagina. Nieuw: `npm run db:relabel-lang -- --to=nl` (op de VPS
+  `./deploy.sh relabel-lang <site> --to=nl`) zet de `en`-etiketten van een
+  bestaande site om, via de store; de seed kent `--lang=`. Aangezet op de
+  Imprint-site (`nl`, ook `<html lang>`); elke andere site blijft op `en` tot
+  ze een basistaal krijgt. **Bij de uitrol van de Imprint-site eerst
+  `relabel-lang` draaien** (docs/deploy-vps.md).
 - **Seed: `--new`.** `npm run db:seed -- --only=page,menu --new` voegt alleen
   de pagina's en menu's toe die nog niet bestaan, zodat een pagina die in de
   admin is bewerkt niet door het bestand wordt overschreven.

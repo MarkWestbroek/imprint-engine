@@ -56,6 +56,22 @@ export function withAccessOptions(schema: JsonSchema, groups: { slug: string }[]
   return { ...schema, properties: out };
 }
 
+/**
+ * A language field (`x-imprint.locale`, content-core's Locale) as a select of
+ * the site's languages, plus "en": the label of rows from before the site had
+ * a base language, and of the types that have no language of their own.
+ */
+export function withLocaleOptions(schema: JsonSchema, locales: readonly string[]): JsonSchema {
+  const props = schema.properties as Record<string, JsonSchema> | undefined;
+  if (!props) return schema;
+  const out: Record<string, JsonSchema> = {};
+  for (const [name, prop] of Object.entries(props)) {
+    const hint = prop["x-imprint"] as { locale?: boolean } | undefined;
+    out[name] = hint?.locale ? { ...prop, enum: [...new Set([...locales, "en"])] } : prop;
+  }
+  return { ...schema, properties: out };
+}
+
 export function contentFormSchema(def: ContentTypeDefinition): JsonSchema {
   const schema = def.formSchema ?? def.schema;
   return schema instanceof z.ZodObject ? objectSchema(schema) : { type: "object", properties: {} };

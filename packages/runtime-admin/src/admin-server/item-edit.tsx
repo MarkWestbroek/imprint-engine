@@ -3,7 +3,8 @@ import { notFound, redirect } from "next/navigation";
 import { ItemEditor } from "../admin/item-editor";
 import type { AdminContext } from "../admin-context";
 import type { AdminActions } from "./actions";
-import { withAccessOptions } from "../forms";
+import { itemLang } from "@imprint/content-core";
+import { withAccessOptions, withLocaleOptions } from "../forms";
 import { accessGroups } from "./members";
 
 /** Date → value for <input type="datetime-local"> (minute precision). */
@@ -28,7 +29,8 @@ export async function ItemEditScreen({
   admin: AdminContext;
   type: string;
   slug: string | undefined;
-  lang: string;
+  /** Absent = the language items of this type have by default (the site's base language for pages). */
+  lang?: string;
   actions: Pick<AdminActions, "saveItem">;
 }) {
   if (!admin.imprint.contentTypes.has(type, "editable")) notFound();
@@ -38,7 +40,8 @@ export async function ItemEditScreen({
   const def = admin.imprint.contentTypes.definition(type);
   const store = admin.imprint.writableStore!;
 
-  const item = slug ? await store.getItem(contentType, slug, lang) : null;
+  const baseLang = itemLang(contentType, admin.imprint.defaultLocale);
+  const item = slug ? await store.getItem(contentType, slug, lang ?? baseLang) : null;
   if (slug && !item) notFound();
 
   // Menu items point to pages; give the editor the real list to pick from.
@@ -64,7 +67,7 @@ export async function ItemEditScreen({
         <ItemEditor
           type={contentType}
           initialData={(item?.data as Record<string, unknown>) ?? def.emptyData?.() ?? {}}
-          formSchema={withAccessOptions(admin.forms.content(contentType), await accessGroups(admin))}
+          formSchema={withLocaleOptions(withAccessOptions(admin.forms.content(contentType), await accessGroups(admin)), admin.imprint.locales)}
           isNew={!item}
           validFrom={toLocalInput(item?.validFrom)}
           validTo={toLocalInput(item?.validTo)}

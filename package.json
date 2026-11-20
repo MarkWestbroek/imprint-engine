@@ -33,6 +33,7 @@
     "db:generate:pg": "drizzle-kit generate --config drizzle.config.pg.ts",
     "db:migrate:pg": "drizzle-kit migrate --config drizzle.config.pg.ts",
     "db:seed": "tsx scripts/seed.ts",
+    "db:relabel-lang": "tsx scripts/relabel-lang.ts",
     "db:copy-to-pg": "tsx scripts/copy-mariadb-to-pg.ts",
     "user": "tsx scripts/user.ts",
     "user:passwd": "tsx scripts/user.ts passwd",

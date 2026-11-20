@@ -411,15 +411,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
           rendert `/techniek` uit Postgres of `content/` met dezelfde
           renderer en acht gekozen standaardwidgets; tokencontract gevuld met
           het Imprint-palet.
-        - [ ] **Basistaal per site** — de store gebruikt Engels als basis
-          (`pickLang`), dus de Nederlandstalige Imprint-site moet haar
-          pagina's als `en` opslaan om ze zonder taalparameter te tonen. Een
-          `defaultLocale` uit de siteconfig als basis maakt dat recht. _(S9; M)_
-          Gezien 30-09: een in de studio als `nl` opgeslagen pagina
-          (`/canoniek-model`) geeft op de site 404, zonder enige waarschuwing
-          in de studio. Tot `defaultLocale` er is: in de studio waarschuwen
-          (of de taalkeuze verbergen) als de gekozen taal niet de basistaal is
-          die de site toont.
+        - [x] ~~**Basistaal per site**~~ — gebouwd 20-11-2026 (stap A van
+          [design/meertaligheid.md](design/meertaligheid.md)): `locales` en
+          `defaultLocale` in `imprint.config.ts`, de store leest en schrijft
+          in de basistaal, en de studio waarschuwt bij een pagina in een taal
+          die de site niet heeft.
         - [ ] **Viewers per widget importeerbaar** — `standardViewers` is één
           object, dus elke site bundelt alle twintig viewers en hun
           client-eilanden, ook als ze er acht kiest. Losse exports per widget
@@ -796,9 +792,26 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       basistaal per site, vaste teksten (catalogus nl/en/pl), beheeromgeving
       per gebruiker, meer talen naast elkaar:
       [design/meertaligheid.md](design/meertaligheid.md). Aanleiding: een
-      eentalig Poolse site. Wacht op Marks keuzes (§7 daar). _(should; L)_
-      - [ ] Stap A: `locales` + basistaal in lezen/schrijven, `<html lang>`,
-            waarschuwing in de studio. _(S)_
+      eentalig Poolse site. Keuzes besloten 20-11-2026 (§7 daar): eerst de
+      engine op de Imprint-site, dan inrichting en omnium, de taaltraining
+      als laatste; commonground blijft zoals het is. _(should; L)_
+      - [x] ~~Stap A: `locales` + basistaal in lezen/schrijven, `<html lang>`,
+            waarschuwing in de studio.~~ Gebouwd 20-11-2026, aangezet op de
+            Imprint-site.
+      - [ ] Stap A uitrollen op de Imprint-site: op de VPS eerst
+            `./deploy.sh relabel-lang imprint --to=nl`, dan bouwen. _(S)_
+      - [ ] Stap A op inrichting en omnium: `defaultLocale: "nl"` in de
+            config, `<html lang>` uit de config, en `relabel-lang`. _(S)_
+      - [ ] De plugins schrijven hun items met een vast `"en"` en hun
+            schema's hebben `lang` met standaard `en`. Zolang hun typen geen
+            taal hebben is dat een etiket zonder betekenis; bij stap D per
+            type beslissen of het vertaalbaar wordt. _(M)_
+      - [ ] Het generieke formulier (`saveItem`) verhuist een item niet als je
+            de taal wijzigt: het oude blijft naast het nieuwe staan. De studio
+            doet dat wel. _(S)_
+      - [ ] `defaultLocale` staat ook nog in de siteconfig in de store (de
+            RSS-feed van MusicBrain leest het); de config is leidend. Het veld
+            daar weghalen of laten volgen. _(S)_
       - [ ] Stap B: catalogi in widgets-standard, plugins en site-chrome;
             `formatDate`. _(M)_
       - [ ] Stap C: beheeromgeving vertaald, taal per gebruiker. _(L)_
@@ -941,8 +954,9 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       woonwagenpagina's komen voorlopig uit de JSON in de repo (alleen die twee
       pagina's via de store bijwerken, geen volledige seed).
 - [ ] **Meertaligheid in de engine** (november 2026, voor IMPRINT-CORE) —
-      `Locale` in content-core kent alleen `en`/`nl` en `<html lang>` is
-      sitebreed. markwestbroek.nl lost het nu lokaal op (vertaling als
+      `Locale` is sinds 20-11 een vrije taalcode en een site heeft een
+      basistaal (stap A van [meertaligheid.md](design/meertaligheid.md)),
+      maar `<html lang>` is nog sitebreed. markwestbroek.nl lost het nu lokaal op (vertaling als
       subpagina `woonwagen/pl`, `lang` op de inhoud via `pageLang`, contactwidget
       met `taal`); in de engine horen: meer locales, `lang` per pagina,
       `hreflang`-koppeling tussen vertalingen en vertaalbare widgetteksten.
@@ -1059,9 +1073,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             zelfbeoordeling te verschijnen).
       - [ ] Een formulier voor dialoog en oefeningen; nu zijn dat JSON-vakken
             in het lesformulier. **M**
-      - [ ] De site slaat haar inhoud op als `en`, want de basistaal `pl`
-            bestaat nog niet ([meertaligheid.md](design/meertaligheid.md),
-            stap A). Daarna ook `<html lang>` per interfacetaal.
+      - [ ] De site slaat haar inhoud op als `en`. De basistaal per site
+            bestaat sinds 20-11 ([meertaligheid.md](design/meertaligheid.md),
+            stap A), maar de taaltraining gaat als laatste over (§5 en §7 E
+            daar). Dan ook `<html lang>` per interfacetaal.
       - [ ] Eigen domeinen (langzaammaarzeker.nl, powolialedoprzodu.pl): per
             domein een standaardpakket. Nu kiest de siteconfig het pakket.
       - [ ] Voortgang per gebruiker in plaats van per browser; uitspraak met

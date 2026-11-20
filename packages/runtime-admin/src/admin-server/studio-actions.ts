@@ -47,7 +47,7 @@ export async function savePageDraft(
   slug: string | undefined,
   lang: string,
   validity: { validFrom?: string; validTo?: string }
-): Promise<StudioResult & { slug?: string }> {
+): Promise<StudioResult & { slug?: string; lang?: string }> {
   const k = await key(admin, slug, lang);
   if (!k) return { ok: false, error: "Not signed in" };
   const store = admin.imprint.writableStore;
@@ -65,18 +65,22 @@ export async function savePageDraft(
     ...(draft.rows.length > 0 ? { layout: { rows: draft.rows } } : {}),
   };
 
+  const newLang = typeof draft.meta.lang === "string" ? draft.meta.lang : lang;
   try {
     await store.putItem("page", newSlug, data, {
-      lang: typeof draft.meta.lang === "string" ? draft.meta.lang : "en",
+      lang: newLang,
       by: k.session.name,
       validFrom: validity.validFrom ? new Date(validity.validFrom) : undefined,
       validTo: validity.validTo ? new Date(validity.validTo) : undefined,
     });
+    // Another language in the form relabels the page: the version under the old
+    // language ends (its history stays), so the page does not exist twice.
+    if (slug && slug === newSlug && newLang !== lang) await store.deleteItem("page", slug, lang);
   } catch (err) {
     return { ok: false, error: saveError(err) };
   }
 
   clearDraft(k.key);
   revalidatePath("/", "layout");
-  return { ok: true, slug: newSlug };
+  return { ok: true, slug: newSlug, lang: newLang };
 }

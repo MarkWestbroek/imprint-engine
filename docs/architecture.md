@@ -965,7 +965,39 @@ wenselijk is voor de bitemporele route: `jsonb` i.p.v. tekst, en
 echt bitemporeel klein.
 
 Alle reads nemen `ReadOptions` mee: `asOf` (tijdreizen), `lang`
-(taal-fallback naar EN, S9) en `includeDrafts` (previews).
+(taal, S9) en `includeDrafts` (previews).
+
+**Basistaal per site** (W5/S9, [design/meertaligheid.md](design/meertaligheid.md)
+laag 1). Een site zet in `imprint.config.ts` haar talen (`locales`) en haar
+basistaal (`defaultLocale`; zonder: `en`). De composition root geeft de
+basistaal aan de store mee en biedt beide aan als `imprint.locales` en
+`imprint.defaultLocale`. Eén regel voor file-store, database-stores en admin,
+in `content-core/src/lang.ts`:
+
+```mermaid
+flowchart LR
+    C["imprint.config.ts<br/>locales, defaultLocale"] --> R["resolveImprint"]
+    R -- "defaultLocale" --> S["store<br/>(file, MariaDB, Postgres, memory)"]
+    R -- "locales, defaultLocale" --> A["admin en studio"]
+    S --> P["pickByLang<br/>gevraagd → basistaal → en"]
+    S --> W["itemLang(type)<br/>schrijven zonder taal"]
+    A --> F["withLocaleOptions<br/>lang als keuzelijst"]
+    A --> X["waarschuwing in de studio<br/>taal buiten locales"]
+```
+
+- **Lezen**: per slug de gevraagde taal, anders de basistaal, anders `en`. De
+  laatste stap vindt rijen van vóór de basistaal.
+- **Schrijven zonder taal**: de basistaal, voor de typen die de store per taal
+  leest (`LANGUAGE_TYPES`: pagina, product, component, board-spec). Andere
+  typen hebben geen eigen taal en houden het etiket `en`.
+- **`Locale`** is een taalcode van twee letters, geen vaste lijst; welke talen
+  een site heeft is een instelling.
+- **Omzetten** van een bestaande site: `relabelLanguage` (script
+  `npm run db:relabel-lang -- --to=nl`) legt elk `en`-item opnieuw vast in de
+  basistaal, met dezelfde geldigheid, en beëindigt de `en`-versie. Via de
+  store, dus met historie.
+- Een file zonder `lang` in de content-map is in de basistaal; de seed neemt
+  dat over met `--lang=nl`.
 
 Dezelfde store is ook als **JSON-API** ontsloten (`/api/content/...`, zie de
 README): één catch-all route handler die de `ContentStore` aanroept, met

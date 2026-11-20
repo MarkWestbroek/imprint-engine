@@ -225,6 +225,11 @@ zien, inclusief header en footer.
   bovenbalk opent de opgeslagen pagina op de site in een nieuw tabblad.
 - **Opslaan**: je werkt in een concept; pas **Save** zet het live (als nieuwe
   versie). **Undo changes** gooit het concept weg.
+- **Taal**: een nieuwe pagina krijgt de taal van de site. Het veld **lang** in
+  de instellingen is een keuzelijst met de talen die de site heeft. Staat een
+  pagina in een taal die de site niet heeft, dan zegt een melding bovenaan dat,
+  en of bezoekers de pagina zien. Kies de taal van de site en sla op: de
+  pagina verhuist dan naar die taal, de oude versie blijft in de geschiedenis.
 - **Default views**: onder **Default views** ontwerp je hoe een producten-,
   componenten- of releasepagina er standáárd uitziet — één keer ontwerpen,
   geldt voor elk item van dat type. Kies "Preview as …" om met een echt

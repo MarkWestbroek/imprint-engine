@@ -1,6 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
+import { itemLang, RelationsDoc, type ContentType, type RelationRule } from "@imprint/content-core";
 import type { ActionResult, MediaActions, StudioActions, TokenActions, UserAction, UserActions } from "../admin/types";
 import type { AdminContext } from "../admin-context";
 
@@ -50,7 +50,7 @@ export async function saveItem(admin: AdminContext, _prev: ActionResult | null, 
     const validFromRaw = String(formData.get("validFrom") ?? "");
     const validToRaw = String(formData.get("validTo") ?? "");
     await store.putItem(type, slug, data, {
-      lang: typeof data.lang === "string" ? data.lang : "en",
+      lang: typeof data.lang === "string" ? data.lang : itemLang(type, admin.imprint.defaultLocale),
       by: session.name,
       validFrom: validFromRaw ? new Date(validFromRaw) : undefined,
       validTo: validToRaw ? new Date(validToRaw) : undefined,
@@ -69,7 +69,7 @@ export async function deleteItem(admin: AdminContext, formData: FormData): Promi
   if (!session || !store) return;
   const type = parseType(admin, formData.get("type"));
   const slug = String(formData.get("slug") ?? "");
-  const lang = String(formData.get("lang") ?? "en");
+  const lang = String(formData.get("lang") ?? itemLang(type, admin.imprint.defaultLocale));
   await store.deleteItem(type, slug, lang);
   revalidatePath("/", "layout");
   redirect(`/admin/${type}`);
@@ -81,7 +81,7 @@ export async function restoreVersion(admin: AdminContext, formData: FormData): P
   if (!session || !store) return;
   const type = parseType(admin, formData.get("type"));
   const slug = String(formData.get("slug") ?? "");
-  const lang = String(formData.get("lang") ?? "en");
+  const lang = String(formData.get("lang") ?? itemLang(type, admin.imprint.defaultLocale));
   const id = Number(formData.get("id"));
   const versions = await store.listVersions(type, slug, lang);
   const version = versions.find((v) => v.id === id);
