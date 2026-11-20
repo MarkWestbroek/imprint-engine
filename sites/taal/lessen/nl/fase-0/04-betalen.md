@@ -8,16 +8,22 @@ titel: Betalen
 dialoog:
   - nl: "Hoeveel kost het?"
     pl: "Ile to kosztuje?"
+    en: "How much is it?"
   - nl: "Vijftien euro vijftig."
     pl: "Piętnaście euro pięćdziesiąt."
+    en: "Fifteen euros fifty."
   - nl: "Kan ik pinnen?"
     pl: "Czy mogę zapłacić kartą?"
+    en: "Can I pay by card?"
   - nl: "Ja, natuurlijk."
     pl: "Tak, oczywiście."
+    en: "Yes, of course."
   - nl: "Wilt u het bonnetje?"
     pl: "Chce pani paragon?"
+    en: "Would you like the receipt?"
   - nl: "Nee, dank u."
     pl: "Nie, dziękuję."
+    en: "No, thank you."
 brokken: ["hoeveel kost het?", "kan ik…?", "pinnen", "wilt u…?", "natuurlijk", "drie euro vijftig", "twaalf euro", "negentien vijfennegentig", "veertig euro", "honderd euro"]
 grammatica: [nl-verkleinwoord]
 oefeningen:
@@ -36,9 +42,13 @@ oefeningen:
   - type: typ
     vraag: "Czy mogę zapłacić kartą?"
     antwoorden: ["Kan ik pinnen?", "Kan ik met de kaart betalen?"]
+    vertaald:
+      en: { vraag: "Can I pay by card?" }
   - type: zeg
     vraag: "Czy mogę zapłacić kartą?"
     antwoorden: ["Kan ik pinnen?", "Kan ik met de kaart betalen?"]
+    vertaald:
+      en: { vraag: "Can I pay by card?" }
 ---
 
 **Ombouwen:** zeg vijf bedragen hardop (3,50 · 12 · 19,95 · 40 · 100).

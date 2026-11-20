@@ -4,14 +4,16 @@ import { taalPlugin } from "@imprint/plugin-taal";
 import { widgetRegistry } from "@/widgets/registry";
 
 /**
- * The language training (design/taaltraining/README.md): a Polish site that
- * offers the lesson package Dutch. The address is `/<ui>/<pakket>/<les>`:
- * the interface language first, then the language taught. Runs on Postgres
+ * The language training (design/taaltraining/README.md): the lesson package
+ * Dutch, for Polish speakers (the default) and for English speakers. The
+ * address is `/<ui>/<pakket>/<les>`: the interface language first, then the
+ * language taught; each interface language has its own front page and menu
+ * (src/lib/ingang.ts). Runs on Postgres
  * via DATABASE_URL; the lessons live in the store only (content type `les`
  * of plugin-taal), so without a database there are pages but no lessons.
  */
 export const TAAL = {
-  ui: ["pl", "nl"],
+  ui: ["pl", "en", "nl"],
   standaardUi: "pl",
   pakket: "nl",
   // "Check a word" (/pl/nederlands/woorden): the word list of the package, made by scripts/woorden-maken.ts.

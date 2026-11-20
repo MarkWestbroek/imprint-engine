@@ -5,9 +5,11 @@ groep: werkwoorden
 volgorde: 3
 titel:
   pl: "Czas przeszły złożony: ik heb gewerkt"
+  en: "The perfect tense: ik heb gewerkt"
   nl: "De voltooide tijd: ik heb gewerkt"
 kort:
   pl: "Hebben albo zijn + imiesłów z ge- na końcu zdania: tak mówi się o przeszłości w rozmowie."
+  en: "Hebben or zijn + a past participle with ge- at the end: this is how you talk about the past."
   nl: "Hebben of zijn + een voltooid deelwoord met ge- aan het eind: zo praat je over vroeger."
 tekst:
   pl: |
@@ -38,6 +40,37 @@ tekst:
     Zwykle *hebben*. *Zijn* mają czasowniki, które mówią o ruchu dokądś albo o zmianie stanu, a także *zijn* i *blijven*: **hij is gekomen**, **wij zijn drie dagen gebleven**, **ik ben in Polen geweest**, **wat is er gebeurd?** Tak samo *worden* i *beginnen*.
 
     Przy *fietsen*, *lopen* czy *rijden* decyduje kierunek. Sama czynność: *hebben*; ruch dokądś: *zijn*.
+
+    - **ik heb een uur gefietst**
+    - **ik ben naar huis gefietst**
+  en: |
+    To talk about what happened, you usually use the perfect tense: *hebben* or *zijn* in the present tense + a past participle. *Heb* or *ben* is in second place, the participle right at the end: **ik heb de hele dag gewerkt**, **ik ben naar huis gegaan**. In a question: **wat heb je gedaan?**, **ben je lang gebleven?**
+
+    ### The regular participle: ge-…-t or ge-…-d
+
+    *Ge-* + stem + *-t* or *-d*. Just as in the simple past: a stem ending in a consonant from *’t kofschip* (*t, k, f, s, ch, p*) gets *-t*, the rest get *-d*.
+
+    - *werken* → **gewerkt**, *maken* → **gemaakt**
+    - *horen* → **gehoord**, *bellen* → **gebeld**
+    - a stem ending in *-t* or *-d* gets no extra ending: *praten* → **gepraat**
+
+    Verbs with *be-*, *ge-*, *her-*, *ver-*, *ont-* and *er-* get no *ge-*: *betalen* → **betaald**, *verstaan* → **verstaan**, *gebeuren* → **gebeurd**.
+
+    ### Irregular participles
+
+    | verb | participle | verb | participle |
+    |---|---|---|---|
+    | *eten* | **gegeten** | *gaan* | **gegaan** |
+    | *drinken* | **gedronken** | *komen* | **gekomen** |
+    | *zien* | **gezien** | *blijven* | **gebleven** |
+    | *doen* | **gedaan** | *zijn* | **geweest** |
+    | *kopen* | **gekocht** | *hebben* | **gehad** |
+
+    ### Hebben or zijn?
+
+    Usually *hebben*. *Zijn* goes with verbs of movement to a place or of change, and with *zijn* and *blijven*: **hij is gekomen**, **wij zijn drie dagen gebleven**, **ik ben in Polen geweest**, **wat is er gebeurd?** The same goes for *worden* and *beginnen*.
+
+    With *fietsen*, *lopen* or *rijden* the direction decides. Just the activity: *hebben*; on the way to a place: *zijn*.
 
     - **ik heb een uur gefietst**
     - **ik ben naar huis gefietst**
@@ -77,4 +110,8 @@ anders:
     Po polsku jest jeden czas przeszły, a różnicę robi aspekt: *jadłem* czy *zjadłem*. Niderlandzki aspektu nie ma; w rozmowie o przeszłości prawie zawsze używa czasu złożonego, bez względu na to, czy czynność się skończyła: *wczoraj pracowałem* to **gisteren heb ik gewerkt**, *zjedliśmy na mieście* to **wij hebben in de stad gegeten**.
 
     Nowy jest też czasownik posiłkowy: trzeba wybrać między *hebben* a *zijn*. Rodzaju też nie ma: **ik ben gekomen** mówi i mężczyzna, i kobieta (*przyszedłem / przyszłam*).
+  en: |
+    It looks like the English *I have worked*, but it is used differently. In English you cannot say *I have worked yesterday*; in Dutch that is the normal way to say it: **gisteren heb ik gewerkt** is simply *I worked yesterday*, and **wij hebben in de stad gegeten** is *we ate in town*.
+
+    Two more things are new. English always uses *have*; in Dutch you choose between *hebben* and *zijn*: *he has come* is **hij is gekomen**. And the participle does not follow *have* directly but goes to the end of the sentence: *I have worked all day* is **ik heb de hele dag gewerkt**.
 ---

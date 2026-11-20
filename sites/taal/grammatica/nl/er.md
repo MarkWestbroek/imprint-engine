@@ -5,9 +5,11 @@ groep: zinsbouw
 volgorde: 5
 titel:
   pl: "Słówko er"
+  en: "The little word er"
   nl: "Het woordje er"
 kort:
   pl: "Er is / er zijn to „jest / są”, a er zastępuje też niezaakcentowane „tam”, liczbę i rzecz po przyimku."
+  en: "Er is / er zijn means there is / there are, and er also replaces an unstressed there, goes with a number, and stands for a thing after a preposition."
   nl: "Er is / er zijn zegt dat iets ergens is, en er vervangt ook een onbeklemtoond daar, een aantal en een ding na een voorzetsel."
 tekst:
   pl: |
@@ -35,6 +37,31 @@ tekst:
     ### Er + przyimek
 
     Po przyimku o rzeczy nie mówisz *het*, tylko *er* + przyimek w jednym słowie: *op het* → **erop**, *met het* → **ermee**, *in het* → **erin**. **Wat doe je ermee?** Zapamiętaj na razie jako gotowe zwroty.
+  en: |
+    *Er* is a short word without stress. It has four important uses.
+
+    | use | example | in English |
+    |---|---|---|
+    | something is somewhere | **Er is een bakker naast de bank.** | There is a bakery next to the bank. |
+    | there | **Ik woon er al tien jaar.** | I have lived there for ten years. |
+    | with a number | **Ik heb er twee.** | I have two (of them). |
+    | with a preposition | **De sleutel ligt erop.** | The key is on it. |
+
+    ### Er is, er zijn
+
+    When you say that something is somewhere, you start with **er is** (one thing) or **er zijn** (more things): **Er zijn twee supermarkten.** In a question the verb goes first: **Is er hier een bakker?** The same with other verbs, when the subject is not a specific one: **Er gaat ook een bus om kwart voor vier.**
+
+    ### Er = there
+
+    A *daar* (there) without stress becomes *er*: **Ben je er al geweest?** If you want to stress the place, you say **daar**: **Daar woon ik.**
+
+    ### Er + number
+
+    With a number or *veel*, *weinig* without a noun you must add *er*: **Hoeveel heeft u er?** **Ik heb er twee.**
+
+    ### Er + preposition
+
+    After a preposition you do not say *het* for a thing, but *er* + preposition as one word: *op het* → **erop**, *met het* → **ermee**, *in het* → **erin**. **Wat doe je ermee?** For now, remember them as fixed chunks.
   nl: |
     *Er* is een kort woordje zonder klemtoon. Het heeft vier belangrijke betekenissen.
 
@@ -67,4 +94,10 @@ anders:
     *Mam dwa* po polsku wystarcza; po niderlandzku *Ik heb twee* brzmi niepełnie, mówi się **Ik heb er twee**.
 
     Po polsku mówisz *na tym*, *z tym*; po niderlandzku nie *op het*, tylko **erop**, nie *met het*, tylko **ermee**.
+  en: |
+    **Er is** and **er zijn** work like *there is* and *there are*. But Dutch uses *er* with other verbs too, where English has no *there*: **Er gaat ook een bus om kwart voor vier**, *A bus also goes at a quarter to four*.
+
+    *I have two* is enough in English; in Dutch *Ik heb twee* sounds unfinished, you say **Ik heb er twee**.
+
+    English says *on it*, *with it*; Dutch turns it around and writes one word: not *op het* but **erop**, not *met het* but **ermee**. Compare old English *thereon*, *therewith*.
 ---

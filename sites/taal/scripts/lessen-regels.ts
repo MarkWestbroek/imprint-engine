@@ -15,8 +15,20 @@ import { vormenKloppen } from "@imprint/plugin-taal/tekst";
 export const LESSEN_DIR = path.resolve(import.meta.dirname, "../lessen");
 export const GRAMMATICA_DIR = path.resolve(import.meta.dirname, "../grammatica");
 
-/** The interface languages of this site: every grammar topic is written for both. */
-const LEZERS = ["pl", "nl"];
+/** The interface languages of this site: every grammar rule is written for all of them. */
+const LEZERS = ["pl", "en", "nl"];
+
+/**
+ * The readers a lesson is translated for, besides its own `steuntaal`: the
+ * dialogue, `situatie` and `patroon` have a text in each, and the exercises a
+ * `vertaald` part (schemas.ts).
+ */
+const OOK_VOOR = ["en"];
+
+/** Whether a text has letters: options that are numbers or times need no translation. */
+const heeftLetters = (s: string) => /\p{L}{2,}/u.test(s);
+/** A question in Polish, by its letters or its forms per learner. */
+const isPools = (s: string) => /[ąćęłńśźżĄĆĘŁŃŚŹŻ{]/.test(s);
 
 export type Gelezen = { file: string; les?: Les; fouten: string[] };
 
@@ -50,7 +62,25 @@ export function controleer(file: string, les: Les): string[] {
     if ("opties" in o && new Set(o.opties).size !== o.opties.length) fout(`${waar}: an option twice`);
     if (o.type === "orden" && (woorden(o.zin) < 3 || woorden(o.zin) > 7)) fout(`${waar}: ${woorden(o.zin)} words, 3 to 7 expected`);
     if (o.type === "orden" && new Set(o.zin.split(/\s+/)).size !== woorden(o.zin)) fout(`${waar}: a word twice, so more than one right order`);
+    if (o.type === "orden") return;
+    for (const taal of OOK_VOOR) {
+      const v = o.vertaald?.[taal];
+      for (const tekst of [v?.vraag ?? "", ...(v?.opties ?? [])]) if (/[{}]/.test(tekst)) fout(`${waar}: a form per learner in ${taal}: ${tekst}`);
+      if (v?.opties && new Set(v.opties).size !== v.opties.length) fout(`${waar}: an option twice in ${taal}`);
+      if (o.type === "luister" && o.opties.some(heeftLetters) && !v?.opties) fout(`${waar}: no options in ${taal}`);
+      if ((o.type === "typ" || o.type === "zeg") && !v?.vraag) fout(`${waar}: no question in ${taal}`);
+      if (o.type === "kies" && isPools(o.vraag) && !v?.vraag) fout(`${waar}: the question is Polish and has no ${taal}`);
+    }
   });
+  for (const taal of OOK_VOOR) {
+    les.dialoog.forEach((r, i) => {
+      if (!r[taal]?.trim()) fout(`dialoog ${i + 1}: needs ${taal}`);
+    });
+    for (const veld of ["situatie", "patroon"] as const) {
+      if (les[veld][steun]?.trim() && !les[veld][taal]?.trim()) fout(`${veld}: no ${taal}`);
+      if (/[{}]/.test(les[veld][taal] ?? "")) fout(`${veld}: a form per learner in ${taal}`);
+    }
+  }
 
   // Phase 0 came before the writing guide: only the rules above apply to it.
   if (les.fase === 0) return fouten;
@@ -97,8 +127,11 @@ export function controleerGrammatica(file: string, g: Grammatica): string[] {
   const fout = (m: string) => fouten.push(m);
   const map = file.replace(/\\/g, "/").split("/")[0];
   if (map !== g.taal) fout(`taal ${g.taal} in folder ${map}`);
+  // A rule is for every reader. A difference is with one language: for the readers it is written for, and in Dutch.
+  const lezers = g.soort === "verschil" ? LEZERS.filter((l) => l === g.taal || g.titel[l]?.trim()) : LEZERS;
+  if (lezers.length < 2) fout("a verschil needs a reader besides the language taught");
   for (const veld of ["titel", "kort", "tekst"] as const) {
-    for (const lezer of LEZERS) if (!g[veld][lezer]?.trim()) fout(`${veld}: no ${lezer}`);
+    for (const lezer of lezers) if (!g[veld][lezer]?.trim()) fout(`${veld}: no ${lezer}`);
   }
   for (const lezer of Object.keys(g.anders)) if (!LEZERS.includes(lezer)) fout(`anders: ${lezer} is not a language of this site`);
   if (g.soort === "verschil" && Object.keys(g.anders).length > 0) fout("a verschil is all difference: no separate anders");

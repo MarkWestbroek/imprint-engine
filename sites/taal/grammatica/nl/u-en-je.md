@@ -5,9 +5,11 @@ groep: voornaamwoorden
 volgorde: 3
 titel:
   pl: "U i je: pan/pani czy ty"
+  en: "U and je: two words for you"
   nl: "U en je"
 kort:
   pl: "Grzeczne u to jedno słowo dla pana i pani, z czasownikiem zwykle jak przy jij."
+  en: "English has one you; Dutch has informal je/jij, polite u and plural jullie."
   nl: "Het beleefde u is één woord voor iedereen, meestal met de werkwoordsvorm van jij."
 tekst:
   pl: |
@@ -39,6 +41,35 @@ tekst:
     ### Kilka osób
 
     Do grupy mówisz **jullie**, także do ludzi, do których każdemu z osobna mówisz *u*: **hebben jullie morgen tijd?** Polskie *państwo* nie ma osobnego odpowiednika; *u* do grupy brzmi bardzo oficjalnie.
+  en: |
+    English has one *you* for everyone. Dutch makes you choose: *je* or *jij* to someone you know, **u** to be polite, and *jullie* to more than one person. **U** is the same word for a man and a woman, and the verb usually has the same form as with *jij*: **u werkt**, **u bent**.
+
+    | | informal | polite |
+    |---|---|---|
+    | to be | **jij bent** | **u bent** |
+    | to have | **jij hebt** | **u hebt**, **u heeft** |
+    | question | **werk jij?** | **werkt u?** |
+    | your | **jouw tas** | **uw tas** |
+    | for you | **voor jou** | **voor u** |
+    | thank you | **dank je** | **dank u** |
+    | please, here you are | **alsjeblieft** | **alstublieft** |
+
+    ### Differences in the forms
+
+    - With *hebben* you say both **u hebt** and **u heeft**; **heeft u…?** is what you hear most.
+    - In a question *u* keeps the *-t*: **werkt u?**, **komt u?**, but **werk jij?**
+    - After a verb and after a preposition *u* does not change: **kunt u mij helpen?**, **ik help u**.
+
+    ### When u, when je?
+
+    - **u**: to adults you do not know, at the town hall, at the doctor's, to older people, often in a shop;
+    - **je / jij**: to neighbours, colleagues, friends and children.
+
+    The Dutch move to *je* quickly, also in shops and in adverts. If you are not sure, start with *u*. If someone says **zeg maar je**, you may say *je* from then on.
+
+    ### More than one person
+
+    To a group you say **jullie**, also to people you each call *u* on their own: **hebben jullie morgen tijd?** There is no everyday polite plural; *u* to a group sounds very formal.
   nl: |
     In het Pools zeg je beleefd *pan* of *pani* met het werkwoord in de derde persoon: *Czy ma pan baterie?* In het Nederlands is er één woord voor een man en een vrouw, **u**, en het werkwoord heeft meestal dezelfde vorm als bij *jij*: **u werkt**, **u bent**.
 

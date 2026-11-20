@@ -10,6 +10,24 @@ Een volwassen Poolstalige beginner in Nederland. De site staat in het Pools.
 De leerling leest nog geen Nederlands, dus alles wat uitleg of opdracht is,
 staat in het Pools. Alleen wat geleerd wordt, staat in het Nederlands.
 
+## Een tweede lezer: Engels
+
+Elke les en elk grammatica-onderwerp is er ook voor de Engelstalige lezer
+(`/en/nederlands/…`). Het Nederlands is hetzelfde; alleen wat uitleg of
+opdracht is, staat er ook in het Engels:
+
+- `dialoog`: bij elke regel `en` naast `pl`; `situatie` en `patroon`: `en`
+  naast `pl` en `nl`.
+- Oefeningen: `vertaald: { en: { vraag: "…" } }` bij `typ`, `zeg` en een
+  `kies` met een Poolse vraag; `vertaald: { en: { opties: […] } }` bij
+  `luister`. Een `kies` met een Nederlandse vraag en een `orden` hebben niets
+  nodig.
+- Engels heeft één *you*. Waar de antwoorden alleen `u` of alleen `je/jij`
+  goed rekenen en de zin het niet laat zien, staat `(polite)` of `(informal)`
+  achter de vraag.
+- Geen vormen `{a|b}` in het Engels.
+- Vergelijk in `patroon` en in `anders` met het Engels, niet met het Pools.
+
 ## Methode
 
 - Eerst bruikbaar, dan correct. Elke zin is iets wat je echt zegt of hoort.

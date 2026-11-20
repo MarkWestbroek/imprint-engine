@@ -1,0 +1,142 @@
+{
+  "slug": "home-en",
+  "title": "Langzaam maar zeker: Dutch from the first sentence",
+  "description": "45 short Dutch lessons for English speakers: first ready-made phrases for the shop, work and the town hall, then the grammar.",
+  "publishedAt": "2026-11-20",
+  "body": "",
+  "layout": {
+    "rows": [
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "hero",
+                "config": {
+                  "title": "Dutch *from the first sentence*",
+                  "subtitle": "45 short lessons for English speakers in the Netherlands. First ready-made phrases for the shop, work and the town hall, then the grammar. Listen, repeat and speak aloud.",
+                  "align": "left",
+                  "variant": "open"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "verder",
+                "config": {
+                  "ui": "en",
+                  "taal": "nl"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "How it works",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "icon": "🎧",
+                      "title": "Listen",
+                      "markdown": "You can play every sentence at normal speed and slowly, as often as you like."
+                    },
+                    {
+                      "icon": "🗣️",
+                      "title": "Speak aloud",
+                      "markdown": "In the “say it” exercises the browser listens and checks what you say."
+                    },
+                    {
+                      "icon": "🧩",
+                      "title": "Phrases first",
+                      "markdown": "Grammar comes later: at most one new rule per lesson."
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "cards",
+                "config": {
+                  "title": "Six phases",
+                  "columns": 3,
+                  "items": [
+                    {
+                      "title": "Phase 0: To begin with",
+                      "markdown": "Dit, dat, heeft u…: getting by in a shop with a few words. Lessons 1–5.",
+                      "href": "/en/nederlands"
+                    },
+                    {
+                      "title": "Phase 1: The basic verbs",
+                      "markdown": "To be, to have, to want, can, to go, to come. Lessons 6–12.",
+                      "href": "/en/nederlands"
+                    },
+                    {
+                      "title": "Phase 2: Where and where to",
+                      "markdown": "Prepositions, asking the way, at the station. Lessons 13–20.",
+                      "href": "/en/nederlands"
+                    },
+                    {
+                      "title": "Phase 3: What you do",
+                      "markdown": "Regular verbs and the past. Lessons 21–30.",
+                      "href": "/en/nederlands"
+                    },
+                    {
+                      "title": "Phase 4: Describing",
+                      "markdown": "Colours, comparing, the weather, the time, the days, making an appointment. Lessons 31–40.",
+                      "href": "/en/nederlands"
+                    },
+                    {
+                      "title": "Phase 5: Polite and precise",
+                      "markdown": "Zou graag, omdat, als… dan: polite requests and longer sentences. Lessons 41–45.",
+                      "href": "/en/nederlands"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "cells": [
+          {
+            "span": 1,
+            "widgets": [
+              {
+                "type": "callout",
+                "config": {
+                  "tone": "muted",
+                  "markdown": "**You do not need an account.** All lessons work without one. With an account your results are also there on another phone or computer. [Create an account](/en/account/register)"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

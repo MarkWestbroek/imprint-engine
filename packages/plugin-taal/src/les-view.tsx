@@ -20,7 +20,6 @@ export function Lesdialoog({ les, ui, stemmen, brokken = true }: { les: Les; ui:
   const t = teksten(ui);
   const audio = audioKaart(les, stemmen);
   const vertaald = metVertaling(les, ui);
-  const steun = les.steuntaal ?? "";
   return (
     <div className="space-y-6">
       {les.dialoog.length > 0 && (
@@ -36,8 +35,8 @@ export function Lesdialoog({ les, ui, stemmen, brokken = true }: { les: Les; ui:
                   {regel[les.taal]}
                 </td>
                 {vertaald && (
-                  <td className="py-3 text-muted" lang={steun}>
-                    <Vormen>{regel[steun] ?? ""}</Vormen>
+                  <td className="py-3 text-muted" lang={ui}>
+                    <Vormen>{regel[ui] ?? ""}</Vormen>
                   </td>
                 )}
               </tr>

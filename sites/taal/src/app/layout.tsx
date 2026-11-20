@@ -29,6 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // The default reader's language; the parts in another language say so themselves (lang on the header, the pages).
     <html lang="pl">
       <body className={`${sans.variable} ${display.variable}`}>{children}</body>
     </html>

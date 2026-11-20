@@ -972,6 +972,20 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [ ] De 40 nieuwe lessen laten nalezen: het Nederlands door Mark, het
             Pools door iemand die Pools spreekt. Ze zijn geschreven door
             Claude en alleen op vorm gecontroleerd (`check:lessen`).
+      - [x] ~~Nederlands vanuit het Engels~~ — `/en`, alle 45 lessen en de
+            grammatica met Engels, eigen startpagina en menu (20-11).
+      - [ ] Het Engels laten nalezen (geschreven door Claude, alleen op vorm
+            gecontroleerd). Twijfelgevallen van de vertalers: *(polite)* ook
+            bij een antwoord met alleen *alstublieft*; *gemeente* = "the
+            town hall"; les 24 "What did you say?" voor *Wat zeg je?*; les 33
+            *zeg* "What is cheaper?" rekent "Welke fiets is goedkoper?" niet
+            goed; datums in les 38 zijn dag-maand (Amerikaanse lezer).
+      - [ ] Les 43: de brok *tot zo* staat niet in de dialoog (daar: *Tot
+            straks!*). **S**
+      - [ ] Pools voor Nederlandstaligen (`/nl/polski`, jezyk.imprint-engine.nl):
+            een eigen cursus van 45 lessen met grammatica. **L**
+      - [ ] Afbeeldingen bij *Zoek een woord* voor de concrete woorden
+            (vrije pictogrammen, bijv. OpenMoji, CC BY-SA). **M**
       - [ ] De ombouw-opdracht staat in het Nederlands, en in fase 0 ook de
             vraag bij *kies*; een beginner leest dat nog niet. Per steuntaal
             een vertaling in de les. **S**

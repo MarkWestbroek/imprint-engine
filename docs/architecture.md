@@ -1740,9 +1740,15 @@ Een vijfde site, `sites/inrichting`, is de **werkplek** op dit register
 - De site draait op Fundament: [deploy-fundament.md](deploy-fundament.md).
 
 Een zesde site, `sites/taal`, is de **taaltraining** (poort 3700; ontwerp in
-[design/taaltraining](design/taaltraining/README.md)): een Poolse site met het
-lespakket Nederlands. De site zelf is dun: chrome, de startpagina die
-doorstuurt, en één catch-all die eerst de plugin vraagt. Alles van de lessen
+[design/taaltraining](design/taaltraining/README.md)): het lespakket
+Nederlands, voor Poolstaligen (de standaard) en voor Engelstaligen. De site
+zelf is dun: chrome, een startpagina per ingang, en één catch-all die eerst
+de plugin vraagt. Een **ingang** (`src/lib/ingang.ts`, platte data voor server
+en client) koppelt een interfacetaal aan een startadres, een pagina en een
+menu uit de store: `pl` → `/`, `home`, `main`; `en` → `/en`, `home-en`,
+`main-en`. De header (client, `nav-links.tsx`) krijgt alle menu's mee en kiest
+op het adres: het eerste segment, of voor een pagina zonder taal in het adres
+de ingang waarvan het menu ernaar linkt. Alles van de lessen
 zit in `@imprint/plugin-taal`.
 
 ```mermaid
@@ -1780,9 +1786,16 @@ flowchart LR
   via de `WidgetContext` en geven alleen platte props door. De clientdelen
   (`speak.tsx`, `oefeningen.tsx`, `voortgang.tsx`) lezen niets van de server.
   De vaste teksten komen per interfacetaal uit `i18n.ts` en gaan als prop mee.
+- **Meer lezers per les**: de dialoog, `situatie` en `patroon` hebben een
+  tekst per taal; `metVertaling(les, ui)` is waar als de dialoog die taal
+  heeft. De `vraag` en `opties` van een oefening staan in de `steuntaal` van
+  de les; voor een andere lezer staat hetzelfde onder `vertaald: { en: {
+  vraag?, opties? } }` (het schema eist evenveel opties). Zo blijven de
+  Nederlandse zinnen, en dus de opnamen, één keer bestaan.
 - **Welke oefeningen** (`oefeningenVoor`): is de interfacetaal de steuntaal
-  van de les, dan alle. Anders alleen `kies` en `orden`, want de rest vraagt
-  of antwoordt in de steuntaal.
+  van de les, dan alle, zoals geschreven. Anders komt `vertaald[ui]` in de
+  plaats: `typ` en `zeg` zonder vertaalde vraag en `luister` zonder vertaalde
+  opties vallen weg; `kies` en `orden` blijven altijd.
 - **Vergelijken** (`tekst.ts`, puur): `norm()` haalt hoofdletters, leestekens
   en accenten weg; `lijktOp()` rekent 85% gelijkenis goed (Levenshtein), voor
   kleine fouten van de spraakherkenning.
@@ -1889,11 +1902,14 @@ flowchart LR
   zag elke import elke les vanaf fase 1 als gewijzigd.
 - **Lesbestanden bewaken** (`sites/taal/scripts/lessen-regels.ts`): het schema
   zegt wat een les mag zijn, `controleer()` wat een goed bestand is (pad en id
-  kloppen, elke regel in beide talen, aantallen, elk oefentype aanwezig, een
+  kloppen, elke regel in de taal van de les en voor elke lezer (`pl`, `en`),
+  Engels bij elke oefening die het nodig heeft, aantallen, elk oefentype aanwezig, een
   `orden`-zin met één volgorde). `npm run check:lessen` en de test van de site
   gebruiken dezelfde regels; fase 0 is ouder dan de schrijfwijzer en valt
   alleen onder de basisregels. `controleerGrammatica()` doet hetzelfde voor
-  de grammaticabestanden (map = taal, titel/kort/tekst in `pl` en `nl`, geen
+  de grammaticabestanden (map = taal, titel/kort/tekst voor elke lezer: `pl`,
+  `en` en `nl`; een `verschil` alleen voor de lezers van die taal plus `nl`;
+  geen
   vormen `{m|v}` in vet), `controleerLinks()` of elke verwijzing uit een les
   bestaat en over dezelfde taal gaat.
 
