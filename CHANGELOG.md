@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **paratmos.nl: Omnium en Imprint op de contactpagina.** De pagina waar de
+  QR-code van het visitekaartje heen leidt, noemt naast LinkedIn nu ook de
+  eigen software (NL en EN).
 - **Taaltraining: admin opent de basistaal.** De bewerk- en historieschermen
   krijgen geen vaste terugval op Engels meer (`lang ?? "en"`), net als de
   andere sites; ze kiezen zelf de basistaal van de site. Nu nog zonder

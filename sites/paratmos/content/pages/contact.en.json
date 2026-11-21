@@ -14,7 +14,7 @@
               {
                 "type": "text",
                 "config": {
-                  "markdown": "For an introduction, an assignment or a training: send a message and I will get back to you. You can also find me on [LinkedIn](https://www.linkedin.com/in/markwestbroek/)."
+                  "markdown": "For an introduction, an assignment or a training: send a message and I will get back to you. You can also find me on [LinkedIn](https://www.linkedin.com/in/markwestbroek/).\n\nWhat I build myself: [Omnium](https://omnium.imprint-engine.nl), the model workbench, and [Imprint](https://imprint-engine.nl), the publishing engine this site runs on."
                 }
               }
             ]
