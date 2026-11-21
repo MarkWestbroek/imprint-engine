@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **paratmos.nl: de drie-eenheid in de indeling van de rolbanner.** Processen
+  boven, gegevens linksonder, regels rechtsonder, als gelijkzijdige driehoek;
+  in de ring bovenaan diensten tussen doelen en visie, onderaan de externe
+  opgave en de externe regels (lange namen op twee regels).
 - **paratmos.nl: Omnium en Imprint op de contactpagina.** De pagina waar de
   QR-code van het visitekaartje heen leidt, noemt naast LinkedIn nu ook de
   eigen software (NL en EN).

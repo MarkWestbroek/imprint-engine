@@ -55,11 +55,11 @@
                   "verbandRegelsGegevens": "guard",
                   "verbandProcessenRegels": "steer",
                   "omgeving": [
-                    "External rules and constraints",
-                    "Vision",
-                    "Goals",
                     "Services",
-                    "External task"
+                    "Vision",
+                    "External rules and constraints",
+                    "External task",
+                    "Goals"
                   ]
                 }
               }

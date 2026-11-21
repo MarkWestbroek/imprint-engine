@@ -2155,9 +2155,10 @@ flowchart LR
   `--force`).
 - Eigen widgets, alle drie server-only (SVG, HTML en CSS, geen clientcode):
   `doorbraak` (de opening van de voorpagina: het beeld uit het logo groot op
-  inkt, over de volle schermbreedte), `drie-eenheid` (gegevens, processen en
-  regels als driehoek, met een ring eromheen voor diensten, visie, doelen en
-  wat van buiten komt) en `afleiding` (het model als klasse, de afgeleiden op
+  inkt, over de volle schermbreedte), `drie-eenheid` (processen boven,
+  gegevens en regels onder, als gelijkzijdige driehoek, met een ring eromheen
+  voor diensten, visie, doelen en wat van buiten komt; vijf of zes namen
+  krijgen een vaste indeling, `INDELING` in de component) en `afleiding` (het model als klasse, de afgeleiden op
   een lijn ernaast). Daarnaast `contact` (zoals op markwestbroek.nl, alleen
   Nederlands).
 - De huisstijl volgt de merkrichtlijnen van Paratmos (juni 2026): de tokens
