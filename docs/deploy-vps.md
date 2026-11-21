@@ -504,13 +504,19 @@ verandert aan wat bezoekers zien: pas het omzetten van de A-records doet dat.
    SITES=paratmos ./deploy.sh
    ```
 
-2. Bekijken vóór de DNS om is, via een tunnel vanaf je eigen machine:
+2. Bekijken vóór de DNS om is: op **https://nieuw.paratmos.nl** (live sinds
+   21-11; een eigen A-record bij Exsilia en het blok `nieuw.paratmos.nl` in
+   [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet), met `noindex`), of via
+   een tunnel vanaf je eigen machine:
    `ssh -L 3900:127.0.0.1:3900 <vps>` en dan `http://localhost:3900`
    (ook `/admin`).
 3. Overschakelen: in Plesk bij Exsilia (*DNS Settings* van paratmos.nl) alleen
    de A-records van `paratmos.nl` en `www.paratmos.nl` naar de VPS zetten.
-   `mail`, de MX- en SPF-record, `oud` en **`vps1`** blijven staan:
-   `vps1.paratmos.nl` is de naam van de VPS zelf. Daarna de twee blokken
+   **`paratmos.nl` heeft ook een AAAA-record** (IPv6 naar Exsilia): dat moet
+   weg, anders mislukt het certificaat van Let's Encrypt en komen
+   IPv6-bezoekers nog bij WordPress uit. `mail`, de MX- en SPF-record, `oud`
+   en de wildcard blijven staan (`vps1.paratmos.nl`, de naam van de VPS, valt
+   onder de wildcard en heeft geen eigen record). Daarna de twee blokken
    uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
    `sudo systemctl reload caddy`. Het blok stuurt de oude WordPress-adressen
    (`/?page_id=…`, `/?p=…`) door naar de nieuwe pagina's.
