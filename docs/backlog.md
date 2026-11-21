@@ -984,7 +984,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       kennisbank. De VPS-kant staat klaar in de repo (service, Caddy-blok met
       doorverwijzingen van de oude WordPress-adressen, runbook "paratmos.nl"
       in deploy-vps.md): Mark kloont WordPress naar `oud.paratmos.nl`, dan
-      uitrollen, A-records omzetten en `noindex` eraf. Uitgerold op de VPS
+      uitrollen, A-records omzetten (en het AAAA-record van de apex weg) en
+      `noindex` eraf. Testadres https://nieuw.paratmos.nl staat sinds 21-11. Uitgerold op de VPS
       (loopback 3900) op 20-11; Engels onder `/en` erbij (stap D). Nog: de
       Engelse teksten zijn een concept-vertaling van de Nederlandse door
       Claude, niet de WPML-tekst van de oude Engelse pagina (die ging over de

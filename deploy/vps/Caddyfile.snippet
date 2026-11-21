@@ -210,9 +210,10 @@ woonwagen.markwestbroek.nl {
 
 # paratmos.nl: de zakelijke site van Paratmos. NOG NIET LIVE: pas aanzetten als
 # de A-records van paratmos.nl en www naar de VPS wijzen. De DNS staat bij
-# Exsilia (Plesk, DNS Settings); mail, de MX- en de SPF-record, vps1 (de VPS zelf) en
+# Exsilia (Plesk, DNS Settings); mail, de MX- en de SPF-record, de wildcard en
 # oud.paratmos.nl (het oude WordPress) blijven daar: alleen deze twee
-# A-records omzetten.
+# A-records omzetten, en het AAAA-record van paratmos.nl weghalen (anders
+# mislukt het certificaat).
 paratmos.nl {
 	import veilig
 	log {
@@ -279,6 +280,15 @@ paratmos.nl {
 
 www.paratmos.nl {
 	redir https://paratmos.nl{uri} permanent
+}
+
+# nieuw.paratmos.nl: tijdelijk testadres van de nieuwe site, LIVE sinds
+# 21 november 2026 (eigen A-record bij Exsilia, geen AAAA). Na de overstap
+# doorsturen naar https://paratmos.nl of weghalen.
+nieuw.paratmos.nl {
+	import veilig
+	header X-Robots-Tag "noindex, nofollow"
+	reverse_proxy 127.0.0.1:3900
 }
 
 # Het tijdelijke adres van de productsite (19 september 2026) stuurt door.
