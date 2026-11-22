@@ -34,3 +34,6 @@ backups/
 test-results/
 playwright-report/
 .cache/
+
+# Visitekaartje: bevat privé-telefoonnummer
+marketing/visitekaartje/
