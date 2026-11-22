@@ -942,7 +942,9 @@ De voorpagina bestaat vooral uit beeld, met drie eigen widgets:
   *omgeving* voor de ring eromheen, met de klok mee vanaf boven. Bij vijf
   namen: boven, rechtsboven, rechtsonder, linksonder, linksboven; op
   paratmos.nl dus diensten bovenaan tussen doelen en visie, en onderaan de
-  externe opgave en de externe regels. Lange namen komen op twee regels.
+  externe opgave en de externe regels, met daartussen de klanten en
+  ketenpartners (een zesde naam komt recht onder de driehoek). Lange namen
+  komen op twee regels.
 - **Afleiding**: links één model, getekend als een klasse met attributen, en
   rechts wat eruit wordt afgeleid. Je vult de naam van het model, de
   attributen en per afgeleide een label, een titel en een regel tekst in; met

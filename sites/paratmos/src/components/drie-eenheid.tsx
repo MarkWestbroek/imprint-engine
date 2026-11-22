@@ -21,7 +21,7 @@ export type DrieEenheidProps = {
   verbandProcessenGegevens?: string;
   verbandRegelsGegevens?: string;
   verbandProcessenRegels?: string;
-  /** Around the triangle, clockwise from the top. With five: top, top right, bottom right, bottom left, top left. */
+  /** Around the triangle, clockwise from the top. With five: top, top right, bottom right, bottom left, top left; a sixth goes bottom centre. */
   omgeving?: string[];
 };
 type Punt = { titel: string; tekst?: string; notatie?: string };
@@ -82,7 +82,7 @@ export function DrieEenheid(props: DrieEenheidProps) {
       {kop ? <h2 className="de-kop">{kop}</h2> : null}
       {intro ? <p className="de-intro">{intro}</p> : null}
       <div className="de-rij">
-        <svg className="de-beeld" viewBox="-60 -25 880 580" role="img" aria-label={label}>
+        <svg className="de-beeld" viewBox="-60 -25 880 630" role="img" aria-label={label}>
           {omgeving.length > 0 ? <circle className="de-ring" cx={CX} cy={CY} r={RING} /> : null}
           {omgeving.map((naam, i) => {
             const lijnen = lijnenVan(naam);

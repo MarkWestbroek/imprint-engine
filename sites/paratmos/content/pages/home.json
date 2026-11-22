@@ -35,8 +35,8 @@
               {
                 "type": "drie-eenheid",
                 "config": {
-                  "kop": "De basis: gegevens, processen en regels",
-                  "intro": "Deze drie dragen samen het hele functioneren van een organisatie. Diensten, visie, doelen en wat van buiten komt, liggen eromheen.",
+                  "kop": "De basis: processen, gegevens en regels",
+                  "intro": "Deze drie dragen samen het hele functioneren van een organisatie. Eromheen liggen visie, doelen en diensten, de klanten en ketenpartners, en wat van buiten komt.",
                   "gegevens": {
                     "titel": "Gegevens",
                     "tekst": "Wat de organisatie weet en vastlegt.",
@@ -58,6 +58,7 @@
                     "Diensten",
                     "Visie",
                     "Externe regels en constraints",
+                    "Klanten en ketenpartners",
                     "Externe opgave",
                     "Doelen"
                   ]

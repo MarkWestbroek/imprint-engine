@@ -47,7 +47,7 @@
               {
                 "type": "drie-eenheid",
                 "config": {
-                  "kop": "De drie-eenheid: gegevens, processen en regels",
+                  "kop": "De drie-eenheid: processen, gegevens en regels",
                   "intro": "Een organisatie laat zich beschrijven langs drie lijnen die nauw samenhangen maar wezenlijk verschillen. Samen zijn ze de basis voor haar hele functioneren.",
                   "gegevens": {
                     "titel": "Gegevens",
@@ -70,6 +70,7 @@
                     "Diensten",
                     "Visie",
                     "Externe regels en constraints",
+                    "Klanten en ketenpartners",
                     "Externe opgave",
                     "Doelen"
                   ]

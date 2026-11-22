@@ -35,8 +35,8 @@
               {
                 "type": "drie-eenheid",
                 "config": {
-                  "kop": "The basis: data, processes and rules",
-                  "intro": "Together these three carry the whole functioning of an organisation. Services, vision, goals and what comes from outside lie around them.",
+                  "kop": "The basis: processes, data and rules",
+                  "intro": "Together these three carry the whole functioning of an organisation. Around them lie vision, goals and services, customers and chain partners, and what comes from outside.",
                   "gegevens": {
                     "titel": "Data",
                     "tekst": "What the organisation knows and records.",
@@ -58,6 +58,7 @@
                     "Services",
                     "Vision",
                     "External rules and constraints",
+                    "Customers and chain partners",
                     "External task",
                     "Goals"
                   ]

@@ -76,8 +76,8 @@ describe("paratmos.nl: the starting content", () => {
     const html = await renderHtml(<PageRenderer page={{ ...page, layout: page.layout }} viewers={widgetComponents} ctx={ctx} />);
     assert.match(html, /<h1 class="db-kop">IT voorbij aan het verkopen van lucht\.<\/h1>/);
     assert.match(html, /<h2 class="afl-kop">Eén model\. De rest volgt eruit\.<\/h2>/);
-    // The triangle, with the five surroundings round its ring.
-    assert.equal(html.match(/class="de-omgeving"/g)?.length, 5);
+    // The triangle, with the six surroundings round its ring.
+    assert.equal(html.match(/class="de-omgeving"/g)?.length, 6);
     assert.equal(html.match(/class="afl-item"/g)?.length, 4);
   });
 

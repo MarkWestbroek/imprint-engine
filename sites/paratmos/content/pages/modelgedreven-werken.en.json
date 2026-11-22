@@ -47,7 +47,7 @@
               {
                 "type": "drie-eenheid",
                 "config": {
-                  "kop": "The holy trinity: data, processes and rules",
+                  "kop": "The holy trinity: processes, data and rules",
                   "intro": "An organisation can be described along three lines that are closely related but fundamentally different. Together they are the basis of how it functions.",
                   "gegevens": {
                     "titel": "Data",
@@ -70,6 +70,7 @@
                     "Services",
                     "Vision",
                     "External rules and constraints",
+                    "Customers and chain partners",
                     "External task",
                     "Goals"
                   ]
