@@ -55,11 +55,11 @@
                   "verbandRegelsGegevens": "bewaakt",
                   "verbandProcessenRegels": "stuurt",
                   "omgeving": [
-                    "Externe regels en constraints",
-                    "Visie",
-                    "Doelen",
                     "Diensten",
-                    "Externe opgave"
+                    "Visie",
+                    "Externe regels en constraints",
+                    "Externe opgave",
+                    "Doelen"
                   ]
                 }
               }

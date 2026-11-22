@@ -76,7 +76,7 @@ const drieEenheid = {
   name: "drie-eenheid",
   label: "Drie-eenheid",
   version: "1.0.0",
-  help: "Gegevens, processen en regels als een driehoek, met langs elke zijde wat de twee met elkaar te maken hebben. Eromheen een ring met wat die basis omgeeft (diensten, visie, doelen, wat van buiten komt); de eerste van die lijst staat gecentreerd bovenaan, zet daar dus de langste. Ernaast per aspect een korte tekst.",
+  help: "Processen (boven), gegevens (linksonder) en regels (rechtsonder) als een gelijkzijdige driehoek, met langs elke zijde wat de twee met elkaar te maken hebben. Eromheen een ring met wat die basis omgeeft, met de klok mee vanaf boven; bij vijf: boven, rechtsboven, rechtsonder, linksonder, linksboven (bijvoorbeeld diensten, visie, externe regels, externe opgave, doelen). Lange namen komen op twee regels. Ernaast per aspect een korte tekst.",
   configSchema: z.object({
     kop: z.string().optional(),
     intro: z.string().optional(),

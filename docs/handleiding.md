@@ -935,11 +935,14 @@ De voorpagina bestaat vooral uit beeld, met drie eigen widgets:
   de boog van de atmosfeer en de koers die erdoorheen breekt. Je vult de kop,
   één regel tekst en een knop in, en eventueel drie korte labels langs de
   koers (aan de voet, op de boog, bij het baken).
-- **Drie-eenheid**: gegevens, processen en regels als driehoek. Per aspect een
-  titel, een regel tekst en de notatie (UML, BPMN); langs elke zijde een woord
-  voor het verband; en een lijst *omgeving* voor de ring eromheen (diensten,
-  visie, doelen, externe regels, de opgave). De eerste uit die lijst staat
-  gecentreerd bovenaan: zet daar de langste.
+- **Drie-eenheid**: processen (boven), gegevens (linksonder) en regels
+  (rechtsonder) als gelijkzijdige driehoek, in dezelfde indeling als de
+  Common Ground-rolbanner. Per aspect een titel, een regel tekst en de notatie
+  (UML, BPMN); langs elke zijde een woord voor het verband; en een lijst
+  *omgeving* voor de ring eromheen, met de klok mee vanaf boven. Bij vijf
+  namen: boven, rechtsboven, rechtsonder, linksonder, linksboven; op
+  paratmos.nl dus diensten bovenaan tussen doelen en visie, en onderaan de
+  externe opgave en de externe regels. Lange namen komen op twee regels.
 - **Afleiding**: links één model, getekend als een klasse met attributen, en
   rechts wat eruit wordt afgeleid. Je vult de naam van het model, de
   attributen en per afgeleide een label, een titel en een regel tekst in; met
