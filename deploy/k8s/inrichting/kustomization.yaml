@@ -39,6 +39,19 @@ patches:
         value:
           name: OMNIUM_SCHRIJF_TOKEN
           valueFrom: { secretKeyRef: { name: omnium-schrijver, key: OMNIUM_SCHRIJF_TOKEN, optional: true } }
+      # Omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4): tot het scan-eindpunt
+      # van de plugin er is (dan SCAN_URL + SCAN_TOKEN), een opgenomen scan uit de ConfigMap
+      # `scan-opname` (key scan.json). Die staat alleen in het cluster, niet in git: hij bevat de
+      # hostnamen van het lab. Ontbreekt hij, dan toont de wizard een voorbeeld uit het register.
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value: { name: SCAN_OPNAME, value: /etc/imprint/scan/scan.json }
+      - op: add
+        path: /spec/template/spec/volumes
+        value: [{ name: scan-opname, configMap: { name: scan-opname, optional: true } }]
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts
+        value: [{ name: scan-opname, mountPath: /etc/imprint/scan, readOnly: true }]
   - target: { kind: HTTPRoute, name: imprint }
     patch: |-
       - op: replace

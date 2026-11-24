@@ -34,6 +34,8 @@ export function SiteHeader({ nav, user }: { nav: NavItem[]; user?: string }) {
         </Link>
         <nav aria-label="Hoofdmenu" className="ir-nav">
           <NavLinks nav={nav} />
+          {/* The omgevingswizard (plugin-omnium): a tool, not a page, so not in the editable menu. */}
+          <Link href="/inrichting/omgevingswizard">Omgeving inrichten</Link>
           <Link href="/admin">{user ? `Beheer (${user})` : "Inloggen"}</Link>
         </nav>
         <WidthToggle />
@@ -43,6 +45,7 @@ export function SiteHeader({ nav, user }: { nav: NavItem[]; user?: string }) {
           </summary>
           <div>
             <NavLinks nav={nav} />
+            <Link href="/inrichting/omgevingswizard">Omgeving inrichten</Link>
             <Link href="/admin">{user ? "Beheer" : "Inloggen"}</Link>
           </div>
         </details>
