@@ -11,7 +11,7 @@ De eerste is de inrichtings-UI op het Omnium-register
 
 > **Stand (25-11-2026):** de site draait op cluster `common-ground` op
 > https://inrichting.fundament.common-ground-lab.nl, met image
-> `0.15.0-bc22417` (registerschema v7, werkplaats Fase A, proefbewerken en opslaan in de Studio-branch, omgevingswizard alleen-lezen op de live scan van de plugin via Secret `inrichting-scan`, de opgenomen scan uit ConfigMap `scan-opname` als terugval). Migratie en beginteksten staan in de database (teruggezet uit de dump van 12-11; de bucket is opnieuw aangemaakt, de oude was leeg). De pod leest
+> `0.15.0-7797404` (registerschema v7, werkplaats Fase A, proefbewerken en opslaan in de Studio-branch, omgevingswizard alleen-lezen op de live scan van de plugin via Secret `inrichting-scan`, de opgenomen scan uit ConfigMap `scan-opname` als terugval, lijnen tussen model en doelen). Migratie en beginteksten staan in de database (teruggezet uit de dump van 12-11; de bucket is opnieuw aangemaakt, de oude was leeg). De pod leest
 > het register met `omnium-lezer`. De backup neemt de database mee, en ook de
 > bucket zodra FUNDAMENT `ensure-backup-secret.ps1` heeft gedraaid.
 
