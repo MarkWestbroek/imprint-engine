@@ -1100,8 +1100,10 @@ omgeving draaien en hoe ze aan het model hangen. De wizard wijzigt nog niets.
 4. **Koppelingen**: links het model, rechts de doelen met hun koppelingen.
    Klik een koppeling aan om te zien uit welk deel van het model ze komt.
 
+De scan is live: de plugin kijkt op het moment dat je op *Scannen* klikt.
 Staat er **Voorbeeld** bovenaan, dan is de scan niet van nu: een opgenomen
-scan of een afleiding uit het register.
+scan of een afleiding uit het register. Dat gebeurt alleen als de live scan
+niet antwoordt; de melding daarboven zegt dan waarom.
 
 ## Berichten schrijven als lid
 

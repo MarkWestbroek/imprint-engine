@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: omgevingswizard op de live scan.** De wizard leest de scan
+  van de plugin (Secret `inrichting-scan`); antwoordt die niet, dan de
+  opgenomen scan als terugval, met de fout erbij en het label "Voorbeeld".
 - **Inrichting: omgevingswizard** (alleen bekijken). Kies namespaces en
   scan; zie de componenten per laag met versie, adres en bereikbaarheid, kies
   de doelen, de modelversie, en zie in een gesplitst scherm het model naast de

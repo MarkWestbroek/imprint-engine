@@ -85,33 +85,37 @@ async function vraag<T>(pad: string): Promise<T> {
 
 /** The namespaces to choose from: the plugin's list, else (example) the omgevingen in the register. */
 export async function namespaces(i: Inrichting): Promise<{ namen: Namespace[]; voorbeeld: boolean; opgenomen?: string; fout?: string }> {
-  if (!scanConfig()) {
-    const o = await opname();
-    if (o) return { namen: (o.namespaces ?? []).map((n) => (typeof n === "string" ? { naam: n } : n)), voorbeeld: true, opgenomen: o.gescandOp };
-  }
+  let fout: string | undefined;
   if (scanConfig()) {
     try {
       const rows = await vraag<Namespace[]>("/namespaces");
       return { namen: rows.filter((r) => r.naam), voorbeeld: false };
     } catch (e) {
-      return { namen: [], voorbeeld: false, fout: e instanceof Error ? e.message : "De scan is niet bereikbaar." };
+      fout = foutTekst(e);
     }
   }
+  // Fallback: the recorded scan, else the omgevingen in the register; both labelled as an example.
+  const o = await opname();
+  if (o) return { namen: (o.namespaces ?? []).map((n) => (typeof n === "string" ? { naam: n } : n)), voorbeeld: true, opgenomen: o.gescandOp, fout };
   const namen = await Promise.all((await i.list("omgevingen").catch(() => [])).map((o) => i.title("omgevingen", o)));
-  return { namen: [...new Set(namen)].sort().map((naam) => ({ naam })), voorbeeld: true };
+  return { namen: [...new Set(namen)].sort().map((naam) => ({ naam })), voorbeeld: true, fout };
 }
+
+const foutTekst = (e: unknown) =>
+  `De live scan van de plugin antwoordt niet (${e instanceof Error ? e.message : "onbereikbaar"}); hieronder wat er zonder kan.`;
 
 /** Scan one or more namespaces (["*"] = all). */
 export async function scan(i: Inrichting, ns: string[]): Promise<Scan> {
   const gescandOp = new Date().toISOString();
   const namespaces = ns.includes(ALLE) || !ns.length ? [ALLE] : ns;
+  let fout: string | undefined;
   if (scanConfig()) {
     try {
       const q = namespaces.map((n) => `namespace=${encodeURIComponent(n)}`).join("&");
       const r = await vraag<{ gescandOp?: string; componenten?: ScanComponent[] }>(`/scan?${q}`);
       return { gescandOp: r.gescandOp ?? gescandOp, namespaces, componenten: r.componenten ?? [], voorbeeld: false, meldingen: (r as Opname).meldingen };
     } catch (e) {
-      return { gescandOp, namespaces, componenten: [], voorbeeld: false, fout: e instanceof Error ? e.message : "De scan is niet bereikbaar." };
+      fout = foutTekst(e);
     }
   }
   const o = await opname();
@@ -124,9 +128,10 @@ export async function scan(i: Inrichting, ns: string[]): Promise<Scan> {
       voorbeeld: true,
       opgenomen: o.gescandOp,
       meldingen: o.meldingen,
+      fout,
     };
   }
-  return voorbeeldScan(i, namespaces, gescandOp);
+  return { ...(await voorbeeldScan(i, namespaces, gescandOp)), fout };
 }
 
 /** The example: per omgeving (as namespace) the component versions the register says run there, plus two things a scan would not recognise. */

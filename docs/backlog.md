@@ -310,8 +310,8 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             - [x] Stap 2–5 alleen-lezen (25-11): scan (eindpunt, opgenomen
                   of voorbeeld), kaarten per laag, modelversie, gesplitst
                   scherm met koppelingen uit de artefacten.
-            - [ ] Het scan-eindpunt van de plugin aansluiten (`SCAN_URL`,
-                  Secret met `SCAN_TOKEN`) zodra plugin 0.6.0 live is.
+            - [x] Het scan-eindpunt van de plugin aangesloten (25-11, plugin
+                  0.6.0, Secret `inrichting-scan`); de opname blijft terugval.
             - [ ] Opslaan: Omgeving (namespaces, modelversie, `isDoel`),
                   Koppeling en Transformatie, na de modelwijziging (§5) en
                   Marks besluit over koppeling per omgeving of per e-dienstversie.

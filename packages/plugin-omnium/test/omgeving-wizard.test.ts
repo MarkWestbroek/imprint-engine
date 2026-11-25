@@ -67,3 +67,20 @@ test("existing links: every generated artefact with a target component, model si
   assert.ok(k.length > 0);
   assert.ok(k.every((x) => x.doel.component && x.naam));
 });
+
+test("live scan configured but not answering: the recording as fallback, still labelled, with the error", async () => {
+  const f = path.join(mkdtempSync(path.join(tmpdir(), "scan-")), "scan.json");
+  writeFileSync(f, JSON.stringify({ gescandOp: "2026-11-24T23:36:37Z", namespaces: ["tnt-a"], componenten: [sc({ namespace: "tnt-a", naam: "openzaak" })] }));
+  process.env.SCAN_URL = "http://127.0.0.1:1";
+  process.env.SCAN_OPNAME = f;
+  try {
+    const i = inrichting();
+    const ns = await namespaces(i);
+    assert.deepEqual([ns.voorbeeld, ns.namen.map((n) => n.naam), Boolean(ns.fout)], [true, ["tnt-a"], true]);
+    const s = await scan(i, ["tnt-a"]);
+    assert.deepEqual([s.voorbeeld, s.componenten.length, Boolean(s.fout)], [true, 1, true]);
+  } finally {
+    delete process.env.SCAN_URL;
+    delete process.env.SCAN_OPNAME;
+  }
+});

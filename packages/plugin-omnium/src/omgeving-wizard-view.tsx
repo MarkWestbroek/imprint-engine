@@ -81,7 +81,7 @@ async function StapOmgeving({ i, ns, actie }: { i: Inrichting; ns: string[]; act
 function Voorbeeld({ opgenomen }: { opgenomen?: string }) {
   return (
     <p className="rounded-lg border border-dashed border-line px-3 py-2 text-sm">
-      <strong>Voorbeeld.</strong> De scan van de plugin is hier nog niet aangesloten.{" "}
+      <strong>Voorbeeld.</strong> Dit is niet de live scan van de plugin.{" "}
       {opgenomen
         ? `Wat je ziet is een echte scan van het cluster, opgenomen op ${new Date(opgenomen).toLocaleString("nl-NL")}; niet van nu.`
         : "Wat je ziet is afgeleid uit wat het register over de omgevingen weet, aangevuld met een onderdeel dat de scan niet zou herkennen."}

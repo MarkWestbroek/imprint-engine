@@ -1835,7 +1835,9 @@ flowchart LR
   `locate()`. Alleen-lezen: niets schrijft naar register of cluster.
   - De site praat niet met de Kubernetes-API. De scan komt van het eindpunt
     van de plugin (`SCAN_URL`, Bearer `SCAN_TOKEN`; `GET /namespaces`,
-    `GET /scan?namespace=…`). Zonder dat eindpunt: een opgenomen scan
+    `GET /scan?namespace=…`; url en token uit Secret `inrichting-scan`, dat
+    de plugin aanmaakt). Zonder dat eindpunt, of als het niet antwoordt (dan
+    met de fout erboven): een opgenomen scan
     (`SCAN_OPNAME`, JSON van de plugin, als ConfigMap `scan-opname` alleen in
     het cluster, want hij bevat hostnamen), anders een voorbeeld uit
     `omgeving_componentversies`. Beide zijn als "voorbeeld" gelabeld.
@@ -1855,7 +1857,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     W["omgevingswizard<br/>(site inrichting)"] -->|"GET /scan (SCAN_URL)"| P["plugin cg-inrichting<br/>scan-eindpunt"]
-    W -.->|"zonder eindpunt"| O["opgenomen scan<br/>ConfigMap scan-opname"]
+    W -.->|"zonder eindpunt of bij een fout"| O["opgenomen scan<br/>ConfigMap scan-opname"]
     W -->|"/full/…"| R[("Omnium-register<br/>componenten, artefacten")]
     P -->|"workloads, labels, routes"| K["Kubernetes-API"]
 ```
