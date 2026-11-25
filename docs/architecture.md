@@ -1841,6 +1841,14 @@ flowchart LR
     (`SCAN_OPNAME`, JSON van de plugin, als ConfigMap `scan-opname` alleen in
     het cluster, want hij bevat hostnamen), anders een voorbeeld uit
     `omgeving_componentversies`. Beide zijn als "voorbeeld" gelabeld.
+  - Het gesplitste scherm (`KoppelingenScherm`, client) tekent lijnen als
+    SVG over het raster: `lijnenVan()` (`omgeving-lijnen.ts`, zonder
+    registercode) geeft per koppeling een `Lijn {van: modelelement, naar:
+    component}`; het scherm zoekt per lijn het zichtbare anker (in een
+    dichte `<details>` de dichtstbijzijnde open ouder, via
+    `checkVisibility()`) en tekent opnieuw bij `toggle` en resize. De actieve
+    versie (trekken, verleggen, wissen) bewerkt dezelfde lijst; het
+    schrijfpad staat in Fundament `docs/inrichtingstool-als-plugin.md` §9.
   - Herkennen doet de plugin; `herken()` neemt dat over als het register de
     component kent, en valt terug op naam, chart of image-naam.
   - Stap 3: kaarten per laag (`component_lagen`), met de versie uit het

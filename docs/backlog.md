@@ -312,6 +312,10 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   scherm met koppelingen uit de artefacten.
             - [x] Het scan-eindpunt van de plugin aangesloten (25-11, plugin
                   0.6.0, Secret `inrichting-scan`); de opname blijft terugval.
+            - [x] Lijnen tussen model en doelen, passief (25-11): smallere
+                  kolommen, aanwijzen licht de andere kant op.
+            - [ ] Lijnen actief (trekken, verleggen, wissen) na het model
+                  Koppeling en het bouwer-account (Fundament §9).
             - [ ] Opslaan: Omgeving (namespaces, modelversie, `isDoel`),
                   Koppeling en Transformatie, na de modelwijziging (§5) en
                   Marks besluit over koppeling per omgeving of per e-dienstversie.

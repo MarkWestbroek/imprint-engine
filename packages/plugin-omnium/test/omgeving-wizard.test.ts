@@ -7,6 +7,7 @@ import { OmniumRegister } from "../src/client";
 import { Inrichting } from "../src/inrichting";
 import { herken, namespaces, scan, type ScanComponent } from "../src/omgeving-scan";
 import { bestaandeKoppelingen, kaartenPerLaag, LAAG_ONBEKEND } from "../src/omgeving-wizard";
+import { lijnenVan } from "../src/omgeving-lijnen";
 
 const dir = path.join(import.meta.dirname, "fixture", "full");
 const registerFetch = (async (input: string | URL | Request) => {
@@ -83,4 +84,12 @@ test("live scan configured but not answering: the recording as fallback, still l
     delete process.env.SCAN_URL;
     delete process.env.SCAN_OPNAME;
   }
+});
+
+test("lines: one per model element a link reads, to the link's target", () => {
+  const k = { id: "artefact:1", naam: "x", soort: "s", bron: { label: "", ids: ["a", "b", "a"] }, doel: { component: "openzaak", weergavenaam: "Open Zaak" } };
+  assert.deepEqual(lijnenVan([k]), [
+    { id: "artefact:1|a", koppeling: "artefact:1", van: "a", naar: "openzaak" },
+    { id: "artefact:1|b", koppeling: "artefact:1", van: "b", naar: "openzaak" },
+  ]);
 });

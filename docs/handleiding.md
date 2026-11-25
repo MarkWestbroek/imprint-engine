@@ -1098,7 +1098,12 @@ omgeving draaien en hoe ze aan het model hangen. De wizard wijzigt nog niets.
    Niet-herkende onderdelen staan onderaan en zijn geen doel.
 3. **Model koppelen**: nu kan alleen de actuele modelversie.
 4. **Koppelingen**: links het model, rechts de doelen met hun koppelingen.
-   Klik een koppeling aan om te zien uit welk deel van het model ze komt.
+   Lijnen lopen van het stuk model naar de koppeling die het gebruikt; is
+   een tak ingeklapt, dan hangt de lijn aan de tak. Wijs een lijn, een
+   eindpunt of een modelelement aan en de andere kant licht op; klik een
+   koppeling of lijn aan om te zien uit welk deel van het model ze komt.
+   Lijnen trekken, verleggen en wissen komen later. Op een smal scherm staan
+   de kolommen onder elkaar, zonder lijnen.
 
 De scan is live: de plugin kijkt op het moment dat je op *Scannen* klikt.
 Staat er **Voorbeeld** bovenaan, dan is de scan niet van nu: een opgenomen

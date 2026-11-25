@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: lijnen in het gesplitste scherm.** Smallere kolommen met
+  lijnen van het model naar de koppelingen; ingeklapte takken dragen de lijn,
+  aanwijzen licht de andere kant op (alleen bekijken).
 - **Inrichting: omgevingswizard op de live scan.** De wizard leest de scan
   van de plugin (Secret `inrichting-scan`); antwoordt die niet, dan de
   opgenomen scan als terugval, met de fout erbij en het label "Voorbeeld".
