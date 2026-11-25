@@ -11,3 +11,13 @@ backups
 doc
 docs
 *.log
+# Lokale bouw- en testresten: horen niet in een (openbare) image.
+out
+.cache
+test-results
+**/test-results
+**/.next-e2e
+**/e2e/.auth
+.claude
+**/*.blend
+**/*.blend1
