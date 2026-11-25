@@ -1,0 +1,141 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-25T08:00:00Z",
+  "transformatie_namen": [
+   {
+    "transformatie_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 1,
+      "rel_id": 1,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "identifier": "objecttype",
+      "naam": "Objecttype uit entiteit",
+      "omschrijving": "Maakt een objecttype van een entiteit."
+     }
+    ]
+   }
+  ],
+  "transformatie_bronnen": [
+   {
+    "transformatie_id": 1,
+    "rel_id": 2,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 1,
+      "rel_id": 2,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "bronSoort": "entiteit"
+     }
+    ]
+   }
+  ],
+  "transformatie_artefactsoorten": [
+   {
+    "transformatie_id": 1,
+    "rel_id": 3,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 1,
+      "rel_id": 3,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "artefactsoort_id": 1
+     }
+    ]
+   }
+  ],
+  "transformatie_heeft_versies": [
+   {
+    "transformatie_id": 1,
+    "rel_id": 4,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 1,
+      "rel_id": 4,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "transformatieversie_id": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-25T08:00:00Z",
+  "transformatie_namen": [
+   {
+    "transformatie_id": 2,
+    "rel_id": 5,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 2,
+      "rel_id": 5,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "identifier": "formulier",
+      "naam": "Formulier uit e-dienstmodel"
+     }
+    ]
+   }
+  ],
+  "transformatie_bronnen": [
+   {
+    "transformatie_id": 2,
+    "rel_id": 6,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 2,
+      "rel_id": 6,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "bronSoort": "dienst"
+     }
+    ]
+   }
+  ],
+  "transformatie_artefactsoorten": [
+   {
+    "transformatie_id": 2,
+    "rel_id": 7,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 2,
+      "rel_id": 7,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "artefactsoort_id": 3
+     }
+    ]
+   }
+  ],
+  "transformatie_heeft_versies": [
+   {
+    "transformatie_id": 2,
+    "rel_id": 8,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "transformatie_id": 2,
+      "rel_id": 8,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "transformatieversie_id": 2
+     }
+    ]
+   }
+  ]
+ }
+]

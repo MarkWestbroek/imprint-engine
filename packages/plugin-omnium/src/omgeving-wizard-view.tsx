@@ -1,12 +1,26 @@
 import Link from "next/link";
 import type { Inrichting } from "./inrichting";
 import { ge } from "./register";
-import { ALLE, namespaces, scan } from "./omgeving-scan";
-import { bestaandeKoppelingen, kaartenPerLaag, LAAG_ONBEKEND, modelBoom, modelVersies, WIZARD_STAPPEN, type WizardStap } from "./omgeving-wizard";
+import { ALLE, inrichtingstool, namespaces, scan, type Onderdeel } from "./omgeving-scan";
+import {
+  bestaandeKoppelingen,
+  kaartenPerLaag,
+  LAAG_ONBEKEND,
+  modelBoom,
+  modelVersies,
+  transformatieOverzicht,
+  vastgelegdAlsKoppeling,
+  WIZARD_STAPPEN,
+  type WizardStap,
+} from "./omgeving-wizard";
 import { DoelVinkje, KoppelingenScherm } from "./omgeving-wizard-client";
+import { componentIds, edienstversieKeuzes, vastgelegdeKoppelingen, type KoppelingHandeling } from "./koppeling-register";
+import type { KoppelingResultaat } from "./koppeling-opslaan";
+
+type Opslaan = (h: KoppelingHandeling) => Promise<KoppelingResultaat>;
 
 /** The omgevingswizard's pages (server). `ns` = the chosen namespaces, carried in the URL from step to step. */
-export async function OmgevingWizardView({ i, stap, ns, prefix }: { i: Inrichting; stap: WizardStap; ns: string[]; prefix: string }) {
+export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: Inrichting; stap: WizardStap; ns: string[]; prefix: string; opslaan?: Opslaan }) {
   const basis = `${prefix}/omgevingswizard`;
   const q = ns.length ? `?${ns.map((n) => `ns=${encodeURIComponent(n)}`).join("&")}` : "";
   const nr = WIZARD_STAPPEN.findIndex((s) => s.id === stap);
@@ -22,24 +36,33 @@ export async function OmgevingWizardView({ i, stap, ns, prefix }: { i: Inrichtin
             aria-current={s.id === stap ? "step" : undefined}
             className={`rounded-full border px-3 py-1 ${s.id === stap ? "border-accent bg-accent/10 font-medium" : "border-line text-muted hover:text-current"}`}
           >
-            {k + 2}. {s.titel}
+            {k + 1}. {s.titel}
           </Link>
         ))}
       </nav>
       <p role="note" className="rounded-xl border border-line bg-surface p-3 text-sm text-muted">
-        Alleen bekijken: de wizard schrijft nog niets naar het register of het cluster. Stap 1 (installatie) gebeurt buiten deze site, via de
-        plugin.
+        {opslaan
+          ? "De wizard schrijft alleen koppelingen naar het register (stap 5); de rest is bekijken. Het cluster raakt hij niet aan."
+          : "Alleen bekijken: de wizard schrijft niets naar het register of het cluster."}{" "}
+        Installeren zelf gebeurt buiten deze site, via de plugin; stap 1 laat zien wat zij vond en koos.
       </p>
+      {stap === "installatie" && <StapInstallatie />}
       {stap === "omgeving" && <StapOmgeving i={i} ns={ns} actie={`${basis}/componenten`} />}
-      {stap !== "omgeving" && !ns.length && (
+      {stap !== "omgeving" && stap !== "installatie" && !ns.length && (
         <p className="text-sm">
           Nog geen omgeving gekozen. <Link href={`${basis}/omgeving`} className="text-accent hover:underline">Kies er eerst een →</Link>
         </p>
       )}
       {stap === "componenten" && ns.length > 0 && <StapComponenten i={i} ns={ns} />}
       {stap === "model" && ns.length > 0 && <StapModel i={i} />}
-      {stap === "koppelingen" && ns.length > 0 && <StapKoppelingen i={i} ns={ns} />}
-      {stap !== "omgeving" && (
+      {stap === "koppelingen" && ns.length > 0 && <StapKoppelingen i={i} ns={ns} opslaan={opslaan} />}
+      {stap === "transformaties" && ns.length > 0 && <StapTransformaties i={i} ns={ns} />}
+      {stap === "installatie" && (
+        <div className="flex justify-end text-sm">
+          <Link href={`${basis}/omgeving${q}`} className="text-accent hover:underline">Omgeving kiezen →</Link>
+        </div>
+      )}
+      {stap !== "omgeving" && stap !== "installatie" && (
         <div className="flex justify-between text-sm">
           {vorige ? <Link href={`${basis}/${vorige.id}${q}`} className="text-accent hover:underline">← {vorige.titel}</Link> : <span />}
           {volgende && ns.length > 0 && <Link href={`${basis}/${volgende.id}${q}`} className="text-accent hover:underline">{volgende.titel} →</Link>}
@@ -100,6 +123,7 @@ async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
         <p className="text-sm text-muted">
           {s.namespaces.includes(ALLE) ? "Alle namespaces" : s.namespaces.join(", ")} · {aantal} gevonden · gescand{" "}
           {new Date(s.gescandOp).toLocaleString("nl-NL")}
+          {s.herkenningUit && <> · herkend volgens {s.herkenningUit === "register" ? "het register" : "de ingebouwde tabel van de plugin"}</>}
         </p>
       </header>
       {s.voorbeeld && <Voorbeeld opgenomen={s.opgenomen} />}
@@ -189,8 +213,17 @@ async function StapModel({ i }: { i: Inrichting }) {
   );
 }
 
-async function StapKoppelingen({ i, ns }: { i: Inrichting; ns: string[] }) {
-  const [s, model, koppelingen, comps] = await Promise.all([scan(i, ns), modelBoom(i), bestaandeKoppelingen(i), i.list("componenten").catch(() => [])]);
+async function StapKoppelingen({ i, ns, opslaan }: { i: Inrichting; ns: string[]; opslaan?: Opslaan }) {
+  const [s, model, afgeleid, comps, stand, ids, keuzes] = await Promise.all([
+    scan(i, ns),
+    modelBoom(i),
+    bestaandeKoppelingen(i),
+    i.list("componenten").catch(() => []),
+    vastgelegdeKoppelingen(i).catch(() => []),
+    componentIds(i),
+    edienstversieKeuzes(i),
+  ]);
+  const koppelingen = [...(await vastgelegdAlsKoppeling(i, stand)), ...afgeleid];
   const lagen = await kaartenPerLaag(i, s);
   const hier = new Map(lagen.flatMap((l) => l.kaarten).filter((k) => k.component).map((k) => [k.component!.naam, k] as const));
   const doelen = await Promise.all(
@@ -214,12 +247,174 @@ async function StapKoppelingen({ i, ns }: { i: Inrichting; ns: string[] }) {
       <header>
         <h2 className="text-xl font-semibold">Koppelingen tussen model en doelen</h2>
         <p className="text-sm text-muted">
-          Wat er al is, afgeleid uit de artefacten: elk gegenereerd artefact koppelt een stuk model aan een component. Nieuwe koppelingen leggen,
-          verfijnen en een transformatie kiezen volgen zodra het register Koppeling en Transformatie kent.
+          Vastgelegd is wat in het register staat (een Koppeling op de e-dienstversie, voor elke gemeente gelijk); afgeleid is wat volgt uit de
+          artefacten (elk gegenereerd artefact koppelt een stuk model aan een component).{" "}
+          {opslaan
+            ? "Trek een lijn van een entiteit naar een doel om een koppeling te leggen; verleg of wis een vastgelegde lijn."
+            : "Lijnen leggen, verleggen en wissen kan een redacteur zodra de site een schrijfaccount heeft."}
         </p>
       </header>
       {s.voorbeeld && <Voorbeeld opgenomen={s.opgenomen} />}
-      <KoppelingenScherm model={model} doelen={doelen} koppelingen={koppelingen} />
+      <KoppelingenScherm
+        model={model}
+        doelen={doelen.map((d) => ({ ...d, componentId: ids.get(d.component) }))}
+        koppelingen={koppelingen}
+        bewerken={opslaan ? { opslaan, edienstversies: keuzes } : undefined}
+      />
+    </section>
+  );
+}
+
+async function StapTransformaties({ i, ns }: { i: Inrichting; ns: string[] }) {
+  const [s, afgeleid, stand] = await Promise.all([scan(i, ns), bestaandeKoppelingen(i), vastgelegdeKoppelingen(i).catch(() => [])]);
+  const lagen = await kaartenPerLaag(i, s);
+  const draait = new Map(lagen.flatMap((l) => l.kaarten).filter((k) => k.component).map((k) => [k.component!.naam, k.scan.versie] as const));
+  const rijen = await transformatieOverzicht(i, draait, [...(await vastgelegdAlsKoppeling(i, stand)), ...afgeleid]);
+  return (
+    <section className="space-y-4">
+      <header>
+        <h2 className="text-xl font-semibold">Transformaties</h2>
+        <p className="text-sm text-muted">
+          Wat een koppeling uitvoert: per transformatie haar versies, de code (een verwijzing, niet de tekst) en voor welke componentversies ze
+          geldt, met wat er in deze omgeving draait. Een transformatie kiezen of maken volgt later.
+        </p>
+      </header>
+      {s.voorbeeld && <Voorbeeld opgenomen={s.opgenomen} />}
+      {!rijen.length && <p className="text-sm text-muted">Het register kent nog geen transformaties.</p>}
+      <ul className="grid gap-4 lg:grid-cols-2">
+        {rijen.map((t) => (
+          <li key={t.id} className="rounded-xl border border-line bg-surface p-4 text-sm">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <h3 className="font-semibold">{t.naam}</h3>
+              {t.identifier && <code className="text-xs text-muted">{t.identifier}</code>}
+            </div>
+            {t.omschrijving && <p className="mt-1 text-muted">{t.omschrijving}</p>}
+            <p className="mt-2 text-xs text-muted">
+              van {t.bronSoorten.join(", ") || "?"} naar {t.artefactsoorten.join(", ") || "?"} · gebruikt door {t.gebruik.afgeleid} afgeleide en{" "}
+              {t.gebruik.vastgelegd} vastgelegde koppeling{t.gebruik.vastgelegd === 1 ? "" : "en"}
+            </p>
+            <ul className="mt-3 space-y-2 border-l border-line pl-3">
+              {t.versies.map((v) => (
+                <li key={v.nummer}>
+                  <div className="flex flex-wrap items-baseline gap-2">
+                    <span className="font-medium">{v.nummer}</span>
+                    {v.status && <span className="rounded border border-line px-1.5 text-xs">{v.status}</span>}
+                    {v.vorm && <span className="text-xs text-muted">{v.vorm}</span>}
+                  </div>
+                  <p className="text-xs text-muted">
+                    code: {v.pad ? <code>{v.pad}</code> : "—"}
+                    {v.verwijzing ? (
+                      <>
+                        {" "}
+                        · <code>{v.verwijzing}</code>
+                      </>
+                    ) : null}
+                    {v.revisie ? (
+                      <>
+                        {" "}
+                        @ <code>{v.revisie}</code>
+                      </>
+                    ) : (
+                      " · verwijzing en revisie nog leeg"
+                    )}
+                  </p>
+                  {v.geldig.length > 0 && (
+                    <p className="text-xs">
+                      geldt voor{" "}
+                      {v.geldig.map((g, n) => (
+                        <span key={g.component}>
+                          {n > 0 && ", "}
+                          {g.weergavenaam}
+                          {g.versieRange ? ` ${g.versieRange}` : ""}
+                          {g.draaitHier !== undefined ? (
+                            <span className="ml-1 rounded bg-accent/15 px-1">draait hier{g.draaitHier ? ` · ${g.draaitHier}` : ""}</span>
+                          ) : (
+                            <span className="ml-1 text-muted">(niet in deze omgeving)</span>
+                          )}
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+const ONDERDELEN: { id: Onderdeel; titel: string }[] = [
+  { id: "register", titel: "Register (Omnium)" },
+  { id: "ui", titel: "Inrichtingstool (deze site)" },
+  { id: "database", titel: "Database" },
+];
+
+/** Step 1: what the plugin found on the cluster and which one it uses per part (read only). */
+async function StapInstallatie() {
+  const { tool, fout } = await inrichtingstool();
+  return (
+    <section className="space-y-4">
+      <header>
+        <h2 className="text-xl font-semibold">Installatie</h2>
+        <p className="text-sm text-muted">
+          Wat de plugin op het cluster vond en wat ze gebruikt: per onderdeel een bestaande installatie of een nieuwe. Kiezen en installeren
+          gebeurt in de Inrichtingstool-resource of met de CLI van de plugin, niet hier.
+        </p>
+      </header>
+      {fout && <p className="rounded-lg border border-dashed border-line px-3 py-2 text-sm">{fout}</p>}
+      {tool && (
+        <>
+          <p className="text-sm">
+            Fase <strong>{tool.status.fase ?? "onbekend"}</strong>
+            {tool.status.gezochtOp && <span className="text-muted"> · gezocht {new Date(tool.status.gezochtOp).toLocaleString("nl-NL")}</span>}
+          </p>
+          {tool.status.meldingen?.length ? (
+            <ul className="list-disc pl-5 text-sm">
+              {tool.status.meldingen.map((m, n) => (
+                <li key={n}>{m}</li>
+              ))}
+            </ul>
+          ) : null}
+          <ul className="grid gap-4 lg:grid-cols-3">
+            {ONDERDELEN.map(({ id, titel }) => {
+              const keuze = tool.spec[id];
+              const gevonden = tool.status.gevonden?.[id] ?? [];
+              return (
+                <li key={id} className="rounded-xl border border-line bg-surface p-4 text-sm">
+                  <h3 className="font-semibold">{titel}</h3>
+                  <p className="mt-1">
+                    {!keuze ? (
+                      <span className="text-muted">nog geen keuze</span>
+                    ) : keuze.gebruik === "nieuw" ? (
+                      "een nieuwe installatie"
+                    ) : (
+                      <>
+                        bestaand: <code>{keuze.namespace}/{keuze.naam}</code>
+                      </>
+                    )}
+                  </p>
+                  <p className="mt-3 text-xs uppercase tracking-wide text-muted">Gevonden ({gevonden.length})</p>
+                  <ul className="mt-1 space-y-1">
+                    {gevonden.map((v) => {
+                      const gekozen = keuze?.gebruik === "bestaand" && keuze.namespace === v.namespace && keuze.naam === v.naam;
+                      return (
+                        <li key={`${v.namespace}/${v.naam}`} className={gekozen ? "rounded bg-accent/10 px-1 font-medium" : "px-1"}>
+                          <code>{v.namespace}/{v.naam}</code>
+                          {v.versie && <span className="text-muted"> · {v.versie}</span>}
+                          {gekozen && <span className="ml-1 text-xs">(gebruikt)</span>}
+                        </li>
+                      );
+                    })}
+                    {!gevonden.length && <li className="text-muted">niets</li>}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
     </section>
   );
 }

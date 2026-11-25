@@ -1,0 +1,126 @@
+[
+ {
+  "id": 1,
+  "opvoer": "2026-11-25T08:00:00Z",
+  "koppeling_namen": [
+   {
+    "koppeling_id": 1,
+    "rel_id": 1,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 1,
+      "rel_id": 1,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "naam": "Kaart wordt objecttype"
+     }
+    ]
+   }
+  ],
+  "koppeling_bronnen": [
+   {
+    "koppeling_id": 1,
+    "rel_id": 2,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 1,
+      "rel_id": 2,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "bronSoort": "entiteit",
+      "bronElementId": "Gpk_Kaart",
+      "naampad": "parkeren.Kaart"
+     }
+    ]
+   }
+  ],
+  "koppeling_doelcomponenten": [
+   {
+    "koppeling_id": 1,
+    "rel_id": 3,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 1,
+      "rel_id": 3,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "component_id": 3
+     }
+    ]
+   }
+  ],
+  "koppeling_transformaties": [
+   {
+    "koppeling_id": 1,
+    "rel_id": 4,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 1,
+      "rel_id": 4,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "transformatie_id": 1
+     }
+    ]
+   }
+  ]
+ },
+ {
+  "id": 2,
+  "opvoer": "2026-11-25T08:00:00Z",
+  "afvoer": "2026-11-25T09:00:00Z",
+  "koppeling_namen": [
+   {
+    "koppeling_id": 2,
+    "rel_id": 5,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 2,
+      "rel_id": 5,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "naam": "Gewiste koppeling"
+     }
+    ]
+   }
+  ],
+  "koppeling_bronnen": [
+   {
+    "koppeling_id": 2,
+    "rel_id": 6,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 2,
+      "rel_id": 6,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "bronSoort": "entiteit",
+      "bronElementId": "Ander"
+     }
+    ]
+   }
+  ],
+  "koppeling_doelcomponenten": [
+   {
+    "koppeling_id": 2,
+    "rel_id": 7,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "koppeling_id": 2,
+      "rel_id": 7,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "component_id": 1
+     }
+    ]
+   }
+  ]
+ }
+]

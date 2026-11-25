@@ -113,6 +113,21 @@ const COLUMNS: Record<Pad, Column[]> = {
     titleLink("artefactformaten"),
     { label: "Mediatype", cell: (r) => text(ge(r, "artefactformaat_gegevens")?.mediatype) },
   ],
+  koppelingen: [
+    titleLink("koppelingen"),
+    { label: "Status", cell: (r) => text(ge(r, "koppeling_verlopen")?.status) },
+    { label: "Doel-API", cell: (r) => text(geRows(r, "koppeling_doelcomponenten")[0]?.apiPad) },
+  ],
+  transformaties: [
+    titleLink("transformaties"),
+    { label: "Identifier", cell: (r) => <code>{text(ge(r, "transformatie_namen")?.identifier)}</code> },
+    { label: "Bronsoort", cell: (r) => text(geRows(r, "transformatie_bronnen").map((b) => b.bronSoort).join(", ")) },
+  ],
+  transformatieversies: [
+    { label: "Versie", cell: (r) => text(ge(r, "transformatieversie_nummers")?.versienummer) },
+    { label: "Code", cell: (r) => text(ge(r, "transformatieversie_codes")?.vorm) },
+    { label: "Status", cell: (r) => text(ge(r, "transformatieversie_verlopen")?.status) },
+  ],
 };
 
 /** A source: name, kind, and links to its drawings. */

@@ -6,6 +6,19 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: lijnen leggen in de omgevingswizard.** Een redacteur trekt een
+  lijn van een entiteit naar een doel, verlegt of wist een vastgelegde lijn;
+  elke handeling is één registratie in het register (Koppeling op de
+  e-dienstversie), alleen met het schrijfaccount (Secret `omnium-koppelaar`).
+  Vastgelegde koppelingen staan naast de afgeleide.
+- **Inrichting: stap 1 Installatie** (alleen bekijken): wat de plugin vond en
+  koos per onderdeel (register, inrichtingstool, database), met de fase.
+  Lijnen trekken kan ook vanaf gegevenselementen en velden.
+- **Inrichting: stap 6 Transformaties** (alleen bekijken): versies, code en
+  geldigheid per component naast wat er in de omgeving draait. Stap 3 zegt of
+  de plugin herkende volgens het register.
+- **Inrichting: afgevoerde records weg.** De site laat records met een afvoer
+  weg, ook als het register de hele geschiedenis teruggeeft.
 - **Images zonder lokale bouwresten**: `.dockerignore` sluit nu ook `out/`,
   `.cache/`, testresultaten, e2e-builds en -sessies en `.claude/` uit, zodat de
   openbare tools-image alleen de repo bevat.

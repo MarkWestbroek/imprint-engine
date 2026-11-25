@@ -1,8 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { lijnenVan } from "./omgeving-lijnen";
 import type { Koppeling, ModelKnoop } from "./omgeving-wizard";
+import type { KoppelingHandeling } from "./koppeling-register";
+import type { KoppelingResultaat } from "./koppeling-opslaan";
 
 /**
  * The browser side of the omgevingswizard: the "doel" ticks (kept in this
@@ -50,7 +53,21 @@ export function DoelVinkje({ ns, id, label, standaard }: { ns: string[]; id: str
   );
 }
 
-type Doel = { component: string; weergavenaam: string; laag: string; draaitHier: boolean; adres?: string; versie?: string; href?: string };
+type Doel = { component: string; weergavenaam: string; laag: string; draaitHier: boolean; adres?: string; versie?: string; href?: string; componentId?: number };
+
+/** Editing the lines (only for an editor, and only when the site can write): the save action and the e-dienstversies to hang a new line on. */
+export type Bewerken = { opslaan: (h: KoppelingHandeling) => Promise<KoppelingResultaat>; edienstversies: { id: number; label: string }[] };
+
+/** A drag in progress: a new line from a model element, or one end of a laid-down line. */
+type Trek =
+  | { soort: "nieuw"; bron: { bronSoort: string; bronElementId: string; naampad?: string }; label: string; x0: number; y0: number; x: number; y: number }
+  | { soort: "verleg-bron" | "verleg-doel"; koppeling: Koppeling; x0: number; y0: number; x: number; y: number };
+
+/** What starts a drag (the positions come from the pointer). */
+type TrekStart = Trek extends infer T ? (T extends Trek ? Omit<T, "x0" | "y0" | "x" | "y"> : never) : never;
+
+/** An action waiting to be saved (one registration each), with its outcome. */
+type Wacht = { id: number; h: KoppelingHandeling; omschrijving: string; status: "wacht" | "bezig" | "ok" | "fout"; melding?: string };
 
 /** A line as drawn: the visible anchor on the left (the element, or its nearest open ancestor) and the link on the right. */
 type Getekend = { id: string; koppeling: string; anker: string; x1: number; xa: number; y1: number; xb: number; x2: number; y2: number };
@@ -79,13 +96,77 @@ function zichtbaarAnker(box: HTMLElement, id: string): HTMLElement | null {
  * an end or a model element lights up the other side; clicking chooses the
  * link. The active version (draw, move, erase) will edit the same lines.
  */
-export function KoppelingenScherm({ model, doelen, koppelingen }: { model: ModelKnoop[]; doelen: Doel[]; koppelingen: Koppeling[] }) {
+export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { model: ModelKnoop[]; doelen: Doel[]; koppelingen: Koppeling[]; bewerken?: Bewerken }) {
   const [gekozen, setGekozen] = useState<string | undefined>(koppelingen.find((k) => doelen.some((d) => d.draaitHier && d.component === k.doel.component))?.id);
   const [wijs, setWijs] = useState<Wijs>();
   const [getekend, setGetekend] = useState<Getekend[]>([]);
   const box = useRef<HTMLDivElement>(null);
   const links = useRef<HTMLElement>(null);
   const rechts = useRef<HTMLElement>(null);
+  const router = useRouter();
+  const [, startTransition] = useTransition();
+  const [ev, setEv] = useState<number | undefined>(
+    () => koppelingen.find((x) => x.herkomst === "register")?.edienstversieIds?.[0] ?? bewerken?.edienstversies[0]?.id
+  );
+  const [trek, setTrek] = useState<Trek>();
+  const [wachtrij, setWachtrij] = useState<Wacht[]>([]);
+  const volgnr = useRef(0);
+  const doelNaam = (componentId: number) => doelen.find((d) => d.componentId === componentId)?.weergavenaam ?? `component ${componentId}`;
+
+  const zet = (h: KoppelingHandeling, omschrijving: string) => setWachtrij((w) => [...w, { id: ++volgnr.current, h, omschrijving, status: "wacht" }]);
+  const binnen = (e: { clientX: number; clientY: number }) => {
+    const r = box.current!.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+
+  // While dragging: follow the pointer; on release, see what is under it (a target, or a model entity).
+  useEffect(() => {
+    if (!trek) return;
+    const beweeg = (e: PointerEvent) => setTrek((t) => (t ? { ...t, ...binnen(e) } : t));
+    const los = (e: PointerEvent) => {
+      const onder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
+      const doel = onder?.closest<HTMLElement>("[data-doel]");
+      const anker = onder?.closest<HTMLElement>("[data-bron-soort]");
+      const componentId = doel ? Number(doel.dataset.doel) : undefined;
+      if (trek.soort === "nieuw" && componentId && ev !== undefined) {
+        const naam = `${trek.label} wordt ${doelNaam(componentId)}`;
+        zet({ soort: "nieuw", edienstversieId: ev, naam, bron: trek.bron, componentId }, `Nieuw: ${naam}`);
+      } else if (trek.soort === "verleg-doel" && componentId && trek.koppeling.registerId !== undefined) {
+        zet({ soort: "verleg-doel", koppelingId: trek.koppeling.registerId, componentId }, `Verleg ${trek.koppeling.naam} naar ${doelNaam(componentId)}`);
+      } else if (trek.soort === "verleg-bron" && anker && trek.koppeling.registerId !== undefined) {
+        const bron = { bronSoort: anker.dataset.bronSoort!, bronElementId: anker.dataset.bronId!, naampad: anker.dataset.naampad };
+        zet({ soort: "verleg-bron", koppelingId: trek.koppeling.registerId, bron }, `Verleg ${trek.koppeling.naam} naar ${anker.dataset.naampad ?? bron.bronElementId}`);
+      }
+      setTrek(undefined);
+    };
+    window.addEventListener("pointermove", beweeg);
+    window.addEventListener("pointerup", los, { once: true });
+    return () => {
+      window.removeEventListener("pointermove", beweeg);
+      window.removeEventListener("pointerup", los);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-armed per drag
+  }, [trek?.soort, trek?.x0, trek?.y0]);
+
+  const begin = (e: React.PointerEvent, t: TrekStart) => {
+    if (!bewerken || e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const p = binnen(e);
+    setTrek({ ...t, x0: p.x, y0: p.y, ...p } as Trek);
+  };
+  const beginNieuw = (e: React.PointerEvent, knoop: ModelKnoop, bron: { bronSoort: string; bronElementId: string; naampad: string }) =>
+    begin(e, { soort: "nieuw", bron, label: knoop.label });
+
+  const bewaar = (w: Wacht) => {
+    if (!bewerken) return;
+    setWachtrij((q) => q.map((x) => (x.id === w.id ? { ...x, status: "bezig", melding: undefined } : x)));
+    startTransition(async () => {
+      const r = await bewerken.opslaan(w.h).catch(() => ({ ok: false as const, fout: "Opslaan mislukte (geen antwoord van de site)." }));
+      setWachtrij((q) => q.map((x) => (x.id === w.id ? { ...x, status: r.ok ? "ok" : "fout", melding: r.ok ? r.melding : r.fout } : x)));
+      if (r.ok) router.refresh();
+    });
+  };
   const k = koppelingen.find((x) => x.id === gekozen);
   const licht = useMemo(() => new Set(k?.bron.ids ?? []), [k]);
   const lijnen = useMemo(() => lijnenVan(koppelingen), [koppelingen]);
@@ -148,9 +229,22 @@ export function KoppelingenScherm({ model, doelen, koppelingen }: { model: Model
     <div ref={box} className="relative grid gap-4 lg:grid-cols-[minmax(0,22rem)_minmax(5rem,1fr)_minmax(0,22rem)]" onMouseLeave={() => setWijs(undefined)}>
       <section ref={links} aria-label="Model" className="rounded-xl border border-line bg-surface p-4">
         <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">Model</h3>
+        {bewerken && (
+          <label className="mb-3 block text-xs">
+            <span className="text-muted">Nieuwe lijnen hangen aan e-dienstversie</span>
+            <select value={ev ?? ""} onChange={(e) => setEv(Number(e.target.value))} className="mt-1 block w-full rounded border border-line bg-background px-2 py-1 text-sm">
+              {bewerken.edienstversies.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.label}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-muted">Sleep vanaf het bolletje achter een entiteit, gegevenselement of veld naar een doel.</span>
+          </label>
+        )}
         <ul className="space-y-1 text-sm">
           {model.map((n) => (
-            <Knoop key={n.id} knoop={n} licht={licht} wijsAan={wijsAan} onWijs={setWijs} />
+            <Knoop key={n.id} knoop={n} licht={licht} wijsAan={wijsAan} onWijs={setWijs} pad={[]} onTrek={bewerken ? beginNieuw : undefined} />
           ))}
         </ul>
       </section>
@@ -159,7 +253,11 @@ export function KoppelingenScherm({ model, doelen, koppelingen }: { model: Model
         <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted">Doelen</h3>
         <ul className="space-y-3 text-sm">
           {doelen.map((d) => (
-            <li key={d.component} className={d.component === k?.doel.component ? "rounded-lg bg-accent/10 p-2" : "p-2"}>
+            <li
+              key={d.component}
+              data-doel={bewerken && d.componentId !== undefined ? d.componentId : undefined}
+              className={`${d.component === k?.doel.component ? "rounded-lg bg-accent/10 p-2" : "p-2"} ${trek && trek.soort !== "verleg-bron" && d.componentId !== undefined ? "rounded-lg outline-dashed outline-1 outline-accent" : ""}`}
+            >
               <div className="flex flex-wrap items-baseline gap-2">
                 <span className="font-medium">{d.href ? <a href={d.href} className="hover:underline">{d.weergavenaam}</a> : d.weergavenaam}</span>
                 <span className="text-xs text-muted">{d.laag}</span>
@@ -213,11 +311,50 @@ export function KoppelingenScherm({ model, doelen, koppelingen }: { model: Model
                 onMouseEnter={() => setWijs({ koppeling: g.koppeling })}
                 onClick={() => setGekozen(g.koppeling)}
               />
-              <circle cx={g.xa} cy={g.y1} r={op ? 3.5 : 2.5} fill="currentColor" style={{ pointerEvents: "all" }} onMouseEnter={() => setWijs({ anker: g.anker })} />
-              <circle cx={g.xb} cy={g.y2} r={op ? 3.5 : 2.5} fill="currentColor" style={{ pointerEvents: "all" }} onMouseEnter={() => setWijs({ koppeling: g.koppeling })} />
+              {(() => {
+                const kk = koppelingen.find((x) => x.id === g.koppeling);
+                const verplaatsbaar = Boolean(bewerken && kk?.herkomst === "register");
+                const stijl = { pointerEvents: "all" as const, cursor: verplaatsbaar ? "grab" : undefined };
+                return (
+                  <>
+                    <circle
+                      cx={g.xa}
+                      cy={g.y1}
+                      r={verplaatsbaar ? 5 : op ? 3.5 : 2.5}
+                      fill="currentColor"
+                      style={stijl}
+                      onMouseEnter={() => setWijs({ anker: g.anker })}
+                      onPointerDown={verplaatsbaar ? (e) => begin(e, { soort: "verleg-bron", koppeling: kk! }) : undefined}
+                    >
+                      {verplaatsbaar && <title>Sleep naar een ander modelelement om de bron te verleggen</title>}
+                    </circle>
+                    <circle
+                      cx={g.xb}
+                      cy={g.y2}
+                      r={verplaatsbaar ? 5 : op ? 3.5 : 2.5}
+                      fill="currentColor"
+                      style={stijl}
+                      onMouseEnter={() => setWijs({ koppeling: g.koppeling })}
+                      onPointerDown={verplaatsbaar ? (e) => begin(e, { soort: "verleg-doel", koppeling: kk! }) : undefined}
+                    >
+                      {verplaatsbaar && <title>Sleep naar een ander doel om de koppeling te verleggen</title>}
+                    </circle>
+                  </>
+                );
+              })()}
             </g>
           );
         })}
+        {trek && (
+          <path
+            d={`M ${trek.x0} ${trek.y0} C ${(trek.x0 + trek.x) / 2} ${trek.y0}, ${(trek.x0 + trek.x) / 2} ${trek.y}, ${trek.x} ${trek.y}`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeDasharray="6 4"
+            className="text-accent"
+          />
+        )}
       </svg>
       <section aria-label="Gekozen koppeling" className="rounded-xl border border-line bg-surface p-4 text-sm lg:col-span-3" aria-live="polite">
         {k ? (
@@ -238,23 +375,117 @@ export function KoppelingenScherm({ model, doelen, koppelingen }: { model: Model
         ) : (
           <p className="text-muted">Kies rechts een koppeling of een lijn: links lichten de modelelementen op die ze leest.</p>
         )}
+        {bewerken && k?.herkomst === "register" && k.registerId !== undefined && (
+          <button
+            type="button"
+            onClick={() => zet({ soort: "wis", koppelingId: k.registerId! }, `Wis ${k.naam}`)}
+            className="mt-3 rounded-md border border-line px-3 py-1 text-sm hover:border-accent"
+          >
+            Lijn wissen…
+          </button>
+        )}
       </section>
+      {bewerken && wachtrij.length > 0 && (
+        <section aria-label="Nog op te slaan" className="rounded-xl border border-accent/40 bg-surface p-4 text-sm lg:col-span-3" aria-live="polite">
+          <h3 className="mb-2 font-semibold">Wijzigingen</h3>
+          <p className="mb-3 text-xs text-muted">Elke wijziging is één registratie in het register. Pas Opslaan schrijft; Weg laat haar vallen.</p>
+          <ul className="space-y-2">
+            {wachtrij.map((w) => (
+              <li key={w.id} className="flex flex-wrap items-center gap-2">
+                {w.h.soort === "nieuw" && w.status !== "ok" ? (
+                  <input
+                    aria-label="Naam van de nieuwe koppeling"
+                    value={w.h.naam}
+                    onChange={(e) => setWachtrij((q) => q.map((x) => (x.id === w.id && x.h.soort === "nieuw" ? { ...x, h: { ...x.h, naam: e.target.value } } : x)))}
+                    className="min-w-64 flex-1 rounded border border-line bg-background px-2 py-1"
+                  />
+                ) : (
+                  <span className="flex-1">{w.omschrijving}</span>
+                )}
+                {w.status === "wacht" || w.status === "fout" ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => bewaar(w)}
+                      className="rounded-md bg-accent px-3 py-1 text-sm font-semibold text-background hover:bg-accent-strong"
+                    >
+                      {w.h.soort === "wis" ? "Wissen in het register" : "Opslaan"}
+                    </button>
+                    <button type="button" onClick={() => setWachtrij((q) => q.filter((x) => x.id !== w.id))} className="text-sm text-muted hover:underline">
+                      Weg
+                    </button>
+                  </>
+                ) : (
+                  <span className="text-xs text-muted">{w.status === "bezig" ? "bezig…" : "opgeslagen"}</span>
+                )}
+                {w.melding && <span className={`w-full text-xs ${w.status === "fout" ? "text-red-700" : "text-muted"}`}>{w.melding}</span>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
 
-function Knoop({ knoop, licht, wijsAan, onWijs, diepte = 0 }: { knoop: ModelKnoop; licht: Set<string>; wijsAan: Set<string>; onWijs: (w: Wijs) => void; diepte?: number }) {
+/**
+ * What a model element is as the source of a line (bronSoort, ModelelementSoort): an entity or a
+ * gegevenselement by its own id; a field by the element it belongs to, the field in the naampad
+ * (the enum has no value for a field, INRICHTEN_VIZ 25-11-2026).
+ */
+function bronVan(knoop: ModelKnoop, ouder: ModelKnoop | undefined, naampad: string) {
+  if (knoop.soort === "entiteit" || knoop.soort === "gegevenselement") return { bronSoort: knoop.soort, bronElementId: knoop.id, naampad };
+  if (knoop.soort === "veld" && ouder && (ouder.soort === "entiteit" || ouder.soort === "gegevenselement"))
+    return { bronSoort: ouder.soort, bronElementId: ouder.id, naampad };
+  return undefined;
+}
+
+function Knoop({
+  knoop,
+  licht,
+  wijsAan,
+  onWijs,
+  pad,
+  onTrek,
+  ouder,
+  diepte = 0,
+}: {
+  knoop: ModelKnoop;
+  licht: Set<string>;
+  wijsAan: Set<string>;
+  onWijs: (w: Wijs) => void;
+  pad: string[];
+  onTrek?: (e: React.PointerEvent, knoop: ModelKnoop, bron: { bronSoort: string; bronElementId: string; naampad: string }) => void;
+  ouder?: ModelKnoop;
+  diepte?: number;
+}) {
+  const naampad = [...pad, knoop.label].join(".");
+  const bron = bronVan(knoop, ouder, naampad);
   const aan = licht.has(knoop.id) || knoop.kinderen.some((c) => licht.has(c.id));
   const binnen = (n: ModelKnoop): boolean => licht.has(n.id) || n.kinderen.some(binnen);
   const open = diepte === 0 ? binnen(knoop) : aan;
   const label = (
     <span
       data-anker={knoop.id}
+      data-soort={knoop.soort}
+      data-naampad={bron?.naampad}
+      data-bron-soort={onTrek ? bron?.bronSoort : undefined}
+      data-bron-id={onTrek ? bron?.bronElementId : undefined}
       onMouseEnter={() => onWijs({ anker: knoop.id })}
       className={aan ? "rounded bg-accent/15 px-1 font-medium" : wijsAan.has(knoop.id) ? "rounded bg-accent/10 px-1" : ""}
     >
       {knoop.href ? <a href={knoop.href} className="hover:underline">{knoop.label}</a> : knoop.label}
       {knoop.soort !== "veld" && knoop.soort !== "domein" && knoop.soort !== "groep" && <span className="ml-1 text-xs text-muted">{knoop.soort}</span>}
+      {onTrek && bron && (
+        <button
+          type="button"
+          aria-label={`Lijn trekken vanaf ${knoop.label}`}
+          title="Sleep naar een doel om een koppeling te leggen"
+          onPointerDown={(e) => onTrek(e, knoop, bron)}
+          onClick={(e) => e.preventDefault()}
+          className="ml-1 inline-block h-3 w-3 cursor-grab touch-none rounded-full border-2 border-accent align-middle hover:bg-accent"
+        />
+      )}
     </span>
   );
   if (!knoop.kinderen.length) return <li style={{ paddingLeft: diepte ? 4 : 0 }}>{label}</li>;
@@ -264,7 +495,7 @@ function Knoop({ knoop, licht, wijsAan, onWijs, diepte = 0 }: { knoop: ModelKnoo
         <summary className="cursor-pointer">{label}</summary>
         <ul className="ml-4 space-y-1 border-l border-line pl-3">
           {knoop.kinderen.map((c) => (
-            <Knoop key={c.id} knoop={c} licht={licht} wijsAan={wijsAan} onWijs={onWijs} diepte={diepte + 1} />
+            <Knoop key={c.id} knoop={c} licht={licht} wijsAan={wijsAan} onWijs={onWijs} pad={knoop.soort === "domein" || knoop.soort === "groep" ? [knoop.label] : [...pad, knoop.label]} onTrek={onTrek} ouder={knoop} diepte={diepte + 1} />
           ))}
         </ul>
       </details>

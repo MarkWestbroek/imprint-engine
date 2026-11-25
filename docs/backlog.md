@@ -314,8 +314,18 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   0.6.0, Secret `inrichting-scan`); de opname blijft terugval.
             - [x] Lijnen tussen model en doelen, passief (25-11): smallere
                   kolommen, aanwijzen licht de andere kant op.
-            - [ ] Lijnen actief (trekken, verleggen, wissen) na het model
-                  Koppeling en het bouwer-account (Fundament §9).
+            - [x] Lijnen actief (25-11, lokaal getest met een nep-register):
+                  trekken, verleggen, wissen; één registratie per handeling.
+            - [ ] Schrijfaccount (rol bouwer) aanmaken en als Secret
+                  `omnium-koppelaar` zetten; daarna één echte proef (nieuw,
+                  verleggen, wissen) en nagaan of de afvoer van een Koppeling
+                  zo werkt als BACKEND verwacht.
+            - [x] Lijnen vanaf gegevenselementen en velden (25-11; een veld als
+                  zijn gegevenselement met het veld in het naampad).
+            - [ ] Lijnen leggen met het toetsenbord.
+            - [x] Stap 6 Transformaties, alleen-lezen (25-11).
+            - [x] Stap 1 Installatie (25-11, alleen-lezen) op `GET /inrichtingstool`;
+                  toont "ontbreekt" tot plugin v0.9.0 live is.
             - [ ] Opslaan: Omgeving (namespaces, modelversie, `isDoel`),
                   Koppeling en Transformatie, na de modelwijziging (§5) en
                   Marks besluit over koppeling per omgeving of per e-dienstversie.

@@ -44,6 +44,8 @@ export type Scan = {
   /** A recorded scan (SCAN_OPNAME): when it was made. */
   opgenomen?: string;
   meldingen?: string[];
+  /** Where the plugin took its recognition rules from (v0.8.0): the register's component_herkenningen, or its built-in table. */
+  herkenningUit?: "register" | "ingebouwd";
   fout?: string;
 };
 
@@ -55,7 +57,7 @@ function scanConfig(): { url: string; token?: string } | null {
   return url ? { url, token: process.env.SCAN_TOKEN?.trim() || undefined } : null;
 }
 
-type Opname = { gescandOp?: string; namespaces?: (string | Namespace)[]; componenten?: ScanComponent[]; meldingen?: string[] };
+type Opname = { gescandOp?: string; namespaces?: (string | Namespace)[]; componenten?: ScanComponent[]; meldingen?: string[]; herkenningUit?: Scan["herkenningUit"] };
 
 /**
  * A recorded scan (the plugin's output saved as JSON, path in SCAN_OPNAME):
@@ -113,7 +115,7 @@ export async function scan(i: Inrichting, ns: string[]): Promise<Scan> {
     try {
       const q = namespaces.map((n) => `namespace=${encodeURIComponent(n)}`).join("&");
       const r = await vraag<{ gescandOp?: string; componenten?: ScanComponent[] }>(`/scan?${q}`);
-      return { gescandOp: r.gescandOp ?? gescandOp, namespaces, componenten: r.componenten ?? [], voorbeeld: false, meldingen: (r as Opname).meldingen };
+      return { gescandOp: r.gescandOp ?? gescandOp, namespaces, componenten: r.componenten ?? [], voorbeeld: false, meldingen: (r as Opname).meldingen, herkenningUit: (r as Opname).herkenningUit };
     } catch (e) {
       fout = foutTekst(e);
     }
@@ -177,4 +179,34 @@ export function herken(sc: ScanComponent, componentNamen: string[]): string | un
   const image = sc.image?.split(":")[0]?.split("/").at(-1);
   const kandidaten = [sc.naam, sc.chart, image].map(norm).filter(Boolean);
   return componentNamen.find((n) => kandidaten.includes(norm(n)));
+}
+
+// ── Step 1: what the plugin found and chose (GET /inrichtingstool, plugin v0.9.0) ──
+
+export type Onderdeel = "register" | "ui" | "database";
+export type Vondst = { namespace: string; naam: string; versie?: string; adres?: string; adresIntern?: string };
+export type Inrichtingstool = {
+  spec: Partial<Record<Onderdeel, { gebruik: "bestaand" | "nieuw"; namespace?: string; naam?: string }>>;
+  status: { fase?: string; meldingen?: string[]; gezochtOp?: string; gevonden?: Partial<Record<Onderdeel, Vondst[]>> };
+};
+
+/** The Inrichtingstool resource as the plugin reports it (read only); `fout` when there is no answer (yet). */
+export async function inrichtingstool(): Promise<{ tool?: Inrichtingstool; fout?: string }> {
+  const cfg = scanConfig();
+  if (!cfg) return { fout: "De plugin is hier niet aangesloten (geen SCAN_URL)." };
+  try {
+    const res = await fetch(`${cfg.url}/inrichtingstool`, {
+      headers: cfg.token ? { authorization: `Bearer ${cfg.token}` } : {},
+      cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (res.status === 404) return { fout: "Deze versie van de plugin meldt de installatie nog niet (eindpunt /inrichtingstool ontbreekt)." };
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { fout?: string };
+      return { fout: `De plugin antwoordt ${res.status}${body.fout ? `: ${body.fout}` : ""}.` };
+    }
+    return { tool: (await res.json()) as Inrichtingstool };
+  } catch {
+    return { fout: "De plugin is niet bereikbaar." };
+  }
 }
