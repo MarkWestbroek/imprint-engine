@@ -13,11 +13,12 @@ import { slaWerkplaatsOp } from "../werkplaats-actions";
  * date) show the register as it was; on a drawing, `?element=` lights up one
  * element (a form field links there from its traceregel). Under a version,
  * `/werkplaats/<stap>` is its werkplaats; `?vraag=` selects a question there.
+ * `/omgevingswizard/<stap>?ns=…` is the omgevingswizard (read only).
  */
 
 type Props = {
   params: Promise<{ path: string[] }>;
-  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string; vraag?: string; bewerk?: string }>;
+  searchParams: Promise<{ peiltijdstip?: string; geldigOp?: string; element?: string; veld?: string; vraag?: string; bewerk?: string; ns?: string | string[] }>;
 };
 
 async function load({ params, searchParams }: Props) {
@@ -33,6 +34,7 @@ async function load({ params, searchParams }: Props) {
     vraag: q.vraag,
     bewerk: q.bewerk === "1",
     // Saving from the werkplaats only for who may edit; a reader keeps the try-out.
+    ns: q.ns,
     werkplaatsOpslaan: q.bewerk === "1" && (await auth.editingSession()) ? slaWerkplaatsOp : undefined,
   });
 }

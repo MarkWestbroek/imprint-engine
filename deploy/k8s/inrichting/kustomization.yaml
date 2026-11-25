@@ -8,7 +8,7 @@ namespace: tnt-cg--inrichting
 resources:
   - ../base
 images:
-  - { name: imprint-site, newName: docker.io/markwestbroek/imprint-inrichting, newTag: "0.15.0-cf280c0" }
+  - { name: imprint-site, newName: docker.io/markwestbroek/imprint-inrichting, newTag: "0.15.0-7797404" }
 configMapGenerator:
   - name: imprint-config
     options: { disableNameSuffixHash: true }
@@ -39,6 +39,30 @@ patches:
         value:
           name: OMNIUM_SCHRIJF_TOKEN
           valueFrom: { secretKeyRef: { name: omnium-schrijver, key: OMNIUM_SCHRIJF_TOKEN, optional: true } }
+      # Omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4): de live scan van de
+      # plugin (v0.6.0) via Secret `inrichting-scan` (url + token, aangemaakt door de plugin).
+      # Als terugval een opgenomen scan uit de ConfigMap `scan-opname` (key scan.json). Die staat
+      # alleen in het cluster, niet in git: hij bevat de hostnamen van het lab. Ontbreken beide,
+      # dan toont de wizard een voorbeeld uit het register.
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SCAN_URL
+          valueFrom: { secretKeyRef: { name: inrichting-scan, key: url, optional: true } }
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: SCAN_TOKEN
+          valueFrom: { secretKeyRef: { name: inrichting-scan, key: token, optional: true } }
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value: { name: SCAN_OPNAME, value: /etc/imprint/scan/scan.json }
+      - op: add
+        path: /spec/template/spec/volumes
+        value: [{ name: scan-opname, configMap: { name: scan-opname, optional: true } }]
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts
+        value: [{ name: scan-opname, mountPath: /etc/imprint/scan, readOnly: true }]
   - target: { kind: HTTPRoute, name: imprint }
     patch: |-
       - op: replace

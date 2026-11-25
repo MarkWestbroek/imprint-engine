@@ -306,6 +306,21 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
       - [x] Componentversies (6-11): FUNDAMENT vult ze uit de images in het
             cluster (`scripts/omnium-componentversies.ps1`, opnieuw na een
             upgrade); de plugin toont ze bij componenten en resultaten.
+      - [ ] **Omgevingswizard** (Fundament `docs/inrichtingstool-als-plugin.md` §4)
+            - [x] Stap 2–5 alleen-lezen (25-11): scan (eindpunt, opgenomen
+                  of voorbeeld), kaarten per laag, modelversie, gesplitst
+                  scherm met koppelingen uit de artefacten.
+            - [x] Het scan-eindpunt van de plugin aangesloten (25-11, plugin
+                  0.6.0, Secret `inrichting-scan`); de opname blijft terugval.
+            - [x] Lijnen tussen model en doelen, passief (25-11): smallere
+                  kolommen, aanwijzen licht de andere kant op.
+            - [ ] Lijnen actief (trekken, verleggen, wissen) na het model
+                  Koppeling en het bouwer-account (Fundament §9).
+            - [ ] Opslaan: Omgeving (namespaces, modelversie, `isDoel`),
+                  Koppeling en Transformatie, na de modelwijziging (§5) en
+                  Marks besluit over koppeling per omgeving of per e-dienstversie.
+            - [ ] OpenAPI per component in de doelboom; koppeling verfijnen;
+                  transformatie kiezen of maken (stap 6, assistent).
       - [ ] **Werkplaats per dienst** (Fundament `docs/werkplaats-plan.md`,
             Mark akkoord 9-11). Fase A, de leesweergave:
             - [x] Route `…/versies/<nr>/werkplaats/<stap>`, afgeleide

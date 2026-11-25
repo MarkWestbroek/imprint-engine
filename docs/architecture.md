@@ -1828,6 +1828,47 @@ flowchart LR
     van `bronGE`). `markField()` zet een `<rect>` voor de `<text data-dc-veld>`
     met die naam, alleen binnen dat element.
   - De rest dimt via CSS: `:not(:has(…))`.
+- **Omgevingswizard** (Fundament `docs/inrichtingstool-als-plugin.md` §4;
+  `omgeving-scan.ts`, `omgeving-wizard.ts`, `omgeving-wizard-view.tsx`,
+  `omgeving-wizard-client.tsx`). Route `/inrichting/omgevingswizard/<stap>`,
+  `?ns=` herhaalbaar (`*` = alle); `omniumPage()` vangt het pad af vóór
+  `locate()`. Alleen-lezen: niets schrijft naar register of cluster.
+  - De site praat niet met de Kubernetes-API. De scan komt van het eindpunt
+    van de plugin (`SCAN_URL`, Bearer `SCAN_TOKEN`; `GET /namespaces`,
+    `GET /scan?namespace=…`; url en token uit Secret `inrichting-scan`, dat
+    de plugin aanmaakt). Zonder dat eindpunt, of als het niet antwoordt (dan
+    met de fout erboven): een opgenomen scan
+    (`SCAN_OPNAME`, JSON van de plugin, als ConfigMap `scan-opname` alleen in
+    het cluster, want hij bevat hostnamen), anders een voorbeeld uit
+    `omgeving_componentversies`. Beide zijn als "voorbeeld" gelabeld.
+  - Het gesplitste scherm (`KoppelingenScherm`, client) tekent lijnen als
+    SVG over het raster: `lijnenVan()` (`omgeving-lijnen.ts`, zonder
+    registercode) geeft per koppeling een `Lijn {van: modelelement, naar:
+    component}`; het scherm zoekt per lijn het zichtbare anker (in een
+    dichte `<details>` de dichtstbijzijnde open ouder, via
+    `checkVisibility()`) en tekent opnieuw bij `toggle` en resize. De actieve
+    versie (trekken, verleggen, wissen) bewerkt dezelfde lijst; het
+    schrijfpad staat in Fundament `docs/inrichtingstool-als-plugin.md` §9.
+  - Herkennen doet de plugin; `herken()` neemt dat over als het register de
+    component kent, en valt terug op naam, chart of image-naam.
+  - Stap 3: kaarten per laag (`component_lagen`), met de versie uit het
+    register ernaast als die afwijkt. Het vinkje "doel" bewaart de browser
+    (localStorage) tot het register `isDoel` kent.
+  - Stap 4: alleen "actueel" is te kiezen; de generaties uit
+    `artefact_herkomsten` staan er uitgeschakeld onder.
+  - Stap 5: `modelBoom()` (domein uit `data.bron.domein` → entiteit →
+    gegevenselement via `compositie` → velden, plus de bronnen per soort) en
+    `bestaandeKoppelingen()`: elk gegenereerd artefact met een doelcomponent
+    is een koppeling bron → component. Kiezen licht links de bronnen en de
+    `bronElementId`'s van de traceregels op.
+
+```mermaid
+flowchart LR
+    W["omgevingswizard<br/>(site inrichting)"] -->|"GET /scan (SCAN_URL)"| P["plugin cg-inrichting<br/>scan-eindpunt"]
+    W -.->|"zonder eindpunt of bij een fout"| O["opgenomen scan<br/>ConfigMap scan-opname"]
+    W -->|"/full/…"| R[("Omnium-register<br/>componenten, artefacten")]
+    P -->|"workloads, labels, routes"| K["Kubernetes-API"]
+```
 - **JSON** toont `json-tree.tsx`: `<details>` per object of array, op de
   server, met hoogstens 5000 onderdelen.
 - **Referentielijsten**: velden die naar een referentielijst wijzen

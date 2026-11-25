@@ -6,6 +6,17 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: lijnen in het gesplitste scherm.** Smallere kolommen met
+  lijnen van het model naar de koppelingen; ingeklapte takken dragen de lijn,
+  aanwijzen licht de andere kant op (alleen bekijken).
+- **Inrichting: omgevingswizard op de live scan.** De wizard leest de scan
+  van de plugin (Secret `inrichting-scan`); antwoordt die niet, dan de
+  opgenomen scan als terugval, met de fout erbij en het label "Voorbeeld".
+- **Inrichting: omgevingswizard** (alleen bekijken). Kies namespaces en
+  scan; zie de componenten per laag met versie, adres en bereikbaarheid, kies
+  de doelen, de modelversie, en zie in een gesplitst scherm het model naast de
+  doelen met de koppelingen die er al zijn. Tot de scan van de plugin is
+  aangesloten, een opgenomen scan of een voorbeeld uit het register.
 - **paratmos.nl: de drie-eenheid in de indeling van de rolbanner.** Processen
   boven, gegevens linksonder, regels rechtsonder, als gelijkzijdige driehoek;
   in de ring bovenaan diensten tussen doelen en visie, onderaan de externe

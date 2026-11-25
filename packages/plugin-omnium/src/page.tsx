@@ -9,6 +9,8 @@ import { EERSTE_STAP, isStap } from "./werkplaats";
 import { WerkplaatsView } from "./werkplaats-view";
 import type { FormulierActie } from "./formulier-acties";
 import type { OpslaanResultaat } from "./werkplaats-opslaan";
+import { isWizardStap, WIZARD_STAPPEN } from "./omgeving-wizard";
+import { OmgevingWizardView } from "./omgeving-wizard-view";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -38,6 +40,7 @@ export async function omniumPage({
   vraag,
   bewerk,
   werkplaatsOpslaan,
+  ns,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -58,9 +61,33 @@ export async function omniumPage({
    * server" wrapper around `slaOpVoorPad`, checking the role); omit for readers.
    */
   werkplaatsOpslaan?: (pad: string[], acties: FormulierActie[]) => Promise<OpslaanResultaat>;
+  /** In the omgevingswizard: the chosen namespaces (`?ns=`, repeatable; "*" = all). */
+  ns?: string | string[];
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
+
+  // The omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4): /omgevingswizard/<stap>.
+  if (path[0] === "omgevingswizard" && path.length <= 2) {
+    const stap = path[1] ?? WIZARD_STAPPEN[0].id;
+    if (!isWizardStap(stap)) return null;
+    const gekozen = (Array.isArray(ns) ? ns : ns ? [ns] : []).filter(Boolean);
+    return {
+      title: "Omgeving inrichten",
+      render: (
+        <article>
+          <header className="mb-6">
+            <nav className="text-sm text-muted" aria-label="Kruimelpad">
+              <Link href={prefix} className="hover:underline">Inrichting</Link>
+            </nav>
+            <p className="mt-3 text-xs uppercase tracking-wide text-muted">Wizard</p>
+            <h1 className="text-3xl font-semibold tracking-tight">Omgeving inrichten</h1>
+          </header>
+          <OmgevingWizardView i={i} stap={stap} ns={gekozen} prefix={prefix} />
+        </article>
+      ),
+    };
+  }
   let located;
   try {
     located = await i.locate(path);
