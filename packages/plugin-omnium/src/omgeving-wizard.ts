@@ -2,6 +2,7 @@ import type { FullRecord } from "./register";
 import { ge, geRows, relation } from "./register";
 import { own, type Inrichting } from "./inrichting";
 import { herken, type Scan, type ScanComponent } from "./omgeving-scan";
+import type { VastgelegdeKoppeling } from "./koppeling-register";
 
 /**
  * The omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4), read
@@ -16,6 +17,7 @@ export const WIZARD_STAPPEN = [
   { id: "componenten", titel: "Omgeving in beeld" },
   { id: "model", titel: "Model koppelen" },
   { id: "koppelingen", titel: "Koppelingen" },
+  { id: "transformaties", titel: "Transformaties" },
 ] as const;
 export type WizardStap = (typeof WIZARD_STAPPEN)[number]["id"];
 export const isWizardStap = (s: string): s is WizardStap => WIZARD_STAPPEN.some((x) => x.id === s);
@@ -167,6 +169,11 @@ export type Koppeling = {
   /** The target: the component (its register name). */
   doel: { component: string; weergavenaam: string };
   href?: string;
+  /** Derived from an artefact (the default), or laid down in the register (a Koppeling, schema v8). */
+  herkomst?: "artefact" | "register";
+  /** For a laid-down link: its register id and the e-dienstversies it hangs on. */
+  registerId?: number;
+  edienstversieIds?: number[];
 };
 
 /** The links there are already: every generated artefact is model → component (artefact → bron and doelcomponent). */
@@ -201,4 +208,101 @@ async function bronElementen(a: FullRecord): Promise<string[]> {
   const ids = new Set<string>();
   for (const t of geRows(a, "artefact_traceregels")) if (typeof t.bronElementId === "string" && t.bronElementId) ids.add(t.bronElementId);
   return [...ids];
+}
+
+// ── Step 6: the transformations (read only) ────────────────────────────────
+
+export type TransformatieRij = {
+  id: number;
+  identifier: string;
+  naam: string;
+  omschrijving?: string;
+  bronSoorten: string[];
+  artefactsoorten: string[];
+  versies: {
+    nummer: string;
+    vorm?: string;
+    pad?: string;
+    verwijzing?: string;
+    revisie?: string;
+    status?: string;
+    geldig: { component: string; weergavenaam: string; versieRange?: string; draaitHier?: string }[];
+  }[];
+  /** How many links use it: derived (an artefact of one of its soorten) and laid down in the register. */
+  gebruik: { afgeleid: number; vastgelegd: number };
+};
+
+/** Every transformation with its versions; per version where it holds and whether that component runs in the chosen omgeving. */
+export async function transformatieOverzicht(i: Inrichting, draaitHier: Map<string, string | undefined>, koppelingen: Koppeling[]): Promise<TransformatieRij[]> {
+  const [trs, versies, soorten, comps, kps] = await Promise.all([
+    i.list("transformaties").catch(() => []),
+    i.list("transformatieversies").catch(() => []),
+    i.list("artefactsoorten").catch(() => []),
+    i.list("componenten").catch(() => []),
+    i.list("koppelingen").catch(() => []),
+  ]);
+  const soortCode = new Map(soorten.map((s) => [s.id, str(ge(s, "artefactsoort_gegevens")?.code)] as const));
+  const comp = new Map(comps.map((c) => [c.id, c] as const));
+  const out: TransformatieRij[] = [];
+  for (const t of trs) {
+    const n = ge(t, "transformatie_namen");
+    const codes = relation(t, "transformatie_artefactsoorten", own("transformaties")).map((l) => soortCode.get(l.id) ?? "").filter(Boolean);
+    const vs = relation(t, "transformatie_heeft_versies", own("transformaties")).flatMap((l) => versies.filter((v) => v.id === l.id));
+    out.push({
+      id: t.id,
+      identifier: str(n?.identifier),
+      naam: str(n?.naam) || str(n?.identifier) || `Transformatie ${t.id}`,
+      omschrijving: str(n?.omschrijving) || undefined,
+      bronSoorten: geRows(t, "transformatie_bronnen").map((b) => str(b.bronSoort)).filter(Boolean),
+      artefactsoorten: codes,
+      versies: vs
+        .map((v) => {
+          const c = ge(v, "transformatieversie_codes");
+          return {
+            nummer: str(ge(v, "transformatieversie_nummers")?.versienummer) || `#${v.id}`,
+            vorm: str(c?.vorm) || undefined,
+            pad: str(c?.pad) || undefined,
+            verwijzing: str(c?.verwijzing) || undefined,
+            revisie: str(c?.revisie) || undefined,
+            status: str(ge(v, "transformatieversie_verlopen")?.status) || undefined,
+            geldig: geRows(v, "transformatieversie_componentgeldigheden").flatMap((g) => {
+              const cc = typeof g.component_id === "number" ? comp.get(g.component_id) : undefined;
+              const naam = cc ? (i.componentNaam(cc) ?? "") : "";
+              return naam
+                ? [{ component: naam, weergavenaam: str(ge(cc, "component_namen")?.weergavenaam) || naam, versieRange: str(g.versieRange) || undefined, draaitHier: draaitHier.has(naam) ? (draaitHier.get(naam) ?? "") : undefined }]
+                : [];
+            }),
+          };
+        })
+        .sort((a, b) => b.nummer.localeCompare(a.nummer, "nl", { numeric: true })),
+      gebruik: {
+        afgeleid: koppelingen.filter((k) => k.herkomst !== "register" && codes.includes(k.soort)).length,
+        vastgelegd: kps.filter((k) => relation(k, "koppeling_transformaties", own("koppelingen")).some((l) => l.id === t.id)).length,
+      },
+    });
+  }
+  return out.sort((a, b) => a.naam.localeCompare(b.naam, "nl"));
+}
+
+/** The links laid down in the register, in the view's shape (soort "vastgelegd"), with what the editor needs to change them. */
+export async function vastgelegdAlsKoppeling(i: Inrichting, stand: VastgelegdeKoppeling[]): Promise<Koppeling[]> {
+  const comps = await i.list("componenten").catch(() => []);
+  const versies = await i.list("edienstversies").catch(() => []);
+  const out: Koppeling[] = [];
+  for (const k of stand) {
+    const c = comps.find((x) => x.id === k.doel?.component_id);
+    if (!c) continue;
+    const labels = await Promise.all(k.edienstversies.map(async (v) => { const r = versies.find((x) => x.id === v.edienstversie_id); return r ? i.title("edienstversies", r) : undefined; }));
+    out.push({
+      id: `koppeling:${k.id}`,
+      naam: k.naam,
+      soort: "vastgelegd",
+      herkomst: "register",
+      registerId: k.id,
+      edienstversieIds: k.edienstversies.map((v) => v.edienstversie_id),
+      bron: { label: labels.filter(Boolean).join(" · ") || "het model", ids: k.bronnen.map((b) => b.bronElementId) },
+      doel: { component: i.componentNaam(c) ?? "", weergavenaam: str(ge(c, "component_namen")?.weergavenaam) || (i.componentNaam(c) ?? "") },
+    });
+  }
+  return out;
 }

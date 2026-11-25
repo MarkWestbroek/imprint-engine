@@ -5,6 +5,8 @@ import { widgetContext } from "@/lib/widget-context";
 import { widgetComponents } from "@/widgets/components";
 import { auth } from "@/lib/admin";
 import { slaWerkplaatsOp } from "../werkplaats-actions";
+import { slaKoppelingOpActie } from "../koppeling-actions";
+import { kanKoppelingenSchrijven } from "@imprint/plugin-omnium/koppeling-opslaan";
 
 /**
  * A record of the Omnium register by its stable key (design/omnium-inrichting.md
@@ -36,6 +38,8 @@ async function load({ params, searchParams }: Props) {
     // Saving from the werkplaats only for who may edit; a reader keeps the try-out.
     ns: q.ns,
     werkplaatsOpslaan: q.bewerk === "1" && (await auth.editingSession()) ? slaWerkplaatsOp : undefined,
+    // Laying down lines in the omgevingswizard: an editor, and only once the site has the register's writing account.
+    koppelingOpslaan: kanKoppelingenSchrijven() && (await auth.editingSession()) ? slaKoppelingOpActie : undefined,
   });
 }
 

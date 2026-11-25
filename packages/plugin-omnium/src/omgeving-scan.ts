@@ -44,6 +44,8 @@ export type Scan = {
   /** A recorded scan (SCAN_OPNAME): when it was made. */
   opgenomen?: string;
   meldingen?: string[];
+  /** Where the plugin took its recognition rules from (v0.8.0): the register's component_herkenningen, or its built-in table. */
+  herkenningUit?: "register" | "ingebouwd";
   fout?: string;
 };
 
@@ -55,7 +57,7 @@ function scanConfig(): { url: string; token?: string } | null {
   return url ? { url, token: process.env.SCAN_TOKEN?.trim() || undefined } : null;
 }
 
-type Opname = { gescandOp?: string; namespaces?: (string | Namespace)[]; componenten?: ScanComponent[]; meldingen?: string[] };
+type Opname = { gescandOp?: string; namespaces?: (string | Namespace)[]; componenten?: ScanComponent[]; meldingen?: string[]; herkenningUit?: Scan["herkenningUit"] };
 
 /**
  * A recorded scan (the plugin's output saved as JSON, path in SCAN_OPNAME):
@@ -113,7 +115,7 @@ export async function scan(i: Inrichting, ns: string[]): Promise<Scan> {
     try {
       const q = namespaces.map((n) => `namespace=${encodeURIComponent(n)}`).join("&");
       const r = await vraag<{ gescandOp?: string; componenten?: ScanComponent[] }>(`/scan?${q}`);
-      return { gescandOp: r.gescandOp ?? gescandOp, namespaces, componenten: r.componenten ?? [], voorbeeld: false, meldingen: (r as Opname).meldingen };
+      return { gescandOp: r.gescandOp ?? gescandOp, namespaces, componenten: r.componenten ?? [], voorbeeld: false, meldingen: (r as Opname).meldingen, herkenningUit: (r as Opname).herkenningUit };
     } catch (e) {
       fout = foutTekst(e);
     }

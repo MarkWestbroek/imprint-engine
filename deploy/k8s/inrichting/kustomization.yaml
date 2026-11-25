@@ -39,6 +39,14 @@ patches:
         value:
           name: OMNIUM_SCHRIJF_TOKEN
           valueFrom: { secretKeyRef: { name: omnium-schrijver, key: OMNIUM_SCHRIJF_TOKEN, optional: true } }
+      # Koppelingen schrijven (omgevingswizard stap 5, Fundament §9): het token van het register-account
+      # met rol bouwer, alleen aan de serverkant. Ontbreekt de Secret `omnium-koppelaar`, dan kan niemand
+      # lijnen leggen en blijft de wizard alleen-lezen.
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: OMNIUM_KOPPELING_TOKEN
+          valueFrom: { secretKeyRef: { name: omnium-koppelaar, key: OMNIUM_KOPPELING_TOKEN, optional: true } }
       # Omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4): de live scan van de
       # plugin (v0.6.0) via Secret `inrichting-scan` (url + token, aangemaakt door de plugin).
       # Als terugval een opgenomen scan uit de ConfigMap `scan-opname` (key scan.json). Die staat

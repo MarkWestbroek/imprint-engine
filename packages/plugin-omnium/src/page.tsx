@@ -11,6 +11,8 @@ import type { FormulierActie } from "./formulier-acties";
 import type { OpslaanResultaat } from "./werkplaats-opslaan";
 import { isWizardStap, WIZARD_STAPPEN } from "./omgeving-wizard";
 import { OmgevingWizardView } from "./omgeving-wizard-view";
+import type { KoppelingHandeling } from "./koppeling-register";
+import type { KoppelingResultaat } from "./koppeling-opslaan";
 
 /**
  * A register record as a page: `/inrichting/<key path>` → the record, rendered
@@ -41,6 +43,7 @@ export async function omniumPage({
   bewerk,
   werkplaatsOpslaan,
   ns,
+  koppelingOpslaan,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -63,6 +66,12 @@ export async function omniumPage({
   werkplaatsOpslaan?: (pad: string[], acties: FormulierActie[]) => Promise<OpslaanResultaat>;
   /** In the omgevingswizard: the chosen namespaces (`?ns=`, repeatable; "*" = all). */
   ns?: string | string[];
+  /**
+   * The site's server action that saves one action on the lines as one
+   * registration (a "use server" wrapper around `slaKoppelingOp`, checking
+   * the role); omit for readers and while the site has no writing account.
+   */
+  koppelingOpslaan?: (h: KoppelingHandeling) => Promise<KoppelingResultaat>;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -83,7 +92,7 @@ export async function omniumPage({
             <p className="mt-3 text-xs uppercase tracking-wide text-muted">Wizard</p>
             <h1 className="text-3xl font-semibold tracking-tight">Omgeving inrichten</h1>
           </header>
-          <OmgevingWizardView i={i} stap={stap} ns={gekozen} prefix={prefix} />
+          <OmgevingWizardView i={i} stap={stap} ns={gekozen} prefix={prefix} opslaan={koppelingOpslaan} />
         </article>
       ),
     };

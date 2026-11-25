@@ -99,6 +99,12 @@ komen ze ook daar vandaan, dus niet dubbel bijhouden in deze repo.
      accepteert;
    - een token via `POST /api/auth/tokens`, met de login van die gebruiker.
 
+   Koppelingen schrijven (omgevingswizard, stap 5) vraagt een tweede account
+   met de rol *bouwer* en zijn token in Secret `omnium-koppelaar` (sleutel
+   `OMNIUM_KOPPELING_TOKEN`). Zonder die Secret start de site gewoon en blijft
+   de wizard alleen-lezen. De site laat met dat token alleen registraties over
+   Koppeling en haar relatie op de e-dienstversie door.
+
    Het token is **maximaal 365 dagen** geldig: zet de vervaldatum in de agenda
    en vervang alleen dit Secret, met daarna `kubectl rollout restart`. Het
    register gaat intern via `http://omnium-api.tnt-cg--omnium.svc.cluster.local:8080`

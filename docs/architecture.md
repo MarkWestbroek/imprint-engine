@@ -1849,6 +1849,46 @@ flowchart LR
     `checkVisibility()`) en tekent opnieuw bij `toggle` en resize. De actieve
     versie (trekken, verleggen, wissen) bewerkt dezelfde lijst; het
     schrijfpad staat in Fundament `docs/inrichtingstool-als-plugin.md` §9.
+  - Koppelingen in het register (schema v8, `koppeling-register.ts`):
+    `vastgelegdeKoppelingen()` leest full/koppelingen en de relatie
+    `edienstversie_koppelingen`; een koppeling telt alleen als ze zelf nog in
+    full/koppelingen staat. `planKoppeling()` maakt van één handeling één
+    registratie: nieuw = opvoer van de Koppeling met haar GE's genest plus
+    `edienstversiekoppeling`; verleggen = afvoer + opvoer van de bron, of een
+    opvolger van het doel met `aanvang` (correctie alleen als het doel vandaag
+    al begon); wissen = afvoer van de Koppeling plus, in dezelfde registratie,
+    van elk relatievoorkomen op een e-dienstversie. Dubbelen weigert de site op
+    de sleutel e-dienstversie + bronelement + doelcomponent.
+  - `slaKoppelingOp()` (`koppeling-opslaan.ts`, alleen server) leest vlak
+    vooraf de stand, laat alleen een registratie op de whitelist door
+    (Koppeling en haar relatie op de e-dienstversie) en post met het token van
+    het bouwer-account (`OMNIUM_KOPPELING_TOKEN`, Secret `omnium-koppelaar`).
+    Na een time-out leest hij opnieuw en kijkt of de handeling er staat; hij
+    verstuurt nooit blind opnieuw. De site geeft de action alleen door aan een
+    redacteur en alleen als het token er is; anders blijft de wizard
+    alleen-lezen.
+
+    ```mermaid
+    sequenceDiagram
+      participant B as Browser (KoppelingenScherm)
+      participant S as Site (server action)
+      participant R as Register
+      B->>S: handeling (nieuw / verleg / wis)
+      S->>S: redacteur? token?
+      S->>R: GET full/koppelingen, full/edienstversies
+      S->>S: planKoppeling + whitelist + dubbelcheck
+      S->>R: POST /registratie/ (bouwer-token)
+      alt time-out
+        S->>R: opnieuw lezen: staat het er?
+      end
+      S-->>B: opgeslagen / fout
+    ```
+  - Stap 6 (`transformatieOverzicht()`): full/transformaties met hun
+    versies, de code als verwijzing, de componentgeldigheid naast wat de scan
+    in de omgeving vond, en hoeveel koppelingen ze gebruiken.
+  - `Inrichting.list` laat afgevoerde records weg: `/full` zonder
+    peiltijdstip geeft de hele geschiedenis (BACKEND, 25-11); afgevoerde hubs
+    en versies sloeg `register.ts` al over.
   - Herkennen doet de plugin; `herken()` neemt dat over als het register de
     component kent, en valt terug op naam, chart of image-naam.
   - Stap 3: kaarten per laag (`component_lagen`), met de versie uit het

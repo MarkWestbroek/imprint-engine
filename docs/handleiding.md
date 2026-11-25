@@ -1087,7 +1087,9 @@ toont wat het register nu weet.
 ### Omgeving inrichten (wizard)
 
 Via **Omgeving inrichten** in de kopregel kijk je welke componenten in een
-omgeving draaien en hoe ze aan het model hangen. De wizard wijzigt nog niets.
+omgeving draaien en hoe ze aan het model hangen. Het enige wat de wizard
+schrijft zijn koppelingen (stap 4), en alleen als je redacteur bent en de site
+een schrijfaccount voor het register heeft; de rest is bekijken.
 
 1. **Omgeving kiezen**: vink een of meer namespaces aan (een omgeving kan over
    meer namespaces verspreid zijn) of "Alle", en kies *Scannen*.
@@ -1095,15 +1097,31 @@ omgeving draaien en hoe ze aan het model hangen. De wizard wijzigt nog niets.
    of het bereikbaar is en de onderdelen (worker, redis…). Wijkt de versie af
    van wat het register weet, dan staat die ernaast. Met het vinkje *doel voor
    uitrol* kies je de doelen; dat onthoudt alleen je eigen browser.
-   Niet-herkende onderdelen staan onderaan en zijn geen doel.
+   Niet-herkende onderdelen staan onderaan en zijn geen doel. Bovenaan staat
+   of de plugin herkende volgens het register of volgens haar eigen tabel.
 3. **Model koppelen**: nu kan alleen de actuele modelversie.
 4. **Koppelingen**: links het model, rechts de doelen met hun koppelingen.
    Lijnen lopen van het stuk model naar de koppeling die het gebruikt; is
    een tak ingeklapt, dan hangt de lijn aan de tak. Wijs een lijn, een
    eindpunt of een modelelement aan en de andere kant licht op; klik een
    koppeling of lijn aan om te zien uit welk deel van het model ze komt.
-   Lijnen trekken, verleggen en wissen komen later. Op een smal scherm staan
+   *Vastgelegd* is een koppeling die in het register staat; *afgeleid* volgt
+   uit de artefacten en kun je hier niet veranderen. Op een smal scherm staan
    de kolommen onder elkaar, zonder lijnen.
+
+   **Lijnen leggen** (redacteur): kies boven het model aan welke e-dienstversie
+   een nieuwe lijn hangt (een koppeling geldt voor die versie, voor elke
+   gemeente gelijk). Sleep vanaf het bolletje achter een entiteit naar een
+   doel: de wijziging komt onder *Wijzigingen*, waar je de naam aanpast en op
+   *Opslaan* klikt. Een vastgelegde lijn verleg je door een van haar
+   eindpunten naar een andere entiteit of een ander doel te slepen; wissen doe
+   je met *Lijn wissen…* bij de gekozen koppeling. Elke wijziging is één
+   registratie in het register; pas *Opslaan* schrijft, *Weg* laat haar vallen.
+   Een koppeling die er al is (zelfde e-dienstversie, entiteit en doel) legt de
+   wizard niet nog eens.
+5. **Transformaties**: wat een koppeling uitvoert. Per transformatie haar
+   versies, waar de code staat en voor welke componentversies ze geldt, met
+   wat er in deze omgeving draait. Kiezen of maken komt later.
 
 De scan is live: de plugin kijkt op het moment dat je op *Scannen* klikt.
 Staat er **Voorbeeld** bovenaan, dan is de scan niet van nu: een opgenomen

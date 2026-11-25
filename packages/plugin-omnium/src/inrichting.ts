@@ -33,6 +33,10 @@ export const INRICHTING_TYPES = {
   component_versies: { typenaam: "ComponentVersie", label: "Componentversie", meervoud: "Componentversies" },
   artefactsoorten: { typenaam: "ArtefactSoort", label: "Artefactsoort", meervoud: "Artefactsoorten" },
   artefactformaten: { typenaam: "ArtefactFormaat", label: "Artefactformaat", meervoud: "Artefactformaten" },
+  // Schema v8 (25-11-2026, the omgevingswizard): a link model → component, and the transformations with their versions.
+  koppelingen: { typenaam: "Koppeling", label: "Koppeling", meervoud: "Koppelingen" },
+  transformaties: { typenaam: "Transformatie", label: "Transformatie", meervoud: "Transformaties" },
+  transformatieversies: { typenaam: "TransformatieVersie", label: "Transformatieversie", meervoud: "Transformatieversies" },
 } as const;
 
 export type Pad = keyof typeof INRICHTING_TYPES;
@@ -58,6 +62,13 @@ export const RELATION_TARGET: Record<string, Pad> = {
   // What runs where (6-11-2026): an omgeving links component versions (materieel), a version its component.
   omgeving_componentversies: "component_versies",
   componentversie_componenten: "componenten",
+  // Schema v8: a Koppeling hangs on the e-dienstversie (keuze A, Mark 25-11-2026), points at a component and a transformation.
+  edienstversie_koppelingen: "koppelingen",
+  koppeling_doelcomponenten: "componenten",
+  koppeling_transformaties: "transformaties",
+  transformatie_artefactsoorten: "artefactsoorten",
+  transformatie_heeft_versies: "transformatieversies",
+  transformatieversie_componentgeldigheden: "componenten",
 };
 export const PADS = Object.keys(INRICHTING_TYPES) as Pad[];
 export const isPad = (p: string): p is Pad => Object.hasOwn(INRICHTING_TYPES, p);
@@ -107,7 +118,11 @@ export class Inrichting {
       const at = momentOf(this.at.geldigOp);
       // A record with its own aanvang/einde (an ended drawing, FUNDAMENT 8-11-2026) holds only
       // within them, like its hubs; ended is not withdrawn, so `geldigOp` still finds it.
-      p = this.register.list(pad, this.at).then((rows) => rows.filter((r) => validAt(r, at)).map((r) => asAt(r, at)));
+      // `/full` without a peiltijdstip returns the whole history (BACKEND, 25-11-2026): a withdrawn record (afvoer) is not
+      // there now, nor at a peiltijdstip after its afvoer. Withdrawn hubs and versions are skipped where they are read (register.ts).
+      const peil = this.at.peiltijdstip ? Date.parse(this.at.peiltijdstip) : Number.POSITIVE_INFINITY;
+      const weg = (r: FullRecord) => typeof r.afvoer === "string" && Date.parse(r.afvoer) <= peil;
+      p = this.register.list(pad, this.at).then((rows) => rows.filter((r) => !weg(r) && validAt(r, at)).map((r) => asAt(r, at)));
       this.lists.set(pad, p);
     }
     return p;
@@ -348,6 +363,12 @@ export class Inrichting {
         return str(ge(r, "artefactsoort_gegevens")?.code) ?? `Artefactsoort ${r.id}`;
       case "artefactformaten":
         return str(ge(r, "artefactformaat_gegevens")?.code) ?? `Artefactformaat ${r.id}`;
+      case "koppelingen":
+        return str(ge(r, "koppeling_namen")?.naam) ?? `Koppeling ${r.id}`;
+      case "transformaties":
+        return str(ge(r, "transformatie_namen")?.naam) ?? str(ge(r, "transformatie_namen")?.identifier) ?? `Transformatie ${r.id}`;
+      case "transformatieversies":
+        return str(ge(r, "transformatieversie_nummers")?.versienummer) ?? `Transformatieversie ${r.id}`;
     }
   }
 

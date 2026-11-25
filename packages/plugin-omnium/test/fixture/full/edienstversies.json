@@ -112,6 +112,36 @@
      }
     ]
    }
+  ],
+  "edienstversie_koppelingen": [
+   {
+    "edienstversie_id": 2,
+    "rel_id": 90,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 2,
+      "rel_id": 90,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "koppeling_id": 1
+     }
+    ]
+   },
+   {
+    "edienstversie_id": 2,
+    "rel_id": 91,
+    "opvoer": "2026-11-25T08:00:00Z",
+    "data": [
+     {
+      "edienstversie_id": 2,
+      "rel_id": 91,
+      "opvoer": "2026-11-25T08:00:00Z",
+      "versie": 1,
+      "koppeling_id": 2
+     }
+    ]
+   }
   ]
  },
  {
