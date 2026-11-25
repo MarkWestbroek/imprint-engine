@@ -116,8 +116,32 @@ export const TOEGESTAAN = new Set([
   "edienstversiekoppeling",
 ]);
 
-export function binnenWhitelist(r: Registratie): boolean {
-  return r.wijzigingen.length > 0 && r.wijzigingen.every((w) => Object.keys("opvoer" in w ? w.opvoer : w.afvoer).every((k) => TOEGESTAAN.has(k)));
+export function binnenWhitelist(r: Registratie, toegestaan: ReadonlySet<string> = TOEGESTAAN): boolean {
+  return r.wijzigingen.length > 0 && r.wijzigingen.every((w) => Object.keys("opvoer" in w ? w.opvoer : w.afvoer).every((k) => toegestaan.has(k)));
+}
+
+/**
+ * The register's refusal in words: the writing filter (403, code or reden
+ * "schrijffilter"), a validation error (422, the reasons; the index in
+ * invalidParams[].name does not follow the body, so the reason is what counts),
+ * otherwise the status with the start of the answer.
+ */
+export function leesWeigering(status: number, tekst: string): string {
+  let b: { code?: string; reden?: string; detail?: string; error?: string; invalidParams?: { name?: string; reason?: string }[] } = {};
+  try {
+    b = JSON.parse(tekst) as typeof b;
+  } catch {
+    /* not JSON */
+  }
+  if (b.code === "schrijffilter") {
+    const typen = (b.invalidParams ?? []).map((p) => p.name).filter(Boolean);
+    return `Het schrijfaccount van de site mag dit niet schrijven${typen.length ? ` (${typen.join(", ")})` : ""}. Vraag de beheerder van het register het schrijffilter aan te passen.`;
+  }
+  if (b.reden === "schrijffilter") return `Het schrijfaccount van de site mag alleen registreren: ${b.error ?? "andere routes zijn dicht"}.`;
+  const redenen = (b.invalidParams ?? []).map((p) => p.reason).filter(Boolean);
+  if (redenen.length) return `Het register weigerde (${status}): ${redenen.join("; ")}.`;
+  if (b.detail) return `Het register weigerde (${status}): ${b.detail}.`;
+  return `Het register weigerde (${status})${tekst ? `: ${tekst.slice(0, 300)}` : ""}.`;
 }
 
 /** The fixed key of a line: e-dienstversie + bronelement + doelcomponent. */

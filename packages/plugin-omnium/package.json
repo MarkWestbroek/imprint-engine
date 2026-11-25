@@ -13,7 +13,8 @@
     "./page": "./src/page.tsx",
     "./werkplaats-opslaan": "./src/werkplaats-opslaan.ts",
     "./koppeling-opslaan": "./src/koppeling-opslaan.ts",
-    "./koppeling-register": "./src/koppeling-register.ts"
+    "./koppeling-register": "./src/koppeling-register.ts",
+    "./component-opname": "./src/component-opname.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

@@ -1,4 +1,5 @@
 import type { ScanComponent } from "./omgeving-scan";
+import type { Registratie } from "./koppeling-register";
 
 /**
  * Taking an unrecognised workload into the register as a Component (step 3 of
@@ -96,3 +97,32 @@ export function controleerOpname(o: Opname, ctx: { bestaandeNamen: string[]; lag
 }
 
 export const isOpneembaar = (b: Bevinding[]) => !b.some((x) => x.ernst === "fout");
+
+/** The layers a Component may have (the enum of ComponentLaag, registerschema 8). */
+export const LAGEN = ["1-2 gegevensbronnen", "3 verbinding", "4-5 proces"] as const;
+
+/** What a registration of a new Component may contain (the site's whitelist; the register filters the account as well). */
+export const COMPONENT_TOEGESTAAN: ReadonlySet<string> = new Set(["component", "componentnaam", "componentlaag", "componentherkenning"]);
+
+const NIEUW = "$nieuw.component";
+
+/**
+ * A new Component as one registration (BACKEND 25-11-2026, checked against
+ * registerschema 8): the entity with its aanvang (a date; the engine makes the
+ * Component_Aanvang), name, layer and recognition rule, tied together by the
+ * placeholder id. Check first with controleerOpname: the register enforces only
+ * the unique name.
+ */
+export function planComponent(o: Opname, vandaag: string): Registratie {
+  const naam = o.naam.trim();
+  return {
+    opmerking: `Component ${naam} opgenomen uit de scan`,
+    registratietype: "registratie",
+    wijzigingen: [
+      { opvoer: { component: { id: NIEUW, aanvang: vandaag } } },
+      { opvoer: { componentnaam: { component_id: NIEUW, naam, weergavenaam: o.weergavenaam.trim() } } },
+      { opvoer: { componentlaag: { component_id: NIEUW, laag: o.laag } } },
+      { opvoer: { componentherkenning: { component_id: NIEUW, soort: o.herkenning.soort, patroon: o.herkenning.patroon } } },
+    ],
+  };
+}
