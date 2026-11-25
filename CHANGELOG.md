@@ -6,6 +6,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Images zonder lokale bouwresten**: `.dockerignore` sluit nu ook `out/`,
+  `.cache/`, testresultaten, e2e-builds en -sessies en `.claude/` uit, zodat de
+  openbare tools-image alleen de repo bevat.
 - **Inrichting: lijnen in het gesplitste scherm.** Smallere kolommen met
   lijnen van het model naar de koppelingen; ingeklapte takken dragen de lijn,
   aanwijzen licht de andere kant op (alleen bekijken).
