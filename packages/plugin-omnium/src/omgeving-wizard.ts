@@ -3,6 +3,7 @@ import { ge, geRows, relation } from "./register";
 import { own, type Inrichting } from "./inrichting";
 import { herken, type Scan, type ScanComponent } from "./omgeving-scan";
 import type { VastgelegdeKoppeling } from "./koppeling-register";
+import { LAGEN } from "./component-opname";
 
 /**
  * The omgevingswizard (Fundament docs/inrichtingstool-als-plugin.md §4), read
@@ -310,12 +311,13 @@ export async function vastgelegdAlsKoppeling(i: Inrichting, stand: VastgelegdeKo
 
 /**
  * What step 3 needs to check a new component (component-opname.ts): the names
- * already in the register and the layers in use there, in their order.
+ * already in the register and the layers a Component may have (the enum of
+ * registerschema 8, plus any other layer the register already uses).
  */
 export async function opnameGegevens(i: Inrichting): Promise<{ bestaandeNamen: string[]; lagen: string[] }> {
   const comps = await i.list("componenten").catch(() => []);
   const bestaandeNamen = comps.map((c) => i.componentNaam(c) ?? "").filter(Boolean);
-  const lagen = [...new Set(comps.map((c) => str(ge(c, "component_lagen")?.laag)).filter(Boolean))].sort((a, b) =>
+  const lagen = [...new Set([...LAGEN, ...comps.map((c) => str(ge(c, "component_lagen")?.laag)).filter(Boolean)])].sort((a, b) =>
     a.localeCompare(b, "nl", { numeric: true })
   );
   return { bestaandeNamen, lagen };

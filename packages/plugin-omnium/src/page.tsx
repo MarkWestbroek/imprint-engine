@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Opname } from "./component-opname";
 import type { ReactNode } from "react";
 import { DefaultView, type WidgetContext, type WidgetViewers } from "@imprint/runtime-admin";
 import { registerProblem } from "./client";
@@ -44,6 +45,7 @@ export async function omniumPage({
   werkplaatsOpslaan,
   ns,
   koppelingOpslaan,
+  componentOpslaan,
 }: {
   path: string[];
   viewers: WidgetViewers;
@@ -72,6 +74,8 @@ export async function omniumPage({
    * the role); omit for readers and while the site has no writing account.
    */
   koppelingOpslaan?: (h: KoppelingHandeling) => Promise<KoppelingResultaat>;
+  /** Likewise for step 3: take an unrecognised workload into the register as a Component (`slaComponentOp`). */
+  componentOpslaan?: (o: Opname) => Promise<KoppelingResultaat>;
 }): Promise<OmniumPage | null> {
   const i = inrichtingFor(prefix, peiltijdstip, geldigOp);
   if (!i) return problem("Deze site heeft geen register ingesteld (OMNIUM_REGISTER_URL).");
@@ -92,7 +96,7 @@ export async function omniumPage({
             <p className="mt-3 text-xs uppercase tracking-wide text-muted">Wizard</p>
             <h1 className="text-3xl font-semibold tracking-tight">Omgeving inrichten</h1>
           </header>
-          <OmgevingWizardView i={i} stap={stap} ns={gekozen} prefix={prefix} opslaan={koppelingOpslaan} />
+          <OmgevingWizardView i={i} stap={stap} ns={gekozen} prefix={prefix} opslaan={koppelingOpslaan} componentOpslaan={componentOpslaan} />
         </article>
       ),
     };

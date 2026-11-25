@@ -1106,8 +1106,13 @@ een schrijfaccount voor het register heeft; de rest is bekijken.
    chart. Het formulier begint met het voorstel van de plugin. Het
    controleert of de naam nog vrij is, of er een laag gekozen is en of het
    patroon klopt; herkent het patroon dit onderdeel zelf niet, dan staat er
-   een waarschuwing. Ook die keuze, met het vinkje *doel voor uitrol*,
-   onthoudt voorlopig alleen je browser; opslaan in het register volgt.
+   een waarschuwing. *Bewaren* onthoudt de keuze in je browser; met *In het
+   register opnemen* zet je het onderdeel als nieuwe component in het register
+   (naam, laag en herkenningsregel in één keer). Dat kan een redacteur zodra
+   de site een schrijfaccount heeft. Bij de volgende scan herkent de plugin
+   het onderdeel dan zelf. Weigert het register, dan staat de reden bij de
+   kaart, bijvoorbeeld dat de naam al bestaat of dat het schrijfaccount dit
+   niet mag.
    Bovenaan staat of de plugin herkende volgens het register of volgens
    haar eigen tabel.
 4. **Model koppelen**: nu kan alleen de actuele modelversie.

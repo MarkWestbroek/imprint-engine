@@ -79,7 +79,8 @@ function schrijfOpname(ns: string[], id: string, o: Opname | undefined) {
 /**
  * An unrecognised workload in step 3: take it in as a new component (name,
  * layer, recognition rule, target tick) or leave it out. Checked as the
- * register would need it (component-opname.ts); kept in this browser only.
+ * register would need it (component-opname.ts); kept in this browser until
+ * someone takes it into the register (`opslaan`, only with the writing account).
  */
 export function OpnemenKaart({
   ns,
@@ -88,6 +89,7 @@ export function OpnemenKaart({
   voorstel,
   bestaandeNamen,
   lagen,
+  opslaan,
 }: {
   ns: string[];
   id: string;
@@ -95,12 +97,45 @@ export function OpnemenKaart({
   voorstel: Opname;
   bestaandeNamen: string[];
   lagen: string[];
+  opslaan?: (o: Opname) => Promise<KoppelingResultaat>;
 }) {
   const [opname, setOpname] = useState<Opname | undefined>(undefined);
   const [open, setOpen] = useState(false);
+  const [bezig, startOpslaan] = useTransition();
+  const [uitslag, setUitslag] = useState<{ ok: boolean; tekst: string } | undefined>(undefined);
+  const router = useRouter();
+  const neemOp = (x: Opname) =>
+    startOpslaan(async () => {
+      if (!opslaan) return;
+      setUitslag(undefined);
+      const schoon = { ...x, naam: x.naam.trim(), weergavenaam: x.weergavenaam.trim() };
+      const r = await opslaan(schoon);
+      if (!r.ok) {
+        setUitslag({ ok: false, tekst: r.fout });
+        return;
+      }
+      // In the register now: the browser copy goes; the target tick carries over to the new component's card.
+      schrijfOpname(ns, id, undefined);
+      try {
+        const d = leesDoelen(ns);
+        if (d.size) {
+          const doelId = `${scan.namespace}/${schoon.naam}`;
+          if (schoon.doel) d.add(doelId);
+          else d.delete(doelId);
+          localStorage.setItem(sleutel(ns), JSON.stringify([...d]));
+        }
+      } catch {
+        /* private window */
+      }
+      setUitslag({ ok: true, tekst: r.melding });
+      setOpen(false);
+      router.refresh();
+    });
   useEffect(() => setOpname(leesOpnames(ns)[id]), [ns, id]);
   const [o, setO] = useState<Opname>(voorstel);
-  useEffect(() => setO(opname ?? voorstel), [opname, voorstel]);
+  // Reset on a different proposal, not on a new object: a refresh (after saving another card) must not wipe a form in progress.
+  const voorstelSleutel = JSON.stringify(voorstel);
+  useEffect(() => setO(opname ?? (JSON.parse(voorstelSleutel) as Opname)), [opname, voorstelSleutel]);
   const bevindingen = controleerOpname(o, { bestaandeNamen, lagen, scan });
   const veldId = (v: string) => `${id}-${v}`.replace(/[^a-zA-Z0-9-]/g, "-");
   // The message sits outside the label (it is no part of the field's name) and is tied to the field with aria-describedby.
@@ -116,15 +151,29 @@ export function OpnemenKaart({
   );
   const aria = (veld: string) => ({ "aria-describedby": `${veldId(veld)}-melding`, "aria-invalid": van(veld).some((b) => b.ernst === "fout") || undefined });
 
+  const uitslagRegel = uitslag && (
+    <p role={uitslag.ok ? "status" : "alert"} className={`text-xs ${uitslag.ok ? "text-muted" : "text-red-700"}`}>
+      {uitslag.tekst}
+    </p>
+  );
   if (!open) {
     return (
-      <div className="mt-3 text-sm">
-        {opname ? (
+      <div className="mt-3 space-y-1 text-sm">
+        {uitslagRegel}
+        {uitslag?.ok ? null : opname ? (
           <p>
             Opnemen als <strong>{opname.weergavenaam}</strong> ({opname.laag}){opname.doel ? ", doel voor uitrol" : ""}.{" "}
             <button type="button" className="text-accent hover:underline" onClick={() => setOpen(true)}>
               Wijzigen
             </button>
+            {opslaan && (
+              <>
+                {" · "}
+                <button type="button" disabled={bezig} className="text-accent hover:underline disabled:opacity-50" onClick={() => neemOp(opname)}>
+                  {bezig ? "Bezig…" : "In het register opnemen"}
+                </button>
+              </>
+            )}
           </p>
         ) : (
           <p className="text-xs text-muted">
@@ -216,10 +265,21 @@ export function OpnemenKaart({
         <input type="checkbox" checked={o.doel} onChange={(e) => setO({ ...o, doel: e.target.checked })} />
         doel voor uitrol
       </label>
+      {uitslagRegel}
       <div className="flex flex-wrap gap-3 pt-1">
         <button type="submit" disabled={!isOpneembaar(bevindingen)} className="rounded-md bg-accent px-3 py-1 text-sm font-semibold text-background hover:bg-accent-strong disabled:opacity-50">
           Bewaren
         </button>
+        {opslaan && (
+          <button
+            type="button"
+            disabled={!isOpneembaar(bevindingen) || bezig}
+            className="rounded-md border border-accent px-3 py-1 text-sm font-semibold text-accent hover:bg-accent/10 disabled:opacity-50"
+            onClick={() => neemOp(o)}
+          >
+            {bezig ? "Bezig…" : "In het register opnemen"}
+          </button>
+        )}
         <button type="button" className="text-muted hover:underline" onClick={() => { setO(opname ?? voorstel); setOpen(false); }}>
           Annuleren
         </button>

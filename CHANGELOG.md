@@ -6,6 +6,12 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: component in het register opnemen** (stap 3): een
+  niet-herkend onderdeel wordt met één registratie een Component met naam,
+  laag en herkenningsregel, met hetzelfde schrijfaccount als de lijnen. Een
+  weigering van het register (schrijffilter, bestaande naam) staat leesbaar
+  bij de kaart, ook bij de lijnen. Een formulier dat je invult blijft staan
+  als de pagina ververst.
 - **Inrichting: niet-herkende onderdelen opnemen** (stap 3, alleen in de
   browser): naam, weergavenaam, laag en herkenningsregel, met het voorstel
   van de plugin als begin en dezelfde controles die het register nodig

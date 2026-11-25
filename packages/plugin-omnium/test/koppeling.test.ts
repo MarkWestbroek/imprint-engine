@@ -4,14 +4,15 @@ import path from "node:path";
 import { test } from "node:test";
 import { OmniumRegister } from "../src/client";
 import { Inrichting } from "../src/inrichting";
-import { binnenWhitelist, planKoppeling, vastgelegdeKoppelingen, type VastgelegdeKoppeling } from "../src/koppeling-register";
-import { slaKoppelingOp } from "../src/koppeling-opslaan";
+import { binnenWhitelist, leesWeigering, planKoppeling, vastgelegdeKoppelingen, type VastgelegdeKoppeling } from "../src/koppeling-register";
+import { COMPONENT_TOEGESTAAN, planComponent, voorstelVoor, type Opname } from "../src/component-opname";
+import { slaComponentOp, slaKoppelingOp } from "../src/koppeling-opslaan";
 
 const dir = path.join(import.meta.dirname, "fixture", "full");
 const lijst = (pad: string) => JSON.parse(readFileSync(path.join(dir, `${pad}.json`), "utf8"));
 
 /** A fake register: /full/<pad> from the fixtures; POST /registratie/ recorded (or slow, or refused). */
-function nepRegister(opts: { posts?: unknown[]; status?: number; traag?: boolean; naPost?: (pad: string, rows: unknown[]) => unknown[] } = {}) {
+function nepRegister(opts: { posts?: unknown[]; status?: number; antwoord?: string; traag?: boolean; naPost?: (pad: string, rows: unknown[]) => unknown[] } = {}) {
   let gepost = false;
   return (async (input: string | URL | Request, init?: RequestInit) => {
     const url = new URL(String(input));
@@ -20,7 +21,7 @@ function nepRegister(opts: { posts?: unknown[]; status?: number; traag?: boolean
       opts.posts?.push(JSON.parse(String(init?.body)));
       gepost = true;
       if (opts.traag) throw new DOMException("timeout", "TimeoutError");
-      return new Response("{}", { status: opts.status ?? 201 });
+      return new Response(opts.antwoord ?? "{}", { status: opts.status ?? 201 });
     }
     const pad = url.pathname.split("/")[2]!;
     let rows = lijst(pad) as unknown[];
@@ -104,4 +105,94 @@ test("saving after a time-out: read again; landed = ok, not landed = say so, nev
   } finally {
     delete process.env.OMNIUM_REGISTER_URL;
   }
+});
+
+// ── Step 3: a new Component (BACKEND 25-11-2026, registerschema 8) ──
+
+const objecten: Opname = {
+  naam: "objecten-api",
+  weergavenaam: "Objecten API",
+  laag: "1-2 gegevensbronnen",
+  herkenning: { soort: "image", patroon: "(^|/)maykinmedia/objects-api$" },
+  doel: true,
+};
+
+test("new Component: one registration, aanvang on the entity, name, layer and rule on the placeholder id; inside its own whitelist only", () => {
+  const r = planComponent(objecten, "2026-11-25");
+  assert.deepEqual(r.wijzigingen, [
+    { opvoer: { component: { id: "$nieuw.component", aanvang: "2026-11-25" } } },
+    { opvoer: { componentnaam: { component_id: "$nieuw.component", naam: "objecten-api", weergavenaam: "Objecten API" } } },
+    { opvoer: { componentlaag: { component_id: "$nieuw.component", laag: "1-2 gegevensbronnen" } } },
+    { opvoer: { componentherkenning: { component_id: "$nieuw.component", soort: "image", patroon: "(^|/)maykinmedia/objects-api$" } } },
+  ]);
+  assert.ok(binnenWhitelist(r, COMPONENT_TOEGESTAAN));
+  assert.equal(binnenWhitelist(r), false, "the lines' whitelist does not let a Component through");
+  assert.equal(binnenWhitelist({ ...r, wijzigingen: [{ opvoer: { koppeling: { id: "$nieuw.koppeling" } } }] }, COMPONENT_TOEGESTAAN), false, "and the other way round");
+});
+
+test("the register's refusal in words: writing filter (both forms), validation reasons, otherwise status", () => {
+  const filter = JSON.stringify({
+    type: "https://api.bitemporeel/problemen/schrijffilter",
+    status: 403,
+    code: "schrijffilter",
+    detail: "account omnium-koppelaar mag deze typen niet schrijven: Persoon",
+    invalidParams: [{ name: "Persoon", code: "type_niet_toegestaan", reason: "…" }, { name: "Persoon_Aanvang", code: "type_niet_toegestaan", reason: "…" }],
+  });
+  assert.match(leesWeigering(403, filter), /mag dit niet schrijven \(Persoon, Persoon_Aanvang\)/);
+  assert.match(leesWeigering(403, JSON.stringify({ error: "Account omnium-koppelaar heeft een schrijffilter en mag alleen registreren via POST /registratie/.", reden: "schrijffilter" })), /mag alleen registreren/);
+  const uniek = JSON.stringify({ status: 422, code: "validation_error", invalidParams: [{ name: "wijzigingen[2].componentnaam.naam", code: "uniek", reason: 'naam "objecten-api" is al in gebruik (Component 1; uniek binnen entiteit)' }] });
+  assert.equal(leesWeigering(422, uniek), 'Het register weigerde (422): naam "objecten-api" is al in gebruik (Component 1; uniek binnen entiteit).');
+  assert.equal(leesWeigering(500, "kapot"), "Het register weigerde (500): kapot.");
+});
+
+test("saving a Component: off without the token; checked against a fresh read (taken name refused before any POST); one POST with the token", async () => {
+  assert.equal((await slaComponentOp(objecten, "mark", { env: { OMNIUM_REGISTER_URL: "http://register.test" } })).ok, false);
+  process.env.OMNIUM_REGISTER_URL = "http://register.test";
+  try {
+    const posts: { registratie: { opmerking: string; bron: string }; wijzigingen: unknown[] }[] = [];
+    const dubbel = await slaComponentOp({ ...objecten, naam: "openzaak" }, "mark", { env, fetch: nepRegister({ posts }) });
+    assert.equal(dubbel.ok, false);
+    assert.match(!dubbel.ok ? dubbel.fout : "", /al een component "openzaak"/);
+    assert.equal((await slaComponentOp({ ...objecten, laag: "9 onzin" }, "mark", { env, fetch: nepRegister({ posts }) })).ok, false);
+    assert.equal(posts.length, 0);
+
+    const r = await slaComponentOp(objecten, "mark", { env, fetch: nepRegister({ posts }), vandaag: "2026-11-25" });
+    assert.deepEqual(r, { ok: true, melding: "Objecten API staat in het register." });
+    assert.equal(posts.length, 1);
+    assert.equal(posts[0]!.registratie.bron, "imprint-omgevingswizard");
+    assert.match(posts[0]!.registratie.opmerking, /objecten-api.*namens mark/);
+    assert.equal(posts[0]!.wijzigingen.length, 4);
+
+    const geweigerd = await slaComponentOp(objecten, "mark", {
+      env,
+      fetch: nepRegister({ status: 403, antwoord: JSON.stringify({ code: "schrijffilter", invalidParams: [{ name: "Component" }] }) }),
+    });
+    assert.match(!geweigerd.ok ? geweigerd.fout : "", /mag dit niet schrijven \(Component\)/);
+  } finally {
+    delete process.env.OMNIUM_REGISTER_URL;
+  }
+});
+
+test("saving a Component after a time-out: read again and look for the name; never a second POST", async () => {
+  process.env.OMNIUM_REGISTER_URL = "http://register.test";
+  try {
+    const posts: unknown[] = [];
+    const erbij = (pad: string, rows: unknown[]) =>
+      pad === "componenten"
+        ? [...rows, { id: 99, opvoer: "2026-11-25T10:00:00Z", component_namen: [{ component_id: 99, rel_id: 1, opvoer: "2026-11-25T10:00:00Z", data: [{ component_id: 99, rel_id: 1, versie: 1, opvoer: "2026-11-25T10:00:00Z", naam: "objecten-api", weergavenaam: "Objecten API" }] }] }]
+        : rows;
+    const ok = await slaComponentOp(objecten, "mark", { env, fetch: nepRegister({ posts, traag: true, naPost: erbij }) });
+    assert.equal(ok.ok, true);
+    const niet = await slaComponentOp(objecten, "mark", { env, fetch: nepRegister({ posts, traag: true }) });
+    assert.match(!niet.ok ? niet.fout : "", /staat er niet in/);
+    assert.equal(posts.length, 2, "one POST per attempt, none resent");
+  } finally {
+    delete process.env.OMNIUM_REGISTER_URL;
+  }
+});
+
+test("voorstelVoor + planComponent: the plugin's proposal goes straight into the registration", () => {
+  const v = voorstelVoor({ namespace: "ns", naam: "zaken", bron: "deployment", image: "ghcr.io/oneground/zaken-api:1.0", herkend: null, bereikbaar: null, voorstel: { componentNaam: "zaken-api", soort: "image", patroon: "(^|/)oneground/zaken-api$" } });
+  const r = planComponent({ ...v, laag: "3 verbinding" }, "2026-11-25");
+  assert.deepEqual(r.wijzigingen[3], { opvoer: { componentherkenning: { component_id: "$nieuw.component", soort: "image", patroon: "(^|/)oneground/zaken-api$" } } });
 });

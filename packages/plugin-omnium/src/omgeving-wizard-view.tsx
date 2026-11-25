@@ -14,14 +14,29 @@ import {
   type WizardStap,
 } from "./omgeving-wizard";
 import { DoelVinkje, KoppelingenScherm, OpnemenKaart } from "./omgeving-wizard-client";
-import { voorstelVoor } from "./component-opname";
+import { voorstelVoor, type Opname } from "./component-opname";
 import { componentIds, edienstversieKeuzes, vastgelegdeKoppelingen, type KoppelingHandeling } from "./koppeling-register";
 import type { KoppelingResultaat } from "./koppeling-opslaan";
 
 type Opslaan = (h: KoppelingHandeling) => Promise<KoppelingResultaat>;
+type ComponentOpslaan = (o: Opname) => Promise<KoppelingResultaat>;
 
 /** The omgevingswizard's pages (server). `ns` = the chosen namespaces, carried in the URL from step to step. */
-export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: Inrichting; stap: WizardStap; ns: string[]; prefix: string; opslaan?: Opslaan }) {
+export async function OmgevingWizardView({
+  i,
+  stap,
+  ns,
+  prefix,
+  opslaan,
+  componentOpslaan,
+}: {
+  i: Inrichting;
+  stap: WizardStap;
+  ns: string[];
+  prefix: string;
+  opslaan?: Opslaan;
+  componentOpslaan?: ComponentOpslaan;
+}) {
   const basis = `${prefix}/omgevingswizard`;
   const q = ns.length ? `?${ns.map((n) => `ns=${encodeURIComponent(n)}`).join("&")}` : "";
   const nr = WIZARD_STAPPEN.findIndex((s) => s.id === stap);
@@ -54,7 +69,7 @@ export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: 
           Nog geen omgeving gekozen. <Link href={`${basis}/omgeving`} className="text-accent hover:underline">Kies er eerst een →</Link>
         </p>
       )}
-      {stap === "componenten" && ns.length > 0 && <StapComponenten i={i} ns={ns} />}
+      {stap === "componenten" && ns.length > 0 && <StapComponenten i={i} ns={ns} opslaan={componentOpslaan} />}
       {stap === "model" && ns.length > 0 && <StapModel i={i} />}
       {stap === "koppelingen" && ns.length > 0 && <StapKoppelingen i={i} ns={ns} opslaan={opslaan} />}
       {stap === "transformaties" && ns.length > 0 && <StapTransformaties i={i} ns={ns} />}
@@ -113,7 +128,7 @@ function Voorbeeld({ opgenomen }: { opgenomen?: string }) {
   );
 }
 
-async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
+async function StapComponenten({ i, ns, opslaan }: { i: Inrichting; ns: string[]; opslaan?: ComponentOpslaan }) {
   const s = await scan(i, ns);
   const [lagen, gegevens] = await Promise.all([kaartenPerLaag(i, s), opnameGegevens(i)]);
   const aantal = lagen.reduce((n, l) => n + l.kaarten.length, 0);
@@ -176,6 +191,7 @@ async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
                       voorstel={voorstelVoor(k.scan)}
                       bestaandeNamen={gegevens.bestaandeNamen}
                       lagen={gegevens.lagen}
+                      opslaan={opslaan}
                     />
                   )}
                 </li>
@@ -186,7 +202,8 @@ async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
       ))}
       {aantal > 0 && (
         <p className="text-xs text-muted">
-          De vinkjes "doel voor uitrol" en de keuzes bij niet-herkende onderdelen bewaart deze browser; opslaan in het register volgt.
+          De vinkjes "doel voor uitrol" bewaart deze browser, net als de keuzes bij niet-herkende onderdelen
+          {opslaan ? " tot je ze in het register opneemt" : "; in het register opnemen kan een redacteur zodra de site een schrijfaccount heeft"}.
         </p>
       )}
     </section>

@@ -5,7 +5,7 @@ import { widgetContext } from "@/lib/widget-context";
 import { widgetComponents } from "@/widgets/components";
 import { auth } from "@/lib/admin";
 import { slaWerkplaatsOp } from "../werkplaats-actions";
-import { slaKoppelingOpActie } from "../koppeling-actions";
+import { slaComponentOpActie, slaKoppelingOpActie } from "../koppeling-actions";
 import { kanKoppelingenSchrijven } from "@imprint/plugin-omnium/koppeling-opslaan";
 
 /**
@@ -25,6 +25,8 @@ type Props = {
 
 async function load({ params, searchParams }: Props) {
   const [{ path }, q] = await Promise.all([params, searchParams]);
+  // Writing to the register (lines in step 5, components in step 3): an editor, and the site has the writing account.
+  const schrijven = kanKoppelingenSchrijven() && Boolean(await auth.editingSession());
   return omniumPage({
     path,
     viewers: widgetComponents,
@@ -39,7 +41,8 @@ async function load({ params, searchParams }: Props) {
     ns: q.ns,
     werkplaatsOpslaan: q.bewerk === "1" && (await auth.editingSession()) ? slaWerkplaatsOp : undefined,
     // Laying down lines in the omgevingswizard: an editor, and only once the site has the register's writing account.
-    koppelingOpslaan: kanKoppelingenSchrijven() && (await auth.editingSession()) ? slaKoppelingOpActie : undefined,
+    koppelingOpslaan: schrijven ? slaKoppelingOpActie : undefined,
+    componentOpslaan: schrijven ? slaComponentOpActie : undefined,
   });
 }
 

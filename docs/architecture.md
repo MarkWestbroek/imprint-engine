@@ -1911,9 +1911,18 @@ flowchart LR
     laag die in het register voorkomt (`opnameGegevens()`), een geldige
     regex; een patroon dat dit onderdeel zelf mist is "let op", geen fout.
     `OpnemenKaart` bewaart de keuze per namespace-set in localStorage.
-    Schrijven (Component met naam, laag en herkenning in één registratie)
-    komt later achter het schrijfaccount, met een beperking per account in
-    het register zelf.
+  - Opnemen in het register: `slaComponentOp()` (`koppeling-opslaan.ts`,
+    hetzelfde schrijfaccount als de lijnen) leest de componentnamen vers,
+    controleert opnieuw, en stuurt één registratie (`planComponent()`):
+    `component` met `aanvang` (een datum; de engine maakt Component_Aanvang),
+    `componentnaam`, `componentlaag` (enum van registerschema 8) en
+    `componentherkenning`, verbonden door `$nieuw.component`. Eigen whitelist
+    `COMPONENT_TOEGESTAAN`; het register filtert het account zelf ook
+    (schrijffilter: koppeling*, component*, omgeving*, edienstversiekoppeling;
+    alleen `POST /registratie/`). Na een time-out: opnieuw lezen en de naam
+    zoeken. `leesWeigering()` maakt van een 403 (schrijffilter, beide vormen)
+    of 422 (de `reason`s; de naam is uniek in het register) één leesbare zin,
+    ook bij de lijnen.
   - Stap 5 slaat een kale Component (`{id, opvoer}`, nog zonder naam) over
     als doel.
   - Stap 4: alleen "actueel" is te kiezen; de generaties uit

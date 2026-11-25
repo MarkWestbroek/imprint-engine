@@ -326,10 +326,11 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
             - [x] Niet-herkende onderdelen opnemen als component (25-11,
                   alleen in de browser): naam, laag, herkenningsregel, doel;
                   gecontroleerd zoals het register het nodig heeft.
-            - [ ] Die opname in het register schrijven (Component met naam,
-                  laag en herkenning; daarna Omgeving): Mark akkoord 25-11,
-                  wacht op het schrijfaccount en de beperking per account in
-                  het register (BACKEND).
+            - [x] Die opname in het register schrijven (25-11, lokaal getest met
+                  een nep-schrijfproxy): Component met naam, laag en herkenning in
+                  één registratie. Live pas met het schrijfaccount en het
+                  schrijffilter van BACKEND (api 0.33.0).
+            - [ ] Omgeving schrijven (namespaces, modelversie, `isDoel`).
             - [x] Stap 6 Transformaties, alleen-lezen (25-11).
             - [x] Stap 1 Installatie (25-11, alleen-lezen) op `GET /inrichtingstool`;
                   toont "ontbreekt" tot plugin v0.9.0 live is.
