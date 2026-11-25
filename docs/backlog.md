@@ -320,11 +320,12 @@ De catalogus nu: `text`, `table`, `image`, `gallery`, `carousel`, `album`,
                   `omnium-koppelaar` zetten; daarna één echte proef (nieuw,
                   verleggen, wissen) en nagaan of de afvoer van een Koppeling
                   zo werkt als BACKEND verwacht.
-            - [ ] Lijnen leggen vanaf gegevenselementen en velden (bronSoort
-                  daarvoor navragen) en met het toetsenbord.
+            - [x] Lijnen vanaf gegevenselementen en velden (25-11; een veld als
+                  zijn gegevenselement met het veld in het naampad).
+            - [ ] Lijnen leggen met het toetsenbord.
             - [x] Stap 6 Transformaties, alleen-lezen (25-11).
-            - [ ] Stap 1: de keuze van de Inrichtingstool-resource tonen (vraagt
-                  een eindpunt van de plugin).
+            - [x] Stap 1 Installatie (25-11, alleen-lezen) op `GET /inrichtingstool`;
+                  toont "ontbreekt" tot plugin v0.9.0 live is.
             - [ ] Opslaan: Omgeving (namespaces, modelversie, `isDoel`),
                   Koppeling en Transformatie, na de modelwijziging (§5) en
                   Marks besluit over koppeling per omgeving of per e-dienstversie.

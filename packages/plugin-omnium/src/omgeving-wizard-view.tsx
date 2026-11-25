@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Inrichting } from "./inrichting";
 import { ge } from "./register";
-import { ALLE, namespaces, scan } from "./omgeving-scan";
+import { ALLE, inrichtingstool, namespaces, scan, type Onderdeel } from "./omgeving-scan";
 import {
   bestaandeKoppelingen,
   kaartenPerLaag,
@@ -36,7 +36,7 @@ export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: 
             aria-current={s.id === stap ? "step" : undefined}
             className={`rounded-full border px-3 py-1 ${s.id === stap ? "border-accent bg-accent/10 font-medium" : "border-line text-muted hover:text-current"}`}
           >
-            {k + 2}. {s.titel}
+            {k + 1}. {s.titel}
           </Link>
         ))}
       </nav>
@@ -44,10 +44,11 @@ export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: 
         {opslaan
           ? "De wizard schrijft alleen koppelingen naar het register (stap 5); de rest is bekijken. Het cluster raakt hij niet aan."
           : "Alleen bekijken: de wizard schrijft niets naar het register of het cluster."}{" "}
-        Stap 1 (installatie) gebeurt buiten deze site, via de plugin.
+        Installeren zelf gebeurt buiten deze site, via de plugin; stap 1 laat zien wat zij vond en koos.
       </p>
+      {stap === "installatie" && <StapInstallatie />}
       {stap === "omgeving" && <StapOmgeving i={i} ns={ns} actie={`${basis}/componenten`} />}
-      {stap !== "omgeving" && !ns.length && (
+      {stap !== "omgeving" && stap !== "installatie" && !ns.length && (
         <p className="text-sm">
           Nog geen omgeving gekozen. <Link href={`${basis}/omgeving`} className="text-accent hover:underline">Kies er eerst een →</Link>
         </p>
@@ -56,7 +57,12 @@ export async function OmgevingWizardView({ i, stap, ns, prefix, opslaan }: { i: 
       {stap === "model" && ns.length > 0 && <StapModel i={i} />}
       {stap === "koppelingen" && ns.length > 0 && <StapKoppelingen i={i} ns={ns} opslaan={opslaan} />}
       {stap === "transformaties" && ns.length > 0 && <StapTransformaties i={i} ns={ns} />}
-      {stap !== "omgeving" && (
+      {stap === "installatie" && (
+        <div className="flex justify-end text-sm">
+          <Link href={`${basis}/omgeving${q}`} className="text-accent hover:underline">Omgeving kiezen →</Link>
+        </div>
+      )}
+      {stap !== "omgeving" && stap !== "installatie" && (
         <div className="flex justify-between text-sm">
           {vorige ? <Link href={`${basis}/${vorige.id}${q}`} className="text-accent hover:underline">← {vorige.titel}</Link> : <span />}
           {volgende && ns.length > 0 && <Link href={`${basis}/${volgende.id}${q}`} className="text-accent hover:underline">{volgende.titel} →</Link>}
@@ -335,6 +341,80 @@ async function StapTransformaties({ i, ns }: { i: Inrichting; ns: string[] }) {
           </li>
         ))}
       </ul>
+    </section>
+  );
+}
+
+const ONDERDELEN: { id: Onderdeel; titel: string }[] = [
+  { id: "register", titel: "Register (Omnium)" },
+  { id: "ui", titel: "Inrichtingstool (deze site)" },
+  { id: "database", titel: "Database" },
+];
+
+/** Step 1: what the plugin found on the cluster and which one it uses per part (read only). */
+async function StapInstallatie() {
+  const { tool, fout } = await inrichtingstool();
+  return (
+    <section className="space-y-4">
+      <header>
+        <h2 className="text-xl font-semibold">Installatie</h2>
+        <p className="text-sm text-muted">
+          Wat de plugin op het cluster vond en wat ze gebruikt: per onderdeel een bestaande installatie of een nieuwe. Kiezen en installeren
+          gebeurt in de Inrichtingstool-resource of met de CLI van de plugin, niet hier.
+        </p>
+      </header>
+      {fout && <p className="rounded-lg border border-dashed border-line px-3 py-2 text-sm">{fout}</p>}
+      {tool && (
+        <>
+          <p className="text-sm">
+            Fase <strong>{tool.status.fase ?? "onbekend"}</strong>
+            {tool.status.gezochtOp && <span className="text-muted"> · gezocht {new Date(tool.status.gezochtOp).toLocaleString("nl-NL")}</span>}
+          </p>
+          {tool.status.meldingen?.length ? (
+            <ul className="list-disc pl-5 text-sm">
+              {tool.status.meldingen.map((m, n) => (
+                <li key={n}>{m}</li>
+              ))}
+            </ul>
+          ) : null}
+          <ul className="grid gap-4 lg:grid-cols-3">
+            {ONDERDELEN.map(({ id, titel }) => {
+              const keuze = tool.spec[id];
+              const gevonden = tool.status.gevonden?.[id] ?? [];
+              return (
+                <li key={id} className="rounded-xl border border-line bg-surface p-4 text-sm">
+                  <h3 className="font-semibold">{titel}</h3>
+                  <p className="mt-1">
+                    {!keuze ? (
+                      <span className="text-muted">nog geen keuze</span>
+                    ) : keuze.gebruik === "nieuw" ? (
+                      "een nieuwe installatie"
+                    ) : (
+                      <>
+                        bestaand: <code>{keuze.namespace}/{keuze.naam}</code>
+                      </>
+                    )}
+                  </p>
+                  <p className="mt-3 text-xs uppercase tracking-wide text-muted">Gevonden ({gevonden.length})</p>
+                  <ul className="mt-1 space-y-1">
+                    {gevonden.map((v) => {
+                      const gekozen = keuze?.gebruik === "bestaand" && keuze.namespace === v.namespace && keuze.naam === v.naam;
+                      return (
+                        <li key={`${v.namespace}/${v.naam}`} className={gekozen ? "rounded bg-accent/10 px-1 font-medium" : "px-1"}>
+                          <code>{v.namespace}/{v.naam}</code>
+                          {v.versie && <span className="text-muted"> · {v.versie}</span>}
+                          {gekozen && <span className="ml-1 text-xs">(gebruikt)</span>}
+                        </li>
+                      );
+                    })}
+                    {!gevonden.length && <li className="text-muted">niets</li>}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      )}
     </section>
   );
 }

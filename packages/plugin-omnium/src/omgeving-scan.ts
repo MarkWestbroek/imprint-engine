@@ -180,3 +180,33 @@ export function herken(sc: ScanComponent, componentNamen: string[]): string | un
   const kandidaten = [sc.naam, sc.chart, image].map(norm).filter(Boolean);
   return componentNamen.find((n) => kandidaten.includes(norm(n)));
 }
+
+// ── Step 1: what the plugin found and chose (GET /inrichtingstool, plugin v0.9.0) ──
+
+export type Onderdeel = "register" | "ui" | "database";
+export type Vondst = { namespace: string; naam: string; versie?: string; adres?: string; adresIntern?: string };
+export type Inrichtingstool = {
+  spec: Partial<Record<Onderdeel, { gebruik: "bestaand" | "nieuw"; namespace?: string; naam?: string }>>;
+  status: { fase?: string; meldingen?: string[]; gezochtOp?: string; gevonden?: Partial<Record<Onderdeel, Vondst[]>> };
+};
+
+/** The Inrichtingstool resource as the plugin reports it (read only); `fout` when there is no answer (yet). */
+export async function inrichtingstool(): Promise<{ tool?: Inrichtingstool; fout?: string }> {
+  const cfg = scanConfig();
+  if (!cfg) return { fout: "De plugin is hier niet aangesloten (geen SCAN_URL)." };
+  try {
+    const res = await fetch(`${cfg.url}/inrichtingstool`, {
+      headers: cfg.token ? { authorization: `Bearer ${cfg.token}` } : {},
+      cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (res.status === 404) return { fout: "Deze versie van de plugin meldt de installatie nog niet (eindpunt /inrichtingstool ontbreekt)." };
+    if (!res.ok) {
+      const body = (await res.json().catch(() => ({}))) as { fout?: string };
+      return { fout: `De plugin antwoordt ${res.status}${body.fout ? `: ${body.fout}` : ""}.` };
+    }
+    return { tool: (await res.json()) as Inrichtingstool };
+  } catch {
+    return { fout: "De plugin is niet bereikbaar." };
+  }
+}

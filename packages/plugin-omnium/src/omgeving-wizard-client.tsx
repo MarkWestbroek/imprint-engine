@@ -126,7 +126,7 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
     const los = (e: PointerEvent) => {
       const onder = document.elementFromPoint(e.clientX, e.clientY) as HTMLElement | null;
       const doel = onder?.closest<HTMLElement>("[data-doel]");
-      const anker = onder?.closest<HTMLElement>("[data-anker][data-soort='entiteit']");
+      const anker = onder?.closest<HTMLElement>("[data-bron-soort]");
       const componentId = doel ? Number(doel.dataset.doel) : undefined;
       if (trek.soort === "nieuw" && componentId && ev !== undefined) {
         const naam = `${trek.label} wordt ${doelNaam(componentId)}`;
@@ -134,7 +134,7 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
       } else if (trek.soort === "verleg-doel" && componentId && trek.koppeling.registerId !== undefined) {
         zet({ soort: "verleg-doel", koppelingId: trek.koppeling.registerId, componentId }, `Verleg ${trek.koppeling.naam} naar ${doelNaam(componentId)}`);
       } else if (trek.soort === "verleg-bron" && anker && trek.koppeling.registerId !== undefined) {
-        const bron = { bronSoort: "entiteit", bronElementId: anker.dataset.anker!, naampad: anker.dataset.naampad };
+        const bron = { bronSoort: anker.dataset.bronSoort!, bronElementId: anker.dataset.bronId!, naampad: anker.dataset.naampad };
         zet({ soort: "verleg-bron", koppelingId: trek.koppeling.registerId, bron }, `Verleg ${trek.koppeling.naam} naar ${anker.dataset.naampad ?? bron.bronElementId}`);
       }
       setTrek(undefined);
@@ -155,8 +155,8 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
     const p = binnen(e);
     setTrek({ ...t, x0: p.x, y0: p.y, ...p } as Trek);
   };
-  const beginNieuw = (e: React.PointerEvent, knoop: ModelKnoop, naampad: string) =>
-    begin(e, { soort: "nieuw", bron: { bronSoort: "entiteit", bronElementId: knoop.id, naampad }, label: knoop.label });
+  const beginNieuw = (e: React.PointerEvent, knoop: ModelKnoop, bron: { bronSoort: string; bronElementId: string; naampad: string }) =>
+    begin(e, { soort: "nieuw", bron, label: knoop.label });
 
   const bewaar = (w: Wacht) => {
     if (!bewerken) return;
@@ -239,7 +239,7 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
                 </option>
               ))}
             </select>
-            <span className="mt-1 block text-muted">Sleep vanaf het bolletje achter een entiteit naar een doel.</span>
+            <span className="mt-1 block text-muted">Sleep vanaf het bolletje achter een entiteit, gegevenselement of veld naar een doel.</span>
           </label>
         )}
         <ul className="space-y-1 text-sm">
@@ -326,7 +326,7 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
                       onMouseEnter={() => setWijs({ anker: g.anker })}
                       onPointerDown={verplaatsbaar ? (e) => begin(e, { soort: "verleg-bron", koppeling: kk! }) : undefined}
                     >
-                      {verplaatsbaar && <title>Sleep naar een andere entiteit om de bron te verleggen</title>}
+                      {verplaatsbaar && <title>Sleep naar een ander modelelement om de bron te verleggen</title>}
                     </circle>
                     <circle
                       cx={g.xb}
@@ -428,6 +428,18 @@ export function KoppelingenScherm({ model, doelen, koppelingen, bewerken }: { mo
   );
 }
 
+/**
+ * What a model element is as the source of a line (bronSoort, ModelelementSoort): an entity or a
+ * gegevenselement by its own id; a field by the element it belongs to, the field in the naampad
+ * (the enum has no value for a field, INRICHTEN_VIZ 25-11-2026).
+ */
+function bronVan(knoop: ModelKnoop, ouder: ModelKnoop | undefined, naampad: string) {
+  if (knoop.soort === "entiteit" || knoop.soort === "gegevenselement") return { bronSoort: knoop.soort, bronElementId: knoop.id, naampad };
+  if (knoop.soort === "veld" && ouder && (ouder.soort === "entiteit" || ouder.soort === "gegevenselement"))
+    return { bronSoort: ouder.soort, bronElementId: ouder.id, naampad };
+  return undefined;
+}
+
 function Knoop({
   knoop,
   licht,
@@ -435,6 +447,7 @@ function Knoop({
   onWijs,
   pad,
   onTrek,
+  ouder,
   diepte = 0,
 }: {
   knoop: ModelKnoop;
@@ -442,10 +455,12 @@ function Knoop({
   wijsAan: Set<string>;
   onWijs: (w: Wijs) => void;
   pad: string[];
-  onTrek?: (e: React.PointerEvent, knoop: ModelKnoop, naampad: string) => void;
+  onTrek?: (e: React.PointerEvent, knoop: ModelKnoop, bron: { bronSoort: string; bronElementId: string; naampad: string }) => void;
+  ouder?: ModelKnoop;
   diepte?: number;
 }) {
   const naampad = [...pad, knoop.label].join(".");
+  const bron = bronVan(knoop, ouder, naampad);
   const aan = licht.has(knoop.id) || knoop.kinderen.some((c) => licht.has(c.id));
   const binnen = (n: ModelKnoop): boolean => licht.has(n.id) || n.kinderen.some(binnen);
   const open = diepte === 0 ? binnen(knoop) : aan;
@@ -453,18 +468,20 @@ function Knoop({
     <span
       data-anker={knoop.id}
       data-soort={knoop.soort}
-      data-naampad={knoop.soort === "entiteit" ? naampad : undefined}
+      data-naampad={bron?.naampad}
+      data-bron-soort={onTrek ? bron?.bronSoort : undefined}
+      data-bron-id={onTrek ? bron?.bronElementId : undefined}
       onMouseEnter={() => onWijs({ anker: knoop.id })}
       className={aan ? "rounded bg-accent/15 px-1 font-medium" : wijsAan.has(knoop.id) ? "rounded bg-accent/10 px-1" : ""}
     >
       {knoop.href ? <a href={knoop.href} className="hover:underline">{knoop.label}</a> : knoop.label}
       {knoop.soort !== "veld" && knoop.soort !== "domein" && knoop.soort !== "groep" && <span className="ml-1 text-xs text-muted">{knoop.soort}</span>}
-      {onTrek && knoop.soort === "entiteit" && (
+      {onTrek && bron && (
         <button
           type="button"
           aria-label={`Lijn trekken vanaf ${knoop.label}`}
           title="Sleep naar een doel om een koppeling te leggen"
-          onPointerDown={(e) => onTrek(e, knoop, naampad)}
+          onPointerDown={(e) => onTrek(e, knoop, bron)}
           onClick={(e) => e.preventDefault()}
           className="ml-1 inline-block h-3 w-3 cursor-grab touch-none rounded-full border-2 border-accent align-middle hover:bg-accent"
         />
@@ -478,7 +495,7 @@ function Knoop({
         <summary className="cursor-pointer">{label}</summary>
         <ul className="ml-4 space-y-1 border-l border-line pl-3">
           {knoop.kinderen.map((c) => (
-            <Knoop key={c.id} knoop={c} licht={licht} wijsAan={wijsAan} onWijs={onWijs} pad={knoop.soort === "domein" ? [knoop.label] : pad} onTrek={onTrek} diepte={diepte + 1} />
+            <Knoop key={c.id} knoop={c} licht={licht} wijsAan={wijsAan} onWijs={onWijs} pad={knoop.soort === "domein" || knoop.soort === "groep" ? [knoop.label] : [...pad, knoop.label]} onTrek={onTrek} ouder={knoop} diepte={diepte + 1} />
           ))}
         </ul>
       </details>

@@ -11,6 +11,9 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
   elke handeling is één registratie in het register (Koppeling op de
   e-dienstversie), alleen met het schrijfaccount (Secret `omnium-koppelaar`).
   Vastgelegde koppelingen staan naast de afgeleide.
+- **Inrichting: stap 1 Installatie** (alleen bekijken): wat de plugin vond en
+  koos per onderdeel (register, inrichtingstool, database), met de fase.
+  Lijnen trekken kan ook vanaf gegevenselementen en velden.
 - **Inrichting: stap 6 Transformaties** (alleen bekijken): versies, code en
   geldigheid per component naast wat er in de omgeving draait. Stap 3 zegt of
   de plugin herkende volgens het register.

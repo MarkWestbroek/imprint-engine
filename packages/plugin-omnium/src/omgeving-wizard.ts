@@ -13,6 +13,7 @@ import type { VastgelegdeKoppeling } from "./koppeling-register";
  */
 
 export const WIZARD_STAPPEN = [
+  { id: "installatie", titel: "Installatie" },
   { id: "omgeving", titel: "Omgeving kiezen" },
   { id: "componenten", titel: "Omgeving in beeld" },
   { id: "model", titel: "Model koppelen" },

@@ -5,7 +5,7 @@ import path from "node:path";
 import { test } from "node:test";
 import { OmniumRegister } from "../src/client";
 import { Inrichting } from "../src/inrichting";
-import { herken, namespaces, scan, type ScanComponent } from "../src/omgeving-scan";
+import { herken, inrichtingstool, namespaces, scan, type ScanComponent } from "../src/omgeving-scan";
 import { bestaandeKoppelingen, kaartenPerLaag, LAAG_ONBEKEND } from "../src/omgeving-wizard";
 import { lijnenVan } from "../src/omgeving-lijnen";
 
@@ -92,4 +92,21 @@ test("lines: one per model element a link reads, to the link's target", () => {
     { id: "artefact:1|a", koppeling: "artefact:1", van: "a", naar: "openzaak" },
     { id: "artefact:1|b", koppeling: "artefact:1", van: "b", naar: "openzaak" },
   ]);
+});
+
+test("step 1: the plugin's Inrichtingstool; a missing endpoint or an error is said, not thrown", async () => {
+  const echt = globalThis.fetch;
+  process.env.SCAN_URL = "http://scan.test";
+  try {
+    globalThis.fetch = (async () => new Response("", { status: 404 })) as typeof fetch;
+    assert.match((await inrichtingstool()).fout ?? "", /ontbreekt/);
+    globalThis.fetch = (async () => new Response(JSON.stringify({ fout: "geen toegang" }), { status: 502 })) as typeof fetch;
+    assert.match((await inrichtingstool()).fout ?? "", /502: geen toegang/);
+    const tool = { spec: { register: { gebruik: "bestaand", namespace: "tnt-a", naam: "omnium-api" } }, status: { fase: "Klaar", gevonden: { register: [{ namespace: "tnt-a", naam: "omnium-api" }] } } };
+    globalThis.fetch = (async () => new Response(JSON.stringify(tool))) as typeof fetch;
+    assert.deepEqual((await inrichtingstool()).tool, tool);
+  } finally {
+    globalThis.fetch = echt;
+    delete process.env.SCAN_URL;
+  }
 });

@@ -1883,6 +1883,15 @@ flowchart LR
       end
       S-->>B: opgeslagen / fout
     ```
+  - Stap 1 (`inrichtingstool()` in `omgeving-scan.ts`): `GET /inrichtingstool`
+    van de plugin (v0.9.0, zelfde Service en token als de scan): per onderdeel
+    (register, ui, database) de keuze en wat er gevonden is, met fase en
+    meldingen. Alleen lezen; een ontbrekend eindpunt (404) of een fout wordt
+    gemeld, niet gegooid.
+  - Een lijn begint bij een entiteit of gegevenselement (bronSoort = dat
+    soort, bronElementId = het element); een veld telt als zijn ouder, met het
+    veld in het naampad (de enum ModelelementSoort heeft geen waarde voor een
+    veld).
   - Stap 6 (`transformatieOverzicht()`): full/transformaties met hun
     versies, de code als verwijzing, de componentgeldigheid naast wat de scan
     in de omgeving vond, en hoeveel koppelingen ze gebruiken.
