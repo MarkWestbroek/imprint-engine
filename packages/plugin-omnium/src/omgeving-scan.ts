@@ -31,6 +31,11 @@ export type ScanComponent = {
   onderdelen?: string[];
   /** The register's component (its `naam` in /full/componenten), or null when not recognised. */
   herkend: { componentNaam: string } | null;
+  /**
+   * For an unrecognised workload (plugin v0.10.0): a proposed component name
+   * and recognition rule; `patroon` is a regex on the image name without tag.
+   */
+  voorstel?: { componentNaam: string; soort: "image" | "chart"; patroon: string };
   bereikbaar: boolean | null;
 };
 

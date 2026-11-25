@@ -6,7 +6,7 @@ import { test } from "node:test";
 import { OmniumRegister } from "../src/client";
 import { Inrichting } from "../src/inrichting";
 import { herken, inrichtingstool, namespaces, scan, type ScanComponent } from "../src/omgeving-scan";
-import { bestaandeKoppelingen, kaartenPerLaag, LAAG_ONBEKEND } from "../src/omgeving-wizard";
+import { bestaandeKoppelingen, kaartenPerLaag, LAAG_ONBEKEND, opnameGegevens } from "../src/omgeving-wizard";
 import { lijnenVan } from "../src/omgeving-lijnen";
 
 const dir = path.join(import.meta.dirname, "fixture", "full");
@@ -109,4 +109,12 @@ test("step 1: the plugin's Inrichtingstool; a missing endpoint or an error is sa
     globalThis.fetch = echt;
     delete process.env.SCAN_URL;
   }
+});
+
+test("opnameGegevens: the register's component names and the layers in use, sorted", async () => {
+  const { bestaandeNamen, lagen } = await opnameGegevens(inrichting());
+  assert.ok(bestaandeNamen.length > 0);
+  assert.ok(bestaandeNamen.every(Boolean));
+  assert.ok(lagen.length > 0);
+  assert.deepEqual(lagen, [...new Set(lagen)].sort((a, b) => a.localeCompare(b, "nl", { numeric: true })));
 });

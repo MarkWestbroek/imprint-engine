@@ -307,3 +307,16 @@ export async function vastgelegdAlsKoppeling(i: Inrichting, stand: VastgelegdeKo
   }
   return out;
 }
+
+/**
+ * What step 3 needs to check a new component (component-opname.ts): the names
+ * already in the register and the layers in use there, in their order.
+ */
+export async function opnameGegevens(i: Inrichting): Promise<{ bestaandeNamen: string[]; lagen: string[] }> {
+  const comps = await i.list("componenten").catch(() => []);
+  const bestaandeNamen = comps.map((c) => i.componentNaam(c) ?? "").filter(Boolean);
+  const lagen = [...new Set(comps.map((c) => str(ge(c, "component_lagen")?.laag)).filter(Boolean))].sort((a, b) =>
+    a.localeCompare(b, "nl", { numeric: true })
+  );
+  return { bestaandeNamen, lagen };
+}

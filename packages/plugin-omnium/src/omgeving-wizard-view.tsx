@@ -5,15 +5,16 @@ import { ALLE, inrichtingstool, namespaces, scan, type Onderdeel } from "./omgev
 import {
   bestaandeKoppelingen,
   kaartenPerLaag,
-  LAAG_ONBEKEND,
   modelBoom,
   modelVersies,
+  opnameGegevens,
   transformatieOverzicht,
   vastgelegdAlsKoppeling,
   WIZARD_STAPPEN,
   type WizardStap,
 } from "./omgeving-wizard";
-import { DoelVinkje, KoppelingenScherm } from "./omgeving-wizard-client";
+import { DoelVinkje, KoppelingenScherm, OpnemenKaart } from "./omgeving-wizard-client";
+import { voorstelVoor } from "./component-opname";
 import { componentIds, edienstversieKeuzes, vastgelegdeKoppelingen, type KoppelingHandeling } from "./koppeling-register";
 import type { KoppelingResultaat } from "./koppeling-opslaan";
 
@@ -114,7 +115,7 @@ function Voorbeeld({ opgenomen }: { opgenomen?: string }) {
 
 async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
   const s = await scan(i, ns);
-  const lagen = await kaartenPerLaag(i, s);
+  const [lagen, gegevens] = await Promise.all([kaartenPerLaag(i, s), opnameGegevens(i)]);
   const aantal = lagen.reduce((n, l) => n + l.kaarten.length, 0);
   return (
     <section className="space-y-5">
@@ -168,9 +169,14 @@ async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
                   {k.component ? (
                     <DoelVinkje ns={ns} id={`${k.scan.namespace}/${k.component.naam}`} label={k.component.weergavenaam} standaard={true} />
                   ) : (
-                    <p className="mt-3 text-xs text-muted">
-                      {k.scan.herkend ? "Herkend, maar niet in het register: geen doel." : "Niet herkend: geen doel."}
-                    </p>
+                    <OpnemenKaart
+                      ns={ns}
+                      id={`${k.scan.namespace}/${k.scan.naam}`}
+                      scan={k.scan}
+                      voorstel={voorstelVoor(k.scan)}
+                      bestaandeNamen={gegevens.bestaandeNamen}
+                      lagen={gegevens.lagen}
+                    />
                   )}
                 </li>
               );
@@ -178,8 +184,10 @@ async function StapComponenten({ i, ns }: { i: Inrichting; ns: string[] }) {
           </ul>
         </div>
       ))}
-      {lagen.some((l) => l.laag !== LAAG_ONBEKEND) && (
-        <p className="text-xs text-muted">De vinkjes "doel voor uitrol" bewaart deze browser; opslaan in het register volgt.</p>
+      {aantal > 0 && (
+        <p className="text-xs text-muted">
+          De vinkjes "doel voor uitrol" en de keuzes bij niet-herkende onderdelen bewaart deze browser; opslaan in het register volgt.
+        </p>
       )}
     </section>
   );
@@ -226,8 +234,9 @@ async function StapKoppelingen({ i, ns, opslaan }: { i: Inrichting; ns: string[]
   const koppelingen = [...(await vastgelegdAlsKoppeling(i, stand)), ...afgeleid];
   const lagen = await kaartenPerLaag(i, s);
   const hier = new Map(lagen.flatMap((l) => l.kaarten).filter((k) => k.component).map((k) => [k.component!.naam, k] as const));
+  // A bare Component ({id, opvoer}, no name yet) is no target: no empty row.
   const doelen = await Promise.all(
-    comps.map(async (c) => {
+    comps.filter((c) => i.componentNaam(c)).map(async (c) => {
       const naam = i.componentNaam(c) ?? "";
       const k = hier.get(naam);
       return {
