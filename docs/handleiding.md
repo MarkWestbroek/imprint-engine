@@ -1100,8 +1100,16 @@ een schrijfaccount voor het register heeft; de rest is bekijken.
    of het bereikbaar is en de onderdelen (worker, redis…). Wijkt de versie af
    van wat het register weet, dan staat die ernaast. Met het vinkje *doel voor
    uitrol* kies je de doelen; dat onthoudt alleen je eigen browser.
-   Niet-herkende onderdelen staan onderaan en zijn geen doel. Bovenaan staat
-   of de plugin herkende volgens het register of volgens haar eigen tabel.
+   Niet-herkende onderdelen staan onderaan. Met *Opnemen als component…* geef
+   je zo'n onderdeel een naam, weergavenaam en laag, en de regel waaraan de
+   plugin het voortaan herkent: een patroon op de image (zonder tag) of de
+   chart. Het formulier begint met het voorstel van de plugin. Het
+   controleert of de naam nog vrij is, of er een laag gekozen is en of het
+   patroon klopt; herkent het patroon dit onderdeel zelf niet, dan staat er
+   een waarschuwing. Ook die keuze, met het vinkje *doel voor uitrol*,
+   onthoudt voorlopig alleen je browser; opslaan in het register volgt.
+   Bovenaan staat of de plugin herkende volgens het register of volgens
+   haar eigen tabel.
 4. **Model koppelen**: nu kan alleen de actuele modelversie.
 5. **Koppelingen**: links het model, rechts de doelen met hun koppelingen.
    Lijnen lopen van het stuk model naar de koppeling die het gebruikt; is

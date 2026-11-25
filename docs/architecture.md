@@ -1903,6 +1903,19 @@ flowchart LR
   - Stap 3: kaarten per laag (`component_lagen`), met de versie uit het
     register ernaast als die afwijkt. Het vinkje "doel" bewaart de browser
     (localStorage) tot het register `isDoel` kent.
+  - Niet-herkende onderdelen (stap 3): `component-opname.ts` (puur) maakt
+    uit de scan een voorstel (`voorstel` van plugin v0.10.0, anders de image
+    zonder tag als verankerde regex of de chart) en controleert het zoals
+    het register het nodig heeft, want dat dwingt zelf niets af: naam
+    (kleine letters, nog vrij, hoofdletterongevoelig), weergavenaam, een
+    laag die in het register voorkomt (`opnameGegevens()`), een geldige
+    regex; een patroon dat dit onderdeel zelf mist is "let op", geen fout.
+    `OpnemenKaart` bewaart de keuze per namespace-set in localStorage.
+    Schrijven (Component met naam, laag en herkenning in één registratie)
+    komt later achter het schrijfaccount, met een beperking per account in
+    het register zelf.
+  - Stap 5 slaat een kale Component (`{id, opvoer}`, nog zonder naam) over
+    als doel.
   - Stap 4: alleen "actueel" is te kiezen; de generaties uit
     `artefact_herkomsten` staan er uitgeschakeld onder.
   - Stap 5: `modelBoom()` (domein uit `data.bron.domein` → entiteit →

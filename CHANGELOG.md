@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **Inrichting: niet-herkende onderdelen opnemen** (stap 3, alleen in de
+  browser): naam, weergavenaam, laag en herkenningsregel, met het voorstel
+  van de plugin als begin en dezelfde controles die het register nodig
+  heeft. Stap 5 toont geen lege doelrij meer voor een component zonder naam.
 - **Inrichting: lijnen leggen in de omgevingswizard.** Een redacteur trekt een
   lijn van een entiteit naar een doel, verlegt of wist een vastgelegde lijn;
   elke handeling is één registratie in het register (Koppeling op de

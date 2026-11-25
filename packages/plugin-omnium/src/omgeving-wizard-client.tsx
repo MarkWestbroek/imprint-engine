@@ -6,6 +6,8 @@ import { lijnenVan } from "./omgeving-lijnen";
 import type { Koppeling, ModelKnoop } from "./omgeving-wizard";
 import type { KoppelingHandeling } from "./koppeling-register";
 import type { KoppelingResultaat } from "./koppeling-opslaan";
+import type { ScanComponent } from "./omgeving-scan";
+import { controleerOpname, isOpneembaar, type Opname } from "./component-opname";
 
 /**
  * The browser side of the omgevingswizard: the "doel" ticks (kept in this
@@ -50,6 +52,192 @@ export function DoelVinkje({ ns, id, label, standaard }: { ns: string[]; id: str
       />
       doel voor uitrol
     </label>
+  );
+}
+
+const opnameSleutel = (ns: string[]) => `imprint-omgevingswizard-opnemen:${[...ns].sort().join(",")}`;
+
+function leesOpnames(ns: string[]): Record<string, Opname> {
+  try {
+    return JSON.parse(localStorage.getItem(opnameSleutel(ns)) ?? "{}") as Record<string, Opname>;
+  } catch {
+    return {};
+  }
+}
+
+function schrijfOpname(ns: string[], id: string, o: Opname | undefined) {
+  try {
+    const alle = leesOpnames(ns);
+    if (o) alle[id] = o;
+    else delete alle[id];
+    localStorage.setItem(opnameSleutel(ns), JSON.stringify(alle));
+  } catch {
+    /* private window: the choice just does not stick */
+  }
+}
+
+/**
+ * An unrecognised workload in step 3: take it in as a new component (name,
+ * layer, recognition rule, target tick) or leave it out. Checked as the
+ * register would need it (component-opname.ts); kept in this browser only.
+ */
+export function OpnemenKaart({
+  ns,
+  id,
+  scan,
+  voorstel,
+  bestaandeNamen,
+  lagen,
+}: {
+  ns: string[];
+  id: string;
+  scan: ScanComponent;
+  voorstel: Opname;
+  bestaandeNamen: string[];
+  lagen: string[];
+}) {
+  const [opname, setOpname] = useState<Opname | undefined>(undefined);
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpname(leesOpnames(ns)[id]), [ns, id]);
+  const [o, setO] = useState<Opname>(voorstel);
+  useEffect(() => setO(opname ?? voorstel), [opname, voorstel]);
+  const bevindingen = controleerOpname(o, { bestaandeNamen, lagen, scan });
+  const veldId = (v: string) => `${id}-${v}`.replace(/[^a-zA-Z0-9-]/g, "-");
+  // The message sits outside the label (it is no part of the field's name) and is tied to the field with aria-describedby.
+  const van = (veld: string) => bevindingen.filter((b) => b.veld === veld);
+  const melding = (veld: string) => (
+    <p id={`${veldId(veld)}-melding`} aria-live="polite" className="text-xs">
+      {van(veld).map((b) => (
+        <span key={b.melding} className={`block ${b.ernst === "fout" ? "text-red-700" : "text-muted"}`}>
+          {b.melding}
+        </span>
+      ))}
+    </p>
+  );
+  const aria = (veld: string) => ({ "aria-describedby": `${veldId(veld)}-melding`, "aria-invalid": van(veld).some((b) => b.ernst === "fout") || undefined });
+
+  if (!open) {
+    return (
+      <div className="mt-3 text-sm">
+        {opname ? (
+          <p>
+            Opnemen als <strong>{opname.weergavenaam}</strong> ({opname.laag}){opname.doel ? ", doel voor uitrol" : ""}.{" "}
+            <button type="button" className="text-accent hover:underline" onClick={() => setOpen(true)}>
+              Wijzigen
+            </button>
+          </p>
+        ) : (
+          <p className="text-xs text-muted">
+            {scan.herkend ? "Herkend, maar niet in het register: geen doel." : "Niet herkend: geen doel."}{" "}
+            <button type="button" className="text-accent hover:underline" onClick={() => setOpen(true)}>
+              Opnemen als component…
+            </button>
+          </p>
+        )}
+      </div>
+    );
+  }
+  return (
+    <form
+      className="mt-3 space-y-2 border-t border-line pt-3 text-sm"
+      aria-label={`${scan.naam} opnemen als component`}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!isOpneembaar(bevindingen)) return;
+        const schoon = { ...o, naam: o.naam.trim(), weergavenaam: o.weergavenaam.trim() };
+        schrijfOpname(ns, id, schoon);
+        setOpname(schoon);
+        setOpen(false);
+      }}
+    >
+      <div>
+        <label className="text-xs text-muted" htmlFor={veldId("naam")}>naam</label>
+        <input
+          id={veldId("naam")}
+          {...aria("naam")}
+          className="block w-full rounded border border-line bg-surface px-2 py-1"
+          value={o.naam}
+          onChange={(e) => setO({ ...o, naam: e.target.value })}
+        />
+        {melding("naam")}
+      </div>
+      <div>
+        <label className="text-xs text-muted" htmlFor={veldId("weergavenaam")}>weergavenaam</label>
+        <input
+          id={veldId("weergavenaam")}
+          {...aria("weergavenaam")}
+          className="block w-full rounded border border-line bg-surface px-2 py-1"
+          value={o.weergavenaam}
+          onChange={(e) => setO({ ...o, weergavenaam: e.target.value })}
+        />
+        {melding("weergavenaam")}
+      </div>
+      <div>
+        <label className="text-xs text-muted" htmlFor={veldId("laag")}>laag</label>
+        <select
+          id={veldId("laag")}
+          {...aria("laag")}
+          className="block w-full rounded border border-line bg-surface px-2 py-1"
+          value={o.laag}
+          onChange={(e) => setO({ ...o, laag: e.target.value })}
+        >
+          <option value="">kies…</option>
+          {lagen.map((l) => (
+            <option key={l} value={l}>
+              {l}
+            </option>
+          ))}
+        </select>
+        {melding("laag")}
+      </div>
+      <fieldset>
+        <legend className="text-xs text-muted">herkennen aan</legend>
+        <div className="flex gap-2">
+          <select
+            aria-label="soort herkenning"
+            className="rounded border border-line bg-surface px-2 py-1"
+            value={o.herkenning.soort}
+            onChange={(e) => setO({ ...o, herkenning: { ...o.herkenning, soort: e.target.value as Opname["herkenning"]["soort"] } })}
+          >
+            <option value="image">image</option>
+            <option value="chart">chart</option>
+          </select>
+          <input
+            aria-label="patroon (reguliere expressie)"
+            {...aria("herkenning.patroon")}
+            className="min-w-0 flex-1 rounded border border-line bg-surface px-2 py-1 font-mono text-xs"
+            value={o.herkenning.patroon}
+            onChange={(e) => setO({ ...o, herkenning: { ...o.herkenning, patroon: e.target.value } })}
+          />
+        </div>
+        {melding("herkenning.patroon")}
+      </fieldset>
+      <label className="flex items-center gap-2">
+        <input type="checkbox" checked={o.doel} onChange={(e) => setO({ ...o, doel: e.target.checked })} />
+        doel voor uitrol
+      </label>
+      <div className="flex flex-wrap gap-3 pt-1">
+        <button type="submit" disabled={!isOpneembaar(bevindingen)} className="rounded-md bg-accent px-3 py-1 text-sm font-semibold text-background hover:bg-accent-strong disabled:opacity-50">
+          Bewaren
+        </button>
+        <button type="button" className="text-muted hover:underline" onClick={() => { setO(opname ?? voorstel); setOpen(false); }}>
+          Annuleren
+        </button>
+        {opname && (
+          <button
+            type="button"
+            className="text-muted hover:underline"
+            onClick={() => {
+              schrijfOpname(ns, id, undefined);
+              setOpname(undefined);
+              setOpen(false);
+            }}
+          >
+            Niet opnemen
+          </button>
+        )}
+      </div>
+    </form>
   );
 }
 
