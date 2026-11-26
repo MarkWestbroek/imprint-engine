@@ -6,6 +6,10 @@ Alle noemenswaardige wijzigingen aan de Imprint-engine. Formaat volgt losjes
 [docs/releasing.md](docs/releasing.md) voor het release-ritueel.
 
 ## [Unreleased]
+- **paratmos.nl live op de VPS** (26 november 2026): de DNS van paratmos.nl en
+  www wijst naar de VPS, het testadres nieuw.paratmos.nl stuurt door; de mail
+  blijft bij Exsilia. De site staat nog op `noindex` tot de teksten zijn
+  nagelopen.
 - **Inrichting: component in het register opnemen** (stap 3): een
   niet-herkend onderdeel wordt met één registratie een Component met naam,
   laag en herkenningsregel, met hetzelfde schrijfaccount als de lijnen. Een
