@@ -481,7 +481,7 @@ docker compose run --rm -e DATABASE_URL="postgres://markwestbroek:$MARKWESTBROEK
 SITES=markwestbroek ./deploy.sh   # de SSG-pagina's opnieuw bouwen
 ```
 
-**paratmos.nl** (`paratmos`, poort 3900; **nog niet live**): de zakelijke site
+**paratmos.nl** (`paratmos`, poort 3900; **live sinds 26 november 2026**): de zakelijke site
 van Paratmos, met blog, kennisbank en begrippen als plugins. Het oude WordPress
 blijft bij Exsilia (Plesk) draaien op `oud.paratmos.nl` (gekloond met de WP
 Toolkit); daar staan ook de DNS en de mail. Uitrollen kan zonder dat er iets
@@ -504,10 +504,9 @@ verandert aan wat bezoekers zien: pas het omzetten van de A-records doet dat.
    SITES=paratmos ./deploy.sh
    ```
 
-2. Bekijken vóór de DNS om is: op **https://nieuw.paratmos.nl** (live sinds
-   21-11; een eigen A-record bij Exsilia en het blok `nieuw.paratmos.nl` in
-   [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet), met `noindex`), of via
-   een tunnel vanaf je eigen machine:
+2. Bekijken vóór de DNS om is: dat was **https://nieuw.paratmos.nl** (21-26
+   november; een eigen A-record bij Exsilia, dat adres stuurt nu door naar
+   paratmos.nl), of via een tunnel vanaf je eigen machine:
    `ssh -L 3900:127.0.0.1:3900 <vps>` en dan `http://localhost:3900`
    (ook `/admin`).
 3. Overschakelen: in Plesk bij Exsilia (*DNS Settings* van paratmos.nl) alleen
@@ -516,10 +515,16 @@ verandert aan wat bezoekers zien: pas het omzetten van de A-records doet dat.
    weg, anders mislukt het certificaat van Let's Encrypt en komen
    IPv6-bezoekers nog bij WordPress uit. `mail`, de MX- en SPF-record, `oud`
    en de wildcard blijven staan (`vps1.paratmos.nl`, de naam van de VPS, valt
-   onder de wildcard en heeft geen eigen record). Daarna de twee blokken
-   uit [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
+   onder de wildcard en heeft geen eigen record). Twee valkuilen die op
+   26-11 bleken: `www` had geen eigen record maar viel onder de wildcard (dus
+   een nieuw A-record `www`, zonder AAAA), en `webmail` was een CNAME naar
+   `paratmos.nl` (omgezet naar `mail.paratmos.nl`, anders gaat webmail mee naar
+   de VPS). Daarna de blokken uit
+   [Caddyfile.snippet](../deploy/vps/Caddyfile.snippet) erbij en
    `sudo systemctl reload caddy`. Het blok stuurt de oude WordPress-adressen
-   (`/?page_id=…`, `/?p=…`) door naar de nieuwe pagina's.
+   (`/?page_id=…`, `/?p=…`) door naar de nieuwe pagina's. Let op: `sudo caddy
+   validate` maakt een nieuw logbestand als root aan, waarna de reload faalt
+   (`permission denied`); dan `sudo chown caddy:caddy /var/log/caddy/paratmos.log`.
 4. Na de omzetting: `noindex` eraf (`sites/paratmos/src/app/layout.tsx`) zodra
    de teksten zijn nagelopen, en het oude WordPress op `oud.paratmos.nl`
    opruimen als het niet meer nodig is.
