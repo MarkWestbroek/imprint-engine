@@ -118,3 +118,25 @@ de backlog) en beheerdersmeldingen.
 verstuurt weer; het testbericht ging via `mail.volksgebouwzeist.nl:465` naar
 Marks eigen adres. Het ontvangstadres is voorlopig dat van Mark; nog te
 beslissen of er een eigen adres of mailbox voor het Volksgebouw komt.
+
+## Ontvangen op imprint-engine.nl (forwarder bij mijn.host)
+
+**Stand: ingericht op 26 november 2026.** `mark@imprint-engine.nl` staat op de
+visitekaartjes van Imprint. Het domein heeft DNS bij mijn.host, en daar is het
+adres een **e-mailforwarder** (domeinpaneel → *Domein toevoegingen* →
+*E-mailforwarders*, gratis bij de domeinnaam) naar Marks eigen mailboxen. Er is
+geen mailbox en er hoefde geen DNS te veranderen: de MX (`mx1`/`mx2.mijn.host`)
+en SPF (`include:spf.mijn.host`) wezen al naar mijn.host.
+
+- Zolang er geen forwarder was, weigerde mijn.host álle mail voor het domein
+  met `451 relay not permitted!`. Een nieuw adres is gewoon een extra
+  forwarder in hetzelfde scherm.
+- Testen kan zonder iets te versturen, vanaf de VPS (poort 25 is thuis vaak
+  dicht): `MAIL FROM` met een afzender op een bestaand domein (een lege
+  afzender geeft `550 Sender has no A, AAAA, or MX DNS records`), dan
+  `RCPT TO`. Een bestaand adres geeft `250 Accepted`, een onbekend
+  `550 No such recipient here`, op beide MX-servers.
+- Een forwarder kan niet *versturen*: antwoorden gaat vanaf het eigen adres.
+  Wil Imprint later mail sturen als `…@imprint-engine.nl` (of "verzenden als"
+  in Gmail), dan is een echte mailbox of de transactionele dienst hierboven
+  nodig, plus DKIM.
